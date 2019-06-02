@@ -10,6 +10,7 @@ class EchoBot[F[_]: Sync](bot: Api[F]) {
   import cats.syntax.functor._
   import cats.syntax.foldable._
   import cats.syntax.traverse._
+  import cats.syntax.applicativeError._
   import cats.instances.list._
   import cats.instances.option._
   import cats.instances.int._
@@ -17,18 +18,27 @@ class EchoBot[F[_]: Sync](bot: Api[F]) {
   import io.github.fperiodic.apimorphism.telegramium.bots._
   import io.github.fperiodic.apimorphism.telegramium.bots.client._
 
-  def loop(counter: Ref[F, Int]): F[Unit] = {
+  def handle(updates: GetUpdatesRes, counter: Ref[F, Int]): F[Unit] = {
     for {
-      count <- counter.get
-      updates <- bot.getUpdates(GetUpdatesReq(offset = Some(count), timeout = Some(10)))
-      _ <- updates.result.map(_.updateId).maximumOption.traverse(max => counter.set(max + 1))
       _ <- updates.result.flatMap(_.message).traverse{ m =>
         bot.sendMessage(SendMessageReq(
           chatId = ChatIntId(m.chat.id),
           text = m.text.getOrElse("NO_TEXT"),
         ))
       }
-      next <- loop(counter)
+      _ <- updates.result.map(_.updateId).maximumOption.traverse(max => counter.set(max + 1))
+    } yield ()
+  }
+
+  def poll(counter: Ref[F, Int]): F[Unit] = {
+    for {
+      offset <- counter.get
+      updates <- bot.getUpdates(GetUpdatesReq(offset = Some(offset), timeout = Some(10)))
+        .onError {
+          case _: java.util.concurrent.TimeoutException => poll(counter)
+        }
+      _ <- handle(updates, counter)
+      next <- poll(counter)
     } yield {
       next
     }
@@ -37,9 +47,9 @@ class EchoBot[F[_]: Sync](bot: Api[F]) {
   def start(): F[Unit] = {
     for {
       counter <- Ref.of[F, Int](0)
-      next <- loop(counter)
+      _ <- poll(counter)
     } yield {
-      next
+      ()
     }
   }
 }

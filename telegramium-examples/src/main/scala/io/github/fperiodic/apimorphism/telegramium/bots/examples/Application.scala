@@ -12,7 +12,8 @@ import scala.concurrent.duration.Duration
 
 object Application extends App {
 
-  val baseUrl = "https://api.telegram.org/PLACE_YOUR_BOT_TOKEN_HERE"
+  val botApiToken = "BOT_API_TOKEN_GOT_FROM_BOTFATHER"
+  val baseUrl = s"https://api.telegram.org/bot$botApiToken"
 
   BlazeClientBuilder[Task](global).resource.use { httpClient =>
     val http = Logger(logBody = true, logHeaders = true)(httpClient)
