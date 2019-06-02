@@ -2,14 +2,14 @@
 
 F[Tg] is a pure functional Telegram Bot API for scala.
 
-In this project we try to provide comprehensive, well documented and Scala-idiomatic client/server implementations to work with Telegram Bot API.
-Please refer to telegramium-examples module for usage examples. We support both polling and webhooks.
+This project is a try to provide a comprehensive, well documented and Scala-idiomatic client/server implementations to work with Telegram Bot API. Please refer to telegramium-examples module for usage examples. There is a support both for polling and webhooks.
 
-Currently we support the following backends:
+Currently the following backends are supported:
 
 - http4s
-- Circe
-- uPickle (MsgPack binary deserialization for storage purposes)
+- cats-effect
+- circe
+- uPickle (MsgPack binary serialization, to be used for storing API messages in DB and sending over network)
 
 You may want to start with [Api.scala](telegramium-core/src/main/scala/io/github/fperiodic/apimorphism/telegramium/bots/client/Api.scala) and [EchoBot.scala](telegramium-examples/src/main/scala/io/github/fperiodic/apimorphism/telegramium/bots/examples/EchoBot.scala).
 
