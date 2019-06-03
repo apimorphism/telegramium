@@ -14,7 +14,7 @@ lazy val `telegramium-examples` = project
 
 lazy val telegramium = (project in file("."))
   .settings(
-    name := "[ Tg ]"
+    name := "F[Tg]"
   )
   .aggregate(
     `telegramium-core`,

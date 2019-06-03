@@ -11,9 +11,9 @@ class EchoBot[F[_]: Sync](bot: Api[F]) {
   import cats.syntax.foldable._
   import cats.syntax.traverse._
   import cats.syntax.applicativeError._
+  import cats.instances.int._
   import cats.instances.list._
   import cats.instances.option._
-  import cats.instances.int._
 
   import io.github.fperiodic.apimorphism.telegramium.bots._
   import io.github.fperiodic.apimorphism.telegramium.bots.client._
