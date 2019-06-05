@@ -19,13 +19,14 @@ If you want to change something in telegramium-core or found a bug in it, please
 Do not create pull requests with changes on telegramium-core as we use semi-automatic way to work with it.
 Except that any PR-s are welcome.
 
+### How to use
+Add to build.sbt next lines
+
+```
+lazy val api = ProjectRef(uri("https://github.com/apimorphism/telegramium.git#master"), "telegramium-core")
+lazy val root = Project("root", file(".")).dependsOn(api)
+```
+
 ### Note for Yan
 
 Yan, напиши бота.
-
-
-### How to use
-Add to build.sbt next lines
-`lazy val api = ProjectRef(uri("https://github.com/apimorphism/telegramium.git#master"), "telegramium-core")
-lazy val root = Project("root", file(".")).dependsOn(api)
- 
