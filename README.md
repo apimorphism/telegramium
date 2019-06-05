@@ -22,3 +22,10 @@ Except that any PR-s are welcome.
 ### Note for Yan
 
 Yan, напиши бота.
+
+
+### How to use
+Add to build.sbt next lines
+`lazy val api = ProjectRef(uri("https://github.com/apimorphism/telegramium.git#master"), "telegramium-core")
+lazy val root = Project("root", file(".")).dependsOn(api)
+ 
