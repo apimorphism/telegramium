@@ -67,5 +67,6 @@ object Dependencies {
   ) ++ circe ++ http4s ++ logger ++ uPickle
 
   val telegramiumCore: Seq[ModuleID] = common
+  val telegramiumHigh: Seq[ModuleID] = common
   val telegramiumExam: Seq[ModuleID] = common
 }
