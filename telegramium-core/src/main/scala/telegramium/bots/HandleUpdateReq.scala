@@ -38,5 +38,5 @@ final case class HandleUpdateReq(
                                    * information about checkout*/
                                  preCheckoutQuery: Option[PreCheckoutQuery] = Option.empty,
                                  /** Optional. New poll state. Bots receive only updates about
-                                   * polls, which are sent or stopped by the bot*/
+                                   * stopped polls and polls, which are sent by the bot*/
                                  poll: Option[Poll] = Option.empty)

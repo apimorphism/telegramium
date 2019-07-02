@@ -14,6 +14,9 @@ import cats.syntax.flatMap._
 import CirceImplicits._
 import scala.concurrent.ExecutionContext
 import org.http4s.multipart.Multipart
+import cats.syntax.traverse._
+import cats.instances.list._
+import io.circe.Json
 import telegramium.bots._
 import telegramium.bots.CirceImplicits._
 
@@ -49,6 +52,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to set a new profile photo for the chat. Photos can't be
@@ -58,26 +62,43 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
     val photoPartF = x.photo match {
       case InputPartFile(f) => makePart("photo", f)
-      case _                => F.pure(List(Part.formData("photo", x.photo.asJson.noSpaces)))
+      case _                => F.pure(List.empty[Part[F]])
     }
 
-    for {
-      uri       <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setChatPhoto"))
-      photoPart <- photoPartF
-      body = Multipart[F](
-        Vector(("chat_id", x.chatId.asJson)).filter(!_._2.isNull).map {
-          case (n, v) => Part.formData(n, v.noSpaces)
-        } ++
-          photoPart
-      )
-      req = Request[F]()
-        .withMethod(POST)
-        .withUri(uri)
-        .withEntity(body)
-        .withHeaders(body.headers)
-      res <- http.expect(req)(jsonOf[F, SetChatPhotoRes])
-    } yield {
-      res
+    List(photoPartF).sequence.map(_.flatten).flatMap { l =>
+      if (l.nonEmpty) {
+        for {
+          uri       <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setChatPhoto"))
+          photoPart <- photoPartF
+          body = Multipart[F](
+            Vector(("chat_id", x.chatId.asJson),
+                   ("photo", if (photoPart.isEmpty) { x.photo.asJson } else { Json.Null }))
+              .filter(!_._2.isNull)
+              .map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              photoPart
+          )
+          req = Request[F]()
+            .withMethod(POST)
+            .withUri(uri)
+            .withEntity(body)
+            .withHeaders(body.headers)
+          res <- http.expect(req)(jsonOf[F, SetChatPhotoRes])
+        } yield {
+          res
+        }
+      } else {
+        for {
+          uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setChatPhoto"))
+          req = Request[F]()
+            .withMethod(GET)
+            .withUri(uri)
+            .withEntity(x.asJson)
+          res <- http.expect(req)(jsonOf[F, SetChatPhotoRes])
+        } yield {
+          res
+        }
+
+      }
     }
   }
 
@@ -95,6 +116,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send answers to callback queries sent from inline keyboards.
@@ -111,6 +133,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send text messages. On success, the sent Message is
@@ -126,6 +149,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to get a list of profile pictures for a user. Returns a
@@ -141,6 +165,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send a native poll. A native poll can't be sent to a private
@@ -156,6 +181,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send phone contacts. On success, the sent Message is
@@ -171,6 +197,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to create new sticker set owned by a user. The bot will be able
@@ -179,31 +206,48 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
     val pngStickerPartF = x.pngSticker match {
       case InputPartFile(f) => makePart("png_sticker", f)
-      case _                => F.pure(List(Part.formData("pngSticker", x.pngSticker.asJson.noSpaces)))
+      case _                => F.pure(List.empty[Part[F]])
     }
 
-    for {
-      uri            <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/createNewStickerSet"))
-      pngStickerPart <- pngStickerPartF
-      body = Multipart[F](
-        Vector(
-          ("user_id", x.userId.asJson),
-          ("name", x.name.asJson),
-          ("title", x.title.asJson),
-          ("emojis", x.emojis.asJson),
-          ("contains_masks", x.containsMasks.asJson),
-          ("mask_position", x.maskPosition.asJson)
-        ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
-          pngStickerPart
-      )
-      req = Request[F]()
-        .withMethod(POST)
-        .withUri(uri)
-        .withEntity(body)
-        .withHeaders(body.headers)
-      res <- http.expect(req)(jsonOf[F, CreateNewStickerSetRes])
-    } yield {
-      res
+    List(pngStickerPartF).sequence.map(_.flatten).flatMap { l =>
+      if (l.nonEmpty) {
+        for {
+          uri            <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/createNewStickerSet"))
+          pngStickerPart <- pngStickerPartF
+          body = Multipart[F](
+            Vector(
+              ("user_id", x.userId.asJson),
+              ("name", x.name.asJson),
+              ("title", x.title.asJson),
+              ("emojis", x.emojis.asJson),
+              ("contains_masks", x.containsMasks.asJson),
+              ("mask_position", x.maskPosition.asJson),
+              ("pngSticker", if (pngStickerPart.isEmpty) { x.pngSticker.asJson } else { Json.Null })
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              pngStickerPart
+          )
+          req = Request[F]()
+            .withMethod(POST)
+            .withUri(uri)
+            .withEntity(body)
+            .withHeaders(body.headers)
+          res <- http.expect(req)(jsonOf[F, CreateNewStickerSetRes])
+        } yield {
+          res
+        }
+      } else {
+        for {
+          uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/createNewStickerSet"))
+          req = Request[F]()
+            .withMethod(GET)
+            .withUri(uri)
+            .withEntity(x.asJson)
+          res <- http.expect(req)(jsonOf[F, CreateNewStickerSetRes])
+        } yield {
+          res
+        }
+
+      }
     }
   }
 
@@ -214,26 +258,43 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
     val pngStickerPartF = x.pngSticker match {
       case InputPartFile(f) => makePart("png_sticker", f)
-      case _                => F.pure(List(Part.formData("pngSticker", x.pngSticker.asJson.noSpaces)))
+      case _                => F.pure(List.empty[Part[F]])
     }
 
-    for {
-      uri            <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/uploadStickerFile"))
-      pngStickerPart <- pngStickerPartF
-      body = Multipart[F](
-        Vector(("user_id", x.userId.asJson)).filter(!_._2.isNull).map {
-          case (n, v) => Part.formData(n, v.noSpaces)
-        } ++
-          pngStickerPart
-      )
-      req = Request[F]()
-        .withMethod(POST)
-        .withUri(uri)
-        .withEntity(body)
-        .withHeaders(body.headers)
-      res <- http.expect(req)(jsonOf[F, UploadStickerFileRes])
-    } yield {
-      res
+    List(pngStickerPartF).sequence.map(_.flatten).flatMap { l =>
+      if (l.nonEmpty) {
+        for {
+          uri            <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/uploadStickerFile"))
+          pngStickerPart <- pngStickerPartF
+          body = Multipart[F](
+            Vector(("user_id", x.userId.asJson),
+                   ("pngSticker", if (pngStickerPart.isEmpty) { x.pngSticker.asJson } else {
+                     Json.Null
+                   })).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              pngStickerPart
+          )
+          req = Request[F]()
+            .withMethod(POST)
+            .withUri(uri)
+            .withEntity(body)
+            .withHeaders(body.headers)
+          res <- http.expect(req)(jsonOf[F, UploadStickerFileRes])
+        } yield {
+          res
+        }
+      } else {
+        for {
+          uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/uploadStickerFile"))
+          req = Request[F]()
+            .withMethod(GET)
+            .withUri(uri)
+            .withEntity(x.asJson)
+          res <- http.expect(req)(jsonOf[F, UploadStickerFileRes])
+        } yield {
+          res
+        }
+
+      }
     }
   }
 
@@ -250,6 +311,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to delete a group sticker set from a supergroup. The bot must
@@ -267,6 +329,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to stop updating a live location message before live_period
@@ -283,6 +346,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to generate a new invite link for a chat; any previously
@@ -300,6 +364,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method when you need to tell the user that something is happening on
@@ -317,6 +382,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to add a new sticker to a set created by the bot. Returns True
@@ -325,29 +391,46 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
     val pngStickerPartF = x.pngSticker match {
       case InputPartFile(f) => makePart("png_sticker", f)
-      case _                => F.pure(List(Part.formData("pngSticker", x.pngSticker.asJson.noSpaces)))
+      case _                => F.pure(List.empty[Part[F]])
     }
 
-    for {
-      uri            <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/addStickerToSet"))
-      pngStickerPart <- pngStickerPartF
-      body = Multipart[F](
-        Vector(("user_id", x.userId.asJson),
-               ("name", x.name.asJson),
-               ("emojis", x.emojis.asJson),
-               ("mask_position", x.maskPosition.asJson)).filter(!_._2.isNull).map {
-          case (n, v) => Part.formData(n, v.noSpaces)
-        } ++
-          pngStickerPart
-      )
-      req = Request[F]()
-        .withMethod(POST)
-        .withUri(uri)
-        .withEntity(body)
-        .withHeaders(body.headers)
-      res <- http.expect(req)(jsonOf[F, AddStickerToSetRes])
-    } yield {
-      res
+    List(pngStickerPartF).sequence.map(_.flatten).flatMap { l =>
+      if (l.nonEmpty) {
+        for {
+          uri            <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/addStickerToSet"))
+          pngStickerPart <- pngStickerPartF
+          body = Multipart[F](
+            Vector(
+              ("user_id", x.userId.asJson),
+              ("name", x.name.asJson),
+              ("emojis", x.emojis.asJson),
+              ("mask_position", x.maskPosition.asJson),
+              ("pngSticker", if (pngStickerPart.isEmpty) { x.pngSticker.asJson } else { Json.Null })
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              pngStickerPart
+          )
+          req = Request[F]()
+            .withMethod(POST)
+            .withUri(uri)
+            .withEntity(body)
+            .withHeaders(body.headers)
+          res <- http.expect(req)(jsonOf[F, AddStickerToSetRes])
+        } yield {
+          res
+        }
+      } else {
+        for {
+          uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/addStickerToSet"))
+          req = Request[F]()
+            .withMethod(GET)
+            .withUri(uri)
+            .withEntity(x.asJson)
+          res <- http.expect(req)(jsonOf[F, AddStickerToSetRes])
+        } yield {
+          res
+        }
+
+      }
     }
   }
 
@@ -364,6 +447,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to stop a poll which was sent by the bot. On success, the
@@ -379,6 +463,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to unpin a message in a group, a supergroup, or a channel. The
@@ -396,6 +481,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send a group of photos or videos as an album. On success, an
@@ -411,6 +497,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send a game. On success, the sent Message is returned.  */
@@ -425,6 +512,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send information about a venue. On success, the sent Message
@@ -440,6 +528,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to unban a previously kicked user in a supergroup or channel.
@@ -457,6 +546,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to change the description of a supergroup or a channel. The bot
@@ -473,6 +563,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to edit text and game messages. On success, if edited message
@@ -488,6 +579,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to edit live location messages. A location can be edited until
@@ -505,6 +597,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to get basic info about a file and prepare it for downloading.
@@ -525,6 +618,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to set the score of the specified user in a game. On success,
@@ -542,6 +636,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method for your bot to leave a group, supergroup or channel. Returns
@@ -557,6 +652,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to change the title of a chat. Titles can't be changed for
@@ -573,6 +669,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** As of v.4.0, Telegram clients support rounded square mp4 videos of up to 1
@@ -582,38 +679,55 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
     val videoNotePartF = x.videoNote match {
       case InputPartFile(f) => makePart("video_note", f)
-      case _                => F.pure(List(Part.formData("videoNote", x.videoNote.asJson.noSpaces)))
+      case _                => F.pure(List.empty[Part[F]])
     }
 
     val thumbPartF = x.thumb match {
       case Some(InputPartFile(f)) => makePart("thumb", f)
-      case Some(y)                => F.pure(List(Part.formData("thumb", y.asJson.noSpaces)))
-      case None                   => F.pure(List.empty[Part[F]])
+      case _                      => F.pure(List.empty[Part[F]])
     }
 
-    for {
-      uri           <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendVideoNote"))
-      videoNotePart <- videoNotePartF
-      thumbPart     <- thumbPartF
-      body = Multipart[F](
-        Vector(
-          ("chat_id", x.chatId.asJson),
-          ("duration", x.duration.asJson),
-          ("length", x.length.asJson),
-          ("disable_notification", x.disableNotification.asJson),
-          ("reply_to_message_id", x.replyToMessageId.asJson),
-          ("reply_markup", x.replyMarkup.asJson)
-        ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
-          videoNotePart ++ thumbPart
-      )
-      req = Request[F]()
-        .withMethod(POST)
-        .withUri(uri)
-        .withEntity(body)
-        .withHeaders(body.headers)
-      res <- http.expect(req)(jsonOf[F, SendVideoNoteRes])
-    } yield {
-      res
+    List(videoNotePartF, thumbPartF).sequence.map(_.flatten).flatMap { l =>
+      if (l.nonEmpty) {
+        for {
+          uri           <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendVideoNote"))
+          videoNotePart <- videoNotePartF
+          thumbPart     <- thumbPartF
+          body = Multipart[F](
+            Vector(
+              ("chat_id", x.chatId.asJson),
+              ("duration", x.duration.asJson),
+              ("length", x.length.asJson),
+              ("disable_notification", x.disableNotification.asJson),
+              ("reply_to_message_id", x.replyToMessageId.asJson),
+              ("reply_markup", x.replyMarkup.asJson),
+              ("videoNote", if (videoNotePart.isEmpty) { x.videoNote.asJson } else { Json.Null }),
+              ("thumb", if (thumbPart.isEmpty) { x.thumb.asJson } else { Json.Null })
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              videoNotePart ++ thumbPart
+          )
+          req = Request[F]()
+            .withMethod(POST)
+            .withUri(uri)
+            .withEntity(body)
+            .withHeaders(body.headers)
+          res <- http.expect(req)(jsonOf[F, SendVideoNoteRes])
+        } yield {
+          res
+        }
+      } else {
+        for {
+          uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendVideoNote"))
+          req = Request[F]()
+            .withMethod(GET)
+            .withUri(uri)
+            .withEntity(x.asJson)
+          res <- http.expect(req)(jsonOf[F, SendVideoNoteRes])
+        } yield {
+          res
+        }
+
+      }
     }
   }
 
@@ -636,6 +750,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to delete a chat photo. Photos can't be changed for private
@@ -652,6 +767,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send invoices. On success, the sent Message is returned.  */
@@ -666,6 +782,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send general files. On success, the sent Message is
@@ -675,38 +792,55 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
     val documentPartF = x.document match {
       case InputPartFile(f) => makePart("document", f)
-      case _                => F.pure(List(Part.formData("document", x.document.asJson.noSpaces)))
+      case _                => F.pure(List.empty[Part[F]])
     }
 
     val thumbPartF = x.thumb match {
       case Some(InputPartFile(f)) => makePart("thumb", f)
-      case Some(y)                => F.pure(List(Part.formData("thumb", y.asJson.noSpaces)))
-      case None                   => F.pure(List.empty[Part[F]])
+      case _                      => F.pure(List.empty[Part[F]])
     }
 
-    for {
-      uri          <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendDocument"))
-      documentPart <- documentPartF
-      thumbPart    <- thumbPartF
-      body = Multipart[F](
-        Vector(
-          ("chat_id", x.chatId.asJson),
-          ("caption", x.caption.asJson),
-          ("parse_mode", x.parseMode.asJson),
-          ("disable_notification", x.disableNotification.asJson),
-          ("reply_to_message_id", x.replyToMessageId.asJson),
-          ("reply_markup", x.replyMarkup.asJson)
-        ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
-          documentPart ++ thumbPart
-      )
-      req = Request[F]()
-        .withMethod(POST)
-        .withUri(uri)
-        .withEntity(body)
-        .withHeaders(body.headers)
-      res <- http.expect(req)(jsonOf[F, SendDocumentRes])
-    } yield {
-      res
+    List(documentPartF, thumbPartF).sequence.map(_.flatten).flatMap { l =>
+      if (l.nonEmpty) {
+        for {
+          uri          <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendDocument"))
+          documentPart <- documentPartF
+          thumbPart    <- thumbPartF
+          body = Multipart[F](
+            Vector(
+              ("chat_id", x.chatId.asJson),
+              ("caption", x.caption.asJson),
+              ("parse_mode", x.parseMode.asJson),
+              ("disable_notification", x.disableNotification.asJson),
+              ("reply_to_message_id", x.replyToMessageId.asJson),
+              ("reply_markup", x.replyMarkup.asJson),
+              ("document", if (documentPart.isEmpty) { x.document.asJson } else { Json.Null }),
+              ("thumb", if (thumbPart.isEmpty) { x.thumb.asJson } else { Json.Null })
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              documentPart ++ thumbPart
+          )
+          req = Request[F]()
+            .withMethod(POST)
+            .withUri(uri)
+            .withEntity(body)
+            .withHeaders(body.headers)
+          res <- http.expect(req)(jsonOf[F, SendDocumentRes])
+        } yield {
+          res
+        }
+      } else {
+        for {
+          uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendDocument"))
+          req = Request[F]()
+            .withMethod(GET)
+            .withUri(uri)
+            .withEntity(x.asJson)
+          res <- http.expect(req)(jsonOf[F, SendDocumentRes])
+        } yield {
+          res
+        }
+
+      }
     }
   }
 
@@ -729,6 +863,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send answers to an inline query. On success, True is
@@ -744,6 +879,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to kick a user from a group, a supergroup or a channel. In the
@@ -762,6 +898,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send audio files, if you want Telegram clients to display
@@ -773,41 +910,58 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
     val audioPartF = x.audio match {
       case InputPartFile(f) => makePart("audio", f)
-      case _                => F.pure(List(Part.formData("audio", x.audio.asJson.noSpaces)))
+      case _                => F.pure(List.empty[Part[F]])
     }
 
     val thumbPartF = x.thumb match {
       case Some(InputPartFile(f)) => makePart("thumb", f)
-      case Some(y)                => F.pure(List(Part.formData("thumb", y.asJson.noSpaces)))
-      case None                   => F.pure(List.empty[Part[F]])
+      case _                      => F.pure(List.empty[Part[F]])
     }
 
-    for {
-      uri       <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendAudio"))
-      audioPart <- audioPartF
-      thumbPart <- thumbPartF
-      body = Multipart[F](
-        Vector(
-          ("chat_id", x.chatId.asJson),
-          ("caption", x.caption.asJson),
-          ("parse_mode", x.parseMode.asJson),
-          ("duration", x.duration.asJson),
-          ("performer", x.performer.asJson),
-          ("title", x.title.asJson),
-          ("disable_notification", x.disableNotification.asJson),
-          ("reply_to_message_id", x.replyToMessageId.asJson),
-          ("reply_markup", x.replyMarkup.asJson)
-        ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
-          audioPart ++ thumbPart
-      )
-      req = Request[F]()
-        .withMethod(POST)
-        .withUri(uri)
-        .withEntity(body)
-        .withHeaders(body.headers)
-      res <- http.expect(req)(jsonOf[F, SendAudioRes])
-    } yield {
-      res
+    List(audioPartF, thumbPartF).sequence.map(_.flatten).flatMap { l =>
+      if (l.nonEmpty) {
+        for {
+          uri       <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendAudio"))
+          audioPart <- audioPartF
+          thumbPart <- thumbPartF
+          body = Multipart[F](
+            Vector(
+              ("chat_id", x.chatId.asJson),
+              ("caption", x.caption.asJson),
+              ("parse_mode", x.parseMode.asJson),
+              ("duration", x.duration.asJson),
+              ("performer", x.performer.asJson),
+              ("title", x.title.asJson),
+              ("disable_notification", x.disableNotification.asJson),
+              ("reply_to_message_id", x.replyToMessageId.asJson),
+              ("reply_markup", x.replyMarkup.asJson),
+              ("audio", if (audioPart.isEmpty) { x.audio.asJson } else { Json.Null }),
+              ("thumb", if (thumbPart.isEmpty) { x.thumb.asJson } else { Json.Null })
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              audioPart ++ thumbPart
+          )
+          req = Request[F]()
+            .withMethod(POST)
+            .withUri(uri)
+            .withEntity(body)
+            .withHeaders(body.headers)
+          res <- http.expect(req)(jsonOf[F, SendAudioRes])
+        } yield {
+          res
+        }
+      } else {
+        for {
+          uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendAudio"))
+          req = Request[F]()
+            .withMethod(GET)
+            .withUri(uri)
+            .withEntity(x.asJson)
+          res <- http.expect(req)(jsonOf[F, SendAudioRes])
+        } yield {
+          res
+        }
+
+      }
     }
   }
 
@@ -826,6 +980,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** A simple method for testing your bot's auth token. Requires no parameters.
@@ -841,6 +996,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to forward messages of any kind. On success, the sent Message
@@ -856,6 +1012,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to get information about a member of a chat. Returns a
@@ -871,6 +1028,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to get a list of administrators in a chat. On success, returns
@@ -888,6 +1046,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send audio files, if you want Telegram clients to display
@@ -899,32 +1058,49 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
     val voicePartF = x.voice match {
       case InputPartFile(f) => makePart("voice", f)
-      case _                => F.pure(List(Part.formData("voice", x.voice.asJson.noSpaces)))
+      case _                => F.pure(List.empty[Part[F]])
     }
 
-    for {
-      uri       <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendVoice"))
-      voicePart <- voicePartF
-      body = Multipart[F](
-        Vector(
-          ("chat_id", x.chatId.asJson),
-          ("caption", x.caption.asJson),
-          ("parse_mode", x.parseMode.asJson),
-          ("duration", x.duration.asJson),
-          ("disable_notification", x.disableNotification.asJson),
-          ("reply_to_message_id", x.replyToMessageId.asJson),
-          ("reply_markup", x.replyMarkup.asJson)
-        ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
-          voicePart
-      )
-      req = Request[F]()
-        .withMethod(POST)
-        .withUri(uri)
-        .withEntity(body)
-        .withHeaders(body.headers)
-      res <- http.expect(req)(jsonOf[F, SendVoiceRes])
-    } yield {
-      res
+    List(voicePartF).sequence.map(_.flatten).flatMap { l =>
+      if (l.nonEmpty) {
+        for {
+          uri       <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendVoice"))
+          voicePart <- voicePartF
+          body = Multipart[F](
+            Vector(
+              ("chat_id", x.chatId.asJson),
+              ("caption", x.caption.asJson),
+              ("parse_mode", x.parseMode.asJson),
+              ("duration", x.duration.asJson),
+              ("disable_notification", x.disableNotification.asJson),
+              ("reply_to_message_id", x.replyToMessageId.asJson),
+              ("reply_markup", x.replyMarkup.asJson),
+              ("voice", if (voicePart.isEmpty) { x.voice.asJson } else { Json.Null })
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              voicePart
+          )
+          req = Request[F]()
+            .withMethod(POST)
+            .withUri(uri)
+            .withEntity(body)
+            .withHeaders(body.headers)
+          res <- http.expect(req)(jsonOf[F, SendVoiceRes])
+        } yield {
+          res
+        }
+      } else {
+        for {
+          uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendVoice"))
+          req = Request[F]()
+            .withMethod(GET)
+            .withUri(uri)
+            .withEntity(x.asJson)
+          res <- http.expect(req)(jsonOf[F, SendVoiceRes])
+        } yield {
+          res
+        }
+
+      }
     }
   }
 
@@ -943,6 +1119,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to edit captions of messages. On success, if edited message is
@@ -958,6 +1135,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to edit animation, audio, document, photo, or video messages.
@@ -977,6 +1155,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to pin a message in a group, a supergroup, or a channel. The
@@ -994,6 +1173,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to edit only the reply markup of messages. On success, if
@@ -1010,6 +1190,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send video files, Telegram clients support mp4 videos (other
@@ -1020,42 +1201,59 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
     val videoPartF = x.video match {
       case InputPartFile(f) => makePart("video", f)
-      case _                => F.pure(List(Part.formData("video", x.video.asJson.noSpaces)))
+      case _                => F.pure(List.empty[Part[F]])
     }
 
     val thumbPartF = x.thumb match {
       case Some(InputPartFile(f)) => makePart("thumb", f)
-      case Some(y)                => F.pure(List(Part.formData("thumb", y.asJson.noSpaces)))
-      case None                   => F.pure(List.empty[Part[F]])
+      case _                      => F.pure(List.empty[Part[F]])
     }
 
-    for {
-      uri       <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendVideo"))
-      videoPart <- videoPartF
-      thumbPart <- thumbPartF
-      body = Multipart[F](
-        Vector(
-          ("chat_id", x.chatId.asJson),
-          ("duration", x.duration.asJson),
-          ("width", x.width.asJson),
-          ("height", x.height.asJson),
-          ("caption", x.caption.asJson),
-          ("parse_mode", x.parseMode.asJson),
-          ("supports_streaming", x.supportsStreaming.asJson),
-          ("disable_notification", x.disableNotification.asJson),
-          ("reply_to_message_id", x.replyToMessageId.asJson),
-          ("reply_markup", x.replyMarkup.asJson)
-        ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
-          videoPart ++ thumbPart
-      )
-      req = Request[F]()
-        .withMethod(POST)
-        .withUri(uri)
-        .withEntity(body)
-        .withHeaders(body.headers)
-      res <- http.expect(req)(jsonOf[F, SendVideoRes])
-    } yield {
-      res
+    List(videoPartF, thumbPartF).sequence.map(_.flatten).flatMap { l =>
+      if (l.nonEmpty) {
+        for {
+          uri       <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendVideo"))
+          videoPart <- videoPartF
+          thumbPart <- thumbPartF
+          body = Multipart[F](
+            Vector(
+              ("chat_id", x.chatId.asJson),
+              ("duration", x.duration.asJson),
+              ("width", x.width.asJson),
+              ("height", x.height.asJson),
+              ("caption", x.caption.asJson),
+              ("parse_mode", x.parseMode.asJson),
+              ("supports_streaming", x.supportsStreaming.asJson),
+              ("disable_notification", x.disableNotification.asJson),
+              ("reply_to_message_id", x.replyToMessageId.asJson),
+              ("reply_markup", x.replyMarkup.asJson),
+              ("video", if (videoPart.isEmpty) { x.video.asJson } else { Json.Null }),
+              ("thumb", if (thumbPart.isEmpty) { x.thumb.asJson } else { Json.Null })
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              videoPart ++ thumbPart
+          )
+          req = Request[F]()
+            .withMethod(POST)
+            .withUri(uri)
+            .withEntity(body)
+            .withHeaders(body.headers)
+          res <- http.expect(req)(jsonOf[F, SendVideoRes])
+        } yield {
+          res
+        }
+      } else {
+        for {
+          uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendVideo"))
+          req = Request[F]()
+            .withMethod(GET)
+            .withUri(uri)
+            .withEntity(x.asJson)
+          res <- http.expect(req)(jsonOf[F, SendVideoRes])
+        } yield {
+          res
+        }
+
+      }
     }
   }
 
@@ -1074,6 +1272,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to get up to date information about the chat (current name of
@@ -1090,6 +1289,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to remove webhook integration if you decide to switch back to
@@ -1105,6 +1305,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to move a sticker in a set created by the bot to a specific
@@ -1120,6 +1321,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without
@@ -1129,41 +1331,58 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
     val animationPartF = x.animation match {
       case InputPartFile(f) => makePart("animation", f)
-      case _                => F.pure(List(Part.formData("animation", x.animation.asJson.noSpaces)))
+      case _                => F.pure(List.empty[Part[F]])
     }
 
     val thumbPartF = x.thumb match {
       case Some(InputPartFile(f)) => makePart("thumb", f)
-      case Some(y)                => F.pure(List(Part.formData("thumb", y.asJson.noSpaces)))
-      case None                   => F.pure(List.empty[Part[F]])
+      case _                      => F.pure(List.empty[Part[F]])
     }
 
-    for {
-      uri           <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendAnimation"))
-      animationPart <- animationPartF
-      thumbPart     <- thumbPartF
-      body = Multipart[F](
-        Vector(
-          ("chat_id", x.chatId.asJson),
-          ("duration", x.duration.asJson),
-          ("width", x.width.asJson),
-          ("height", x.height.asJson),
-          ("caption", x.caption.asJson),
-          ("parse_mode", x.parseMode.asJson),
-          ("disable_notification", x.disableNotification.asJson),
-          ("reply_to_message_id", x.replyToMessageId.asJson),
-          ("reply_markup", x.replyMarkup.asJson)
-        ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
-          animationPart ++ thumbPart
-      )
-      req = Request[F]()
-        .withMethod(POST)
-        .withUri(uri)
-        .withEntity(body)
-        .withHeaders(body.headers)
-      res <- http.expect(req)(jsonOf[F, SendAnimationRes])
-    } yield {
-      res
+    List(animationPartF, thumbPartF).sequence.map(_.flatten).flatMap { l =>
+      if (l.nonEmpty) {
+        for {
+          uri           <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendAnimation"))
+          animationPart <- animationPartF
+          thumbPart     <- thumbPartF
+          body = Multipart[F](
+            Vector(
+              ("chat_id", x.chatId.asJson),
+              ("duration", x.duration.asJson),
+              ("width", x.width.asJson),
+              ("height", x.height.asJson),
+              ("caption", x.caption.asJson),
+              ("parse_mode", x.parseMode.asJson),
+              ("disable_notification", x.disableNotification.asJson),
+              ("reply_to_message_id", x.replyToMessageId.asJson),
+              ("reply_markup", x.replyMarkup.asJson),
+              ("animation", if (animationPart.isEmpty) { x.animation.asJson } else { Json.Null }),
+              ("thumb", if (thumbPart.isEmpty) { x.thumb.asJson } else { Json.Null })
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              animationPart ++ thumbPart
+          )
+          req = Request[F]()
+            .withMethod(POST)
+            .withUri(uri)
+            .withEntity(body)
+            .withHeaders(body.headers)
+          res <- http.expect(req)(jsonOf[F, SendAnimationRes])
+        } yield {
+          res
+        }
+      } else {
+        for {
+          uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendAnimation"))
+          req = Request[F]()
+            .withMethod(GET)
+            .withUri(uri)
+            .withEntity(x.asJson)
+          res <- http.expect(req)(jsonOf[F, SendAnimationRes])
+        } yield {
+          res
+        }
+
+      }
     }
   }
 
@@ -1182,6 +1401,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Once the user has confirmed their payment and shipping details, the Bot API
@@ -1200,6 +1420,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send .webp stickers. On success, the sent Message is
@@ -1208,29 +1429,46 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
     val stickerPartF = x.sticker match {
       case InputPartFile(f) => makePart("sticker", f)
-      case _                => F.pure(List(Part.formData("sticker", x.sticker.asJson.noSpaces)))
+      case _                => F.pure(List.empty[Part[F]])
     }
 
-    for {
-      uri         <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendSticker"))
-      stickerPart <- stickerPartF
-      body = Multipart[F](
-        Vector(
-          ("chat_id", x.chatId.asJson),
-          ("disable_notification", x.disableNotification.asJson),
-          ("reply_to_message_id", x.replyToMessageId.asJson),
-          ("reply_markup", x.replyMarkup.asJson)
-        ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
-          stickerPart
-      )
-      req = Request[F]()
-        .withMethod(POST)
-        .withUri(uri)
-        .withEntity(body)
-        .withHeaders(body.headers)
-      res <- http.expect(req)(jsonOf[F, SendStickerRes])
-    } yield {
-      res
+    List(stickerPartF).sequence.map(_.flatten).flatMap { l =>
+      if (l.nonEmpty) {
+        for {
+          uri         <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendSticker"))
+          stickerPart <- stickerPartF
+          body = Multipart[F](
+            Vector(
+              ("chat_id", x.chatId.asJson),
+              ("disable_notification", x.disableNotification.asJson),
+              ("reply_to_message_id", x.replyToMessageId.asJson),
+              ("reply_markup", x.replyMarkup.asJson),
+              ("sticker", if (stickerPart.isEmpty) { x.sticker.asJson } else { Json.Null })
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              stickerPart
+          )
+          req = Request[F]()
+            .withMethod(POST)
+            .withUri(uri)
+            .withEntity(body)
+            .withHeaders(body.headers)
+          res <- http.expect(req)(jsonOf[F, SendStickerRes])
+        } yield {
+          res
+        }
+      } else {
+        for {
+          uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendSticker"))
+          req = Request[F]()
+            .withMethod(GET)
+            .withUri(uri)
+            .withEntity(x.asJson)
+          res <- http.expect(req)(jsonOf[F, SendStickerRes])
+        } yield {
+          res
+        }
+
+      }
     }
   }
 
@@ -1246,6 +1484,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to send photos. On success, the sent Message is returned.  */
@@ -1253,31 +1492,48 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
     val photoPartF = x.photo match {
       case InputPartFile(f) => makePart("photo", f)
-      case _                => F.pure(List(Part.formData("photo", x.photo.asJson.noSpaces)))
+      case _                => F.pure(List.empty[Part[F]])
     }
 
-    for {
-      uri       <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendPhoto"))
-      photoPart <- photoPartF
-      body = Multipart[F](
-        Vector(
-          ("chat_id", x.chatId.asJson),
-          ("caption", x.caption.asJson),
-          ("parse_mode", x.parseMode.asJson),
-          ("disable_notification", x.disableNotification.asJson),
-          ("reply_to_message_id", x.replyToMessageId.asJson),
-          ("reply_markup", x.replyMarkup.asJson)
-        ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
-          photoPart
-      )
-      req = Request[F]()
-        .withMethod(POST)
-        .withUri(uri)
-        .withEntity(body)
-        .withHeaders(body.headers)
-      res <- http.expect(req)(jsonOf[F, SendPhotoRes])
-    } yield {
-      res
+    List(photoPartF).sequence.map(_.flatten).flatMap { l =>
+      if (l.nonEmpty) {
+        for {
+          uri       <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendPhoto"))
+          photoPart <- photoPartF
+          body = Multipart[F](
+            Vector(
+              ("chat_id", x.chatId.asJson),
+              ("caption", x.caption.asJson),
+              ("parse_mode", x.parseMode.asJson),
+              ("disable_notification", x.disableNotification.asJson),
+              ("reply_to_message_id", x.replyToMessageId.asJson),
+              ("reply_markup", x.replyMarkup.asJson),
+              ("photo", if (photoPart.isEmpty) { x.photo.asJson } else { Json.Null })
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              photoPart
+          )
+          req = Request[F]()
+            .withMethod(POST)
+            .withUri(uri)
+            .withEntity(body)
+            .withHeaders(body.headers)
+          res <- http.expect(req)(jsonOf[F, SendPhotoRes])
+        } yield {
+          res
+        }
+      } else {
+        for {
+          uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendPhoto"))
+          req = Request[F]()
+            .withMethod(GET)
+            .withUri(uri)
+            .withEntity(x.asJson)
+          res <- http.expect(req)(jsonOf[F, SendPhotoRes])
+        } yield {
+          res
+        }
+
+      }
     }
   }
 
@@ -1294,6 +1550,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to get a sticker set. On success, a StickerSet object is
@@ -1309,6 +1566,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     } yield {
       res
     }
+
   }
 
   /** Use this method to specify a url and receive incoming updates via an outgoing
@@ -1323,29 +1581,47 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
     val certificatePartF = x.certificate match {
       case Some(InputPartFile(f)) => makePart("certificate", f)
-      case Some(y)                => F.pure(List(Part.formData("certificate", y.asJson.noSpaces)))
-      case None                   => F.pure(List.empty[Part[F]])
+      case _                      => F.pure(List.empty[Part[F]])
     }
 
-    for {
-      uri             <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setWebhook"))
-      certificatePart <- certificatePartF
-      body = Multipart[F](
-        Vector(("url", x.url.asJson),
-               ("max_connections", x.maxConnections.asJson),
-               ("allowed_updates", x.allowedUpdates.asJson)).filter(!_._2.isNull).map {
-          case (n, v) => Part.formData(n, v.noSpaces)
-        } ++
-          certificatePart
-      )
-      req = Request[F]()
-        .withMethod(POST)
-        .withUri(uri)
-        .withEntity(body)
-        .withHeaders(body.headers)
-      res <- http.expect(req)(jsonOf[F, SetWebhookRes])
-    } yield {
-      res
+    List(certificatePartF).sequence.map(_.flatten).flatMap { l =>
+      if (l.nonEmpty) {
+        for {
+          uri             <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setWebhook"))
+          certificatePart <- certificatePartF
+          body = Multipart[F](
+            Vector(
+              ("url", x.url.asJson),
+              ("max_connections", x.maxConnections.asJson),
+              ("allowed_updates", x.allowedUpdates.asJson),
+              ("certificate", if (certificatePart.isEmpty) { x.certificate.asJson } else {
+                Json.Null
+              })
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              certificatePart
+          )
+          req = Request[F]()
+            .withMethod(POST)
+            .withUri(uri)
+            .withEntity(body)
+            .withHeaders(body.headers)
+          res <- http.expect(req)(jsonOf[F, SetWebhookRes])
+        } yield {
+          res
+        }
+      } else {
+        for {
+          uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setWebhook"))
+          req = Request[F]()
+            .withMethod(GET)
+            .withUri(uri)
+            .withEntity(x.asJson)
+          res <- http.expect(req)(jsonOf[F, SetWebhookRes])
+        } yield {
+          res
+        }
+
+      }
     }
   }
 
