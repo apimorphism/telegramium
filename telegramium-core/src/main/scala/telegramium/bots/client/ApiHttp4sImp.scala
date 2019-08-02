@@ -298,6 +298,23 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     }
   }
 
+  /** Use this method to set default chat permissions for all members. The bot must
+          be an administrator in the group or a supergroup for this to work and must have
+          the can_restrict_members admin rights. Returns True on success.  */
+  def setChatPermissions(x: SetChatPermissionsReq): F[SetChatPermissionsRes] = {
+    for {
+      uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setChatPermissions"))
+      req = Request[F]()
+        .withMethod(GET)
+        .withUri(uri)
+        .withEntity(x.asJson)
+      res <- http.expect(req)(jsonOf[F, SetChatPermissionsRes])
+    } yield {
+      res
+    }
+
+  }
+
   /** Use this method to send point on the map. On success, the sent Message is
           returned.  */
   def sendLocation(x: SendLocationReq): F[SendLocationRes] = {
@@ -549,9 +566,9 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   }
 
-  /** Use this method to change the description of a supergroup or a channel. The bot
-          must be an administrator in the chat for this to work and must have the
-          appropriate admin rights. Returns True on success.  */
+  /** Use this method to change the description of a group, a supergroup or a
+          channel. The bot must be an administrator in the chat for this to work and must
+          have the appropriate admin rights. Returns True on success.  */
   def setChatDescription(x: SetChatDescriptionReq): F[SetChatDescriptionRes] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setChatDescription"))
@@ -967,8 +984,8 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to restrict a user in a supergroup. The bot must be an
           administrator in the supergroup for this to work and must have the appropriate
-          admin rights. Pass True for all boolean parameters to lift restrictions from a
-          user. Returns True on success.  */
+          admin rights. Pass True for all permissions to lift restrictions from a user.
+          Returns True on success.  */
   def restrictChatMember(x: RestrictChatMemberReq): F[RestrictChatMemberRes] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/restrictChatMember"))
@@ -1423,8 +1440,8 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   }
 
-  /** Use this method to send .webp stickers. On success, the sent Message is
-          returned.  */
+  /** Use this method to send static .WEBP or animated .TGS stickers. On success, the
+          sent Message is returned.  */
   def sendSticker(x: SendStickerReq): F[SendStickerRes] = {
 
     val stickerPartF = x.sticker match {

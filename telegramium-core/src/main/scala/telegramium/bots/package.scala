@@ -2253,53 +2253,51 @@ object uPickleImplicits {
   }
 
   implicit lazy val chatCodec: ReadWriter[Chat] = {
-    val idKey                          = upack.Str("id")
-    val typeKey                        = upack.Str("type")
-    val titleKey                       = upack.Str("title")
-    val usernameKey                    = upack.Str("username")
-    val firstNameKey                   = upack.Str("firstName")
-    val lastNameKey                    = upack.Str("lastName")
-    val allMembersAreAdministratorsKey = upack.Str("allMembersAreAdministrators")
-    val photoKey                       = upack.Str("photo")
-    val descriptionKey                 = upack.Str("description")
-    val inviteLinkKey                  = upack.Str("inviteLink")
-    val pinnedMessageKey               = upack.Str("pinnedMessage")
-    val stickerSetNameKey              = upack.Str("stickerSetName")
-    val canSetStickerSetKey            = upack.Str("canSetStickerSet")
+    val idKey               = upack.Str("id")
+    val typeKey             = upack.Str("type")
+    val titleKey            = upack.Str("title")
+    val usernameKey         = upack.Str("username")
+    val firstNameKey        = upack.Str("firstName")
+    val lastNameKey         = upack.Str("lastName")
+    val photoKey            = upack.Str("photo")
+    val descriptionKey      = upack.Str("description")
+    val inviteLinkKey       = upack.Str("inviteLink")
+    val pinnedMessageKey    = upack.Str("pinnedMessage")
+    val permissionsKey      = upack.Str("permissions")
+    val stickerSetNameKey   = upack.Str("stickerSetName")
+    val canSetStickerSetKey = upack.Str("canSetStickerSet")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          idKey                          -> writeMsg(x.id),
-          typeKey                        -> writeMsg(x.`type`),
-          titleKey                       -> writeMsg(x.title),
-          usernameKey                    -> writeMsg(x.username),
-          firstNameKey                   -> writeMsg(x.firstName),
-          lastNameKey                    -> writeMsg(x.lastName),
-          allMembersAreAdministratorsKey -> writeMsg(x.allMembersAreAdministrators),
-          photoKey                       -> writeMsg(x.photo),
-          descriptionKey                 -> writeMsg(x.description),
-          inviteLinkKey                  -> writeMsg(x.inviteLink),
-          pinnedMessageKey               -> writeMsg(x.pinnedMessage),
-          stickerSetNameKey              -> writeMsg(x.stickerSetName),
-          canSetStickerSetKey            -> writeMsg(x.canSetStickerSet)
+          idKey               -> writeMsg(x.id),
+          typeKey             -> writeMsg(x.`type`),
+          titleKey            -> writeMsg(x.title),
+          usernameKey         -> writeMsg(x.username),
+          firstNameKey        -> writeMsg(x.firstName),
+          lastNameKey         -> writeMsg(x.lastName),
+          photoKey            -> writeMsg(x.photo),
+          descriptionKey      -> writeMsg(x.description),
+          inviteLinkKey       -> writeMsg(x.inviteLink),
+          pinnedMessageKey    -> writeMsg(x.pinnedMessage),
+          permissionsKey      -> writeMsg(x.permissions),
+          stickerSetNameKey   -> writeMsg(x.stickerSetName),
+          canSetStickerSetKey -> writeMsg(x.canSetStickerSet)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          id        <- m.get(idKey).map(x => readBinary[Int](x))
-          `type`    <- m.get(typeKey).map(x => readBinary[String](x))
-          title     <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          username  <- m.get(usernameKey).map(x => readBinary[Option[String]](x))
-          firstName <- m.get(firstNameKey).map(x => readBinary[Option[String]](x))
-          lastName  <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
-          allMembersAreAdministrators <- m
-            .get(allMembersAreAdministratorsKey)
-            .map(x => readBinary[Option[Boolean]](x))
+          id               <- m.get(idKey).map(x => readBinary[Int](x))
+          `type`           <- m.get(typeKey).map(x => readBinary[String](x))
+          title            <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          username         <- m.get(usernameKey).map(x => readBinary[Option[String]](x))
+          firstName        <- m.get(firstNameKey).map(x => readBinary[Option[String]](x))
+          lastName         <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
           photo            <- m.get(photoKey).map(x => readBinary[Option[ChatPhoto]](x))
           description      <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
           inviteLink       <- m.get(inviteLinkKey).map(x => readBinary[Option[String]](x))
           pinnedMessage    <- m.get(pinnedMessageKey).map(x => readBinary[Option[Message]](x))
+          permissions      <- m.get(permissionsKey).map(x => readBinary[Option[ChatPermissions]](x))
           stickerSetName   <- m.get(stickerSetNameKey).map(x => readBinary[Option[String]](x))
           canSetStickerSet <- m.get(canSetStickerSetKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
@@ -2310,11 +2308,11 @@ object uPickleImplicits {
             username = username,
             firstName = firstName,
             lastName = lastName,
-            allMembersAreAdministrators = allMembersAreAdministrators,
             photo = photo,
             description = description,
             inviteLink = inviteLink,
             pinnedMessage = pinnedMessage,
+            permissions = permissions,
             stickerSetName = stickerSetName,
             canSetStickerSet = canSetStickerSet
           )
@@ -2415,6 +2413,62 @@ object uPickleImplicits {
             from = from,
             invoicePayload = invoicePayload,
             shippingAddress = shippingAddress
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val chatpermissionsCodec: ReadWriter[ChatPermissions] = {
+    val canSendMessagesKey       = upack.Str("canSendMessages")
+    val canSendMediaMessagesKey  = upack.Str("canSendMediaMessages")
+    val canSendPollsKey          = upack.Str("canSendPolls")
+    val canSendOtherMessagesKey  = upack.Str("canSendOtherMessages")
+    val canAddWebPagePreviewsKey = upack.Str("canAddWebPagePreviews")
+    val canChangeInfoKey         = upack.Str("canChangeInfo")
+    val canInviteUsersKey        = upack.Str("canInviteUsers")
+    val canPinMessagesKey        = upack.Str("canPinMessages")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          canSendMessagesKey       -> writeMsg(x.canSendMessages),
+          canSendMediaMessagesKey  -> writeMsg(x.canSendMediaMessages),
+          canSendPollsKey          -> writeMsg(x.canSendPolls),
+          canSendOtherMessagesKey  -> writeMsg(x.canSendOtherMessages),
+          canAddWebPagePreviewsKey -> writeMsg(x.canAddWebPagePreviews),
+          canChangeInfoKey         -> writeMsg(x.canChangeInfo),
+          canInviteUsersKey        -> writeMsg(x.canInviteUsers),
+          canPinMessagesKey        -> writeMsg(x.canPinMessages)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          canSendMessages <- m.get(canSendMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canSendMediaMessages <- m
+            .get(canSendMediaMessagesKey)
+            .map(x => readBinary[Option[Boolean]](x))
+          canSendPolls <- m.get(canSendPollsKey).map(x => readBinary[Option[Boolean]](x))
+          canSendOtherMessages <- m
+            .get(canSendOtherMessagesKey)
+            .map(x => readBinary[Option[Boolean]](x))
+          canAddWebPagePreviews <- m
+            .get(canAddWebPagePreviewsKey)
+            .map(x => readBinary[Option[Boolean]](x))
+          canChangeInfo  <- m.get(canChangeInfoKey).map(x => readBinary[Option[Boolean]](x))
+          canInviteUsers <- m.get(canInviteUsersKey).map(x => readBinary[Option[Boolean]](x))
+          canPinMessages <- m.get(canPinMessagesKey).map(x => readBinary[Option[Boolean]](x))
+        } yield {
+          ChatPermissions(
+            canSendMessages = canSendMessages,
+            canSendMediaMessages = canSendMediaMessages,
+            canSendPolls = canSendPolls,
+            canSendOtherMessages = canSendOtherMessages,
+            canAddWebPagePreviews = canAddWebPagePreviews,
+            canChangeInfo = canChangeInfo,
+            canInviteUsers = canInviteUsers,
+            canPinMessages = canPinMessages
           )
         }
         result.get
@@ -2787,6 +2841,7 @@ object uPickleImplicits {
   implicit lazy val stickersetCodec: ReadWriter[StickerSet] = {
     val nameKey          = upack.Str("name")
     val titleKey         = upack.Str("title")
+    val isAnimatedKey    = upack.Str("isAnimated")
     val containsMasksKey = upack.Str("containsMasks")
     val stickersKey      = upack.Str("stickers")
     readwriter[upack.Msg].bimap(
@@ -2794,6 +2849,7 @@ object uPickleImplicits {
         upack.Obj(
           nameKey          -> writeMsg(x.name),
           titleKey         -> writeMsg(x.title),
+          isAnimatedKey    -> writeMsg(x.isAnimated),
           containsMasksKey -> writeMsg(x.containsMasks),
           stickersKey      -> writeMsg(x.stickers)
         )
@@ -2803,12 +2859,14 @@ object uPickleImplicits {
         val result = for {
           name          <- m.get(nameKey).map(x => readBinary[String](x))
           title         <- m.get(titleKey).map(x => readBinary[String](x))
+          isAnimated    <- m.get(isAnimatedKey).map(x => readBinary[Boolean](x))
           containsMasks <- m.get(containsMasksKey).map(x => readBinary[Boolean](x))
           stickers      <- m.get(stickersKey).map(x => readBinary[List[Sticker]](x))
         } yield {
           StickerSet(
             name = name,
             title = title,
+            isAnimated = isAnimated,
             containsMasks = containsMasks,
             stickers = stickers
           )
@@ -3460,6 +3518,7 @@ object uPickleImplicits {
     val fileIdKey       = upack.Str("fileId")
     val widthKey        = upack.Str("width")
     val heightKey       = upack.Str("height")
+    val isAnimatedKey   = upack.Str("isAnimated")
     val thumbKey        = upack.Str("thumb")
     val emojiKey        = upack.Str("emoji")
     val setNameKey      = upack.Str("setName")
@@ -3471,6 +3530,7 @@ object uPickleImplicits {
           fileIdKey       -> writeMsg(x.fileId),
           widthKey        -> writeMsg(x.width),
           heightKey       -> writeMsg(x.height),
+          isAnimatedKey   -> writeMsg(x.isAnimated),
           thumbKey        -> writeMsg(x.thumb),
           emojiKey        -> writeMsg(x.emoji),
           setNameKey      -> writeMsg(x.setName),
@@ -3484,6 +3544,7 @@ object uPickleImplicits {
           fileId       <- m.get(fileIdKey).map(x => readBinary[String](x))
           width        <- m.get(widthKey).map(x => readBinary[Int](x))
           height       <- m.get(heightKey).map(x => readBinary[Int](x))
+          isAnimated   <- m.get(isAnimatedKey).map(x => readBinary[Boolean](x))
           thumb        <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
           emoji        <- m.get(emojiKey).map(x => readBinary[Option[String]](x))
           setName      <- m.get(setNameKey).map(x => readBinary[Option[String]](x))
@@ -3494,6 +3555,7 @@ object uPickleImplicits {
             fileId = fileId,
             width = width,
             height = height,
+            isAnimated = isAnimated,
             thumb = thumb,
             emoji = emoji,
             setName = setName,
@@ -4059,17 +4121,18 @@ object uPickleImplicits {
     val statusKey                = upack.Str("status")
     val untilDateKey             = upack.Str("untilDate")
     val canBeEditedKey           = upack.Str("canBeEdited")
-    val canChangeInfoKey         = upack.Str("canChangeInfo")
     val canPostMessagesKey       = upack.Str("canPostMessages")
     val canEditMessagesKey       = upack.Str("canEditMessages")
     val canDeleteMessagesKey     = upack.Str("canDeleteMessages")
-    val canInviteUsersKey        = upack.Str("canInviteUsers")
     val canRestrictMembersKey    = upack.Str("canRestrictMembers")
-    val canPinMessagesKey        = upack.Str("canPinMessages")
     val canPromoteMembersKey     = upack.Str("canPromoteMembers")
+    val canChangeInfoKey         = upack.Str("canChangeInfo")
+    val canInviteUsersKey        = upack.Str("canInviteUsers")
+    val canPinMessagesKey        = upack.Str("canPinMessages")
     val isMemberKey              = upack.Str("isMember")
     val canSendMessagesKey       = upack.Str("canSendMessages")
     val canSendMediaMessagesKey  = upack.Str("canSendMediaMessages")
+    val canSendPollsKey          = upack.Str("canSendPolls")
     val canSendOtherMessagesKey  = upack.Str("canSendOtherMessages")
     val canAddWebPagePreviewsKey = upack.Str("canAddWebPagePreviews")
     readwriter[upack.Msg].bimap(
@@ -4079,17 +4142,18 @@ object uPickleImplicits {
           statusKey                -> writeMsg(x.status),
           untilDateKey             -> writeMsg(x.untilDate),
           canBeEditedKey           -> writeMsg(x.canBeEdited),
-          canChangeInfoKey         -> writeMsg(x.canChangeInfo),
           canPostMessagesKey       -> writeMsg(x.canPostMessages),
           canEditMessagesKey       -> writeMsg(x.canEditMessages),
           canDeleteMessagesKey     -> writeMsg(x.canDeleteMessages),
-          canInviteUsersKey        -> writeMsg(x.canInviteUsers),
           canRestrictMembersKey    -> writeMsg(x.canRestrictMembers),
-          canPinMessagesKey        -> writeMsg(x.canPinMessages),
           canPromoteMembersKey     -> writeMsg(x.canPromoteMembers),
+          canChangeInfoKey         -> writeMsg(x.canChangeInfo),
+          canInviteUsersKey        -> writeMsg(x.canInviteUsers),
+          canPinMessagesKey        -> writeMsg(x.canPinMessages),
           isMemberKey              -> writeMsg(x.isMember),
           canSendMessagesKey       -> writeMsg(x.canSendMessages),
           canSendMediaMessagesKey  -> writeMsg(x.canSendMediaMessages),
+          canSendPollsKey          -> writeMsg(x.canSendPolls),
           canSendOtherMessagesKey  -> writeMsg(x.canSendOtherMessages),
           canAddWebPagePreviewsKey -> writeMsg(x.canAddWebPagePreviews)
         )
@@ -4101,21 +4165,22 @@ object uPickleImplicits {
           status            <- m.get(statusKey).map(x => readBinary[String](x))
           untilDate         <- m.get(untilDateKey).map(x => readBinary[Option[Int]](x))
           canBeEdited       <- m.get(canBeEditedKey).map(x => readBinary[Option[Boolean]](x))
-          canChangeInfo     <- m.get(canChangeInfoKey).map(x => readBinary[Option[Boolean]](x))
           canPostMessages   <- m.get(canPostMessagesKey).map(x => readBinary[Option[Boolean]](x))
           canEditMessages   <- m.get(canEditMessagesKey).map(x => readBinary[Option[Boolean]](x))
           canDeleteMessages <- m.get(canDeleteMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canInviteUsers    <- m.get(canInviteUsersKey).map(x => readBinary[Option[Boolean]](x))
           canRestrictMembers <- m
             .get(canRestrictMembersKey)
             .map(x => readBinary[Option[Boolean]](x))
-          canPinMessages    <- m.get(canPinMessagesKey).map(x => readBinary[Option[Boolean]](x))
           canPromoteMembers <- m.get(canPromoteMembersKey).map(x => readBinary[Option[Boolean]](x))
+          canChangeInfo     <- m.get(canChangeInfoKey).map(x => readBinary[Option[Boolean]](x))
+          canInviteUsers    <- m.get(canInviteUsersKey).map(x => readBinary[Option[Boolean]](x))
+          canPinMessages    <- m.get(canPinMessagesKey).map(x => readBinary[Option[Boolean]](x))
           isMember          <- m.get(isMemberKey).map(x => readBinary[Option[Boolean]](x))
           canSendMessages   <- m.get(canSendMessagesKey).map(x => readBinary[Option[Boolean]](x))
           canSendMediaMessages <- m
             .get(canSendMediaMessagesKey)
             .map(x => readBinary[Option[Boolean]](x))
+          canSendPolls <- m.get(canSendPollsKey).map(x => readBinary[Option[Boolean]](x))
           canSendOtherMessages <- m
             .get(canSendOtherMessagesKey)
             .map(x => readBinary[Option[Boolean]](x))
@@ -4128,17 +4193,18 @@ object uPickleImplicits {
             status = status,
             untilDate = untilDate,
             canBeEdited = canBeEdited,
-            canChangeInfo = canChangeInfo,
             canPostMessages = canPostMessages,
             canEditMessages = canEditMessages,
             canDeleteMessages = canDeleteMessages,
-            canInviteUsers = canInviteUsers,
             canRestrictMembers = canRestrictMembers,
-            canPinMessages = canPinMessages,
             canPromoteMembers = canPromoteMembers,
+            canChangeInfo = canChangeInfo,
+            canInviteUsers = canInviteUsers,
+            canPinMessages = canPinMessages,
             isMember = isMember,
             canSendMessages = canSendMessages,
             canSendMediaMessages = canSendMediaMessages,
+            canSendPolls = canSendPolls,
             canSendOtherMessages = canSendOtherMessages,
             canAddWebPagePreviews = canAddWebPagePreviews
           )
@@ -5994,19 +6060,19 @@ object CirceImplicits {
     (x: Chat) => {
       Json.fromFields(
         List(
-          "id"                             -> x.id.asJson,
-          "type"                           -> x.`type`.asJson,
-          "title"                          -> x.title.asJson,
-          "username"                       -> x.username.asJson,
-          "first_name"                     -> x.firstName.asJson,
-          "last_name"                      -> x.lastName.asJson,
-          "all_members_are_administrators" -> x.allMembersAreAdministrators.asJson,
-          "photo"                          -> x.photo.asJson,
-          "description"                    -> x.description.asJson,
-          "invite_link"                    -> x.inviteLink.asJson,
-          "pinned_message"                 -> x.pinnedMessage.asJson,
-          "sticker_set_name"               -> x.stickerSetName.asJson,
-          "can_set_sticker_set"            -> x.canSetStickerSet.asJson
+          "id"                  -> x.id.asJson,
+          "type"                -> x.`type`.asJson,
+          "title"               -> x.title.asJson,
+          "username"            -> x.username.asJson,
+          "first_name"          -> x.firstName.asJson,
+          "last_name"           -> x.lastName.asJson,
+          "photo"               -> x.photo.asJson,
+          "description"         -> x.description.asJson,
+          "invite_link"         -> x.inviteLink.asJson,
+          "pinned_message"      -> x.pinnedMessage.asJson,
+          "permissions"         -> x.permissions.asJson,
+          "sticker_set_name"    -> x.stickerSetName.asJson,
+          "can_set_sticker_set" -> x.canSetStickerSet.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6014,19 +6080,19 @@ object CirceImplicits {
   implicit lazy val chatDecoder: Decoder[Chat] =
     Decoder.instance { h =>
       for {
-        _id                          <- h.get[Int]("id")
-        _type                        <- h.get[String]("type")
-        _title                       <- h.get[Option[String]]("title")
-        _username                    <- h.get[Option[String]]("username")
-        _firstName                   <- h.get[Option[String]]("first_name")
-        _lastName                    <- h.get[Option[String]]("last_name")
-        _allMembersAreAdministrators <- h.get[Option[Boolean]]("all_members_are_administrators")
-        _photo                       <- h.get[Option[ChatPhoto]]("photo")
-        _description                 <- h.get[Option[String]]("description")
-        _inviteLink                  <- h.get[Option[String]]("invite_link")
-        _pinnedMessage               <- h.get[Option[Message]]("pinned_message")
-        _stickerSetName              <- h.get[Option[String]]("sticker_set_name")
-        _canSetStickerSet            <- h.get[Option[Boolean]]("can_set_sticker_set")
+        _id               <- h.get[Int]("id")
+        _type             <- h.get[String]("type")
+        _title            <- h.get[Option[String]]("title")
+        _username         <- h.get[Option[String]]("username")
+        _firstName        <- h.get[Option[String]]("first_name")
+        _lastName         <- h.get[Option[String]]("last_name")
+        _photo            <- h.get[Option[ChatPhoto]]("photo")
+        _description      <- h.get[Option[String]]("description")
+        _inviteLink       <- h.get[Option[String]]("invite_link")
+        _pinnedMessage    <- h.get[Option[Message]]("pinned_message")
+        _permissions      <- h.get[Option[ChatPermissions]]("permissions")
+        _stickerSetName   <- h.get[Option[String]]("sticker_set_name")
+        _canSetStickerSet <- h.get[Option[Boolean]]("can_set_sticker_set")
       } yield {
         Chat(
           id = _id,
@@ -6035,11 +6101,11 @@ object CirceImplicits {
           username = _username,
           firstName = _firstName,
           lastName = _lastName,
-          allMembersAreAdministrators = _allMembersAreAdministrators,
           photo = _photo,
           description = _description,
           inviteLink = _inviteLink,
           pinnedMessage = _pinnedMessage,
+          permissions = _permissions,
           stickerSetName = _stickerSetName,
           canSetStickerSet = _canSetStickerSet
         )
@@ -6120,6 +6186,47 @@ object CirceImplicits {
                       from = _from,
                       invoicePayload = _invoicePayload,
                       shippingAddress = _shippingAddress)
+      }
+    }
+
+  implicit lazy val chatpermissionsEncoder: Encoder[ChatPermissions] =
+    (x: ChatPermissions) => {
+      Json.fromFields(
+        List(
+          "can_send_messages"         -> x.canSendMessages.asJson,
+          "can_send_media_messages"   -> x.canSendMediaMessages.asJson,
+          "can_send_polls"            -> x.canSendPolls.asJson,
+          "can_send_other_messages"   -> x.canSendOtherMessages.asJson,
+          "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson,
+          "can_change_info"           -> x.canChangeInfo.asJson,
+          "can_invite_users"          -> x.canInviteUsers.asJson,
+          "can_pin_messages"          -> x.canPinMessages.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatpermissionsDecoder: Decoder[ChatPermissions] =
+    Decoder.instance { h =>
+      for {
+        _canSendMessages       <- h.get[Option[Boolean]]("can_send_messages")
+        _canSendMediaMessages  <- h.get[Option[Boolean]]("can_send_media_messages")
+        _canSendPolls          <- h.get[Option[Boolean]]("can_send_polls")
+        _canSendOtherMessages  <- h.get[Option[Boolean]]("can_send_other_messages")
+        _canAddWebPagePreviews <- h.get[Option[Boolean]]("can_add_web_page_previews")
+        _canChangeInfo         <- h.get[Option[Boolean]]("can_change_info")
+        _canInviteUsers        <- h.get[Option[Boolean]]("can_invite_users")
+        _canPinMessages        <- h.get[Option[Boolean]]("can_pin_messages")
+      } yield {
+        ChatPermissions(
+          canSendMessages = _canSendMessages,
+          canSendMediaMessages = _canSendMediaMessages,
+          canSendPolls = _canSendPolls,
+          canSendOtherMessages = _canSendOtherMessages,
+          canAddWebPagePreviews = _canAddWebPagePreviews,
+          canChangeInfo = _canChangeInfo,
+          canInviteUsers = _canInviteUsers,
+          canPinMessages = _canPinMessages
+        )
       }
     }
 
@@ -6403,6 +6510,7 @@ object CirceImplicits {
         List(
           "name"           -> x.name.asJson,
           "title"          -> x.title.asJson,
+          "is_animated"    -> x.isAnimated.asJson,
           "contains_masks" -> x.containsMasks.asJson,
           "stickers"       -> x.stickers.asJson
         ).filter(!_._2.isNull)
@@ -6414,11 +6522,13 @@ object CirceImplicits {
       for {
         _name          <- h.get[String]("name")
         _title         <- h.get[String]("title")
+        _isAnimated    <- h.get[Boolean]("is_animated")
         _containsMasks <- h.get[Boolean]("contains_masks")
         _stickers      <- h.getOrElse[List[Sticker]]("stickers")(List.empty)
       } yield {
         StickerSet(name = _name,
                    title = _title,
+                   isAnimated = _isAnimated,
                    containsMasks = _containsMasks,
                    stickers = _stickers)
       }
@@ -6926,6 +7036,7 @@ object CirceImplicits {
           "file_id"       -> x.fileId.asJson,
           "width"         -> x.width.asJson,
           "height"        -> x.height.asJson,
+          "is_animated"   -> x.isAnimated.asJson,
           "thumb"         -> x.thumb.asJson,
           "emoji"         -> x.emoji.asJson,
           "set_name"      -> x.setName.asJson,
@@ -6941,20 +7052,24 @@ object CirceImplicits {
         _fileId       <- h.get[String]("file_id")
         _width        <- h.get[Int]("width")
         _height       <- h.get[Int]("height")
+        _isAnimated   <- h.get[Boolean]("is_animated")
         _thumb        <- h.get[Option[PhotoSize]]("thumb")
         _emoji        <- h.get[Option[String]]("emoji")
         _setName      <- h.get[Option[String]]("set_name")
         _maskPosition <- h.get[Option[MaskPosition]]("mask_position")
         _fileSize     <- h.get[Option[Int]]("file_size")
       } yield {
-        Sticker(fileId = _fileId,
-                width = _width,
-                height = _height,
-                thumb = _thumb,
-                emoji = _emoji,
-                setName = _setName,
-                maskPosition = _maskPosition,
-                fileSize = _fileSize)
+        Sticker(
+          fileId = _fileId,
+          width = _width,
+          height = _height,
+          isAnimated = _isAnimated,
+          thumb = _thumb,
+          emoji = _emoji,
+          setName = _setName,
+          maskPosition = _maskPosition,
+          fileSize = _fileSize
+        )
       }
     }
 
@@ -7379,17 +7494,18 @@ object CirceImplicits {
           "status"                    -> x.status.asJson,
           "until_date"                -> x.untilDate.asJson,
           "can_be_edited"             -> x.canBeEdited.asJson,
-          "can_change_info"           -> x.canChangeInfo.asJson,
           "can_post_messages"         -> x.canPostMessages.asJson,
           "can_edit_messages"         -> x.canEditMessages.asJson,
           "can_delete_messages"       -> x.canDeleteMessages.asJson,
-          "can_invite_users"          -> x.canInviteUsers.asJson,
           "can_restrict_members"      -> x.canRestrictMembers.asJson,
-          "can_pin_messages"          -> x.canPinMessages.asJson,
           "can_promote_members"       -> x.canPromoteMembers.asJson,
+          "can_change_info"           -> x.canChangeInfo.asJson,
+          "can_invite_users"          -> x.canInviteUsers.asJson,
+          "can_pin_messages"          -> x.canPinMessages.asJson,
           "is_member"                 -> x.isMember.asJson,
           "can_send_messages"         -> x.canSendMessages.asJson,
           "can_send_media_messages"   -> x.canSendMediaMessages.asJson,
+          "can_send_polls"            -> x.canSendPolls.asJson,
           "can_send_other_messages"   -> x.canSendOtherMessages.asJson,
           "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson
         ).filter(!_._2.isNull)
@@ -7403,17 +7519,18 @@ object CirceImplicits {
         _status                <- h.get[String]("status")
         _untilDate             <- h.get[Option[Int]]("until_date")
         _canBeEdited           <- h.get[Option[Boolean]]("can_be_edited")
-        _canChangeInfo         <- h.get[Option[Boolean]]("can_change_info")
         _canPostMessages       <- h.get[Option[Boolean]]("can_post_messages")
         _canEditMessages       <- h.get[Option[Boolean]]("can_edit_messages")
         _canDeleteMessages     <- h.get[Option[Boolean]]("can_delete_messages")
-        _canInviteUsers        <- h.get[Option[Boolean]]("can_invite_users")
         _canRestrictMembers    <- h.get[Option[Boolean]]("can_restrict_members")
-        _canPinMessages        <- h.get[Option[Boolean]]("can_pin_messages")
         _canPromoteMembers     <- h.get[Option[Boolean]]("can_promote_members")
+        _canChangeInfo         <- h.get[Option[Boolean]]("can_change_info")
+        _canInviteUsers        <- h.get[Option[Boolean]]("can_invite_users")
+        _canPinMessages        <- h.get[Option[Boolean]]("can_pin_messages")
         _isMember              <- h.get[Option[Boolean]]("is_member")
         _canSendMessages       <- h.get[Option[Boolean]]("can_send_messages")
         _canSendMediaMessages  <- h.get[Option[Boolean]]("can_send_media_messages")
+        _canSendPolls          <- h.get[Option[Boolean]]("can_send_polls")
         _canSendOtherMessages  <- h.get[Option[Boolean]]("can_send_other_messages")
         _canAddWebPagePreviews <- h.get[Option[Boolean]]("can_add_web_page_previews")
       } yield {
@@ -7422,17 +7539,18 @@ object CirceImplicits {
           status = _status,
           untilDate = _untilDate,
           canBeEdited = _canBeEdited,
-          canChangeInfo = _canChangeInfo,
           canPostMessages = _canPostMessages,
           canEditMessages = _canEditMessages,
           canDeleteMessages = _canDeleteMessages,
-          canInviteUsers = _canInviteUsers,
           canRestrictMembers = _canRestrictMembers,
-          canPinMessages = _canPinMessages,
           canPromoteMembers = _canPromoteMembers,
+          canChangeInfo = _canChangeInfo,
+          canInviteUsers = _canInviteUsers,
+          canPinMessages = _canPinMessages,
           isMember = _isMember,
           canSendMessages = _canSendMessages,
           canSendMediaMessages = _canSendMediaMessages,
+          canSendPolls = _canSendPolls,
           canSendOtherMessages = _canSendOtherMessages,
           canAddWebPagePreviews = _canAddWebPagePreviews
         )

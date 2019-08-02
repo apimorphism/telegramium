@@ -47,6 +47,11 @@ trait Api[F[_]] {
     * Returns the uploaded File on success.*/
   def uploadStickerFile(x: UploadStickerFileReq): F[UploadStickerFileRes]
 
+  /** Use this method to set default chat permissions for all members. The bot must
+    * be an administrator in the group or a supergroup for this to work and must have
+    * the can_restrict_members admin rights. Returns True on success.*/
+  def setChatPermissions(x: SetChatPermissionsReq): F[SetChatPermissionsRes]
+
   /** Use this method to send point on the map. On success, the sent Message is
     * returned.*/
   def sendLocation(x: SendLocationReq): F[SendLocationRes]
@@ -109,9 +114,9 @@ trait Api[F[_]] {
     * Returns True on success.*/
   def unbanChatMember(x: UnbanChatMemberReq): F[UnbanChatMemberRes]
 
-  /** Use this method to change the description of a supergroup or a channel. The bot
-    * must be an administrator in the chat for this to work and must have the
-    * appropriate admin rights. Returns True on success.*/
+  /** Use this method to change the description of a group, a supergroup or a
+    * channel. The bot must be an administrator in the chat for this to work and must
+    * have the appropriate admin rights. Returns True on success.*/
   def setChatDescription(x: SetChatDescriptionReq): F[SetChatDescriptionRes]
 
   /** Use this method to edit text and game messages. On success, if edited message
@@ -206,8 +211,8 @@ trait Api[F[_]] {
 
   /** Use this method to restrict a user in a supergroup. The bot must be an
     * administrator in the supergroup for this to work and must have the appropriate
-    * admin rights. Pass True for all boolean parameters to lift restrictions from a
-    * user. Returns True on success.*/
+    * admin rights. Pass True for all permissions to lift restrictions from a user.
+    * Returns True on success.*/
   def restrictChatMember(x: RestrictChatMemberReq): F[RestrictChatMemberRes]
 
   /** A simple method for testing your bot's auth token. Requires no parameters.
@@ -307,8 +312,8 @@ trait Api[F[_]] {
     * seconds after the pre-checkout query was sent.*/
   def answerPreCheckoutQuery(x: AnswerPreCheckoutQueryReq): F[AnswerPreCheckoutQueryRes]
 
-  /** Use this method to send .webp stickers. On success, the sent Message is
-    * returned.*/
+  /** Use this method to send static .WEBP or animated .TGS stickers. On success, the
+    * sent Message is returned.*/
   def sendSticker(x: SendStickerReq): F[SendStickerRes]
 
   /** Use this method to get the number of members in a chat. Returns Int on success.*/

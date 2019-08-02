@@ -8,6 +8,8 @@ final case class Sticker(
                          width: Int,
                          /** Sticker height*/
                          height: Int,
+                         /** True, if the sticker is animated*/
+                         isAnimated: Boolean,
                          /** Optional. Sticker thumbnail in the .webp or .jpg format*/
                          thumb: Option[PhotoSize] = Option.empty,
                          /** Optional. Emoji associated with the sticker*/

@@ -20,6 +20,7 @@ object uPickleImplicits {
   import telegramium.bots.UserProfilePhotos
   import telegramium.bots.MaskPosition
   import telegramium.bots.File
+  import telegramium.bots.ChatPermissions
   import telegramium.bots.InlineKeyboardMarkup
   import telegramium.bots.Poll
   import telegramium.bots.InputMedia
@@ -699,6 +700,62 @@ object uPickleImplicits {
           result      <- m.get(resultKey).map(x => readBinary[Option[File]](x))
         } yield {
           UploadStickerFileRes(
+            ok = ok,
+            description = description,
+            result = result
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val setchatpermissionsreqCodec: ReadWriter[SetChatPermissionsReq] = {
+    val chatIdKey      = upack.Str("chatId")
+    val permissionsKey = upack.Str("permissions")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          chatIdKey      -> writeMsg(x.chatId),
+          permissionsKey -> writeMsg(x.permissions)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          chatId      <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          permissions <- m.get(permissionsKey).map(x => readBinary[ChatPermissions](x))
+        } yield {
+          SetChatPermissionsReq(
+            chatId = chatId,
+            permissions = permissions
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val setchatpermissionsresCodec: ReadWriter[SetChatPermissionsRes] = {
+    val okKey          = upack.Str("ok")
+    val descriptionKey = upack.Str("description")
+    val resultKey      = upack.Str("result")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          okKey          -> writeMsg(x.ok),
+          descriptionKey -> writeMsg(x.description),
+          resultKey      -> writeMsg(x.result)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          ok          <- m.get(okKey).map(x => readBinary[Boolean](x))
+          description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          result      <- m.get(resultKey).map(x => readBinary[Option[Boolean]](x))
+        } yield {
+          SetChatPermissionsRes(
             ok = ok,
             description = description,
             result = result
@@ -2652,50 +2709,32 @@ object uPickleImplicits {
   }
 
   implicit lazy val restrictchatmemberreqCodec: ReadWriter[RestrictChatMemberReq] = {
-    val chatIdKey                = upack.Str("chatId")
-    val userIdKey                = upack.Str("userId")
-    val untilDateKey             = upack.Str("untilDate")
-    val canSendMessagesKey       = upack.Str("canSendMessages")
-    val canSendMediaMessagesKey  = upack.Str("canSendMediaMessages")
-    val canSendOtherMessagesKey  = upack.Str("canSendOtherMessages")
-    val canAddWebPagePreviewsKey = upack.Str("canAddWebPagePreviews")
+    val chatIdKey      = upack.Str("chatId")
+    val userIdKey      = upack.Str("userId")
+    val permissionsKey = upack.Str("permissions")
+    val untilDateKey   = upack.Str("untilDate")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          chatIdKey                -> writeMsg(x.chatId),
-          userIdKey                -> writeMsg(x.userId),
-          untilDateKey             -> writeMsg(x.untilDate),
-          canSendMessagesKey       -> writeMsg(x.canSendMessages),
-          canSendMediaMessagesKey  -> writeMsg(x.canSendMediaMessages),
-          canSendOtherMessagesKey  -> writeMsg(x.canSendOtherMessages),
-          canAddWebPagePreviewsKey -> writeMsg(x.canAddWebPagePreviews)
+          chatIdKey      -> writeMsg(x.chatId),
+          userIdKey      -> writeMsg(x.userId),
+          permissionsKey -> writeMsg(x.permissions),
+          untilDateKey   -> writeMsg(x.untilDate)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          chatId          <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          userId          <- m.get(userIdKey).map(x => readBinary[Int](x))
-          untilDate       <- m.get(untilDateKey).map(x => readBinary[Option[Int]](x))
-          canSendMessages <- m.get(canSendMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canSendMediaMessages <- m
-            .get(canSendMediaMessagesKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          canSendOtherMessages <- m
-            .get(canSendOtherMessagesKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          canAddWebPagePreviews <- m
-            .get(canAddWebPagePreviewsKey)
-            .map(x => readBinary[Option[Boolean]](x))
+          chatId      <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          userId      <- m.get(userIdKey).map(x => readBinary[Int](x))
+          permissions <- m.get(permissionsKey).map(x => readBinary[ChatPermissions](x))
+          untilDate   <- m.get(untilDateKey).map(x => readBinary[Option[Int]](x))
         } yield {
           RestrictChatMemberReq(
             chatId = chatId,
             userId = userId,
-            untilDate = untilDate,
-            canSendMessages = canSendMessages,
-            canSendMediaMessages = canSendMediaMessages,
-            canSendOtherMessages = canSendOtherMessages,
-            canAddWebPagePreviews = canAddWebPagePreviews
+            permissions = permissions,
+            untilDate = untilDate
           )
         }
         result.get
@@ -4286,6 +4325,7 @@ object CirceImplicits {
   import telegramium.bots.UserProfilePhotos
   import telegramium.bots.MaskPosition
   import telegramium.bots.File
+  import telegramium.bots.ChatPermissions
   import telegramium.bots.InlineKeyboardMarkup
   import telegramium.bots.Poll
   import telegramium.bots.InputMedia
@@ -4811,6 +4851,48 @@ object CirceImplicits {
         _result      <- h.get[Option[File]]("result")
       } yield {
         UploadStickerFileRes(ok = _ok, description = _description, result = _result)
+      }
+    }
+
+  implicit lazy val setchatpermissionsreqEncoder: Encoder[SetChatPermissionsReq] =
+    (x: SetChatPermissionsReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"     -> x.chatId.asJson,
+          "permissions" -> x.permissions.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setchatpermissionsreqDecoder: Decoder[SetChatPermissionsReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId      <- h.get[ChatId]("chat_id")
+        _permissions <- h.get[ChatPermissions]("permissions")
+      } yield {
+        SetChatPermissionsReq(chatId = _chatId, permissions = _permissions)
+      }
+    }
+
+  implicit lazy val setchatpermissionsresEncoder: Encoder[SetChatPermissionsRes] =
+    (x: SetChatPermissionsRes) => {
+      Json.fromFields(
+        List(
+          "ok"          -> x.ok.asJson,
+          "description" -> x.description.asJson,
+          "result"      -> x.result.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setchatpermissionsresDecoder: Decoder[SetChatPermissionsRes] =
+    Decoder.instance { h =>
+      for {
+        _ok          <- h.get[Boolean]("ok")
+        _description <- h.get[Option[String]]("description")
+        _result      <- h.get[Option[Boolean]]("result")
+      } yield {
+        SetChatPermissionsRes(ok = _ok, description = _description, result = _result)
       }
     }
 
@@ -6292,13 +6374,10 @@ object CirceImplicits {
     (x: RestrictChatMemberReq) => {
       Json.fromFields(
         List(
-          "chat_id"                   -> x.chatId.asJson,
-          "user_id"                   -> x.userId.asJson,
-          "until_date"                -> x.untilDate.asJson,
-          "can_send_messages"         -> x.canSendMessages.asJson,
-          "can_send_media_messages"   -> x.canSendMediaMessages.asJson,
-          "can_send_other_messages"   -> x.canSendOtherMessages.asJson,
-          "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson
+          "chat_id"     -> x.chatId.asJson,
+          "user_id"     -> x.userId.asJson,
+          "permissions" -> x.permissions.asJson,
+          "until_date"  -> x.untilDate.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6306,23 +6385,15 @@ object CirceImplicits {
   implicit lazy val restrictchatmemberreqDecoder: Decoder[RestrictChatMemberReq] =
     Decoder.instance { h =>
       for {
-        _chatId                <- h.get[ChatId]("chat_id")
-        _userId                <- h.get[Int]("user_id")
-        _untilDate             <- h.get[Option[Int]]("until_date")
-        _canSendMessages       <- h.get[Option[Boolean]]("can_send_messages")
-        _canSendMediaMessages  <- h.get[Option[Boolean]]("can_send_media_messages")
-        _canSendOtherMessages  <- h.get[Option[Boolean]]("can_send_other_messages")
-        _canAddWebPagePreviews <- h.get[Option[Boolean]]("can_add_web_page_previews")
+        _chatId      <- h.get[ChatId]("chat_id")
+        _userId      <- h.get[Int]("user_id")
+        _permissions <- h.get[ChatPermissions]("permissions")
+        _untilDate   <- h.get[Option[Int]]("until_date")
       } yield {
-        RestrictChatMemberReq(
-          chatId = _chatId,
-          userId = _userId,
-          untilDate = _untilDate,
-          canSendMessages = _canSendMessages,
-          canSendMediaMessages = _canSendMediaMessages,
-          canSendOtherMessages = _canSendOtherMessages,
-          canAddWebPagePreviews = _canAddWebPagePreviews
-        )
+        RestrictChatMemberReq(chatId = _chatId,
+                              userId = _userId,
+                              permissions = _permissions,
+                              untilDate = _untilDate)
       }
     }
 

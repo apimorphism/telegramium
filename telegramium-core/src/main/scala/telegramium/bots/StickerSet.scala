@@ -6,6 +6,8 @@ final case class StickerSet(
                             name: String,
                             /** Sticker set title*/
                             title: String,
+                            /** True, if the sticker set contains animated stickers*/
+                            isAnimated: Boolean,
                             /** True, if the sticker set contains masks*/
                             containsMasks: Boolean,
                             /** List of all set stickers*/
