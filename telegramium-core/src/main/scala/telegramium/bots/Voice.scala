@@ -2,7 +2,7 @@ package telegramium.bots
 
 /** This object represents a voice note.*/
 final case class Voice(
-                       /** Unique identifier for this file*/
+                       /** Identifier for this file*/
                        fileId: String,
                        /** Duration of the audio in seconds as defined by sender*/
                        duration: Int,

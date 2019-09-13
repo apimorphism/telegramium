@@ -3,7 +3,7 @@ package telegramium.bots
 /** This object represents an animation file (GIF or H.264/MPEG-4 AVC video without
   * sound).*/
 final case class Animation(
-                           /** Unique file identifier*/
+                           /** Identifier for this file*/
                            fileId: String,
                            /** Video width as defined by sender*/
                            width: Int,

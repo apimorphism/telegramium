@@ -3,7 +3,7 @@ package telegramium.bots
 /** This object represents a video message (available in Telegram apps as of
   * v.4.0).*/
 final case class VideoNote(
-                           /** Unique identifier for this file*/
+                           /** Identifier for this file*/
                            fileId: String,
                            /** Video width and height (diameter of the video message) as
                              * defined by sender*/

@@ -5,7 +5,7 @@ package telegramium.bots
   * is guaranteed that the link will be valid for at least 1 hour. When the link
   * expires, a new one can be requested by calling getFile.*/
 final case class File(
-                      /** Unique identifier for this file*/
+                      /** Identifier for this file*/
                       fileId: String,
                       /** Optional. File size, if known*/
                       fileSize: Option[Int] = Option.empty,

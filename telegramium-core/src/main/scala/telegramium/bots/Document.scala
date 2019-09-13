@@ -3,7 +3,7 @@ package telegramium.bots
 /** This object represents a general file (as opposed to photos, voice messages and
   * audio files).*/
 final case class Document(
-                          /** Unique file identifier*/
+                          /** Identifier for this file*/
                           fileId: String,
                           /** Optional. Document thumbnail as defined by sender*/
                           thumb: Option[PhotoSize] = Option.empty,

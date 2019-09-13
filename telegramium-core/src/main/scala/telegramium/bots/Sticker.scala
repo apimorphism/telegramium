@@ -2,7 +2,7 @@ package telegramium.bots
 
 /** This object represents a sticker.*/
 final case class Sticker(
-                         /** Unique identifier for this file*/
+                         /** Identifier for this file*/
                          fileId: String,
                          /** Sticker width*/
                          width: Int,

@@ -2,7 +2,7 @@ package telegramium.bots
 
 /** This object represents a video file.*/
 final case class Video(
-                       /** Unique identifier for this file*/
+                       /** Identifier for this file*/
                        fileId: String,
                        /** Video width as defined by sender*/
                        width: Int,
