@@ -27,8 +27,11 @@ Except that any PR-s are welcome.
 Add to build.sbt next lines
 
 ```
+// Low level core API
 lazy val api = ProjectRef(uri("https://github.com/apimorphism/telegramium.git#master"), "telegramium-core")
-lazy val root = Project("root", file(".")).dependsOn(api)
+// High level convenient classes
+lazy val high = ProjectRef(uri("https://github.com/apimorphism/telegramium.git#master"), "telegramium-high")
+lazy val root = Project("root", file(".")).dependsOn(api, high)
 ```
 
 ### Known issues
