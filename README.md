@@ -39,6 +39,12 @@ lazy val root = Project("root", file(".")).dependsOn(api, high)
 InlineQueryResultMpeg4Gif and InlineQueryResultCachedMpeg4Gif
 has the same discriminator value which comes from the official docs. Maybe the bug in Tg Bot API itself.
 
+### Alternatives
+
+You may also want to have a look at these projects:
+* https://github.com/augustjune/canoe
+* https://github.com/bot4s/telegram
+
 ### Note for Yan
 
 Yan, напиши бота.
