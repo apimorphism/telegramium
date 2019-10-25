@@ -1,7 +1,5 @@
 package telegramium.bots.high
 
-import LongPollBot.OffsetKeeper
-
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import cats.syntax.traverse._
@@ -10,15 +8,18 @@ import cats.syntax.applicativeError._
 import cats.instances.int._
 import cats.instances.list._
 import cats.instances.option._
-import cats.effect.Sync
+import cats.effect.{Sync, Timer}
 import cats.effect.concurrent.Ref
-import scala.concurrent.duration.Duration
-import scala.concurrent.duration.DurationInt
 
 import telegramium.bots._
 import telegramium.bots.client._
 
-abstract class LongPollBot[F[_]](bot: Api[F])(implicit syncF: Sync[F]) {
+import scala.util.control.NonFatal
+import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
+
+abstract class LongPollBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) {
+
+  import LongPollBot.OffsetKeeper
 
   def onMessage(msg: Message): F[Unit] = syncF.delay(msg).void
   def onInlineQuery(query: InlineQuery): F[Unit] = syncF.delay(query).void
@@ -34,6 +35,10 @@ abstract class LongPollBot[F[_]](bot: Api[F])(implicit syncF: Sync[F]) {
     } yield ()
   }
 
+  def onError(e: Throwable): F[Unit] = {
+    syncF.delay(e.printStackTrace())
+  }
+
   def poll(offsetKeeper: OffsetKeeper[F]): F[Unit] = {
     for {
       offset <- offsetKeeper.getOffset
@@ -41,6 +46,12 @@ abstract class LongPollBot[F[_]](bot: Api[F])(implicit syncF: Sync[F]) {
       updates <- bot.getUpdates(GetUpdatesReq(offset = Some(offset), timeout = Some(seconds)))
         .onError {
           case _: java.util.concurrent.TimeoutException => poll(offsetKeeper)
+          case NonFatal(e) => for {
+            _ <- onError(e)
+            delay <- onErrorDelay
+            _ <- timer.sleep(delay)
+            _ <- poll(offsetKeeper)
+          } yield ()
         }
       _ <- updates.result.traverse(onUpdate)
       _ <- updates.result.map(_.updateId).maximumOption.traverse(max => offsetKeeper.setOffset(max + 1))
@@ -64,6 +75,11 @@ abstract class LongPollBot[F[_]](bot: Api[F])(implicit syncF: Sync[F]) {
   }
 
   def pollInterval: Duration = 10.seconds
+
+  /* Use effectful override to implement different backoff strategies */
+  def onErrorDelay: F[FiniteDuration] = {
+    syncF.delay(5.seconds)
+  }
 }
 
 object LongPollBot {

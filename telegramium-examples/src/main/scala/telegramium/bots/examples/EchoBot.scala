@@ -1,10 +1,10 @@
 package telegramium.bots.examples
 
-import cats.effect.Sync
+import cats.effect.{Sync, Timer}
 import telegramium.bots.client.Api
 import telegramium.bots.high.LongPollBot
 
-class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F]) extends LongPollBot[F](bot) {
+class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) extends LongPollBot[F](bot) {
 
   import cats.syntax.functor._
   import telegramium.bots._
