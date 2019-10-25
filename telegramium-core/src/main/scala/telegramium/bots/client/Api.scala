@@ -203,10 +203,10 @@ trait Api[F[_]] {
   def kickChatMember(x: KickChatMemberReq): F[KickChatMemberRes]
 
   /** Use this method to send audio files, if you want Telegram clients to display
-    * them in the music player. Your audio must be in the .mp3 format. On success, the
-    * sent Message is returned. Bots can currently send audio files of up to 50 MB in
-    * size, this limit may be changed in the future. For sending voice messages, use
-    * the sendVoice method instead.*/
+    * them in the music player. Your audio must be in the .MP3 or .M4A format. On
+    * success, the sent Message is returned. Bots can currently send audio files of up
+    * to 50 MB in size, this limit may be changed in the future. For sending voice
+    * messages, use the sendVoice method instead.*/
   def sendAudio(x: SendAudioReq): F[SendAudioRes]
 
   /** Use this method to restrict a user in a supergroup. The bot must be an

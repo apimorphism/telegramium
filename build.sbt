@@ -1,5 +1,18 @@
-ThisBuild / version      := "0.0.1"
+ThisBuild / version      := "0.0.1-SNAPSHOT"
+ThisBuild / name         := "telegramium"
 ThisBuild / organization := "io.github.fperiodic"
+
+ThisBuild / homepage   := Some(url("https://github.com/apimorphism/telegramium"))
+ThisBuild / licenses   := List(("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")))
+ThisBuild / scmInfo    := Some(ScmInfo(
+                            url("https://github.com/apimorphism/telegramium"),
+                            "git@github.com:apimorphism/telegramium.git"
+                          ))
+ThisBuild / developers := List(Developer(
+                            "sherzod", "Sherzod Gapirov",
+                            "sh.gapirov@gmail.com",
+                            url("https://github.com/sherzodv")
+                          ))
 
 val settings = Compiler.settings ++ Seq()
 
