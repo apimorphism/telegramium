@@ -44,6 +44,7 @@ has the same discriminator value which comes from the official docs. Maybe the b
 You may also want to have a look at these projects:
 * https://github.com/augustjune/canoe
 * https://github.com/bot4s/telegram
+* https://github.com/paoloboni/telegram4s
 
 ### Note for Yan
 
