@@ -14,15 +14,6 @@ Currently the following backends are supported:
 
 You may want to start with [Api.scala](telegramium-core/src/main/scala/telegramium/bots/client/Api.scala) and [EchoBot.scala](telegramium-examples/src/main/scala/telegramium/bots/examples/EchoBot.scala).
 
-### Contribution
-
-I'd love to have more testing and more example bots. Ideas and PRs on telegramium-high -
-high level interface for the bot API are also highly encouraged.
-
-If you want to change something in telegramium-core or found a bug in it, please create an issue.
-Do not create pull requests with changes on telegramium-core as we use semi-automatic way to work with it.
-Except that any PR-s are welcome.
-
 ### How to use
 Create the dependency by adding the following lines to your build.sbt:
 
@@ -35,6 +26,15 @@ libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "1.0.0-RC
 
 InlineQueryResultMpeg4Gif and InlineQueryResultCachedMpeg4Gif
 has the same discriminator value which comes from the official docs. Maybe the bug in Tg Bot API itself.
+
+### Contribution
+
+I'd love to have more testing and more example bots. Ideas and PRs on telegramium-high -
+high level interface for the bot API are also highly encouraged.
+
+If you want to change something in telegramium-core or found a bug in it, please create an issue.
+Do not create pull requests with changes on telegramium-core as we use semi-automatic way to work with it.
+Except that any PR-s are welcome.
 
 ### Alternatives
 
