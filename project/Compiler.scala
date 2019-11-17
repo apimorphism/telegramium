@@ -4,7 +4,7 @@ import Keys._
 object Compiler {
 
   val settings = Seq(
-    crossScalaVersions := Seq("2.12.8"),
+    crossScalaVersions := Seq("2.12.10"),
     scalacOptions ++= options,
     addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.8"),
   )

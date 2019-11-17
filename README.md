@@ -24,14 +24,11 @@ Do not create pull requests with changes on telegramium-core as we use semi-auto
 Except that any PR-s are welcome.
 
 ### How to use
-Add to build.sbt next lines
+Create the dependency by adding the following lines to your build.sbt:
 
 ```
-// Low level core API
-lazy val api = ProjectRef(uri("https://github.com/apimorphism/telegramium.git#master"), "telegramium-core")
-// High level convenient classes
-lazy val high = ProjectRef(uri("https://github.com/apimorphism/telegramium.git#master"), "telegramium-high")
-lazy val root = Project("root", file(".")).dependsOn(api, high)
+libraryDependencies += "io.github.apimorphism" %% "telegramium-core" % "1.0.0-RC1"
+libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "1.0.0-RC1"
 ```
 
 ### Known issues
