@@ -2203,41 +2203,45 @@ object uPickleImplicits {
   }
 
   implicit lazy val animationCodec: ReadWriter[Animation] = {
-    val fileIdKey   = upack.Str("fileId")
-    val widthKey    = upack.Str("width")
-    val heightKey   = upack.Str("height")
-    val durationKey = upack.Str("duration")
-    val thumbKey    = upack.Str("thumb")
-    val fileNameKey = upack.Str("fileName")
-    val mimeTypeKey = upack.Str("mimeType")
-    val fileSizeKey = upack.Str("fileSize")
+    val fileIdKey       = upack.Str("fileId")
+    val fileUniqueIdKey = upack.Str("fileUniqueId")
+    val widthKey        = upack.Str("width")
+    val heightKey       = upack.Str("height")
+    val durationKey     = upack.Str("duration")
+    val thumbKey        = upack.Str("thumb")
+    val fileNameKey     = upack.Str("fileName")
+    val mimeTypeKey     = upack.Str("mimeType")
+    val fileSizeKey     = upack.Str("fileSize")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          fileIdKey   -> writeMsg(x.fileId),
-          widthKey    -> writeMsg(x.width),
-          heightKey   -> writeMsg(x.height),
-          durationKey -> writeMsg(x.duration),
-          thumbKey    -> writeMsg(x.thumb),
-          fileNameKey -> writeMsg(x.fileName),
-          mimeTypeKey -> writeMsg(x.mimeType),
-          fileSizeKey -> writeMsg(x.fileSize)
+          fileIdKey       -> writeMsg(x.fileId),
+          fileUniqueIdKey -> writeMsg(x.fileUniqueId),
+          widthKey        -> writeMsg(x.width),
+          heightKey       -> writeMsg(x.height),
+          durationKey     -> writeMsg(x.duration),
+          thumbKey        -> writeMsg(x.thumb),
+          fileNameKey     -> writeMsg(x.fileName),
+          mimeTypeKey     -> writeMsg(x.mimeType),
+          fileSizeKey     -> writeMsg(x.fileSize)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          fileId   <- m.get(fileIdKey).map(x => readBinary[String](x))
-          width    <- m.get(widthKey).map(x => readBinary[Int](x))
-          height   <- m.get(heightKey).map(x => readBinary[Int](x))
-          duration <- m.get(durationKey).map(x => readBinary[Int](x))
-          thumb    <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
-          fileName <- m.get(fileNameKey).map(x => readBinary[Option[String]](x))
-          mimeType <- m.get(mimeTypeKey).map(x => readBinary[Option[String]](x))
-          fileSize <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
+          fileId       <- m.get(fileIdKey).map(x => readBinary[String](x))
+          fileUniqueId <- m.get(fileUniqueIdKey).map(x => readBinary[String](x))
+          width        <- m.get(widthKey).map(x => readBinary[Int](x))
+          height       <- m.get(heightKey).map(x => readBinary[Int](x))
+          duration     <- m.get(durationKey).map(x => readBinary[Int](x))
+          thumb        <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
+          fileName     <- m.get(fileNameKey).map(x => readBinary[Option[String]](x))
+          mimeType     <- m.get(mimeTypeKey).map(x => readBinary[Option[String]](x))
+          fileSize     <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
         } yield {
           Animation(
             fileId = fileId,
+            fileUniqueId = fileUniqueId,
             width = width,
             height = height,
             duration = duration,
@@ -2264,6 +2268,7 @@ object uPickleImplicits {
     val inviteLinkKey       = upack.Str("inviteLink")
     val pinnedMessageKey    = upack.Str("pinnedMessage")
     val permissionsKey      = upack.Str("permissions")
+    val slowModeDelayKey    = upack.Str("slowModeDelay")
     val stickerSetNameKey   = upack.Str("stickerSetName")
     val canSetStickerSetKey = upack.Str("canSetStickerSet")
     readwriter[upack.Msg].bimap(
@@ -2280,6 +2285,7 @@ object uPickleImplicits {
           inviteLinkKey       -> writeMsg(x.inviteLink),
           pinnedMessageKey    -> writeMsg(x.pinnedMessage),
           permissionsKey      -> writeMsg(x.permissions),
+          slowModeDelayKey    -> writeMsg(x.slowModeDelay),
           stickerSetNameKey   -> writeMsg(x.stickerSetName),
           canSetStickerSetKey -> writeMsg(x.canSetStickerSet)
         )
@@ -2298,6 +2304,7 @@ object uPickleImplicits {
           inviteLink       <- m.get(inviteLinkKey).map(x => readBinary[Option[String]](x))
           pinnedMessage    <- m.get(pinnedMessageKey).map(x => readBinary[Option[Message]](x))
           permissions      <- m.get(permissionsKey).map(x => readBinary[Option[ChatPermissions]](x))
+          slowModeDelay    <- m.get(slowModeDelayKey).map(x => readBinary[Option[Int]](x))
           stickerSetName   <- m.get(stickerSetNameKey).map(x => readBinary[Option[String]](x))
           canSetStickerSet <- m.get(canSetStickerSetKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
@@ -2313,6 +2320,7 @@ object uPickleImplicits {
             inviteLink = inviteLink,
             pinnedMessage = pinnedMessage,
             permissions = permissions,
+            slowModeDelay = slowModeDelay,
             stickerSetName = stickerSetName,
             canSetStickerSet = canSetStickerSet
           )
@@ -2323,32 +2331,36 @@ object uPickleImplicits {
   }
 
   implicit lazy val videonoteCodec: ReadWriter[VideoNote] = {
-    val fileIdKey   = upack.Str("fileId")
-    val lengthKey   = upack.Str("length")
-    val durationKey = upack.Str("duration")
-    val thumbKey    = upack.Str("thumb")
-    val fileSizeKey = upack.Str("fileSize")
+    val fileIdKey       = upack.Str("fileId")
+    val fileUniqueIdKey = upack.Str("fileUniqueId")
+    val lengthKey       = upack.Str("length")
+    val durationKey     = upack.Str("duration")
+    val thumbKey        = upack.Str("thumb")
+    val fileSizeKey     = upack.Str("fileSize")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          fileIdKey   -> writeMsg(x.fileId),
-          lengthKey   -> writeMsg(x.length),
-          durationKey -> writeMsg(x.duration),
-          thumbKey    -> writeMsg(x.thumb),
-          fileSizeKey -> writeMsg(x.fileSize)
+          fileIdKey       -> writeMsg(x.fileId),
+          fileUniqueIdKey -> writeMsg(x.fileUniqueId),
+          lengthKey       -> writeMsg(x.length),
+          durationKey     -> writeMsg(x.duration),
+          thumbKey        -> writeMsg(x.thumb),
+          fileSizeKey     -> writeMsg(x.fileSize)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          fileId   <- m.get(fileIdKey).map(x => readBinary[String](x))
-          length   <- m.get(lengthKey).map(x => readBinary[Int](x))
-          duration <- m.get(durationKey).map(x => readBinary[Int](x))
-          thumb    <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
-          fileSize <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
+          fileId       <- m.get(fileIdKey).map(x => readBinary[String](x))
+          fileUniqueId <- m.get(fileUniqueIdKey).map(x => readBinary[String](x))
+          length       <- m.get(lengthKey).map(x => readBinary[Int](x))
+          duration     <- m.get(durationKey).map(x => readBinary[Int](x))
+          thumb        <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
+          fileSize     <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
         } yield {
           VideoNote(
             fileId = fileId,
+            fileUniqueId = fileUniqueId,
             length = length,
             duration = duration,
             thumb = thumb,
@@ -2594,6 +2606,7 @@ object uPickleImplicits {
     val shippingQueryKey      = upack.Str("shippingQuery")
     val preCheckoutQueryKey   = upack.Str("preCheckoutQuery")
     val pollKey               = upack.Str("poll")
+    val pollAnswerKey         = upack.Str("pollAnswer")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
@@ -2607,7 +2620,8 @@ object uPickleImplicits {
           callbackQueryKey      -> writeMsg(x.callbackQuery),
           shippingQueryKey      -> writeMsg(x.shippingQuery),
           preCheckoutQueryKey   -> writeMsg(x.preCheckoutQuery),
-          pollKey               -> writeMsg(x.poll)
+          pollKey               -> writeMsg(x.poll),
+          pollAnswerKey         -> writeMsg(x.pollAnswer)
         )
       },
       msg => {
@@ -2627,7 +2641,8 @@ object uPickleImplicits {
           preCheckoutQuery <- m
             .get(preCheckoutQueryKey)
             .map(x => readBinary[Option[PreCheckoutQuery]](x))
-          poll <- m.get(pollKey).map(x => readBinary[Option[Poll]](x))
+          poll       <- m.get(pollKey).map(x => readBinary[Option[Poll]](x))
+          pollAnswer <- m.get(pollAnswerKey).map(x => readBinary[Option[PollAnswer]](x))
         } yield {
           Update(
             updateId = updateId,
@@ -2640,7 +2655,8 @@ object uPickleImplicits {
             callbackQuery = callbackQuery,
             shippingQuery = shippingQuery,
             preCheckoutQuery = preCheckoutQuery,
-            poll = poll
+            poll = poll,
+            pollAnswer = pollAnswer
           )
         }
         result.get
@@ -2688,12 +2704,14 @@ object uPickleImplicits {
     val textKey            = upack.Str("text")
     val requestContactKey  = upack.Str("requestContact")
     val requestLocationKey = upack.Str("requestLocation")
+    val requestPollKey     = upack.Str("requestPoll")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
           textKey            -> writeMsg(x.text),
           requestContactKey  -> writeMsg(x.requestContact),
-          requestLocationKey -> writeMsg(x.requestLocation)
+          requestLocationKey -> writeMsg(x.requestLocation),
+          requestPollKey     -> writeMsg(x.requestPoll)
         )
       },
       msg => {
@@ -2702,11 +2720,15 @@ object uPickleImplicits {
           text            <- m.get(textKey).map(x => readBinary[String](x))
           requestContact  <- m.get(requestContactKey).map(x => readBinary[Option[Boolean]](x))
           requestLocation <- m.get(requestLocationKey).map(x => readBinary[Option[Boolean]](x))
+          requestPoll <- m
+            .get(requestPollKey)
+            .map(x => readBinary[Option[KeyboardButtonPollType]](x))
         } yield {
           KeyboardButton(
             text = text,
             requestContact = requestContact,
-            requestLocation = requestLocation
+            requestLocation = requestLocation,
+            requestPoll = requestPoll
           )
         }
         result.get
@@ -2715,26 +2737,30 @@ object uPickleImplicits {
   }
 
   implicit lazy val passportfileCodec: ReadWriter[PassportFile] = {
-    val fileIdKey   = upack.Str("fileId")
-    val fileSizeKey = upack.Str("fileSize")
-    val fileDateKey = upack.Str("fileDate")
+    val fileIdKey       = upack.Str("fileId")
+    val fileUniqueIdKey = upack.Str("fileUniqueId")
+    val fileSizeKey     = upack.Str("fileSize")
+    val fileDateKey     = upack.Str("fileDate")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          fileIdKey   -> writeMsg(x.fileId),
-          fileSizeKey -> writeMsg(x.fileSize),
-          fileDateKey -> writeMsg(x.fileDate)
+          fileIdKey       -> writeMsg(x.fileId),
+          fileUniqueIdKey -> writeMsg(x.fileUniqueId),
+          fileSizeKey     -> writeMsg(x.fileSize),
+          fileDateKey     -> writeMsg(x.fileDate)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          fileId   <- m.get(fileIdKey).map(x => readBinary[String](x))
-          fileSize <- m.get(fileSizeKey).map(x => readBinary[Int](x))
-          fileDate <- m.get(fileDateKey).map(x => readBinary[Int](x))
+          fileId       <- m.get(fileIdKey).map(x => readBinary[String](x))
+          fileUniqueId <- m.get(fileUniqueIdKey).map(x => readBinary[String](x))
+          fileSize     <- m.get(fileSizeKey).map(x => readBinary[Int](x))
+          fileDate     <- m.get(fileDateKey).map(x => readBinary[Int](x))
         } yield {
           PassportFile(
             fileId = fileId,
+            fileUniqueId = fileUniqueId,
             fileSize = fileSize,
             fileDate = fileDate
           )
@@ -2745,29 +2771,33 @@ object uPickleImplicits {
   }
 
   implicit lazy val photosizeCodec: ReadWriter[PhotoSize] = {
-    val fileIdKey   = upack.Str("fileId")
-    val widthKey    = upack.Str("width")
-    val heightKey   = upack.Str("height")
-    val fileSizeKey = upack.Str("fileSize")
+    val fileIdKey       = upack.Str("fileId")
+    val fileUniqueIdKey = upack.Str("fileUniqueId")
+    val widthKey        = upack.Str("width")
+    val heightKey       = upack.Str("height")
+    val fileSizeKey     = upack.Str("fileSize")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          fileIdKey   -> writeMsg(x.fileId),
-          widthKey    -> writeMsg(x.width),
-          heightKey   -> writeMsg(x.height),
-          fileSizeKey -> writeMsg(x.fileSize)
+          fileIdKey       -> writeMsg(x.fileId),
+          fileUniqueIdKey -> writeMsg(x.fileUniqueId),
+          widthKey        -> writeMsg(x.width),
+          heightKey       -> writeMsg(x.height),
+          fileSizeKey     -> writeMsg(x.fileSize)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          fileId   <- m.get(fileIdKey).map(x => readBinary[String](x))
-          width    <- m.get(widthKey).map(x => readBinary[Int](x))
-          height   <- m.get(heightKey).map(x => readBinary[Int](x))
-          fileSize <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
+          fileId       <- m.get(fileIdKey).map(x => readBinary[String](x))
+          fileUniqueId <- m.get(fileUniqueIdKey).map(x => readBinary[String](x))
+          width        <- m.get(widthKey).map(x => readBinary[Int](x))
+          height       <- m.get(heightKey).map(x => readBinary[Int](x))
+          fileSize     <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
         } yield {
           PhotoSize(
             fileId = fileId,
+            fileUniqueId = fileUniqueId,
             width = width,
             height = height,
             fileSize = fileSize
@@ -2778,33 +2808,75 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val pollCodec: ReadWriter[Poll] = {
-    val idKey       = upack.Str("id")
-    val questionKey = upack.Str("question")
-    val optionsKey  = upack.Str("options")
-    val isClosedKey = upack.Str("isClosed")
+  implicit lazy val keyboardbuttonpolltypeCodec: ReadWriter[KeyboardButtonPollType] = {
+    val typeKey = upack.Str("type")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          idKey       -> writeMsg(x.id),
-          questionKey -> writeMsg(x.question),
-          optionsKey  -> writeMsg(x.options),
-          isClosedKey -> writeMsg(x.isClosed)
+          typeKey -> writeMsg(x.`type`)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          id       <- m.get(idKey).map(x => readBinary[String](x))
-          question <- m.get(questionKey).map(x => readBinary[String](x))
-          options  <- m.get(optionsKey).map(x => readBinary[List[PollOption]](x))
-          isClosed <- m.get(isClosedKey).map(x => readBinary[Boolean](x))
+          `type` <- m.get(typeKey).map(x => readBinary[Option[String]](x))
+        } yield {
+          KeyboardButtonPollType(
+            `type` = `type`
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val pollCodec: ReadWriter[Poll] = {
+    val idKey                    = upack.Str("id")
+    val questionKey              = upack.Str("question")
+    val optionsKey               = upack.Str("options")
+    val totalVoterCountKey       = upack.Str("totalVoterCount")
+    val isClosedKey              = upack.Str("isClosed")
+    val isAnonymousKey           = upack.Str("isAnonymous")
+    val typeKey                  = upack.Str("type")
+    val allowsMultipleAnswersKey = upack.Str("allowsMultipleAnswers")
+    val correctOptionIdKey       = upack.Str("correctOptionId")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          idKey                    -> writeMsg(x.id),
+          questionKey              -> writeMsg(x.question),
+          optionsKey               -> writeMsg(x.options),
+          totalVoterCountKey       -> writeMsg(x.totalVoterCount),
+          isClosedKey              -> writeMsg(x.isClosed),
+          isAnonymousKey           -> writeMsg(x.isAnonymous),
+          typeKey                  -> writeMsg(x.`type`),
+          allowsMultipleAnswersKey -> writeMsg(x.allowsMultipleAnswers),
+          correctOptionIdKey       -> writeMsg(x.correctOptionId)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          id                    <- m.get(idKey).map(x => readBinary[String](x))
+          question              <- m.get(questionKey).map(x => readBinary[String](x))
+          options               <- m.get(optionsKey).map(x => readBinary[List[PollOption]](x))
+          totalVoterCount       <- m.get(totalVoterCountKey).map(x => readBinary[Int](x))
+          isClosed              <- m.get(isClosedKey).map(x => readBinary[Boolean](x))
+          isAnonymous           <- m.get(isAnonymousKey).map(x => readBinary[Boolean](x))
+          `type`                <- m.get(typeKey).map(x => readBinary[String](x))
+          allowsMultipleAnswers <- m.get(allowsMultipleAnswersKey).map(x => readBinary[Boolean](x))
+          correctOptionId       <- m.get(correctOptionIdKey).map(x => readBinary[Option[Int]](x))
         } yield {
           Poll(
             id = id,
             question = question,
             options = options,
-            isClosed = isClosed
+            totalVoterCount = totalVoterCount,
+            isClosed = isClosed,
+            isAnonymous = isAnonymous,
+            `type` = `type`,
+            allowsMultipleAnswers = allowsMultipleAnswers,
+            correctOptionId = correctOptionId
           )
         }
         result.get
@@ -2869,6 +2941,36 @@ object uPickleImplicits {
             isAnimated = isAnimated,
             containsMasks = containsMasks,
             stickers = stickers
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val pollanswerCodec: ReadWriter[PollAnswer] = {
+    val pollIdKey    = upack.Str("pollId")
+    val userKey      = upack.Str("user")
+    val optionIdsKey = upack.Str("optionIds")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          pollIdKey    -> writeMsg(x.pollId),
+          userKey      -> writeMsg(x.user),
+          optionIdsKey -> writeMsg(x.optionIds)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          pollId    <- m.get(pollIdKey).map(x => readBinary[String](x))
+          user      <- m.get(userKey).map(x => readBinary[User](x))
+          optionIds <- m.get(optionIdsKey).map(x => readBinary[List[Int]](x))
+        } yield {
+          PollAnswer(
+            pollId = pollId,
+            user = user,
+            optionIds = optionIds
           )
         }
         result.get
@@ -3085,26 +3187,30 @@ object uPickleImplicits {
   }
 
   implicit lazy val fileCodec: ReadWriter[File] = {
-    val fileIdKey   = upack.Str("fileId")
-    val fileSizeKey = upack.Str("fileSize")
-    val filePathKey = upack.Str("filePath")
+    val fileIdKey       = upack.Str("fileId")
+    val fileUniqueIdKey = upack.Str("fileUniqueId")
+    val fileSizeKey     = upack.Str("fileSize")
+    val filePathKey     = upack.Str("filePath")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          fileIdKey   -> writeMsg(x.fileId),
-          fileSizeKey -> writeMsg(x.fileSize),
-          filePathKey -> writeMsg(x.filePath)
+          fileIdKey       -> writeMsg(x.fileId),
+          fileUniqueIdKey -> writeMsg(x.fileUniqueId),
+          fileSizeKey     -> writeMsg(x.fileSize),
+          filePathKey     -> writeMsg(x.filePath)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          fileId   <- m.get(fileIdKey).map(x => readBinary[String](x))
-          fileSize <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
-          filePath <- m.get(filePathKey).map(x => readBinary[Option[String]](x))
+          fileId       <- m.get(fileIdKey).map(x => readBinary[String](x))
+          fileUniqueId <- m.get(fileUniqueIdKey).map(x => readBinary[String](x))
+          fileSize     <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
+          filePath     <- m.get(filePathKey).map(x => readBinary[Option[String]](x))
         } yield {
           File(
             fileId = fileId,
+            fileUniqueId = fileUniqueId,
             fileSize = fileSize,
             filePath = filePath
           )
@@ -3221,38 +3327,42 @@ object uPickleImplicits {
   }
 
   implicit lazy val audioCodec: ReadWriter[Audio] = {
-    val fileIdKey    = upack.Str("fileId")
-    val durationKey  = upack.Str("duration")
-    val performerKey = upack.Str("performer")
-    val titleKey     = upack.Str("title")
-    val mimeTypeKey  = upack.Str("mimeType")
-    val fileSizeKey  = upack.Str("fileSize")
-    val thumbKey     = upack.Str("thumb")
+    val fileIdKey       = upack.Str("fileId")
+    val fileUniqueIdKey = upack.Str("fileUniqueId")
+    val durationKey     = upack.Str("duration")
+    val performerKey    = upack.Str("performer")
+    val titleKey        = upack.Str("title")
+    val mimeTypeKey     = upack.Str("mimeType")
+    val fileSizeKey     = upack.Str("fileSize")
+    val thumbKey        = upack.Str("thumb")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          fileIdKey    -> writeMsg(x.fileId),
-          durationKey  -> writeMsg(x.duration),
-          performerKey -> writeMsg(x.performer),
-          titleKey     -> writeMsg(x.title),
-          mimeTypeKey  -> writeMsg(x.mimeType),
-          fileSizeKey  -> writeMsg(x.fileSize),
-          thumbKey     -> writeMsg(x.thumb)
+          fileIdKey       -> writeMsg(x.fileId),
+          fileUniqueIdKey -> writeMsg(x.fileUniqueId),
+          durationKey     -> writeMsg(x.duration),
+          performerKey    -> writeMsg(x.performer),
+          titleKey        -> writeMsg(x.title),
+          mimeTypeKey     -> writeMsg(x.mimeType),
+          fileSizeKey     -> writeMsg(x.fileSize),
+          thumbKey        -> writeMsg(x.thumb)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          fileId    <- m.get(fileIdKey).map(x => readBinary[String](x))
-          duration  <- m.get(durationKey).map(x => readBinary[Int](x))
-          performer <- m.get(performerKey).map(x => readBinary[Option[String]](x))
-          title     <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          mimeType  <- m.get(mimeTypeKey).map(x => readBinary[Option[String]](x))
-          fileSize  <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
-          thumb     <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
+          fileId       <- m.get(fileIdKey).map(x => readBinary[String](x))
+          fileUniqueId <- m.get(fileUniqueIdKey).map(x => readBinary[String](x))
+          duration     <- m.get(durationKey).map(x => readBinary[Int](x))
+          performer    <- m.get(performerKey).map(x => readBinary[Option[String]](x))
+          title        <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          mimeType     <- m.get(mimeTypeKey).map(x => readBinary[Option[String]](x))
+          fileSize     <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
+          thumb        <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
         } yield {
           Audio(
             fileId = fileId,
+            fileUniqueId = fileUniqueId,
             duration = duration,
             performer = performer,
             title = title,
@@ -3351,24 +3461,32 @@ object uPickleImplicits {
   }
 
   implicit lazy val chatphotoCodec: ReadWriter[ChatPhoto] = {
-    val smallFileIdKey = upack.Str("smallFileId")
-    val bigFileIdKey   = upack.Str("bigFileId")
+    val smallFileIdKey       = upack.Str("smallFileId")
+    val smallFileUniqueIdKey = upack.Str("smallFileUniqueId")
+    val bigFileIdKey         = upack.Str("bigFileId")
+    val bigFileUniqueIdKey   = upack.Str("bigFileUniqueId")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          smallFileIdKey -> writeMsg(x.smallFileId),
-          bigFileIdKey   -> writeMsg(x.bigFileId)
+          smallFileIdKey       -> writeMsg(x.smallFileId),
+          smallFileUniqueIdKey -> writeMsg(x.smallFileUniqueId),
+          bigFileIdKey         -> writeMsg(x.bigFileId),
+          bigFileUniqueIdKey   -> writeMsg(x.bigFileUniqueId)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          smallFileId <- m.get(smallFileIdKey).map(x => readBinary[String](x))
-          bigFileId   <- m.get(bigFileIdKey).map(x => readBinary[String](x))
+          smallFileId       <- m.get(smallFileIdKey).map(x => readBinary[String](x))
+          smallFileUniqueId <- m.get(smallFileUniqueIdKey).map(x => readBinary[String](x))
+          bigFileId         <- m.get(bigFileIdKey).map(x => readBinary[String](x))
+          bigFileUniqueId   <- m.get(bigFileUniqueIdKey).map(x => readBinary[String](x))
         } yield {
           ChatPhoto(
             smallFileId = smallFileId,
-            bigFileId = bigFileId
+            smallFileUniqueId = smallFileUniqueId,
+            bigFileId = bigFileId,
+            bigFileUniqueId = bigFileUniqueId
           )
         }
         result.get
@@ -3415,32 +3533,45 @@ object uPickleImplicits {
   }
 
   implicit lazy val userCodec: ReadWriter[User] = {
-    val idKey           = upack.Str("id")
-    val isBotKey        = upack.Str("isBot")
-    val firstNameKey    = upack.Str("firstName")
-    val lastNameKey     = upack.Str("lastName")
-    val usernameKey     = upack.Str("username")
-    val languageCodeKey = upack.Str("languageCode")
+    val idKey                      = upack.Str("id")
+    val isBotKey                   = upack.Str("isBot")
+    val firstNameKey               = upack.Str("firstName")
+    val lastNameKey                = upack.Str("lastName")
+    val usernameKey                = upack.Str("username")
+    val languageCodeKey            = upack.Str("languageCode")
+    val canJoinGroupsKey           = upack.Str("canJoinGroups")
+    val canReadAllGroupMessagesKey = upack.Str("canReadAllGroupMessages")
+    val supportsInlineQueriesKey   = upack.Str("supportsInlineQueries")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          idKey           -> writeMsg(x.id),
-          isBotKey        -> writeMsg(x.isBot),
-          firstNameKey    -> writeMsg(x.firstName),
-          lastNameKey     -> writeMsg(x.lastName),
-          usernameKey     -> writeMsg(x.username),
-          languageCodeKey -> writeMsg(x.languageCode)
+          idKey                      -> writeMsg(x.id),
+          isBotKey                   -> writeMsg(x.isBot),
+          firstNameKey               -> writeMsg(x.firstName),
+          lastNameKey                -> writeMsg(x.lastName),
+          usernameKey                -> writeMsg(x.username),
+          languageCodeKey            -> writeMsg(x.languageCode),
+          canJoinGroupsKey           -> writeMsg(x.canJoinGroups),
+          canReadAllGroupMessagesKey -> writeMsg(x.canReadAllGroupMessages),
+          supportsInlineQueriesKey   -> writeMsg(x.supportsInlineQueries)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          id           <- m.get(idKey).map(x => readBinary[Int](x))
-          isBot        <- m.get(isBotKey).map(x => readBinary[Boolean](x))
-          firstName    <- m.get(firstNameKey).map(x => readBinary[String](x))
-          lastName     <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
-          username     <- m.get(usernameKey).map(x => readBinary[Option[String]](x))
-          languageCode <- m.get(languageCodeKey).map(x => readBinary[Option[String]](x))
+          id            <- m.get(idKey).map(x => readBinary[Int](x))
+          isBot         <- m.get(isBotKey).map(x => readBinary[Boolean](x))
+          firstName     <- m.get(firstNameKey).map(x => readBinary[String](x))
+          lastName      <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
+          username      <- m.get(usernameKey).map(x => readBinary[Option[String]](x))
+          languageCode  <- m.get(languageCodeKey).map(x => readBinary[Option[String]](x))
+          canJoinGroups <- m.get(canJoinGroupsKey).map(x => readBinary[Option[Boolean]](x))
+          canReadAllGroupMessages <- m
+            .get(canReadAllGroupMessagesKey)
+            .map(x => readBinary[Option[Boolean]](x))
+          supportsInlineQueries <- m
+            .get(supportsInlineQueriesKey)
+            .map(x => readBinary[Option[Boolean]](x))
         } yield {
           User(
             id = id,
@@ -3448,7 +3579,10 @@ object uPickleImplicits {
             firstName = firstName,
             lastName = lastName,
             username = username,
-            languageCode = languageCode
+            languageCode = languageCode,
+            canJoinGroups = canJoinGroups,
+            canReadAllGroupMessages = canReadAllGroupMessages,
+            supportsInlineQueries = supportsInlineQueries
           )
         }
         result.get
@@ -3516,6 +3650,7 @@ object uPickleImplicits {
 
   implicit lazy val stickerCodec: ReadWriter[Sticker] = {
     val fileIdKey       = upack.Str("fileId")
+    val fileUniqueIdKey = upack.Str("fileUniqueId")
     val widthKey        = upack.Str("width")
     val heightKey       = upack.Str("height")
     val isAnimatedKey   = upack.Str("isAnimated")
@@ -3528,6 +3663,7 @@ object uPickleImplicits {
       x => {
         upack.Obj(
           fileIdKey       -> writeMsg(x.fileId),
+          fileUniqueIdKey -> writeMsg(x.fileUniqueId),
           widthKey        -> writeMsg(x.width),
           heightKey       -> writeMsg(x.height),
           isAnimatedKey   -> writeMsg(x.isAnimated),
@@ -3542,6 +3678,7 @@ object uPickleImplicits {
         val m = msg.obj
         val result = for {
           fileId       <- m.get(fileIdKey).map(x => readBinary[String](x))
+          fileUniqueId <- m.get(fileUniqueIdKey).map(x => readBinary[String](x))
           width        <- m.get(widthKey).map(x => readBinary[Int](x))
           height       <- m.get(heightKey).map(x => readBinary[Int](x))
           isAnimated   <- m.get(isAnimatedKey).map(x => readBinary[Boolean](x))
@@ -3553,6 +3690,7 @@ object uPickleImplicits {
         } yield {
           Sticker(
             fileId = fileId,
+            fileUniqueId = fileUniqueId,
             width = width,
             height = height,
             isAnimated = isAnimated,
@@ -3977,29 +4115,33 @@ object uPickleImplicits {
   }
 
   implicit lazy val voiceCodec: ReadWriter[Voice] = {
-    val fileIdKey   = upack.Str("fileId")
-    val durationKey = upack.Str("duration")
-    val mimeTypeKey = upack.Str("mimeType")
-    val fileSizeKey = upack.Str("fileSize")
+    val fileIdKey       = upack.Str("fileId")
+    val fileUniqueIdKey = upack.Str("fileUniqueId")
+    val durationKey     = upack.Str("duration")
+    val mimeTypeKey     = upack.Str("mimeType")
+    val fileSizeKey     = upack.Str("fileSize")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          fileIdKey   -> writeMsg(x.fileId),
-          durationKey -> writeMsg(x.duration),
-          mimeTypeKey -> writeMsg(x.mimeType),
-          fileSizeKey -> writeMsg(x.fileSize)
+          fileIdKey       -> writeMsg(x.fileId),
+          fileUniqueIdKey -> writeMsg(x.fileUniqueId),
+          durationKey     -> writeMsg(x.duration),
+          mimeTypeKey     -> writeMsg(x.mimeType),
+          fileSizeKey     -> writeMsg(x.fileSize)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          fileId   <- m.get(fileIdKey).map(x => readBinary[String](x))
-          duration <- m.get(durationKey).map(x => readBinary[Int](x))
-          mimeType <- m.get(mimeTypeKey).map(x => readBinary[Option[String]](x))
-          fileSize <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
+          fileId       <- m.get(fileIdKey).map(x => readBinary[String](x))
+          fileUniqueId <- m.get(fileUniqueIdKey).map(x => readBinary[String](x))
+          duration     <- m.get(durationKey).map(x => readBinary[Int](x))
+          mimeType     <- m.get(mimeTypeKey).map(x => readBinary[Option[String]](x))
+          fileSize     <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
         } yield {
           Voice(
             fileId = fileId,
+            fileUniqueId = fileUniqueId,
             duration = duration,
             mimeType = mimeType,
             fileSize = fileSize
@@ -4119,6 +4261,7 @@ object uPickleImplicits {
   implicit lazy val chatmemberCodec: ReadWriter[ChatMember] = {
     val userKey                  = upack.Str("user")
     val statusKey                = upack.Str("status")
+    val customTitleKey           = upack.Str("customTitle")
     val untilDateKey             = upack.Str("untilDate")
     val canBeEditedKey           = upack.Str("canBeEdited")
     val canPostMessagesKey       = upack.Str("canPostMessages")
@@ -4140,6 +4283,7 @@ object uPickleImplicits {
         upack.Obj(
           userKey                  -> writeMsg(x.user),
           statusKey                -> writeMsg(x.status),
+          customTitleKey           -> writeMsg(x.customTitle),
           untilDateKey             -> writeMsg(x.untilDate),
           canBeEditedKey           -> writeMsg(x.canBeEdited),
           canPostMessagesKey       -> writeMsg(x.canPostMessages),
@@ -4163,6 +4307,7 @@ object uPickleImplicits {
         val result = for {
           user              <- m.get(userKey).map(x => readBinary[User](x))
           status            <- m.get(statusKey).map(x => readBinary[String](x))
+          customTitle       <- m.get(customTitleKey).map(x => readBinary[Option[String]](x))
           untilDate         <- m.get(untilDateKey).map(x => readBinary[Option[Int]](x))
           canBeEdited       <- m.get(canBeEditedKey).map(x => readBinary[Option[Boolean]](x))
           canPostMessages   <- m.get(canPostMessagesKey).map(x => readBinary[Option[Boolean]](x))
@@ -4191,6 +4336,7 @@ object uPickleImplicits {
           ChatMember(
             user = user,
             status = status,
+            customTitle = customTitle,
             untilDate = untilDate,
             canBeEdited = canBeEdited,
             canPostMessages = canPostMessages,
@@ -4215,36 +4361,40 @@ object uPickleImplicits {
   }
 
   implicit lazy val messageentityCodec: ReadWriter[MessageEntity] = {
-    val typeKey   = upack.Str("type")
-    val offsetKey = upack.Str("offset")
-    val lengthKey = upack.Str("length")
-    val urlKey    = upack.Str("url")
-    val userKey   = upack.Str("user")
+    val typeKey     = upack.Str("type")
+    val offsetKey   = upack.Str("offset")
+    val lengthKey   = upack.Str("length")
+    val urlKey      = upack.Str("url")
+    val userKey     = upack.Str("user")
+    val languageKey = upack.Str("language")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          typeKey   -> writeMsg(x.`type`),
-          offsetKey -> writeMsg(x.offset),
-          lengthKey -> writeMsg(x.length),
-          urlKey    -> writeMsg(x.url),
-          userKey   -> writeMsg(x.user)
+          typeKey     -> writeMsg(x.`type`),
+          offsetKey   -> writeMsg(x.offset),
+          lengthKey   -> writeMsg(x.length),
+          urlKey      -> writeMsg(x.url),
+          userKey     -> writeMsg(x.user),
+          languageKey -> writeMsg(x.language)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          `type` <- m.get(typeKey).map(x => readBinary[String](x))
-          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
-          length <- m.get(lengthKey).map(x => readBinary[Int](x))
-          url    <- m.get(urlKey).map(x => readBinary[Option[String]](x))
-          user   <- m.get(userKey).map(x => readBinary[Option[User]](x))
+          `type`   <- m.get(typeKey).map(x => readBinary[String](x))
+          offset   <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length   <- m.get(lengthKey).map(x => readBinary[Int](x))
+          url      <- m.get(urlKey).map(x => readBinary[Option[String]](x))
+          user     <- m.get(userKey).map(x => readBinary[Option[User]](x))
+          language <- m.get(languageKey).map(x => readBinary[Option[String]](x))
         } yield {
           MessageEntity(
             `type` = `type`,
             offset = offset,
             length = length,
             url = url,
-            user = user
+            user = user,
+            language = language
           )
         }
         result.get
@@ -4253,38 +4403,42 @@ object uPickleImplicits {
   }
 
   implicit lazy val videoCodec: ReadWriter[Video] = {
-    val fileIdKey   = upack.Str("fileId")
-    val widthKey    = upack.Str("width")
-    val heightKey   = upack.Str("height")
-    val durationKey = upack.Str("duration")
-    val thumbKey    = upack.Str("thumb")
-    val mimeTypeKey = upack.Str("mimeType")
-    val fileSizeKey = upack.Str("fileSize")
+    val fileIdKey       = upack.Str("fileId")
+    val fileUniqueIdKey = upack.Str("fileUniqueId")
+    val widthKey        = upack.Str("width")
+    val heightKey       = upack.Str("height")
+    val durationKey     = upack.Str("duration")
+    val thumbKey        = upack.Str("thumb")
+    val mimeTypeKey     = upack.Str("mimeType")
+    val fileSizeKey     = upack.Str("fileSize")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          fileIdKey   -> writeMsg(x.fileId),
-          widthKey    -> writeMsg(x.width),
-          heightKey   -> writeMsg(x.height),
-          durationKey -> writeMsg(x.duration),
-          thumbKey    -> writeMsg(x.thumb),
-          mimeTypeKey -> writeMsg(x.mimeType),
-          fileSizeKey -> writeMsg(x.fileSize)
+          fileIdKey       -> writeMsg(x.fileId),
+          fileUniqueIdKey -> writeMsg(x.fileUniqueId),
+          widthKey        -> writeMsg(x.width),
+          heightKey       -> writeMsg(x.height),
+          durationKey     -> writeMsg(x.duration),
+          thumbKey        -> writeMsg(x.thumb),
+          mimeTypeKey     -> writeMsg(x.mimeType),
+          fileSizeKey     -> writeMsg(x.fileSize)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          fileId   <- m.get(fileIdKey).map(x => readBinary[String](x))
-          width    <- m.get(widthKey).map(x => readBinary[Int](x))
-          height   <- m.get(heightKey).map(x => readBinary[Int](x))
-          duration <- m.get(durationKey).map(x => readBinary[Int](x))
-          thumb    <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
-          mimeType <- m.get(mimeTypeKey).map(x => readBinary[Option[String]](x))
-          fileSize <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
+          fileId       <- m.get(fileIdKey).map(x => readBinary[String](x))
+          fileUniqueId <- m.get(fileUniqueIdKey).map(x => readBinary[String](x))
+          width        <- m.get(widthKey).map(x => readBinary[Int](x))
+          height       <- m.get(heightKey).map(x => readBinary[Int](x))
+          duration     <- m.get(durationKey).map(x => readBinary[Int](x))
+          thumb        <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
+          mimeType     <- m.get(mimeTypeKey).map(x => readBinary[Option[String]](x))
+          fileSize     <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
         } yield {
           Video(
             fileId = fileId,
+            fileUniqueId = fileUniqueId,
             width = width,
             height = height,
             duration = duration,
@@ -4299,32 +4453,36 @@ object uPickleImplicits {
   }
 
   implicit lazy val documentCodec: ReadWriter[Document] = {
-    val fileIdKey   = upack.Str("fileId")
-    val thumbKey    = upack.Str("thumb")
-    val fileNameKey = upack.Str("fileName")
-    val mimeTypeKey = upack.Str("mimeType")
-    val fileSizeKey = upack.Str("fileSize")
+    val fileIdKey       = upack.Str("fileId")
+    val fileUniqueIdKey = upack.Str("fileUniqueId")
+    val thumbKey        = upack.Str("thumb")
+    val fileNameKey     = upack.Str("fileName")
+    val mimeTypeKey     = upack.Str("mimeType")
+    val fileSizeKey     = upack.Str("fileSize")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          fileIdKey   -> writeMsg(x.fileId),
-          thumbKey    -> writeMsg(x.thumb),
-          fileNameKey -> writeMsg(x.fileName),
-          mimeTypeKey -> writeMsg(x.mimeType),
-          fileSizeKey -> writeMsg(x.fileSize)
+          fileIdKey       -> writeMsg(x.fileId),
+          fileUniqueIdKey -> writeMsg(x.fileUniqueId),
+          thumbKey        -> writeMsg(x.thumb),
+          fileNameKey     -> writeMsg(x.fileName),
+          mimeTypeKey     -> writeMsg(x.mimeType),
+          fileSizeKey     -> writeMsg(x.fileSize)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          fileId   <- m.get(fileIdKey).map(x => readBinary[String](x))
-          thumb    <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
-          fileName <- m.get(fileNameKey).map(x => readBinary[Option[String]](x))
-          mimeType <- m.get(mimeTypeKey).map(x => readBinary[Option[String]](x))
-          fileSize <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
+          fileId       <- m.get(fileIdKey).map(x => readBinary[String](x))
+          fileUniqueId <- m.get(fileUniqueIdKey).map(x => readBinary[String](x))
+          thumb        <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
+          fileName     <- m.get(fileNameKey).map(x => readBinary[Option[String]](x))
+          mimeType     <- m.get(mimeTypeKey).map(x => readBinary[Option[String]](x))
+          fileSize     <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
         } yield {
           Document(
             fileId = fileId,
+            fileUniqueId = fileUniqueId,
             thumb = thumb,
             fileName = fileName,
             mimeType = mimeType,
@@ -4348,6 +4506,7 @@ object uPickleImplicits {
     val shippingQueryKey      = upack.Str("shippingQuery")
     val preCheckoutQueryKey   = upack.Str("preCheckoutQuery")
     val pollKey               = upack.Str("poll")
+    val pollAnswerKey         = upack.Str("pollAnswer")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
@@ -4361,7 +4520,8 @@ object uPickleImplicits {
           callbackQueryKey      -> writeMsg(x.callbackQuery),
           shippingQueryKey      -> writeMsg(x.shippingQuery),
           preCheckoutQueryKey   -> writeMsg(x.preCheckoutQuery),
-          pollKey               -> writeMsg(x.poll)
+          pollKey               -> writeMsg(x.poll),
+          pollAnswerKey         -> writeMsg(x.pollAnswer)
         )
       },
       msg => {
@@ -4381,7 +4541,8 @@ object uPickleImplicits {
           preCheckoutQuery <- m
             .get(preCheckoutQueryKey)
             .map(x => readBinary[Option[PreCheckoutQuery]](x))
-          poll <- m.get(pollKey).map(x => readBinary[Option[Poll]](x))
+          poll       <- m.get(pollKey).map(x => readBinary[Option[Poll]](x))
+          pollAnswer <- m.get(pollAnswerKey).map(x => readBinary[Option[PollAnswer]](x))
         } yield {
           HandleUpdateReq(
             updateId = updateId,
@@ -4394,7 +4555,8 @@ object uPickleImplicits {
             callbackQuery = callbackQuery,
             shippingQuery = shippingQuery,
             preCheckoutQuery = preCheckoutQuery,
-            poll = poll
+            poll = poll,
+            pollAnswer = pollAnswer
           )
         }
         result.get
@@ -6021,14 +6183,15 @@ object CirceImplicits {
     (x: Animation) => {
       Json.fromFields(
         List(
-          "file_id"   -> x.fileId.asJson,
-          "width"     -> x.width.asJson,
-          "height"    -> x.height.asJson,
-          "duration"  -> x.duration.asJson,
-          "thumb"     -> x.thumb.asJson,
-          "file_name" -> x.fileName.asJson,
-          "mime_type" -> x.mimeType.asJson,
-          "file_size" -> x.fileSize.asJson
+          "file_id"        -> x.fileId.asJson,
+          "file_unique_id" -> x.fileUniqueId.asJson,
+          "width"          -> x.width.asJson,
+          "height"         -> x.height.asJson,
+          "duration"       -> x.duration.asJson,
+          "thumb"          -> x.thumb.asJson,
+          "file_name"      -> x.fileName.asJson,
+          "mime_type"      -> x.mimeType.asJson,
+          "file_size"      -> x.fileSize.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6036,23 +6199,27 @@ object CirceImplicits {
   implicit lazy val animationDecoder: Decoder[Animation] =
     Decoder.instance { h =>
       for {
-        _fileId   <- h.get[String]("file_id")
-        _width    <- h.get[Int]("width")
-        _height   <- h.get[Int]("height")
-        _duration <- h.get[Int]("duration")
-        _thumb    <- h.get[Option[PhotoSize]]("thumb")
-        _fileName <- h.get[Option[String]]("file_name")
-        _mimeType <- h.get[Option[String]]("mime_type")
-        _fileSize <- h.get[Option[Int]]("file_size")
+        _fileId       <- h.get[String]("file_id")
+        _fileUniqueId <- h.get[String]("file_unique_id")
+        _width        <- h.get[Int]("width")
+        _height       <- h.get[Int]("height")
+        _duration     <- h.get[Int]("duration")
+        _thumb        <- h.get[Option[PhotoSize]]("thumb")
+        _fileName     <- h.get[Option[String]]("file_name")
+        _mimeType     <- h.get[Option[String]]("mime_type")
+        _fileSize     <- h.get[Option[Int]]("file_size")
       } yield {
-        Animation(fileId = _fileId,
-                  width = _width,
-                  height = _height,
-                  duration = _duration,
-                  thumb = _thumb,
-                  fileName = _fileName,
-                  mimeType = _mimeType,
-                  fileSize = _fileSize)
+        Animation(
+          fileId = _fileId,
+          fileUniqueId = _fileUniqueId,
+          width = _width,
+          height = _height,
+          duration = _duration,
+          thumb = _thumb,
+          fileName = _fileName,
+          mimeType = _mimeType,
+          fileSize = _fileSize
+        )
       }
     }
 
@@ -6071,6 +6238,7 @@ object CirceImplicits {
           "invite_link"         -> x.inviteLink.asJson,
           "pinned_message"      -> x.pinnedMessage.asJson,
           "permissions"         -> x.permissions.asJson,
+          "slow_mode_delay"     -> x.slowModeDelay.asJson,
           "sticker_set_name"    -> x.stickerSetName.asJson,
           "can_set_sticker_set" -> x.canSetStickerSet.asJson
         ).filter(!_._2.isNull)
@@ -6091,6 +6259,7 @@ object CirceImplicits {
         _inviteLink       <- h.get[Option[String]]("invite_link")
         _pinnedMessage    <- h.get[Option[Message]]("pinned_message")
         _permissions      <- h.get[Option[ChatPermissions]]("permissions")
+        _slowModeDelay    <- h.get[Option[Int]]("slow_mode_delay")
         _stickerSetName   <- h.get[Option[String]]("sticker_set_name")
         _canSetStickerSet <- h.get[Option[Boolean]]("can_set_sticker_set")
       } yield {
@@ -6106,6 +6275,7 @@ object CirceImplicits {
           inviteLink = _inviteLink,
           pinnedMessage = _pinnedMessage,
           permissions = _permissions,
+          slowModeDelay = _slowModeDelay,
           stickerSetName = _stickerSetName,
           canSetStickerSet = _canSetStickerSet
         )
@@ -6116,11 +6286,12 @@ object CirceImplicits {
     (x: VideoNote) => {
       Json.fromFields(
         List(
-          "file_id"   -> x.fileId.asJson,
-          "length"    -> x.length.asJson,
-          "duration"  -> x.duration.asJson,
-          "thumb"     -> x.thumb.asJson,
-          "file_size" -> x.fileSize.asJson
+          "file_id"        -> x.fileId.asJson,
+          "file_unique_id" -> x.fileUniqueId.asJson,
+          "length"         -> x.length.asJson,
+          "duration"       -> x.duration.asJson,
+          "thumb"          -> x.thumb.asJson,
+          "file_size"      -> x.fileSize.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6128,13 +6299,15 @@ object CirceImplicits {
   implicit lazy val videonoteDecoder: Decoder[VideoNote] =
     Decoder.instance { h =>
       for {
-        _fileId   <- h.get[String]("file_id")
-        _length   <- h.get[Int]("length")
-        _duration <- h.get[Int]("duration")
-        _thumb    <- h.get[Option[PhotoSize]]("thumb")
-        _fileSize <- h.get[Option[Int]]("file_size")
+        _fileId       <- h.get[String]("file_id")
+        _fileUniqueId <- h.get[String]("file_unique_id")
+        _length       <- h.get[Int]("length")
+        _duration     <- h.get[Int]("duration")
+        _thumb        <- h.get[Option[PhotoSize]]("thumb")
+        _fileSize     <- h.get[Option[Int]]("file_size")
       } yield {
         VideoNote(fileId = _fileId,
+                  fileUniqueId = _fileUniqueId,
                   length = _length,
                   duration = _duration,
                   thumb = _thumb,
@@ -6326,7 +6499,8 @@ object CirceImplicits {
           "callback_query"       -> x.callbackQuery.asJson,
           "shipping_query"       -> x.shippingQuery.asJson,
           "pre_checkout_query"   -> x.preCheckoutQuery.asJson,
-          "poll"                 -> x.poll.asJson
+          "poll"                 -> x.poll.asJson,
+          "poll_answer"          -> x.pollAnswer.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6345,6 +6519,7 @@ object CirceImplicits {
         _shippingQuery      <- h.get[Option[ShippingQuery]]("shipping_query")
         _preCheckoutQuery   <- h.get[Option[PreCheckoutQuery]]("pre_checkout_query")
         _poll               <- h.get[Option[Poll]]("poll")
+        _pollAnswer         <- h.get[Option[PollAnswer]]("poll_answer")
       } yield {
         Update(
           updateId = _updateId,
@@ -6357,7 +6532,8 @@ object CirceImplicits {
           callbackQuery = _callbackQuery,
           shippingQuery = _shippingQuery,
           preCheckoutQuery = _preCheckoutQuery,
-          poll = _poll
+          poll = _poll,
+          pollAnswer = _pollAnswer
         )
       }
     }
@@ -6396,7 +6572,8 @@ object CirceImplicits {
         List(
           "text"             -> x.text.asJson,
           "request_contact"  -> x.requestContact.asJson,
-          "request_location" -> x.requestLocation.asJson
+          "request_location" -> x.requestLocation.asJson,
+          "request_poll"     -> x.requestPoll.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6407,10 +6584,12 @@ object CirceImplicits {
         _text            <- h.get[String]("text")
         _requestContact  <- h.get[Option[Boolean]]("request_contact")
         _requestLocation <- h.get[Option[Boolean]]("request_location")
+        _requestPoll     <- h.get[Option[KeyboardButtonPollType]]("request_poll")
       } yield {
         KeyboardButton(text = _text,
                        requestContact = _requestContact,
-                       requestLocation = _requestLocation)
+                       requestLocation = _requestLocation,
+                       requestPoll = _requestPoll)
       }
     }
 
@@ -6418,9 +6597,10 @@ object CirceImplicits {
     (x: PassportFile) => {
       Json.fromFields(
         List(
-          "file_id"   -> x.fileId.asJson,
-          "file_size" -> x.fileSize.asJson,
-          "file_date" -> x.fileDate.asJson
+          "file_id"        -> x.fileId.asJson,
+          "file_unique_id" -> x.fileUniqueId.asJson,
+          "file_size"      -> x.fileSize.asJson,
+          "file_date"      -> x.fileDate.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6428,11 +6608,15 @@ object CirceImplicits {
   implicit lazy val passportfileDecoder: Decoder[PassportFile] =
     Decoder.instance { h =>
       for {
-        _fileId   <- h.get[String]("file_id")
-        _fileSize <- h.get[Int]("file_size")
-        _fileDate <- h.get[Int]("file_date")
+        _fileId       <- h.get[String]("file_id")
+        _fileUniqueId <- h.get[String]("file_unique_id")
+        _fileSize     <- h.get[Int]("file_size")
+        _fileDate     <- h.get[Int]("file_date")
       } yield {
-        PassportFile(fileId = _fileId, fileSize = _fileSize, fileDate = _fileDate)
+        PassportFile(fileId = _fileId,
+                     fileUniqueId = _fileUniqueId,
+                     fileSize = _fileSize,
+                     fileDate = _fileDate)
       }
     }
 
@@ -6440,10 +6624,11 @@ object CirceImplicits {
     (x: PhotoSize) => {
       Json.fromFields(
         List(
-          "file_id"   -> x.fileId.asJson,
-          "width"     -> x.width.asJson,
-          "height"    -> x.height.asJson,
-          "file_size" -> x.fileSize.asJson
+          "file_id"        -> x.fileId.asJson,
+          "file_unique_id" -> x.fileUniqueId.asJson,
+          "width"          -> x.width.asJson,
+          "height"         -> x.height.asJson,
+          "file_size"      -> x.fileSize.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6451,12 +6636,35 @@ object CirceImplicits {
   implicit lazy val photosizeDecoder: Decoder[PhotoSize] =
     Decoder.instance { h =>
       for {
-        _fileId   <- h.get[String]("file_id")
-        _width    <- h.get[Int]("width")
-        _height   <- h.get[Int]("height")
-        _fileSize <- h.get[Option[Int]]("file_size")
+        _fileId       <- h.get[String]("file_id")
+        _fileUniqueId <- h.get[String]("file_unique_id")
+        _width        <- h.get[Int]("width")
+        _height       <- h.get[Int]("height")
+        _fileSize     <- h.get[Option[Int]]("file_size")
       } yield {
-        PhotoSize(fileId = _fileId, width = _width, height = _height, fileSize = _fileSize)
+        PhotoSize(fileId = _fileId,
+                  fileUniqueId = _fileUniqueId,
+                  width = _width,
+                  height = _height,
+                  fileSize = _fileSize)
+      }
+    }
+
+  implicit lazy val keyboardbuttonpolltypeEncoder: Encoder[KeyboardButtonPollType] =
+    (x: KeyboardButtonPollType) => {
+      Json.fromFields(
+        List(
+          "type" -> x.`type`.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val keyboardbuttonpolltypeDecoder: Decoder[KeyboardButtonPollType] =
+    Decoder.instance { h =>
+      for {
+        _type <- h.get[Option[String]]("type")
+      } yield {
+        KeyboardButtonPollType(`type` = _type)
       }
     }
 
@@ -6464,10 +6672,15 @@ object CirceImplicits {
     (x: Poll) => {
       Json.fromFields(
         List(
-          "id"        -> x.id.asJson,
-          "question"  -> x.question.asJson,
-          "options"   -> x.options.asJson,
-          "is_closed" -> x.isClosed.asJson
+          "id"                      -> x.id.asJson,
+          "question"                -> x.question.asJson,
+          "options"                 -> x.options.asJson,
+          "total_voter_count"       -> x.totalVoterCount.asJson,
+          "is_closed"               -> x.isClosed.asJson,
+          "is_anonymous"            -> x.isAnonymous.asJson,
+          "type"                    -> x.`type`.asJson,
+          "allows_multiple_answers" -> x.allowsMultipleAnswers.asJson,
+          "correct_option_id"       -> x.correctOptionId.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6475,12 +6688,27 @@ object CirceImplicits {
   implicit lazy val pollDecoder: Decoder[Poll] =
     Decoder.instance { h =>
       for {
-        _id       <- h.get[String]("id")
-        _question <- h.get[String]("question")
-        _options  <- h.getOrElse[List[PollOption]]("options")(List.empty)
-        _isClosed <- h.get[Boolean]("is_closed")
+        _id                    <- h.get[String]("id")
+        _question              <- h.get[String]("question")
+        _options               <- h.getOrElse[List[PollOption]]("options")(List.empty)
+        _totalVoterCount       <- h.get[Int]("total_voter_count")
+        _isClosed              <- h.get[Boolean]("is_closed")
+        _isAnonymous           <- h.get[Boolean]("is_anonymous")
+        _type                  <- h.get[String]("type")
+        _allowsMultipleAnswers <- h.get[Boolean]("allows_multiple_answers")
+        _correctOptionId       <- h.get[Option[Int]]("correct_option_id")
       } yield {
-        Poll(id = _id, question = _question, options = _options, isClosed = _isClosed)
+        Poll(
+          id = _id,
+          question = _question,
+          options = _options,
+          totalVoterCount = _totalVoterCount,
+          isClosed = _isClosed,
+          isAnonymous = _isAnonymous,
+          `type` = _type,
+          allowsMultipleAnswers = _allowsMultipleAnswers,
+          correctOptionId = _correctOptionId
+        )
       }
     }
 
@@ -6531,6 +6759,28 @@ object CirceImplicits {
                    isAnimated = _isAnimated,
                    containsMasks = _containsMasks,
                    stickers = _stickers)
+      }
+    }
+
+  implicit lazy val pollanswerEncoder: Encoder[PollAnswer] =
+    (x: PollAnswer) => {
+      Json.fromFields(
+        List(
+          "poll_id"    -> x.pollId.asJson,
+          "user"       -> x.user.asJson,
+          "option_ids" -> x.optionIds.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val pollanswerDecoder: Decoder[PollAnswer] =
+    Decoder.instance { h =>
+      for {
+        _pollId    <- h.get[String]("poll_id")
+        _user      <- h.get[User]("user")
+        _optionIds <- h.getOrElse[List[Int]]("option_ids")(List.empty)
+      } yield {
+        PollAnswer(pollId = _pollId, user = _user, optionIds = _optionIds)
       }
     }
 
@@ -6698,9 +6948,10 @@ object CirceImplicits {
     (x: File) => {
       Json.fromFields(
         List(
-          "file_id"   -> x.fileId.asJson,
-          "file_size" -> x.fileSize.asJson,
-          "file_path" -> x.filePath.asJson
+          "file_id"        -> x.fileId.asJson,
+          "file_unique_id" -> x.fileUniqueId.asJson,
+          "file_size"      -> x.fileSize.asJson,
+          "file_path"      -> x.filePath.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6708,11 +6959,15 @@ object CirceImplicits {
   implicit lazy val fileDecoder: Decoder[File] =
     Decoder.instance { h =>
       for {
-        _fileId   <- h.get[String]("file_id")
-        _fileSize <- h.get[Option[Int]]("file_size")
-        _filePath <- h.get[Option[String]]("file_path")
+        _fileId       <- h.get[String]("file_id")
+        _fileUniqueId <- h.get[String]("file_unique_id")
+        _fileSize     <- h.get[Option[Int]]("file_size")
+        _filePath     <- h.get[Option[String]]("file_path")
       } yield {
-        File(fileId = _fileId, fileSize = _fileSize, filePath = _filePath)
+        File(fileId = _fileId,
+             fileUniqueId = _fileUniqueId,
+             fileSize = _fileSize,
+             filePath = _filePath)
       }
     }
 
@@ -6803,13 +7058,14 @@ object CirceImplicits {
     (x: Audio) => {
       Json.fromFields(
         List(
-          "file_id"   -> x.fileId.asJson,
-          "duration"  -> x.duration.asJson,
-          "performer" -> x.performer.asJson,
-          "title"     -> x.title.asJson,
-          "mime_type" -> x.mimeType.asJson,
-          "file_size" -> x.fileSize.asJson,
-          "thumb"     -> x.thumb.asJson
+          "file_id"        -> x.fileId.asJson,
+          "file_unique_id" -> x.fileUniqueId.asJson,
+          "duration"       -> x.duration.asJson,
+          "performer"      -> x.performer.asJson,
+          "title"          -> x.title.asJson,
+          "mime_type"      -> x.mimeType.asJson,
+          "file_size"      -> x.fileSize.asJson,
+          "thumb"          -> x.thumb.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6817,15 +7073,17 @@ object CirceImplicits {
   implicit lazy val audioDecoder: Decoder[Audio] =
     Decoder.instance { h =>
       for {
-        _fileId    <- h.get[String]("file_id")
-        _duration  <- h.get[Int]("duration")
-        _performer <- h.get[Option[String]]("performer")
-        _title     <- h.get[Option[String]]("title")
-        _mimeType  <- h.get[Option[String]]("mime_type")
-        _fileSize  <- h.get[Option[Int]]("file_size")
-        _thumb     <- h.get[Option[PhotoSize]]("thumb")
+        _fileId       <- h.get[String]("file_id")
+        _fileUniqueId <- h.get[String]("file_unique_id")
+        _duration     <- h.get[Int]("duration")
+        _performer    <- h.get[Option[String]]("performer")
+        _title        <- h.get[Option[String]]("title")
+        _mimeType     <- h.get[Option[String]]("mime_type")
+        _fileSize     <- h.get[Option[Int]]("file_size")
+        _thumb        <- h.get[Option[PhotoSize]]("thumb")
       } yield {
         Audio(fileId = _fileId,
+              fileUniqueId = _fileUniqueId,
               duration = _duration,
               performer = _performer,
               title = _title,
@@ -6907,8 +7165,10 @@ object CirceImplicits {
     (x: ChatPhoto) => {
       Json.fromFields(
         List(
-          "small_file_id" -> x.smallFileId.asJson,
-          "big_file_id"   -> x.bigFileId.asJson
+          "small_file_id"        -> x.smallFileId.asJson,
+          "small_file_unique_id" -> x.smallFileUniqueId.asJson,
+          "big_file_id"          -> x.bigFileId.asJson,
+          "big_file_unique_id"   -> x.bigFileUniqueId.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6916,10 +7176,15 @@ object CirceImplicits {
   implicit lazy val chatphotoDecoder: Decoder[ChatPhoto] =
     Decoder.instance { h =>
       for {
-        _smallFileId <- h.get[String]("small_file_id")
-        _bigFileId   <- h.get[String]("big_file_id")
+        _smallFileId       <- h.get[String]("small_file_id")
+        _smallFileUniqueId <- h.get[String]("small_file_unique_id")
+        _bigFileId         <- h.get[String]("big_file_id")
+        _bigFileUniqueId   <- h.get[String]("big_file_unique_id")
       } yield {
-        ChatPhoto(smallFileId = _smallFileId, bigFileId = _bigFileId)
+        ChatPhoto(smallFileId = _smallFileId,
+                  smallFileUniqueId = _smallFileUniqueId,
+                  bigFileId = _bigFileId,
+                  bigFileUniqueId = _bigFileUniqueId)
       }
     }
 
@@ -6953,12 +7218,15 @@ object CirceImplicits {
     (x: User) => {
       Json.fromFields(
         List(
-          "id"            -> x.id.asJson,
-          "is_bot"        -> x.isBot.asJson,
-          "first_name"    -> x.firstName.asJson,
-          "last_name"     -> x.lastName.asJson,
-          "username"      -> x.username.asJson,
-          "language_code" -> x.languageCode.asJson
+          "id"                          -> x.id.asJson,
+          "is_bot"                      -> x.isBot.asJson,
+          "first_name"                  -> x.firstName.asJson,
+          "last_name"                   -> x.lastName.asJson,
+          "username"                    -> x.username.asJson,
+          "language_code"               -> x.languageCode.asJson,
+          "can_join_groups"             -> x.canJoinGroups.asJson,
+          "can_read_all_group_messages" -> x.canReadAllGroupMessages.asJson,
+          "supports_inline_queries"     -> x.supportsInlineQueries.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6966,19 +7234,27 @@ object CirceImplicits {
   implicit lazy val userDecoder: Decoder[User] =
     Decoder.instance { h =>
       for {
-        _id           <- h.get[Int]("id")
-        _isBot        <- h.get[Boolean]("is_bot")
-        _firstName    <- h.get[String]("first_name")
-        _lastName     <- h.get[Option[String]]("last_name")
-        _username     <- h.get[Option[String]]("username")
-        _languageCode <- h.get[Option[String]]("language_code")
+        _id                      <- h.get[Int]("id")
+        _isBot                   <- h.get[Boolean]("is_bot")
+        _firstName               <- h.get[String]("first_name")
+        _lastName                <- h.get[Option[String]]("last_name")
+        _username                <- h.get[Option[String]]("username")
+        _languageCode            <- h.get[Option[String]]("language_code")
+        _canJoinGroups           <- h.get[Option[Boolean]]("can_join_groups")
+        _canReadAllGroupMessages <- h.get[Option[Boolean]]("can_read_all_group_messages")
+        _supportsInlineQueries   <- h.get[Option[Boolean]]("supports_inline_queries")
       } yield {
-        User(id = _id,
-             isBot = _isBot,
-             firstName = _firstName,
-             lastName = _lastName,
-             username = _username,
-             languageCode = _languageCode)
+        User(
+          id = _id,
+          isBot = _isBot,
+          firstName = _firstName,
+          lastName = _lastName,
+          username = _username,
+          languageCode = _languageCode,
+          canJoinGroups = _canJoinGroups,
+          canReadAllGroupMessages = _canReadAllGroupMessages,
+          supportsInlineQueries = _supportsInlineQueries
+        )
       }
     }
 
@@ -7033,15 +7309,16 @@ object CirceImplicits {
     (x: Sticker) => {
       Json.fromFields(
         List(
-          "file_id"       -> x.fileId.asJson,
-          "width"         -> x.width.asJson,
-          "height"        -> x.height.asJson,
-          "is_animated"   -> x.isAnimated.asJson,
-          "thumb"         -> x.thumb.asJson,
-          "emoji"         -> x.emoji.asJson,
-          "set_name"      -> x.setName.asJson,
-          "mask_position" -> x.maskPosition.asJson,
-          "file_size"     -> x.fileSize.asJson
+          "file_id"        -> x.fileId.asJson,
+          "file_unique_id" -> x.fileUniqueId.asJson,
+          "width"          -> x.width.asJson,
+          "height"         -> x.height.asJson,
+          "is_animated"    -> x.isAnimated.asJson,
+          "thumb"          -> x.thumb.asJson,
+          "emoji"          -> x.emoji.asJson,
+          "set_name"       -> x.setName.asJson,
+          "mask_position"  -> x.maskPosition.asJson,
+          "file_size"      -> x.fileSize.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -7050,6 +7327,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _fileId       <- h.get[String]("file_id")
+        _fileUniqueId <- h.get[String]("file_unique_id")
         _width        <- h.get[Int]("width")
         _height       <- h.get[Int]("height")
         _isAnimated   <- h.get[Boolean]("is_animated")
@@ -7061,6 +7339,7 @@ object CirceImplicits {
       } yield {
         Sticker(
           fileId = _fileId,
+          fileUniqueId = _fileUniqueId,
           width = _width,
           height = _height,
           isAnimated = _isAnimated,
@@ -7383,10 +7662,11 @@ object CirceImplicits {
     (x: Voice) => {
       Json.fromFields(
         List(
-          "file_id"   -> x.fileId.asJson,
-          "duration"  -> x.duration.asJson,
-          "mime_type" -> x.mimeType.asJson,
-          "file_size" -> x.fileSize.asJson
+          "file_id"        -> x.fileId.asJson,
+          "file_unique_id" -> x.fileUniqueId.asJson,
+          "duration"       -> x.duration.asJson,
+          "mime_type"      -> x.mimeType.asJson,
+          "file_size"      -> x.fileSize.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -7394,12 +7674,17 @@ object CirceImplicits {
   implicit lazy val voiceDecoder: Decoder[Voice] =
     Decoder.instance { h =>
       for {
-        _fileId   <- h.get[String]("file_id")
-        _duration <- h.get[Int]("duration")
-        _mimeType <- h.get[Option[String]]("mime_type")
-        _fileSize <- h.get[Option[Int]]("file_size")
+        _fileId       <- h.get[String]("file_id")
+        _fileUniqueId <- h.get[String]("file_unique_id")
+        _duration     <- h.get[Int]("duration")
+        _mimeType     <- h.get[Option[String]]("mime_type")
+        _fileSize     <- h.get[Option[Int]]("file_size")
       } yield {
-        Voice(fileId = _fileId, duration = _duration, mimeType = _mimeType, fileSize = _fileSize)
+        Voice(fileId = _fileId,
+              fileUniqueId = _fileUniqueId,
+              duration = _duration,
+              mimeType = _mimeType,
+              fileSize = _fileSize)
       }
     }
 
@@ -7492,6 +7777,7 @@ object CirceImplicits {
         List(
           "user"                      -> x.user.asJson,
           "status"                    -> x.status.asJson,
+          "custom_title"              -> x.customTitle.asJson,
           "until_date"                -> x.untilDate.asJson,
           "can_be_edited"             -> x.canBeEdited.asJson,
           "can_post_messages"         -> x.canPostMessages.asJson,
@@ -7517,6 +7803,7 @@ object CirceImplicits {
       for {
         _user                  <- h.get[User]("user")
         _status                <- h.get[String]("status")
+        _customTitle           <- h.get[Option[String]]("custom_title")
         _untilDate             <- h.get[Option[Int]]("until_date")
         _canBeEdited           <- h.get[Option[Boolean]]("can_be_edited")
         _canPostMessages       <- h.get[Option[Boolean]]("can_post_messages")
@@ -7537,6 +7824,7 @@ object CirceImplicits {
         ChatMember(
           user = _user,
           status = _status,
+          customTitle = _customTitle,
           untilDate = _untilDate,
           canBeEdited = _canBeEdited,
           canPostMessages = _canPostMessages,
@@ -7561,11 +7849,12 @@ object CirceImplicits {
     (x: MessageEntity) => {
       Json.fromFields(
         List(
-          "type"   -> x.`type`.asJson,
-          "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson,
-          "url"    -> x.url.asJson,
-          "user"   -> x.user.asJson
+          "type"     -> x.`type`.asJson,
+          "offset"   -> x.offset.asJson,
+          "length"   -> x.length.asJson,
+          "url"      -> x.url.asJson,
+          "user"     -> x.user.asJson,
+          "language" -> x.language.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -7573,13 +7862,19 @@ object CirceImplicits {
   implicit lazy val messageentityDecoder: Decoder[MessageEntity] =
     Decoder.instance { h =>
       for {
-        _type   <- h.get[String]("type")
-        _offset <- h.get[Int]("offset")
-        _length <- h.get[Int]("length")
-        _url    <- h.get[Option[String]]("url")
-        _user   <- h.get[Option[User]]("user")
+        _type     <- h.get[String]("type")
+        _offset   <- h.get[Int]("offset")
+        _length   <- h.get[Int]("length")
+        _url      <- h.get[Option[String]]("url")
+        _user     <- h.get[Option[User]]("user")
+        _language <- h.get[Option[String]]("language")
       } yield {
-        MessageEntity(`type` = _type, offset = _offset, length = _length, url = _url, user = _user)
+        MessageEntity(`type` = _type,
+                      offset = _offset,
+                      length = _length,
+                      url = _url,
+                      user = _user,
+                      language = _language)
       }
     }
 
@@ -7587,13 +7882,14 @@ object CirceImplicits {
     (x: Video) => {
       Json.fromFields(
         List(
-          "file_id"   -> x.fileId.asJson,
-          "width"     -> x.width.asJson,
-          "height"    -> x.height.asJson,
-          "duration"  -> x.duration.asJson,
-          "thumb"     -> x.thumb.asJson,
-          "mime_type" -> x.mimeType.asJson,
-          "file_size" -> x.fileSize.asJson
+          "file_id"        -> x.fileId.asJson,
+          "file_unique_id" -> x.fileUniqueId.asJson,
+          "width"          -> x.width.asJson,
+          "height"         -> x.height.asJson,
+          "duration"       -> x.duration.asJson,
+          "thumb"          -> x.thumb.asJson,
+          "mime_type"      -> x.mimeType.asJson,
+          "file_size"      -> x.fileSize.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -7601,15 +7897,17 @@ object CirceImplicits {
   implicit lazy val videoDecoder: Decoder[Video] =
     Decoder.instance { h =>
       for {
-        _fileId   <- h.get[String]("file_id")
-        _width    <- h.get[Int]("width")
-        _height   <- h.get[Int]("height")
-        _duration <- h.get[Int]("duration")
-        _thumb    <- h.get[Option[PhotoSize]]("thumb")
-        _mimeType <- h.get[Option[String]]("mime_type")
-        _fileSize <- h.get[Option[Int]]("file_size")
+        _fileId       <- h.get[String]("file_id")
+        _fileUniqueId <- h.get[String]("file_unique_id")
+        _width        <- h.get[Int]("width")
+        _height       <- h.get[Int]("height")
+        _duration     <- h.get[Int]("duration")
+        _thumb        <- h.get[Option[PhotoSize]]("thumb")
+        _mimeType     <- h.get[Option[String]]("mime_type")
+        _fileSize     <- h.get[Option[Int]]("file_size")
       } yield {
         Video(fileId = _fileId,
+              fileUniqueId = _fileUniqueId,
               width = _width,
               height = _height,
               duration = _duration,
@@ -7623,11 +7921,12 @@ object CirceImplicits {
     (x: Document) => {
       Json.fromFields(
         List(
-          "file_id"   -> x.fileId.asJson,
-          "thumb"     -> x.thumb.asJson,
-          "file_name" -> x.fileName.asJson,
-          "mime_type" -> x.mimeType.asJson,
-          "file_size" -> x.fileSize.asJson
+          "file_id"        -> x.fileId.asJson,
+          "file_unique_id" -> x.fileUniqueId.asJson,
+          "thumb"          -> x.thumb.asJson,
+          "file_name"      -> x.fileName.asJson,
+          "mime_type"      -> x.mimeType.asJson,
+          "file_size"      -> x.fileSize.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -7635,13 +7934,15 @@ object CirceImplicits {
   implicit lazy val documentDecoder: Decoder[Document] =
     Decoder.instance { h =>
       for {
-        _fileId   <- h.get[String]("file_id")
-        _thumb    <- h.get[Option[PhotoSize]]("thumb")
-        _fileName <- h.get[Option[String]]("file_name")
-        _mimeType <- h.get[Option[String]]("mime_type")
-        _fileSize <- h.get[Option[Int]]("file_size")
+        _fileId       <- h.get[String]("file_id")
+        _fileUniqueId <- h.get[String]("file_unique_id")
+        _thumb        <- h.get[Option[PhotoSize]]("thumb")
+        _fileName     <- h.get[Option[String]]("file_name")
+        _mimeType     <- h.get[Option[String]]("mime_type")
+        _fileSize     <- h.get[Option[Int]]("file_size")
       } yield {
         Document(fileId = _fileId,
+                 fileUniqueId = _fileUniqueId,
                  thumb = _thumb,
                  fileName = _fileName,
                  mimeType = _mimeType,
@@ -7663,7 +7964,8 @@ object CirceImplicits {
           "callback_query"       -> x.callbackQuery.asJson,
           "shipping_query"       -> x.shippingQuery.asJson,
           "pre_checkout_query"   -> x.preCheckoutQuery.asJson,
-          "poll"                 -> x.poll.asJson
+          "poll"                 -> x.poll.asJson,
+          "poll_answer"          -> x.pollAnswer.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -7682,6 +7984,7 @@ object CirceImplicits {
         _shippingQuery      <- h.get[Option[ShippingQuery]]("shipping_query")
         _preCheckoutQuery   <- h.get[Option[PreCheckoutQuery]]("pre_checkout_query")
         _poll               <- h.get[Option[Poll]]("poll")
+        _pollAnswer         <- h.get[Option[PollAnswer]]("poll_answer")
       } yield {
         HandleUpdateReq(
           updateId = _updateId,
@@ -7694,7 +7997,8 @@ object CirceImplicits {
           callbackQuery = _callbackQuery,
           shippingQuery = _shippingQuery,
           preCheckoutQuery = _preCheckoutQuery,
-          poll = _poll
+          poll = _poll,
+          pollAnswer = _pollAnswer
         )
       }
     }

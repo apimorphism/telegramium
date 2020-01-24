@@ -2,8 +2,13 @@ package telegramium.bots
 
 /** This object represents a video file.*/
 final case class Video(
-                       /** Identifier for this file*/
+                       /** Identifier for this file, which can be used to download or
+                         * reuse the file*/
                        fileId: String,
+                       /** Unique identifier for this file, which is supposed to be
+                         * the same over time and for different bots. Can't be used to
+                         * download or reuse the file.*/
+                       fileUniqueId: String,
                        /** Video width as defined by sender*/
                        width: Int,
                        /** Video height as defined by sender*/

@@ -13,4 +13,13 @@ final case class User(
                       /** Optional. User‘s or bot’s username*/
                       username: Option[String] = Option.empty,
                       /** Optional. IETF language tag of the user's language*/
-                      languageCode: Option[String] = Option.empty)
+                      languageCode: Option[String] = Option.empty,
+                      /** Optional. True, if the bot can be invited to groups.
+                        * Returned only in getMe.*/
+                      canJoinGroups: Option[Boolean] = Option.empty,
+                      /** Optional. True, if privacy mode is disabled for the bot.
+                        * Returned only in getMe.*/
+                      canReadAllGroupMessages: Option[Boolean] = Option.empty,
+                      /** Optional. True, if the bot supports inline queries.
+                        * Returned only in getMe.*/
+                      supportsInlineQueries: Option[Boolean] = Option.empty)

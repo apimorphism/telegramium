@@ -30,8 +30,8 @@ trait Api[F[_]] {
     * UserProfilePhotos object.*/
   def getUserProfilePhotos(x: GetUserProfilePhotosReq): F[GetUserProfilePhotosRes]
 
-  /** Use this method to send a native poll. A native poll can't be sent to a private
-    * chat. On success, the sent Message is returned.*/
+  /** Use this method to send a native poll. On success, the sent Message is
+    * returned.*/
   def sendPoll(x: SendPollReq): F[SendPollRes]
 
   /** Use this method to send phone contacts. On success, the sent Message is
@@ -293,6 +293,11 @@ trait Api[F[_]] {
   /** Use this method to move a sticker in a set created by the bot to a specific
     * position . Returns True on success.*/
   def setStickerPositionInSet(x: SetStickerPositionInSetReq): F[SetStickerPositionInSetRes]
+
+  /** Use this method to set a custom title for an administrator in a supergroup
+    * promoted by the bot. Returns True on success.*/
+  def setChatAdministratorCustomTitle(
+      x: SetChatAdministratorCustomTitleReq): F[SetChatAdministratorCustomTitleRes]
 
   /** Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without
     * sound). On success, the sent Message is returned. Bots can currently send

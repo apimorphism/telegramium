@@ -7,6 +7,9 @@ final case class ChatMember(
                             /** The member's status in the chat. Can be “creator”,
                               * “administrator”, “member”, “restricted”, “left” or “kicked”*/
                             status: String,
+                            /** Optional. Owner and administrators only. Custom title for
+                              * this user*/
+                            customTitle: Option[String] = Option.empty,
                             /** Optional. Restricted and kicked only. Date when
                               * restrictions will be lifted for this user; unix time*/
                             untilDate: Option[Int] = Option.empty,

@@ -41,4 +41,8 @@ final case class Update(
                         preCheckoutQuery: Option[PreCheckoutQuery] = Option.empty,
                         /** Optional. New poll state. Bots receive only updates about
                           * stopped polls and polls, which are sent by the bot*/
-                        poll: Option[Poll] = Option.empty)
+                        poll: Option[Poll] = Option.empty,
+                        /** Optional. A user changed their answer in a non-anonymous
+                          * poll. Bots receive new votes only in polls that were sent by
+                          * the bot itself.*/
+                        pollAnswer: Option[PollAnswer] = Option.empty)

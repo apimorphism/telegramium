@@ -168,8 +168,8 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   }
 
-  /** Use this method to send a native poll. A native poll can't be sent to a private
-          chat. On success, the sent Message is returned.  */
+  /** Use this method to send a native poll. On success, the sent Message is
+          returned.  */
   def sendPoll(x: SendPollReq): F[SendPollRes] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendPoll"))
@@ -1335,6 +1335,23 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
         .withUri(uri)
         .withEntity(x.asJson)
       res <- http.expect(req)(jsonOf[F, SetStickerPositionInSetRes])
+    } yield {
+      res
+    }
+
+  }
+
+  /** Use this method to set a custom title for an administrator in a supergroup
+          promoted by the bot. Returns True on success.  */
+  def setChatAdministratorCustomTitle(
+      x: SetChatAdministratorCustomTitleReq): F[SetChatAdministratorCustomTitleRes] = {
+    for {
+      uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setChatAdministratorCustomTitle"))
+      req = Request[F]()
+        .withMethod(GET)
+        .withUri(uri)
+        .withEntity(x.asJson)
+      res <- http.expect(req)(jsonOf[F, SetChatAdministratorCustomTitleRes])
     } yield {
       res
     }

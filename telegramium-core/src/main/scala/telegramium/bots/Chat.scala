@@ -37,6 +37,10 @@ final case class Chat(
                       /** Optional. Default chat member permissions, for groups and
                         * supergroups. Returned only in getChat.*/
                       permissions: Option[ChatPermissions] = Option.empty,
+                      /** Optional. For supergroups, the minimum allowed delay
+                        * between consecutive messages sent by each unpriviledged
+                        * user. Returned only in getChat.*/
+                      slowModeDelay: Option[Int] = Option.empty,
                       /** Optional. For supergroups, name of group sticker set.
                         * Returned only in getChat.*/
                       stickerSetName: Option[String] = Option.empty,

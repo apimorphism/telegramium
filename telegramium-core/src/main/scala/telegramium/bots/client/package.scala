@@ -423,29 +423,46 @@ object uPickleImplicits {
   }
 
   implicit lazy val sendpollreqCodec: ReadWriter[SendPollReq] = {
-    val chatIdKey              = upack.Str("chatId")
-    val questionKey            = upack.Str("question")
-    val optionsKey             = upack.Str("options")
-    val disableNotificationKey = upack.Str("disableNotification")
-    val replyToMessageIdKey    = upack.Str("replyToMessageId")
-    val replyMarkupKey         = upack.Str("replyMarkup")
+    val chatIdKey                = upack.Str("chatId")
+    val questionKey              = upack.Str("question")
+    val optionsKey               = upack.Str("options")
+    val isAnonymousKey           = upack.Str("isAnonymous")
+    val typeKey                  = upack.Str("type")
+    val allowsMultipleAnswersKey = upack.Str("allowsMultipleAnswers")
+    val correctOptionIdKey       = upack.Str("correctOptionId")
+    val isClosedKey              = upack.Str("isClosed")
+    val disableNotificationKey   = upack.Str("disableNotification")
+    val replyToMessageIdKey      = upack.Str("replyToMessageId")
+    val replyMarkupKey           = upack.Str("replyMarkup")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          chatIdKey              -> writeMsg(x.chatId),
-          questionKey            -> writeMsg(x.question),
-          optionsKey             -> writeMsg(x.options),
-          disableNotificationKey -> writeMsg(x.disableNotification),
-          replyToMessageIdKey    -> writeMsg(x.replyToMessageId),
-          replyMarkupKey         -> writeMsg(x.replyMarkup)
+          chatIdKey                -> writeMsg(x.chatId),
+          questionKey              -> writeMsg(x.question),
+          optionsKey               -> writeMsg(x.options),
+          isAnonymousKey           -> writeMsg(x.isAnonymous),
+          typeKey                  -> writeMsg(x.`type`),
+          allowsMultipleAnswersKey -> writeMsg(x.allowsMultipleAnswers),
+          correctOptionIdKey       -> writeMsg(x.correctOptionId),
+          isClosedKey              -> writeMsg(x.isClosed),
+          disableNotificationKey   -> writeMsg(x.disableNotification),
+          replyToMessageIdKey      -> writeMsg(x.replyToMessageId),
+          replyMarkupKey           -> writeMsg(x.replyMarkup)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          chatId   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          question <- m.get(questionKey).map(x => readBinary[String](x))
-          options  <- m.get(optionsKey).map(x => readBinary[List[String]](x))
+          chatId      <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          question    <- m.get(questionKey).map(x => readBinary[String](x))
+          options     <- m.get(optionsKey).map(x => readBinary[List[String]](x))
+          isAnonymous <- m.get(isAnonymousKey).map(x => readBinary[Option[Boolean]](x))
+          `type`      <- m.get(typeKey).map(x => readBinary[Option[String]](x))
+          allowsMultipleAnswers <- m
+            .get(allowsMultipleAnswersKey)
+            .map(x => readBinary[Option[Boolean]](x))
+          correctOptionId <- m.get(correctOptionIdKey).map(x => readBinary[Option[Int]](x))
+          isClosed        <- m.get(isClosedKey).map(x => readBinary[Option[Boolean]](x))
           disableNotification <- m
             .get(disableNotificationKey)
             .map(x => readBinary[Option[Boolean]](x))
@@ -456,6 +473,11 @@ object uPickleImplicits {
             chatId = chatId,
             question = question,
             options = options,
+            isAnonymous = isAnonymous,
+            `type` = `type`,
+            allowsMultipleAnswers = allowsMultipleAnswers,
+            correctOptionId = correctOptionId,
+            isClosed = isClosed,
             disableNotification = disableNotification,
             replyToMessageId = replyToMessageId,
             replyMarkup = replyMarkup
@@ -3710,6 +3732,68 @@ object uPickleImplicits {
     )
   }
 
+  implicit lazy val setchatadministratorcustomtitlereqCodec
+    : ReadWriter[SetChatAdministratorCustomTitleReq] = {
+    val chatIdKey      = upack.Str("chatId")
+    val userIdKey      = upack.Str("userId")
+    val customTitleKey = upack.Str("customTitle")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          chatIdKey      -> writeMsg(x.chatId),
+          userIdKey      -> writeMsg(x.userId),
+          customTitleKey -> writeMsg(x.customTitle)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          chatId      <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          userId      <- m.get(userIdKey).map(x => readBinary[Int](x))
+          customTitle <- m.get(customTitleKey).map(x => readBinary[String](x))
+        } yield {
+          SetChatAdministratorCustomTitleReq(
+            chatId = chatId,
+            userId = userId,
+            customTitle = customTitle
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val setchatadministratorcustomtitleresCodec
+    : ReadWriter[SetChatAdministratorCustomTitleRes] = {
+    val okKey          = upack.Str("ok")
+    val descriptionKey = upack.Str("description")
+    val resultKey      = upack.Str("result")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          okKey          -> writeMsg(x.ok),
+          descriptionKey -> writeMsg(x.description),
+          resultKey      -> writeMsg(x.result)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          ok          <- m.get(okKey).map(x => readBinary[Boolean](x))
+          description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          result      <- m.get(resultKey).map(x => readBinary[Option[Boolean]](x))
+        } yield {
+          SetChatAdministratorCustomTitleRes(
+            ok = ok,
+            description = description,
+            result = result
+          )
+        }
+        result.get
+      }
+    )
+  }
+
   implicit lazy val sendanimationreqCodec: ReadWriter[SendAnimationReq] = {
     val chatIdKey              = upack.Str("chatId")
     val animationKey           = upack.Str("animation")
@@ -4638,12 +4722,17 @@ object CirceImplicits {
     (x: SendPollReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "question"             -> x.question.asJson,
-          "options"              -> x.options.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "reply_to_message_id"  -> x.replyToMessageId.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson
+          "chat_id"                 -> x.chatId.asJson,
+          "question"                -> x.question.asJson,
+          "options"                 -> x.options.asJson,
+          "is_anonymous"            -> x.isAnonymous.asJson,
+          "type"                    -> x.`type`.asJson,
+          "allows_multiple_answers" -> x.allowsMultipleAnswers.asJson,
+          "correct_option_id"       -> x.correctOptionId.asJson,
+          "is_closed"               -> x.isClosed.asJson,
+          "disable_notification"    -> x.disableNotification.asJson,
+          "reply_to_message_id"     -> x.replyToMessageId.asJson,
+          "reply_markup"            -> x.replyMarkup.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4651,17 +4740,27 @@ object CirceImplicits {
   implicit lazy val sendpollreqDecoder: Decoder[SendPollReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[ChatId]("chat_id")
-        _question            <- h.get[String]("question")
-        _options             <- h.getOrElse[List[String]]("options")(List.empty)
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _replyToMessageId    <- h.get[Option[Int]]("reply_to_message_id")
-        _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _chatId                <- h.get[ChatId]("chat_id")
+        _question              <- h.get[String]("question")
+        _options               <- h.getOrElse[List[String]]("options")(List.empty)
+        _isAnonymous           <- h.get[Option[Boolean]]("is_anonymous")
+        _type                  <- h.get[Option[String]]("type")
+        _allowsMultipleAnswers <- h.get[Option[Boolean]]("allows_multiple_answers")
+        _correctOptionId       <- h.get[Option[Int]]("correct_option_id")
+        _isClosed              <- h.get[Option[Boolean]]("is_closed")
+        _disableNotification   <- h.get[Option[Boolean]]("disable_notification")
+        _replyToMessageId      <- h.get[Option[Int]]("reply_to_message_id")
+        _replyMarkup           <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendPollReq(
           chatId = _chatId,
           question = _question,
           options = _options,
+          isAnonymous = _isAnonymous,
+          `type` = _type,
+          allowsMultipleAnswers = _allowsMultipleAnswers,
+          correctOptionId = _correctOptionId,
+          isClosed = _isClosed,
           disableNotification = _disableNotification,
           replyToMessageId = _replyToMessageId,
           replyMarkup = _replyMarkup
@@ -7130,6 +7229,56 @@ object CirceImplicits {
         _result      <- h.get[Option[Boolean]]("result")
       } yield {
         SetStickerPositionInSetRes(ok = _ok, description = _description, result = _result)
+      }
+    }
+
+  implicit lazy val setchatadministratorcustomtitlereqEncoder
+    : Encoder[SetChatAdministratorCustomTitleReq] =
+    (x: SetChatAdministratorCustomTitleReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"      -> x.chatId.asJson,
+          "user_id"      -> x.userId.asJson,
+          "custom_title" -> x.customTitle.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setchatadministratorcustomtitlereqDecoder
+    : Decoder[SetChatAdministratorCustomTitleReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId      <- h.get[ChatId]("chat_id")
+        _userId      <- h.get[Int]("user_id")
+        _customTitle <- h.get[String]("custom_title")
+      } yield {
+        SetChatAdministratorCustomTitleReq(chatId = _chatId,
+                                           userId = _userId,
+                                           customTitle = _customTitle)
+      }
+    }
+
+  implicit lazy val setchatadministratorcustomtitleresEncoder
+    : Encoder[SetChatAdministratorCustomTitleRes] =
+    (x: SetChatAdministratorCustomTitleRes) => {
+      Json.fromFields(
+        List(
+          "ok"          -> x.ok.asJson,
+          "description" -> x.description.asJson,
+          "result"      -> x.result.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setchatadministratorcustomtitleresDecoder
+    : Decoder[SetChatAdministratorCustomTitleRes] =
+    Decoder.instance { h =>
+      for {
+        _ok          <- h.get[Boolean]("ok")
+        _description <- h.get[Option[String]]("description")
+        _result      <- h.get[Option[Boolean]]("result")
+      } yield {
+        SetChatAdministratorCustomTitleRes(ok = _ok, description = _description, result = _result)
       }
     }
 

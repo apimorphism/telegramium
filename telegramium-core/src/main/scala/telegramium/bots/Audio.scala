@@ -3,8 +3,13 @@ package telegramium.bots
 /** This object represents an audio file to be treated as music by the Telegram
   * clients.*/
 final case class Audio(
-                       /** Identifier for this file*/
+                       /** Identifier for this file, which can be used to download or
+                         * reuse the file*/
                        fileId: String,
+                       /** Unique identifier for this file, which is supposed to be
+                         * the same over time and for different bots. Can't be used to
+                         * download or reuse the file.*/
+                       fileUniqueId: String,
                        /** Duration of the audio in seconds as defined by sender*/
                        duration: Int,
                        /** Optional. Performer of the audio as defined by sender or by
