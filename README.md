@@ -1,5 +1,8 @@
 # F[Tg] - Telegramium
 
+[![Telegram](https://img.shields.io/badge/Telegram%20Bot%20API-4.6%20(January%2023%2C%202020)-blue)](https://core.telegram.org/bots/api#recent-changes)
+
+
 F[Tg] is a pure functional Telegram Bot API for scala.
 
 This project is a try to provide a comprehensive, well documented and Scala-idiomatic client/server implementations to work with Telegram Bot API. Please refer to telegramium-examples module for usage examples. There is a support both for polling and webhooks.
