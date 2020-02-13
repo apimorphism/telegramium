@@ -14,7 +14,8 @@ final case class EditMessageCaptionReq(
                                        /** Required if chat_id and message_id are not specified.
                                          * Identifier of the inline message*/
                                        inlineMessageId: Option[String] = Option.empty,
-                                       /** New caption of the message*/
+                                       /** New caption of the message, 0-1024 characters after
+                                         * entities parsing*/
                                        caption: Option[String] = Option.empty,
                                        /** Send Markdown or HTML, if you want Telegram apps to show
                                          * bold, italic, fixed-width text or inline URLs in the media

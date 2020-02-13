@@ -76,44 +76,46 @@ object uPickleImplicits {
   implicit lazy val keyboardmarkupCodec: ReadWriter[KeyboardMarkup] = {
     readwriter[upack.Msg].bimap(
       {
-        case x: MarkupInlineKeyboard =>
+        case x: InlineKeyboardMarkup =>
           upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("InlineKeyboardMarkup"))
-        case x: MarkupReplyKeyboard =>
-          upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("ReplyKeyboardMarkup"))
-        case x: MarkupRemoveKeyboard =>
-          upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("ReplyKeyboardRemove"))
-        case x: MarkupForceReply =>
+        case x: ForceReply =>
           upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("ForceReply"))
+        case x: ReplyKeyboardRemove =>
+          upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("ReplyKeyboardRemove"))
+        case x: ReplyKeyboardMarkup =>
+          upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("ReplyKeyboardMarkup"))
       },
       msg => {
         val m = msg.obj
         m.get(upack.Str("type"))
           .collect {
-            case upack.Str("InlineKeyboardMarkup") => readBinary[MarkupInlineKeyboard](msg)
-            case upack.Str("ReplyKeyboardMarkup")  => readBinary[MarkupReplyKeyboard](msg)
-            case upack.Str("ReplyKeyboardRemove")  => readBinary[MarkupRemoveKeyboard](msg)
-            case upack.Str("ForceReply")           => readBinary[MarkupForceReply](msg)
+            case upack.Str("InlineKeyboardMarkup") => readBinary[InlineKeyboardMarkup](msg)
+            case upack.Str("ForceReply")           => readBinary[ForceReply](msg)
+            case upack.Str("ReplyKeyboardRemove")  => readBinary[ReplyKeyboardRemove](msg)
+            case upack.Str("ReplyKeyboardMarkup")  => readBinary[ReplyKeyboardMarkup](msg)
           }
           .get
       }
     )
   }
 
-  implicit lazy val markupinlinekeyboardCodec: ReadWriter[MarkupInlineKeyboard] = {
-    val markupKey = upack.Str("markup")
+  implicit lazy val inlinekeyboardmarkupCodec: ReadWriter[InlineKeyboardMarkup] = {
+    val inlineKeyboardKey = upack.Str("inlineKeyboard")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          markupKey -> writeMsg(x.markup)
+          inlineKeyboardKey -> writeMsg(x.inlineKeyboard)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          markup <- m.get(markupKey).map(x => readBinary[InlineKeyboardMarkup](x))
+          inlineKeyboard <- m
+            .get(inlineKeyboardKey)
+            .map(x => readBinary[List[List[InlineKeyboardButton]]](x))
         } yield {
-          MarkupInlineKeyboard(
-            markup = markup
+          InlineKeyboardMarkup(
+            inlineKeyboard = inlineKeyboard
           )
         }
         result.get
@@ -121,21 +123,25 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val markupreplykeyboardCodec: ReadWriter[MarkupReplyKeyboard] = {
-    val markupKey = upack.Str("markup")
+  implicit lazy val forcereplyCodec: ReadWriter[ForceReply] = {
+    val forceReplyKey = upack.Str("forceReply")
+    val selectiveKey  = upack.Str("selective")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          markupKey -> writeMsg(x.markup)
+          forceReplyKey -> writeMsg(x.forceReply),
+          selectiveKey  -> writeMsg(x.selective)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          markup <- m.get(markupKey).map(x => readBinary[ReplyKeyboardMarkup](x))
+          forceReply <- m.get(forceReplyKey).map(x => readBinary[Boolean](x))
+          selective  <- m.get(selectiveKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
-          MarkupReplyKeyboard(
-            markup = markup
+          ForceReply(
+            forceReply = forceReply,
+            selective = selective
           )
         }
         result.get
@@ -143,21 +149,25 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val markupremovekeyboardCodec: ReadWriter[MarkupRemoveKeyboard] = {
-    val markupKey = upack.Str("markup")
+  implicit lazy val replykeyboardremoveCodec: ReadWriter[ReplyKeyboardRemove] = {
+    val removeKeyboardKey = upack.Str("removeKeyboard")
+    val selectiveKey      = upack.Str("selective")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          markupKey -> writeMsg(x.markup)
+          removeKeyboardKey -> writeMsg(x.removeKeyboard),
+          selectiveKey      -> writeMsg(x.selective)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          markup <- m.get(markupKey).map(x => readBinary[ReplyKeyboardRemove](x))
+          removeKeyboard <- m.get(removeKeyboardKey).map(x => readBinary[Boolean](x))
+          selective      <- m.get(selectiveKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
-          MarkupRemoveKeyboard(
-            markup = markup
+          ReplyKeyboardRemove(
+            removeKeyboard = removeKeyboard,
+            selective = selective
           )
         }
         result.get
@@ -165,21 +175,33 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val markupforcereplyCodec: ReadWriter[MarkupForceReply] = {
-    val markupKey = upack.Str("markup")
+  implicit lazy val replykeyboardmarkupCodec: ReadWriter[ReplyKeyboardMarkup] = {
+    val keyboardKey        = upack.Str("keyboard")
+    val resizeKeyboardKey  = upack.Str("resizeKeyboard")
+    val oneTimeKeyboardKey = upack.Str("oneTimeKeyboard")
+    val selectiveKey       = upack.Str("selective")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          markupKey -> writeMsg(x.markup)
+          keyboardKey        -> writeMsg(x.keyboard),
+          resizeKeyboardKey  -> writeMsg(x.resizeKeyboard),
+          oneTimeKeyboardKey -> writeMsg(x.oneTimeKeyboard),
+          selectiveKey       -> writeMsg(x.selective)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          markup <- m.get(markupKey).map(x => readBinary[ForceReply](x))
+          keyboard        <- m.get(keyboardKey).map(x => readBinary[List[List[KeyboardButton]]](x))
+          resizeKeyboard  <- m.get(resizeKeyboardKey).map(x => readBinary[Option[Boolean]](x))
+          oneTimeKeyboard <- m.get(oneTimeKeyboardKey).map(x => readBinary[Option[Boolean]](x))
+          selective       <- m.get(selectiveKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
-          MarkupForceReply(
-            markup = markup
+          ReplyKeyboardMarkup(
+            keyboard = keyboard,
+            resizeKeyboard = resizeKeyboard,
+            oneTimeKeyboard = oneTimeKeyboard,
+            selective = selective
           )
         }
         result.get
@@ -2152,30 +2174,6 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val inlinekeyboardmarkupCodec: ReadWriter[InlineKeyboardMarkup] = {
-    val inlineKeyboardKey = upack.Str("inlineKeyboard")
-    readwriter[upack.Msg].bimap(
-      x => {
-        upack.Obj(
-          inlineKeyboardKey -> writeMsg(x.inlineKeyboard)
-        )
-      },
-      msg => {
-        val m = msg.obj
-        val result = for {
-          inlineKeyboard <- m
-            .get(inlineKeyboardKey)
-            .map(x => readBinary[List[List[InlineKeyboardButton]]](x))
-        } yield {
-          InlineKeyboardMarkup(
-            inlineKeyboard = inlineKeyboard
-          )
-        }
-        result.get
-      }
-    )
-  }
-
   implicit lazy val responseparametersCodec: ReadWriter[ResponseParameters] = {
     val migrateToChatIdKey = upack.Str("migrateToChatId")
     val retryAfterKey      = upack.Str("retryAfter")
@@ -2884,32 +2882,6 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val forcereplyCodec: ReadWriter[ForceReply] = {
-    val forceReplyKey = upack.Str("forceReply")
-    val selectiveKey  = upack.Str("selective")
-    readwriter[upack.Msg].bimap(
-      x => {
-        upack.Obj(
-          forceReplyKey -> writeMsg(x.forceReply),
-          selectiveKey  -> writeMsg(x.selective)
-        )
-      },
-      msg => {
-        val m = msg.obj
-        val result = for {
-          forceReply <- m.get(forceReplyKey).map(x => readBinary[Boolean](x))
-          selective  <- m.get(selectiveKey).map(x => readBinary[Option[Boolean]](x))
-        } yield {
-          ForceReply(
-            forceReply = forceReply,
-            selective = selective
-          )
-        }
-        result.get
-      }
-    )
-  }
-
   implicit lazy val stickersetCodec: ReadWriter[StickerSet] = {
     val nameKey          = upack.Str("name")
     val titleKey         = upack.Str("title")
@@ -3213,32 +3185,6 @@ object uPickleImplicits {
             fileUniqueId = fileUniqueId,
             fileSize = fileSize,
             filePath = filePath
-          )
-        }
-        result.get
-      }
-    )
-  }
-
-  implicit lazy val replykeyboardremoveCodec: ReadWriter[ReplyKeyboardRemove] = {
-    val removeKeyboardKey = upack.Str("removeKeyboard")
-    val selectiveKey      = upack.Str("selective")
-    readwriter[upack.Msg].bimap(
-      x => {
-        upack.Obj(
-          removeKeyboardKey -> writeMsg(x.removeKeyboard),
-          selectiveKey      -> writeMsg(x.selective)
-        )
-      },
-      msg => {
-        val m = msg.obj
-        val result = for {
-          removeKeyboard <- m.get(removeKeyboardKey).map(x => readBinary[Boolean](x))
-          selective      <- m.get(selectiveKey).map(x => readBinary[Option[Boolean]](x))
-        } yield {
-          ReplyKeyboardRemove(
-            removeKeyboard = removeKeyboard,
-            selective = selective
           )
         }
         result.get
@@ -4224,40 +4170,6 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val replykeyboardmarkupCodec: ReadWriter[ReplyKeyboardMarkup] = {
-    val keyboardKey        = upack.Str("keyboard")
-    val resizeKeyboardKey  = upack.Str("resizeKeyboard")
-    val oneTimeKeyboardKey = upack.Str("oneTimeKeyboard")
-    val selectiveKey       = upack.Str("selective")
-    readwriter[upack.Msg].bimap(
-      x => {
-        upack.Obj(
-          keyboardKey        -> writeMsg(x.keyboard),
-          resizeKeyboardKey  -> writeMsg(x.resizeKeyboard),
-          oneTimeKeyboardKey -> writeMsg(x.oneTimeKeyboard),
-          selectiveKey       -> writeMsg(x.selective)
-        )
-      },
-      msg => {
-        val m = msg.obj
-        val result = for {
-          keyboard        <- m.get(keyboardKey).map(x => readBinary[List[List[KeyboardButton]]](x))
-          resizeKeyboard  <- m.get(resizeKeyboardKey).map(x => readBinary[Option[Boolean]](x))
-          oneTimeKeyboard <- m.get(oneTimeKeyboardKey).map(x => readBinary[Option[Boolean]](x))
-          selective       <- m.get(selectiveKey).map(x => readBinary[Option[Boolean]](x))
-        } yield {
-          ReplyKeyboardMarkup(
-            keyboard = keyboard,
-            resizeKeyboard = resizeKeyboard,
-            oneTimeKeyboard = oneTimeKeyboard,
-            selective = selective
-          )
-        }
-        result.get
-      }
-    )
-  }
-
   implicit lazy val chatmemberCodec: ReadWriter[ChatMember] = {
     val userKey                  = upack.Str("user")
     val statusKey                = upack.Str("status")
@@ -4612,36 +4524,105 @@ object CirceImplicits {
   implicit lazy val chatstridDecoder: Decoder[ChatStrId] = Decoder[String].map(ChatStrId)
 
   implicit lazy val keyboardmarkupEncoder: Encoder[KeyboardMarkup] = {
-    case x: MarkupInlineKeyboard => x.asJson
-    case x: MarkupReplyKeyboard  => x.asJson
-    case x: MarkupRemoveKeyboard => x.asJson
-    case x: MarkupForceReply     => x.asJson
+    case x: InlineKeyboardMarkup => x.asJson
+    case x: ForceReply           => x.asJson
+    case x: ReplyKeyboardRemove  => x.asJson
+    case x: ReplyKeyboardMarkup  => x.asJson
   }
   implicit lazy val keyboardmarkupDecoder: Decoder[KeyboardMarkup] = {
     List[Decoder[KeyboardMarkup]](
-      markupinlinekeyboardDecoder.widen,
-      markupreplykeyboardDecoder.widen,
-      markupremovekeyboardDecoder.widen,
-      markupforcereplyDecoder.widen
+      inlinekeyboardmarkupDecoder.widen,
+      forcereplyDecoder.widen,
+      replykeyboardremoveDecoder.widen,
+      replykeyboardmarkupDecoder.widen
     ).reduceLeft(_ or _)
   }
 
-  implicit lazy val markupinlinekeyboardEncoder: Encoder[MarkupInlineKeyboard] =
-    (x: MarkupInlineKeyboard) => x.markup.asJson
-  implicit lazy val markupinlinekeyboardDecoder: Decoder[MarkupInlineKeyboard] =
-    Decoder[InlineKeyboardMarkup].map(MarkupInlineKeyboard)
-  implicit lazy val markupreplykeyboardEncoder: Encoder[MarkupReplyKeyboard] =
-    (x: MarkupReplyKeyboard) => x.markup.asJson
-  implicit lazy val markupreplykeyboardDecoder: Decoder[MarkupReplyKeyboard] =
-    Decoder[ReplyKeyboardMarkup].map(MarkupReplyKeyboard)
-  implicit lazy val markupremovekeyboardEncoder: Encoder[MarkupRemoveKeyboard] =
-    (x: MarkupRemoveKeyboard) => x.markup.asJson
-  implicit lazy val markupremovekeyboardDecoder: Decoder[MarkupRemoveKeyboard] =
-    Decoder[ReplyKeyboardRemove].map(MarkupRemoveKeyboard)
-  implicit lazy val markupforcereplyEncoder: Encoder[MarkupForceReply] = (x: MarkupForceReply) =>
-    x.markup.asJson
-  implicit lazy val markupforcereplyDecoder: Decoder[MarkupForceReply] =
-    Decoder[ForceReply].map(MarkupForceReply)
+  implicit lazy val inlinekeyboardmarkupEncoder: Encoder[InlineKeyboardMarkup] =
+    (x: InlineKeyboardMarkup) => {
+      Json.fromFields(
+        List(
+          "inline_keyboard" -> x.inlineKeyboard.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inlinekeyboardmarkupDecoder: Decoder[InlineKeyboardMarkup] =
+    Decoder.instance { h =>
+      for {
+        _inlineKeyboard <- h
+          .getOrElse[List[List[InlineKeyboardButton]]]("inline_keyboard")(List.empty)
+      } yield {
+        InlineKeyboardMarkup(inlineKeyboard = _inlineKeyboard)
+      }
+    }
+
+  implicit lazy val forcereplyEncoder: Encoder[ForceReply] =
+    (x: ForceReply) => {
+      Json.fromFields(
+        List(
+          "force_reply" -> x.forceReply.asJson,
+          "selective"   -> x.selective.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val forcereplyDecoder: Decoder[ForceReply] =
+    Decoder.instance { h =>
+      for {
+        _forceReply <- h.get[Boolean]("force_reply")
+        _selective  <- h.get[Option[Boolean]]("selective")
+      } yield {
+        ForceReply(forceReply = _forceReply, selective = _selective)
+      }
+    }
+
+  implicit lazy val replykeyboardremoveEncoder: Encoder[ReplyKeyboardRemove] =
+    (x: ReplyKeyboardRemove) => {
+      Json.fromFields(
+        List(
+          "remove_keyboard" -> x.removeKeyboard.asJson,
+          "selective"       -> x.selective.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val replykeyboardremoveDecoder: Decoder[ReplyKeyboardRemove] =
+    Decoder.instance { h =>
+      for {
+        _removeKeyboard <- h.get[Boolean]("remove_keyboard")
+        _selective      <- h.get[Option[Boolean]]("selective")
+      } yield {
+        ReplyKeyboardRemove(removeKeyboard = _removeKeyboard, selective = _selective)
+      }
+    }
+
+  implicit lazy val replykeyboardmarkupEncoder: Encoder[ReplyKeyboardMarkup] =
+    (x: ReplyKeyboardMarkup) => {
+      Json.fromFields(
+        List(
+          "keyboard"          -> x.keyboard.asJson,
+          "resize_keyboard"   -> x.resizeKeyboard.asJson,
+          "one_time_keyboard" -> x.oneTimeKeyboard.asJson,
+          "selective"         -> x.selective.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val replykeyboardmarkupDecoder: Decoder[ReplyKeyboardMarkup] =
+    Decoder.instance { h =>
+      for {
+        _keyboard        <- h.getOrElse[List[List[KeyboardButton]]]("keyboard")(List.empty)
+        _resizeKeyboard  <- h.get[Option[Boolean]]("resize_keyboard")
+        _oneTimeKeyboard <- h.get[Option[Boolean]]("one_time_keyboard")
+        _selective       <- h.get[Option[Boolean]]("selective")
+      } yield {
+        ReplyKeyboardMarkup(keyboard = _keyboard,
+                            resizeKeyboard = _resizeKeyboard,
+                            oneTimeKeyboard = _oneTimeKeyboard,
+                            selective = _selective)
+      }
+    }
 
   implicit lazy val ifileEncoder: Encoder[IFile] = {
     case x: InputPartFile => x.asJson
@@ -6140,25 +6121,6 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val inlinekeyboardmarkupEncoder: Encoder[InlineKeyboardMarkup] =
-    (x: InlineKeyboardMarkup) => {
-      Json.fromFields(
-        List(
-          "inline_keyboard" -> x.inlineKeyboard.asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val inlinekeyboardmarkupDecoder: Decoder[InlineKeyboardMarkup] =
-    Decoder.instance { h =>
-      for {
-        _inlineKeyboard <- h
-          .getOrElse[List[List[InlineKeyboardButton]]]("inline_keyboard")(List.empty)
-      } yield {
-        InlineKeyboardMarkup(inlineKeyboard = _inlineKeyboard)
-      }
-    }
-
   implicit lazy val responseparametersEncoder: Encoder[ResponseParameters] =
     (x: ResponseParameters) => {
       Json.fromFields(
@@ -6712,26 +6674,6 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val forcereplyEncoder: Encoder[ForceReply] =
-    (x: ForceReply) => {
-      Json.fromFields(
-        List(
-          "force_reply" -> x.forceReply.asJson,
-          "selective"   -> x.selective.asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val forcereplyDecoder: Decoder[ForceReply] =
-    Decoder.instance { h =>
-      for {
-        _forceReply <- h.get[Boolean]("force_reply")
-        _selective  <- h.get[Option[Boolean]]("selective")
-      } yield {
-        ForceReply(forceReply = _forceReply, selective = _selective)
-      }
-    }
-
   implicit lazy val stickersetEncoder: Encoder[StickerSet] =
     (x: StickerSet) => {
       Json.fromFields(
@@ -6968,26 +6910,6 @@ object CirceImplicits {
              fileUniqueId = _fileUniqueId,
              fileSize = _fileSize,
              filePath = _filePath)
-      }
-    }
-
-  implicit lazy val replykeyboardremoveEncoder: Encoder[ReplyKeyboardRemove] =
-    (x: ReplyKeyboardRemove) => {
-      Json.fromFields(
-        List(
-          "remove_keyboard" -> x.removeKeyboard.asJson,
-          "selective"       -> x.selective.asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val replykeyboardremoveDecoder: Decoder[ReplyKeyboardRemove] =
-    Decoder.instance { h =>
-      for {
-        _removeKeyboard <- h.get[Boolean]("remove_keyboard")
-        _selective      <- h.get[Option[Boolean]]("selective")
-      } yield {
-        ReplyKeyboardRemove(removeKeyboard = _removeKeyboard, selective = _selective)
       }
     }
 
@@ -7741,33 +7663,6 @@ object CirceImplicits {
                       chatInstance = _chatInstance,
                       data = _data,
                       gameShortName = _gameShortName)
-      }
-    }
-
-  implicit lazy val replykeyboardmarkupEncoder: Encoder[ReplyKeyboardMarkup] =
-    (x: ReplyKeyboardMarkup) => {
-      Json.fromFields(
-        List(
-          "keyboard"          -> x.keyboard.asJson,
-          "resize_keyboard"   -> x.resizeKeyboard.asJson,
-          "one_time_keyboard" -> x.oneTimeKeyboard.asJson,
-          "selective"         -> x.selective.asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val replykeyboardmarkupDecoder: Decoder[ReplyKeyboardMarkup] =
-    Decoder.instance { h =>
-      for {
-        _keyboard        <- h.getOrElse[List[List[KeyboardButton]]]("keyboard")(List.empty)
-        _resizeKeyboard  <- h.get[Option[Boolean]]("resize_keyboard")
-        _oneTimeKeyboard <- h.get[Option[Boolean]]("one_time_keyboard")
-        _selective       <- h.get[Option[Boolean]]("selective")
-      } yield {
-        ReplyKeyboardMarkup(keyboard = _keyboard,
-                            resizeKeyboard = _resizeKeyboard,
-                            oneTimeKeyboard = _oneTimeKeyboard,
-                            selective = _selective)
       }
     }
 

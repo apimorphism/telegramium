@@ -9,7 +9,8 @@ final case class SendPollReq(
                              chatId: ChatId,
                              /** Poll question, 1-255 characters*/
                              question: String,
-                             /** List of answer options, 2-10 strings 1-100 characters each*/
+                             /** A JSON-serialized list of answer options, 2-10 strings
+                               * 1-100 characters each*/
                              options: List[String] = List.empty,
                              /** True, if the poll needs to be anonymous, defaults to True*/
                              isAnonymous: Option[Boolean] = Option.empty,
@@ -21,7 +22,8 @@ final case class SendPollReq(
                              /** 0-based identifier of the correct answer option, required
                                * for polls in quiz mode*/
                              correctOptionId: Option[Int] = Option.empty,
-                             /** Pass True, if the poll needs to be immediately closed*/
+                             /** Pass True, if the poll needs to be immediately closed. This
+                               * can be useful for poll preview.*/
                              isClosed: Option[Boolean] = Option.empty,
                              /** Sends the message silently. Users will receive a
                                * notification with no sound.*/

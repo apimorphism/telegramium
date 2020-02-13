@@ -14,6 +14,27 @@ class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) exten
     bot.sendMessage(SendMessageReq(
       chatId = ChatIntId(msg.chat.id),
       text = msg.text.getOrElse("NO_TEXT"),
+      replyMarkup = Some(
+        InlineKeyboardMarkup(
+          inlineKeyboard = List(
+            List(
+              InlineKeyboardButton("OK", callbackData = Some("OK")),
+              InlineKeyboardButton("Cancel", callbackData = Some("Cancel"))
+            ),
+            List(
+              InlineKeyboardButton("Yes", callbackData = Some("Yes")),
+              InlineKeyboardButton("No", callbackData = Some("No"))
+            ),
+          )
+        )
+      )
+    )).void
+  }
+
+  override def onCallbackQuery(query: CallbackQuery): F[Unit] = {
+    bot.answerCallbackQuery(AnswerCallbackQueryReq(
+      callbackQueryId = query.id,
+      text = query.data.map(x => s"Your choice is $x")
     )).void
   }
 

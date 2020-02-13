@@ -32,7 +32,7 @@ final case class SendVideoReq(
                                 * info on Sending Files »*/
                               thumb: Option[IFile] = Option.empty,
                               /** Video caption (may also be used when resending videos by
-                                * file_id), 0-1024 characters*/
+                                * file_id), 0-1024 characters after entities parsing*/
                               caption: Option[String] = Option.empty,
                               /** Send Markdown or HTML, if you want Telegram apps to show
                                 * bold, italic, fixed-width text or inline URLs in the media

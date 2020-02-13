@@ -14,7 +14,7 @@ final case class SendAudioReq(
                                 * get an audio file from the Internet, or upload a new one
                                 * using multipart/form-data. More info on Sending Files »*/
                               audio: IFile,
-                              /** Audio caption, 0-1024 characters*/
+                              /** Audio caption, 0-1024 characters after entities parsing*/
                               caption: Option[String] = Option.empty,
                               /** Send Markdown or HTML, if you want Telegram apps to show
                                 * bold, italic, fixed-width text or inline URLs in the media

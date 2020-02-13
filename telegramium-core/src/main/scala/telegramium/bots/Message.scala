@@ -42,7 +42,7 @@ final case class Message(
                            * channels*/
                          authorSignature: Option[String] = Option.empty,
                          /** Optional. For text messages, the actual UTF-8 text of the
-                           * message, 0-4096 characters.*/
+                           * message, 0-4096 characters*/
                          text: Option[String] = Option.empty,
                          /** Optional. For text messages, special entities like
                            * usernames, URLs, bot commands, etc. that appear in the text*/

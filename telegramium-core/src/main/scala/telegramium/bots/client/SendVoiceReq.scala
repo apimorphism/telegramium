@@ -14,7 +14,8 @@ final case class SendVoiceReq(
                                 * Internet, or upload a new one using multipart/form-data.
                                 * More info on Sending Files »*/
                               voice: IFile,
-                              /** Voice message caption, 0-1024 characters*/
+                              /** Voice message caption, 0-1024 characters after entities
+                                * parsing*/
                               caption: Option[String] = Option.empty,
                               /** Send Markdown or HTML, if you want Telegram apps to show
                                 * bold, italic, fixed-width text or inline URLs in the media

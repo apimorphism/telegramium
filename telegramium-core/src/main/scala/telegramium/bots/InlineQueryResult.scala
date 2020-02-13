@@ -22,7 +22,7 @@ final case class InlineQueryResultGif(
                                       /** Optional. Title for the result*/
                                       title: Option[String] = Option.empty,
                                       /** Optional. Caption of the GIF file to be sent, 0-1024
-                                        * characters*/
+                                        * characters after entities parsing*/
                                       caption: Option[String] = Option.empty,
                                       /** Optional. Send Markdown or HTML, if you want Telegram apps
                                         * to show bold, italic, fixed-width text or inline URLs in the
@@ -119,7 +119,7 @@ final case class InlineQueryResultPhoto(
                                         /** Optional. Short description of the result*/
                                         description: Option[String] = Option.empty,
                                         /** Optional. Caption of the photo to be sent, 0-1024
-                                          * characters*/
+                                          * characters after entities parsing*/
                                         caption: Option[String] = Option.empty,
                                         /** Optional. Send Markdown or HTML, if you want Telegram apps
                                           * to show bold, italic, fixed-width text or inline URLs in the
@@ -143,7 +143,7 @@ final case class InlineQueryResultDocument(
                                            /** Title for the result*/
                                            title: String,
                                            /** Optional. Caption of the document to be sent, 0-1024
-                                             * characters*/
+                                             * characters after entities parsing*/
                                            caption: Option[String] = Option.empty,
                                            /** Optional. Send Markdown or HTML, if you want Telegram apps
                                              * to show bold, italic, fixed-width text or inline URLs in the
@@ -181,7 +181,7 @@ final case class InlineQueryResultCachedVoice(
     voiceFileId: String,
     /** Voice message title*/
     title: String,
-    /** Optional. Caption, 0-1024 characters*/
+    /** Optional. Caption, 0-1024 characters after entities parsing*/
     caption: Option[String] = Option.empty,
     /** Optional. Send Markdown or HTML, if you want Telegram apps
       * to show bold, italic, fixed-width text or inline URLs in the
@@ -229,7 +229,7 @@ final case class InlineQueryResultAudio(
                                         audioUrl: String,
                                         /** Title*/
                                         title: String,
-                                        /** Optional. Caption, 0-1024 characters*/
+                                        /** Optional. Caption, 0-1024 characters after entities parsing*/
                                         caption: Option[String] = Option.empty,
                                         /** Optional. Send Markdown or HTML, if you want Telegram apps
                                           * to show bold, italic, fixed-width text or inline URLs in the
@@ -267,7 +267,7 @@ final case class InlineQueryResultMpeg4Gif(
                                            /** Optional. Title for the result*/
                                            title: Option[String] = Option.empty,
                                            /** Optional. Caption of the MPEG-4 file to be sent, 0-1024
-                                             * characters*/
+                                             * characters after entities parsing*/
                                            caption: Option[String] = Option.empty,
                                            /** Optional. Send Markdown or HTML, if you want Telegram apps
                                              * to show bold, italic, fixed-width text or inline URLs in the
@@ -294,7 +294,7 @@ final case class InlineQueryResultCachedMpeg4Gif(
     /** Optional. Title for the result*/
     title: Option[String] = Option.empty,
     /** Optional. Caption of the MPEG-4 file to be sent, 0-1024
-      * characters*/
+      * characters after entities parsing*/
     caption: Option[String] = Option.empty,
     /** Optional. Send Markdown or HTML, if you want Telegram apps
       * to show bold, italic, fixed-width text or inline URLs in the
@@ -321,7 +321,7 @@ final case class InlineQueryResultCachedDocument(
     /** Optional. Short description of the result*/
     description: Option[String] = Option.empty,
     /** Optional. Caption of the document to be sent, 0-1024
-      * characters*/
+      * characters after entities parsing*/
     caption: Option[String] = Option.empty,
     /** Optional. Send Markdown or HTML, if you want Telegram apps
       * to show bold, italic, fixed-width text or inline URLs in the
@@ -348,7 +348,7 @@ final case class InlineQueryResultCachedVideo(
     /** Optional. Short description of the result*/
     description: Option[String] = Option.empty,
     /** Optional. Caption of the video to be sent, 0-1024
-      * characters*/
+      * characters after entities parsing*/
     caption: Option[String] = Option.empty,
     /** Optional. Send Markdown or HTML, if you want Telegram apps
       * to show bold, italic, fixed-width text or inline URLs in the
@@ -385,7 +385,7 @@ final case class InlineQueryResultCachedPhoto(
     /** Optional. Short description of the result*/
     description: Option[String] = Option.empty,
     /** Optional. Caption of the photo to be sent, 0-1024
-      * characters*/
+      * characters after entities parsing*/
     caption: Option[String] = Option.empty,
     /** Optional. Send Markdown or HTML, if you want Telegram apps
       * to show bold, italic, fixed-width text or inline URLs in the
@@ -431,7 +431,7 @@ final case class InlineQueryResultVideo(
                                         /** Title for the result*/
                                         title: String,
                                         /** Optional. Caption of the video to be sent, 0-1024
-                                          * characters*/
+                                          * characters after entities parsing*/
                                         caption: Option[String] = Option.empty,
                                         /** Optional. Send Markdown or HTML, if you want Telegram apps
                                           * to show bold, italic, fixed-width text or inline URLs in the
@@ -464,7 +464,7 @@ final case class InlineQueryResultCachedAudio(
     id: String,
     /** A valid file identifier for the audio file*/
     audioFileId: String,
-    /** Optional. Caption, 0-1024 characters*/
+    /** Optional. Caption, 0-1024 characters after entities parsing*/
     caption: Option[String] = Option.empty,
     /** Optional. Send Markdown or HTML, if you want Telegram apps
       * to show bold, italic, fixed-width text or inline URLs in the
@@ -518,7 +518,7 @@ final case class InlineQueryResultCachedGif(
     /** Optional. Title for the result*/
     title: Option[String] = Option.empty,
     /** Optional. Caption of the GIF file to be sent, 0-1024
-      * characters*/
+      * characters after entities parsing*/
     caption: Option[String] = Option.empty,
     /** Optional. Send Markdown or HTML, if you want Telegram apps
       * to show bold, italic, fixed-width text or inline URLs in the
@@ -542,7 +542,7 @@ final case class InlineQueryResultVoice(
                                         voiceUrl: String,
                                         /** Recording title*/
                                         title: String,
-                                        /** Optional. Caption, 0-1024 characters*/
+                                        /** Optional. Caption, 0-1024 characters after entities parsing*/
                                         caption: Option[String] = Option.empty,
                                         /** Optional. Send Markdown or HTML, if you want Telegram apps
                                           * to show bold, italic, fixed-width text or inline URLs in the

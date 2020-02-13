@@ -7,7 +7,8 @@ final case class SendMessageReq(
                                 /** Unique identifier for the target chat or username of the
                                   * target channel (in the format @channelusername)*/
                                 chatId: ChatId,
-                                /** Text of the message to be sent*/
+                                /** Text of the message to be sent, 1-4096 characters after
+                                  * entities parsing*/
                                 text: String,
                                 /** Send Markdown or HTML, if you want Telegram apps to show
                                   * bold, italic, fixed-width text or inline URLs in your bot's

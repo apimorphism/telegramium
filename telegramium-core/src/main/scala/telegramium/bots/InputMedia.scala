@@ -24,7 +24,7 @@ final case class InputMediaAnimation(
                                        * info on Sending Files »*/
                                      thumb: Option[IFile] = Option.empty,
                                      /** Optional. Caption of the animation to be sent, 0-1024
-                                       * characters*/
+                                       * characters after entities parsing*/
                                      caption: Option[String] = Option.empty,
                                      /** Optional. Send Markdown or HTML, if you want Telegram apps
                                        * to show bold, italic, fixed-width text or inline URLs in the
@@ -48,7 +48,7 @@ final case class InputMediaPhoto(
                                    * on Sending Files »*/
                                  media: String,
                                  /** Optional. Caption of the photo to be sent, 0-1024
-                                   * characters*/
+                                   * characters after entities parsing*/
                                  caption: Option[String] = Option.empty,
                                  /** Optional. Send Markdown or HTML, if you want Telegram apps
                                    * to show bold, italic, fixed-width text or inline URLs in the
@@ -77,7 +77,7 @@ final case class InputMediaVideo(
                                    * info on Sending Files »*/
                                  thumb: Option[IFile] = Option.empty,
                                  /** Optional. Caption of the video to be sent, 0-1024
-                                   * characters*/
+                                   * characters after entities parsing*/
                                  caption: Option[String] = Option.empty,
                                  /** Optional. Send Markdown or HTML, if you want Telegram apps
                                    * to show bold, italic, fixed-width text or inline URLs in the
@@ -115,7 +115,7 @@ final case class InputMediaDocument(
                                       * info on Sending Files »*/
                                     thumb: Option[IFile] = Option.empty,
                                     /** Optional. Caption of the document to be sent, 0-1024
-                                      * characters*/
+                                      * characters after entities parsing*/
                                     caption: Option[String] = Option.empty,
                                     /** Optional. Send Markdown or HTML, if you want Telegram apps
                                       * to show bold, italic, fixed-width text or inline URLs in the
@@ -144,7 +144,7 @@ final case class InputMediaAudio(
                                    * info on Sending Files »*/
                                  thumb: Option[IFile] = Option.empty,
                                  /** Optional. Caption of the audio to be sent, 0-1024
-                                   * characters*/
+                                   * characters after entities parsing*/
                                  caption: Option[String] = Option.empty,
                                  /** Optional. Send Markdown or HTML, if you want Telegram apps
                                    * to show bold, italic, fixed-width text or inline URLs in the
