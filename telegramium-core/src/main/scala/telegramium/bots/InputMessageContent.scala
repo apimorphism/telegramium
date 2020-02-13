@@ -55,7 +55,7 @@ final case class InputTextMessageContent(
                                          /** Optional. Send Markdown or HTML, if you want Telegram apps
                                            * to show bold, italic, fixed-width text or inline URLs in
                                            * your bot's message.*/
-                                         parseMode: Option[String] = Option.empty,
+                                         parseMode: Option[ParseMode] = Option.empty,
                                          /** Optional. Disables link previews for links in the sent
                                            * message*/
                                          disableWebPagePreview: Option[Boolean] = Option.empty)

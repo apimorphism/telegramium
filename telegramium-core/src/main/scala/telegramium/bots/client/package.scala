@@ -15,6 +15,7 @@ object uPickleImplicits {
   import telegramium.bots.ChatId
   import telegramium.bots.IFile
   import telegramium.bots.GameHighScore
+  import telegramium.bots.ParseMode
   import telegramium.bots.KeyboardMarkup
   import telegramium.bots.Message
   import telegramium.bots.UserProfilePhotos
@@ -307,7 +308,7 @@ object uPickleImplicits {
         val result = for {
           chatId    <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
           text      <- m.get(textKey).map(x => readBinary[String](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           disableWebPagePreview <- m
             .get(disableWebPagePreviewKey)
             .map(x => readBinary[Option[Boolean]](x))
@@ -1663,7 +1664,7 @@ object uPickleImplicits {
           messageId       <- m.get(messageIdKey).map(x => readBinary[Option[Int]](x))
           inlineMessageId <- m.get(inlineMessageIdKey).map(x => readBinary[Option[String]](x))
           text            <- m.get(textKey).map(x => readBinary[String](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           disableWebPagePreview <- m
             .get(disableWebPagePreviewKey)
             .map(x => readBinary[Option[Boolean]](x))
@@ -2391,7 +2392,7 @@ object uPickleImplicits {
           document  <- m.get(documentKey).map(x => readBinary[IFile](x))
           thumb     <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
           caption   <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           disableNotification <- m
             .get(disableNotificationKey)
             .map(x => readBinary[Option[Boolean]](x))
@@ -2670,7 +2671,7 @@ object uPickleImplicits {
           chatId    <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
           audio     <- m.get(audioKey).map(x => readBinary[IFile](x))
           caption   <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           duration  <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
           performer <- m.get(performerKey).map(x => readBinary[Option[String]](x))
           title     <- m.get(titleKey).map(x => readBinary[Option[String]](x))
@@ -3028,7 +3029,7 @@ object uPickleImplicits {
           chatId    <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
           voice     <- m.get(voiceKey).map(x => readBinary[IFile](x))
           caption   <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           duration  <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
           disableNotification <- m
             .get(disableNotificationKey)
@@ -3197,7 +3198,7 @@ object uPickleImplicits {
           messageId       <- m.get(messageIdKey).map(x => readBinary[Option[Int]](x))
           inlineMessageId <- m.get(inlineMessageIdKey).map(x => readBinary[Option[String]](x))
           caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
         } yield {
           EditMessageCaptionReq(
@@ -3478,7 +3479,7 @@ object uPickleImplicits {
           height            <- m.get(heightKey).map(x => readBinary[Option[Int]](x))
           thumb             <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
           caption           <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode         <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode         <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           supportsStreaming <- m.get(supportsStreamingKey).map(x => readBinary[Option[Boolean]](x))
           disableNotification <- m
             .get(disableNotificationKey)
@@ -3832,7 +3833,7 @@ object uPickleImplicits {
           height    <- m.get(heightKey).map(x => readBinary[Option[Int]](x))
           thumb     <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
           caption   <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           disableNotification <- m
             .get(disableNotificationKey)
             .map(x => readBinary[Option[Boolean]](x))
@@ -4160,7 +4161,7 @@ object uPickleImplicits {
           chatId    <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
           photo     <- m.get(photoKey).map(x => readBinary[IFile](x))
           caption   <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           disableNotification <- m
             .get(disableNotificationKey)
             .map(x => readBinary[Option[Boolean]](x))
@@ -4404,6 +4405,7 @@ object CirceImplicits {
   import telegramium.bots.ChatId
   import telegramium.bots.IFile
   import telegramium.bots.GameHighScore
+  import telegramium.bots.ParseMode
   import telegramium.bots.KeyboardMarkup
   import telegramium.bots.Message
   import telegramium.bots.UserProfilePhotos
@@ -4634,7 +4636,7 @@ object CirceImplicits {
       for {
         _chatId                <- h.get[ChatId]("chat_id")
         _text                  <- h.get[String]("text")
-        _parseMode             <- h.get[Option[String]]("parse_mode")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
         _disableWebPagePreview <- h.get[Option[Boolean]]("disable_web_page_preview")
         _disableNotification   <- h.get[Option[Boolean]]("disable_notification")
         _replyToMessageId      <- h.get[Option[Int]]("reply_to_message_id")
@@ -5662,7 +5664,7 @@ object CirceImplicits {
         _messageId             <- h.get[Option[Int]]("message_id")
         _inlineMessageId       <- h.get[Option[String]]("inline_message_id")
         _text                  <- h.get[String]("text")
-        _parseMode             <- h.get[Option[String]]("parse_mode")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
         _disableWebPagePreview <- h.get[Option[Boolean]]("disable_web_page_preview")
         _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
       } yield {
@@ -6211,7 +6213,7 @@ object CirceImplicits {
         _document            <- h.get[IFile]("document")
         _thumb               <- h.get[Option[IFile]]("thumb")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _disableNotification <- h.get[Option[Boolean]]("disable_notification")
         _replyToMessageId    <- h.get[Option[Int]]("reply_to_message_id")
         _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -6422,7 +6424,7 @@ object CirceImplicits {
         _chatId              <- h.get[ChatId]("chat_id")
         _audio               <- h.get[IFile]("audio")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _duration            <- h.get[Option[Int]]("duration")
         _performer           <- h.get[Option[String]]("performer")
         _title               <- h.get[Option[String]]("title")
@@ -6695,7 +6697,7 @@ object CirceImplicits {
         _chatId              <- h.get[ChatId]("chat_id")
         _voice               <- h.get[IFile]("voice")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _duration            <- h.get[Option[Int]]("duration")
         _disableNotification <- h.get[Option[Boolean]]("disable_notification")
         _replyToMessageId    <- h.get[Option[Int]]("reply_to_message_id")
@@ -6826,7 +6828,7 @@ object CirceImplicits {
         _messageId       <- h.get[Option[Int]]("message_id")
         _inlineMessageId <- h.get[Option[String]]("inline_message_id")
         _caption         <- h.get[Option[String]]("caption")
-        _parseMode       <- h.get[Option[String]]("parse_mode")
+        _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
         _replyMarkup     <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
       } yield {
         EditMessageCaptionReq(chatId = _chatId,
@@ -7037,7 +7039,7 @@ object CirceImplicits {
         _height              <- h.get[Option[Int]]("height")
         _thumb               <- h.get[Option[IFile]]("thumb")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _supportsStreaming   <- h.get[Option[Boolean]]("supports_streaming")
         _disableNotification <- h.get[Option[Boolean]]("disable_notification")
         _replyToMessageId    <- h.get[Option[Int]]("reply_to_message_id")
@@ -7311,7 +7313,7 @@ object CirceImplicits {
         _height              <- h.get[Option[Int]]("height")
         _thumb               <- h.get[Option[IFile]]("thumb")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _disableNotification <- h.get[Option[Boolean]]("disable_notification")
         _replyToMessageId    <- h.get[Option[Int]]("reply_to_message_id")
         _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -7562,7 +7564,7 @@ object CirceImplicits {
         _chatId              <- h.get[ChatId]("chat_id")
         _photo               <- h.get[IFile]("photo")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _disableNotification <- h.get[Option[Boolean]]("disable_notification")
         _replyToMessageId    <- h.get[Option[Int]]("reply_to_message_id")
         _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")

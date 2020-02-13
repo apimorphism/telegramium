@@ -29,7 +29,7 @@ final case class InputMediaAnimation(
                                      /** Optional. Send Markdown or HTML, if you want Telegram apps
                                        * to show bold, italic, fixed-width text or inline URLs in the
                                        * media caption.*/
-                                     parseMode: Option[String] = Option.empty,
+                                     parseMode: Option[ParseMode] = Option.empty,
                                      /** Optional. Animation width*/
                                      width: Option[Int] = Option.empty,
                                      /** Optional. Animation height*/
@@ -53,7 +53,7 @@ final case class InputMediaPhoto(
                                  /** Optional. Send Markdown or HTML, if you want Telegram apps
                                    * to show bold, italic, fixed-width text or inline URLs in the
                                    * media caption.*/
-                                 parseMode: Option[String] = Option.empty)
+                                 parseMode: Option[ParseMode] = Option.empty)
     extends InputMedia
 
 /** Represents a video to be sent.*/
@@ -82,7 +82,7 @@ final case class InputMediaVideo(
                                  /** Optional. Send Markdown or HTML, if you want Telegram apps
                                    * to show bold, italic, fixed-width text or inline URLs in the
                                    * media caption.*/
-                                 parseMode: Option[String] = Option.empty,
+                                 parseMode: Option[ParseMode] = Option.empty,
                                  /** Optional. Video width*/
                                  width: Option[Int] = Option.empty,
                                  /** Optional. Video height*/
@@ -120,7 +120,7 @@ final case class InputMediaDocument(
                                     /** Optional. Send Markdown or HTML, if you want Telegram apps
                                       * to show bold, italic, fixed-width text or inline URLs in the
                                       * media caption.*/
-                                    parseMode: Option[String] = Option.empty)
+                                    parseMode: Option[ParseMode] = Option.empty)
     extends InputMedia
 
 /** Represents an audio file to be treated as music to be sent.*/
@@ -149,7 +149,7 @@ final case class InputMediaAudio(
                                  /** Optional. Send Markdown or HTML, if you want Telegram apps
                                    * to show bold, italic, fixed-width text or inline URLs in the
                                    * media caption.*/
-                                 parseMode: Option[String] = Option.empty,
+                                 parseMode: Option[ParseMode] = Option.empty,
                                  /** Optional. Duration of the audio in seconds*/
                                  duration: Option[Int] = Option.empty,
                                  /** Optional. Performer of the audio*/

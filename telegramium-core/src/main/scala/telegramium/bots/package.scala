@@ -11,6 +11,31 @@ object uPickleImplicits {
     )
   }
 
+  implicit lazy val parsemodeCodec: ReadWriter[ParseMode] = {
+    readwriter[upack.Msg].bimap(
+      {
+        case Markdown => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("Markdown"))
+        case Markdown2 =>
+          upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("MarkdownV2"))
+        case Html => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("HTML"))
+      },
+      msg => {
+        val m = msg.obj
+        m.get(upack.Str("type"))
+          .collect {
+            case upack.Str("Markdown")   => Markdown
+            case upack.Str("MarkdownV2") => Markdown2
+            case upack.Str("HTML")       => Html
+          }
+          .get
+      }
+    )
+  }
+
+  implicit lazy val markdownCodec: ReadWriter[Markdown.type]   = macroRW
+  implicit lazy val markdown2Codec: ReadWriter[Markdown2.type] = macroRW
+  implicit lazy val htmlCodec: ReadWriter[Html.type]           = macroRW
+
   implicit lazy val chatidCodec: ReadWriter[ChatId] = {
     readwriter[upack.Msg].bimap(
       {
@@ -328,7 +353,7 @@ object uPickleImplicits {
           media     <- m.get(mediaKey).map(x => readBinary[String](x))
           thumb     <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
           caption   <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           width     <- m.get(widthKey).map(x => readBinary[Option[Int]](x))
           height    <- m.get(heightKey).map(x => readBinary[Option[Int]](x))
           duration  <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
@@ -365,7 +390,7 @@ object uPickleImplicits {
         val result = for {
           media     <- m.get(mediaKey).map(x => readBinary[String](x))
           caption   <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
         } yield {
           InputMediaPhoto(
             media = media,
@@ -406,7 +431,7 @@ object uPickleImplicits {
           media             <- m.get(mediaKey).map(x => readBinary[String](x))
           thumb             <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
           caption           <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode         <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode         <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           width             <- m.get(widthKey).map(x => readBinary[Option[Int]](x))
           height            <- m.get(heightKey).map(x => readBinary[Option[Int]](x))
           duration          <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
@@ -448,7 +473,7 @@ object uPickleImplicits {
           media     <- m.get(mediaKey).map(x => readBinary[String](x))
           thumb     <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
           caption   <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
         } yield {
           InputMediaDocument(
             media = media,
@@ -488,7 +513,7 @@ object uPickleImplicits {
           media     <- m.get(mediaKey).map(x => readBinary[String](x))
           thumb     <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
           caption   <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           duration  <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
           performer <- m.get(performerKey).map(x => readBinary[Option[String]](x))
           title     <- m.get(titleKey).map(x => readBinary[Option[String]](x))
@@ -621,7 +646,7 @@ object uPickleImplicits {
           thumbUrl    <- m.get(thumbUrlKey).map(x => readBinary[String](x))
           title       <- m.get(titleKey).map(x => readBinary[Option[String]](x))
           caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
@@ -813,7 +838,7 @@ object uPickleImplicits {
           title       <- m.get(titleKey).map(x => readBinary[Option[String]](x))
           description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
           caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
@@ -874,7 +899,7 @@ object uPickleImplicits {
           id          <- m.get(idKey).map(x => readBinary[String](x))
           title       <- m.get(titleKey).map(x => readBinary[String](x))
           caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           documentUrl <- m.get(documentUrlKey).map(x => readBinary[String](x))
           mimeType    <- m.get(mimeTypeKey).map(x => readBinary[String](x))
           description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
@@ -933,7 +958,7 @@ object uPickleImplicits {
           voiceFileId <- m.get(voiceFileIdKey).map(x => readBinary[String](x))
           title       <- m.get(titleKey).map(x => readBinary[String](x))
           caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
@@ -1045,7 +1070,7 @@ object uPickleImplicits {
           audioUrl      <- m.get(audioUrlKey).map(x => readBinary[String](x))
           title         <- m.get(titleKey).map(x => readBinary[String](x))
           caption       <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           performer     <- m.get(performerKey).map(x => readBinary[Option[String]](x))
           audioDuration <- m.get(audioDurationKey).map(x => readBinary[Option[Int]](x))
           replyMarkup   <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
@@ -1109,7 +1134,7 @@ object uPickleImplicits {
           thumbUrl      <- m.get(thumbUrlKey).map(x => readBinary[String](x))
           title         <- m.get(titleKey).map(x => readBinary[Option[String]](x))
           caption       <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           replyMarkup   <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
@@ -1162,7 +1187,7 @@ object uPickleImplicits {
           mpeg4FileId <- m.get(mpeg4FileIdKey).map(x => readBinary[String](x))
           title       <- m.get(titleKey).map(x => readBinary[Option[String]](x))
           caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
@@ -1214,7 +1239,7 @@ object uPickleImplicits {
           documentFileId <- m.get(documentFileIdKey).map(x => readBinary[String](x))
           description    <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
           caption        <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode      <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode      <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           replyMarkup    <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
@@ -1266,7 +1291,7 @@ object uPickleImplicits {
           title       <- m.get(titleKey).map(x => readBinary[String](x))
           description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
           caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
@@ -1348,7 +1373,7 @@ object uPickleImplicits {
           title       <- m.get(titleKey).map(x => readBinary[Option[String]](x))
           description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
           caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
@@ -1448,7 +1473,7 @@ object uPickleImplicits {
           thumbUrl      <- m.get(thumbUrlKey).map(x => readBinary[String](x))
           title         <- m.get(titleKey).map(x => readBinary[String](x))
           caption       <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           videoWidth    <- m.get(videoWidthKey).map(x => readBinary[Option[Int]](x))
           videoHeight   <- m.get(videoHeightKey).map(x => readBinary[Option[Int]](x))
           videoDuration <- m.get(videoDurationKey).map(x => readBinary[Option[Int]](x))
@@ -1503,7 +1528,7 @@ object uPickleImplicits {
           id          <- m.get(idKey).map(x => readBinary[String](x))
           audioFileId <- m.get(audioFileIdKey).map(x => readBinary[String](x))
           caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
@@ -1610,7 +1635,7 @@ object uPickleImplicits {
           gifFileId   <- m.get(gifFileIdKey).map(x => readBinary[String](x))
           title       <- m.get(titleKey).map(x => readBinary[Option[String]](x))
           caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
@@ -1660,7 +1685,7 @@ object uPickleImplicits {
           voiceUrl      <- m.get(voiceUrlKey).map(x => readBinary[String](x))
           title         <- m.get(titleKey).map(x => readBinary[String](x))
           caption       <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           voiceDuration <- m.get(voiceDurationKey).map(x => readBinary[Option[Int]](x))
           replyMarkup   <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
@@ -1835,7 +1860,7 @@ object uPickleImplicits {
         val m = msg.obj
         val result = for {
           messageText <- m.get(messageTextKey).map(x => readBinary[String](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[String]](x))
+          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
           disableWebPagePreview <- m
             .get(disableWebPagePreviewKey)
             .map(x => readBinary[Option[Boolean]](x))
@@ -4507,6 +4532,28 @@ object CirceImplicits {
   import cats.syntax.functor._
   import io.circe.HCursor
 
+  implicit lazy val parsemodeEncoder: Encoder[ParseMode] = {
+    case Markdown  => Markdown.asJson
+    case Markdown2 => Markdown2.asJson
+    case Html      => Html.asJson
+  }
+  implicit lazy val parsemodeDecoder: Decoder[ParseMode] = {
+    List[Decoder[ParseMode]](
+      markdownDecoder.widen,
+      markdown2Decoder.widen,
+      htmlDecoder.widen
+    ).reduceLeft(_ or _)
+  }
+
+  implicit lazy val markdownEncoder: Encoder[Markdown.type] = (x: Markdown.type) =>
+    "Markdown".asJson
+  implicit lazy val markdownDecoder: Decoder[Markdown.type] = Decoder[String].map(_ => Markdown)
+  implicit lazy val markdown2Encoder: Encoder[Markdown2.type] = (x: Markdown2.type) =>
+    "MarkdownV2".asJson
+  implicit lazy val markdown2Decoder: Decoder[Markdown2.type] = Decoder[String].map(_ => Markdown2)
+  implicit lazy val htmlEncoder: Encoder[Html.type]           = (x: Html.type) => "HTML".asJson
+  implicit lazy val htmlDecoder: Decoder[Html.type]           = Decoder[String].map(_ => Html)
+
   implicit lazy val chatidEncoder: Encoder[ChatId] = {
     case x: ChatIntId => x.asJson
     case x: ChatStrId => x.asJson
@@ -4685,7 +4732,7 @@ object CirceImplicits {
         _media     <- h.get[String]("media")
         _thumb     <- h.get[Option[IFile]]("thumb")
         _caption   <- h.get[Option[String]]("caption")
-        _parseMode <- h.get[Option[String]]("parse_mode")
+        _parseMode <- h.get[Option[ParseMode]]("parse_mode")
         _width     <- h.get[Option[Int]]("width")
         _height    <- h.get[Option[Int]]("height")
         _duration  <- h.get[Option[Int]]("duration")
@@ -4716,7 +4763,7 @@ object CirceImplicits {
       for {
         _media     <- h.get[String]("media")
         _caption   <- h.get[Option[String]]("caption")
-        _parseMode <- h.get[Option[String]]("parse_mode")
+        _parseMode <- h.get[Option[ParseMode]]("parse_mode")
       } yield {
         InputMediaPhoto(media = _media, caption = _caption, parseMode = _parseMode)
       }
@@ -4744,7 +4791,7 @@ object CirceImplicits {
         _media             <- h.get[String]("media")
         _thumb             <- h.get[Option[IFile]]("thumb")
         _caption           <- h.get[Option[String]]("caption")
-        _parseMode         <- h.get[Option[String]]("parse_mode")
+        _parseMode         <- h.get[Option[ParseMode]]("parse_mode")
         _width             <- h.get[Option[Int]]("width")
         _height            <- h.get[Option[Int]]("height")
         _duration          <- h.get[Option[Int]]("duration")
@@ -4779,7 +4826,7 @@ object CirceImplicits {
         _media     <- h.get[String]("media")
         _thumb     <- h.get[Option[IFile]]("thumb")
         _caption   <- h.get[Option[String]]("caption")
-        _parseMode <- h.get[Option[String]]("parse_mode")
+        _parseMode <- h.get[Option[ParseMode]]("parse_mode")
       } yield {
         InputMediaDocument(media = _media,
                            thumb = _thumb,
@@ -4809,7 +4856,7 @@ object CirceImplicits {
         _media     <- h.get[String]("media")
         _thumb     <- h.get[Option[IFile]]("thumb")
         _caption   <- h.get[Option[String]]("caption")
-        _parseMode <- h.get[Option[String]]("parse_mode")
+        _parseMode <- h.get[Option[ParseMode]]("parse_mode")
         _duration  <- h.get[Option[Int]]("duration")
         _performer <- h.get[Option[String]]("performer")
         _title     <- h.get[Option[String]]("title")
@@ -4921,7 +4968,7 @@ object CirceImplicits {
         _thumbUrl            <- h.get[String]("thumb_url")
         _title               <- h.get[Option[String]]("title")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5071,7 +5118,7 @@ object CirceImplicits {
         _title               <- h.get[Option[String]]("title")
         _description         <- h.get[Option[String]]("description")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5117,7 +5164,7 @@ object CirceImplicits {
         _id                  <- h.get[String]("id")
         _title               <- h.get[String]("title")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _documentUrl         <- h.get[String]("document_url")
         _mimeType            <- h.get[String]("mime_type")
         _description         <- h.get[Option[String]]("description")
@@ -5166,7 +5213,7 @@ object CirceImplicits {
         _voiceFileId         <- h.get[String]("voice_file_id")
         _title               <- h.get[String]("title")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5251,7 +5298,7 @@ object CirceImplicits {
         _audioUrl            <- h.get[String]("audio_url")
         _title               <- h.get[String]("title")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _performer           <- h.get[Option[String]]("performer")
         _audioDuration       <- h.get[Option[Int]]("audio_duration")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
@@ -5301,7 +5348,7 @@ object CirceImplicits {
         _thumbUrl            <- h.get[String]("thumb_url")
         _title               <- h.get[Option[String]]("title")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5345,7 +5392,7 @@ object CirceImplicits {
         _mpeg4FileId         <- h.get[String]("mpeg4_file_id")
         _title               <- h.get[Option[String]]("title")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5385,7 +5432,7 @@ object CirceImplicits {
         _documentFileId      <- h.get[String]("document_file_id")
         _description         <- h.get[Option[String]]("description")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5426,7 +5473,7 @@ object CirceImplicits {
         _title               <- h.get[String]("title")
         _description         <- h.get[Option[String]]("description")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5489,7 +5536,7 @@ object CirceImplicits {
         _title               <- h.get[Option[String]]("title")
         _description         <- h.get[Option[String]]("description")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5563,7 +5610,7 @@ object CirceImplicits {
         _thumbUrl            <- h.get[String]("thumb_url")
         _title               <- h.get[String]("title")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _videoWidth          <- h.get[Option[Int]]("video_width")
         _videoHeight         <- h.get[Option[Int]]("video_height")
         _videoDuration       <- h.get[Option[Int]]("video_duration")
@@ -5609,7 +5656,7 @@ object CirceImplicits {
         _id                  <- h.get[String]("id")
         _audioFileId         <- h.get[String]("audio_file_id")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5691,7 +5738,7 @@ object CirceImplicits {
         _gifFileId           <- h.get[String]("gif_file_id")
         _title               <- h.get[Option[String]]("title")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5728,7 +5775,7 @@ object CirceImplicits {
         _voiceUrl            <- h.get[String]("voice_url")
         _title               <- h.get[String]("title")
         _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[String]]("parse_mode")
+        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
         _voiceDuration       <- h.get[Option[Int]]("voice_duration")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
@@ -5860,7 +5907,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _messageText           <- h.get[String]("message_text")
-        _parseMode             <- h.get[Option[String]]("parse_mode")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
         _disableWebPagePreview <- h.get[Option[Boolean]]("disable_web_page_preview")
       } yield {
         InputTextMessageContent(messageText = _messageText,

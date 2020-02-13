@@ -1,6 +1,7 @@
 package telegramium.bots.client
 
 import telegramium.bots.ChatId
+import telegramium.bots.ParseMode
 import telegramium.bots.KeyboardMarkup
 
 final case class SendMessageReq(
@@ -13,7 +14,7 @@ final case class SendMessageReq(
                                 /** Send Markdown or HTML, if you want Telegram apps to show
                                   * bold, italic, fixed-width text or inline URLs in your bot's
                                   * message.*/
-                                parseMode: Option[String] = Option.empty,
+                                parseMode: Option[ParseMode] = Option.empty,
                                 /** Disables link previews for links in this message*/
                                 disableWebPagePreview: Option[Boolean] = Option.empty,
                                 /** Sends the message silently. Users will receive a

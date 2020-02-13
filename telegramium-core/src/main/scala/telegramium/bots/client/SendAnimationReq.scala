@@ -2,6 +2,7 @@ package telegramium.bots.client
 
 import telegramium.bots.ChatId
 import telegramium.bots.IFile
+import telegramium.bots.ParseMode
 import telegramium.bots.KeyboardMarkup
 
 final case class SendAnimationReq(
@@ -38,7 +39,7 @@ final case class SendAnimationReq(
                                   /** Send Markdown or HTML, if you want Telegram apps to show
                                     * bold, italic, fixed-width text or inline URLs in the media
                                     * caption.*/
-                                  parseMode: Option[String] = Option.empty,
+                                  parseMode: Option[ParseMode] = Option.empty,
                                   /** Sends the message silently. Users will receive a
                                     * notification with no sound.*/
                                   disableNotification: Option[Boolean] = Option.empty,

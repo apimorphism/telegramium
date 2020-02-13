@@ -1,6 +1,7 @@
 package telegramium.bots.client
 
 import telegramium.bots.ChatId
+import telegramium.bots.ParseMode
 import telegramium.bots.InlineKeyboardMarkup
 
 final case class EditMessageCaptionReq(
@@ -20,6 +21,6 @@ final case class EditMessageCaptionReq(
                                        /** Send Markdown or HTML, if you want Telegram apps to show
                                          * bold, italic, fixed-width text or inline URLs in the media
                                          * caption.*/
-                                       parseMode: Option[String] = Option.empty,
+                                       parseMode: Option[ParseMode] = Option.empty,
                                        /** A JSON-serialized object for an inline keyboard.*/
                                        replyMarkup: Option[InlineKeyboardMarkup] = Option.empty)

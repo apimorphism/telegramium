@@ -2,6 +2,7 @@ package telegramium.bots.client
 
 import telegramium.bots.ChatId
 import telegramium.bots.IFile
+import telegramium.bots.ParseMode
 import telegramium.bots.KeyboardMarkup
 
 final case class SendVideoReq(
@@ -37,7 +38,7 @@ final case class SendVideoReq(
                               /** Send Markdown or HTML, if you want Telegram apps to show
                                 * bold, italic, fixed-width text or inline URLs in the media
                                 * caption.*/
-                              parseMode: Option[String] = Option.empty,
+                              parseMode: Option[ParseMode] = Option.empty,
                               /** Pass True, if the uploaded video is suitable for streaming*/
                               supportsStreaming: Option[Boolean] = Option.empty,
                               /** Sends the message silently. Users will receive a
