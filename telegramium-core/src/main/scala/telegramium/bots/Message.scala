@@ -126,7 +126,7 @@ final case class Message(
                            * smaller than 52 bits, so a signed 64 bit integer or
                            * double-precision float type are safe for storing this
                            * identifier.*/
-                         migrateToChatId: Option[Int] = Option.empty,
+                         migrateToChatId: Option[Long] = Option.empty,
                          /** Optional. The supergroup has been migrated from a group
                            * with the specified identifier. This number may be greater
                            * than 32 bits and some programming languages may have
@@ -134,7 +134,7 @@ final case class Message(
                            * smaller than 52 bits, so a signed 64 bit integer or
                            * double-precision float type are safe for storing this
                            * identifier.*/
-                         migrateFromChatId: Option[Int] = Option.empty,
+                         migrateFromChatId: Option[Long] = Option.empty,
                          /** Optional. Specified message was pinned. Note that the
                            * Message object in this field will not contain further
                            * reply_to_message fields even if it is itself a reply.*/

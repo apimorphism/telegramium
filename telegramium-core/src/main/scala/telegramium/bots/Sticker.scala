@@ -15,7 +15,7 @@ final case class Sticker(
                          height: Int,
                          /** True, if the sticker is animated*/
                          isAnimated: Boolean,
-                         /** Optional. Sticker thumbnail in the .webp or .jpg format*/
+                         /** Optional. Sticker thumbnail in the .WEBP or .JPG format*/
                          thumb: Option[PhotoSize] = Option.empty,
                          /** Optional. Emoji associated with the sticker*/
                          emoji: Option[String] = Option.empty,

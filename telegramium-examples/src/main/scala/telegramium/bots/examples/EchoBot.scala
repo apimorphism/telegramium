@@ -34,7 +34,7 @@ class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) exten
   }
 
   override def onCallbackQuery(query: CallbackQuery): F[Unit] = {
-    def sendMsg(chatId: Int, text: String, parseMode: ParseMode): F[Unit] = {
+    def sendMsg(chatId: Long, text: String, parseMode: ParseMode): F[Unit] = {
       bot.sendMessage(SendMessageReq(
         chatId = ChatIntId(chatId),
         text = text,

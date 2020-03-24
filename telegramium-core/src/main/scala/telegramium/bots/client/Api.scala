@@ -42,7 +42,7 @@ trait Api[F[_]] {
     * to edit the created sticker set. Returns True on success.*/
   def createNewStickerSet(x: CreateNewStickerSetReq): F[CreateNewStickerSetRes]
 
-  /** Use this method to upload a .png file with a sticker for later use in
+  /** Use this method to upload a .PNG file with a sticker for later use in
     * createNewStickerSet and addStickerToSet methods (can be used multiple times).
     * Returns the uploaded File on success.*/
   def uploadStickerFile(x: UploadStickerFileReq): F[UploadStickerFileRes]
@@ -235,7 +235,7 @@ trait Api[F[_]] {
 
   /** Use this method to send audio files, if you want Telegram clients to display
     * the file as a playable voice message. For this to work, your audio must be in an
-    * .ogg file encoded with OPUS (other formats may be sent as Audio or Document). On
+    * .OGG file encoded with OPUS (other formats may be sent as Audio or Document). On
     * success, the sent Message is returned. Bots can currently send voice messages of
     * up to 50 MB in size, this limit may be changed in the future.*/
   def sendVoice(x: SendVoiceReq): F[SendVoiceRes]
@@ -291,7 +291,7 @@ trait Api[F[_]] {
   def deleteWebhook(): F[DeleteWebhookRes]
 
   /** Use this method to move a sticker in a set created by the bot to a specific
-    * position . Returns True on success.*/
+    * position. Returns True on success.*/
   def setStickerPositionInSet(x: SetStickerPositionInSetReq): F[SetStickerPositionInSetRes]
 
   /** Use this method to set a custom title for an administrator in a supergroup

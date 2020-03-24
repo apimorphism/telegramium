@@ -8,7 +8,7 @@ final case class Chat(
                         * smaller than 52 bits, so a signed 64 bit integer or
                         * double-precision float type are safe for storing this
                         * identifier.*/
-                      id: Int,
+                      id: Long,
                       /** Type of chat, can be either “private”, “group”,
                         * “supergroup” or “channel”*/
                       `type`: String,

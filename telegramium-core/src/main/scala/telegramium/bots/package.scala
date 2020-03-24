@@ -39,14 +39,14 @@ object uPickleImplicits {
   implicit lazy val chatidCodec: ReadWriter[ChatId] = {
     readwriter[upack.Msg].bimap(
       {
-        case x: ChatIntId => upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("Int"))
+        case x: ChatIntId => upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("Long"))
         case x: ChatStrId => upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("String"))
       },
       msg => {
         val m = msg.obj
         m.get(upack.Str("type"))
           .collect {
-            case upack.Str("Int")    => readBinary[ChatIntId](msg)
+            case upack.Str("Long")   => readBinary[ChatIntId](msg)
             case upack.Str("String") => readBinary[ChatStrId](msg)
           }
           .get
@@ -65,7 +65,7 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id <- m.get(idKey).map(x => readBinary[Int](x))
+          id <- m.get(idKey).map(x => readBinary[Long](x))
         } yield {
           ChatIntId(
             id = id
@@ -2212,7 +2212,7 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          migrateToChatId <- m.get(migrateToChatIdKey).map(x => readBinary[Option[Int]](x))
+          migrateToChatId <- m.get(migrateToChatIdKey).map(x => readBinary[Option[Long]](x))
           retryAfter      <- m.get(retryAfterKey).map(x => readBinary[Option[Int]](x))
         } yield {
           ResponseParameters(
@@ -2316,7 +2316,7 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id               <- m.get(idKey).map(x => readBinary[Int](x))
+          id               <- m.get(idKey).map(x => readBinary[Long](x))
           `type`           <- m.get(typeKey).map(x => readBinary[String](x))
           title            <- m.get(titleKey).map(x => readBinary[Option[String]](x))
           username         <- m.get(usernameKey).map(x => readBinary[Option[String]](x))
@@ -3825,8 +3825,8 @@ object uPickleImplicits {
           channelChatCreated <- m
             .get(channelChatCreatedKey)
             .map(x => readBinary[Option[Boolean]](x))
-          migrateToChatId   <- m.get(migrateToChatIdKey).map(x => readBinary[Option[Int]](x))
-          migrateFromChatId <- m.get(migrateFromChatIdKey).map(x => readBinary[Option[Int]](x))
+          migrateToChatId   <- m.get(migrateToChatIdKey).map(x => readBinary[Option[Long]](x))
+          migrateFromChatId <- m.get(migrateFromChatIdKey).map(x => readBinary[Option[Long]](x))
           pinnedMessage     <- m.get(pinnedMessageKey).map(x => readBinary[Option[Message]](x))
           invoice           <- m.get(invoiceKey).map(x => readBinary[Option[Invoice]](x))
           successfulPayment <- m
@@ -4566,7 +4566,7 @@ object CirceImplicits {
   }
 
   implicit lazy val chatintidEncoder: Encoder[ChatIntId] = (x: ChatIntId) => x.id.asJson
-  implicit lazy val chatintidDecoder: Decoder[ChatIntId] = Decoder[Int].map(ChatIntId)
+  implicit lazy val chatintidDecoder: Decoder[ChatIntId] = Decoder[Long].map(ChatIntId)
   implicit lazy val chatstridEncoder: Encoder[ChatStrId] = (x: ChatStrId) => x.id.asJson
   implicit lazy val chatstridDecoder: Decoder[ChatStrId] = Decoder[String].map(ChatStrId)
 
@@ -6181,7 +6181,7 @@ object CirceImplicits {
   implicit lazy val responseparametersDecoder: Decoder[ResponseParameters] =
     Decoder.instance { h =>
       for {
-        _migrateToChatId <- h.get[Option[Int]]("migrate_to_chat_id")
+        _migrateToChatId <- h.get[Option[Long]]("migrate_to_chat_id")
         _retryAfter      <- h.get[Option[Int]]("retry_after")
       } yield {
         ResponseParameters(migrateToChatId = _migrateToChatId, retryAfter = _retryAfter)
@@ -6257,7 +6257,7 @@ object CirceImplicits {
   implicit lazy val chatDecoder: Decoder[Chat] =
     Decoder.instance { h =>
       for {
-        _id               <- h.get[Int]("id")
+        _id               <- h.get[Long]("id")
         _type             <- h.get[String]("type")
         _title            <- h.get[Option[String]]("title")
         _username         <- h.get[Option[String]]("username")
@@ -7418,8 +7418,8 @@ object CirceImplicits {
         _groupChatCreated      <- h.get[Option[Boolean]]("group_chat_created")
         _supergroupChatCreated <- h.get[Option[Boolean]]("supergroup_chat_created")
         _channelChatCreated    <- h.get[Option[Boolean]]("channel_chat_created")
-        _migrateToChatId       <- h.get[Option[Int]]("migrate_to_chat_id")
-        _migrateFromChatId     <- h.get[Option[Int]]("migrate_from_chat_id")
+        _migrateToChatId       <- h.get[Option[Long]]("migrate_to_chat_id")
+        _migrateFromChatId     <- h.get[Option[Long]]("migrate_from_chat_id")
         _pinnedMessage         <- h.get[Option[Message]]("pinned_message")
         _invoice               <- h.get[Option[Invoice]]("invoice")
         _successfulPayment     <- h.get[Option[SuccessfulPayment]]("successful_payment")
