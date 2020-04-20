@@ -27,6 +27,9 @@ class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) exten
               InlineKeyboardButton("Yes", callbackData = Some("Yes")),
               InlineKeyboardButton("No", callbackData = Some("No"))
             ),
+            List(
+              InlineKeyboardButton("Roll the dice", callbackData = Some("dice")),
+            ),
           )
         )
       )
@@ -34,6 +37,10 @@ class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) exten
   }
 
   override def onCallbackQuery(query: CallbackQuery): F[Unit] = {
+    def rollTheDice(chatId: Long): F[Unit] = {
+      bot.sendDice(SendDiceReq(ChatIntId(chatId))).void >>
+        bot.answerCallbackQuery(AnswerCallbackQueryReq(callbackQueryId = query.id)).void
+    }
     def sendMsg(chatId: Long, text: String, parseMode: ParseMode): F[Unit] = {
       bot.sendMessage(SendMessageReq(
         chatId = ChatIntId(chatId),
@@ -45,6 +52,7 @@ class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) exten
       case "HTML"      => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, htmlText, Html))
       case "Markdown"  => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdownText, Markdown))
       case "Markdown2" => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdown2Text, Markdown2))
+      case "dice"      => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id))
       case x => bot.answerCallbackQuery(AnswerCallbackQueryReq(
         callbackQueryId = query.id,
         text = Some(s"Your choice is $x")

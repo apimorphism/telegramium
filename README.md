@@ -1,6 +1,6 @@
 # F[Tg] - Telegramium
 
-[![Telegram](https://img.shields.io/badge/Telegram%20Bot%20API-4.6%20(January%2023%2C%202020)-blue)](https://core.telegram.org/bots/api#recent-changes)
+[![Telegram](https://img.shields.io/badge/Telegram%20Bot%20API-4.7%20(March%2030%2C%202020)-blue)](https://core.telegram.org/bots/api#recent-changes)
 
 
 F[Tg] is a pure functional Telegram Bot API for scala.
@@ -45,6 +45,10 @@ You may also want to have a look at these projects:
 * https://github.com/augustjune/canoe
 * https://github.com/bot4s/telegram
 * https://github.com/paoloboni/telegram4s
+
+### Known usages
+
+* https://github.com/oybek/playcs_bot : telegram chat bot for creating counter strike 1.6 dedicated servers
 
 ### Note for Yan
 
