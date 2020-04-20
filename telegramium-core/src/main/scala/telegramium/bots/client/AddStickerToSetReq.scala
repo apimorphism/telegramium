@@ -8,7 +8,7 @@ final case class AddStickerToSetReq(
                                     userId: Int,
                                     /** Sticker set name*/
                                     name: String,
-                                    /** Png image with the sticker, must be up to 512 kilobytes in
+                                    /** PNG image with the sticker, must be up to 512 kilobytes in
                                       * size, dimensions must not exceed 512px, and either width or
                                       * height must be exactly 512px. Pass a file_id as a String to
                                       * send a file that already exists on the Telegram servers,
@@ -16,6 +16,11 @@ final case class AddStickerToSetReq(
                                       * the Internet, or upload a new one using multipart/form-data.
                                       * More info on Sending Files »*/
                                     pngSticker: IFile,
+                                    /** TGS animation with the sticker, uploaded using
+                                      * multipart/form-data. See
+                                      * https://core.telegram.org/animated_stickers#technical-requirements
+                                      * for technical requirements*/
+                                    tgsSticker: Option[IFile] = Option.empty,
                                     /** One or more emoji corresponding to the sticker*/
                                     emojis: String,
                                     /** A JSON-serialized object for position where the mask should

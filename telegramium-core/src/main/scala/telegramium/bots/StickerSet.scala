@@ -11,4 +11,6 @@ final case class StickerSet(
                             /** True, if the sticker set contains masks*/
                             containsMasks: Boolean,
                             /** List of all set stickers*/
-                            stickers: List[Sticker] = List.empty)
+                            stickers: List[Sticker] = List.empty,
+                            /** Optional. Sticker set thumbnail in the .WEBP or .TGS format*/
+                            thumb: Option[PhotoSize] = Option.empty)

@@ -7,6 +7,10 @@ trait Api[F[_]] {
     * return an object with the url field empty.*/
   def getWebhookInfo(): F[GetWebhookInfoRes]
 
+  /** Use this method to change the list of the bot's commands. Returns True on
+    * success.*/
+  def setMyCommands(x: SetMyCommandsReq): F[SetMyCommandsRes]
+
   /** Use this method to set a new profile photo for the chat. Photos can't be
     * changed for private chats. The bot must be an administrator in the chat for this
     * to work and must have the appropriate admin rights. Returns True on success.*/
@@ -38,8 +42,9 @@ trait Api[F[_]] {
     * returned.*/
   def sendContact(x: SendContactReq): F[SendContactRes]
 
-  /** Use this method to create new sticker set owned by a user. The bot will be able
-    * to edit the created sticker set. Returns True on success.*/
+  /** Use this method to create a new sticker set owned by a user. The bot will be
+    * able to edit the sticker set thus created. You must use exactly one of the
+    * fields png_sticker or tgs_sticker. Returns True on success.*/
   def createNewStickerSet(x: CreateNewStickerSetReq): F[CreateNewStickerSetRes]
 
   /** Use this method to upload a .PNG file with a sticker for later use in
@@ -73,13 +78,22 @@ trait Api[F[_]] {
     * as String on success.*/
   def exportChatInviteLink(x: ExportChatInviteLinkReq): F[ExportChatInviteLinkRes]
 
+  /** Use this method to send a dice, which will have a random value from 1 to 6. On
+    * success, the sent Message is returned. (Yes, we're aware of the “proper”
+    * singular of die. But it's awkward, and we decided to help it change. One dice at
+    * a time!)*/
+  def sendDice(x: SendDiceReq): F[SendDiceRes]
+
   /** Use this method when you need to tell the user that something is happening on
     * the bot's side. The status is set for 5 seconds or less (when a message arrives
     * from your bot, Telegram clients clear its typing status). Returns True on
     * success.*/
   def sendChatAction(): F[SendChatActionRes]
 
-  /** Use this method to add a new sticker to a set created by the bot. Returns True
+  /** Use this method to add a new sticker to a set created by the bot. You must use
+    * exactly one of the fields png_sticker or tgs_sticker. Animated stickers can be
+    * added to animated sticker sets and only to them. Animated sticker sets can have
+    * up to 50 stickers. Static sticker sets can have up to 120 stickers. Returns True
     * on success.*/
   def addStickerToSet(x: AddStickerToSetReq): F[AddStickerToSetRes]
 
@@ -183,12 +197,13 @@ trait Api[F[_]] {
 
   /** Use this method to delete a message, including service messages, with the
     * following limitations: - A message can only be deleted if it was sent less than
-    * 48 hours ago. - Bots can delete outgoing messages in private chats, groups, and
-    * supergroups. - Bots can delete incoming messages in private chats. - Bots
-    * granted can_post_messages permissions can delete outgoing messages in channels.
-    * - If the bot is an administrator of a group, it can delete any message there. -
-    * If the bot has can_delete_messages permission in a supergroup or a channel, it
-    * can delete any message there. Returns True on success.*/
+    * 48 hours ago. - A dice message in a private chat can only be deleted if it was
+    * sent more than 24 hours ago. - Bots can delete outgoing messages in private
+    * chats, groups, and supergroups. - Bots can delete incoming messages in private
+    * chats. - Bots granted can_post_messages permissions can delete outgoing messages
+    * in channels. - If the bot is an administrator of a group, it can delete any
+    * message there. - If the bot has can_delete_messages permission in a supergroup
+    * or a channel, it can delete any message there. Returns True on success.*/
   def deleteMessage(x: DeleteMessageReq): F[DeleteMessageRes]
 
   /** Use this method to send answers to an inline query. On success, True is
@@ -227,6 +242,10 @@ trait Api[F[_]] {
     * ChatMember object on success.*/
   def getChatMember(x: GetChatMemberReq): F[GetChatMemberRes]
 
+  /** Use this method to get the current list of the bot's commands. Requires no
+    * parameters. Returns Array of BotCommand on success.*/
+  def getMyCommands(): F[GetMyCommandsRes]
+
   /** Use this method to get a list of administrators in a chat. On success, returns
     * an Array of ChatMember objects that contains information about all chat
     * administrators except other bots. If the chat is a group or a supergroup and no
@@ -263,6 +282,10 @@ trait Api[F[_]] {
     * ‘can_pin_messages’ admin right in the supergroup or ‘can_edit_messages’ admin
     * right in the channel. Returns True on success.*/
   def pinChatMessage(x: PinChatMessageReq): F[PinChatMessageRes]
+
+  /** Use this method to set the thumbnail of a sticker set. Animated thumbnails can
+    * be set for animated sticker sets only. Returns True on success.*/
+  def setStickerSetThumb(x: SetStickerSetThumbReq): F[SetStickerSetThumbRes]
 
   /** Use this method to edit only the reply markup of messages. On success, if
     * edited message is sent by the bot, the edited Message is returned, otherwise

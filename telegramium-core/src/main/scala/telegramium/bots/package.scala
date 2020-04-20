@@ -2913,6 +2913,7 @@ object uPickleImplicits {
     val isAnimatedKey    = upack.Str("isAnimated")
     val containsMasksKey = upack.Str("containsMasks")
     val stickersKey      = upack.Str("stickers")
+    val thumbKey         = upack.Str("thumb")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
@@ -2920,7 +2921,8 @@ object uPickleImplicits {
           titleKey         -> writeMsg(x.title),
           isAnimatedKey    -> writeMsg(x.isAnimated),
           containsMasksKey -> writeMsg(x.containsMasks),
-          stickersKey      -> writeMsg(x.stickers)
+          stickersKey      -> writeMsg(x.stickers),
+          thumbKey         -> writeMsg(x.thumb)
         )
       },
       msg => {
@@ -2931,13 +2933,15 @@ object uPickleImplicits {
           isAnimated    <- m.get(isAnimatedKey).map(x => readBinary[Boolean](x))
           containsMasks <- m.get(containsMasksKey).map(x => readBinary[Boolean](x))
           stickers      <- m.get(stickersKey).map(x => readBinary[List[Sticker]](x))
+          thumb         <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
         } yield {
           StickerSet(
             name = name,
             title = title,
             isAnimated = isAnimated,
             containsMasks = containsMasks,
-            stickers = stickers
+            stickers = stickers,
+            thumb = thumb
           )
         }
         result.get
@@ -3157,6 +3161,28 @@ object uPickleImplicits {
     )
   }
 
+  implicit lazy val diceCodec: ReadWriter[Dice] = {
+    val valueKey = upack.Str("value")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          valueKey -> writeMsg(x.value)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          value <- m.get(valueKey).map(x => readBinary[Int](x))
+        } yield {
+          Dice(
+            value = value
+          )
+        }
+        result.get
+      }
+    )
+  }
+
   implicit lazy val passportdataCodec: ReadWriter[PassportData] = {
     val dataKey        = upack.Str("data")
     val credentialsKey = upack.Str("credentials")
@@ -3290,6 +3316,32 @@ object uPickleImplicits {
             location = location,
             inlineMessageId = inlineMessageId,
             query = query
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val botcommandCodec: ReadWriter[BotCommand] = {
+    val commandKey     = upack.Str("command")
+    val descriptionKey = upack.Str("description")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          commandKey     -> writeMsg(x.command),
+          descriptionKey -> writeMsg(x.description)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          command     <- m.get(commandKey).map(x => readBinary[String](x))
+          description <- m.get(descriptionKey).map(x => readBinary[String](x))
+        } yield {
+          BotCommand(
+            command = command,
+            description = description
           )
         }
         result.get
@@ -3709,6 +3761,7 @@ object uPickleImplicits {
     val locationKey              = upack.Str("location")
     val venueKey                 = upack.Str("venue")
     val pollKey                  = upack.Str("poll")
+    val diceKey                  = upack.Str("dice")
     val newChatMembersKey        = upack.Str("newChatMembers")
     val leftChatMemberKey        = upack.Str("leftChatMember")
     val newChatTitleKey          = upack.Str("newChatTitle")
@@ -3759,6 +3812,7 @@ object uPickleImplicits {
           locationKey              -> writeMsg(x.location),
           venueKey                 -> writeMsg(x.venue),
           pollKey                  -> writeMsg(x.poll),
+          diceKey                  -> writeMsg(x.dice),
           newChatMembersKey        -> writeMsg(x.newChatMembers),
           leftChatMemberKey        -> writeMsg(x.leftChatMember),
           newChatTitleKey          -> writeMsg(x.newChatTitle),
@@ -3813,6 +3867,7 @@ object uPickleImplicits {
           location          <- m.get(locationKey).map(x => readBinary[Option[Location]](x))
           venue             <- m.get(venueKey).map(x => readBinary[Option[Venue]](x))
           poll              <- m.get(pollKey).map(x => readBinary[Option[Poll]](x))
+          dice              <- m.get(diceKey).map(x => readBinary[Option[Dice]](x))
           newChatMembers    <- m.get(newChatMembersKey).map(x => readBinary[List[User]](x))
           leftChatMember    <- m.get(leftChatMemberKey).map(x => readBinary[Option[User]](x))
           newChatTitle      <- m.get(newChatTitleKey).map(x => readBinary[Option[String]](x))
@@ -3868,6 +3923,7 @@ object uPickleImplicits {
             location = location,
             venue = venue,
             poll = poll,
+            dice = dice,
             newChatMembers = newChatMembers,
             leftChatMember = leftChatMember,
             newChatTitle = newChatTitle,
@@ -6729,7 +6785,8 @@ object CirceImplicits {
           "title"          -> x.title.asJson,
           "is_animated"    -> x.isAnimated.asJson,
           "contains_masks" -> x.containsMasks.asJson,
-          "stickers"       -> x.stickers.asJson
+          "stickers"       -> x.stickers.asJson,
+          "thumb"          -> x.thumb.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6742,12 +6799,14 @@ object CirceImplicits {
         _isAnimated    <- h.get[Boolean]("is_animated")
         _containsMasks <- h.get[Boolean]("contains_masks")
         _stickers      <- h.getOrElse[List[Sticker]]("stickers")(List.empty)
+        _thumb         <- h.get[Option[PhotoSize]]("thumb")
       } yield {
         StickerSet(name = _name,
                    title = _title,
                    isAnimated = _isAnimated,
                    containsMasks = _containsMasks,
-                   stickers = _stickers)
+                   stickers = _stickers,
+                   thumb = _thumb)
       }
     }
 
@@ -6913,6 +6972,24 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val diceEncoder: Encoder[Dice] =
+    (x: Dice) => {
+      Json.fromFields(
+        List(
+          "value" -> x.value.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val diceDecoder: Decoder[Dice] =
+    Decoder.instance { h =>
+      for {
+        _value <- h.get[Int]("value")
+      } yield {
+        Dice(value = _value)
+      }
+    }
+
   implicit lazy val passportdataEncoder: Encoder[PassportData] =
     (x: PassportData) => {
       Json.fromFields(
@@ -7020,6 +7097,26 @@ object CirceImplicits {
                            location = _location,
                            inlineMessageId = _inlineMessageId,
                            query = _query)
+      }
+    }
+
+  implicit lazy val botcommandEncoder: Encoder[BotCommand] =
+    (x: BotCommand) => {
+      Json.fromFields(
+        List(
+          "command"     -> x.command.asJson,
+          "description" -> x.description.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val botcommandDecoder: Decoder[BotCommand] =
+    Decoder.instance { h =>
+      for {
+        _command     <- h.get[String]("command")
+        _description <- h.get[String]("description")
+      } yield {
+        BotCommand(command = _command, description = _description)
       }
     }
 
@@ -7356,6 +7453,7 @@ object CirceImplicits {
           "location"                -> x.location.asJson,
           "venue"                   -> x.venue.asJson,
           "poll"                    -> x.poll.asJson,
+          "dice"                    -> x.dice.asJson,
           "new_chat_members"        -> x.newChatMembers.asJson,
           "left_chat_member"        -> x.leftChatMember.asJson,
           "new_chat_title"          -> x.newChatTitle.asJson,
@@ -7410,6 +7508,7 @@ object CirceImplicits {
         _location              <- h.get[Option[Location]]("location")
         _venue                 <- h.get[Option[Venue]]("venue")
         _poll                  <- h.get[Option[Poll]]("poll")
+        _dice                  <- h.get[Option[Dice]]("dice")
         _newChatMembers        <- h.getOrElse[List[User]]("new_chat_members")(List.empty)
         _leftChatMember        <- h.get[Option[User]]("left_chat_member")
         _newChatTitle          <- h.get[Option[String]]("new_chat_title")
@@ -7459,6 +7558,7 @@ object CirceImplicits {
           location = _location,
           venue = _venue,
           poll = _poll,
+          dice = _dice,
           newChatMembers = _newChatMembers,
           leftChatMember = _leftChatMember,
           newChatTitle = _newChatTitle,

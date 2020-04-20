@@ -12,6 +12,7 @@ object uPickleImplicits {
   }
   import telegramium.bots.WebhookInfo
   import telegramium.bots.uPickleImplicits._
+  import telegramium.bots.BotCommand
   import telegramium.bots.ChatId
   import telegramium.bots.IFile
   import telegramium.bots.GameHighScore
@@ -85,6 +86,58 @@ object uPickleImplicits {
           result      <- m.get(resultKey).map(x => readBinary[Option[WebhookInfo]](x))
         } yield {
           GetWebhookInfoRes(
+            ok = ok,
+            description = description,
+            result = result
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val setmycommandsreqCodec: ReadWriter[SetMyCommandsReq] = {
+    val commandsKey = upack.Str("commands")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          commandsKey -> writeMsg(x.commands)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          commands <- m.get(commandsKey).map(x => readBinary[List[BotCommand]](x))
+        } yield {
+          SetMyCommandsReq(
+            commands = commands
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val setmycommandsresCodec: ReadWriter[SetMyCommandsRes] = {
+    val okKey          = upack.Str("ok")
+    val descriptionKey = upack.Str("description")
+    val resultKey      = upack.Str("result")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          okKey          -> writeMsg(x.ok),
+          descriptionKey -> writeMsg(x.description),
+          resultKey      -> writeMsg(x.result)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          ok          <- m.get(okKey).map(x => readBinary[Boolean](x))
+          description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          result      <- m.get(resultKey).map(x => readBinary[Option[Boolean]](x))
+        } yield {
+          SetMyCommandsRes(
             ok = ok,
             description = description,
             result = result
@@ -606,6 +659,7 @@ object uPickleImplicits {
     val nameKey          = upack.Str("name")
     val titleKey         = upack.Str("title")
     val pngStickerKey    = upack.Str("pngSticker")
+    val tgsStickerKey    = upack.Str("tgsSticker")
     val emojisKey        = upack.Str("emojis")
     val containsMasksKey = upack.Str("containsMasks")
     val maskPositionKey  = upack.Str("maskPosition")
@@ -616,6 +670,7 @@ object uPickleImplicits {
           nameKey          -> writeMsg(x.name),
           titleKey         -> writeMsg(x.title),
           pngStickerKey    -> writeMsg(x.pngSticker),
+          tgsStickerKey    -> writeMsg(x.tgsSticker),
           emojisKey        -> writeMsg(x.emojis),
           containsMasksKey -> writeMsg(x.containsMasks),
           maskPositionKey  -> writeMsg(x.maskPosition)
@@ -627,7 +682,8 @@ object uPickleImplicits {
           userId        <- m.get(userIdKey).map(x => readBinary[Int](x))
           name          <- m.get(nameKey).map(x => readBinary[String](x))
           title         <- m.get(titleKey).map(x => readBinary[String](x))
-          pngSticker    <- m.get(pngStickerKey).map(x => readBinary[IFile](x))
+          pngSticker    <- m.get(pngStickerKey).map(x => readBinary[Option[IFile]](x))
+          tgsSticker    <- m.get(tgsStickerKey).map(x => readBinary[Option[IFile]](x))
           emojis        <- m.get(emojisKey).map(x => readBinary[String](x))
           containsMasks <- m.get(containsMasksKey).map(x => readBinary[Option[Boolean]](x))
           maskPosition  <- m.get(maskPositionKey).map(x => readBinary[Option[MaskPosition]](x))
@@ -637,6 +693,7 @@ object uPickleImplicits {
             name = name,
             title = title,
             pngSticker = pngSticker,
+            tgsSticker = tgsSticker,
             emojis = emojis,
             containsMasks = containsMasks,
             maskPosition = maskPosition
@@ -1035,6 +1092,72 @@ object uPickleImplicits {
     )
   }
 
+  implicit lazy val senddicereqCodec: ReadWriter[SendDiceReq] = {
+    val chatIdKey              = upack.Str("chatId")
+    val disableNotificationKey = upack.Str("disableNotification")
+    val replyToMessageIdKey    = upack.Str("replyToMessageId")
+    val replyMarkupKey         = upack.Str("replyMarkup")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          chatIdKey              -> writeMsg(x.chatId),
+          disableNotificationKey -> writeMsg(x.disableNotification),
+          replyToMessageIdKey    -> writeMsg(x.replyToMessageId),
+          replyMarkupKey         -> writeMsg(x.replyMarkup)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          chatId <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          disableNotification <- m
+            .get(disableNotificationKey)
+            .map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          replyMarkup      <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+        } yield {
+          SendDiceReq(
+            chatId = chatId,
+            disableNotification = disableNotification,
+            replyToMessageId = replyToMessageId,
+            replyMarkup = replyMarkup
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val senddiceresCodec: ReadWriter[SendDiceRes] = {
+    val okKey          = upack.Str("ok")
+    val descriptionKey = upack.Str("description")
+    val resultKey      = upack.Str("result")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          okKey          -> writeMsg(x.ok),
+          descriptionKey -> writeMsg(x.description),
+          resultKey      -> writeMsg(x.result)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          ok          <- m.get(okKey).map(x => readBinary[Boolean](x))
+          description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          result      <- m.get(resultKey).map(x => readBinary[Option[Message]](x))
+        } yield {
+          SendDiceRes(
+            ok = ok,
+            description = description,
+            result = result
+          )
+        }
+        result.get
+      }
+    )
+  }
+
   implicit lazy val sendchatactionreqCodec: ReadWriter[SendChatActionReq.type] = macroRW
 
   implicit lazy val sendchatactionresCodec: ReadWriter[SendChatActionRes] = {
@@ -1071,6 +1194,7 @@ object uPickleImplicits {
     val userIdKey       = upack.Str("userId")
     val nameKey         = upack.Str("name")
     val pngStickerKey   = upack.Str("pngSticker")
+    val tgsStickerKey   = upack.Str("tgsSticker")
     val emojisKey       = upack.Str("emojis")
     val maskPositionKey = upack.Str("maskPosition")
     readwriter[upack.Msg].bimap(
@@ -1079,6 +1203,7 @@ object uPickleImplicits {
           userIdKey       -> writeMsg(x.userId),
           nameKey         -> writeMsg(x.name),
           pngStickerKey   -> writeMsg(x.pngSticker),
+          tgsStickerKey   -> writeMsg(x.tgsSticker),
           emojisKey       -> writeMsg(x.emojis),
           maskPositionKey -> writeMsg(x.maskPosition)
         )
@@ -1089,6 +1214,7 @@ object uPickleImplicits {
           userId       <- m.get(userIdKey).map(x => readBinary[Int](x))
           name         <- m.get(nameKey).map(x => readBinary[String](x))
           pngSticker   <- m.get(pngStickerKey).map(x => readBinary[IFile](x))
+          tgsSticker   <- m.get(tgsStickerKey).map(x => readBinary[Option[IFile]](x))
           emojis       <- m.get(emojisKey).map(x => readBinary[String](x))
           maskPosition <- m.get(maskPositionKey).map(x => readBinary[Option[MaskPosition]](x))
         } yield {
@@ -1096,6 +1222,7 @@ object uPickleImplicits {
             userId = userId,
             name = name,
             pngSticker = pngSticker,
+            tgsSticker = tgsSticker,
             emojis = emojis,
             maskPosition = maskPosition
           )
@@ -2949,6 +3076,38 @@ object uPickleImplicits {
     )
   }
 
+  implicit lazy val getmycommandsreqCodec: ReadWriter[GetMyCommandsReq.type] = macroRW
+
+  implicit lazy val getmycommandsresCodec: ReadWriter[GetMyCommandsRes] = {
+    val okKey          = upack.Str("ok")
+    val descriptionKey = upack.Str("description")
+    val resultKey      = upack.Str("result")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          okKey          -> writeMsg(x.ok),
+          descriptionKey -> writeMsg(x.description),
+          resultKey      -> writeMsg(x.result)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          ok          <- m.get(okKey).map(x => readBinary[Boolean](x))
+          description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          result      <- m.get(resultKey).map(x => readBinary[List[BotCommand]](x))
+        } yield {
+          GetMyCommandsRes(
+            ok = ok,
+            description = description,
+            result = result
+          )
+        }
+        result.get
+      }
+    )
+  }
+
   implicit lazy val getchatadministratorsreqCodec: ReadWriter[GetChatAdministratorsReq] = {
     val chatIdKey = upack.Str("chatId")
     readwriter[upack.Msg].bimap(
@@ -3365,6 +3524,66 @@ object uPickleImplicits {
           result      <- m.get(resultKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           PinChatMessageRes(
+            ok = ok,
+            description = description,
+            result = result
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val setstickersetthumbreqCodec: ReadWriter[SetStickerSetThumbReq] = {
+    val nameKey   = upack.Str("name")
+    val userIdKey = upack.Str("userId")
+    val thumbKey  = upack.Str("thumb")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          nameKey   -> writeMsg(x.name),
+          userIdKey -> writeMsg(x.userId),
+          thumbKey  -> writeMsg(x.thumb)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          name   <- m.get(nameKey).map(x => readBinary[String](x))
+          userId <- m.get(userIdKey).map(x => readBinary[Int](x))
+          thumb  <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
+        } yield {
+          SetStickerSetThumbReq(
+            name = name,
+            userId = userId,
+            thumb = thumb
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val setstickersetthumbresCodec: ReadWriter[SetStickerSetThumbRes] = {
+    val okKey          = upack.Str("ok")
+    val descriptionKey = upack.Str("description")
+    val resultKey      = upack.Str("result")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          okKey          -> writeMsg(x.ok),
+          descriptionKey -> writeMsg(x.description),
+          resultKey      -> writeMsg(x.result)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          ok          <- m.get(okKey).map(x => readBinary[Boolean](x))
+          description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          result      <- m.get(resultKey).map(x => readBinary[Option[Boolean]](x))
+        } yield {
+          SetStickerSetThumbRes(
             ok = ok,
             description = description,
             result = result
@@ -4402,6 +4621,7 @@ object CirceImplicits {
   import io.circe.HCursor
   import telegramium.bots.WebhookInfo
   import telegramium.bots.CirceImplicits._
+  import telegramium.bots.BotCommand
   import telegramium.bots.ChatId
   import telegramium.bots.IFile
   import telegramium.bots.GameHighScore
@@ -4470,6 +4690,46 @@ object CirceImplicits {
         _result      <- h.get[Option[WebhookInfo]]("result")
       } yield {
         GetWebhookInfoRes(ok = _ok, description = _description, result = _result)
+      }
+    }
+
+  implicit lazy val setmycommandsreqEncoder: Encoder[SetMyCommandsReq] =
+    (x: SetMyCommandsReq) => {
+      Json.fromFields(
+        List(
+          "commands" -> x.commands.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setmycommandsreqDecoder: Decoder[SetMyCommandsReq] =
+    Decoder.instance { h =>
+      for {
+        _commands <- h.getOrElse[List[BotCommand]]("commands")(List.empty)
+      } yield {
+        SetMyCommandsReq(commands = _commands)
+      }
+    }
+
+  implicit lazy val setmycommandsresEncoder: Encoder[SetMyCommandsRes] =
+    (x: SetMyCommandsRes) => {
+      Json.fromFields(
+        List(
+          "ok"          -> x.ok.asJson,
+          "description" -> x.description.asJson,
+          "result"      -> x.result.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setmycommandsresDecoder: Decoder[SetMyCommandsRes] =
+    Decoder.instance { h =>
+      for {
+        _ok          <- h.get[Boolean]("ok")
+        _description <- h.get[Option[String]]("description")
+        _result      <- h.get[Option[Boolean]]("result")
+      } yield {
+        SetMyCommandsRes(ok = _ok, description = _description, result = _result)
       }
     }
 
@@ -4863,6 +5123,7 @@ object CirceImplicits {
           "name"           -> x.name.asJson,
           "title"          -> x.title.asJson,
           "png_sticker"    -> x.pngSticker.asJson,
+          "tgs_sticker"    -> x.tgsSticker.asJson,
           "emojis"         -> x.emojis.asJson,
           "contains_masks" -> x.containsMasks.asJson,
           "mask_position"  -> x.maskPosition.asJson
@@ -4876,18 +5137,22 @@ object CirceImplicits {
         _userId        <- h.get[Int]("user_id")
         _name          <- h.get[String]("name")
         _title         <- h.get[String]("title")
-        _pngSticker    <- h.get[IFile]("png_sticker")
+        _pngSticker    <- h.get[Option[IFile]]("png_sticker")
+        _tgsSticker    <- h.get[Option[IFile]]("tgs_sticker")
         _emojis        <- h.get[String]("emojis")
         _containsMasks <- h.get[Option[Boolean]]("contains_masks")
         _maskPosition  <- h.get[Option[MaskPosition]]("mask_position")
       } yield {
-        CreateNewStickerSetReq(userId = _userId,
-                               name = _name,
-                               title = _title,
-                               pngSticker = _pngSticker,
-                               emojis = _emojis,
-                               containsMasks = _containsMasks,
-                               maskPosition = _maskPosition)
+        CreateNewStickerSetReq(
+          userId = _userId,
+          name = _name,
+          title = _title,
+          pngSticker = _pngSticker,
+          tgsSticker = _tgsSticker,
+          emojis = _emojis,
+          containsMasks = _containsMasks,
+          maskPosition = _maskPosition
+        )
       }
     }
 
@@ -5186,6 +5451,55 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val senddicereqEncoder: Encoder[SendDiceReq] =
+    (x: SendDiceReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"              -> x.chatId.asJson,
+          "disable_notification" -> x.disableNotification.asJson,
+          "reply_to_message_id"  -> x.replyToMessageId.asJson,
+          "reply_markup"         -> x.replyMarkup.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val senddicereqDecoder: Decoder[SendDiceReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId              <- h.get[ChatId]("chat_id")
+        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
+        _replyToMessageId    <- h.get[Option[Int]]("reply_to_message_id")
+        _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
+      } yield {
+        SendDiceReq(chatId = _chatId,
+                    disableNotification = _disableNotification,
+                    replyToMessageId = _replyToMessageId,
+                    replyMarkup = _replyMarkup)
+      }
+    }
+
+  implicit lazy val senddiceresEncoder: Encoder[SendDiceRes] =
+    (x: SendDiceRes) => {
+      Json.fromFields(
+        List(
+          "ok"          -> x.ok.asJson,
+          "description" -> x.description.asJson,
+          "result"      -> x.result.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val senddiceresDecoder: Decoder[SendDiceRes] =
+    Decoder.instance { h =>
+      for {
+        _ok          <- h.get[Boolean]("ok")
+        _description <- h.get[Option[String]]("description")
+        _result      <- h.get[Option[Message]]("result")
+      } yield {
+        SendDiceRes(ok = _ok, description = _description, result = _result)
+      }
+    }
+
   implicit lazy val sendchatactionreqEncoder: Encoder[SendChatActionReq.type] =
     (_: SendChatActionReq.type) => ().asJson
   implicit lazy val sendchatactionreqDecoder: Decoder[SendChatActionReq.type] = (_: HCursor) =>
@@ -5219,6 +5533,7 @@ object CirceImplicits {
           "user_id"       -> x.userId.asJson,
           "name"          -> x.name.asJson,
           "png_sticker"   -> x.pngSticker.asJson,
+          "tgs_sticker"   -> x.tgsSticker.asJson,
           "emojis"        -> x.emojis.asJson,
           "mask_position" -> x.maskPosition.asJson
         ).filter(!_._2.isNull)
@@ -5231,12 +5546,14 @@ object CirceImplicits {
         _userId       <- h.get[Int]("user_id")
         _name         <- h.get[String]("name")
         _pngSticker   <- h.get[IFile]("png_sticker")
+        _tgsSticker   <- h.get[Option[IFile]]("tgs_sticker")
         _emojis       <- h.get[String]("emojis")
         _maskPosition <- h.get[Option[MaskPosition]]("mask_position")
       } yield {
         AddStickerToSetReq(userId = _userId,
                            name = _name,
                            pngSticker = _pngSticker,
+                           tgsSticker = _tgsSticker,
                            emojis = _emojis,
                            maskPosition = _maskPosition)
       }
@@ -6635,6 +6952,32 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val getmycommandsreqEncoder: Encoder[GetMyCommandsReq.type] =
+    (_: GetMyCommandsReq.type) => ().asJson
+  implicit lazy val getmycommandsreqDecoder: Decoder[GetMyCommandsReq.type] = (_: HCursor) =>
+    Right(GetMyCommandsReq)
+  implicit lazy val getmycommandsresEncoder: Encoder[GetMyCommandsRes] =
+    (x: GetMyCommandsRes) => {
+      Json.fromFields(
+        List(
+          "ok"          -> x.ok.asJson,
+          "description" -> x.description.asJson,
+          "result"      -> x.result.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getmycommandsresDecoder: Decoder[GetMyCommandsRes] =
+    Decoder.instance { h =>
+      for {
+        _ok          <- h.get[Boolean]("ok")
+        _description <- h.get[Option[String]]("description")
+        _result      <- h.getOrElse[List[BotCommand]]("result")(List.empty)
+      } yield {
+        GetMyCommandsRes(ok = _ok, description = _description, result = _result)
+      }
+    }
+
   implicit lazy val getchatadministratorsreqEncoder: Encoder[GetChatAdministratorsReq] =
     (x: GetChatAdministratorsReq) => {
       Json.fromFields(
@@ -6957,6 +7300,50 @@ object CirceImplicits {
         _result      <- h.get[Option[Boolean]]("result")
       } yield {
         PinChatMessageRes(ok = _ok, description = _description, result = _result)
+      }
+    }
+
+  implicit lazy val setstickersetthumbreqEncoder: Encoder[SetStickerSetThumbReq] =
+    (x: SetStickerSetThumbReq) => {
+      Json.fromFields(
+        List(
+          "name"    -> x.name.asJson,
+          "user_id" -> x.userId.asJson,
+          "thumb"   -> x.thumb.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setstickersetthumbreqDecoder: Decoder[SetStickerSetThumbReq] =
+    Decoder.instance { h =>
+      for {
+        _name   <- h.get[String]("name")
+        _userId <- h.get[Int]("user_id")
+        _thumb  <- h.get[Option[IFile]]("thumb")
+      } yield {
+        SetStickerSetThumbReq(name = _name, userId = _userId, thumb = _thumb)
+      }
+    }
+
+  implicit lazy val setstickersetthumbresEncoder: Encoder[SetStickerSetThumbRes] =
+    (x: SetStickerSetThumbRes) => {
+      Json.fromFields(
+        List(
+          "ok"          -> x.ok.asJson,
+          "description" -> x.description.asJson,
+          "result"      -> x.result.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setstickersetthumbresDecoder: Decoder[SetStickerSetThumbRes] =
+    Decoder.instance { h =>
+      for {
+        _ok          <- h.get[Boolean]("ok")
+        _description <- h.get[Option[String]]("description")
+        _result      <- h.get[Option[Boolean]]("result")
+      } yield {
+        SetStickerSetThumbRes(ok = _ok, description = _description, result = _result)
       }
     }
 

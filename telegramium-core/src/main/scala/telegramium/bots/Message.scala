@@ -91,6 +91,8 @@ final case class Message(
                          /** Optional. Message is a native poll, information about the
                            * poll*/
                          poll: Option[Poll] = Option.empty,
+                         /** Optional. Message is a dice with random value from 1 to 6*/
+                         dice: Option[Dice] = Option.empty,
                          /** Optional. New members that were added to the group or
                            * supergroup and information about them (the bot itself may be
                            * one of these members)*/

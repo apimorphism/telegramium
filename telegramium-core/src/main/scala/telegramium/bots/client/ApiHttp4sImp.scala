@@ -55,6 +55,22 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   }
 
+  /** Use this method to change the list of the bot's commands. Returns True on
+          success.  */
+  def setMyCommands(x: SetMyCommandsReq): F[SetMyCommandsRes] = {
+    for {
+      uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setMyCommands"))
+      req = Request[F]()
+        .withMethod(GET)
+        .withUri(uri)
+        .withEntity(x.asJson)
+      res <- http.expect(req)(jsonOf[F, SetMyCommandsRes])
+    } yield {
+      res
+    }
+
+  }
+
   /** Use this method to set a new profile photo for the chat. Photos can't be
           changed for private chats. The bot must be an administrator in the chat for this
           to work and must have the appropriate admin rights. Returns True on success.  */
@@ -200,20 +216,27 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   }
 
-  /** Use this method to create new sticker set owned by a user. The bot will be able
-          to edit the created sticker set. Returns True on success.  */
+  /** Use this method to create a new sticker set owned by a user. The bot will be
+          able to edit the sticker set thus created. You must use exactly one of the
+          fields png_sticker or tgs_sticker. Returns True on success.  */
   def createNewStickerSet(x: CreateNewStickerSetReq): F[CreateNewStickerSetRes] = {
 
     val pngStickerPartF = x.pngSticker match {
-      case InputPartFile(f) => makePart("png_sticker", f)
-      case _                => F.pure(List.empty[Part[F]])
+      case Some(InputPartFile(f)) => makePart("png_sticker", f)
+      case _                      => F.pure(List.empty[Part[F]])
     }
 
-    List(pngStickerPartF).sequence.map(_.flatten).flatMap { l =>
+    val tgsStickerPartF = x.tgsSticker match {
+      case Some(InputPartFile(f)) => makePart("tgs_sticker", f)
+      case _                      => F.pure(List.empty[Part[F]])
+    }
+
+    List(pngStickerPartF, tgsStickerPartF).sequence.map(_.flatten).flatMap { l =>
       if (l.nonEmpty) {
         for {
           uri            <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/createNewStickerSet"))
           pngStickerPart <- pngStickerPartF
+          tgsStickerPart <- tgsStickerPartF
           body = Multipart[F](
             Vector(
               ("user_id", x.userId.asJson),
@@ -222,9 +245,11 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
               ("emojis", x.emojis.asJson),
               ("contains_masks", x.containsMasks.asJson),
               ("mask_position", x.maskPosition.asJson),
-              ("pngSticker", if (pngStickerPart.isEmpty) { x.pngSticker.asJson } else { Json.Null })
+              ("pngSticker",
+               if (pngStickerPart.isEmpty) { x.pngSticker.asJson } else { Json.Null }),
+              ("tgsSticker", if (tgsStickerPart.isEmpty) { x.tgsSticker.asJson } else { Json.Null })
             ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
-              pngStickerPart
+              pngStickerPart ++ tgsStickerPart
           )
           req = Request[F]()
             .withMethod(POST)
@@ -384,6 +409,24 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   }
 
+  /** Use this method to send a dice, which will have a random value from 1 to 6. On
+          success, the sent Message is returned. (Yes, we're aware of the “proper”
+          singular of die. But it's awkward, and we decided to help it change. One dice at
+          a time!)  */
+  def sendDice(x: SendDiceReq): F[SendDiceRes] = {
+    for {
+      uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendDice"))
+      req = Request[F]()
+        .withMethod(GET)
+        .withUri(uri)
+        .withEntity(x.asJson)
+      res <- http.expect(req)(jsonOf[F, SendDiceRes])
+    } yield {
+      res
+    }
+
+  }
+
   /** Use this method when you need to tell the user that something is happening on
           the bot's side. The status is set for 5 seconds or less (when a message arrives
           from your bot, Telegram clients clear its typing status). Returns True on
@@ -402,7 +445,10 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   }
 
-  /** Use this method to add a new sticker to a set created by the bot. Returns True
+  /** Use this method to add a new sticker to a set created by the bot. You must use
+          exactly one of the fields png_sticker or tgs_sticker. Animated stickers can be
+          added to animated sticker sets and only to them. Animated sticker sets can have
+          up to 50 stickers. Static sticker sets can have up to 120 stickers. Returns True
           on success.  */
   def addStickerToSet(x: AddStickerToSetReq): F[AddStickerToSetRes] = {
 
@@ -411,20 +457,28 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
       case _                => F.pure(List.empty[Part[F]])
     }
 
-    List(pngStickerPartF).sequence.map(_.flatten).flatMap { l =>
+    val tgsStickerPartF = x.tgsSticker match {
+      case Some(InputPartFile(f)) => makePart("tgs_sticker", f)
+      case _                      => F.pure(List.empty[Part[F]])
+    }
+
+    List(pngStickerPartF, tgsStickerPartF).sequence.map(_.flatten).flatMap { l =>
       if (l.nonEmpty) {
         for {
           uri            <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/addStickerToSet"))
           pngStickerPart <- pngStickerPartF
+          tgsStickerPart <- tgsStickerPartF
           body = Multipart[F](
             Vector(
               ("user_id", x.userId.asJson),
               ("name", x.name.asJson),
               ("emojis", x.emojis.asJson),
               ("mask_position", x.maskPosition.asJson),
-              ("pngSticker", if (pngStickerPart.isEmpty) { x.pngSticker.asJson } else { Json.Null })
+              ("pngSticker",
+               if (pngStickerPart.isEmpty) { x.pngSticker.asJson } else { Json.Null }),
+              ("tgsSticker", if (tgsStickerPart.isEmpty) { x.tgsSticker.asJson } else { Json.Null })
             ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
-              pngStickerPart
+              pngStickerPart ++ tgsStickerPart
           )
           req = Request[F]()
             .withMethod(POST)
@@ -863,12 +917,13 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to delete a message, including service messages, with the
           following limitations: - A message can only be deleted if it was sent less than
-          48 hours ago. - Bots can delete outgoing messages in private chats, groups, and
-          supergroups. - Bots can delete incoming messages in private chats. - Bots
-          granted can_post_messages permissions can delete outgoing messages in channels.
-          - If the bot is an administrator of a group, it can delete any message there. -
-          If the bot has can_delete_messages permission in a supergroup or a channel, it
-          can delete any message there. Returns True on success.  */
+          48 hours ago. - A dice message in a private chat can only be deleted if it was
+          sent more than 24 hours ago. - Bots can delete outgoing messages in private
+          chats, groups, and supergroups. - Bots can delete incoming messages in private
+          chats. - Bots granted can_post_messages permissions can delete outgoing messages
+          in channels. - If the bot is an administrator of a group, it can delete any
+          message there. - If the bot has can_delete_messages permission in a supergroup
+          or a channel, it can delete any message there. Returns True on success.  */
   def deleteMessage(x: DeleteMessageReq): F[DeleteMessageRes] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/deleteMessage"))
@@ -1048,6 +1103,22 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   }
 
+  /** Use this method to get the current list of the bot's commands. Requires no
+          parameters. Returns Array of BotCommand on success.  */
+  def getMyCommands(): F[GetMyCommandsRes] = {
+    for {
+      uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/getMyCommands"))
+      req = Request[F]()
+        .withMethod(GET)
+        .withUri(uri)
+
+      res <- http.expect(req)(jsonOf[F, GetMyCommandsRes])
+    } yield {
+      res
+    }
+
+  }
+
   /** Use this method to get a list of administrators in a chat. On success, returns
           an Array of ChatMember objects that contains information about all chat
           administrators except other bots. If the chat is a group or a supergroup and no
@@ -1191,6 +1262,53 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
       res
     }
 
+  }
+
+  /** Use this method to set the thumbnail of a sticker set. Animated thumbnails can
+          be set for animated sticker sets only. Returns True on success.  */
+  def setStickerSetThumb(x: SetStickerSetThumbReq): F[SetStickerSetThumbRes] = {
+
+    val thumbPartF = x.thumb match {
+      case Some(InputPartFile(f)) => makePart("thumb", f)
+      case _                      => F.pure(List.empty[Part[F]])
+    }
+
+    List(thumbPartF).sequence.map(_.flatten).flatMap { l =>
+      if (l.nonEmpty) {
+        for {
+          uri       <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setStickerSetThumb"))
+          thumbPart <- thumbPartF
+          body = Multipart[F](
+            Vector(("name", x.name.asJson),
+                   ("user_id", x.userId.asJson),
+                   ("thumb", if (thumbPart.isEmpty) { x.thumb.asJson } else { Json.Null }))
+              .filter(!_._2.isNull)
+              .map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              thumbPart
+          )
+          req = Request[F]()
+            .withMethod(POST)
+            .withUri(uri)
+            .withEntity(body)
+            .withHeaders(body.headers)
+          res <- http.expect(req)(jsonOf[F, SetStickerSetThumbRes])
+        } yield {
+          res
+        }
+      } else {
+        for {
+          uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setStickerSetThumb"))
+          req = Request[F]()
+            .withMethod(GET)
+            .withUri(uri)
+            .withEntity(x.asJson)
+          res <- http.expect(req)(jsonOf[F, SetStickerSetThumbRes])
+        } yield {
+          res
+        }
+
+      }
+    }
   }
 
   /** Use this method to edit only the reply markup of messages. On success, if
