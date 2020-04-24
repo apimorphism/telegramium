@@ -484,6 +484,10 @@ object uPickleImplicits {
     val typeKey                  = upack.Str("type")
     val allowsMultipleAnswersKey = upack.Str("allowsMultipleAnswers")
     val correctOptionIdKey       = upack.Str("correctOptionId")
+    val explanationKey           = upack.Str("explanation")
+    val explanationParseModeKey  = upack.Str("explanationParseMode")
+    val openPeriodKey            = upack.Str("openPeriod")
+    val closeDateKey             = upack.Str("closeDate")
     val isClosedKey              = upack.Str("isClosed")
     val disableNotificationKey   = upack.Str("disableNotification")
     val replyToMessageIdKey      = upack.Str("replyToMessageId")
@@ -498,6 +502,10 @@ object uPickleImplicits {
           typeKey                  -> writeMsg(x.`type`),
           allowsMultipleAnswersKey -> writeMsg(x.allowsMultipleAnswers),
           correctOptionIdKey       -> writeMsg(x.correctOptionId),
+          explanationKey           -> writeMsg(x.explanation),
+          explanationParseModeKey  -> writeMsg(x.explanationParseMode),
+          openPeriodKey            -> writeMsg(x.openPeriod),
+          closeDateKey             -> writeMsg(x.closeDate),
           isClosedKey              -> writeMsg(x.isClosed),
           disableNotificationKey   -> writeMsg(x.disableNotification),
           replyToMessageIdKey      -> writeMsg(x.replyToMessageId),
@@ -516,7 +524,13 @@ object uPickleImplicits {
             .get(allowsMultipleAnswersKey)
             .map(x => readBinary[Option[Boolean]](x))
           correctOptionId <- m.get(correctOptionIdKey).map(x => readBinary[Option[Int]](x))
-          isClosed        <- m.get(isClosedKey).map(x => readBinary[Option[Boolean]](x))
+          explanation     <- m.get(explanationKey).map(x => readBinary[Option[String]](x))
+          explanationParseMode <- m
+            .get(explanationParseModeKey)
+            .map(x => readBinary[Option[String]](x))
+          openPeriod <- m.get(openPeriodKey).map(x => readBinary[Option[Int]](x))
+          closeDate  <- m.get(closeDateKey).map(x => readBinary[Option[Int]](x))
+          isClosed   <- m.get(isClosedKey).map(x => readBinary[Option[Boolean]](x))
           disableNotification <- m
             .get(disableNotificationKey)
             .map(x => readBinary[Option[Boolean]](x))
@@ -531,6 +545,10 @@ object uPickleImplicits {
             `type` = `type`,
             allowsMultipleAnswers = allowsMultipleAnswers,
             correctOptionId = correctOptionId,
+            explanation = explanation,
+            explanationParseMode = explanationParseMode,
+            openPeriod = openPeriod,
+            closeDate = closeDate,
             isClosed = isClosed,
             disableNotification = disableNotification,
             replyToMessageId = replyToMessageId,
@@ -1094,6 +1112,7 @@ object uPickleImplicits {
 
   implicit lazy val senddicereqCodec: ReadWriter[SendDiceReq] = {
     val chatIdKey              = upack.Str("chatId")
+    val emojiKey               = upack.Str("emoji")
     val disableNotificationKey = upack.Str("disableNotification")
     val replyToMessageIdKey    = upack.Str("replyToMessageId")
     val replyMarkupKey         = upack.Str("replyMarkup")
@@ -1101,6 +1120,7 @@ object uPickleImplicits {
       x => {
         upack.Obj(
           chatIdKey              -> writeMsg(x.chatId),
+          emojiKey               -> writeMsg(x.emoji),
           disableNotificationKey -> writeMsg(x.disableNotification),
           replyToMessageIdKey    -> writeMsg(x.replyToMessageId),
           replyMarkupKey         -> writeMsg(x.replyMarkup)
@@ -1110,6 +1130,7 @@ object uPickleImplicits {
         val m = msg.obj
         val result = for {
           chatId <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          emoji  <- m.get(emojiKey).map(x => readBinary[Option[String]](x))
           disableNotification <- m
             .get(disableNotificationKey)
             .map(x => readBinary[Option[Boolean]](x))
@@ -1118,6 +1139,7 @@ object uPickleImplicits {
         } yield {
           SendDiceReq(
             chatId = chatId,
+            emoji = emoji,
             disableNotification = disableNotification,
             replyToMessageId = replyToMessageId,
             replyMarkup = replyMarkup
@@ -4991,6 +5013,10 @@ object CirceImplicits {
           "type"                    -> x.`type`.asJson,
           "allows_multiple_answers" -> x.allowsMultipleAnswers.asJson,
           "correct_option_id"       -> x.correctOptionId.asJson,
+          "explanation"             -> x.explanation.asJson,
+          "explanation_parse_mode"  -> x.explanationParseMode.asJson,
+          "open_period"             -> x.openPeriod.asJson,
+          "close_date"              -> x.closeDate.asJson,
           "is_closed"               -> x.isClosed.asJson,
           "disable_notification"    -> x.disableNotification.asJson,
           "reply_to_message_id"     -> x.replyToMessageId.asJson,
@@ -5009,6 +5035,10 @@ object CirceImplicits {
         _type                  <- h.get[Option[String]]("type")
         _allowsMultipleAnswers <- h.get[Option[Boolean]]("allows_multiple_answers")
         _correctOptionId       <- h.get[Option[Int]]("correct_option_id")
+        _explanation           <- h.get[Option[String]]("explanation")
+        _explanationParseMode  <- h.get[Option[String]]("explanation_parse_mode")
+        _openPeriod            <- h.get[Option[Int]]("open_period")
+        _closeDate             <- h.get[Option[Int]]("close_date")
         _isClosed              <- h.get[Option[Boolean]]("is_closed")
         _disableNotification   <- h.get[Option[Boolean]]("disable_notification")
         _replyToMessageId      <- h.get[Option[Int]]("reply_to_message_id")
@@ -5022,6 +5052,10 @@ object CirceImplicits {
           `type` = _type,
           allowsMultipleAnswers = _allowsMultipleAnswers,
           correctOptionId = _correctOptionId,
+          explanation = _explanation,
+          explanationParseMode = _explanationParseMode,
+          openPeriod = _openPeriod,
+          closeDate = _closeDate,
           isClosed = _isClosed,
           disableNotification = _disableNotification,
           replyToMessageId = _replyToMessageId,
@@ -5456,6 +5490,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"              -> x.chatId.asJson,
+          "emoji"                -> x.emoji.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "reply_to_message_id"  -> x.replyToMessageId.asJson,
           "reply_markup"         -> x.replyMarkup.asJson
@@ -5467,11 +5502,13 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId              <- h.get[ChatId]("chat_id")
+        _emoji               <- h.get[Option[String]]("emoji")
         _disableNotification <- h.get[Option[Boolean]]("disable_notification")
         _replyToMessageId    <- h.get[Option[Int]]("reply_to_message_id")
         _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendDiceReq(chatId = _chatId,
+                    emoji = _emoji,
                     disableNotification = _disableNotification,
                     replyToMessageId = _replyToMessageId,
                     replyMarkup = _replyMarkup)

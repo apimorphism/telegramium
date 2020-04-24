@@ -7,5 +7,5 @@ final case class GetUserProfilePhotosReq(
                                            * default, all photos are returned.*/
                                          offset: Option[Int] = Option.empty,
                                          /** Limits the number of photos to be retrieved. Values between
-                                           * 1—100 are accepted. Defaults to 100.*/
+                                           * 1-100 are accepted. Defaults to 100.*/
                                          limit: Option[Int] = Option.empty)

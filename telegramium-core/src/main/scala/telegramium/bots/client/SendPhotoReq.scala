@@ -18,9 +18,8 @@ final case class SendPhotoReq(
                               /** Photo caption (may also be used when resending photos by
                                 * file_id), 0-1024 characters after entities parsing*/
                               caption: Option[String] = Option.empty,
-                              /** Send Markdown or HTML, if you want Telegram apps to show
-                                * bold, italic, fixed-width text or inline URLs in the media
-                                * caption.*/
+                              /** Mode for parsing entities in the photo caption. See
+                                * formatting options for more details.*/
                               parseMode: Option[ParseMode] = Option.empty,
                               /** Sends the message silently. Users will receive a
                                 * notification with no sound.*/

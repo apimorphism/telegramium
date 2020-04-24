@@ -18,9 +18,8 @@ final case class SendVoiceReq(
                               /** Voice message caption, 0-1024 characters after entities
                                 * parsing*/
                               caption: Option[String] = Option.empty,
-                              /** Send Markdown or HTML, if you want Telegram apps to show
-                                * bold, italic, fixed-width text or inline URLs in the media
-                                * caption.*/
+                              /** Mode for parsing entities in the voice message caption. See
+                                * formatting options for more details.*/
                               parseMode: Option[ParseMode] = Option.empty,
                               /** Duration of the voice message in seconds*/
                               duration: Option[Int] = Option.empty,

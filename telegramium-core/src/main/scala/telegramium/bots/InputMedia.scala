@@ -26,9 +26,8 @@ final case class InputMediaAnimation(
                                      /** Optional. Caption of the animation to be sent, 0-1024
                                        * characters after entities parsing*/
                                      caption: Option[String] = Option.empty,
-                                     /** Optional. Send Markdown or HTML, if you want Telegram apps
-                                       * to show bold, italic, fixed-width text or inline URLs in the
-                                       * media caption.*/
+                                     /** Optional. Mode for parsing entities in the animation
+                                       * caption. See formatting options for more details.*/
                                      parseMode: Option[ParseMode] = Option.empty,
                                      /** Optional. Animation width*/
                                      width: Option[Int] = Option.empty,
@@ -50,9 +49,8 @@ final case class InputMediaPhoto(
                                  /** Optional. Caption of the photo to be sent, 0-1024
                                    * characters after entities parsing*/
                                  caption: Option[String] = Option.empty,
-                                 /** Optional. Send Markdown or HTML, if you want Telegram apps
-                                   * to show bold, italic, fixed-width text or inline URLs in the
-                                   * media caption.*/
+                                 /** Optional. Mode for parsing entities in the photo caption.
+                                   * See formatting options for more details.*/
                                  parseMode: Option[ParseMode] = Option.empty)
     extends InputMedia
 
@@ -79,9 +77,8 @@ final case class InputMediaVideo(
                                  /** Optional. Caption of the video to be sent, 0-1024
                                    * characters after entities parsing*/
                                  caption: Option[String] = Option.empty,
-                                 /** Optional. Send Markdown or HTML, if you want Telegram apps
-                                   * to show bold, italic, fixed-width text or inline URLs in the
-                                   * media caption.*/
+                                 /** Optional. Mode for parsing entities in the video caption.
+                                   * See formatting options for more details.*/
                                  parseMode: Option[ParseMode] = Option.empty,
                                  /** Optional. Video width*/
                                  width: Option[Int] = Option.empty,
@@ -117,9 +114,8 @@ final case class InputMediaDocument(
                                     /** Optional. Caption of the document to be sent, 0-1024
                                       * characters after entities parsing*/
                                     caption: Option[String] = Option.empty,
-                                    /** Optional. Send Markdown or HTML, if you want Telegram apps
-                                      * to show bold, italic, fixed-width text or inline URLs in the
-                                      * media caption.*/
+                                    /** Optional. Mode for parsing entities in the document
+                                      * caption. See formatting options for more details.*/
                                     parseMode: Option[ParseMode] = Option.empty)
     extends InputMedia
 
@@ -146,9 +142,8 @@ final case class InputMediaAudio(
                                  /** Optional. Caption of the audio to be sent, 0-1024
                                    * characters after entities parsing*/
                                  caption: Option[String] = Option.empty,
-                                 /** Optional. Send Markdown or HTML, if you want Telegram apps
-                                   * to show bold, italic, fixed-width text or inline URLs in the
-                                   * media caption.*/
+                                 /** Optional. Mode for parsing entities in the audio caption.
+                                   * See formatting options for more details.*/
                                  parseMode: Option[ParseMode] = Option.empty,
                                  /** Optional. Duration of the audio in seconds*/
                                  duration: Option[Int] = Option.empty,

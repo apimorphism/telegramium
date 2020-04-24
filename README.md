@@ -1,6 +1,6 @@
 # F[Tg] - Telegramium
 
-[![Telegram](https://img.shields.io/badge/Telegram%20Bot%20API-4.7%20(March%2030%2C%202020)-blue)](https://core.telegram.org/bots/api#recent-changes)
+[![Telegram](https://img.shields.io/badge/Telegram%20Bot%20API-4.8%20(April%2430%2C%202020)-blue)](https://core.telegram.org/bots/api#recent-changes)
 
 
 F[Tg] is a pure functional Telegram Bot API for scala.
@@ -21,9 +21,19 @@ You may want to start with [Api.scala](telegramium-core/src/main/scala/telegrami
 Create the dependency by adding the following lines to your build.sbt:
 
 ```
-libraryDependencies += "io.github.apimorphism" %% "telegramium-core" % "1.0.0-RC5"
-libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "1.0.0-RC5"
+libraryDependencies += "io.github.apimorphism" %% "telegramium-core" % "1.48.0"
+libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "1.48.0"
 ```
+
+### Versioning
+
+X.Y.Z where
+
+* X major changes to telegramium high or internals of the core.
+* Y denotes Telegram Bot API version which is supported by this `X.Y.Z`.
+* Z bug fix changes.
+
+Please, note, that this versioning scheme is started from version `1.48.0`.
 
 ### Known issues
 

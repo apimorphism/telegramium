@@ -30,7 +30,7 @@ final case class ChatMember(
                               * can restrict, ban or unban chat members*/
                             canRestrictMembers: Option[Boolean] = Option.empty,
                             /** Optional. Administrators only. True, if the administrator
-                              * can add new administrators with a subset of his own
+                              * can add new administrators with a subset of their own
                               * privileges or demote administrators that he has promoted,
                               * directly or indirectly (promoted by administrators that were
                               * appointed by the user)*/

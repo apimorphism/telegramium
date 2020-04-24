@@ -52,9 +52,8 @@ final case class InputLocationMessageContent(
 final case class InputTextMessageContent(
                                          /** Text of the message to be sent, 1-4096 characters*/
                                          messageText: String,
-                                         /** Optional. Send Markdown or HTML, if you want Telegram apps
-                                           * to show bold, italic, fixed-width text or inline URLs in
-                                           * your bot's message.*/
+                                         /** Optional. Mode for parsing entities in the message text.
+                                           * See formatting options for more details.*/
                                          parseMode: Option[ParseMode] = Option.empty,
                                          /** Optional. Disables link previews for links in the sent
                                            * message*/

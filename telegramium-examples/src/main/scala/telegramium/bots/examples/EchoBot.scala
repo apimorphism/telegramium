@@ -30,6 +30,9 @@ class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) exten
             List(
               InlineKeyboardButton("Roll the dice", callbackData = Some("dice")),
             ),
+            List(
+              InlineKeyboardButton("Gimme a quiz", callbackData = Some("quiz")),
+            ),
           )
         )
       )
@@ -39,6 +42,23 @@ class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) exten
   override def onCallbackQuery(query: CallbackQuery): F[Unit] = {
     def rollTheDice(chatId: Long): F[Unit] = {
       bot.sendDice(SendDiceReq(ChatIntId(chatId))).void >>
+        bot.answerCallbackQuery(AnswerCallbackQueryReq(callbackQueryId = query.id)).void
+    }
+    def quiz(chatId: Long): F[Unit] = {
+      bot.sendPoll(SendPollReq(
+        chatId = ChatIntId(chatId),
+        question = "How much is the fish?",
+        `type` = Some("quiz"),
+        options = List(
+          "3.14",
+          "2.72",
+          "1.62",
+          "Sunshine in the air!",
+        ),
+        correctOptionId = Some(2),
+        isAnonymous = Some(false),
+        explanation = Some("https://en.wikipedia.org/wiki/Golden_ratio"),
+      )).void >>
         bot.answerCallbackQuery(AnswerCallbackQueryReq(callbackQueryId = query.id)).void
     }
     def sendMsg(chatId: Long, text: String, parseMode: ParseMode): F[Unit] = {
@@ -53,6 +73,7 @@ class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) exten
       case "Markdown"  => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdownText, Markdown))
       case "Markdown2" => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdown2Text, Markdown2))
       case "dice"      => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id))
+      case "quiz"      => query.message.fold(syncF.unit)(m => quiz(m.chat.id))
       case x => bot.answerCallbackQuery(AnswerCallbackQueryReq(
         callbackQueryId = query.id,
         text = Some(s"Your choice is $x")

@@ -7,6 +7,9 @@ final case class SendDiceReq(
                              /** Unique identifier for the target chat or username of the
                                * target channel (in the format @channelusername)*/
                              chatId: ChatId,
+                             /** Emoji on which the dice throw animation is based.
+                               * Currently, must be one of “” or “”. Defauts to “”*/
+                             emoji: Option[String] = Option.empty,
                              /** Sends the message silently. Users will receive a
                                * notification with no sound.*/
                              disableNotification: Option[Boolean] = Option.empty,

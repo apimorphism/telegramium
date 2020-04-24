@@ -12,7 +12,7 @@ final case class GetUpdatesReq(
                                  * updates will forgotten.*/
                                offset: Option[Int] = Option.empty,
                                /** Limits the number of updates to be retrieved. Values
-                                 * between 1—100 are accepted. Defaults to 100.*/
+                                 * between 1-100 are accepted. Defaults to 100.*/
                                limit: Option[Int] = Option.empty,
                                /** Timeout in seconds for long polling. Defaults to 0, i.e.
                                  * usual short polling. Should be positive, short polling

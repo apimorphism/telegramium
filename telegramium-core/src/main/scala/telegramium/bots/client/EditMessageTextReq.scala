@@ -18,9 +18,8 @@ final case class EditMessageTextReq(
                                     /** New text of the message, 1-4096 characters after entities
                                       * parsing*/
                                     text: String,
-                                    /** Send Markdown or HTML, if you want Telegram apps to show
-                                      * bold, italic, fixed-width text or inline URLs in your bot's
-                                      * message.*/
+                                    /** Mode for parsing entities in the message text. See
+                                      * formatting options for more details.*/
                                     parseMode: Option[ParseMode] = Option.empty,
                                     /** Disables link previews for links in this message*/
                                     disableWebPagePreview: Option[Boolean] = Option.empty,

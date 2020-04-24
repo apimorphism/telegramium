@@ -22,6 +22,21 @@ final case class SendPollReq(
                              /** 0-based identifier of the correct answer option, required
                                * for polls in quiz mode*/
                              correctOptionId: Option[Int] = Option.empty,
+                             /** Text that is shown when a user chooses an incorrect answer
+                               * or taps on the lamp icon in a quiz-style poll, 0-200
+                               * characters with at most 2 line feeds after entities parsing*/
+                             explanation: Option[String] = Option.empty,
+                             /** Mode for parsing entities in the explanation. See
+                               * formatting options for more details.*/
+                             explanationParseMode: Option[String] = Option.empty,
+                             /** Amount of time in seconds the poll will be active after
+                               * creation, 5-600. Can't be used together with close_date.*/
+                             openPeriod: Option[Int] = Option.empty,
+                             /** Point in time (Unix timestamp) when the poll will be
+                               * automatically closed. Must be at least 5 and no more than
+                               * 600 seconds in the future. Can't be used together with
+                               * open_period.*/
+                             closeDate: Option[Int] = Option.empty,
                              /** Pass True, if the poll needs to be immediately closed. This
                                * can be useful for poll preview.*/
                              isClosed: Option[Boolean] = Option.empty,

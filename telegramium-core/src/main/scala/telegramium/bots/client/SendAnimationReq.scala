@@ -36,9 +36,8 @@ final case class SendAnimationReq(
                                     * animation by file_id), 0-1024 characters after entities
                                     * parsing*/
                                   caption: Option[String] = Option.empty,
-                                  /** Send Markdown or HTML, if you want Telegram apps to show
-                                    * bold, italic, fixed-width text or inline URLs in the media
-                                    * caption.*/
+                                  /** Mode for parsing entities in the animation caption. See
+                                    * formatting options for more details.*/
                                   parseMode: Option[ParseMode] = Option.empty,
                                   /** Sends the message silently. Users will receive a
                                     * notification with no sound.*/

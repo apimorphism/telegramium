@@ -2863,6 +2863,10 @@ object uPickleImplicits {
     val typeKey                  = upack.Str("type")
     val allowsMultipleAnswersKey = upack.Str("allowsMultipleAnswers")
     val correctOptionIdKey       = upack.Str("correctOptionId")
+    val explanationKey           = upack.Str("explanation")
+    val explanationEntitiesKey   = upack.Str("explanationEntities")
+    val openPeriodKey            = upack.Str("openPeriod")
+    val closeDateKey             = upack.Str("closeDate")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
@@ -2874,7 +2878,11 @@ object uPickleImplicits {
           isAnonymousKey           -> writeMsg(x.isAnonymous),
           typeKey                  -> writeMsg(x.`type`),
           allowsMultipleAnswersKey -> writeMsg(x.allowsMultipleAnswers),
-          correctOptionIdKey       -> writeMsg(x.correctOptionId)
+          correctOptionIdKey       -> writeMsg(x.correctOptionId),
+          explanationKey           -> writeMsg(x.explanation),
+          explanationEntitiesKey   -> writeMsg(x.explanationEntities),
+          openPeriodKey            -> writeMsg(x.openPeriod),
+          closeDateKey             -> writeMsg(x.closeDate)
         )
       },
       msg => {
@@ -2889,6 +2897,12 @@ object uPickleImplicits {
           `type`                <- m.get(typeKey).map(x => readBinary[String](x))
           allowsMultipleAnswers <- m.get(allowsMultipleAnswersKey).map(x => readBinary[Boolean](x))
           correctOptionId       <- m.get(correctOptionIdKey).map(x => readBinary[Option[Int]](x))
+          explanation           <- m.get(explanationKey).map(x => readBinary[Option[String]](x))
+          explanationEntities <- m
+            .get(explanationEntitiesKey)
+            .map(x => readBinary[List[MessageEntity]](x))
+          openPeriod <- m.get(openPeriodKey).map(x => readBinary[Option[Int]](x))
+          closeDate  <- m.get(closeDateKey).map(x => readBinary[Option[Int]](x))
         } yield {
           Poll(
             id = id,
@@ -2899,7 +2913,11 @@ object uPickleImplicits {
             isAnonymous = isAnonymous,
             `type` = `type`,
             allowsMultipleAnswers = allowsMultipleAnswers,
-            correctOptionId = correctOptionId
+            correctOptionId = correctOptionId,
+            explanation = explanation,
+            explanationEntities = explanationEntities,
+            openPeriod = openPeriod,
+            closeDate = closeDate
           )
         }
         result.get
@@ -3162,19 +3180,23 @@ object uPickleImplicits {
   }
 
   implicit lazy val diceCodec: ReadWriter[Dice] = {
+    val emojiKey = upack.Str("emoji")
     val valueKey = upack.Str("value")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
+          emojiKey -> writeMsg(x.emoji),
           valueKey -> writeMsg(x.value)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
+          emoji <- m.get(emojiKey).map(x => readBinary[String](x))
           value <- m.get(valueKey).map(x => readBinary[Int](x))
         } yield {
           Dice(
+            emoji = emoji,
             value = value
           )
         }
@@ -6745,7 +6767,11 @@ object CirceImplicits {
           "is_anonymous"            -> x.isAnonymous.asJson,
           "type"                    -> x.`type`.asJson,
           "allows_multiple_answers" -> x.allowsMultipleAnswers.asJson,
-          "correct_option_id"       -> x.correctOptionId.asJson
+          "correct_option_id"       -> x.correctOptionId.asJson,
+          "explanation"             -> x.explanation.asJson,
+          "explanation_entities"    -> x.explanationEntities.asJson,
+          "open_period"             -> x.openPeriod.asJson,
+          "close_date"              -> x.closeDate.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6762,6 +6788,10 @@ object CirceImplicits {
         _type                  <- h.get[String]("type")
         _allowsMultipleAnswers <- h.get[Boolean]("allows_multiple_answers")
         _correctOptionId       <- h.get[Option[Int]]("correct_option_id")
+        _explanation           <- h.get[Option[String]]("explanation")
+        _explanationEntities   <- h.getOrElse[List[MessageEntity]]("explanation_entities")(List.empty)
+        _openPeriod            <- h.get[Option[Int]]("open_period")
+        _closeDate             <- h.get[Option[Int]]("close_date")
       } yield {
         Poll(
           id = _id,
@@ -6772,7 +6802,11 @@ object CirceImplicits {
           isAnonymous = _isAnonymous,
           `type` = _type,
           allowsMultipleAnswers = _allowsMultipleAnswers,
-          correctOptionId = _correctOptionId
+          correctOptionId = _correctOptionId,
+          explanation = _explanation,
+          explanationEntities = _explanationEntities,
+          openPeriod = _openPeriod,
+          closeDate = _closeDate
         )
       }
     }
@@ -6976,6 +7010,7 @@ object CirceImplicits {
     (x: Dice) => {
       Json.fromFields(
         List(
+          "emoji" -> x.emoji.asJson,
           "value" -> x.value.asJson
         ).filter(!_._2.isNull)
       )
@@ -6984,9 +7019,10 @@ object CirceImplicits {
   implicit lazy val diceDecoder: Decoder[Dice] =
     Decoder.instance { h =>
       for {
+        _emoji <- h.get[String]("emoji")
         _value <- h.get[Int]("value")
       } yield {
-        Dice(value = _value)
+        Dice(emoji = _emoji, value = _value)
       }
     }
 
