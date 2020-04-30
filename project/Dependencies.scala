@@ -4,10 +4,10 @@ object Dependencies {
 
   object V {
     val monix      = "3.1.0"
-    val catsCore   = "2.0.0"
-    val catsEffect = "2.0.0"
-    val circe      = "0.12.3"
-    val http4s     = "0.20.13"
+    val catsCore   = "2.1.1"
+    val catsEffect = "2.1.3"
+    val circe      = "0.13.0"
+    val http4s     = "0.21.3"
     val slf4j      = "1.7.26"
     val logback    = "1.2.3"
     val uPickle    = "0.8.0"

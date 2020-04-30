@@ -12,7 +12,6 @@ import cats.data.OptionT
 import cats.syntax.functor._
 import cats.syntax.flatMap._
 import CirceImplicits._
-import scala.concurrent.ExecutionContext
 import org.http4s.multipart.Multipart
 import cats.syntax.traverse._
 import cats.instances.list._
@@ -20,13 +19,12 @@ import io.circe.Json
 import telegramium.bots._
 import telegramium.bots.CirceImplicits._
 
-class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUrl: String)(
-    implicit F: MonadError[F, Throwable],
-    ec: ExecutionContext)
+class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUrl: String, blocker: Blocker)(
+    implicit F: MonadError[F, Throwable]
+)
     extends Api[F] {
 
-  def makePart(field: String, file: java.io.File)(
-      implicit ec: ExecutionContext): F[List[Part[F]]] = {
+  def makePart(field: String, file: java.io.File): F[List[Part[F]]] = {
     import org.http4s.headers._
     val ext    = "\\.[A-Za-z0-9]+$".r.findFirstIn(file.getName).getOrElse("").drop(1)
     val extOpt = MediaType.forExtension(ext).map(x => `Content-Type`(x))
@@ -34,7 +32,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
     for {
       mediaType <- OptionT(F.pure(extOpt)).getOrElseF(F.raiseError(error))
     } yield {
-      List(Part.fileData(field, file, ec, mediaType))
+      List(Part.fileData(field, file, blocker, mediaType))
     }
   }
 
@@ -90,7 +88,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             Vector(("chat_id", x.chatId.asJson),
                    ("photo", if (photoPart.isEmpty) { x.photo.asJson } else { Json.Null }))
               .filter(!_._2.isNull)
-              .map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              .map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
               photoPart
           )
           req = Request[F]()
@@ -248,7 +246,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
               ("pngSticker",
                if (pngStickerPart.isEmpty) { x.pngSticker.asJson } else { Json.Null }),
               ("tgsSticker", if (tgsStickerPart.isEmpty) { x.tgsSticker.asJson } else { Json.Null })
-            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
               pngStickerPart ++ tgsStickerPart
           )
           req = Request[F]()
@@ -295,7 +293,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             Vector(("user_id", x.userId.asJson),
                    ("pngSticker", if (pngStickerPart.isEmpty) { x.pngSticker.asJson } else {
                      Json.Null
-                   })).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+                   })).filter(!_._2.isNull).map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
               pngStickerPart
           )
           req = Request[F]()
@@ -477,7 +475,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
               ("pngSticker",
                if (pngStickerPart.isEmpty) { x.pngSticker.asJson } else { Json.Null }),
               ("tgsSticker", if (tgsStickerPart.isEmpty) { x.tgsSticker.asJson } else { Json.Null })
-            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
               pngStickerPart ++ tgsStickerPart
           )
           req = Request[F]()
@@ -774,7 +772,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
               ("reply_markup", x.replyMarkup.asJson),
               ("videoNote", if (videoNotePart.isEmpty) { x.videoNote.asJson } else { Json.Null }),
               ("thumb", if (thumbPart.isEmpty) { x.thumb.asJson } else { Json.Null })
-            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
               videoNotePart ++ thumbPart
           )
           req = Request[F]()
@@ -887,7 +885,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
               ("reply_markup", x.replyMarkup.asJson),
               ("document", if (documentPart.isEmpty) { x.document.asJson } else { Json.Null }),
               ("thumb", if (thumbPart.isEmpty) { x.thumb.asJson } else { Json.Null })
-            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
               documentPart ++ thumbPart
           )
           req = Request[F]()
@@ -1009,7 +1007,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
               ("reply_markup", x.replyMarkup.asJson),
               ("audio", if (audioPart.isEmpty) { x.audio.asJson } else { Json.Null }),
               ("thumb", if (thumbPart.isEmpty) { x.thumb.asJson } else { Json.Null })
-            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
               audioPart ++ thumbPart
           )
           req = Request[F]()
@@ -1164,7 +1162,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
               ("reply_to_message_id", x.replyToMessageId.asJson),
               ("reply_markup", x.replyMarkup.asJson),
               ("voice", if (voicePart.isEmpty) { x.voice.asJson } else { Json.Null })
-            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
               voicePart
           )
           req = Request[F]()
@@ -1283,7 +1281,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
                    ("user_id", x.userId.asJson),
                    ("thumb", if (thumbPart.isEmpty) { x.thumb.asJson } else { Json.Null }))
               .filter(!_._2.isNull)
-              .map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+              .map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
               thumbPart
           )
           req = Request[F]()
@@ -1364,7 +1362,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
               ("reply_markup", x.replyMarkup.asJson),
               ("video", if (videoPart.isEmpty) { x.video.asJson } else { Json.Null }),
               ("thumb", if (thumbPart.isEmpty) { x.thumb.asJson } else { Json.Null })
-            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
               videoPart ++ thumbPart
           )
           req = Request[F]()
@@ -1510,7 +1508,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
               ("reply_markup", x.replyMarkup.asJson),
               ("animation", if (animationPart.isEmpty) { x.animation.asJson } else { Json.Null }),
               ("thumb", if (thumbPart.isEmpty) { x.thumb.asJson } else { Json.Null })
-            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
               animationPart ++ thumbPart
           )
           req = Request[F]()
@@ -1596,7 +1594,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
               ("reply_to_message_id", x.replyToMessageId.asJson),
               ("reply_markup", x.replyMarkup.asJson),
               ("sticker", if (stickerPart.isEmpty) { x.sticker.asJson } else { Json.Null })
-            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
               stickerPart
           )
           req = Request[F]()
@@ -1661,7 +1659,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
               ("reply_to_message_id", x.replyToMessageId.asJson),
               ("reply_markup", x.replyMarkup.asJson),
               ("photo", if (photoPart.isEmpty) { x.photo.asJson } else { Json.Null })
-            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
               photoPart
           )
           req = Request[F]()
@@ -1749,7 +1747,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
               ("certificate", if (certificatePart.isEmpty) { x.certificate.asJson } else {
                 Json.Null
               })
-            ).filter(!_._2.isNull).map { case (n, v) => Part.formData(n, v.noSpaces) } ++
+            ).filter(!_._2.isNull).map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
               certificatePart
           )
           req = Request[F]()

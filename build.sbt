@@ -14,6 +14,8 @@ val buildTimestamp = settingKey[String]("Build info: timestamp")
 ThisBuild / buildCommit       := Version.commit(git.gitHeadCommit.value)
 ThisBuild / buildTimestamp    := Version.timestamp
 
+ThisBuild / scalaVersion      := Compiler.scala213
+
 ThisBuild / name              := "telegramium"
 ThisBuild / organization      := "io.github.apimorphism"
 ThisBuild / homepage          := Some(url("https://github.com/apimorphism/telegramium"))
