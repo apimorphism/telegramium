@@ -2,7 +2,6 @@ package telegramium.bots.high
 
 import java.util.concurrent.Executors
 
-import cats.MonadError
 import cats.effect.{Blocker, ConcurrentEffect, ContextShift}
 import org.http4s.client.Client
 import telegramium.bots.client.{Api, ApiHttp4sImp}
@@ -25,8 +24,7 @@ object Http4sApi {
   /**
    * @param blocker The `Blocker` to use for blocking IO operations. If not provided, a default `Blocker` will be used.
    */
-  def create[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUrl: String, blocker: Blocker = defaultBlocker)(
-    implicit F: MonadError[F, Throwable]
-  ): Api[F] = new ApiHttp4sImp[F](http, baseUrl, blocker)
+  def create[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUrl: String, blocker: Blocker = defaultBlocker): Api[F] =
+    new ApiHttp4sImp[F](http, baseUrl, blocker)
 
 }
