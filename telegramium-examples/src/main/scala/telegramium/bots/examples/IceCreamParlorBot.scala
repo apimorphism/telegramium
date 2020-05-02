@@ -4,8 +4,8 @@ import cats.effect.{Sync, Timer}
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import telegramium.bots.client.{AnswerCallbackQueryReq, Api, EditMessageReplyMarkupReq, EditMessageTextReq, SendMessageReq}
-import telegramium.bots.high.LongPollBot
-import telegramium.bots.{CallbackQuery, ChatIntId, InlineKeyboardButton, InlineKeyboardMarkup, Message}
+import telegramium.bots.{CallbackQuery, ChatIntId, Message}
+import telegramium.bots.high._
 
 /**
  * Show how to use inline keyboards
@@ -16,13 +16,15 @@ class IceCreamParlorBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer
       bot.sendMessage(SendMessageReq(
         chatId = ChatIntId(msg.chat.id),
         text = "Choose your flavor:",
-        replyMarkup = Some(InlineKeyboardMarkup(List(
-          List(InlineKeyboardButton("Vanilla", callbackData = Some("vanilla"))),
-          List(InlineKeyboardButton("Chocolate", callbackData = Some("chocolate"))),
-          List(InlineKeyboardButton("Cookies & Cream", callbackData = Some("cookies_cream"))),
-          List(InlineKeyboardButton("Mint Chocolate Chip", callbackData = Some("mint_chocolate_chip"))),
-          List(InlineKeyboardButton("Chocolate Chip Cookie Dough", callbackData = Some("chocolate_chip_cookie_dough")))
-        )))
+        replyMarkup = Some(InlineKeyboardMarkup.singleColumn(
+          List(
+            InlineKeyboardButton.callbackData("Vanilla", callbackData = "vanilla"),
+            InlineKeyboardButton.callbackData("Chocolate", callbackData = "chocolate"),
+            InlineKeyboardButton.callbackData("Cookies & Cream", callbackData = "cookies_cream"),
+            InlineKeyboardButton.callbackData("Mint Chocolate Chip", callbackData = "mint_chocolate_chip"),
+            InlineKeyboardButton.callbackData("Chocolate Chip Cookie Dough", callbackData = "chocolate_chip_cookie_dough")
+          )
+        ))
       )).void
     }
 
