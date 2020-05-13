@@ -56,7 +56,7 @@ class AbstractApi[F[_]: ConcurrentEffect: ContextShift](
 
   def execute[Res, M](method: M)(implicit ev: M <:< BotApiMethod[Res], encoder: Encoder[M], decoder: Decoder[Res]): F[Res] =
     for {
-      uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendMessage"))
+      uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/${method.name}"))
       req = Request[F]()
         .withMethod(POST)
         .withUri(uri)
