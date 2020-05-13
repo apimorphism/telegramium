@@ -15,7 +15,7 @@ final case class AddStickerToSetReq(
                                       * pass an HTTP URL as a String for Telegram to get a file from
                                       * the Internet, or upload a new one using multipart/form-data.
                                       * More info on Sending Files »*/
-                                    pngSticker: IFile,
+                                    pngSticker: Option[IFile] = Option.empty,
                                     /** TGS animation with the sticker, uploaded using
                                       * multipart/form-data. See
                                       * https://core.telegram.org/animated_stickers#technical-requirements

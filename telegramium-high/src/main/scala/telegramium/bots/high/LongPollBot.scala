@@ -53,8 +53,8 @@ abstract class LongPollBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Ti
             _ <- poll(offsetKeeper)
           } yield ()
         }
-      _ <- updates.result.traverse(onUpdate)
-      _ <- updates.result.map(_.updateId).maximumOption.traverse(max => offsetKeeper.setOffset(max + 1))
+      _ <- updates.traverse(onUpdate)
+      _ <- updates.map(_.updateId).maximumOption.traverse(max => offsetKeeper.setOffset(max + 1))
       next <- poll(offsetKeeper)
     } yield {
       next

@@ -19,10 +19,46 @@ import io.circe.Json
 import telegramium.bots._
 import telegramium.bots.CirceImplicits._
 
-class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUrl: String, blocker: Blocker)(
-    implicit F: MonadError[F, Throwable]
-)
+class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](
+    http: Client[F],
+    baseUrl: String,
+    blocker: Blocker)(implicit F: MonadError[F, Throwable])
     extends Api[F] {
+  import io.circe.Decoder
+
+  implicit def decodeEither[A, B](implicit
+                                  decoderA: Decoder[A],
+                                  decoderB: Decoder[B]): Decoder[Either[A, B]] =
+    decoderA.either(decoderB)
+
+  case class Response[A: Decoder](
+      ok: Boolean,
+      result: Option[A],
+      description: Option[String]
+  )
+
+  private implicit def responseDecoder[A: Decoder]: Decoder[Response[A]] =
+    Decoder.instance { h =>
+      for {
+        _ok          <- h.get[Boolean]("ok")
+        _result      <- h.get[Option[A]]("result")
+        _description <- h.get[Option[String]]("description")
+      } yield {
+        Response[A](ok = _ok, result = _result, description = _description)
+      }
+    }
+
+  private def decodeResponse[A: io.circe.Decoder](req: Request[F]): F[A] = {
+    for {
+      response <- http.expect(req)(jsonOf[F, Response[A]])
+      result <- F.fromOption[A](
+        response.result,
+        new RuntimeException(response.description.getOrElse("Unknown error occurred"))
+      )
+    } yield {
+      result
+    }
+  }
 
   def makePart(field: String, file: java.io.File): F[List[Part[F]]] = {
     import org.http4s.headers._
@@ -39,14 +75,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to get current webhook status. Requires no parameters. On
           success, returns a WebhookInfo object. If the bot is using getUpdates, will
           return an object with the url field empty.  */
-  def getWebhookInfo(): F[GetWebhookInfoRes] = {
+  def getWebhookInfo(): F[WebhookInfo] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/getWebhookInfo"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
 
-      res <- http.expect(req)(jsonOf[F, GetWebhookInfoRes])
+      res <- decodeResponse[WebhookInfo](req)
     } yield {
       res
     }
@@ -55,14 +91,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to change the list of the bot's commands. Returns True on
           success.  */
-  def setMyCommands(x: SetMyCommandsReq): F[SetMyCommandsRes] = {
+  def setMyCommands(x: SetMyCommandsReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setMyCommands"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SetMyCommandsRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -72,7 +108,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to set a new profile photo for the chat. Photos can't be
           changed for private chats. The bot must be an administrator in the chat for this
           to work and must have the appropriate admin rights. Returns True on success.  */
-  def setChatPhoto(x: SetChatPhotoReq): F[SetChatPhotoRes] = {
+  def setChatPhoto(x: SetChatPhotoReq): F[Boolean] = {
 
     val photoPartF = x.photo match {
       case InputPartFile(f) => makePart("photo", f)
@@ -96,7 +132,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withUri(uri)
             .withEntity(body)
             .withHeaders(body.headers)
-          res <- http.expect(req)(jsonOf[F, SetChatPhotoRes])
+          res <- decodeResponse[Boolean](req)
         } yield {
           res
         }
@@ -107,7 +143,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withMethod(GET)
             .withUri(uri)
             .withEntity(x.asJson)
-          res <- http.expect(req)(jsonOf[F, SetChatPhotoRes])
+          res <- decodeResponse[Boolean](req)
         } yield {
           res
         }
@@ -119,14 +155,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to get data for high score tables. Will return the score of the
           specified user and several of their neighbors in a game. On success, returns an
           Array of GameHighScore objects.  */
-  def getGameHighScores(x: GetGameHighScoresReq): F[GetGameHighScoresRes] = {
+  def getGameHighScores(x: GetGameHighScoresReq): F[List[GameHighScore]] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/getGameHighScores"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, GetGameHighScoresRes])
+      res <- decodeResponse[List[GameHighScore]](req)
     } yield {
       res
     }
@@ -136,14 +172,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to send answers to callback queries sent from inline keyboards.
           The answer will be displayed to the user as a notification at the top of the
           chat screen or as an alert. On success, True is returned.  */
-  def answerCallbackQuery(x: AnswerCallbackQueryReq): F[AnswerCallbackQueryRes] = {
+  def answerCallbackQuery(x: AnswerCallbackQueryReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/answerCallbackQuery"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, AnswerCallbackQueryRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -152,14 +188,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to send text messages. On success, the sent Message is
           returned.  */
-  def sendMessage(x: SendMessageReq): F[SendMessageRes] = {
+  def sendMessage(x: SendMessageReq): F[telegramium.bots.Message] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendMessage"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SendMessageRes])
+      res <- decodeResponse[telegramium.bots.Message](req)
     } yield {
       res
     }
@@ -168,14 +204,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to get a list of profile pictures for a user. Returns a
           UserProfilePhotos object.  */
-  def getUserProfilePhotos(x: GetUserProfilePhotosReq): F[GetUserProfilePhotosRes] = {
+  def getUserProfilePhotos(x: GetUserProfilePhotosReq): F[UserProfilePhotos] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/getUserProfilePhotos"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, GetUserProfilePhotosRes])
+      res <- decodeResponse[UserProfilePhotos](req)
     } yield {
       res
     }
@@ -184,14 +220,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to send a native poll. On success, the sent Message is
           returned.  */
-  def sendPoll(x: SendPollReq): F[SendPollRes] = {
+  def sendPoll(x: SendPollReq): F[telegramium.bots.Message] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendPoll"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SendPollRes])
+      res <- decodeResponse[telegramium.bots.Message](req)
     } yield {
       res
     }
@@ -200,14 +236,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to send phone contacts. On success, the sent Message is
           returned.  */
-  def sendContact(x: SendContactReq): F[SendContactRes] = {
+  def sendContact(x: SendContactReq): F[telegramium.bots.Message] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendContact"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SendContactRes])
+      res <- decodeResponse[telegramium.bots.Message](req)
     } yield {
       res
     }
@@ -217,7 +253,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to create a new sticker set owned by a user. The bot will be
           able to edit the sticker set thus created. You must use exactly one of the
           fields png_sticker or tgs_sticker. Returns True on success.  */
-  def createNewStickerSet(x: CreateNewStickerSetReq): F[CreateNewStickerSetRes] = {
+  def createNewStickerSet(x: CreateNewStickerSetReq): F[Boolean] = {
 
     val pngStickerPartF = x.pngSticker match {
       case Some(InputPartFile(f)) => makePart("png_sticker", f)
@@ -254,7 +290,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withUri(uri)
             .withEntity(body)
             .withHeaders(body.headers)
-          res <- http.expect(req)(jsonOf[F, CreateNewStickerSetRes])
+          res <- decodeResponse[Boolean](req)
         } yield {
           res
         }
@@ -265,7 +301,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withMethod(GET)
             .withUri(uri)
             .withEntity(x.asJson)
-          res <- http.expect(req)(jsonOf[F, CreateNewStickerSetRes])
+          res <- decodeResponse[Boolean](req)
         } yield {
           res
         }
@@ -277,7 +313,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to upload a .PNG file with a sticker for later use in
           createNewStickerSet and addStickerToSet methods (can be used multiple times).
           Returns the uploaded File on success.  */
-  def uploadStickerFile(x: UploadStickerFileReq): F[UploadStickerFileRes] = {
+  def uploadStickerFile(x: UploadStickerFileReq): F[File] = {
 
     val pngStickerPartF = x.pngSticker match {
       case InputPartFile(f) => makePart("png_sticker", f)
@@ -290,10 +326,11 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           uri            <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/uploadStickerFile"))
           pngStickerPart <- pngStickerPartF
           body = Multipart[F](
-            Vector(("user_id", x.userId.asJson),
-                   ("pngSticker", if (pngStickerPart.isEmpty) { x.pngSticker.asJson } else {
-                     Json.Null
-                   })).filter(!_._2.isNull).map { case (n, v) => Part.formData[F](n, v.noSpaces) } ++
+            Vector(("user_id", x.userId.asJson), ("pngSticker", if (pngStickerPart.isEmpty) {
+              x.pngSticker.asJson
+            } else { Json.Null })).filter(!_._2.isNull).map {
+              case (n, v) => Part.formData[F](n, v.noSpaces)
+            } ++
               pngStickerPart
           )
           req = Request[F]()
@@ -301,7 +338,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withUri(uri)
             .withEntity(body)
             .withHeaders(body.headers)
-          res <- http.expect(req)(jsonOf[F, UploadStickerFileRes])
+          res <- decodeResponse[File](req)
         } yield {
           res
         }
@@ -312,7 +349,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withMethod(GET)
             .withUri(uri)
             .withEntity(x.asJson)
-          res <- http.expect(req)(jsonOf[F, UploadStickerFileRes])
+          res <- decodeResponse[File](req)
         } yield {
           res
         }
@@ -324,14 +361,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to set default chat permissions for all members. The bot must
           be an administrator in the group or a supergroup for this to work and must have
           the can_restrict_members admin rights. Returns True on success.  */
-  def setChatPermissions(x: SetChatPermissionsReq): F[SetChatPermissionsRes] = {
+  def setChatPermissions(x: SetChatPermissionsReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setChatPermissions"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SetChatPermissionsRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -340,14 +377,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to send point on the map. On success, the sent Message is
           returned.  */
-  def sendLocation(x: SendLocationReq): F[SendLocationRes] = {
+  def sendLocation(x: SendLocationReq): F[telegramium.bots.Message] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendLocation"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SendLocationRes])
+      res <- decodeResponse[telegramium.bots.Message](req)
     } yield {
       res
     }
@@ -358,14 +395,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           be an administrator in the chat for this to work and must have the appropriate
           admin rights. Use the field can_set_sticker_set optionally returned in getChat
           requests to check if the bot can use this method. Returns True on success.  */
-  def deleteChatStickerSet(x: DeleteChatStickerSetReq): F[DeleteChatStickerSetRes] = {
+  def deleteChatStickerSet(x: DeleteChatStickerSetReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/deleteChatStickerSet"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, DeleteChatStickerSetRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -375,14 +412,15 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to stop updating a live location message before live_period
           expires. On success, if the message was sent by the bot, the sent Message is
           returned, otherwise True is returned.  */
-  def stopMessageLiveLocation(x: StopMessageLiveLocationReq): F[StopMessageLiveLocationRes] = {
+  def stopMessageLiveLocation(
+      x: StopMessageLiveLocationReq): F[Either[Boolean, telegramium.bots.Message]] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/stopMessageLiveLocation"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, StopMessageLiveLocationRes])
+      res <- decodeResponse[Either[Boolean, telegramium.bots.Message]](req)
     } yield {
       res
     }
@@ -393,14 +431,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           generated link is revoked. The bot must be an administrator in the chat for this
           to work and must have the appropriate admin rights. Returns the new invite link
           as String on success.  */
-  def exportChatInviteLink(x: ExportChatInviteLinkReq): F[ExportChatInviteLinkRes] = {
+  def exportChatInviteLink(x: ExportChatInviteLinkReq): F[String] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/exportChatInviteLink"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, ExportChatInviteLinkRes])
+      res <- decodeResponse[String](req)
     } yield {
       res
     }
@@ -411,14 +449,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           success, the sent Message is returned. (Yes, we're aware of the “proper”
           singular of die. But it's awkward, and we decided to help it change. One dice at
           a time!)  */
-  def sendDice(x: SendDiceReq): F[SendDiceRes] = {
+  def sendDice(x: SendDiceReq): F[telegramium.bots.Message] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendDice"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SendDiceRes])
+      res <- decodeResponse[telegramium.bots.Message](req)
     } yield {
       res
     }
@@ -429,14 +467,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           the bot's side. The status is set for 5 seconds or less (when a message arrives
           from your bot, Telegram clients clear its typing status). Returns True on
           success.  */
-  def sendChatAction(): F[SendChatActionRes] = {
+  def sendChatAction(): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendChatAction"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
 
-      res <- http.expect(req)(jsonOf[F, SendChatActionRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -448,11 +486,11 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           added to animated sticker sets and only to them. Animated sticker sets can have
           up to 50 stickers. Static sticker sets can have up to 120 stickers. Returns True
           on success.  */
-  def addStickerToSet(x: AddStickerToSetReq): F[AddStickerToSetRes] = {
+  def addStickerToSet(x: AddStickerToSetReq): F[Boolean] = {
 
     val pngStickerPartF = x.pngSticker match {
-      case InputPartFile(f) => makePart("png_sticker", f)
-      case _                => F.pure(List.empty[Part[F]])
+      case Some(InputPartFile(f)) => makePart("png_sticker", f)
+      case _                      => F.pure(List.empty[Part[F]])
     }
 
     val tgsStickerPartF = x.tgsSticker match {
@@ -483,7 +521,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withUri(uri)
             .withEntity(body)
             .withHeaders(body.headers)
-          res <- http.expect(req)(jsonOf[F, AddStickerToSetRes])
+          res <- decodeResponse[Boolean](req)
         } yield {
           res
         }
@@ -494,7 +532,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withMethod(GET)
             .withUri(uri)
             .withEntity(x.asJson)
-          res <- http.expect(req)(jsonOf[F, AddStickerToSetRes])
+          res <- decodeResponse[Boolean](req)
         } yield {
           res
         }
@@ -505,14 +543,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to delete a sticker from a set created by the bot. Returns True
           on success.  */
-  def deleteStickerFromSet(x: DeleteStickerFromSetReq): F[DeleteStickerFromSetRes] = {
+  def deleteStickerFromSet(x: DeleteStickerFromSetReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/deleteStickerFromSet"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, DeleteStickerFromSetRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -521,14 +559,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to stop a poll which was sent by the bot. On success, the
           stopped Poll with the final results is returned.  */
-  def stopPoll(x: StopPollReq): F[StopPollRes] = {
+  def stopPoll(x: StopPollReq): F[Poll] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/stopPoll"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, StopPollRes])
+      res <- decodeResponse[Poll](req)
     } yield {
       res
     }
@@ -539,14 +577,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           bot must be an administrator in the chat for this to work and must have the
           ‘can_pin_messages’ admin right in the supergroup or ‘can_edit_messages’ admin
           right in the channel. Returns True on success.  */
-  def unpinChatMessage(x: UnpinChatMessageReq): F[UnpinChatMessageRes] = {
+  def unpinChatMessage(x: UnpinChatMessageReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/unpinChatMessage"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, UnpinChatMessageRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -555,14 +593,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to send a group of photos or videos as an album. On success, an
           array of the sent Messages is returned.  */
-  def sendMediaGroup(x: SendMediaGroupReq): F[SendMediaGroupRes] = {
+  def sendMediaGroup(x: SendMediaGroupReq): F[List[telegramium.bots.Message]] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendMediaGroup"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SendMediaGroupRes])
+      res <- decodeResponse[List[telegramium.bots.Message]](req)
     } yield {
       res
     }
@@ -570,14 +608,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   }
 
   /** Use this method to send a game. On success, the sent Message is returned.  */
-  def sendGame(x: SendGameReq): F[SendGameRes] = {
+  def sendGame(x: SendGameReq): F[telegramium.bots.Message] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendGame"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SendGameRes])
+      res <- decodeResponse[telegramium.bots.Message](req)
     } yield {
       res
     }
@@ -586,14 +624,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to send information about a venue. On success, the sent Message
           is returned.  */
-  def sendVenue(x: SendVenueReq): F[SendVenueRes] = {
+  def sendVenue(x: SendVenueReq): F[telegramium.bots.Message] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendVenue"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SendVenueRes])
+      res <- decodeResponse[telegramium.bots.Message](req)
     } yield {
       res
     }
@@ -604,14 +642,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           The user will not return to the group or channel automatically, but will be able
           to join via link, etc. The bot must be an administrator for this to work.
           Returns True on success.  */
-  def unbanChatMember(x: UnbanChatMemberReq): F[UnbanChatMemberRes] = {
+  def unbanChatMember(x: UnbanChatMemberReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/unbanChatMember"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, UnbanChatMemberRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -621,14 +659,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to change the description of a group, a supergroup or a
           channel. The bot must be an administrator in the chat for this to work and must
           have the appropriate admin rights. Returns True on success.  */
-  def setChatDescription(x: SetChatDescriptionReq): F[SetChatDescriptionRes] = {
+  def setChatDescription(x: SetChatDescriptionReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setChatDescription"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SetChatDescriptionRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -637,14 +675,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to edit text and game messages. On success, if edited message
           is sent by the bot, the edited Message is returned, otherwise True is returned.  */
-  def editMessageText(x: EditMessageTextReq): F[EditMessageTextRes] = {
+  def editMessageText(x: EditMessageTextReq): F[Either[Boolean, telegramium.bots.Message]] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/editMessageText"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, EditMessageTextRes])
+      res <- decodeResponse[Either[Boolean, telegramium.bots.Message]](req)
     } yield {
       res
     }
@@ -655,14 +693,15 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           its live_period expires or editing is explicitly disabled by a call to
           stopMessageLiveLocation. On success, if the edited message was sent by the bot,
           the edited Message is returned, otherwise True is returned.  */
-  def editMessageLiveLocation(x: EditMessageLiveLocationReq): F[EditMessageLiveLocationRes] = {
+  def editMessageLiveLocation(
+      x: EditMessageLiveLocationReq): F[Either[Boolean, telegramium.bots.Message]] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/editMessageLiveLocation"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, EditMessageLiveLocationRes])
+      res <- decodeResponse[Either[Boolean, telegramium.bots.Message]](req)
     } yield {
       res
     }
@@ -676,14 +715,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           from the response. It is guaranteed that the link will be valid for at least 1
           hour. When the link expires, a new one can be requested by calling getFile
           again.  */
-  def getFile(x: GetFileReq): F[GetFileRes] = {
+  def getFile(x: GetFileReq): F[File] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/getFile"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, GetFileRes])
+      res <- decodeResponse[File](req)
     } yield {
       res
     }
@@ -694,14 +733,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           if the message was sent by the bot, returns the edited Message, otherwise
           returns True. Returns an error, if the new score is not greater than the user's
           current score in the chat and force is False.  */
-  def setGameScore(x: SetGameScoreReq): F[SetGameScoreRes] = {
+  def setGameScore(x: SetGameScoreReq): F[Either[Boolean, telegramium.bots.Message]] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setGameScore"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SetGameScoreRes])
+      res <- decodeResponse[Either[Boolean, telegramium.bots.Message]](req)
     } yield {
       res
     }
@@ -710,14 +749,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method for your bot to leave a group, supergroup or channel. Returns
           True on success.  */
-  def leaveChat(x: LeaveChatReq): F[LeaveChatRes] = {
+  def leaveChat(x: LeaveChatReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/leaveChat"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, LeaveChatRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -727,14 +766,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to change the title of a chat. Titles can't be changed for
           private chats. The bot must be an administrator in the chat for this to work and
           must have the appropriate admin rights. Returns True on success.  */
-  def setChatTitle(x: SetChatTitleReq): F[SetChatTitleRes] = {
+  def setChatTitle(x: SetChatTitleReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setChatTitle"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SetChatTitleRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -744,7 +783,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** As of v.4.0, Telegram clients support rounded square mp4 videos of up to 1
           minute long. Use this method to send video messages. On success, the sent
           Message is returned.  */
-  def sendVideoNote(x: SendVideoNoteReq): F[SendVideoNoteRes] = {
+  def sendVideoNote(x: SendVideoNoteReq): F[telegramium.bots.Message] = {
 
     val videoNotePartF = x.videoNote match {
       case InputPartFile(f) => makePart("video_note", f)
@@ -780,7 +819,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withUri(uri)
             .withEntity(body)
             .withHeaders(body.headers)
-          res <- http.expect(req)(jsonOf[F, SendVideoNoteRes])
+          res <- decodeResponse[telegramium.bots.Message](req)
         } yield {
           res
         }
@@ -791,7 +830,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withMethod(GET)
             .withUri(uri)
             .withEntity(x.asJson)
-          res <- http.expect(req)(jsonOf[F, SendVideoNoteRes])
+          res <- decodeResponse[telegramium.bots.Message](req)
         } yield {
           res
         }
@@ -808,14 +847,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           example, if a birthday date seems invalid, a submitted document is blurry, a
           scan shows evidence of tampering, etc. Supply some details in the error message
           to make sure the user knows how to correct the issues.  */
-  def setPassportDataErrors(x: SetPassportDataErrorsReq): F[SetPassportDataErrorsRes] = {
+  def setPassportDataErrors(x: SetPassportDataErrorsReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setPassportDataErrors"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SetPassportDataErrorsRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -825,14 +864,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to delete a chat photo. Photos can't be changed for private
           chats. The bot must be an administrator in the chat for this to work and must
           have the appropriate admin rights. Returns True on success.  */
-  def deleteChatPhoto(x: DeleteChatPhotoReq): F[DeleteChatPhotoRes] = {
+  def deleteChatPhoto(x: DeleteChatPhotoReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/deleteChatPhoto"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, DeleteChatPhotoRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -840,14 +879,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   }
 
   /** Use this method to send invoices. On success, the sent Message is returned.  */
-  def sendInvoice(x: SendInvoiceReq): F[SendInvoiceRes] = {
+  def sendInvoice(x: SendInvoiceReq): F[telegramium.bots.Message] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/sendInvoice"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SendInvoiceRes])
+      res <- decodeResponse[telegramium.bots.Message](req)
     } yield {
       res
     }
@@ -857,7 +896,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to send general files. On success, the sent Message is
           returned. Bots can currently send files of any type of up to 50 MB in size, this
           limit may be changed in the future.  */
-  def sendDocument(x: SendDocumentReq): F[SendDocumentRes] = {
+  def sendDocument(x: SendDocumentReq): F[telegramium.bots.Message] = {
 
     val documentPartF = x.document match {
       case InputPartFile(f) => makePart("document", f)
@@ -893,7 +932,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withUri(uri)
             .withEntity(body)
             .withHeaders(body.headers)
-          res <- http.expect(req)(jsonOf[F, SendDocumentRes])
+          res <- decodeResponse[telegramium.bots.Message](req)
         } yield {
           res
         }
@@ -904,7 +943,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withMethod(GET)
             .withUri(uri)
             .withEntity(x.asJson)
-          res <- http.expect(req)(jsonOf[F, SendDocumentRes])
+          res <- decodeResponse[telegramium.bots.Message](req)
         } yield {
           res
         }
@@ -922,14 +961,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           in channels. - If the bot is an administrator of a group, it can delete any
           message there. - If the bot has can_delete_messages permission in a supergroup
           or a channel, it can delete any message there. Returns True on success.  */
-  def deleteMessage(x: DeleteMessageReq): F[DeleteMessageRes] = {
+  def deleteMessage(x: DeleteMessageReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/deleteMessage"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, DeleteMessageRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -938,14 +977,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to send answers to an inline query. On success, True is
           returned. No more than 50 results per query are allowed.  */
-  def answerInlineQuery(x: AnswerInlineQueryReq): F[AnswerInlineQueryRes] = {
+  def answerInlineQuery(x: AnswerInlineQueryReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/answerInlineQuery"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, AnswerInlineQueryRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -957,14 +996,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           group on their own using invite links, etc., unless unbanned first. The bot must
           be an administrator in the chat for this to work and must have the appropriate
           admin rights. Returns True on success.  */
-  def kickChatMember(x: KickChatMemberReq): F[KickChatMemberRes] = {
+  def kickChatMember(x: KickChatMemberReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/kickChatMember"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, KickChatMemberRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -976,7 +1015,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           success, the sent Message is returned. Bots can currently send audio files of up
           to 50 MB in size, this limit may be changed in the future. For sending voice
           messages, use the sendVoice method instead.  */
-  def sendAudio(x: SendAudioReq): F[SendAudioRes] = {
+  def sendAudio(x: SendAudioReq): F[telegramium.bots.Message] = {
 
     val audioPartF = x.audio match {
       case InputPartFile(f) => makePart("audio", f)
@@ -1015,7 +1054,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withUri(uri)
             .withEntity(body)
             .withHeaders(body.headers)
-          res <- http.expect(req)(jsonOf[F, SendAudioRes])
+          res <- decodeResponse[telegramium.bots.Message](req)
         } yield {
           res
         }
@@ -1026,7 +1065,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withMethod(GET)
             .withUri(uri)
             .withEntity(x.asJson)
-          res <- http.expect(req)(jsonOf[F, SendAudioRes])
+          res <- decodeResponse[telegramium.bots.Message](req)
         } yield {
           res
         }
@@ -1039,14 +1078,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           administrator in the supergroup for this to work and must have the appropriate
           admin rights. Pass True for all permissions to lift restrictions from a user.
           Returns True on success.  */
-  def restrictChatMember(x: RestrictChatMemberReq): F[RestrictChatMemberRes] = {
+  def restrictChatMember(x: RestrictChatMemberReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/restrictChatMember"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, RestrictChatMemberRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -1055,14 +1094,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** A simple method for testing your bot's auth token. Requires no parameters.
           Returns basic information about the bot in form of a User object.  */
-  def getMe(): F[GetMeRes] = {
+  def getMe(): F[User] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/getMe"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
 
-      res <- http.expect(req)(jsonOf[F, GetMeRes])
+      res <- decodeResponse[User](req)
     } yield {
       res
     }
@@ -1071,14 +1110,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to forward messages of any kind. On success, the sent Message
           is returned.  */
-  def forwardMessage(x: ForwardMessageReq): F[ForwardMessageRes] = {
+  def forwardMessage(x: ForwardMessageReq): F[telegramium.bots.Message] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/forwardMessage"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, ForwardMessageRes])
+      res <- decodeResponse[telegramium.bots.Message](req)
     } yield {
       res
     }
@@ -1087,14 +1126,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to get information about a member of a chat. Returns a
           ChatMember object on success.  */
-  def getChatMember(x: GetChatMemberReq): F[GetChatMemberRes] = {
+  def getChatMember(x: GetChatMemberReq): F[ChatMember] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/getChatMember"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, GetChatMemberRes])
+      res <- decodeResponse[ChatMember](req)
     } yield {
       res
     }
@@ -1103,14 +1142,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to get the current list of the bot's commands. Requires no
           parameters. Returns Array of BotCommand on success.  */
-  def getMyCommands(): F[GetMyCommandsRes] = {
+  def getMyCommands(): F[List[BotCommand]] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/getMyCommands"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
 
-      res <- http.expect(req)(jsonOf[F, GetMyCommandsRes])
+      res <- decodeResponse[List[BotCommand]](req)
     } yield {
       res
     }
@@ -1121,14 +1160,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           an Array of ChatMember objects that contains information about all chat
           administrators except other bots. If the chat is a group or a supergroup and no
           administrators were appointed, only the creator will be returned.  */
-  def getChatAdministrators(x: GetChatAdministratorsReq): F[GetChatAdministratorsRes] = {
+  def getChatAdministrators(x: GetChatAdministratorsReq): F[List[ChatMember]] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/getChatAdministrators"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, GetChatAdministratorsRes])
+      res <- decodeResponse[List[ChatMember]](req)
     } yield {
       res
     }
@@ -1140,7 +1179,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           .OGG file encoded with OPUS (other formats may be sent as Audio or Document). On
           success, the sent Message is returned. Bots can currently send voice messages of
           up to 50 MB in size, this limit may be changed in the future.  */
-  def sendVoice(x: SendVoiceReq): F[SendVoiceRes] = {
+  def sendVoice(x: SendVoiceReq): F[Audio] = {
 
     val voicePartF = x.voice match {
       case InputPartFile(f) => makePart("voice", f)
@@ -1170,7 +1209,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withUri(uri)
             .withEntity(body)
             .withHeaders(body.headers)
-          res <- http.expect(req)(jsonOf[F, SendVoiceRes])
+          res <- decodeResponse[Audio](req)
         } yield {
           res
         }
@@ -1181,7 +1220,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withMethod(GET)
             .withUri(uri)
             .withEntity(x.asJson)
-          res <- http.expect(req)(jsonOf[F, SendVoiceRes])
+          res <- decodeResponse[Audio](req)
         } yield {
           res
         }
@@ -1194,14 +1233,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           bot must be an administrator in the chat for this to work and must have the
           appropriate admin rights. Pass False for all boolean parameters to demote a
           user. Returns True on success.  */
-  def promoteChatMember(x: PromoteChatMemberReq): F[PromoteChatMemberRes] = {
+  def promoteChatMember(x: PromoteChatMemberReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/promoteChatMember"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, PromoteChatMemberRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -1210,14 +1249,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to edit captions of messages. On success, if edited message is
           sent by the bot, the edited Message is returned, otherwise True is returned.  */
-  def editMessageCaption(x: EditMessageCaptionReq): F[EditMessageCaptionRes] = {
+  def editMessageCaption(x: EditMessageCaptionReq): F[Either[Boolean, telegramium.bots.Message]] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/editMessageCaption"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, EditMessageCaptionRes])
+      res <- decodeResponse[Either[Boolean, telegramium.bots.Message]](req)
     } yield {
       res
     }
@@ -1230,14 +1269,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           message is edited, new file can't be uploaded. Use previously uploaded file via
           its file_id or specify a URL. On success, if the edited message was sent by the
           bot, the edited Message is returned, otherwise True is returned.  */
-  def editMessageMedia(x: EditMessageMediaReq): F[EditMessageMediaRes] = {
+  def editMessageMedia(x: EditMessageMediaReq): F[Either[Boolean, telegramium.bots.Message]] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/editMessageMedia"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, EditMessageMediaRes])
+      res <- decodeResponse[Either[Boolean, telegramium.bots.Message]](req)
     } yield {
       res
     }
@@ -1248,14 +1287,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           bot must be an administrator in the chat for this to work and must have the
           ‘can_pin_messages’ admin right in the supergroup or ‘can_edit_messages’ admin
           right in the channel. Returns True on success.  */
-  def pinChatMessage(x: PinChatMessageReq): F[PinChatMessageRes] = {
+  def pinChatMessage(x: PinChatMessageReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/pinChatMessage"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, PinChatMessageRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -1264,7 +1303,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to set the thumbnail of a sticker set. Animated thumbnails can
           be set for animated sticker sets only. Returns True on success.  */
-  def setStickerSetThumb(x: SetStickerSetThumbReq): F[SetStickerSetThumbRes] = {
+  def setStickerSetThumb(x: SetStickerSetThumbReq): F[Boolean] = {
 
     val thumbPartF = x.thumb match {
       case Some(InputPartFile(f)) => makePart("thumb", f)
@@ -1289,7 +1328,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withUri(uri)
             .withEntity(body)
             .withHeaders(body.headers)
-          res <- http.expect(req)(jsonOf[F, SetStickerSetThumbRes])
+          res <- decodeResponse[Boolean](req)
         } yield {
           res
         }
@@ -1300,7 +1339,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withMethod(GET)
             .withUri(uri)
             .withEntity(x.asJson)
-          res <- http.expect(req)(jsonOf[F, SetStickerSetThumbRes])
+          res <- decodeResponse[Boolean](req)
         } yield {
           res
         }
@@ -1312,14 +1351,15 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to edit only the reply markup of messages. On success, if
           edited message is sent by the bot, the edited Message is returned, otherwise
           True is returned.  */
-  def editMessageReplyMarkup(x: EditMessageReplyMarkupReq): F[EditMessageReplyMarkupRes] = {
+  def editMessageReplyMarkup(
+      x: EditMessageReplyMarkupReq): F[Either[Boolean, telegramium.bots.Message]] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/editMessageReplyMarkup"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, EditMessageReplyMarkupRes])
+      res <- decodeResponse[Either[Boolean, telegramium.bots.Message]](req)
     } yield {
       res
     }
@@ -1330,7 +1370,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           formats may be sent as Document). On success, the sent Message is returned. Bots
           can currently send video files of up to 50 MB in size, this limit may be changed
           in the future.  */
-  def sendVideo(x: SendVideoReq): F[SendVideoRes] = {
+  def sendVideo(x: SendVideoReq): F[Document] = {
 
     val videoPartF = x.video match {
       case InputPartFile(f) => makePart("video", f)
@@ -1370,7 +1410,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withUri(uri)
             .withEntity(body)
             .withHeaders(body.headers)
-          res <- http.expect(req)(jsonOf[F, SendVideoRes])
+          res <- decodeResponse[Document](req)
         } yield {
           res
         }
@@ -1381,7 +1421,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withMethod(GET)
             .withUri(uri)
             .withEntity(x.asJson)
-          res <- http.expect(req)(jsonOf[F, SendVideoRes])
+          res <- decodeResponse[Document](req)
         } yield {
           res
         }
@@ -1394,14 +1434,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           be an administrator in the chat for this to work and must have the appropriate
           admin rights. Use the field can_set_sticker_set optionally returned in getChat
           requests to check if the bot can use this method. Returns True on success.  */
-  def setChatStickerSet(x: SetChatStickerSetReq): F[SetChatStickerSetRes] = {
+  def setChatStickerSet(x: SetChatStickerSetReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setChatStickerSet"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SetChatStickerSetRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -1411,14 +1451,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to get up to date information about the chat (current name of
           the user for one-on-one conversations, current username of a user, group or
           channel, etc.). Returns a Chat object on success.  */
-  def getChat(x: GetChatReq): F[GetChatRes] = {
+  def getChat(x: GetChatReq): F[Chat] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/getChat"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, GetChatRes])
+      res <- decodeResponse[Chat](req)
     } yield {
       res
     }
@@ -1427,14 +1467,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to remove webhook integration if you decide to switch back to
           getUpdates. Returns True on success. Requires no parameters.  */
-  def deleteWebhook(): F[DeleteWebhookRes] = {
+  def deleteWebhook(): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/deleteWebhook"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
 
-      res <- http.expect(req)(jsonOf[F, DeleteWebhookRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -1443,14 +1483,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to move a sticker in a set created by the bot to a specific
           position. Returns True on success.  */
-  def setStickerPositionInSet(x: SetStickerPositionInSetReq): F[SetStickerPositionInSetRes] = {
+  def setStickerPositionInSet(x: SetStickerPositionInSetReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setStickerPositionInSet"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SetStickerPositionInSetRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -1459,15 +1499,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to set a custom title for an administrator in a supergroup
           promoted by the bot. Returns True on success.  */
-  def setChatAdministratorCustomTitle(
-      x: SetChatAdministratorCustomTitleReq): F[SetChatAdministratorCustomTitleRes] = {
+  def setChatAdministratorCustomTitle(x: SetChatAdministratorCustomTitleReq): F[Boolean] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/setChatAdministratorCustomTitle"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, SetChatAdministratorCustomTitleRes])
+      res <- decodeResponse[Boolean](req)
     } yield {
       res
     }
@@ -1477,7 +1516,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   /** Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without
           sound). On success, the sent Message is returned. Bots can currently send
           animation files of up to 50 MB in size, this limit may be changed in the future.  */
-  def sendAnimation(x: SendAnimationReq): F[SendAnimationRes] = {
+  def sendAnimation(x: SendAnimationReq): F[telegramium.bots.Message] = {
 
     val animationPartF = x.animation match {
       case InputPartFile(f) => makePart("animation", f)
@@ -1516,7 +1555,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withUri(uri)
             .withEntity(body)
             .withHeaders(body.headers)
-          res <- http.expect(req)(jsonOf[F, SendAnimationRes])
+          res <- decodeResponse[telegramium.bots.Message](req)
         } yield {
           res
         }
@@ -1527,7 +1566,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withMethod(GET)
             .withUri(uri)
             .withEntity(x.asJson)
-          res <- http.expect(req)(jsonOf[F, SendAnimationRes])
+          res <- decodeResponse[telegramium.bots.Message](req)
         } yield {
           res
         }
@@ -1540,14 +1579,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           is_flexible was specified, the Bot API will send an Update with a shipping_query
           field to the bot. Use this method to reply to shipping queries. On success, True
           is returned.  */
-  def answerShippingQuery(x: AnswerShippingQueryReq): F[AnswerShippingQueryRes] = {
+  def answerShippingQuery(x: AnswerShippingQueryReq): F[Update] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/answerShippingQuery"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, AnswerShippingQueryRes])
+      res <- decodeResponse[Update](req)
     } yield {
       res
     }
@@ -1559,14 +1598,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           pre_checkout_query. Use this method to respond to such pre-checkout queries. On
           success, True is returned. Note: The Bot API must receive an answer within 10
           seconds after the pre-checkout query was sent.  */
-  def answerPreCheckoutQuery(x: AnswerPreCheckoutQueryReq): F[AnswerPreCheckoutQueryRes] = {
+  def answerPreCheckoutQuery(x: AnswerPreCheckoutQueryReq): F[Update] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/answerPreCheckoutQuery"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, AnswerPreCheckoutQueryRes])
+      res <- decodeResponse[Update](req)
     } yield {
       res
     }
@@ -1575,7 +1614,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to send static .WEBP or animated .TGS stickers. On success, the
           sent Message is returned.  */
-  def sendSticker(x: SendStickerReq): F[SendStickerRes] = {
+  def sendSticker(x: SendStickerReq): F[telegramium.bots.Message] = {
 
     val stickerPartF = x.sticker match {
       case InputPartFile(f) => makePart("sticker", f)
@@ -1602,7 +1641,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withUri(uri)
             .withEntity(body)
             .withHeaders(body.headers)
-          res <- http.expect(req)(jsonOf[F, SendStickerRes])
+          res <- decodeResponse[telegramium.bots.Message](req)
         } yield {
           res
         }
@@ -1613,7 +1652,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withMethod(GET)
             .withUri(uri)
             .withEntity(x.asJson)
-          res <- http.expect(req)(jsonOf[F, SendStickerRes])
+          res <- decodeResponse[telegramium.bots.Message](req)
         } yield {
           res
         }
@@ -1623,14 +1662,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   }
 
   /** Use this method to get the number of members in a chat. Returns Int on success.  */
-  def getChatMembersCount(x: GetChatMembersCountReq): F[GetChatMembersCountRes] = {
+  def getChatMembersCount(x: GetChatMembersCountReq): F[Int] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/getChatMembersCount"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, GetChatMembersCountRes])
+      res <- decodeResponse[Int](req)
     } yield {
       res
     }
@@ -1638,7 +1677,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
   }
 
   /** Use this method to send photos. On success, the sent Message is returned.  */
-  def sendPhoto(x: SendPhotoReq): F[SendPhotoRes] = {
+  def sendPhoto(x: SendPhotoReq): F[telegramium.bots.Message] = {
 
     val photoPartF = x.photo match {
       case InputPartFile(f) => makePart("photo", f)
@@ -1667,7 +1706,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withUri(uri)
             .withEntity(body)
             .withHeaders(body.headers)
-          res <- http.expect(req)(jsonOf[F, SendPhotoRes])
+          res <- decodeResponse[telegramium.bots.Message](req)
         } yield {
           res
         }
@@ -1678,7 +1717,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withMethod(GET)
             .withUri(uri)
             .withEntity(x.asJson)
-          res <- http.expect(req)(jsonOf[F, SendPhotoRes])
+          res <- decodeResponse[telegramium.bots.Message](req)
         } yield {
           res
         }
@@ -1689,14 +1728,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to receive incoming updates using long polling (wiki). An Array
           of Update objects is returned.  */
-  def getUpdates(x: GetUpdatesReq): F[GetUpdatesRes] = {
+  def getUpdates(x: GetUpdatesReq): F[List[Update]] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/getUpdates"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, GetUpdatesRes])
+      res <- decodeResponse[List[Update]](req)
     } yield {
       res
     }
@@ -1705,14 +1744,14 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
 
   /** Use this method to get a sticker set. On success, a StickerSet object is
           returned.  */
-  def getStickerSet(x: GetStickerSetReq): F[GetStickerSetRes] = {
+  def getStickerSet(x: GetStickerSetReq): F[StickerSet] = {
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/getStickerSet"))
       req = Request[F]()
         .withMethod(GET)
         .withUri(uri)
         .withEntity(x.asJson)
-      res <- http.expect(req)(jsonOf[F, GetStickerSetRes])
+      res <- decodeResponse[StickerSet](req)
     } yield {
       res
     }
@@ -1727,7 +1766,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
           comes from Telegram, we recommend using a secret path in the URL, e.g.
           https://www.example.com/<token>. Since nobody else knows your bot‘s token, you
           can be pretty sure it’s us.  */
-  def setWebhook(x: SetWebhookReq): F[SetWebhookRes] = {
+  def setWebhook(x: SetWebhookReq): F[Boolean] = {
 
     val certificatePartF = x.certificate match {
       case Some(InputPartFile(f)) => makePart("certificate", f)
@@ -1755,7 +1794,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withUri(uri)
             .withEntity(body)
             .withHeaders(body.headers)
-          res <- http.expect(req)(jsonOf[F, SetWebhookRes])
+          res <- decodeResponse[Boolean](req)
         } yield {
           res
         }
@@ -1766,7 +1805,7 @@ class ApiHttp4sImp[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUr
             .withMethod(GET)
             .withUri(uri)
             .withEntity(x.asJson)
-          res <- http.expect(req)(jsonOf[F, SetWebhookRes])
+          res <- decodeResponse[Boolean](req)
         } yield {
           res
         }
