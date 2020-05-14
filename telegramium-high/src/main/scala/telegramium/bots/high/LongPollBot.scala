@@ -63,6 +63,7 @@ abstract class LongPollBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Ti
 
   def start(): F[Unit] = {
     for {
+      _ <- bot.deleteWebhook()
       refCounter <- Ref.of[F, Int](0)
       offsetKeeper = new OffsetKeeper[F] {
         def getOffset: F[Int] = refCounter.get
