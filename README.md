@@ -60,6 +60,7 @@ You may also want to have a look at these projects:
 
 * https://github.com/oybek/playcs_bot : telegram chat bot for creating counter strike 1.6 dedicated servers
 * https://github.com/johnspade/s10ns_bot : Subscription Management Telegram Bot
+* https://github.com/oybek/gdetram : Public transport info aggregator with chat bot interface
 
 ### Note for Yan
 
