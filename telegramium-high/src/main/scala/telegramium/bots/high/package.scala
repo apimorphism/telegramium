@@ -4,6 +4,13 @@ package object high {
 
   type KeyboardButton = telegramium.bots.KeyboardButton
   object KeyboardButton {
+    def apply(
+      text: String,
+      requestContact: Option[Boolean] = Option.empty,
+      requestLocation: Option[Boolean] = Option.empty,
+      requestPoll: Option[KeyboardButtonPollType] = Option.empty
+    ): KeyboardButton = new KeyboardButton(text, requestContact, requestLocation, requestPoll)
+
     /**
      * Text will be sent to the bot as a message when the button is pressed.
      */
@@ -27,6 +34,13 @@ package object high {
 
   type ReplyKeyboardMarkup = telegramium.bots.ReplyKeyboardMarkup
   object ReplyKeyboardMarkup {
+    def apply(
+      keyboard: List[List[KeyboardButton]] = List.empty,
+      resizeKeyboard: Option[Boolean] = Option.empty,
+      oneTimeKeyboard: Option[Boolean] = Option.empty,
+      selective: Option[Boolean] = Option.empty
+    ): ReplyKeyboardMarkup = new ReplyKeyboardMarkup(keyboard, resizeKeyboard, oneTimeKeyboard,selective)
+
     /**
      * Creates a reply keyboard markup with one button
      */
@@ -75,6 +89,18 @@ package object high {
 
   type InlineKeyboardButton = telegramium.bots.InlineKeyboardButton
   object InlineKeyboardButton {
+    def apply(
+      text: String,
+      url: Option[String] = Option.empty,
+      loginUrl: Option[LoginUrl] = Option.empty,
+      callbackData: Option[String] = Option.empty,
+      switchInlineQuery: Option[String] = Option.empty,
+      switchInlineQueryCurrentChat: Option[String] = Option.empty,
+      callbackGame: Option[String] = Option.empty,
+      pay: Option[Boolean] = Option.empty
+    ): InlineKeyboardButton =
+      new InlineKeyboardButton(text, url, loginUrl, callbackData, switchInlineQuery, switchInlineQueryCurrentChat, callbackGame, pay)
+
     /**
      * Creates an inline keyboard button that sends a callback query to bot when pressed
      */
@@ -122,6 +148,9 @@ package object high {
 
   type InlineKeyboardMarkup = telegramium.bots.InlineKeyboardMarkup
   object InlineKeyboardMarkup {
+    def apply(inlineKeyboard: List[List[InlineKeyboardButton]] = List.empty): InlineKeyboardMarkup =
+      new InlineKeyboardMarkup(inlineKeyboard)
+
     /**
      * Creates an inline keyboard markup with one button
      */
