@@ -28,7 +28,9 @@ class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) exten
               InlineKeyboardButton("No", callbackData = Some("No"))
             ),
             List(
-              InlineKeyboardButton("Roll the dice", callbackData = Some("dice")),
+              InlineKeyboardButton(EmojiDice.toString, callbackData = Some("dice")),
+              InlineKeyboardButton(EmojiDarts.toString, callbackData = Some("darts")),
+              InlineKeyboardButton(EmojiBasketball.toString, callbackData = Some("basketball")),
             ),
             List(
               InlineKeyboardButton("Gimme a quiz", callbackData = Some("quiz")),
@@ -40,8 +42,8 @@ class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) exten
   }
 
   override def onCallbackQuery(query: CallbackQuery): F[Unit] = {
-    def rollTheDice(chatId: Long): F[Unit] = {
-      bot.sendDice(SendDiceReq(ChatIntId(chatId))).void >>
+    def rollTheDice(chatId: Long, emoji: Emoji = EmojiDice): F[Unit] = {
+      bot.sendDice(SendDiceReq(ChatIntId(chatId), Some(emoji))).void >>
         bot.answerCallbackQuery(AnswerCallbackQueryReq(callbackQueryId = query.id)).void
     }
     def quiz(chatId: Long): F[Unit] = {
@@ -69,11 +71,13 @@ class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) exten
       )).void >> bot.answerCallbackQuery(AnswerCallbackQueryReq(callbackQueryId = query.id)).void
     }
     query.data.map{
-      case "HTML"      => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, htmlText, Html))
-      case "Markdown"  => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdownText, Markdown))
-      case "Markdown2" => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdown2Text, Markdown2))
-      case "dice"      => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id))
-      case "quiz"      => query.message.fold(syncF.unit)(m => quiz(m.chat.id))
+      case "HTML"       => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, htmlText, Html))
+      case "Markdown"   => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdownText, Markdown))
+      case "Markdown2"  => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdown2Text, Markdown2))
+      case "dice"       => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id))
+      case "darts"      => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id, EmojiDarts))
+      case "basketball" => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id, EmojiBasketball))
+      case "quiz"       => query.message.fold(syncF.unit)(m => quiz(m.chat.id))
       case x => bot.answerCallbackQuery(AnswerCallbackQueryReq(
         callbackQueryId = query.id,
         text = Some(s"Your choice is $x")

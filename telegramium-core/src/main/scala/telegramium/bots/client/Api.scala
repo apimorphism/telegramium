@@ -93,10 +93,8 @@ trait Api[F[_]] {
     * as String on success.*/
   def exportChatInviteLink(x: ExportChatInviteLinkReq): F[String]
 
-  /** Use this method to send a dice, which will have a random value from 1 to 6. On
-    * success, the sent Message is returned. (Yes, we're aware of the “proper”
-    * singular of die. But it's awkward, and we decided to help it change. One dice at
-    * a time!)*/
+  /** Use this method to send an animated emoji that will display a random value. On
+    * success, the sent Message is returned.*/
   def sendDice(x: SendDiceReq): F[Message]
 
   /** Use this method when you need to tell the user that something is happening on
@@ -122,7 +120,7 @@ trait Api[F[_]] {
 
   /** Use this method to unpin a message in a group, a supergroup, or a channel. The
     * bot must be an administrator in the chat for this to work and must have the
-    * ‘can_pin_messages’ admin right in the supergroup or ‘can_edit_messages’ admin
+    * 'can_pin_messages' admin right in the supergroup or 'can_edit_messages' admin
     * right in the channel. Returns True on success.*/
   def unpinChatMessage(x: UnpinChatMessageReq): F[Boolean]
 
@@ -294,7 +292,7 @@ trait Api[F[_]] {
 
   /** Use this method to pin a message in a group, a supergroup, or a channel. The
     * bot must be an administrator in the chat for this to work and must have the
-    * ‘can_pin_messages’ admin right in the supergroup or ‘can_edit_messages’ admin
+    * 'can_pin_messages' admin right in the supergroup or 'can_edit_messages' admin
     * right in the channel. Returns True on success.*/
   def pinChatMessage(x: PinChatMessageReq): F[Boolean]
 
@@ -378,7 +376,7 @@ trait Api[F[_]] {
     * unsuccessful request, we will give up after a reasonable amount of attempts.
     * Returns True on success. If you'd like to make sure that the Webhook request
     * comes from Telegram, we recommend using a secret path in the URL, e.g.
-    * https://www.example.com/<token>. Since nobody else knows your bot‘s token, you
-    * can be pretty sure it’s us.*/
+    * https://www.example.com/<token>. Since nobody else knows your bot's token, you
+    * can be pretty sure it's us.*/
   def setWebhook(x: SetWebhookReq): F[Boolean]
 }

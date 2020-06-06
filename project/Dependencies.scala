@@ -31,6 +31,7 @@ object Dependencies {
 
   val logger = Seq(
     "org.slf4j"      % "slf4j-api"       % V.slf4j,
+    "org.slf4j"      % "slf4j-simple"    % V.slf4j,
     "ch.qos.logback" % "logback-classic" % V.logback,
   )
 
@@ -46,5 +47,5 @@ object Dependencies {
 
   val telegramiumCore: Seq[ModuleID] = common
   val telegramiumHigh: Seq[ModuleID] = common
-  val telegramiumExam: Seq[ModuleID] = common ++ Seq(monix)
+  val telegramiumExam: Seq[ModuleID] = common ++ logger ++ Seq(monix)
 }

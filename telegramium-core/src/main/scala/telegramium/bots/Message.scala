@@ -33,6 +33,8 @@ final case class Message(
                            * Message object in this field will not contain further
                            * reply_to_message fields even if it itself is a reply.*/
                          replyToMessage: Option[Message] = Option.empty,
+                         /** Optional. Bot through which the message was sent*/
+                         viaBot: Option[User] = Option.empty,
                          /** Optional. Date the message was last edited in Unix time*/
                          editDate: Option[Int] = Option.empty,
                          /** Optional. The unique identifier of a media message group
@@ -47,23 +49,16 @@ final case class Message(
                          /** Optional. For text messages, special entities like
                            * usernames, URLs, bot commands, etc. that appear in the text*/
                          entities: List[MessageEntity] = List.empty,
-                         /** Optional. For messages with a caption, special entities
-                           * like usernames, URLs, bot commands, etc. that appear in the
-                           * caption*/
-                         captionEntities: List[MessageEntity] = List.empty,
+                         /** Optional. Message is an animation, information about the
+                           * animation. For backward compatibility, when this field is
+                           * set, the document field will also be set*/
+                         animation: Option[Animation] = Option.empty,
                          /** Optional. Message is an audio file, information about the
                            * file*/
                          audio: Option[Audio] = Option.empty,
                          /** Optional. Message is a general file, information about the
                            * file*/
                          document: Option[Document] = Option.empty,
-                         /** Optional. Message is an animation, information about the
-                           * animation. For backward compatibility, when this field is
-                           * set, the document field will also be set*/
-                         animation: Option[Animation] = Option.empty,
-                         /** Optional. Message is a game, information about the game.
-                           * More about games »*/
-                         game: Option[Game] = Option.empty,
                          /** Optional. Message is a photo, available sizes of the photo*/
                          photo: List[PhotoSize] = List.empty,
                          /** Optional. Message is a sticker, information about the
@@ -71,28 +66,37 @@ final case class Message(
                          sticker: Option[Sticker] = Option.empty,
                          /** Optional. Message is a video, information about the video*/
                          video: Option[Video] = Option.empty,
-                         /** Optional. Message is a voice message, information about the
-                           * file*/
-                         voice: Option[Voice] = Option.empty,
                          /** Optional. Message is a video note, information about the
                            * video message*/
                          videoNote: Option[VideoNote] = Option.empty,
+                         /** Optional. Message is a voice message, information about the
+                           * file*/
+                         voice: Option[Voice] = Option.empty,
                          /** Optional. Caption for the animation, audio, document,
                            * photo, video or voice, 0-1024 characters*/
                          caption: Option[String] = Option.empty,
+                         /** Optional. For messages with a caption, special entities
+                           * like usernames, URLs, bot commands, etc. that appear in the
+                           * caption*/
+                         captionEntities: List[MessageEntity] = List.empty,
                          /** Optional. Message is a shared contact, information about
                            * the contact*/
                          contact: Option[Contact] = Option.empty,
-                         /** Optional. Message is a shared location, information about
-                           * the location*/
-                         location: Option[Location] = Option.empty,
-                         /** Optional. Message is a venue, information about the venue*/
-                         venue: Option[Venue] = Option.empty,
+                         /** Optional. Message is a dice with random value from 1 to 6*/
+                         dice: Option[Dice] = Option.empty,
+                         /** Optional. Message is a game, information about the game.
+                           * More about games »*/
+                         game: Option[Game] = Option.empty,
                          /** Optional. Message is a native poll, information about the
                            * poll*/
                          poll: Option[Poll] = Option.empty,
-                         /** Optional. Message is a dice with random value from 1 to 6*/
-                         dice: Option[Dice] = Option.empty,
+                         /** Optional. Message is a venue, information about the venue.
+                           * For backward compatibility, when this field is set, the
+                           * location field will also be set*/
+                         venue: Option[Venue] = Option.empty,
+                         /** Optional. Message is a shared location, information about
+                           * the location*/
+                         location: Option[Location] = Option.empty,
                          /** Optional. New members that were added to the group or
                            * supergroup and information about them (the bot itself may be
                            * one of these members)*/
@@ -109,15 +113,15 @@ final case class Message(
                          /** Optional. Service message: the group has been created*/
                          groupChatCreated: Option[Boolean] = Option.empty,
                          /** Optional. Service message: the supergroup has been created.
-                           * This field can‘t be received in a message coming through
-                           * updates, because bot can’t be a member of a supergroup when
+                           * This field can't be received in a message coming through
+                           * updates, because bot can't be a member of a supergroup when
                            * it is created. It can only be found in reply_to_message if
                            * someone replies to a very first message in a directly
                            * created supergroup.*/
                          supergroupChatCreated: Option[Boolean] = Option.empty,
                          /** Optional. Service message: the channel has been created.
-                           * This field can‘t be received in a message coming through
-                           * updates, because bot can’t be a member of a channel when it
+                           * This field can't be received in a message coming through
+                           * updates, because bot can't be a member of a channel when it
                            * is created. It can only be found in reply_to_message if
                            * someone replies to a very first message in a channel.*/
                          channelChatCreated: Option[Boolean] = Option.empty,

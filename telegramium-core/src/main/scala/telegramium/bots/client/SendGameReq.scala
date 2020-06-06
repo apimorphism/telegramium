@@ -14,6 +14,6 @@ final case class SendGameReq(
                              /** If the message is a reply, ID of the original message*/
                              replyToMessageId: Option[Int] = Option.empty,
                              /** A JSON-serialized object for an inline keyboard. If empty,
-                               * one ‘Play game_title’ button will be shown. If not empty,
+                               * one 'Play game_title' button will be shown. If not empty,
                                * the first button must launch the game.*/
                              replyMarkup: Option[InlineKeyboardMarkup] = Option.empty)

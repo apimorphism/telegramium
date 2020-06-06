@@ -18,7 +18,7 @@ final case class Sticker(
                          /** Optional. Sticker thumbnail in the .WEBP or .JPG format*/
                          thumb: Option[PhotoSize] = Option.empty,
                          /** Optional. Emoji associated with the sticker*/
-                         emoji: Option[String] = Option.empty,
+                         emoji: Option[Emoji] = Option.empty,
                          /** Optional. Name of the sticker set to which the sticker
                            * belongs*/
                          setName: Option[String] = Option.empty,

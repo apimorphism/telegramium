@@ -12,8 +12,8 @@ final case class SetWebhookReq(
                                certificate: Option[IFile] = Option.empty,
                                /** Maximum allowed number of simultaneous HTTPS connections to
                                  * the webhook for update delivery, 1-100. Defaults to 40. Use
-                                 * lower values to limit the load on your bot‘s server, and
-                                 * higher values to increase your bot’s throughput.*/
+                                 * lower values to limit the load on your bot's server, and
+                                 * higher values to increase your bot's throughput.*/
                                maxConnections: Option[Int] = Option.empty,
                                /** A JSON-serialized list of the update types you want your
                                  * bot to receive. For example, specify [“message”,

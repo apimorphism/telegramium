@@ -17,8 +17,8 @@ final case class AnswerInlineQueryReq(
                                       isPersonal: Option[Boolean] = Option.empty,
                                       /** Pass the offset that a client should send in the next query
                                         * with the same text to receive more results. Pass an empty
-                                        * string if there are no more results or if you don‘t support
-                                        * pagination. Offset length can’t exceed 64 bytes.*/
+                                        * string if there are no more results or if you don't support
+                                        * pagination. Offset length can't exceed 64 bytes.*/
                                       nextOffset: Option[String] = Option.empty,
                                       /** If passed, clients will display a button with specified
                                         * text that switches the user to a private chat with the bot
@@ -30,8 +30,8 @@ final case class AnswerInlineQueryReq(
                                         * only A-Z, a-z, 0-9, _ and - are allowed. Example: An inline
                                         * bot that sends YouTube videos can ask the user to connect
                                         * the bot to their YouTube account to adapt search results
-                                        * accordingly. To do this, it displays a ‘Connect your YouTube
-                                        * account’ button above the results, or even before showing
+                                        * accordingly. To do this, it displays a 'Connect your YouTube
+                                        * account' button above the results, or even before showing
                                         * any. The user presses the button, switches to a private chat
                                         * with the bot and, in doing so, passes a start parameter that
                                         * instructs the bot to return an oauth link. Once done, the

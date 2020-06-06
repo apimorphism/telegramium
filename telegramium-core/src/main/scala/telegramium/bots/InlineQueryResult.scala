@@ -17,8 +17,13 @@ final case class InlineQueryResultGif(
                                       gifHeight: Option[Int] = Option.empty,
                                       /** Optional. Duration of the GIF*/
                                       gifDuration: Option[Int] = Option.empty,
-                                      /** URL of the static thumbnail for the result (jpeg or gif)*/
+                                      /** URL of the static (JPEG or GIF) or animated (MPEG4)
+                                        * thumbnail for the result*/
                                       thumbUrl: String,
+                                      /** Optional. MIME type of the thumbnail, must be one of
+                                        * “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to
+                                        * “image/jpeg”*/
+                                      thumbMimeType: Option[String] = Option.empty,
                                       /** Optional. Title for the result*/
                                       title: Option[String] = Option.empty,
                                       /** Optional. Caption of the GIF file to be sent, 0-1024
@@ -257,8 +262,13 @@ final case class InlineQueryResultMpeg4Gif(
                                            mpeg4Height: Option[Int] = Option.empty,
                                            /** Optional. Video duration*/
                                            mpeg4Duration: Option[Int] = Option.empty,
-                                           /** URL of the static thumbnail (jpeg or gif) for the result*/
+                                           /** URL of the static (JPEG or GIF) or animated (MPEG4)
+                                             * thumbnail for the result*/
                                            thumbUrl: String,
+                                           /** Optional. MIME type of the thumbnail, must be one of
+                                             * “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to
+                                             * “image/jpeg”*/
+                                           thumbMimeType: Option[String] = Option.empty,
                                            /** Optional. Title for the result*/
                                            title: Option[String] = Option.empty,
                                            /** Optional. Caption of the MPEG-4 file to be sent, 0-1024

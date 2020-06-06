@@ -1,6 +1,7 @@
 package telegramium.bots.client
 
 import telegramium.bots.ChatId
+import telegramium.bots.Emoji
 import telegramium.bots.KeyboardMarkup
 
 final case class SendDiceReq(
@@ -8,8 +9,11 @@ final case class SendDiceReq(
                                * target channel (in the format @channelusername)*/
                              chatId: ChatId,
                              /** Emoji on which the dice throw animation is based.
-                               * Currently, must be one of “” or “”. Defauts to “”*/
-                             emoji: Option[String] = Option.empty,
+                               * Currently, must be one of EmojiDice, EmojiDarts, or
+                               * EmojiBasketball. Dice can have values 1-6 for EmojiDice and
+                               * EmojiDarts, and values 1-5 for EmojiBasketball. Defaults to
+                               * EmojiDarts*/
+                             emoji: Option[Emoji] = Option.empty,
                              /** Sends the message silently. Users will receive a
                                * notification with no sound.*/
                              disableNotification: Option[Boolean] = Option.empty,

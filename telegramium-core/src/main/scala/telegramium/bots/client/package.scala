@@ -19,6 +19,7 @@ object uPickleImplicits {
   import telegramium.bots.MaskPosition
   import telegramium.bots.ChatPermissions
   import telegramium.bots.InlineKeyboardMarkup
+  import telegramium.bots.Emoji
   import telegramium.bots.InputMedia
   import telegramium.bots.PassportElementError
   import telegramium.bots.LabeledPrice
@@ -637,7 +638,7 @@ object uPickleImplicits {
         val m = msg.obj
         val result = for {
           chatId <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          emoji  <- m.get(emojiKey).map(x => readBinary[Option[String]](x))
+          emoji  <- m.get(emojiKey).map(x => readBinary[Option[Emoji]](x))
           disableNotification <- m
             .get(disableNotificationKey)
             .map(x => readBinary[Option[Boolean]](x))
@@ -2536,6 +2537,7 @@ object CirceImplicits {
   import telegramium.bots.MaskPosition
   import telegramium.bots.ChatPermissions
   import telegramium.bots.InlineKeyboardMarkup
+  import telegramium.bots.Emoji
   import telegramium.bots.InputMedia
   import telegramium.bots.PassportElementError
   import telegramium.bots.LabeledPrice
@@ -3023,7 +3025,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId              <- h.get[ChatId]("chat_id")
-        _emoji               <- h.get[Option[String]]("emoji")
+        _emoji               <- h.get[Option[Emoji]]("emoji")
         _disableNotification <- h.get[Option[Boolean]]("disable_notification")
         _replyToMessageId    <- h.get[Option[Int]]("reply_to_message_id")
         _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")

@@ -11,6 +11,30 @@ object uPickleImplicits {
     )
   }
 
+  implicit lazy val emojiCodec: ReadWriter[Emoji] = {
+    readwriter[upack.Msg].bimap(
+      {
+        case EmojiDice       => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("🎲"))
+        case EmojiDarts      => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("🎯"))
+        case EmojiBasketball => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("🏀"))
+      },
+      msg => {
+        val m = msg.obj
+        m.get(upack.Str("type"))
+          .collect {
+            case upack.Str("🎲") => EmojiDice
+            case upack.Str("🎯") => EmojiDarts
+            case upack.Str("🏀") => EmojiBasketball
+          }
+          .get
+      }
+    )
+  }
+
+  implicit lazy val emojidiceCodec: ReadWriter[EmojiDice.type]             = macroRW
+  implicit lazy val emojidartsCodec: ReadWriter[EmojiDarts.type]           = macroRW
+  implicit lazy val emojibasketballCodec: ReadWriter[EmojiBasketball.type] = macroRW
+
   implicit lazy val parsemodeCodec: ReadWriter[ParseMode] = {
     readwriter[upack.Msg].bimap(
       {
@@ -614,6 +638,7 @@ object uPickleImplicits {
     val gifHeightKey           = upack.Str("gifHeight")
     val gifDurationKey         = upack.Str("gifDuration")
     val thumbUrlKey            = upack.Str("thumbUrl")
+    val thumbMimeTypeKey       = upack.Str("thumbMimeType")
     val titleKey               = upack.Str("title")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
@@ -628,6 +653,7 @@ object uPickleImplicits {
           gifHeightKey           -> writeMsg(x.gifHeight),
           gifDurationKey         -> writeMsg(x.gifDuration),
           thumbUrlKey            -> writeMsg(x.thumbUrl),
+          thumbMimeTypeKey       -> writeMsg(x.thumbMimeType),
           titleKey               -> writeMsg(x.title),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
@@ -638,16 +664,17 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id          <- m.get(idKey).map(x => readBinary[String](x))
-          gifUrl      <- m.get(gifUrlKey).map(x => readBinary[String](x))
-          gifWidth    <- m.get(gifWidthKey).map(x => readBinary[Option[Int]](x))
-          gifHeight   <- m.get(gifHeightKey).map(x => readBinary[Option[Int]](x))
-          gifDuration <- m.get(gifDurationKey).map(x => readBinary[Option[Int]](x))
-          thumbUrl    <- m.get(thumbUrlKey).map(x => readBinary[String](x))
-          title       <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id            <- m.get(idKey).map(x => readBinary[String](x))
+          gifUrl        <- m.get(gifUrlKey).map(x => readBinary[String](x))
+          gifWidth      <- m.get(gifWidthKey).map(x => readBinary[Option[Int]](x))
+          gifHeight     <- m.get(gifHeightKey).map(x => readBinary[Option[Int]](x))
+          gifDuration   <- m.get(gifDurationKey).map(x => readBinary[Option[Int]](x))
+          thumbUrl      <- m.get(thumbUrlKey).map(x => readBinary[String](x))
+          thumbMimeType <- m.get(thumbMimeTypeKey).map(x => readBinary[Option[String]](x))
+          title         <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          caption       <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          replyMarkup   <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -659,6 +686,7 @@ object uPickleImplicits {
             gifHeight = gifHeight,
             gifDuration = gifDuration,
             thumbUrl = thumbUrl,
+            thumbMimeType = thumbMimeType,
             title = title,
             caption = caption,
             parseMode = parseMode,
@@ -1102,6 +1130,7 @@ object uPickleImplicits {
     val mpeg4HeightKey         = upack.Str("mpeg4Height")
     val mpeg4DurationKey       = upack.Str("mpeg4Duration")
     val thumbUrlKey            = upack.Str("thumbUrl")
+    val thumbMimeTypeKey       = upack.Str("thumbMimeType")
     val titleKey               = upack.Str("title")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
@@ -1116,6 +1145,7 @@ object uPickleImplicits {
           mpeg4HeightKey         -> writeMsg(x.mpeg4Height),
           mpeg4DurationKey       -> writeMsg(x.mpeg4Duration),
           thumbUrlKey            -> writeMsg(x.thumbUrl),
+          thumbMimeTypeKey       -> writeMsg(x.thumbMimeType),
           titleKey               -> writeMsg(x.title),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
@@ -1132,6 +1162,7 @@ object uPickleImplicits {
           mpeg4Height   <- m.get(mpeg4HeightKey).map(x => readBinary[Option[Int]](x))
           mpeg4Duration <- m.get(mpeg4DurationKey).map(x => readBinary[Option[Int]](x))
           thumbUrl      <- m.get(thumbUrlKey).map(x => readBinary[String](x))
+          thumbMimeType <- m.get(thumbMimeTypeKey).map(x => readBinary[Option[String]](x))
           title         <- m.get(titleKey).map(x => readBinary[Option[String]](x))
           caption       <- m.get(captionKey).map(x => readBinary[Option[String]](x))
           parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
@@ -1147,6 +1178,7 @@ object uPickleImplicits {
             mpeg4Height = mpeg4Height,
             mpeg4Duration = mpeg4Duration,
             thumbUrl = thumbUrl,
+            thumbMimeType = thumbMimeType,
             title = title,
             caption = caption,
             parseMode = parseMode,
@@ -3192,7 +3224,7 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          emoji <- m.get(emojiKey).map(x => readBinary[String](x))
+          emoji <- m.get(emojiKey).map(x => readBinary[Emoji](x))
           value <- m.get(valueKey).map(x => readBinary[Int](x))
         } yield {
           Dice(
@@ -3728,7 +3760,7 @@ object uPickleImplicits {
           height       <- m.get(heightKey).map(x => readBinary[Int](x))
           isAnimated   <- m.get(isAnimatedKey).map(x => readBinary[Boolean](x))
           thumb        <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
-          emoji        <- m.get(emojiKey).map(x => readBinary[Option[String]](x))
+          emoji        <- m.get(emojiKey).map(x => readBinary[Option[Emoji]](x))
           setName      <- m.get(setNameKey).map(x => readBinary[Option[String]](x))
           maskPosition <- m.get(maskPositionKey).map(x => readBinary[Option[MaskPosition]](x))
           fileSize     <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
@@ -3763,27 +3795,28 @@ object uPickleImplicits {
     val forwardSenderNameKey     = upack.Str("forwardSenderName")
     val forwardDateKey           = upack.Str("forwardDate")
     val replyToMessageKey        = upack.Str("replyToMessage")
+    val viaBotKey                = upack.Str("viaBot")
     val editDateKey              = upack.Str("editDate")
     val mediaGroupIdKey          = upack.Str("mediaGroupId")
     val authorSignatureKey       = upack.Str("authorSignature")
     val textKey                  = upack.Str("text")
     val entitiesKey              = upack.Str("entities")
-    val captionEntitiesKey       = upack.Str("captionEntities")
+    val animationKey             = upack.Str("animation")
     val audioKey                 = upack.Str("audio")
     val documentKey              = upack.Str("document")
-    val animationKey             = upack.Str("animation")
-    val gameKey                  = upack.Str("game")
     val photoKey                 = upack.Str("photo")
     val stickerKey               = upack.Str("sticker")
     val videoKey                 = upack.Str("video")
-    val voiceKey                 = upack.Str("voice")
     val videoNoteKey             = upack.Str("videoNote")
+    val voiceKey                 = upack.Str("voice")
     val captionKey               = upack.Str("caption")
+    val captionEntitiesKey       = upack.Str("captionEntities")
     val contactKey               = upack.Str("contact")
-    val locationKey              = upack.Str("location")
-    val venueKey                 = upack.Str("venue")
-    val pollKey                  = upack.Str("poll")
     val diceKey                  = upack.Str("dice")
+    val gameKey                  = upack.Str("game")
+    val pollKey                  = upack.Str("poll")
+    val venueKey                 = upack.Str("venue")
+    val locationKey              = upack.Str("location")
     val newChatMembersKey        = upack.Str("newChatMembers")
     val leftChatMemberKey        = upack.Str("leftChatMember")
     val newChatTitleKey          = upack.Str("newChatTitle")
@@ -3814,27 +3847,28 @@ object uPickleImplicits {
           forwardSenderNameKey     -> writeMsg(x.forwardSenderName),
           forwardDateKey           -> writeMsg(x.forwardDate),
           replyToMessageKey        -> writeMsg(x.replyToMessage),
+          viaBotKey                -> writeMsg(x.viaBot),
           editDateKey              -> writeMsg(x.editDate),
           mediaGroupIdKey          -> writeMsg(x.mediaGroupId),
           authorSignatureKey       -> writeMsg(x.authorSignature),
           textKey                  -> writeMsg(x.text),
           entitiesKey              -> writeMsg(x.entities),
-          captionEntitiesKey       -> writeMsg(x.captionEntities),
+          animationKey             -> writeMsg(x.animation),
           audioKey                 -> writeMsg(x.audio),
           documentKey              -> writeMsg(x.document),
-          animationKey             -> writeMsg(x.animation),
-          gameKey                  -> writeMsg(x.game),
           photoKey                 -> writeMsg(x.photo),
           stickerKey               -> writeMsg(x.sticker),
           videoKey                 -> writeMsg(x.video),
-          voiceKey                 -> writeMsg(x.voice),
           videoNoteKey             -> writeMsg(x.videoNote),
+          voiceKey                 -> writeMsg(x.voice),
           captionKey               -> writeMsg(x.caption),
+          captionEntitiesKey       -> writeMsg(x.captionEntities),
           contactKey               -> writeMsg(x.contact),
-          locationKey              -> writeMsg(x.location),
-          venueKey                 -> writeMsg(x.venue),
-          pollKey                  -> writeMsg(x.poll),
           diceKey                  -> writeMsg(x.dice),
+          gameKey                  -> writeMsg(x.game),
+          pollKey                  -> writeMsg(x.poll),
+          venueKey                 -> writeMsg(x.venue),
+          locationKey              -> writeMsg(x.location),
           newChatMembersKey        -> writeMsg(x.newChatMembers),
           leftChatMemberKey        -> writeMsg(x.leftChatMember),
           newChatTitleKey          -> writeMsg(x.newChatTitle),
@@ -3869,27 +3903,28 @@ object uPickleImplicits {
           forwardSenderName <- m.get(forwardSenderNameKey).map(x => readBinary[Option[String]](x))
           forwardDate       <- m.get(forwardDateKey).map(x => readBinary[Option[Int]](x))
           replyToMessage    <- m.get(replyToMessageKey).map(x => readBinary[Option[Message]](x))
+          viaBot            <- m.get(viaBotKey).map(x => readBinary[Option[User]](x))
           editDate          <- m.get(editDateKey).map(x => readBinary[Option[Int]](x))
           mediaGroupId      <- m.get(mediaGroupIdKey).map(x => readBinary[Option[String]](x))
           authorSignature   <- m.get(authorSignatureKey).map(x => readBinary[Option[String]](x))
           text              <- m.get(textKey).map(x => readBinary[Option[String]](x))
           entities          <- m.get(entitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          captionEntities   <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          animation         <- m.get(animationKey).map(x => readBinary[Option[Animation]](x))
           audio             <- m.get(audioKey).map(x => readBinary[Option[Audio]](x))
           document          <- m.get(documentKey).map(x => readBinary[Option[Document]](x))
-          animation         <- m.get(animationKey).map(x => readBinary[Option[Animation]](x))
-          game              <- m.get(gameKey).map(x => readBinary[Option[Game]](x))
           photo             <- m.get(photoKey).map(x => readBinary[List[PhotoSize]](x))
           sticker           <- m.get(stickerKey).map(x => readBinary[Option[Sticker]](x))
           video             <- m.get(videoKey).map(x => readBinary[Option[Video]](x))
-          voice             <- m.get(voiceKey).map(x => readBinary[Option[Voice]](x))
           videoNote         <- m.get(videoNoteKey).map(x => readBinary[Option[VideoNote]](x))
+          voice             <- m.get(voiceKey).map(x => readBinary[Option[Voice]](x))
           caption           <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          captionEntities   <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
           contact           <- m.get(contactKey).map(x => readBinary[Option[Contact]](x))
-          location          <- m.get(locationKey).map(x => readBinary[Option[Location]](x))
-          venue             <- m.get(venueKey).map(x => readBinary[Option[Venue]](x))
-          poll              <- m.get(pollKey).map(x => readBinary[Option[Poll]](x))
           dice              <- m.get(diceKey).map(x => readBinary[Option[Dice]](x))
+          game              <- m.get(gameKey).map(x => readBinary[Option[Game]](x))
+          poll              <- m.get(pollKey).map(x => readBinary[Option[Poll]](x))
+          venue             <- m.get(venueKey).map(x => readBinary[Option[Venue]](x))
+          location          <- m.get(locationKey).map(x => readBinary[Option[Location]](x))
           newChatMembers    <- m.get(newChatMembersKey).map(x => readBinary[List[User]](x))
           leftChatMember    <- m.get(leftChatMemberKey).map(x => readBinary[Option[User]](x))
           newChatTitle      <- m.get(newChatTitleKey).map(x => readBinary[Option[String]](x))
@@ -3925,27 +3960,28 @@ object uPickleImplicits {
             forwardSenderName = forwardSenderName,
             forwardDate = forwardDate,
             replyToMessage = replyToMessage,
+            viaBot = viaBot,
             editDate = editDate,
             mediaGroupId = mediaGroupId,
             authorSignature = authorSignature,
             text = text,
             entities = entities,
-            captionEntities = captionEntities,
+            animation = animation,
             audio = audio,
             document = document,
-            animation = animation,
-            game = game,
             photo = photo,
             sticker = sticker,
             video = video,
-            voice = voice,
             videoNote = videoNote,
+            voice = voice,
             caption = caption,
+            captionEntities = captionEntities,
             contact = contact,
-            location = location,
-            venue = venue,
-            poll = poll,
             dice = dice,
+            game = game,
+            poll = poll,
+            venue = venue,
+            location = location,
             newChatMembers = newChatMembers,
             leftChatMember = leftChatMember,
             newChatTitle = newChatTitle,
@@ -4610,6 +4646,30 @@ object CirceImplicits {
   import cats.syntax.functor._
   import io.circe.HCursor
 
+  implicit lazy val emojiEncoder: Encoder[Emoji] = {
+    case EmojiDice       => EmojiDice.asJson
+    case EmojiDarts      => EmojiDarts.asJson
+    case EmojiBasketball => EmojiBasketball.asJson
+  }
+  implicit lazy val emojiDecoder: Decoder[Emoji] = {
+    List[Decoder[Emoji]](
+      emojidiceDecoder.widen,
+      emojidartsDecoder.widen,
+      emojibasketballDecoder.widen
+    ).reduceLeft(_ or _)
+  }
+
+  implicit lazy val emojidiceEncoder: Encoder[EmojiDice.type] = (x: EmojiDice.type) => "🎲".asJson
+  implicit lazy val emojidiceDecoder: Decoder[EmojiDice.type] = Decoder[String].map(_ => EmojiDice)
+  implicit lazy val emojidartsEncoder: Encoder[EmojiDarts.type] = (x: EmojiDarts.type) =>
+    "🎯".asJson
+  implicit lazy val emojidartsDecoder: Decoder[EmojiDarts.type] =
+    Decoder[String].map(_ => EmojiDarts)
+  implicit lazy val emojibasketballEncoder: Encoder[EmojiBasketball.type] =
+    (x: EmojiBasketball.type) => "🏀".asJson
+  implicit lazy val emojibasketballDecoder: Decoder[EmojiBasketball.type] =
+    Decoder[String].map(_ => EmojiBasketball)
+
   implicit lazy val parsemodeEncoder: Encoder[ParseMode] = {
     case Markdown  => Markdown.asJson
     case Markdown2 => Markdown2.asJson
@@ -5026,6 +5086,7 @@ object CirceImplicits {
           "gif_height"            -> x.gifHeight.asJson,
           "gif_duration"          -> x.gifDuration.asJson,
           "thumb_url"             -> x.thumbUrl.asJson,
+          "thumb_mime_type"       -> x.thumbMimeType.asJson,
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
@@ -5044,6 +5105,7 @@ object CirceImplicits {
         _gifHeight           <- h.get[Option[Int]]("gif_height")
         _gifDuration         <- h.get[Option[Int]]("gif_duration")
         _thumbUrl            <- h.get[String]("thumb_url")
+        _thumbMimeType       <- h.get[Option[String]]("thumb_mime_type")
         _title               <- h.get[Option[String]]("title")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
@@ -5057,6 +5119,7 @@ object CirceImplicits {
           gifHeight = _gifHeight,
           gifDuration = _gifDuration,
           thumbUrl = _thumbUrl,
+          thumbMimeType = _thumbMimeType,
           title = _title,
           caption = _caption,
           parseMode = _parseMode,
@@ -5406,6 +5469,7 @@ object CirceImplicits {
           "mpeg4_height"          -> x.mpeg4Height.asJson,
           "mpeg4_duration"        -> x.mpeg4Duration.asJson,
           "thumb_url"             -> x.thumbUrl.asJson,
+          "thumb_mime_type"       -> x.thumbMimeType.asJson,
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
@@ -5424,6 +5488,7 @@ object CirceImplicits {
         _mpeg4Height         <- h.get[Option[Int]]("mpeg4_height")
         _mpeg4Duration       <- h.get[Option[Int]]("mpeg4_duration")
         _thumbUrl            <- h.get[String]("thumb_url")
+        _thumbMimeType       <- h.get[Option[String]]("thumb_mime_type")
         _title               <- h.get[Option[String]]("title")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
@@ -5437,6 +5502,7 @@ object CirceImplicits {
           mpeg4Height = _mpeg4Height,
           mpeg4Duration = _mpeg4Duration,
           thumbUrl = _thumbUrl,
+          thumbMimeType = _thumbMimeType,
           title = _title,
           caption = _caption,
           parseMode = _parseMode,
@@ -7019,7 +7085,7 @@ object CirceImplicits {
   implicit lazy val diceDecoder: Decoder[Dice] =
     Decoder.instance { h =>
       for {
-        _emoji <- h.get[String]("emoji")
+        _emoji <- h.get[Emoji]("emoji")
         _value <- h.get[Int]("value")
       } yield {
         Dice(emoji = _emoji, value = _value)
@@ -7434,7 +7500,7 @@ object CirceImplicits {
         _height       <- h.get[Int]("height")
         _isAnimated   <- h.get[Boolean]("is_animated")
         _thumb        <- h.get[Option[PhotoSize]]("thumb")
-        _emoji        <- h.get[Option[String]]("emoji")
+        _emoji        <- h.get[Option[Emoji]]("emoji")
         _setName      <- h.get[Option[String]]("set_name")
         _maskPosition <- h.get[Option[MaskPosition]]("mask_position")
         _fileSize     <- h.get[Option[Int]]("file_size")
@@ -7469,27 +7535,28 @@ object CirceImplicits {
           "forward_sender_name"     -> x.forwardSenderName.asJson,
           "forward_date"            -> x.forwardDate.asJson,
           "reply_to_message"        -> x.replyToMessage.asJson,
+          "via_bot"                 -> x.viaBot.asJson,
           "edit_date"               -> x.editDate.asJson,
           "media_group_id"          -> x.mediaGroupId.asJson,
           "author_signature"        -> x.authorSignature.asJson,
           "text"                    -> x.text.asJson,
           "entities"                -> x.entities.asJson,
-          "caption_entities"        -> x.captionEntities.asJson,
+          "animation"               -> x.animation.asJson,
           "audio"                   -> x.audio.asJson,
           "document"                -> x.document.asJson,
-          "animation"               -> x.animation.asJson,
-          "game"                    -> x.game.asJson,
           "photo"                   -> x.photo.asJson,
           "sticker"                 -> x.sticker.asJson,
           "video"                   -> x.video.asJson,
-          "voice"                   -> x.voice.asJson,
           "video_note"              -> x.videoNote.asJson,
+          "voice"                   -> x.voice.asJson,
           "caption"                 -> x.caption.asJson,
+          "caption_entities"        -> x.captionEntities.asJson,
           "contact"                 -> x.contact.asJson,
-          "location"                -> x.location.asJson,
-          "venue"                   -> x.venue.asJson,
-          "poll"                    -> x.poll.asJson,
           "dice"                    -> x.dice.asJson,
+          "game"                    -> x.game.asJson,
+          "poll"                    -> x.poll.asJson,
+          "venue"                   -> x.venue.asJson,
+          "location"                -> x.location.asJson,
           "new_chat_members"        -> x.newChatMembers.asJson,
           "left_chat_member"        -> x.leftChatMember.asJson,
           "new_chat_title"          -> x.newChatTitle.asJson,
@@ -7524,27 +7591,28 @@ object CirceImplicits {
         _forwardSenderName     <- h.get[Option[String]]("forward_sender_name")
         _forwardDate           <- h.get[Option[Int]]("forward_date")
         _replyToMessage        <- h.get[Option[Message]]("reply_to_message")
+        _viaBot                <- h.get[Option[User]]("via_bot")
         _editDate              <- h.get[Option[Int]]("edit_date")
         _mediaGroupId          <- h.get[Option[String]]("media_group_id")
         _authorSignature       <- h.get[Option[String]]("author_signature")
         _text                  <- h.get[Option[String]]("text")
         _entities              <- h.getOrElse[List[MessageEntity]]("entities")(List.empty)
-        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _animation             <- h.get[Option[Animation]]("animation")
         _audio                 <- h.get[Option[Audio]]("audio")
         _document              <- h.get[Option[Document]]("document")
-        _animation             <- h.get[Option[Animation]]("animation")
-        _game                  <- h.get[Option[Game]]("game")
         _photo                 <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
         _sticker               <- h.get[Option[Sticker]]("sticker")
         _video                 <- h.get[Option[Video]]("video")
-        _voice                 <- h.get[Option[Voice]]("voice")
         _videoNote             <- h.get[Option[VideoNote]]("video_note")
+        _voice                 <- h.get[Option[Voice]]("voice")
         _caption               <- h.get[Option[String]]("caption")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _contact               <- h.get[Option[Contact]]("contact")
-        _location              <- h.get[Option[Location]]("location")
-        _venue                 <- h.get[Option[Venue]]("venue")
-        _poll                  <- h.get[Option[Poll]]("poll")
         _dice                  <- h.get[Option[Dice]]("dice")
+        _game                  <- h.get[Option[Game]]("game")
+        _poll                  <- h.get[Option[Poll]]("poll")
+        _venue                 <- h.get[Option[Venue]]("venue")
+        _location              <- h.get[Option[Location]]("location")
         _newChatMembers        <- h.getOrElse[List[User]]("new_chat_members")(List.empty)
         _leftChatMember        <- h.get[Option[User]]("left_chat_member")
         _newChatTitle          <- h.get[Option[String]]("new_chat_title")
@@ -7574,27 +7642,28 @@ object CirceImplicits {
           forwardSenderName = _forwardSenderName,
           forwardDate = _forwardDate,
           replyToMessage = _replyToMessage,
+          viaBot = _viaBot,
           editDate = _editDate,
           mediaGroupId = _mediaGroupId,
           authorSignature = _authorSignature,
           text = _text,
           entities = _entities,
-          captionEntities = _captionEntities,
+          animation = _animation,
           audio = _audio,
           document = _document,
-          animation = _animation,
-          game = _game,
           photo = _photo,
           sticker = _sticker,
           video = _video,
-          voice = _voice,
           videoNote = _videoNote,
+          voice = _voice,
           caption = _caption,
+          captionEntities = _captionEntities,
           contact = _contact,
-          location = _location,
-          venue = _venue,
-          poll = _poll,
           dice = _dice,
+          game = _game,
+          poll = _poll,
+          venue = _venue,
+          location = _location,
           newChatMembers = _newChatMembers,
           leftChatMember = _leftChatMember,
           newChatTitle = _newChatTitle,
