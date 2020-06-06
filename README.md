@@ -21,8 +21,8 @@ You may want to start with [Api.scala](telegramium-core/src/main/scala/telegrami
 Create the dependency by adding the following lines to your build.sbt:
 
 ```
-libraryDependencies += "io.github.apimorphism" %% "telegramium-core" % "1.48.0"
-libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "1.48.0"
+libraryDependencies += "io.github.apimorphism" %% "telegramium-core" % "1.49.0"
+libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "1.49.0"
 ```
 
 ### Versioning
