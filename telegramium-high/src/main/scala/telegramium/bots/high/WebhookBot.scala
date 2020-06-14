@@ -1,12 +1,12 @@
 package telegramium.bots.high
 
-import cats.effect.{ConcurrentEffect, Resource, Sync, Timer}
+import cats.effect.{Blocker, ConcurrentEffect, ContextShift, Resource, Timer}
 import cats.implicits._
-import io.circe.syntax._
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.dsl.impl.Path
 import org.http4s.implicits._
+import org.http4s.multipart.{Multipart, Part}
 import org.http4s.server.Server
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.{EntityDecoder, HttpApp, HttpRoutes}
@@ -29,28 +29,29 @@ import telegramium.bots.{CallbackQuery, ChosenInlineResult, HandleUpdateReq, Inl
  *                       affect updates created before the call to the setWebhook, so unwanted updates may be received
  *                       for a short period of time.
  */
-abstract class WebhookBot[F[_]: ConcurrentEffect](
+abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   bot: Api[F],
   port: Int,
   url: String,
   path: String = "/",
+  blocker: Blocker,
   certificate: Option[InputPartFile] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty
-)(implicit syncF: Sync[F], timer: Timer[F]) {
+)(implicit timer: Timer[F]) extends Methods {
 
   private val BotPath = Path(if (path.startsWith("/")) path else path.prepended('/'))
 
-  def onMessage(msg: Message): F[BotApiMethod[_]] = ???
-  def onInlineQuery(query: InlineQuery): F[BotApiMethod[_]] = ???
-  def onCallbackQuery(query: CallbackQuery): F[BotApiMethod[_]] = ???
-  def onChosenInlineResult(inlineResult: ChosenInlineResult): F[BotApiMethod[_]] = ???
+  def onMessage(msg: Message): F[Method[_]] = ???
+  def onInlineQuery(query: InlineQuery): F[Method[_]] = ???
+  def onCallbackQuery(query: CallbackQuery): F[Method[_]] = ???
+  def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Method[_]] = ???
 
-  def onUpdate(update: HandleUpdateReq): F[Option[BotApiMethod[_]]] = update.message.traverse(onMessage)
+  def onUpdate(update: HandleUpdateReq): F[Option[Method[_]]] = update.message.traverse(onMessage)
 
   private implicit val HandleUpdateReqEntityDecoder: EntityDecoder[F, HandleUpdateReq] = jsonOf[F, HandleUpdateReq]
 
-  def handleUpdateReq(rawReq: org.http4s.Request[F]): F[BotApiMethod[_]] =
+  def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Method[_]] =
     rawReq.as[HandleUpdateReq].flatMap(onUpdate(_).map(_.get))
 
   def start(): Resource[F, Server[F]] = setWebhook(url, certificate, maxConnections, allowedUpdates) *> createServer()
@@ -67,8 +68,6 @@ abstract class WebhookBot[F[_]: ConcurrentEffect](
       _ => bot.deleteWebhook().void
     )
 
-  import telegramium.bots.high.SendMessage.sendmessageEncoder
-
   private def createServer(): Resource[F, Server[F]] = {
     val dsl = Http4sDsl[F]
     import dsl._
@@ -76,8 +75,24 @@ abstract class WebhookBot[F[_]: ConcurrentEffect](
     def app(): HttpApp[F] =
       HttpRoutes.of[F] {
         case req @ POST -> BotPath =>
-          handleUpdateReq(req).flatMap {
-            case x: SendMessage => Ok(x.asJson)
+          handleUpdateReq(req).flatMap { m =>
+            val methodReq = m.asInstanceOf[MethodReq[_]]
+            val attachments = methodReq.files.collect {
+              case (filename, InputPartFile(file)) => Part.fileData[F](filename, file, blocker)
+            }
+              .toVector
+            if (attachments.isEmpty)
+              Ok(methodReq.json)
+            else {
+              val parts = Multipart[F] {
+                methodReq.json.asObject.map(
+                  _.toIterable.filterNot(nv => nv._2.isNull || nv._2.isObject).map {
+                    case (n, v) => Part.formData[F](n, v.asString.getOrElse(v.toString))
+                  }.toVector
+                ).getOrElse(Vector.empty) ++ attachments
+              }
+              Ok(parts).map(_.withHeaders(parts.headers))
+            }
           }
       }
         .orNotFound
