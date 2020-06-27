@@ -7,7 +7,7 @@ import monix.execution.Scheduler.Implicits.global
 import org.http4s.client.Client
 import org.http4s.client.blaze.BlazeClientBuilder
 import org.http4s.client.middleware.Logger
-import telegramium.bots.high.Http4sApi
+import telegramium.bots.high.{Api, BotApi}
 
 import scala.concurrent.duration.Duration
 
@@ -18,10 +18,12 @@ object Application extends App {
     val http = Logger(logBody = true, logHeaders = true)(httpClient)
     args match {
       case Array("EchoBot", token) =>
-        val echoBot = new EchoBot(createBotBackend(http, token, blocker))
+        implicit val api: Api[Task] = createBotBackend(http, token, blocker)
+        val echoBot = new EchoBot()
         echoBot.start()
       case Array("IceCreamParlorBot", token) =>
-        val iceCreamParlorBot = new IceCreamParlorBot(createBotBackend(http, token, blocker))
+        implicit val api: Api[Task] = createBotBackend(http, token, blocker)
+        val iceCreamParlorBot = new IceCreamParlorBot()
         iceCreamParlorBot.start()
       case Array(name, _) =>
         Task.raiseError(new RuntimeException(s"Unknown bot $name"))
@@ -34,6 +36,6 @@ object Application extends App {
    * @param token Bot API token got from Botfather
    */
   private def createBotBackend(http: Client[Task], token: String, blocker: Blocker) =
-    Http4sApi.create(http, baseUrl = s"https://api.telegram.org/bot$token", blocker)
+    BotApi(http, baseUrl = s"https://api.telegram.org/bot$token", blocker)
 
 }

@@ -2572,7 +2572,8 @@ object CirceImplicits {
     (x: SetMyCommandsReq) => {
       Json.fromFields(
         List(
-          "commands" -> x.commands.asJson
+          "commands" -> x.commands.asJson,
+          "method"   -> "setMyCommands".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2591,7 +2592,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id" -> x.chatId.asJson,
-          "photo"   -> x.photo.asJson
+          "photo"   -> x.photo.asJson,
+          "method"  -> "setChatPhoto".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2613,7 +2615,8 @@ object CirceImplicits {
           "user_id"           -> x.userId.asJson,
           "chat_id"           -> x.chatId.asJson,
           "message_id"        -> x.messageId.asJson,
-          "inline_message_id" -> x.inlineMessageId.asJson
+          "inline_message_id" -> x.inlineMessageId.asJson,
+          "method"            -> "getGameHighScores".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2641,7 +2644,8 @@ object CirceImplicits {
           "text"              -> x.text.asJson,
           "show_alert"        -> x.showAlert.asJson,
           "url"               -> x.url.asJson,
-          "cache_time"        -> x.cacheTime.asJson
+          "cache_time"        -> x.cacheTime.asJson,
+          "method"            -> "answerCallbackQuery".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2673,7 +2677,8 @@ object CirceImplicits {
           "disable_web_page_preview" -> x.disableWebPagePreview.asJson,
           "disable_notification"     -> x.disableNotification.asJson,
           "reply_to_message_id"      -> x.replyToMessageId.asJson,
-          "reply_markup"             -> x.replyMarkup.asJson
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "method"                   -> "sendMessage".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2707,7 +2712,8 @@ object CirceImplicits {
         List(
           "user_id" -> x.userId.asJson,
           "offset"  -> x.offset.asJson,
-          "limit"   -> x.limit.asJson
+          "limit"   -> x.limit.asJson,
+          "method"  -> "getUserProfilePhotos".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2741,7 +2747,8 @@ object CirceImplicits {
           "is_closed"               -> x.isClosed.asJson,
           "disable_notification"    -> x.disableNotification.asJson,
           "reply_to_message_id"     -> x.replyToMessageId.asJson,
-          "reply_markup"            -> x.replyMarkup.asJson
+          "reply_markup"            -> x.replyMarkup.asJson,
+          "method"                  -> "sendPoll".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2796,7 +2803,8 @@ object CirceImplicits {
           "vcard"                -> x.vcard.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "reply_to_message_id"  -> x.replyToMessageId.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "sendContact".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2837,7 +2845,8 @@ object CirceImplicits {
           "tgs_sticker"    -> x.tgsSticker.asJson,
           "emojis"         -> x.emojis.asJson,
           "contains_masks" -> x.containsMasks.asJson,
-          "mask_position"  -> x.maskPosition.asJson
+          "mask_position"  -> x.maskPosition.asJson,
+          "method"         -> "createNewStickerSet".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2872,7 +2881,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "user_id"     -> x.userId.asJson,
-          "png_sticker" -> x.pngSticker.asJson
+          "png_sticker" -> x.pngSticker.asJson,
+          "method"      -> "uploadStickerFile".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2892,7 +2902,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"     -> x.chatId.asJson,
-          "permissions" -> x.permissions.asJson
+          "permissions" -> x.permissions.asJson,
+          "method"      -> "setChatPermissions".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2917,7 +2928,8 @@ object CirceImplicits {
           "live_period"          -> x.livePeriod.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "reply_to_message_id"  -> x.replyToMessageId.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "sendLocation".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2949,7 +2961,8 @@ object CirceImplicits {
     (x: DeleteChatStickerSetReq) => {
       Json.fromFields(
         List(
-          "chat_id" -> x.chatId.asJson
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "deleteChatStickerSet".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2970,7 +2983,8 @@ object CirceImplicits {
           "chat_id"           -> x.chatId.asJson,
           "message_id"        -> x.messageId.asJson,
           "inline_message_id" -> x.inlineMessageId.asJson,
-          "reply_markup"      -> x.replyMarkup.asJson
+          "reply_markup"      -> x.replyMarkup.asJson,
+          "method"            -> "stopMessageLiveLocation".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2994,7 +3008,8 @@ object CirceImplicits {
     (x: ExportChatInviteLinkReq) => {
       Json.fromFields(
         List(
-          "chat_id" -> x.chatId.asJson
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "exportChatInviteLink".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3016,7 +3031,8 @@ object CirceImplicits {
           "emoji"                -> x.emoji.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "reply_to_message_id"  -> x.replyToMessageId.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "sendDice".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3051,7 +3067,8 @@ object CirceImplicits {
           "png_sticker"   -> x.pngSticker.asJson,
           "tgs_sticker"   -> x.tgsSticker.asJson,
           "emojis"        -> x.emojis.asJson,
-          "mask_position" -> x.maskPosition.asJson
+          "mask_position" -> x.maskPosition.asJson,
+          "method"        -> "addStickerToSet".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3079,7 +3096,8 @@ object CirceImplicits {
     (x: DeleteStickerFromSetReq) => {
       Json.fromFields(
         List(
-          "sticker" -> x.sticker.asJson
+          "sticker" -> x.sticker.asJson,
+          "method"  -> "deleteStickerFromSet".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3099,7 +3117,8 @@ object CirceImplicits {
         List(
           "chat_id"      -> x.chatId.asJson,
           "message_id"   -> x.messageId.asJson,
-          "reply_markup" -> x.replyMarkup.asJson
+          "reply_markup" -> x.replyMarkup.asJson,
+          "method"       -> "stopPoll".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3119,7 +3138,8 @@ object CirceImplicits {
     (x: UnpinChatMessageReq) => {
       Json.fromFields(
         List(
-          "chat_id" -> x.chatId.asJson
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "unpinChatMessage".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3140,7 +3160,8 @@ object CirceImplicits {
           "chat_id"              -> x.chatId.asJson,
           "media"                -> x.media.asJson,
           "disable_notification" -> x.disableNotification.asJson,
-          "reply_to_message_id"  -> x.replyToMessageId.asJson
+          "reply_to_message_id"  -> x.replyToMessageId.asJson,
+          "method"               -> "sendMediaGroup".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3168,7 +3189,8 @@ object CirceImplicits {
           "game_short_name"      -> x.gameShortName.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "reply_to_message_id"  -> x.replyToMessageId.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "sendGame".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3203,7 +3225,8 @@ object CirceImplicits {
           "foursquare_type"      -> x.foursquareType.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "reply_to_message_id"  -> x.replyToMessageId.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "sendVenue".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3242,7 +3265,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id" -> x.chatId.asJson,
-          "user_id" -> x.userId.asJson
+          "user_id" -> x.userId.asJson,
+          "method"  -> "unbanChatMember".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3262,7 +3286,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"     -> x.chatId.asJson,
-          "description" -> x.description.asJson
+          "description" -> x.description.asJson,
+          "method"      -> "setChatDescription".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3287,7 +3312,8 @@ object CirceImplicits {
           "text"                     -> x.text.asJson,
           "parse_mode"               -> x.parseMode.asJson,
           "disable_web_page_preview" -> x.disableWebPagePreview.asJson,
-          "reply_markup"             -> x.replyMarkup.asJson
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "method"                   -> "editMessageText".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3324,7 +3350,8 @@ object CirceImplicits {
           "inline_message_id" -> x.inlineMessageId.asJson,
           "latitude"          -> x.latitude.asJson,
           "longitude"         -> x.longitude.asJson,
-          "reply_markup"      -> x.replyMarkup.asJson
+          "reply_markup"      -> x.replyMarkup.asJson,
+          "method"            -> "editMessageLiveLocation".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3352,7 +3379,8 @@ object CirceImplicits {
     (x: GetFileReq) => {
       Json.fromFields(
         List(
-          "file_id" -> x.fileId.asJson
+          "file_id" -> x.fileId.asJson,
+          "method"  -> "getFile".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3376,7 +3404,8 @@ object CirceImplicits {
           "disable_edit_message" -> x.disableEditMessage.asJson,
           "chat_id"              -> x.chatId.asJson,
           "message_id"           -> x.messageId.asJson,
-          "inline_message_id"    -> x.inlineMessageId.asJson
+          "inline_message_id"    -> x.inlineMessageId.asJson,
+          "method"               -> "setGameScore".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3406,7 +3435,8 @@ object CirceImplicits {
     (x: LeaveChatReq) => {
       Json.fromFields(
         List(
-          "chat_id" -> x.chatId.asJson
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "leaveChat".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3425,7 +3455,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id" -> x.chatId.asJson,
-          "title"   -> x.title.asJson
+          "title"   -> x.title.asJson,
+          "method"  -> "setChatTitle".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3451,7 +3482,8 @@ object CirceImplicits {
           "thumb"                -> x.thumb.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "reply_to_message_id"  -> x.replyToMessageId.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "sendVideoNote".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3486,7 +3518,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "user_id" -> x.userId.asJson,
-          "errors"  -> x.errors.asJson
+          "errors"  -> x.errors.asJson,
+          "method"  -> "setPassportDataErrors".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3505,7 +3538,8 @@ object CirceImplicits {
     (x: DeleteChatPhotoReq) => {
       Json.fromFields(
         List(
-          "chat_id" -> x.chatId.asJson
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "deleteChatPhoto".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3545,7 +3579,8 @@ object CirceImplicits {
           "is_flexible"                   -> x.isFlexible.asJson,
           "disable_notification"          -> x.disableNotification.asJson,
           "reply_to_message_id"           -> x.replyToMessageId.asJson,
-          "reply_markup"                  -> x.replyMarkup.asJson
+          "reply_markup"                  -> x.replyMarkup.asJson,
+          "method"                        -> "sendInvoice".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3616,7 +3651,8 @@ object CirceImplicits {
           "parse_mode"           -> x.parseMode.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "reply_to_message_id"  -> x.replyToMessageId.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "sendDocument".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3651,7 +3687,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"    -> x.chatId.asJson,
-          "message_id" -> x.messageId.asJson
+          "message_id" -> x.messageId.asJson,
+          "method"     -> "deleteMessage".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3676,7 +3713,8 @@ object CirceImplicits {
           "is_personal"         -> x.isPersonal.asJson,
           "next_offset"         -> x.nextOffset.asJson,
           "switch_pm_text"      -> x.switchPmText.asJson,
-          "switch_pm_parameter" -> x.switchPmParameter.asJson
+          "switch_pm_parameter" -> x.switchPmParameter.asJson,
+          "method"              -> "answerInlineQuery".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3710,7 +3748,8 @@ object CirceImplicits {
         List(
           "chat_id"    -> x.chatId.asJson,
           "user_id"    -> x.userId.asJson,
-          "until_date" -> x.untilDate.asJson
+          "until_date" -> x.untilDate.asJson,
+          "method"     -> "kickChatMember".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3740,7 +3779,8 @@ object CirceImplicits {
           "thumb"                -> x.thumb.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "reply_to_message_id"  -> x.replyToMessageId.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "sendAudio".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3783,7 +3823,8 @@ object CirceImplicits {
           "chat_id"     -> x.chatId.asJson,
           "user_id"     -> x.userId.asJson,
           "permissions" -> x.permissions.asJson,
-          "until_date"  -> x.untilDate.asJson
+          "until_date"  -> x.untilDate.asJson,
+          "method"      -> "restrictChatMember".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3812,7 +3853,8 @@ object CirceImplicits {
           "chat_id"              -> x.chatId.asJson,
           "from_chat_id"         -> x.fromChatId.asJson,
           "disable_notification" -> x.disableNotification.asJson,
-          "message_id"           -> x.messageId.asJson
+          "message_id"           -> x.messageId.asJson,
+          "method"               -> "forwardMessage".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3837,7 +3879,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id" -> x.chatId.asJson,
-          "user_id" -> x.userId.asJson
+          "user_id" -> x.userId.asJson,
+          "method"  -> "getChatMember".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3860,7 +3903,8 @@ object CirceImplicits {
     (x: GetChatAdministratorsReq) => {
       Json.fromFields(
         List(
-          "chat_id" -> x.chatId.asJson
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "getChatAdministrators".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3885,7 +3929,8 @@ object CirceImplicits {
           "duration"             -> x.duration.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "reply_to_message_id"  -> x.replyToMessageId.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "sendVoice".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3928,7 +3973,8 @@ object CirceImplicits {
           "can_invite_users"     -> x.canInviteUsers.asJson,
           "can_restrict_members" -> x.canRestrictMembers.asJson,
           "can_pin_messages"     -> x.canPinMessages.asJson,
-          "can_promote_members"  -> x.canPromoteMembers.asJson
+          "can_promote_members"  -> x.canPromoteMembers.asJson,
+          "method"               -> "promoteChatMember".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3971,7 +4017,8 @@ object CirceImplicits {
           "inline_message_id" -> x.inlineMessageId.asJson,
           "caption"           -> x.caption.asJson,
           "parse_mode"        -> x.parseMode.asJson,
-          "reply_markup"      -> x.replyMarkup.asJson
+          "reply_markup"      -> x.replyMarkup.asJson,
+          "method"            -> "editMessageCaption".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4003,7 +4050,8 @@ object CirceImplicits {
           "message_id"        -> x.messageId.asJson,
           "inline_message_id" -> x.inlineMessageId.asJson,
           "media"             -> x.media.asJson,
-          "reply_markup"      -> x.replyMarkup.asJson
+          "reply_markup"      -> x.replyMarkup.asJson,
+          "method"            -> "editMessageMedia".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4031,7 +4079,8 @@ object CirceImplicits {
         List(
           "chat_id"              -> x.chatId.asJson,
           "message_id"           -> x.messageId.asJson,
-          "disable_notification" -> x.disableNotification.asJson
+          "disable_notification" -> x.disableNotification.asJson,
+          "method"               -> "pinChatMessage".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4055,7 +4104,8 @@ object CirceImplicits {
         List(
           "name"    -> x.name.asJson,
           "user_id" -> x.userId.asJson,
-          "thumb"   -> x.thumb.asJson
+          "thumb"   -> x.thumb.asJson,
+          "method"  -> "setStickerSetThumb".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4078,7 +4128,8 @@ object CirceImplicits {
           "chat_id"           -> x.chatId.asJson,
           "message_id"        -> x.messageId.asJson,
           "inline_message_id" -> x.inlineMessageId.asJson,
-          "reply_markup"      -> x.replyMarkup.asJson
+          "reply_markup"      -> x.replyMarkup.asJson,
+          "method"            -> "editMessageReplyMarkup".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4113,7 +4164,8 @@ object CirceImplicits {
           "supports_streaming"   -> x.supportsStreaming.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "reply_to_message_id"  -> x.replyToMessageId.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "sendVideo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4156,7 +4208,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"          -> x.chatId.asJson,
-          "sticker_set_name" -> x.stickerSetName.asJson
+          "sticker_set_name" -> x.stickerSetName.asJson,
+          "method"           -> "setChatStickerSet".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4175,7 +4228,8 @@ object CirceImplicits {
     (x: GetChatReq) => {
       Json.fromFields(
         List(
-          "chat_id" -> x.chatId.asJson
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "getChat".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4198,7 +4252,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "sticker"  -> x.sticker.asJson,
-          "position" -> x.position.asJson
+          "position" -> x.position.asJson,
+          "method"   -> "setStickerPositionInSet".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4220,7 +4275,8 @@ object CirceImplicits {
         List(
           "chat_id"      -> x.chatId.asJson,
           "user_id"      -> x.userId.asJson,
-          "custom_title" -> x.customTitle.asJson
+          "custom_title" -> x.customTitle.asJson,
+          "method"       -> "setChatAdministratorCustomTitle".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4253,7 +4309,8 @@ object CirceImplicits {
           "parse_mode"           -> x.parseMode.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "reply_to_message_id"  -> x.replyToMessageId.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "sendAnimation".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4296,7 +4353,8 @@ object CirceImplicits {
           "shipping_query_id" -> x.shippingQueryId.asJson,
           "ok"                -> x.ok.asJson,
           "shipping_options"  -> x.shippingOptions.asJson,
-          "error_message"     -> x.errorMessage.asJson
+          "error_message"     -> x.errorMessage.asJson,
+          "method"            -> "answerShippingQuery".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4322,7 +4380,8 @@ object CirceImplicits {
         List(
           "pre_checkout_query_id" -> x.preCheckoutQueryId.asJson,
           "ok"                    -> x.ok.asJson,
-          "error_message"         -> x.errorMessage.asJson
+          "error_message"         -> x.errorMessage.asJson,
+          "method"                -> "answerPreCheckoutQuery".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4348,7 +4407,8 @@ object CirceImplicits {
           "sticker"              -> x.sticker.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "reply_to_message_id"  -> x.replyToMessageId.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "sendSticker".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4374,7 +4434,8 @@ object CirceImplicits {
     (x: GetChatMembersCountReq) => {
       Json.fromFields(
         List(
-          "chat_id" -> x.chatId.asJson
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "getChatMembersCount".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4398,7 +4459,8 @@ object CirceImplicits {
           "parse_mode"           -> x.parseMode.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "reply_to_message_id"  -> x.replyToMessageId.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "sendPhoto".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4433,7 +4495,8 @@ object CirceImplicits {
           "offset"          -> x.offset.asJson,
           "limit"           -> x.limit.asJson,
           "timeout"         -> x.timeout.asJson,
-          "allowed_updates" -> x.allowedUpdates.asJson
+          "allowed_updates" -> x.allowedUpdates.asJson,
+          "method"          -> "getUpdates".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4457,7 +4520,8 @@ object CirceImplicits {
     (x: GetStickerSetReq) => {
       Json.fromFields(
         List(
-          "name" -> x.name.asJson
+          "name"   -> x.name.asJson,
+          "method" -> "getStickerSet".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4478,7 +4542,8 @@ object CirceImplicits {
           "url"             -> x.url.asJson,
           "certificate"     -> x.certificate.asJson,
           "max_connections" -> x.maxConnections.asJson,
-          "allowed_updates" -> x.allowedUpdates.asJson
+          "allowed_updates" -> x.allowedUpdates.asJson,
+          "method"          -> "setWebhook".asJson
         ).filter(!_._2.isNull)
       )
     }

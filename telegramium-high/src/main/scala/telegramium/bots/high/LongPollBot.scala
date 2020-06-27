@@ -17,7 +17,7 @@ import telegramium.bots.client._
 import scala.util.control.NonFatal
 import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
 
-abstract class LongPollBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) {
+abstract class LongPollBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) extends Methods {
 
   import LongPollBot.OffsetKeeper
 
@@ -43,7 +43,7 @@ abstract class LongPollBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Ti
     for {
       offset <- offsetKeeper.getOffset
       seconds = pollInterval.toSeconds.toInt
-      updates <- bot.getUpdates(GetUpdatesReq(offset = Some(offset), timeout = Some(seconds)))
+      updates <- bot.execute(getUpdates(offset = Some(offset), timeout = Some(seconds)))
         .onError {
           case _: java.util.concurrent.TimeoutException => poll(offsetKeeper)
           case NonFatal(e) => for {
@@ -63,7 +63,7 @@ abstract class LongPollBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Ti
 
   def start(): F[Unit] = {
     for {
-      _ <- bot.deleteWebhook()
+      _ <- bot.execute(deleteWebhook())
       refCounter <- Ref.of[F, Int](0)
       offsetKeeper = new OffsetKeeper[F] {
         def getOffset: F[Int] = refCounter.get
