@@ -1,7 +1,6 @@
 package telegramium.bots.high
 
-import cats.Monad
-import cats.effect.{Blocker, ConcurrentEffect, ContextShift, Resource, Timer}
+import cats.effect.{Blocker, ConcurrentEffect, ContextShift, Resource, Sync, Timer}
 import cats.syntax.apply._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
@@ -15,7 +14,7 @@ import org.http4s.{EntityDecoder, HttpApp, HttpRoutes}
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.{Method, MethodReq, Methods}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
-import telegramium.bots.{CallbackQuery, ChosenInlineResult, InlineQuery, InputPartFile, Message, Update}
+import telegramium.bots.{CallbackQuery, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
 /**
  * @param url            HTTPS url to send updates to. Use an empty string to remove webhook integration
@@ -41,34 +40,52 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   certificate: Option[InputPartFile] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty
-)(implicit timer: Timer[F]) extends Methods {
+)(implicit syncF: Sync[F], timer: Timer[F]) extends Methods {
 
   private val BotPath = Path(if (path.startsWith("/")) path else path.prepended('/'))
 
-  def onMessage(msg: Message): F[Unit] = Monad[F].unit
-  def onInlineQuery(query: InlineQuery): F[Unit] = Monad[F].unit
-  def onCallbackQuery(query: CallbackQuery): F[Unit] = Monad[F].unit
-  def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit] = Monad[F].unit
+  private def noop[A](a: A) = syncF.pure(a).void
 
-  def onMessageReply(msg: Message): F[Option[Method[_]]] = Monad[F].pure(Option.empty[Method[_]])
-  def onInlineQueryReply(query: InlineQuery): F[Option[Method[_]]] = Monad[F].pure(Option.empty[Method[_]])
-  def onCallbackQueryReply(query: CallbackQuery): F[Option[Method[_]]] = Monad[F].pure(Option.empty[Method[_]])
-  def onChosenInlineResultReply(inlineResult: ChosenInlineResult): F[Option[Method[_]]] = Monad[F].pure(Option.empty[Method[_]])
+  def onMessage(msg: Message): F[Unit] = noop(msg)
+  def onEditedMessage(msg: Message): F[Unit] = noop(msg)
+  def onChannelPost(msg: Message): F[Unit] = noop(msg)
+  def onEditedChannelPost(msg: Message): F[Unit] = noop(msg)
+  def onInlineQuery(query: InlineQuery): F[Unit] = noop(query)
+  def onCallbackQuery(query: CallbackQuery): F[Unit] = noop(query)
+  def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit] = noop(inlineResult)
+  def onShippingQuery(query: ShippingQuery): F[Unit] = noop(query)
+  def onPreCheckoutQuery(query: PreCheckoutQuery): F[Unit] = noop(query)
+  def onPoll(poll: Poll): F[Unit] = noop(poll)
+  def onPollAnswer(pollAnswer: PollAnswer): F[Unit] = noop(pollAnswer)
+
+  private def noopReply[A](a: A) = syncF.pure(a).map(_ => Option.empty[Method[_]])
+
+  def onMessageReply(msg: Message): F[Option[Method[_]]] = noopReply(msg)
+  def onEditedMessageReply(msg: Message): F[Option[Method[_]]] = noopReply(msg)
+  def onChannelPostReply(msg: Message): F[Option[Method[_]]] = noopReply(msg)
+  def onEditedChannelPostReply(msg: Message): F[Option[Method[_]]] = noopReply(msg)
+  def onInlineQueryReply(query: InlineQuery): F[Option[Method[_]]] = noopReply(query)
+  def onCallbackQueryReply(query: CallbackQuery): F[Option[Method[_]]] = noopReply(query)
+  def onChosenInlineResultReply(inlineResult: ChosenInlineResult): F[Option[Method[_]]] =
+    syncF.pure(inlineResult).map(_ => Option.empty[Method[_]])
+  def onShippingQueryReply(query: ShippingQuery): F[Option[Method[_]]] = noopReply(query)
+  def onPreCheckoutQueryReply(query: PreCheckoutQuery): F[Option[Method[_]]] = noopReply(query)
+  def onPollReply(poll: Poll): F[Option[Method[_]]] = noopReply(poll)
+  def onPollAnswerReply(pollAnswer: PollAnswer): F[Option[Method[_]]] = noopReply(pollAnswer)
 
   def onUpdate(update: Update): F[Option[Method[_]]] =
     List(
-      update.message.map { message =>
-        onMessageReply(message) <* onMessage(message)
-      },
-      update.inlineQuery.map { query =>
-        onInlineQueryReply(query) <* onInlineQuery(query)
-      },
-      update.callbackQuery.map { query =>
-        onCallbackQueryReply(query) <* onCallbackQuery(query)
-      },
-      update.chosenInlineResult.map { inlineResult =>
-        onChosenInlineResultReply(inlineResult) <* onChosenInlineResult(inlineResult)
-      }
+      update.message.map(msg => onMessageReply(msg) <* onMessage(msg)),
+      update.editedMessage.map(msg => onEditedMessageReply(msg) <* onEditedMessage(msg)),
+      update.channelPost.map(msg => onChannelPostReply(msg) <* onChannelPost(msg)),
+      update.editedChannelPost.map(msg => onEditedChannelPostReply(msg) <* onEditedChannelPost(msg)),
+      update.inlineQuery.map(query => onInlineQueryReply(query) <* onInlineQuery(query)),
+      update.callbackQuery.map(query => onCallbackQueryReply(query) <* onCallbackQuery(query)),
+      update.chosenInlineResult.map(inlineResult => onChosenInlineResultReply(inlineResult) <* onChosenInlineResult(inlineResult)),
+      update.shippingQuery.map(query => onShippingQueryReply(query) <* onShippingQuery(query)),
+      update.preCheckoutQuery.map(query => onPreCheckoutQueryReply(query) <* onPreCheckoutQuery(query)),
+      update.poll.map(poll => onPollReply(poll) <* onPoll(poll)),
+      update.pollAnswer.map(pollAnswer => onPollAnswerReply(pollAnswer) <* onPollAnswer(pollAnswer))
     )
       .flatten
       .head

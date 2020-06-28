@@ -21,17 +21,33 @@ abstract class LongPollBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Ti
 
   import LongPollBot.OffsetKeeper
 
-  def onMessage(msg: Message): F[Unit] = syncF.delay(msg).void
-  def onInlineQuery(query: InlineQuery): F[Unit] = syncF.delay(query).void
-  def onCallbackQuery(query: CallbackQuery): F[Unit] = syncF.delay(query).void
-  def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit] = syncF.delay(inlineResult).void
+  private def noop[A](a: A) = syncF.pure(a).void
+
+  def onMessage(msg: Message): F[Unit] = noop(msg)
+  def onEditedMessage(msg: Message): F[Unit] = noop(msg)
+  def onChannelPost(msg: Message): F[Unit] = noop(msg)
+  def onEditedChannelPost(msg: Message): F[Unit] = noop(msg)
+  def onInlineQuery(query: InlineQuery): F[Unit] = noop(query)
+  def onCallbackQuery(query: CallbackQuery): F[Unit] = noop(query)
+  def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit] = noop(inlineResult)
+  def onShippingQuery(query: ShippingQuery): F[Unit] = noop(query)
+  def onPreCheckoutQuery(query: PreCheckoutQuery): F[Unit] = noop(query)
+  def onPoll(poll: Poll): F[Unit] = noop(poll)
+  def onPollAnswer(pollAnswer: PollAnswer): F[Unit] = noop(pollAnswer)
 
   def onUpdate(update: Update): F[Unit] = {
     for {
       _ <- update.message.fold(syncF.unit)(onMessage)
+      _ <- update.editedMessage.fold(syncF.unit)(onEditedMessage)
+      _ <- update.channelPost.fold(syncF.unit)(onChannelPost)
+      _ <- update.editedChannelPost.fold(syncF.unit)(onEditedChannelPost)
       _ <- update.inlineQuery.fold(syncF.unit)(onInlineQuery)
       _ <- update.callbackQuery.fold(syncF.unit)(onCallbackQuery)
       _ <- update.chosenInlineResult.fold(syncF.unit)(onChosenInlineResult)
+      _ <- update.shippingQuery.fold(syncF.unit)(onShippingQuery)
+      _ <- update.preCheckoutQuery.fold(syncF.unit)(onPreCheckoutQuery)
+      _ <- update.poll.fold(syncF.unit)(onPoll)
+      _ <- update.pollAnswer.fold(syncF.unit)(onPollAnswer)
     } yield ()
   }
 
