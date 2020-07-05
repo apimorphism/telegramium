@@ -57,7 +57,7 @@ lazy val `telegramium-core` = project
 lazy val `telegramium-high` = project
   .dependsOn(`telegramium-core`)
   .settings(settings: _*)
-  .settings(libraryDependencies ++= Dependencies.telegramiumCore)
+  .settings(libraryDependencies ++= Dependencies.telegramiumHigh)
 
 lazy val `telegramium-examples` = project
   .dependsOn(

@@ -1,18 +1,17 @@
 package telegramium.bots.examples
 
 import cats.effect.{Sync, Timer}
-import telegramium.bots.client.Api
-import telegramium.bots.high.LongPollBot
+import telegramium.bots.high.implicits._
+import telegramium.bots.high.{Api, LongPollBot}
 
-class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) extends LongPollBot[F](bot) {
+class EchoBot[F[_]]()(implicit bot: Api[F], syncF: Sync[F], timer: Timer[F]) extends LongPollBot[F](bot) {
 
-  import cats.syntax.functor._
   import cats.syntax.flatMap._
+  import cats.syntax.functor._
   import telegramium.bots._
-  import telegramium.bots.client._
 
   override def onMessage(msg: Message): F[Unit] = {
-    bot.sendMessage(SendMessageReq(
+    sendMessage(
       chatId = ChatIntId(msg.chat.id),
       text = msg.text.getOrElse("NO_TEXT"),
       replyMarkup = Some(
@@ -38,16 +37,17 @@ class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) exten
           )
         )
       )
-    )).void
+    ).exec.void
   }
 
   override def onCallbackQuery(query: CallbackQuery): F[Unit] = {
     def rollTheDice(chatId: Long, emoji: Emoji = EmojiDice): F[Unit] = {
-      bot.sendDice(SendDiceReq(ChatIntId(chatId), Some(emoji))).void >>
-        bot.answerCallbackQuery(AnswerCallbackQueryReq(callbackQueryId = query.id)).void
+      sendDice(ChatIntId(chatId), Some(emoji)).exec.void >>
+        answerCallbackQuery(callbackQueryId = query.id).exec.void
     }
+
     def quiz(chatId: Long): F[Unit] = {
-      bot.sendPoll(SendPollReq(
+      sendPoll(
         chatId = ChatIntId(chatId),
         question = "How much is the fish?",
         `type` = Some("quiz"),
@@ -60,49 +60,49 @@ class EchoBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) exten
         correctOptionId = Some(2),
         isAnonymous = Some(false),
         explanation = Some("https://en.wikipedia.org/wiki/Golden_ratio"),
-      )).void >>
-        bot.answerCallbackQuery(AnswerCallbackQueryReq(callbackQueryId = query.id)).void
+      ).exec.void >>
+        answerCallbackQuery(callbackQueryId = query.id).exec.void
     }
+
     def sendMsg(chatId: Long, text: String, parseMode: ParseMode): F[Unit] = {
-      bot.sendMessage(SendMessageReq(
+      sendMessage(
         chatId = ChatIntId(chatId),
         text = text,
         parseMode = Some(parseMode),
-      )).void >> bot.answerCallbackQuery(AnswerCallbackQueryReq(callbackQueryId = query.id)).void
+      ).exec.void >> answerCallbackQuery(callbackQueryId = query.id).exec.void
     }
-    query.data.map{
-      case "HTML"       => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, htmlText, Html))
-      case "Markdown"   => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdownText, Markdown))
-      case "Markdown2"  => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdown2Text, Markdown2))
-      case "dice"       => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id))
-      case "darts"      => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id, EmojiDarts))
+
+    query.data.map {
+      case "HTML" => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, htmlText, Html))
+      case "Markdown" => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdownText, Markdown))
+      case "Markdown2" => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdown2Text, Markdown2))
+      case "dice" => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id))
+      case "darts" => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id, EmojiDarts))
       case "basketball" => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id, EmojiBasketball))
-      case "quiz"       => query.message.fold(syncF.unit)(m => quiz(m.chat.id))
-      case x => bot.answerCallbackQuery(AnswerCallbackQueryReq(
+      case "quiz" => query.message.fold(syncF.unit)(m => quiz(m.chat.id))
+      case x => answerCallbackQuery(
         callbackQueryId = query.id,
         text = Some(s"Your choice is $x")
-      )).void
+      ).exec.void
     }.getOrElse(syncF.unit)
   }
 
   override def onInlineQuery(query: InlineQuery): F[Unit] = {
-    bot.answerInlineQuery(
-      AnswerInlineQueryReq(
-        inlineQueryId = query.id,
-        results = query.query.split(" ").zipWithIndex.map{ case (word, idx) =>
-          InlineQueryResultArticle(
-            id = idx.toString,
-            title = word,
-            inputMessageContent = InputTextMessageContent(messageText = word),
-          )
-        }.toList
-      )
-    ).void
+    answerInlineQuery(
+      inlineQueryId = query.id,
+      results = query.query.split(" ").zipWithIndex.map { case (word, idx) =>
+        InlineQueryResultArticle(
+          id = idx.toString,
+          title = word,
+          inputMessageContent = InputTextMessageContent(messageText = word),
+        )
+      }.toList
+    ).exec.void
   }
 
   override def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit] = {
-    import telegramium.bots.CirceImplicits._
     import io.circe.syntax._
+    import telegramium.bots.CirceImplicits._
     syncF.delay {
       println(inlineResult.asJson.spaces4)
     }

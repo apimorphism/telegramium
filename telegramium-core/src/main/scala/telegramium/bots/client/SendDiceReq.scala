@@ -12,7 +12,7 @@ final case class SendDiceReq(
                                * Currently, must be one of EmojiDice, EmojiDarts, or
                                * EmojiBasketball. Dice can have values 1-6 for EmojiDice and
                                * EmojiDarts, and values 1-5 for EmojiBasketball. Defaults to
-                               * EmojiDarts*/
+                               * EmojiDice*/
                              emoji: Option[Emoji] = Option.empty,
                              /** Sends the message silently. Users will receive a
                                * notification with no sound.*/

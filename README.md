@@ -15,7 +15,7 @@ Currently the following backends are supported:
 - circe
 - uPickle (MsgPack binary serialization, to be used for storing API messages in DB and sending over network)
 
-You may want to start with [Api.scala](telegramium-core/src/main/scala/telegramium/bots/client/Api.scala) and [EchoBot.scala](telegramium-examples/src/main/scala/telegramium/bots/examples/EchoBot.scala).
+You may want to start with [Methods.scala](telegramium-core/src/main/scala/telegramium/bots/client/Methods.scala) and [EchoBot.scala](telegramium-examples/src/main/scala/telegramium/bots/examples/EchoBot.scala).
 
 ### How to use
 Create the dependency by adding the following lines to your build.sbt:
@@ -23,6 +23,47 @@ Create the dependency by adding the following lines to your build.sbt:
 ```
 libraryDependencies += "io.github.apimorphism" %% "telegramium-core" % "1.49.0"
 libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "1.49.0"
+```
+
+Imports:
+```scala
+import telegramium.bots.high._
+import telegramium.bots.high.implicits._
+```
+
+Use the `Methods` fabric to create requests. You will need an instance of the `BotApi` class to execute them:
+```scala
+BlazeClientBuilder[F](ExecutionContext.global).resource.use { httpClient =>
+  implicit val api: Api[F] = BotApi(http, baseUrl = s"https://api.telegram.org/bot$token")
+  val bot = new MyLongPollBot()
+  bot.start()
+}
+```
+
+#### Long polling
+```scala
+class MyLongPollBot[F[_]: Sync: Timer]()(implicit api: Api[F]) extends LongPollBot[F](api) {
+  override def onMessage(msg: Message): F[Unit] =
+    Methods.sendMessage(chatId = ChatIntId(msg.chat.id), text = "Hello, world!").exec.void
+}
+```
+
+`LongPollBot` and `WebhookBot` extend the `Methods` trait so you can call `sendMessage` directly.
+
+#### Webhooks
+```scala
+class MyWebhookBot[F[_]: ConcurrentEffect: ContextShift: Timer](port: Int, url: String, path: String)(
+  implicit api: Api[F]
+) extends WebhookBot[F](api, port, url, path) {
+  override def onMessage(msg: Message): F[Unit] =
+    sendMessage(chatId = ChatIntId(msg.chat.id), text = "Hello, world!").exec.void
+}
+```
+
+You can also perform a request to the Bot API while [sending an answer to the webhook](https://core.telegram.org/bots/api#making-requests-when-getting-updates):
+```scala
+override def onMessageReply(msg: Message): F[Option[Method[_]]] =
+  Sync[F].pure(Some(sendMessage(chatId = ChatIntId(msg.chat.id), text = "Hello, world!")))
 ```
 
 ### Versioning
