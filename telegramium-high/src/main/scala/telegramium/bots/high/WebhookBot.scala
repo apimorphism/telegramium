@@ -19,6 +19,9 @@ import telegramium.bots.{CallbackQuery, ChosenInlineResult, InlineQuery, InputPa
 /**
  * @param url            HTTPS url to send updates to. Use an empty string to remove webhook integration
  * @param path           Webhook route. Must be consistent with `url`.
+ *                       ''If you'd like to make sure that the Webhook request comes from Telegram, we recommend using
+ *                       a secret path in the URL, e.g. https://www.example.com/&lt;token&gt;. Since nobody else knows your
+ *                       bot's token, you can be pretty sure it's us.''
  * @param certificate    Upload your public key certificate so that the root certificate in use can be checked.
  * @param maxConnections Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery, 1-100.
  *                       Defaults to 40. Use lower values to limit the load on your bot‘s server, and higher values
