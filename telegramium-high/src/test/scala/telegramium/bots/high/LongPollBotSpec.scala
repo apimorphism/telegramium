@@ -114,7 +114,7 @@ class LongPollBotSpec extends AnyFreeSpec with MockFactory with Matchers with Op
       bot.onUpdate(update).runSyncUnsafe()
       (api.execute[Message] _)
         .verify(MethodReq[Message]("sendMessage", SendMessageReq(ChatIntId(0), expectedSentMessage).asJson))
-        .once
+        .once()
       ()
     }
   }

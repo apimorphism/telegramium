@@ -126,7 +126,7 @@ class WebhookBotSpec extends AnyFreeSpec with MockFactory with Matchers with Opt
         MethodReq[Message]("sendMessage", SendMessageReq(ChatIntId(0), expectedReply).asJson)
       (api.execute[Message] _)
         .verify(MethodReq[Message]("sendMessage", SendMessageReq(ChatIntId(0), expectedSentMessage).asJson))
-        .once
+        .once()
       ()
     }
   }
