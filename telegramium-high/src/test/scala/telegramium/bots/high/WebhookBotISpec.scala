@@ -19,7 +19,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
 class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfterAll with Matchers {
-  lazy val container: MockServerContainer = MockServerContainer("5.10.0")
+  lazy val container: MockServerContainer = MockServerContainer("5.11.1")
   private val mockServer = container.container
 
   private val (httpClient, finalizer) = BlazeClientBuilder[Task](global).resource.allocated.runSyncUnsafe()

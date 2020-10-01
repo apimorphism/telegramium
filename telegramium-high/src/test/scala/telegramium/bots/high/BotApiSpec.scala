@@ -15,7 +15,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import telegramium.bots.{ChatIntId, InputLinkFile, InputPartFile}
 
 class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfterAll {
-  lazy val container: MockServerContainer = MockServerContainer("5.10.0")
+  lazy val container: MockServerContainer = MockServerContainer("5.11.1")
   private val mockServer = container.container
 
   private val (httpClient, finalizer) = BlazeClientBuilder[Task](global).resource.allocated.runSyncUnsafe()

@@ -13,7 +13,7 @@ object Dependencies {
     val uPickle = "0.8.0"
     val scalatest = "3.2.2"
     val testcontainers = "0.38.4"
-    val mockServerClient = "5.10.0"
+    val mockServerClient = "5.11.1"
     val scalamock = "5.0.0"
   }
 
