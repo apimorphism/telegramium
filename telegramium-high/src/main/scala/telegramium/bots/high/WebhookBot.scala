@@ -16,6 +16,8 @@ import telegramium.bots.client.{Method, MethodReq, Methods}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
 import telegramium.bots.{CallbackQuery, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
+import scala.concurrent.ExecutionContext
+
 /**
  * @param url            HTTPS url to send updates to. Use an empty string to remove webhook integration
  * @param path           Webhook route. Must be consistent with `url`.
@@ -136,6 +138,6 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
       }
         .orNotFound
 
-    BlazeServerBuilder[F].bindHttp(port).withHttpApp(app()).resource
+    BlazeServerBuilder[F](ExecutionContext.global).bindHttp(port).withHttpApp(app()).resource
   }
 }
