@@ -3,8 +3,8 @@ import Keys._
 
 object Compiler {
 
-  lazy val scala213 = "2.13.2"
-  lazy val scala212 = "2.12.11"
+  lazy val scala213 = "2.13.3"
+  lazy val scala212 = "2.12.12"
   lazy val supportedScalaVersions = List(scala213, scala212)
 
   val settings = Seq(
@@ -35,7 +35,6 @@ object Compiler {
     "-Xlint:inaccessible",               // Warn about inaccessible types in method signatures.
     "-Xlint:infer-any",                  // Warn when a type argument is inferred to be `Any`.
     "-Xlint:missing-interpolator",       // A string literal appears to be missing an interpolator id.
-    "-Xlint:nullary-override",           // Warn when non-nullary `def f()' overrides nullary `def f'.
     "-Xlint:nullary-unit",               // Warn when nullary methods return Unit.
     "-Xlint:option-implicit",            // Option.apply used implicit view.
     "-Xlint:package-object-classes",     // Class or object defined in package object.

@@ -3,18 +3,18 @@ import sbt._
 object Dependencies {
 
   object V {
-    val monix = "3.1.0"
-    val catsCore = "2.1.1"
-    val catsEffect = "2.1.3"
+    val monix = "3.2.2"
+    val catsCore = "2.2.0"
+    val catsEffect = "2.2.0"
     val circe = "0.13.0"
-    val http4s = "0.21.3"
-    val slf4j = "1.7.26"
+    val http4s = "0.21.7"
+    val slf4j = "1.7.30"
     val logback = "1.2.3"
     val uPickle = "0.8.0"
-    val scalatest = "3.2.0"
-    val testcontainers = "0.37.0"
+    val scalatest = "3.2.2"
+    val testcontainers = "0.38.4"
     val mockServerClient = "5.10.0"
-    val scalamock = "4.4.0"
+    val scalamock = "5.0.0"
   }
 
   val monix = "io.monix" %% "monix" % V.monix
