@@ -1,5 +1,5 @@
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.9.1")
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.3.25")
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.7.6")
 addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.8")
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.1")
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.0")
