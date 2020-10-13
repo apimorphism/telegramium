@@ -6,3 +6,4 @@ target/
 .project
 .settings/
 *.iml
+.bsp/sbt.json
