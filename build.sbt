@@ -19,7 +19,7 @@ ThisBuild / scalaVersion      := Compiler.scala213
 ThisBuild / name              := "telegramium"
 ThisBuild / organization      := "io.github.apimorphism"
 ThisBuild / homepage          := Some(url("https://github.com/apimorphism/telegramium"))
-ThisBuild / licenses          := List(("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")))
+ThisBuild / licenses          := List(("MIT", url("http://opensource.org/licenses/MIT")))
 ThisBuild / scmInfo           := Some(ScmInfo(
                                    url("https://github.com/apimorphism/telegramium"),
                                    "git@github.com:apimorphism/telegramium.git"

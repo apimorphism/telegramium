@@ -2,8 +2,11 @@ package telegramium.bots.high
 
 import cats.MonadError
 import cats.effect.{Blocker, ConcurrentEffect, ContextShift, Sync}
+import cats.syntax.applicativeError._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
+import io.chrisdavenport.log4cats.Logger
+import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import io.circe.{Decoder, Json}
 import org.http4s.circe._
 import org.http4s.client._
@@ -14,7 +17,7 @@ import telegramium.bots.InputPartFile
 import telegramium.bots.client.{Method, MethodReq}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
 
-class BotApi[F[_]: Sync: ContextShift](
+class BotApi[F[_]: Sync: ContextShift: Logger](
   http: Client[F],
   baseUrl: String,
   blocker: Blocker
@@ -29,7 +32,7 @@ class BotApi[F[_]: Sync: ContextShift](
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/${method.name}"))
       req = mkRequest(uri, methodReq.json, inputPartFiles.keys.toList, attachments)
-      res <- decodeResponse[Res](req)(methodReq.decoder)
+      res <- handleResponse[Res](methodReq, req)(methodReq.decoder)
     } yield res
   }
 
@@ -60,9 +63,11 @@ class BotApi[F[_]: Sync: ContextShift](
       }
     }
 
-  private def decodeResponse[A: io.circe.Decoder](req: Request[F]): F[A] =
+  private def handleResponse[A: io.circe.Decoder](methodReq: MethodReq[A], req: Request[F]): F[A] =
     for {
-      response <- http.expect(req)(jsonOf[F, Response[A]])
+      response <- http.expect(req)(jsonOf[F, Response[A]]).onError {
+        case e => Logger[F].error(e)(s"Telegram Bot API request failed. Method: ${methodReq.name}, JSON: \n${methodReq.json}")
+      }
       result <- F.fromOption[A](
         response.result,
         new RuntimeException(response.description.getOrElse("Unknown error occurred"))
@@ -77,4 +82,6 @@ object BotApi {
    */
   def apply[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUrl: String, blocker: Blocker = DefaultBlocker.blocker): BotApi[F] =
     new BotApi[F](http, baseUrl, blocker)
+
+  private implicit def defaultLogger[F[_]: Sync]: Logger[F] = Slf4jLogger.getLogger[F]
 }
