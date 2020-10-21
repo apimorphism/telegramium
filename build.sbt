@@ -8,13 +8,17 @@ ThisBuild / version := Version.mkVersion(
   git.gitUncommittedChanges.value
 )
 
+lazy val scala213 = "2.13.3"
+lazy val scala212 = "2.12.12"
+
+ThisBuild / scalaVersion := scala213
+ThisBuild / crossScalaVersions := List(scala213, scala212)
+
 val buildCommit    = settingKey[String]("Build info: commit")
 val buildTimestamp = settingKey[String]("Build info: timestamp")
 
 ThisBuild / buildCommit       := Version.commit(git.gitHeadCommit.value)
 ThisBuild / buildTimestamp    := Version.timestamp
-
-ThisBuild / scalaVersion      := Compiler.scala213
 
 ThisBuild / name              := "telegramium"
 ThisBuild / organization      := "io.github.apimorphism"
@@ -39,6 +43,9 @@ ThisBuild / publishTo         := Some(
                                  )
 
 usePgpKeyHex("ACBE704D")
+
+ThisBuild / githubWorkflowJavaVersions := Seq("adopt@1.11", "adopt@1.8")
+ThisBuild / githubWorkflowPublishTargetBranches := Seq.empty
 
 val settings = Compiler.settings ++ Seq()
 

@@ -2,13 +2,7 @@ import sbt._
 import Keys._
 
 object Compiler {
-
-  lazy val scala213 = "2.13.3"
-  lazy val scala212 = "2.12.12"
-  lazy val supportedScalaVersions = List(scala213, scala212)
-
   val settings = Seq(
-    crossScalaVersions := supportedScalaVersions,
     scalacOptions ++= options,
     addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
   )
