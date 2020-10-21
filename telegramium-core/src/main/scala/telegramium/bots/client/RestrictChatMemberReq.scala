@@ -9,7 +9,7 @@ final case class RestrictChatMemberReq(
                                        chatId: ChatId,
                                        /** Unique identifier of the target user*/
                                        userId: Int,
-                                       /** New user permissions*/
+                                       /** A JSON-serialized object for new user permissions*/
                                        permissions: ChatPermissions,
                                        /** Date when restrictions will be lifted for the user, unix
                                          * time. If user is restricted for more than 366 days or less

@@ -6,8 +6,6 @@ import telegramium.bots.client.Method
 import telegramium.bots.WebhookInfo
 import telegramium.bots._
 import telegramium.bots.CirceImplicits._
-import cats.instances.map._
-import cats.syntax.functorFilter._
 import telegramium.bots.GameHighScore
 import telegramium.bots.Message
 import telegramium.bots.UserProfilePhotos
@@ -58,9 +56,9 @@ trait Methods {
     * @param photo New chat photo, uploaded using multipart/form-data*/
   def setChatPhoto(chatId: ChatId, photo: IFile): Method[Boolean] = {
     val req = SetChatPhotoReq(chatId, photo)
-    MethodReq[Boolean]("setChatPhoto",
-                       req.asJson,
-                       Map("photo" -> Option(photo)).mapFilter(identity))
+    MethodReq[Boolean]("setChatPhoto", req.asJson, Map("photo" -> Option(photo)).collect {
+      case (k, Some(v)) => k -> v
+    })
   }
 
   /** Use this method to get data for high score tables. Will return the score of the
@@ -306,10 +304,11 @@ trait Methods {
                                      emojis,
                                      containsMasks,
                                      maskPosition)
-    MethodReq[Boolean](
-      "createNewStickerSet",
-      req.asJson,
-      Map("png_sticker" -> pngSticker, "tgs_sticker" -> tgsSticker).mapFilter(identity))
+    MethodReq[Boolean]("createNewStickerSet",
+                       req.asJson,
+                       Map("png_sticker" -> pngSticker, "tgs_sticker" -> tgsSticker).collect {
+                         case (k, Some(v)) => k -> v
+                       })
   }
 
   /** Use this method to upload a .PNG file with a sticker for later use in
@@ -322,9 +321,10 @@ trait Methods {
     * height must be exactly 512px. More info on Sending Files »*/
   def uploadStickerFile(userId: Int, pngSticker: IFile): Method[File] = {
     val req = UploadStickerFileReq(userId, pngSticker)
-    MethodReq[File]("uploadStickerFile",
-                    req.asJson,
-                    Map("png_sticker" -> Option(pngSticker)).mapFilter(identity))
+    MethodReq[File](
+      "uploadStickerFile",
+      req.asJson,
+      Map("png_sticker" -> Option(pngSticker)).collect { case (k, Some(v)) => k -> v })
   }
 
   /** Use this method to set default chat permissions for all members. The bot must
@@ -479,10 +479,11 @@ trait Methods {
                       emojis: String,
                       maskPosition: Option[MaskPosition] = Option.empty): Method[Boolean] = {
     val req = AddStickerToSetReq(userId, name, pngSticker, tgsSticker, emojis, maskPosition)
-    MethodReq[Boolean](
-      "addStickerToSet",
-      req.asJson,
-      Map("png_sticker" -> pngSticker, "tgs_sticker" -> tgsSticker).mapFilter(identity))
+    MethodReq[Boolean]("addStickerToSet",
+                       req.asJson,
+                       Map("png_sticker" -> pngSticker, "tgs_sticker" -> tgsSticker).collect {
+                         case (k, Some(v)) => k -> v
+                       })
   }
 
   /** Use this method to delete a sticker from a set created by the bot. Returns True
@@ -805,7 +806,9 @@ trait Methods {
                                replyMarkup)
     MethodReq[Message]("sendVideoNote",
                        req.asJson,
-                       Map("video_note" -> Option(videoNote), "thumb" -> thumb).mapFilter(identity))
+                       Map("video_note" -> Option(videoNote), "thumb" -> thumb).collect {
+                         case (k, Some(v)) => k -> v
+                       })
   }
 
   /** Informs a user that some of the Telegram Passport elements they provided
@@ -850,8 +853,8 @@ trait Methods {
     * @param prices Price breakdown, a JSON-serialized list of components (e.g.
     * product price, tax, discount, delivery cost, delivery tax,
     * bonus, etc.)
-    * @param providerData JSON-encoded data about the invoice, which will be shared
-    * with the payment provider. A detailed description of
+    * @param providerData A JSON-serialized data about the invoice, which will be
+    * shared with the payment provider. A detailed description of
     * required fields should be provided by the payment provider.
     * @param photoUrl URL of the product photo for the invoice. Can be a photo of
     * the goods or a marketing image for a service. People like it
@@ -979,7 +982,9 @@ trait Methods {
                               replyMarkup)
     MethodReq[Message]("sendDocument",
                        req.asJson,
-                       Map("document" -> Option(document), "thumb" -> thumb).mapFilter(identity))
+                       Map("document" -> Option(document), "thumb" -> thumb).collect {
+                         case (k, Some(v)) => k -> v
+                       })
   }
 
   /** Use this method to delete a message, including service messages, with the
@@ -1128,7 +1133,9 @@ trait Methods {
                            replyMarkup)
     MethodReq[Message]("sendAudio",
                        req.asJson,
-                       Map("audio" -> Option(audio), "thumb" -> thumb).mapFilter(identity))
+                       Map("audio" -> Option(audio), "thumb" -> thumb).collect {
+                         case (k, Some(v)) => k -> v
+                       })
   }
 
   /** Use this method to restrict a user in a supergroup. The bot must be an
@@ -1139,7 +1146,7 @@ trait Methods {
     * @param chatId Unique identifier for the target chat or username of the
     * target supergroup (in the format @supergroupusername)
     * @param userId Unique identifier of the target user
-    * @param permissions New user permissions
+    * @param permissions A JSON-serialized object for new user permissions
     * @param untilDate Date when restrictions will be lifted for the user, unix
     * time. If user is restricted for more than 366 days or less
     * than 30 seconds from the current time, they are considered
@@ -1250,7 +1257,9 @@ trait Methods {
                            disableNotification,
                            replyToMessageId,
                            replyMarkup)
-    MethodReq[Audio]("sendVoice", req.asJson, Map("voice" -> Option(voice)).mapFilter(identity))
+    MethodReq[Audio]("sendVoice", req.asJson, Map("voice" -> Option(voice)).collect {
+      case (k, Some(v)) => k -> v
+    })
   }
 
   /** Use this method to promote or demote a user in a supergroup or a channel. The
@@ -1393,7 +1402,9 @@ trait Methods {
                          userId: Int,
                          thumb: Option[IFile] = Option.empty): Method[Boolean] = {
     val req = SetStickerSetThumbReq(name, userId, thumb)
-    MethodReq[Boolean]("setStickerSetThumb", req.asJson, Map("thumb" -> thumb).mapFilter(identity))
+    MethodReq[Boolean]("setStickerSetThumb", req.asJson, Map("thumb" -> thumb).collect {
+      case (k, Some(v)) => k -> v
+    })
   }
 
   /** Use this method to edit only the reply markup of messages. On success, if
@@ -1479,7 +1490,9 @@ trait Methods {
                            replyMarkup)
     MethodReq[Document]("sendVideo",
                         req.asJson,
-                        Map("video" -> Option(video), "thumb" -> thumb).mapFilter(identity))
+                        Map("video" -> Option(video), "thumb" -> thumb).collect {
+                          case (k, Some(v)) => k -> v
+                        })
   }
 
   /** Use this method to set a new group sticker set for a supergroup. The bot must
@@ -1598,7 +1611,9 @@ trait Methods {
                                replyMarkup)
     MethodReq[Message]("sendAnimation",
                        req.asJson,
-                       Map("animation" -> Option(animation), "thumb" -> thumb).mapFilter(identity))
+                       Map("animation" -> Option(animation), "thumb" -> thumb).collect {
+                         case (k, Some(v)) => k -> v
+                       })
   }
 
   /** If you sent an invoice requesting a shipping address and the parameter
@@ -1670,9 +1685,9 @@ trait Methods {
                   replyToMessageId: Option[Int] = Option.empty,
                   replyMarkup: Option[KeyboardMarkup] = Option.empty): Method[Message] = {
     val req = SendStickerReq(chatId, sticker, disableNotification, replyToMessageId, replyMarkup)
-    MethodReq[Message]("sendSticker",
-                       req.asJson,
-                       Map("sticker" -> Option(sticker)).mapFilter(identity))
+    MethodReq[Message]("sendSticker", req.asJson, Map("sticker" -> Option(sticker)).collect {
+      case (k, Some(v)) => k -> v
+    })
   }
 
   /** Use this method to get the number of members in a chat. Returns Int on success.
@@ -1718,7 +1733,9 @@ trait Methods {
                            disableNotification,
                            replyToMessageId,
                            replyMarkup)
-    MethodReq[Message]("sendPhoto", req.asJson, Map("photo" -> Option(photo)).mapFilter(identity))
+    MethodReq[Message]("sendPhoto", req.asJson, Map("photo" -> Option(photo)).collect {
+      case (k, Some(v)) => k -> v
+    })
   }
 
   /** Use this method to receive incoming updates using long polling (wiki). An Array
@@ -1798,9 +1815,9 @@ trait Methods {
                  maxConnections: Option[Int] = Option.empty,
                  allowedUpdates: List[String] = List.empty): Method[Boolean] = {
     val req = SetWebhookReq(url, certificate, maxConnections, allowedUpdates)
-    MethodReq[Boolean]("setWebhook",
-                       req.asJson,
-                       Map("certificate" -> certificate).mapFilter(identity))
+    MethodReq[Boolean]("setWebhook", req.asJson, Map("certificate" -> certificate).collect {
+      case (k, Some(v)) => k -> v
+    })
   }
 
 }

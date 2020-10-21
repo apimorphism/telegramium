@@ -24,8 +24,8 @@ final case class SendInvoiceReq(
                                   * product price, tax, discount, delivery cost, delivery tax,
                                   * bonus, etc.)*/
                                 prices: List[LabeledPrice] = List.empty,
-                                /** JSON-encoded data about the invoice, which will be shared
-                                  * with the payment provider. A detailed description of
+                                /** A JSON-serialized data about the invoice, which will be
+                                  * shared with the payment provider. A detailed description of
                                   * required fields should be provided by the payment provider.*/
                                 providerData: Option[String] = Option.empty,
                                 /** URL of the product photo for the invoice. Can be a photo of

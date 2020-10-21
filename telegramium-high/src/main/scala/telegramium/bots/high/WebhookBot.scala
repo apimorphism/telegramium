@@ -47,7 +47,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   allowedUpdates: List[String] = List.empty
 )(implicit syncF: Sync[F], timer: Timer[F]) extends Methods {
 
-  private val BotPath = Path(if (path.startsWith("/")) path else path.prepended('/'))
+  private val BotPath = Path(if (path.startsWith("/")) path else "/" + path)
 
   private def noop[A](a: A) = syncF.pure(a).void
 
@@ -99,7 +99,8 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
 
   private def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Option[Method[_]]] = rawReq.as[Update].flatMap(onUpdate)
 
-  def start(): Resource[F, Server[F]] = setWebhook(url, certificate, maxConnections, allowedUpdates) *> createServer()
+  def start(): Resource[F, Server[F]] =
+    setWebhook(url, certificate, maxConnections, allowedUpdates).flatMap(_ => createServer())
 
   private def setWebhook(
     url: String,
