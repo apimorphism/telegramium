@@ -3,6 +3,7 @@ package telegramium.bots.high
 import cats.MonadError
 import cats.effect.{Blocker, ConcurrentEffect, ContextShift, Sync}
 import cats.syntax.applicativeError._
+import cats.syntax.apply._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import io.chrisdavenport.log4cats.Logger
@@ -46,10 +47,11 @@ class BotApi[F[_]: Sync: ContextShift: Logger](
     }
   }
 
-  private case class Response[A: Decoder](
+  private case class Response[A](
     ok: Boolean,
     result: Option[A],
-    description: Option[String]
+    description: Option[String],
+    errorCode: Option[Int]
   )
 
   private implicit def responseDecoder[A: Decoder]: Decoder[Response[A]] =
@@ -58,20 +60,26 @@ class BotApi[F[_]: Sync: ContextShift: Logger](
         _ok <- h.get[Boolean]("ok")
         _result <- h.get[Option[A]]("result")
         _description <- h.get[Option[String]]("description")
+        _errorCode <- h.get[Option[Int]]("error_code")
       } yield {
-        Response[A](ok = _ok, result = _result, description = _description)
+        Response[A](ok = _ok, result = _result, description = _description, errorCode = _errorCode)
       }
     }
 
   private def handleResponse[A: io.circe.Decoder](methodReq: MethodReq[A], req: Request[F]): F[A] =
     for {
-      response <- http.expect(req)(jsonOf[F, Response[A]]).onError {
-        case e => Logger[F].error(e)(s"Telegram Bot API request failed. Method: ${methodReq.name}, JSON: \n${methodReq.json}")
+      response <- http.fetchAs(req)(jsonOf[F, Response[A]])
+      result <- response match {
+        case Response(true, Some(result), _, _) => F.pure(result)
+        case Response(_, _, description, errorCode) =>
+          val code = errorCode.map(_.toString).getOrElse("")
+          val desc = description.getOrElse("")
+          val method = methodReq.name
+          val json = methodReq.json
+          Logger[F].error(
+            s"""Telegram Bot API request failed: code=$code description="$desc" method=$method, JSON: \n$json"""
+          ) *> FailedRequest(methodReq, errorCode, description).raiseError[F, A]
       }
-      result <- F.fromOption[A](
-        response.result,
-        new RuntimeException(response.description.getOrElse("Unknown error occurred"))
-      )
     } yield result
 
 }
