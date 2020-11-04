@@ -9,6 +9,8 @@ final case class WebhookInfo(
                              hasCustomCertificate: Boolean,
                              /** Number of updates awaiting delivery*/
                              pendingUpdateCount: Int,
+                             /** Optional. Currently used webhook IP address*/
+                             ipAddress: Option[String] = Option.empty,
                              /** Optional. Unix time for the most recent error that happened
                                * when trying to deliver an update via webhook*/
                              lastErrorDate: Option[Int] = Option.empty,

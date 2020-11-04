@@ -5,5 +5,6 @@ final case class Dice(
                       /** Emoji on which the dice throw animation is based*/
                       emoji: Emoji,
                       /** Value of the dice, 1-6 for EmojiDice and EmojiDarts base
-                        * emoji, 1-5 for EmojiBasketball base emoji*/
+                        * emoji, 1-5 for EmojiBasketball and EmojiFootball base emoji,
+                        * 1-64 for EmojiSlotMachine base emoji*/
                       value: Int)

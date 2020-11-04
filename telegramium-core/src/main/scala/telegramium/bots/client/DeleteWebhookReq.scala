@@ -1,3 +1,5 @@
 package telegramium.bots.client
 
-case object DeleteWebhookReq
+final case class DeleteWebhookReq(
+    /** Pass True to drop all pending updates*/
+    dropPendingUpdates: Option[Boolean] = Option.empty)

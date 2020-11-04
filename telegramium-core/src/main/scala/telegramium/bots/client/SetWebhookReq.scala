@@ -10,6 +10,9 @@ final case class SetWebhookReq(
                                  * certificate in use can be checked. See our self-signed guide
                                  * for details.*/
                                certificate: Option[IFile] = Option.empty,
+                               /** The fixed IP address which will be used to send webhook
+                                 * requests instead of the IP address resolved through DNS*/
+                               ipAddress: Option[String] = Option.empty,
                                /** Maximum allowed number of simultaneous HTTPS connections to
                                  * the webhook for update delivery, 1-100. Defaults to 40. Use
                                  * lower values to limit the load on your bot's server, and
@@ -25,4 +28,6 @@ final case class SetWebhookReq(
                                  * parameter doesn't affect updates created before the call to
                                  * the setWebhook, so unwanted updates may be received for a
                                  * short period of time.*/
-                               allowedUpdates: List[String] = List.empty)
+                               allowedUpdates: List[String] = List.empty,
+                               /** Pass True to drop all pending updates*/
+                               dropPendingUpdates: Option[Boolean] = Option.empty)

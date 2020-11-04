@@ -17,6 +17,8 @@ final case class Video(
                        duration: Int,
                        /** Optional. Video thumbnail*/
                        thumb: Option[PhotoSize] = Option.empty,
+                       /** Optional. Original filename as defined by sender*/
+                       fileName: Option[String] = Option.empty,
                        /** Optional. Mime type of a file as defined by sender*/
                        mimeType: Option[String] = Option.empty,
                        /** Optional. File size*/

@@ -10,5 +10,5 @@ final case class PinChatMessageReq(
                                    messageId: Int,
                                    /** Pass True, if it is not necessary to send a notification to
                                      * all chat members about the new pinned message. Notifications
-                                     * are always disabled in channels.*/
+                                     * are always disabled in channels and private chats.*/
                                    disableNotification: Option[Boolean] = Option.empty)

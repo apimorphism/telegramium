@@ -2,7 +2,7 @@ package telegramium.bots
 
 /** This object represents a venue.*/
 final case class Venue(
-                       /** Venue location*/
+                       /** Venue location. Can't be a live location*/
                        location: Location,
                        /** Name of the venue*/
                        title: String,
@@ -13,4 +13,9 @@ final case class Venue(
                        /** Optional. Foursquare type of the venue. (For example,
                          * “arts_entertainment/default”, “arts_entertainment/aquarium”
                          * or “food/icecream”.)*/
-                       foursquareType: Option[String] = Option.empty)
+                       foursquareType: Option[String] = Option.empty,
+                       /** Optional. Google Places identifier of the venue*/
+                       googlePlaceId: Option[String] = Option.empty,
+                       /** Optional. Google Places type of the venue. (See supported
+                         * types.)*/
+                       googlePlaceType: Option[String] = Option.empty)

@@ -13,6 +13,9 @@ final case class SendGameReq(
                              disableNotification: Option[Boolean] = Option.empty,
                              /** If the message is a reply, ID of the original message*/
                              replyToMessageId: Option[Int] = Option.empty,
+                             /** Pass True, if the message should be sent even if the
+                               * specified replied-to message is not found*/
+                             allowSendingWithoutReply: Option[Boolean] = Option.empty,
                              /** A JSON-serialized object for an inline keyboard. If empty,
                                * one 'Play game_title' button will be shown. If not empty,
                                * the first button must launch the game.*/

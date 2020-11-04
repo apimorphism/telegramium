@@ -8,6 +8,9 @@ final case class PromoteChatMemberReq(
                                       chatId: ChatId,
                                       /** Unique identifier of the target user*/
                                       userId: Int,
+                                      /** Pass True, if the administrator's presence in the chat is
+                                        * hidden*/
+                                      isAnonymous: Option[Boolean] = Option.empty,
                                       /** Pass True, if the administrator can change chat title,
                                         * photo and other settings*/
                                       canChangeInfo: Option[Boolean] = Option.empty,

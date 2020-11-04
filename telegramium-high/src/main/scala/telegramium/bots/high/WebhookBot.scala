@@ -25,6 +25,8 @@ import scala.concurrent.ExecutionContext
  *                       a secret path in the URL, e.g. https://www.example.com/&lt;token&gt;. Since nobody else knows your
  *                       bot's token, you can be pretty sure it's us.''
  * @param certificate    Upload your public key certificate so that the root certificate in use can be checked.
+ * @param ipAddress      The fixed IP address which will be used to send webhook requests instead of the IP address
+ *                       resolved through DNS.
  * @param maxConnections Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery, 1-100.
  *                       Defaults to 40. Use lower values to limit the load on your bot‘s server, and higher values
  *                       to increase your bot’s throughput.
@@ -43,6 +45,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   path: String = "/",
   blocker: Blocker = DefaultBlocker.blocker,
   certificate: Option[InputPartFile] = Option.empty,
+  ipAddress: Option[String] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty
 )(implicit syncF: Sync[F], timer: Timer[F]) extends Methods {
@@ -100,16 +103,17 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   private def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Option[Method[_]]] = rawReq.as[Update].flatMap(onUpdate)
 
   def start(): Resource[F, Server[F]] =
-    setWebhook(url, certificate, maxConnections, allowedUpdates).flatMap(_ => createServer())
+    setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates).flatMap(_ => createServer())
 
   private def setWebhook(
     url: String,
     certificate: Option[InputPartFile],
+    ipAddress: Option[String],
     maxConnections: Option[Int],
     allowedUpdates: List[String]
   ): Resource[F, Unit] =
     Resource.make(
-      bot.execute(setWebhook(url, certificate, maxConnections, allowedUpdates)).void
+      bot.execute(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates)).void
     )(
       _ => bot.execute(deleteWebhook()).void
     )

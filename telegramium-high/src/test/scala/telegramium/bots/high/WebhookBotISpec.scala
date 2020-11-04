@@ -50,6 +50,7 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
           {
             "chat_id": 0,
             "text": "onMessageReply",
+            "entities": [],
             "method": "sendMessage"
           }
         """

@@ -32,6 +32,9 @@ final case class InlineQueryResultGif(
                                       /** Optional. Mode for parsing entities in the caption. See
                                         * formatting options for more details.*/
                                       parseMode: Option[ParseMode] = Option.empty,
+                                      /** Optional. List of special entities that appear in the
+                                        * caption, which can be specified instead of parse_mode*/
+                                      captionEntities: List[MessageEntity] = List.empty,
                                       /** Optional. Inline keyboard attached to the message*/
                                       replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
                                       /** Optional. Content of the message to be sent instead of the
@@ -60,6 +63,11 @@ final case class InlineQueryResultVenue(
                                           * example, “arts_entertainment/default”,
                                           * “arts_entertainment/aquarium” or “food/icecream”.)*/
                                         foursquareType: Option[String] = Option.empty,
+                                        /** Optional. Google Places identifier of the venue*/
+                                        googlePlaceId: Option[String] = Option.empty,
+                                        /** Optional. Google Places type of the venue. (See supported
+                                          * types.)*/
+                                        googlePlaceType: Option[String] = Option.empty,
                                         /** Optional. Inline keyboard attached to the message*/
                                         replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
                                         /** Optional. Content of the message to be sent instead of the
@@ -128,6 +136,9 @@ final case class InlineQueryResultPhoto(
                                         /** Optional. Mode for parsing entities in the photo caption.
                                           * See formatting options for more details.*/
                                         parseMode: Option[ParseMode] = Option.empty,
+                                        /** Optional. List of special entities that appear in the
+                                          * caption, which can be specified instead of parse_mode*/
+                                        captionEntities: List[MessageEntity] = List.empty,
                                         /** Optional. Inline keyboard attached to the message*/
                                         replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
                                         /** Optional. Content of the message to be sent instead of the
@@ -151,6 +162,9 @@ final case class InlineQueryResultDocument(
                                            /** Optional. Mode for parsing entities in the document
                                              * caption. See formatting options for more details.*/
                                            parseMode: Option[ParseMode] = Option.empty,
+                                           /** Optional. List of special entities that appear in the
+                                             * caption, which can be specified instead of parse_mode*/
+                                           captionEntities: List[MessageEntity] = List.empty,
                                            /** A valid URL for the file*/
                                            documentUrl: String,
                                            /** Mime type of the content of the file, either
@@ -188,6 +202,9 @@ final case class InlineQueryResultCachedVoice(
     /** Optional. Mode for parsing entities in the voice message
       * caption. See formatting options for more details.*/
     parseMode: Option[ParseMode] = Option.empty,
+    /** Optional. List of special entities that appear in the
+      * caption, which can be specified instead of parse_mode*/
+    captionEntities: List[MessageEntity] = List.empty,
     /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
     /** Optional. Content of the message to be sent instead of the
@@ -235,6 +252,9 @@ final case class InlineQueryResultAudio(
                                         /** Optional. Mode for parsing entities in the audio caption.
                                           * See formatting options for more details.*/
                                         parseMode: Option[ParseMode] = Option.empty,
+                                        /** Optional. List of special entities that appear in the
+                                          * caption, which can be specified instead of parse_mode*/
+                                        captionEntities: List[MessageEntity] = List.empty,
                                         /** Optional. Performer*/
                                         performer: Option[String] = Option.empty,
                                         /** Optional. Audio duration in seconds*/
@@ -277,6 +297,9 @@ final case class InlineQueryResultMpeg4Gif(
                                            /** Optional. Mode for parsing entities in the caption. See
                                              * formatting options for more details.*/
                                            parseMode: Option[ParseMode] = Option.empty,
+                                           /** Optional. List of special entities that appear in the
+                                             * caption, which can be specified instead of parse_mode*/
+                                           captionEntities: List[MessageEntity] = List.empty,
                                            /** Optional. Inline keyboard attached to the message*/
                                            replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
                                            /** Optional. Content of the message to be sent instead of the
@@ -303,6 +326,9 @@ final case class InlineQueryResultCachedMpeg4Gif(
     /** Optional. Mode for parsing entities in the caption. See
       * formatting options for more details.*/
     parseMode: Option[ParseMode] = Option.empty,
+    /** Optional. List of special entities that appear in the
+      * caption, which can be specified instead of parse_mode*/
+    captionEntities: List[MessageEntity] = List.empty,
     /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
     /** Optional. Content of the message to be sent instead of the
@@ -329,6 +355,9 @@ final case class InlineQueryResultCachedDocument(
     /** Optional. Mode for parsing entities in the document
       * caption. See formatting options for more details.*/
     parseMode: Option[ParseMode] = Option.empty,
+    /** Optional. List of special entities that appear in the
+      * caption, which can be specified instead of parse_mode*/
+    captionEntities: List[MessageEntity] = List.empty,
     /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
     /** Optional. Content of the message to be sent instead of the
@@ -355,6 +384,9 @@ final case class InlineQueryResultCachedVideo(
     /** Optional. Mode for parsing entities in the video caption.
       * See formatting options for more details.*/
     parseMode: Option[ParseMode] = Option.empty,
+    /** Optional. List of special entities that appear in the
+      * caption, which can be specified instead of parse_mode*/
+    captionEntities: List[MessageEntity] = List.empty,
     /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
     /** Optional. Content of the message to be sent instead of the
@@ -391,6 +423,9 @@ final case class InlineQueryResultCachedPhoto(
     /** Optional. Mode for parsing entities in the photo caption.
       * See formatting options for more details.*/
     parseMode: Option[ParseMode] = Option.empty,
+    /** Optional. List of special entities that appear in the
+      * caption, which can be specified instead of parse_mode*/
+    captionEntities: List[MessageEntity] = List.empty,
     /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
     /** Optional. Content of the message to be sent instead of the
@@ -436,6 +471,9 @@ final case class InlineQueryResultVideo(
                                         /** Optional. Mode for parsing entities in the video caption.
                                           * See formatting options for more details.*/
                                         parseMode: Option[ParseMode] = Option.empty,
+                                        /** Optional. List of special entities that appear in the
+                                          * caption, which can be specified instead of parse_mode*/
+                                        captionEntities: List[MessageEntity] = List.empty,
                                         /** Optional. Video width*/
                                         videoWidth: Option[Int] = Option.empty,
                                         /** Optional. Video height*/
@@ -468,6 +506,9 @@ final case class InlineQueryResultCachedAudio(
     /** Optional. Mode for parsing entities in the audio caption.
       * See formatting options for more details.*/
     parseMode: Option[ParseMode] = Option.empty,
+    /** Optional. List of special entities that appear in the
+      * caption, which can be specified instead of parse_mode*/
+    captionEntities: List[MessageEntity] = List.empty,
     /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
     /** Optional. Content of the message to be sent instead of the
@@ -487,9 +528,20 @@ final case class InlineQueryResultLocation(
                                            longitude: Float,
                                            /** Location title*/
                                            title: String,
+                                           /** Optional. The radius of uncertainty for the location,
+                                             * measured in meters; 0-1500*/
+                                           horizontalAccuracy: Option[Float] = Option.empty,
                                            /** Optional. Period in seconds for which the location can be
                                              * updated, should be between 60 and 86400.*/
                                            livePeriod: Option[Int] = Option.empty,
+                                           /** Optional. For live locations, a direction in which the user
+                                             * is moving, in degrees. Must be between 1 and 360 if
+                                             * specified.*/
+                                           heading: Option[Int] = Option.empty,
+                                           /** Optional. For live locations, a maximum distance for
+                                             * proximity alerts about approaching another chat member, in
+                                             * meters. Must be between 1 and 100000 if specified.*/
+                                           proximityAlertRadius: Option[Int] = Option.empty,
                                            /** Optional. Inline keyboard attached to the message*/
                                            replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
                                            /** Optional. Content of the message to be sent instead of the
@@ -521,6 +573,9 @@ final case class InlineQueryResultCachedGif(
     /** Optional. Mode for parsing entities in the caption. See
       * formatting options for more details.*/
     parseMode: Option[ParseMode] = Option.empty,
+    /** Optional. List of special entities that appear in the
+      * caption, which can be specified instead of parse_mode*/
+    captionEntities: List[MessageEntity] = List.empty,
     /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
     /** Optional. Content of the message to be sent instead of the
@@ -544,6 +599,9 @@ final case class InlineQueryResultVoice(
                                         /** Optional. Mode for parsing entities in the voice message
                                           * caption. See formatting options for more details.*/
                                         parseMode: Option[ParseMode] = Option.empty,
+                                        /** Optional. List of special entities that appear in the
+                                          * caption, which can be specified instead of parse_mode*/
+                                        captionEntities: List[MessageEntity] = List.empty,
                                         /** Optional. Recording duration in seconds*/
                                         voiceDuration: Option[Int] = Option.empty,
                                         /** Optional. Inline keyboard attached to the message*/

@@ -13,3 +13,11 @@ final case object EmojiDarts extends Emoji {
 final case object EmojiBasketball extends Emoji {
   override def toString() = "🏀"
 }
+
+final case object EmojiFootball extends Emoji {
+  override def toString() = "⚽"
+}
+
+final case object EmojiSlotMachine extends Emoji {
+  override def toString() = "🎰"
+}

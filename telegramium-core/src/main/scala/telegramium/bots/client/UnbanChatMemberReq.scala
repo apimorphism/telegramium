@@ -7,4 +7,6 @@ final case class UnbanChatMemberReq(
                                       * target supergroup or channel (in the format @username)*/
                                     chatId: ChatId,
                                     /** Unique identifier of the target user*/
-                                    userId: Int)
+                                    userId: Int,
+                                    /** Do nothing if the user is not banned*/
+                                    onlyIfBanned: Option[Boolean] = Option.empty)

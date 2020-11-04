@@ -3,6 +3,7 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 import telegramium.bots.IFile
 import telegramium.bots.ParseMode
+import telegramium.bots.MessageEntity
 import telegramium.bots.KeyboardMarkup
 
 final case class SendAudioReq(
@@ -20,6 +21,9 @@ final case class SendAudioReq(
                               /** Mode for parsing entities in the audio caption. See
                                 * formatting options for more details.*/
                               parseMode: Option[ParseMode] = Option.empty,
+                              /** List of special entities that appear in the caption, which
+                                * can be specified instead of parse_mode*/
+                              captionEntities: List[MessageEntity] = List.empty,
                               /** Duration of the audio in seconds*/
                               duration: Option[Int] = Option.empty,
                               /** Performer*/
@@ -42,6 +46,9 @@ final case class SendAudioReq(
                               disableNotification: Option[Boolean] = Option.empty,
                               /** If the message is a reply, ID of the original message*/
                               replyToMessageId: Option[Int] = Option.empty,
+                              /** Pass True, if the message should be sent even if the
+                                * specified replied-to message is not found*/
+                              allowSendingWithoutReply: Option[Boolean] = Option.empty,
                               /** Additional interface options. A JSON-serialized object for
                                 * an inline keyboard, custom reply keyboard, instructions to
                                 * remove reply keyboard or to force a reply from the user.*/

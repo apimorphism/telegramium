@@ -29,6 +29,9 @@ final case class InputMediaAnimation(
                                      /** Optional. Mode for parsing entities in the animation
                                        * caption. See formatting options for more details.*/
                                      parseMode: Option[ParseMode] = Option.empty,
+                                     /** Optional. List of special entities that appear in the
+                                       * caption, which can be specified instead of parse_mode*/
+                                     captionEntities: List[MessageEntity] = List.empty,
                                      /** Optional. Animation width*/
                                      width: Option[Int] = Option.empty,
                                      /** Optional. Animation height*/
@@ -51,7 +54,10 @@ final case class InputMediaPhoto(
                                  caption: Option[String] = Option.empty,
                                  /** Optional. Mode for parsing entities in the photo caption.
                                    * See formatting options for more details.*/
-                                 parseMode: Option[ParseMode] = Option.empty)
+                                 parseMode: Option[ParseMode] = Option.empty,
+                                 /** Optional. List of special entities that appear in the
+                                   * caption, which can be specified instead of parse_mode*/
+                                 captionEntities: List[MessageEntity] = List.empty)
     extends InputMedia
 
 /** Represents a video to be sent.*/
@@ -80,6 +86,9 @@ final case class InputMediaVideo(
                                  /** Optional. Mode for parsing entities in the video caption.
                                    * See formatting options for more details.*/
                                  parseMode: Option[ParseMode] = Option.empty,
+                                 /** Optional. List of special entities that appear in the
+                                   * caption, which can be specified instead of parse_mode*/
+                                 captionEntities: List[MessageEntity] = List.empty,
                                  /** Optional. Video width*/
                                  width: Option[Int] = Option.empty,
                                  /** Optional. Video height*/
@@ -116,7 +125,14 @@ final case class InputMediaDocument(
                                     caption: Option[String] = Option.empty,
                                     /** Optional. Mode for parsing entities in the document
                                       * caption. See formatting options for more details.*/
-                                    parseMode: Option[ParseMode] = Option.empty)
+                                    parseMode: Option[ParseMode] = Option.empty,
+                                    /** Optional. List of special entities that appear in the
+                                      * caption, which can be specified instead of parse_mode*/
+                                    captionEntities: List[MessageEntity] = List.empty,
+                                    /** Optional. Disables automatic server-side content type
+                                      * detection for files uploaded using multipart/form-data.
+                                      * Always true, if the document is sent as part of an album.*/
+                                    disableContentTypeDetection: Option[Boolean] = Option.empty)
     extends InputMedia
 
 /** Represents an audio file to be treated as music to be sent.*/
@@ -145,6 +161,9 @@ final case class InputMediaAudio(
                                  /** Optional. Mode for parsing entities in the audio caption.
                                    * See formatting options for more details.*/
                                  parseMode: Option[ParseMode] = Option.empty,
+                                 /** Optional. List of special entities that appear in the
+                                   * caption, which can be specified instead of parse_mode*/
+                                 captionEntities: List[MessageEntity] = List.empty,
                                  /** Optional. Duration of the audio in seconds*/
                                  duration: Option[Int] = Option.empty,
                                  /** Optional. Performer of the audio*/

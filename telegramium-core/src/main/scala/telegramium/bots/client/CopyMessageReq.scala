@@ -5,21 +5,25 @@ import telegramium.bots.ParseMode
 import telegramium.bots.MessageEntity
 import telegramium.bots.KeyboardMarkup
 
-final case class SendMessageReq(
+final case class CopyMessageReq(
                                 /** Unique identifier for the target chat or username of the
                                   * target channel (in the format @channelusername)*/
                                 chatId: ChatId,
-                                /** Text of the message to be sent, 1-4096 characters after
-                                  * entities parsing*/
-                                text: String,
-                                /** Mode for parsing entities in the message text. See
+                                /** Unique identifier for the chat where the original message
+                                  * was sent (or channel username in the format
+                                  * @channelusername)*/
+                                fromChatId: ChatId,
+                                /** Message identifier in the chat specified in from_chat_id*/
+                                messageId: Int,
+                                /** New caption for media, 0-1024 characters after entities
+                                  * parsing. If not specified, the original caption is kept*/
+                                caption: Option[String] = Option.empty,
+                                /** Mode for parsing entities in the new caption. See
                                   * formatting options for more details.*/
                                 parseMode: Option[ParseMode] = Option.empty,
-                                /** List of special entities that appear in message text, which
-                                  * can be specified instead of parse_mode*/
-                                entities: List[MessageEntity] = List.empty,
-                                /** Disables link previews for links in this message*/
-                                disableWebPagePreview: Option[Boolean] = Option.empty,
+                                /** List of special entities that appear in the new caption,
+                                  * which can be specified instead of parse_mode*/
+                                captionEntities: List[MessageEntity] = List.empty,
                                 /** Sends the message silently. Users will receive a
                                   * notification with no sound.*/
                                 disableNotification: Option[Boolean] = Option.empty,

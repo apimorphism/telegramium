@@ -14,9 +14,11 @@ object uPickleImplicits {
   implicit lazy val emojiCodec: ReadWriter[Emoji] = {
     readwriter[upack.Msg].bimap(
       {
-        case EmojiDice       => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("🎲"))
-        case EmojiDarts      => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("🎯"))
-        case EmojiBasketball => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("🏀"))
+        case EmojiDice        => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("🎲"))
+        case EmojiDarts       => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("🎯"))
+        case EmojiBasketball  => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("🏀"))
+        case EmojiFootball    => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("⚽"))
+        case EmojiSlotMachine => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("🎰"))
       },
       msg => {
         val m = msg.obj
@@ -25,15 +27,19 @@ object uPickleImplicits {
             case upack.Str("🎲") => EmojiDice
             case upack.Str("🎯") => EmojiDarts
             case upack.Str("🏀") => EmojiBasketball
+            case upack.Str("⚽")  => EmojiFootball
+            case upack.Str("🎰") => EmojiSlotMachine
           }
           .get
       }
     )
   }
 
-  implicit lazy val emojidiceCodec: ReadWriter[EmojiDice.type]             = macroRW
-  implicit lazy val emojidartsCodec: ReadWriter[EmojiDarts.type]           = macroRW
-  implicit lazy val emojibasketballCodec: ReadWriter[EmojiBasketball.type] = macroRW
+  implicit lazy val emojidiceCodec: ReadWriter[EmojiDice.type]               = macroRW
+  implicit lazy val emojidartsCodec: ReadWriter[EmojiDarts.type]             = macroRW
+  implicit lazy val emojibasketballCodec: ReadWriter[EmojiBasketball.type]   = macroRW
+  implicit lazy val emojifootballCodec: ReadWriter[EmojiFootball.type]       = macroRW
+  implicit lazy val emojislotmachineCodec: ReadWriter[EmojiSlotMachine.type] = macroRW
 
   implicit lazy val parsemodeCodec: ReadWriter[ParseMode] = {
     readwriter[upack.Msg].bimap(
@@ -352,41 +358,45 @@ object uPickleImplicits {
   }
 
   implicit lazy val inputmediaanimationCodec: ReadWriter[InputMediaAnimation] = {
-    val mediaKey     = upack.Str("media")
-    val thumbKey     = upack.Str("thumb")
-    val captionKey   = upack.Str("caption")
-    val parseModeKey = upack.Str("parseMode")
-    val widthKey     = upack.Str("width")
-    val heightKey    = upack.Str("height")
-    val durationKey  = upack.Str("duration")
+    val mediaKey           = upack.Str("media")
+    val thumbKey           = upack.Str("thumb")
+    val captionKey         = upack.Str("caption")
+    val parseModeKey       = upack.Str("parseMode")
+    val captionEntitiesKey = upack.Str("captionEntities")
+    val widthKey           = upack.Str("width")
+    val heightKey          = upack.Str("height")
+    val durationKey        = upack.Str("duration")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          mediaKey     -> writeMsg(x.media),
-          thumbKey     -> writeMsg(x.thumb),
-          captionKey   -> writeMsg(x.caption),
-          parseModeKey -> writeMsg(x.parseMode),
-          widthKey     -> writeMsg(x.width),
-          heightKey    -> writeMsg(x.height),
-          durationKey  -> writeMsg(x.duration)
+          mediaKey           -> writeMsg(x.media),
+          thumbKey           -> writeMsg(x.thumb),
+          captionKey         -> writeMsg(x.caption),
+          parseModeKey       -> writeMsg(x.parseMode),
+          captionEntitiesKey -> writeMsg(x.captionEntities),
+          widthKey           -> writeMsg(x.width),
+          heightKey          -> writeMsg(x.height),
+          durationKey        -> writeMsg(x.duration)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          media     <- m.get(mediaKey).map(x => readBinary[String](x))
-          thumb     <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
-          caption   <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          width     <- m.get(widthKey).map(x => readBinary[Option[Int]](x))
-          height    <- m.get(heightKey).map(x => readBinary[Option[Int]](x))
-          duration  <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
+          media           <- m.get(mediaKey).map(x => readBinary[String](x))
+          thumb           <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          width           <- m.get(widthKey).map(x => readBinary[Option[Int]](x))
+          height          <- m.get(heightKey).map(x => readBinary[Option[Int]](x))
+          duration        <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
         } yield {
           InputMediaAnimation(
             media = media,
             thumb = thumb,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             width = width,
             height = height,
             duration = duration
@@ -398,28 +408,32 @@ object uPickleImplicits {
   }
 
   implicit lazy val inputmediaphotoCodec: ReadWriter[InputMediaPhoto] = {
-    val mediaKey     = upack.Str("media")
-    val captionKey   = upack.Str("caption")
-    val parseModeKey = upack.Str("parseMode")
+    val mediaKey           = upack.Str("media")
+    val captionKey         = upack.Str("caption")
+    val parseModeKey       = upack.Str("parseMode")
+    val captionEntitiesKey = upack.Str("captionEntities")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          mediaKey     -> writeMsg(x.media),
-          captionKey   -> writeMsg(x.caption),
-          parseModeKey -> writeMsg(x.parseMode)
+          mediaKey           -> writeMsg(x.media),
+          captionKey         -> writeMsg(x.caption),
+          parseModeKey       -> writeMsg(x.parseMode),
+          captionEntitiesKey -> writeMsg(x.captionEntities)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          media     <- m.get(mediaKey).map(x => readBinary[String](x))
-          caption   <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          media           <- m.get(mediaKey).map(x => readBinary[String](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
         } yield {
           InputMediaPhoto(
             media = media,
             caption = caption,
-            parseMode = parseMode
+            parseMode = parseMode,
+            captionEntities = captionEntities
           )
         }
         result.get
@@ -432,6 +446,7 @@ object uPickleImplicits {
     val thumbKey             = upack.Str("thumb")
     val captionKey           = upack.Str("caption")
     val parseModeKey         = upack.Str("parseMode")
+    val captionEntitiesKey   = upack.Str("captionEntities")
     val widthKey             = upack.Str("width")
     val heightKey            = upack.Str("height")
     val durationKey          = upack.Str("duration")
@@ -443,6 +458,7 @@ object uPickleImplicits {
           thumbKey             -> writeMsg(x.thumb),
           captionKey           -> writeMsg(x.caption),
           parseModeKey         -> writeMsg(x.parseMode),
+          captionEntitiesKey   -> writeMsg(x.captionEntities),
           widthKey             -> writeMsg(x.width),
           heightKey            -> writeMsg(x.height),
           durationKey          -> writeMsg(x.duration),
@@ -456,6 +472,7 @@ object uPickleImplicits {
           thumb             <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
           caption           <- m.get(captionKey).map(x => readBinary[Option[String]](x))
           parseMode         <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities   <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
           width             <- m.get(widthKey).map(x => readBinary[Option[Int]](x))
           height            <- m.get(heightKey).map(x => readBinary[Option[Int]](x))
           duration          <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
@@ -466,6 +483,7 @@ object uPickleImplicits {
             thumb = thumb,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             width = width,
             height = height,
             duration = duration,
@@ -478,32 +496,42 @@ object uPickleImplicits {
   }
 
   implicit lazy val inputmediadocumentCodec: ReadWriter[InputMediaDocument] = {
-    val mediaKey     = upack.Str("media")
-    val thumbKey     = upack.Str("thumb")
-    val captionKey   = upack.Str("caption")
-    val parseModeKey = upack.Str("parseMode")
+    val mediaKey                       = upack.Str("media")
+    val thumbKey                       = upack.Str("thumb")
+    val captionKey                     = upack.Str("caption")
+    val parseModeKey                   = upack.Str("parseMode")
+    val captionEntitiesKey             = upack.Str("captionEntities")
+    val disableContentTypeDetectionKey = upack.Str("disableContentTypeDetection")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          mediaKey     -> writeMsg(x.media),
-          thumbKey     -> writeMsg(x.thumb),
-          captionKey   -> writeMsg(x.caption),
-          parseModeKey -> writeMsg(x.parseMode)
+          mediaKey                       -> writeMsg(x.media),
+          thumbKey                       -> writeMsg(x.thumb),
+          captionKey                     -> writeMsg(x.caption),
+          parseModeKey                   -> writeMsg(x.parseMode),
+          captionEntitiesKey             -> writeMsg(x.captionEntities),
+          disableContentTypeDetectionKey -> writeMsg(x.disableContentTypeDetection)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          media     <- m.get(mediaKey).map(x => readBinary[String](x))
-          thumb     <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
-          caption   <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          media           <- m.get(mediaKey).map(x => readBinary[String](x))
+          thumb           <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          disableContentTypeDetection <- m
+            .get(disableContentTypeDetectionKey)
+            .map(x => readBinary[Option[Boolean]](x))
         } yield {
           InputMediaDocument(
             media = media,
             thumb = thumb,
             caption = caption,
-            parseMode = parseMode
+            parseMode = parseMode,
+            captionEntities = captionEntities,
+            disableContentTypeDetection = disableContentTypeDetection
           )
         }
         result.get
@@ -512,41 +540,45 @@ object uPickleImplicits {
   }
 
   implicit lazy val inputmediaaudioCodec: ReadWriter[InputMediaAudio] = {
-    val mediaKey     = upack.Str("media")
-    val thumbKey     = upack.Str("thumb")
-    val captionKey   = upack.Str("caption")
-    val parseModeKey = upack.Str("parseMode")
-    val durationKey  = upack.Str("duration")
-    val performerKey = upack.Str("performer")
-    val titleKey     = upack.Str("title")
+    val mediaKey           = upack.Str("media")
+    val thumbKey           = upack.Str("thumb")
+    val captionKey         = upack.Str("caption")
+    val parseModeKey       = upack.Str("parseMode")
+    val captionEntitiesKey = upack.Str("captionEntities")
+    val durationKey        = upack.Str("duration")
+    val performerKey       = upack.Str("performer")
+    val titleKey           = upack.Str("title")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          mediaKey     -> writeMsg(x.media),
-          thumbKey     -> writeMsg(x.thumb),
-          captionKey   -> writeMsg(x.caption),
-          parseModeKey -> writeMsg(x.parseMode),
-          durationKey  -> writeMsg(x.duration),
-          performerKey -> writeMsg(x.performer),
-          titleKey     -> writeMsg(x.title)
+          mediaKey           -> writeMsg(x.media),
+          thumbKey           -> writeMsg(x.thumb),
+          captionKey         -> writeMsg(x.caption),
+          parseModeKey       -> writeMsg(x.parseMode),
+          captionEntitiesKey -> writeMsg(x.captionEntities),
+          durationKey        -> writeMsg(x.duration),
+          performerKey       -> writeMsg(x.performer),
+          titleKey           -> writeMsg(x.title)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          media     <- m.get(mediaKey).map(x => readBinary[String](x))
-          thumb     <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
-          caption   <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          duration  <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
-          performer <- m.get(performerKey).map(x => readBinary[Option[String]](x))
-          title     <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          media           <- m.get(mediaKey).map(x => readBinary[String](x))
+          thumb           <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          duration        <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
+          performer       <- m.get(performerKey).map(x => readBinary[Option[String]](x))
+          title           <- m.get(titleKey).map(x => readBinary[Option[String]](x))
         } yield {
           InputMediaAudio(
             media = media,
             thumb = thumb,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             duration = duration,
             performer = performer,
             title = title
@@ -642,6 +674,7 @@ object uPickleImplicits {
     val titleKey               = upack.Str("title")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
+    val captionEntitiesKey     = upack.Str("captionEntities")
     val replyMarkupKey         = upack.Str("replyMarkup")
     val inputMessageContentKey = upack.Str("inputMessageContent")
     readwriter[upack.Msg].bimap(
@@ -657,6 +690,7 @@ object uPickleImplicits {
           titleKey               -> writeMsg(x.title),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
+          captionEntitiesKey     -> writeMsg(x.captionEntities),
           replyMarkupKey         -> writeMsg(x.replyMarkup),
           inputMessageContentKey -> writeMsg(x.inputMessageContent)
         )
@@ -664,17 +698,18 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id            <- m.get(idKey).map(x => readBinary[String](x))
-          gifUrl        <- m.get(gifUrlKey).map(x => readBinary[String](x))
-          gifWidth      <- m.get(gifWidthKey).map(x => readBinary[Option[Int]](x))
-          gifHeight     <- m.get(gifHeightKey).map(x => readBinary[Option[Int]](x))
-          gifDuration   <- m.get(gifDurationKey).map(x => readBinary[Option[Int]](x))
-          thumbUrl      <- m.get(thumbUrlKey).map(x => readBinary[String](x))
-          thumbMimeType <- m.get(thumbMimeTypeKey).map(x => readBinary[Option[String]](x))
-          title         <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          caption       <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          replyMarkup   <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          gifUrl          <- m.get(gifUrlKey).map(x => readBinary[String](x))
+          gifWidth        <- m.get(gifWidthKey).map(x => readBinary[Option[Int]](x))
+          gifHeight       <- m.get(gifHeightKey).map(x => readBinary[Option[Int]](x))
+          gifDuration     <- m.get(gifDurationKey).map(x => readBinary[Option[Int]](x))
+          thumbUrl        <- m.get(thumbUrlKey).map(x => readBinary[String](x))
+          thumbMimeType   <- m.get(thumbMimeTypeKey).map(x => readBinary[Option[String]](x))
+          title           <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -690,6 +725,7 @@ object uPickleImplicits {
             title = title,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             replyMarkup = replyMarkup,
             inputMessageContent = inputMessageContent
           )
@@ -707,6 +743,8 @@ object uPickleImplicits {
     val addressKey             = upack.Str("address")
     val foursquareIdKey        = upack.Str("foursquareId")
     val foursquareTypeKey      = upack.Str("foursquareType")
+    val googlePlaceIdKey       = upack.Str("googlePlaceId")
+    val googlePlaceTypeKey     = upack.Str("googlePlaceType")
     val replyMarkupKey         = upack.Str("replyMarkup")
     val inputMessageContentKey = upack.Str("inputMessageContent")
     val thumbUrlKey            = upack.Str("thumbUrl")
@@ -722,6 +760,8 @@ object uPickleImplicits {
           addressKey             -> writeMsg(x.address),
           foursquareIdKey        -> writeMsg(x.foursquareId),
           foursquareTypeKey      -> writeMsg(x.foursquareType),
+          googlePlaceIdKey       -> writeMsg(x.googlePlaceId),
+          googlePlaceTypeKey     -> writeMsg(x.googlePlaceType),
           replyMarkupKey         -> writeMsg(x.replyMarkup),
           inputMessageContentKey -> writeMsg(x.inputMessageContent),
           thumbUrlKey            -> writeMsg(x.thumbUrl),
@@ -732,14 +772,16 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id             <- m.get(idKey).map(x => readBinary[String](x))
-          latitude       <- m.get(latitudeKey).map(x => readBinary[Float](x))
-          longitude      <- m.get(longitudeKey).map(x => readBinary[Float](x))
-          title          <- m.get(titleKey).map(x => readBinary[String](x))
-          address        <- m.get(addressKey).map(x => readBinary[String](x))
-          foursquareId   <- m.get(foursquareIdKey).map(x => readBinary[Option[String]](x))
-          foursquareType <- m.get(foursquareTypeKey).map(x => readBinary[Option[String]](x))
-          replyMarkup    <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          latitude        <- m.get(latitudeKey).map(x => readBinary[Float](x))
+          longitude       <- m.get(longitudeKey).map(x => readBinary[Float](x))
+          title           <- m.get(titleKey).map(x => readBinary[String](x))
+          address         <- m.get(addressKey).map(x => readBinary[String](x))
+          foursquareId    <- m.get(foursquareIdKey).map(x => readBinary[Option[String]](x))
+          foursquareType  <- m.get(foursquareTypeKey).map(x => readBinary[Option[String]](x))
+          googlePlaceId   <- m.get(googlePlaceIdKey).map(x => readBinary[Option[String]](x))
+          googlePlaceType <- m.get(googlePlaceTypeKey).map(x => readBinary[Option[String]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -755,6 +797,8 @@ object uPickleImplicits {
             address = address,
             foursquareId = foursquareId,
             foursquareType = foursquareType,
+            googlePlaceId = googlePlaceId,
+            googlePlaceType = googlePlaceType,
             replyMarkup = replyMarkup,
             inputMessageContent = inputMessageContent,
             thumbUrl = thumbUrl,
@@ -837,6 +881,7 @@ object uPickleImplicits {
     val descriptionKey         = upack.Str("description")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
+    val captionEntitiesKey     = upack.Str("captionEntities")
     val replyMarkupKey         = upack.Str("replyMarkup")
     val inputMessageContentKey = upack.Str("inputMessageContent")
     readwriter[upack.Msg].bimap(
@@ -851,6 +896,7 @@ object uPickleImplicits {
           descriptionKey         -> writeMsg(x.description),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
+          captionEntitiesKey     -> writeMsg(x.captionEntities),
           replyMarkupKey         -> writeMsg(x.replyMarkup),
           inputMessageContentKey -> writeMsg(x.inputMessageContent)
         )
@@ -858,16 +904,17 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id          <- m.get(idKey).map(x => readBinary[String](x))
-          photoUrl    <- m.get(photoUrlKey).map(x => readBinary[String](x))
-          thumbUrl    <- m.get(thumbUrlKey).map(x => readBinary[String](x))
-          photoWidth  <- m.get(photoWidthKey).map(x => readBinary[Option[Int]](x))
-          photoHeight <- m.get(photoHeightKey).map(x => readBinary[Option[Int]](x))
-          title       <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          photoUrl        <- m.get(photoUrlKey).map(x => readBinary[String](x))
+          thumbUrl        <- m.get(thumbUrlKey).map(x => readBinary[String](x))
+          photoWidth      <- m.get(photoWidthKey).map(x => readBinary[Option[Int]](x))
+          photoHeight     <- m.get(photoHeightKey).map(x => readBinary[Option[Int]](x))
+          title           <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          description     <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -882,6 +929,7 @@ object uPickleImplicits {
             description = description,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             replyMarkup = replyMarkup,
             inputMessageContent = inputMessageContent
           )
@@ -896,6 +944,7 @@ object uPickleImplicits {
     val titleKey               = upack.Str("title")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
+    val captionEntitiesKey     = upack.Str("captionEntities")
     val documentUrlKey         = upack.Str("documentUrl")
     val mimeTypeKey            = upack.Str("mimeType")
     val descriptionKey         = upack.Str("description")
@@ -911,6 +960,7 @@ object uPickleImplicits {
           titleKey               -> writeMsg(x.title),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
+          captionEntitiesKey     -> writeMsg(x.captionEntities),
           documentUrlKey         -> writeMsg(x.documentUrl),
           mimeTypeKey            -> writeMsg(x.mimeType),
           descriptionKey         -> writeMsg(x.description),
@@ -924,14 +974,15 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id          <- m.get(idKey).map(x => readBinary[String](x))
-          title       <- m.get(titleKey).map(x => readBinary[String](x))
-          caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          documentUrl <- m.get(documentUrlKey).map(x => readBinary[String](x))
-          mimeType    <- m.get(mimeTypeKey).map(x => readBinary[String](x))
-          description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          title           <- m.get(titleKey).map(x => readBinary[String](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          documentUrl     <- m.get(documentUrlKey).map(x => readBinary[String](x))
+          mimeType        <- m.get(mimeTypeKey).map(x => readBinary[String](x))
+          description     <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -944,6 +995,7 @@ object uPickleImplicits {
             title = title,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             documentUrl = documentUrl,
             mimeType = mimeType,
             description = description,
@@ -965,6 +1017,7 @@ object uPickleImplicits {
     val titleKey               = upack.Str("title")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
+    val captionEntitiesKey     = upack.Str("captionEntities")
     val replyMarkupKey         = upack.Str("replyMarkup")
     val inputMessageContentKey = upack.Str("inputMessageContent")
     readwriter[upack.Msg].bimap(
@@ -975,6 +1028,7 @@ object uPickleImplicits {
           titleKey               -> writeMsg(x.title),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
+          captionEntitiesKey     -> writeMsg(x.captionEntities),
           replyMarkupKey         -> writeMsg(x.replyMarkup),
           inputMessageContentKey -> writeMsg(x.inputMessageContent)
         )
@@ -982,12 +1036,13 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id          <- m.get(idKey).map(x => readBinary[String](x))
-          voiceFileId <- m.get(voiceFileIdKey).map(x => readBinary[String](x))
-          title       <- m.get(titleKey).map(x => readBinary[String](x))
-          caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          voiceFileId     <- m.get(voiceFileIdKey).map(x => readBinary[String](x))
+          title           <- m.get(titleKey).map(x => readBinary[String](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -998,6 +1053,7 @@ object uPickleImplicits {
             title = title,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             replyMarkup = replyMarkup,
             inputMessageContent = inputMessageContent
           )
@@ -1073,6 +1129,7 @@ object uPickleImplicits {
     val titleKey               = upack.Str("title")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
+    val captionEntitiesKey     = upack.Str("captionEntities")
     val performerKey           = upack.Str("performer")
     val audioDurationKey       = upack.Str("audioDuration")
     val replyMarkupKey         = upack.Str("replyMarkup")
@@ -1085,6 +1142,7 @@ object uPickleImplicits {
           titleKey               -> writeMsg(x.title),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
+          captionEntitiesKey     -> writeMsg(x.captionEntities),
           performerKey           -> writeMsg(x.performer),
           audioDurationKey       -> writeMsg(x.audioDuration),
           replyMarkupKey         -> writeMsg(x.replyMarkup),
@@ -1094,14 +1152,15 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id            <- m.get(idKey).map(x => readBinary[String](x))
-          audioUrl      <- m.get(audioUrlKey).map(x => readBinary[String](x))
-          title         <- m.get(titleKey).map(x => readBinary[String](x))
-          caption       <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          performer     <- m.get(performerKey).map(x => readBinary[Option[String]](x))
-          audioDuration <- m.get(audioDurationKey).map(x => readBinary[Option[Int]](x))
-          replyMarkup   <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          audioUrl        <- m.get(audioUrlKey).map(x => readBinary[String](x))
+          title           <- m.get(titleKey).map(x => readBinary[String](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          performer       <- m.get(performerKey).map(x => readBinary[Option[String]](x))
+          audioDuration   <- m.get(audioDurationKey).map(x => readBinary[Option[Int]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -1112,6 +1171,7 @@ object uPickleImplicits {
             title = title,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             performer = performer,
             audioDuration = audioDuration,
             replyMarkup = replyMarkup,
@@ -1134,6 +1194,7 @@ object uPickleImplicits {
     val titleKey               = upack.Str("title")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
+    val captionEntitiesKey     = upack.Str("captionEntities")
     val replyMarkupKey         = upack.Str("replyMarkup")
     val inputMessageContentKey = upack.Str("inputMessageContent")
     readwriter[upack.Msg].bimap(
@@ -1149,6 +1210,7 @@ object uPickleImplicits {
           titleKey               -> writeMsg(x.title),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
+          captionEntitiesKey     -> writeMsg(x.captionEntities),
           replyMarkupKey         -> writeMsg(x.replyMarkup),
           inputMessageContentKey -> writeMsg(x.inputMessageContent)
         )
@@ -1156,17 +1218,18 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id            <- m.get(idKey).map(x => readBinary[String](x))
-          mpeg4Url      <- m.get(mpeg4UrlKey).map(x => readBinary[String](x))
-          mpeg4Width    <- m.get(mpeg4WidthKey).map(x => readBinary[Option[Int]](x))
-          mpeg4Height   <- m.get(mpeg4HeightKey).map(x => readBinary[Option[Int]](x))
-          mpeg4Duration <- m.get(mpeg4DurationKey).map(x => readBinary[Option[Int]](x))
-          thumbUrl      <- m.get(thumbUrlKey).map(x => readBinary[String](x))
-          thumbMimeType <- m.get(thumbMimeTypeKey).map(x => readBinary[Option[String]](x))
-          title         <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          caption       <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          replyMarkup   <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          mpeg4Url        <- m.get(mpeg4UrlKey).map(x => readBinary[String](x))
+          mpeg4Width      <- m.get(mpeg4WidthKey).map(x => readBinary[Option[Int]](x))
+          mpeg4Height     <- m.get(mpeg4HeightKey).map(x => readBinary[Option[Int]](x))
+          mpeg4Duration   <- m.get(mpeg4DurationKey).map(x => readBinary[Option[Int]](x))
+          thumbUrl        <- m.get(thumbUrlKey).map(x => readBinary[String](x))
+          thumbMimeType   <- m.get(thumbMimeTypeKey).map(x => readBinary[Option[String]](x))
+          title           <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -1182,6 +1245,7 @@ object uPickleImplicits {
             title = title,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             replyMarkup = replyMarkup,
             inputMessageContent = inputMessageContent
           )
@@ -1198,6 +1262,7 @@ object uPickleImplicits {
     val titleKey               = upack.Str("title")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
+    val captionEntitiesKey     = upack.Str("captionEntities")
     val replyMarkupKey         = upack.Str("replyMarkup")
     val inputMessageContentKey = upack.Str("inputMessageContent")
     readwriter[upack.Msg].bimap(
@@ -1208,6 +1273,7 @@ object uPickleImplicits {
           titleKey               -> writeMsg(x.title),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
+          captionEntitiesKey     -> writeMsg(x.captionEntities),
           replyMarkupKey         -> writeMsg(x.replyMarkup),
           inputMessageContentKey -> writeMsg(x.inputMessageContent)
         )
@@ -1215,12 +1281,13 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id          <- m.get(idKey).map(x => readBinary[String](x))
-          mpeg4FileId <- m.get(mpeg4FileIdKey).map(x => readBinary[String](x))
-          title       <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          mpeg4FileId     <- m.get(mpeg4FileIdKey).map(x => readBinary[String](x))
+          title           <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -1231,6 +1298,7 @@ object uPickleImplicits {
             title = title,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             replyMarkup = replyMarkup,
             inputMessageContent = inputMessageContent
           )
@@ -1248,6 +1316,7 @@ object uPickleImplicits {
     val descriptionKey         = upack.Str("description")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
+    val captionEntitiesKey     = upack.Str("captionEntities")
     val replyMarkupKey         = upack.Str("replyMarkup")
     val inputMessageContentKey = upack.Str("inputMessageContent")
     readwriter[upack.Msg].bimap(
@@ -1259,6 +1328,7 @@ object uPickleImplicits {
           descriptionKey         -> writeMsg(x.description),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
+          captionEntitiesKey     -> writeMsg(x.captionEntities),
           replyMarkupKey         -> writeMsg(x.replyMarkup),
           inputMessageContentKey -> writeMsg(x.inputMessageContent)
         )
@@ -1266,13 +1336,14 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id             <- m.get(idKey).map(x => readBinary[String](x))
-          title          <- m.get(titleKey).map(x => readBinary[String](x))
-          documentFileId <- m.get(documentFileIdKey).map(x => readBinary[String](x))
-          description    <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          caption        <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode      <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          replyMarkup    <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          title           <- m.get(titleKey).map(x => readBinary[String](x))
+          documentFileId  <- m.get(documentFileIdKey).map(x => readBinary[String](x))
+          description     <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -1284,6 +1355,7 @@ object uPickleImplicits {
             description = description,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             replyMarkup = replyMarkup,
             inputMessageContent = inputMessageContent
           )
@@ -1300,6 +1372,7 @@ object uPickleImplicits {
     val descriptionKey         = upack.Str("description")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
+    val captionEntitiesKey     = upack.Str("captionEntities")
     val replyMarkupKey         = upack.Str("replyMarkup")
     val inputMessageContentKey = upack.Str("inputMessageContent")
     readwriter[upack.Msg].bimap(
@@ -1311,6 +1384,7 @@ object uPickleImplicits {
           descriptionKey         -> writeMsg(x.description),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
+          captionEntitiesKey     -> writeMsg(x.captionEntities),
           replyMarkupKey         -> writeMsg(x.replyMarkup),
           inputMessageContentKey -> writeMsg(x.inputMessageContent)
         )
@@ -1318,13 +1392,14 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id          <- m.get(idKey).map(x => readBinary[String](x))
-          videoFileId <- m.get(videoFileIdKey).map(x => readBinary[String](x))
-          title       <- m.get(titleKey).map(x => readBinary[String](x))
-          description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          videoFileId     <- m.get(videoFileIdKey).map(x => readBinary[String](x))
+          title           <- m.get(titleKey).map(x => readBinary[String](x))
+          description     <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -1336,6 +1411,7 @@ object uPickleImplicits {
             description = description,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             replyMarkup = replyMarkup,
             inputMessageContent = inputMessageContent
           )
@@ -1382,6 +1458,7 @@ object uPickleImplicits {
     val descriptionKey         = upack.Str("description")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
+    val captionEntitiesKey     = upack.Str("captionEntities")
     val replyMarkupKey         = upack.Str("replyMarkup")
     val inputMessageContentKey = upack.Str("inputMessageContent")
     readwriter[upack.Msg].bimap(
@@ -1393,6 +1470,7 @@ object uPickleImplicits {
           descriptionKey         -> writeMsg(x.description),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
+          captionEntitiesKey     -> writeMsg(x.captionEntities),
           replyMarkupKey         -> writeMsg(x.replyMarkup),
           inputMessageContentKey -> writeMsg(x.inputMessageContent)
         )
@@ -1400,13 +1478,14 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id          <- m.get(idKey).map(x => readBinary[String](x))
-          photoFileId <- m.get(photoFileIdKey).map(x => readBinary[String](x))
-          title       <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          photoFileId     <- m.get(photoFileIdKey).map(x => readBinary[String](x))
+          title           <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          description     <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -1418,6 +1497,7 @@ object uPickleImplicits {
             description = description,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             replyMarkup = replyMarkup,
             inputMessageContent = inputMessageContent
           )
@@ -1472,6 +1552,7 @@ object uPickleImplicits {
     val titleKey               = upack.Str("title")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
+    val captionEntitiesKey     = upack.Str("captionEntities")
     val videoWidthKey          = upack.Str("videoWidth")
     val videoHeightKey         = upack.Str("videoHeight")
     val videoDurationKey       = upack.Str("videoDuration")
@@ -1488,6 +1569,7 @@ object uPickleImplicits {
           titleKey               -> writeMsg(x.title),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
+          captionEntitiesKey     -> writeMsg(x.captionEntities),
           videoWidthKey          -> writeMsg(x.videoWidth),
           videoHeightKey         -> writeMsg(x.videoHeight),
           videoDurationKey       -> writeMsg(x.videoDuration),
@@ -1499,18 +1581,19 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id            <- m.get(idKey).map(x => readBinary[String](x))
-          videoUrl      <- m.get(videoUrlKey).map(x => readBinary[String](x))
-          mimeType      <- m.get(mimeTypeKey).map(x => readBinary[String](x))
-          thumbUrl      <- m.get(thumbUrlKey).map(x => readBinary[String](x))
-          title         <- m.get(titleKey).map(x => readBinary[String](x))
-          caption       <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          videoWidth    <- m.get(videoWidthKey).map(x => readBinary[Option[Int]](x))
-          videoHeight   <- m.get(videoHeightKey).map(x => readBinary[Option[Int]](x))
-          videoDuration <- m.get(videoDurationKey).map(x => readBinary[Option[Int]](x))
-          description   <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          replyMarkup   <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          videoUrl        <- m.get(videoUrlKey).map(x => readBinary[String](x))
+          mimeType        <- m.get(mimeTypeKey).map(x => readBinary[String](x))
+          thumbUrl        <- m.get(thumbUrlKey).map(x => readBinary[String](x))
+          title           <- m.get(titleKey).map(x => readBinary[String](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          videoWidth      <- m.get(videoWidthKey).map(x => readBinary[Option[Int]](x))
+          videoHeight     <- m.get(videoHeightKey).map(x => readBinary[Option[Int]](x))
+          videoDuration   <- m.get(videoDurationKey).map(x => readBinary[Option[Int]](x))
+          description     <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -1523,6 +1606,7 @@ object uPickleImplicits {
             title = title,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             videoWidth = videoWidth,
             videoHeight = videoHeight,
             videoDuration = videoDuration,
@@ -1541,6 +1625,7 @@ object uPickleImplicits {
     val audioFileIdKey         = upack.Str("audioFileId")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
+    val captionEntitiesKey     = upack.Str("captionEntities")
     val replyMarkupKey         = upack.Str("replyMarkup")
     val inputMessageContentKey = upack.Str("inputMessageContent")
     readwriter[upack.Msg].bimap(
@@ -1550,6 +1635,7 @@ object uPickleImplicits {
           audioFileIdKey         -> writeMsg(x.audioFileId),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
+          captionEntitiesKey     -> writeMsg(x.captionEntities),
           replyMarkupKey         -> writeMsg(x.replyMarkup),
           inputMessageContentKey -> writeMsg(x.inputMessageContent)
         )
@@ -1557,11 +1643,12 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id          <- m.get(idKey).map(x => readBinary[String](x))
-          audioFileId <- m.get(audioFileIdKey).map(x => readBinary[String](x))
-          caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          audioFileId     <- m.get(audioFileIdKey).map(x => readBinary[String](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -1571,6 +1658,7 @@ object uPickleImplicits {
             audioFileId = audioFileId,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             replyMarkup = replyMarkup,
             inputMessageContent = inputMessageContent
           )
@@ -1581,39 +1669,50 @@ object uPickleImplicits {
   }
 
   implicit lazy val inlinequeryresultlocationCodec: ReadWriter[InlineQueryResultLocation] = {
-    val idKey                  = upack.Str("id")
-    val latitudeKey            = upack.Str("latitude")
-    val longitudeKey           = upack.Str("longitude")
-    val titleKey               = upack.Str("title")
-    val livePeriodKey          = upack.Str("livePeriod")
-    val replyMarkupKey         = upack.Str("replyMarkup")
-    val inputMessageContentKey = upack.Str("inputMessageContent")
-    val thumbUrlKey            = upack.Str("thumbUrl")
-    val thumbWidthKey          = upack.Str("thumbWidth")
-    val thumbHeightKey         = upack.Str("thumbHeight")
+    val idKey                   = upack.Str("id")
+    val latitudeKey             = upack.Str("latitude")
+    val longitudeKey            = upack.Str("longitude")
+    val titleKey                = upack.Str("title")
+    val horizontalAccuracyKey   = upack.Str("horizontalAccuracy")
+    val livePeriodKey           = upack.Str("livePeriod")
+    val headingKey              = upack.Str("heading")
+    val proximityAlertRadiusKey = upack.Str("proximityAlertRadius")
+    val replyMarkupKey          = upack.Str("replyMarkup")
+    val inputMessageContentKey  = upack.Str("inputMessageContent")
+    val thumbUrlKey             = upack.Str("thumbUrl")
+    val thumbWidthKey           = upack.Str("thumbWidth")
+    val thumbHeightKey          = upack.Str("thumbHeight")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          idKey                  -> writeMsg(x.id),
-          latitudeKey            -> writeMsg(x.latitude),
-          longitudeKey           -> writeMsg(x.longitude),
-          titleKey               -> writeMsg(x.title),
-          livePeriodKey          -> writeMsg(x.livePeriod),
-          replyMarkupKey         -> writeMsg(x.replyMarkup),
-          inputMessageContentKey -> writeMsg(x.inputMessageContent),
-          thumbUrlKey            -> writeMsg(x.thumbUrl),
-          thumbWidthKey          -> writeMsg(x.thumbWidth),
-          thumbHeightKey         -> writeMsg(x.thumbHeight)
+          idKey                   -> writeMsg(x.id),
+          latitudeKey             -> writeMsg(x.latitude),
+          longitudeKey            -> writeMsg(x.longitude),
+          titleKey                -> writeMsg(x.title),
+          horizontalAccuracyKey   -> writeMsg(x.horizontalAccuracy),
+          livePeriodKey           -> writeMsg(x.livePeriod),
+          headingKey              -> writeMsg(x.heading),
+          proximityAlertRadiusKey -> writeMsg(x.proximityAlertRadius),
+          replyMarkupKey          -> writeMsg(x.replyMarkup),
+          inputMessageContentKey  -> writeMsg(x.inputMessageContent),
+          thumbUrlKey             -> writeMsg(x.thumbUrl),
+          thumbWidthKey           -> writeMsg(x.thumbWidth),
+          thumbHeightKey          -> writeMsg(x.thumbHeight)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          id          <- m.get(idKey).map(x => readBinary[String](x))
-          latitude    <- m.get(latitudeKey).map(x => readBinary[Float](x))
-          longitude   <- m.get(longitudeKey).map(x => readBinary[Float](x))
-          title       <- m.get(titleKey).map(x => readBinary[String](x))
-          livePeriod  <- m.get(livePeriodKey).map(x => readBinary[Option[Int]](x))
+          id                 <- m.get(idKey).map(x => readBinary[String](x))
+          latitude           <- m.get(latitudeKey).map(x => readBinary[Float](x))
+          longitude          <- m.get(longitudeKey).map(x => readBinary[Float](x))
+          title              <- m.get(titleKey).map(x => readBinary[String](x))
+          horizontalAccuracy <- m.get(horizontalAccuracyKey).map(x => readBinary[Option[Float]](x))
+          livePeriod         <- m.get(livePeriodKey).map(x => readBinary[Option[Int]](x))
+          heading            <- m.get(headingKey).map(x => readBinary[Option[Int]](x))
+          proximityAlertRadius <- m
+            .get(proximityAlertRadiusKey)
+            .map(x => readBinary[Option[Int]](x))
           replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
@@ -1627,7 +1726,10 @@ object uPickleImplicits {
             latitude = latitude,
             longitude = longitude,
             title = title,
+            horizontalAccuracy = horizontalAccuracy,
             livePeriod = livePeriod,
+            heading = heading,
+            proximityAlertRadius = proximityAlertRadius,
             replyMarkup = replyMarkup,
             inputMessageContent = inputMessageContent,
             thumbUrl = thumbUrl,
@@ -1646,6 +1748,7 @@ object uPickleImplicits {
     val titleKey               = upack.Str("title")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
+    val captionEntitiesKey     = upack.Str("captionEntities")
     val replyMarkupKey         = upack.Str("replyMarkup")
     val inputMessageContentKey = upack.Str("inputMessageContent")
     readwriter[upack.Msg].bimap(
@@ -1656,6 +1759,7 @@ object uPickleImplicits {
           titleKey               -> writeMsg(x.title),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
+          captionEntitiesKey     -> writeMsg(x.captionEntities),
           replyMarkupKey         -> writeMsg(x.replyMarkup),
           inputMessageContentKey -> writeMsg(x.inputMessageContent)
         )
@@ -1663,12 +1767,13 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id          <- m.get(idKey).map(x => readBinary[String](x))
-          gifFileId   <- m.get(gifFileIdKey).map(x => readBinary[String](x))
-          title       <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          caption     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          gifFileId       <- m.get(gifFileIdKey).map(x => readBinary[String](x))
+          title           <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -1679,6 +1784,7 @@ object uPickleImplicits {
             title = title,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             replyMarkup = replyMarkup,
             inputMessageContent = inputMessageContent
           )
@@ -1694,6 +1800,7 @@ object uPickleImplicits {
     val titleKey               = upack.Str("title")
     val captionKey             = upack.Str("caption")
     val parseModeKey           = upack.Str("parseMode")
+    val captionEntitiesKey     = upack.Str("captionEntities")
     val voiceDurationKey       = upack.Str("voiceDuration")
     val replyMarkupKey         = upack.Str("replyMarkup")
     val inputMessageContentKey = upack.Str("inputMessageContent")
@@ -1705,6 +1812,7 @@ object uPickleImplicits {
           titleKey               -> writeMsg(x.title),
           captionKey             -> writeMsg(x.caption),
           parseModeKey           -> writeMsg(x.parseMode),
+          captionEntitiesKey     -> writeMsg(x.captionEntities),
           voiceDurationKey       -> writeMsg(x.voiceDuration),
           replyMarkupKey         -> writeMsg(x.replyMarkup),
           inputMessageContentKey -> writeMsg(x.inputMessageContent)
@@ -1713,13 +1821,14 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id            <- m.get(idKey).map(x => readBinary[String](x))
-          voiceUrl      <- m.get(voiceUrlKey).map(x => readBinary[String](x))
-          title         <- m.get(titleKey).map(x => readBinary[String](x))
-          caption       <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode     <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          voiceDuration <- m.get(voiceDurationKey).map(x => readBinary[Option[Int]](x))
-          replyMarkup   <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          id              <- m.get(idKey).map(x => readBinary[String](x))
+          voiceUrl        <- m.get(voiceUrlKey).map(x => readBinary[String](x))
+          title           <- m.get(titleKey).map(x => readBinary[String](x))
+          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          voiceDuration   <- m.get(voiceDurationKey).map(x => readBinary[Option[Int]](x))
+          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
           inputMessageContent <- m
             .get(inputMessageContentKey)
             .map(x => readBinary[Option[InputMessageContent]](x))
@@ -1730,6 +1839,7 @@ object uPickleImplicits {
             title = title,
             caption = caption,
             parseMode = parseMode,
+            captionEntities = captionEntities,
             voiceDuration = voiceDuration,
             replyMarkup = replyMarkup,
             inputMessageContent = inputMessageContent
@@ -1771,32 +1881,38 @@ object uPickleImplicits {
   }
 
   implicit lazy val inputvenuemessagecontentCodec: ReadWriter[InputVenueMessageContent] = {
-    val latitudeKey       = upack.Str("latitude")
-    val longitudeKey      = upack.Str("longitude")
-    val titleKey          = upack.Str("title")
-    val addressKey        = upack.Str("address")
-    val foursquareIdKey   = upack.Str("foursquareId")
-    val foursquareTypeKey = upack.Str("foursquareType")
+    val latitudeKey        = upack.Str("latitude")
+    val longitudeKey       = upack.Str("longitude")
+    val titleKey           = upack.Str("title")
+    val addressKey         = upack.Str("address")
+    val foursquareIdKey    = upack.Str("foursquareId")
+    val foursquareTypeKey  = upack.Str("foursquareType")
+    val googlePlaceIdKey   = upack.Str("googlePlaceId")
+    val googlePlaceTypeKey = upack.Str("googlePlaceType")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          latitudeKey       -> writeMsg(x.latitude),
-          longitudeKey      -> writeMsg(x.longitude),
-          titleKey          -> writeMsg(x.title),
-          addressKey        -> writeMsg(x.address),
-          foursquareIdKey   -> writeMsg(x.foursquareId),
-          foursquareTypeKey -> writeMsg(x.foursquareType)
+          latitudeKey        -> writeMsg(x.latitude),
+          longitudeKey       -> writeMsg(x.longitude),
+          titleKey           -> writeMsg(x.title),
+          addressKey         -> writeMsg(x.address),
+          foursquareIdKey    -> writeMsg(x.foursquareId),
+          foursquareTypeKey  -> writeMsg(x.foursquareType),
+          googlePlaceIdKey   -> writeMsg(x.googlePlaceId),
+          googlePlaceTypeKey -> writeMsg(x.googlePlaceType)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          latitude       <- m.get(latitudeKey).map(x => readBinary[Float](x))
-          longitude      <- m.get(longitudeKey).map(x => readBinary[Float](x))
-          title          <- m.get(titleKey).map(x => readBinary[String](x))
-          address        <- m.get(addressKey).map(x => readBinary[String](x))
-          foursquareId   <- m.get(foursquareIdKey).map(x => readBinary[Option[String]](x))
-          foursquareType <- m.get(foursquareTypeKey).map(x => readBinary[Option[String]](x))
+          latitude        <- m.get(latitudeKey).map(x => readBinary[Float](x))
+          longitude       <- m.get(longitudeKey).map(x => readBinary[Float](x))
+          title           <- m.get(titleKey).map(x => readBinary[String](x))
+          address         <- m.get(addressKey).map(x => readBinary[String](x))
+          foursquareId    <- m.get(foursquareIdKey).map(x => readBinary[Option[String]](x))
+          foursquareType  <- m.get(foursquareTypeKey).map(x => readBinary[Option[String]](x))
+          googlePlaceId   <- m.get(googlePlaceIdKey).map(x => readBinary[Option[String]](x))
+          googlePlaceType <- m.get(googlePlaceTypeKey).map(x => readBinary[Option[String]](x))
         } yield {
           InputVenueMessageContent(
             latitude = latitude,
@@ -1804,7 +1920,9 @@ object uPickleImplicits {
             title = title,
             address = address,
             foursquareId = foursquareId,
-            foursquareType = foursquareType
+            foursquareType = foursquareType,
+            googlePlaceId = googlePlaceId,
+            googlePlaceType = googlePlaceType
           )
         }
         result.get
@@ -1847,28 +1965,42 @@ object uPickleImplicits {
   }
 
   implicit lazy val inputlocationmessagecontentCodec: ReadWriter[InputLocationMessageContent] = {
-    val latitudeKey   = upack.Str("latitude")
-    val longitudeKey  = upack.Str("longitude")
-    val livePeriodKey = upack.Str("livePeriod")
+    val latitudeKey             = upack.Str("latitude")
+    val longitudeKey            = upack.Str("longitude")
+    val horizontalAccuracyKey   = upack.Str("horizontalAccuracy")
+    val livePeriodKey           = upack.Str("livePeriod")
+    val headingKey              = upack.Str("heading")
+    val proximityAlertRadiusKey = upack.Str("proximityAlertRadius")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          latitudeKey   -> writeMsg(x.latitude),
-          longitudeKey  -> writeMsg(x.longitude),
-          livePeriodKey -> writeMsg(x.livePeriod)
+          latitudeKey             -> writeMsg(x.latitude),
+          longitudeKey            -> writeMsg(x.longitude),
+          horizontalAccuracyKey   -> writeMsg(x.horizontalAccuracy),
+          livePeriodKey           -> writeMsg(x.livePeriod),
+          headingKey              -> writeMsg(x.heading),
+          proximityAlertRadiusKey -> writeMsg(x.proximityAlertRadius)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          latitude   <- m.get(latitudeKey).map(x => readBinary[Float](x))
-          longitude  <- m.get(longitudeKey).map(x => readBinary[Float](x))
-          livePeriod <- m.get(livePeriodKey).map(x => readBinary[Option[Int]](x))
+          latitude           <- m.get(latitudeKey).map(x => readBinary[Float](x))
+          longitude          <- m.get(longitudeKey).map(x => readBinary[Float](x))
+          horizontalAccuracy <- m.get(horizontalAccuracyKey).map(x => readBinary[Option[Float]](x))
+          livePeriod         <- m.get(livePeriodKey).map(x => readBinary[Option[Int]](x))
+          heading            <- m.get(headingKey).map(x => readBinary[Option[Int]](x))
+          proximityAlertRadius <- m
+            .get(proximityAlertRadiusKey)
+            .map(x => readBinary[Option[Int]](x))
         } yield {
           InputLocationMessageContent(
             latitude = latitude,
             longitude = longitude,
-            livePeriod = livePeriod
+            horizontalAccuracy = horizontalAccuracy,
+            livePeriod = livePeriod,
+            heading = heading,
+            proximityAlertRadius = proximityAlertRadius
           )
         }
         result.get
@@ -1879,12 +2011,14 @@ object uPickleImplicits {
   implicit lazy val inputtextmessagecontentCodec: ReadWriter[InputTextMessageContent] = {
     val messageTextKey           = upack.Str("messageText")
     val parseModeKey             = upack.Str("parseMode")
+    val entitiesKey              = upack.Str("entities")
     val disableWebPagePreviewKey = upack.Str("disableWebPagePreview")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
           messageTextKey           -> writeMsg(x.messageText),
           parseModeKey             -> writeMsg(x.parseMode),
+          entitiesKey              -> writeMsg(x.entities),
           disableWebPagePreviewKey -> writeMsg(x.disableWebPagePreview)
         )
       },
@@ -1893,6 +2027,7 @@ object uPickleImplicits {
         val result = for {
           messageText <- m.get(messageTextKey).map(x => readBinary[String](x))
           parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          entities    <- m.get(entitiesKey).map(x => readBinary[List[MessageEntity]](x))
           disableWebPagePreview <- m
             .get(disableWebPagePreviewKey)
             .map(x => readBinary[Option[Boolean]](x))
@@ -1900,6 +2035,7 @@ object uPickleImplicits {
           InputTextMessageContent(
             messageText = messageText,
             parseMode = parseMode,
+            entities = entities,
             disableWebPagePreview = disableWebPagePreview
           )
         }
@@ -2319,6 +2455,7 @@ object uPickleImplicits {
     val firstNameKey        = upack.Str("firstName")
     val lastNameKey         = upack.Str("lastName")
     val photoKey            = upack.Str("photo")
+    val bioKey              = upack.Str("bio")
     val descriptionKey      = upack.Str("description")
     val inviteLinkKey       = upack.Str("inviteLink")
     val pinnedMessageKey    = upack.Str("pinnedMessage")
@@ -2326,6 +2463,8 @@ object uPickleImplicits {
     val slowModeDelayKey    = upack.Str("slowModeDelay")
     val stickerSetNameKey   = upack.Str("stickerSetName")
     val canSetStickerSetKey = upack.Str("canSetStickerSet")
+    val linkedChatIdKey     = upack.Str("linkedChatId")
+    val locationKey         = upack.Str("location")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
@@ -2336,13 +2475,16 @@ object uPickleImplicits {
           firstNameKey        -> writeMsg(x.firstName),
           lastNameKey         -> writeMsg(x.lastName),
           photoKey            -> writeMsg(x.photo),
+          bioKey              -> writeMsg(x.bio),
           descriptionKey      -> writeMsg(x.description),
           inviteLinkKey       -> writeMsg(x.inviteLink),
           pinnedMessageKey    -> writeMsg(x.pinnedMessage),
           permissionsKey      -> writeMsg(x.permissions),
           slowModeDelayKey    -> writeMsg(x.slowModeDelay),
           stickerSetNameKey   -> writeMsg(x.stickerSetName),
-          canSetStickerSetKey -> writeMsg(x.canSetStickerSet)
+          canSetStickerSetKey -> writeMsg(x.canSetStickerSet),
+          linkedChatIdKey     -> writeMsg(x.linkedChatId),
+          locationKey         -> writeMsg(x.location)
         )
       },
       msg => {
@@ -2355,6 +2497,7 @@ object uPickleImplicits {
           firstName        <- m.get(firstNameKey).map(x => readBinary[Option[String]](x))
           lastName         <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
           photo            <- m.get(photoKey).map(x => readBinary[Option[ChatPhoto]](x))
+          bio              <- m.get(bioKey).map(x => readBinary[Option[String]](x))
           description      <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
           inviteLink       <- m.get(inviteLinkKey).map(x => readBinary[Option[String]](x))
           pinnedMessage    <- m.get(pinnedMessageKey).map(x => readBinary[Option[Message]](x))
@@ -2362,6 +2505,8 @@ object uPickleImplicits {
           slowModeDelay    <- m.get(slowModeDelayKey).map(x => readBinary[Option[Int]](x))
           stickerSetName   <- m.get(stickerSetNameKey).map(x => readBinary[Option[String]](x))
           canSetStickerSet <- m.get(canSetStickerSetKey).map(x => readBinary[Option[Boolean]](x))
+          linkedChatId     <- m.get(linkedChatIdKey).map(x => readBinary[Option[Long]](x))
+          location         <- m.get(locationKey).map(x => readBinary[Option[ChatLocation]](x))
         } yield {
           Chat(
             id = id,
@@ -2371,13 +2516,16 @@ object uPickleImplicits {
             firstName = firstName,
             lastName = lastName,
             photo = photo,
+            bio = bio,
             description = description,
             inviteLink = inviteLink,
             pinnedMessage = pinnedMessage,
             permissions = permissions,
             slowModeDelay = slowModeDelay,
             stickerSetName = stickerSetName,
-            canSetStickerSet = canSetStickerSet
+            canSetStickerSet = canSetStickerSet,
+            linkedChatId = linkedChatId,
+            location = location
           )
         }
         result.get
@@ -2428,24 +2576,42 @@ object uPickleImplicits {
   }
 
   implicit lazy val locationCodec: ReadWriter[Location] = {
-    val longitudeKey = upack.Str("longitude")
-    val latitudeKey  = upack.Str("latitude")
+    val longitudeKey            = upack.Str("longitude")
+    val latitudeKey             = upack.Str("latitude")
+    val horizontalAccuracyKey   = upack.Str("horizontalAccuracy")
+    val livePeriodKey           = upack.Str("livePeriod")
+    val headingKey              = upack.Str("heading")
+    val proximityAlertRadiusKey = upack.Str("proximityAlertRadius")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          longitudeKey -> writeMsg(x.longitude),
-          latitudeKey  -> writeMsg(x.latitude)
+          longitudeKey            -> writeMsg(x.longitude),
+          latitudeKey             -> writeMsg(x.latitude),
+          horizontalAccuracyKey   -> writeMsg(x.horizontalAccuracy),
+          livePeriodKey           -> writeMsg(x.livePeriod),
+          headingKey              -> writeMsg(x.heading),
+          proximityAlertRadiusKey -> writeMsg(x.proximityAlertRadius)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          longitude <- m.get(longitudeKey).map(x => readBinary[Float](x))
-          latitude  <- m.get(latitudeKey).map(x => readBinary[Float](x))
+          longitude          <- m.get(longitudeKey).map(x => readBinary[Float](x))
+          latitude           <- m.get(latitudeKey).map(x => readBinary[Float](x))
+          horizontalAccuracy <- m.get(horizontalAccuracyKey).map(x => readBinary[Option[Float]](x))
+          livePeriod         <- m.get(livePeriodKey).map(x => readBinary[Option[Int]](x))
+          heading            <- m.get(headingKey).map(x => readBinary[Option[Int]](x))
+          proximityAlertRadius <- m
+            .get(proximityAlertRadiusKey)
+            .map(x => readBinary[Option[Int]](x))
         } yield {
           Location(
             longitude = longitude,
-            latitude = latitude
+            latitude = latitude,
+            horizontalAccuracy = horizontalAccuracy,
+            livePeriod = livePeriod,
+            heading = heading,
+            proximityAlertRadius = proximityAlertRadius
           )
         }
         result.get
@@ -2604,6 +2770,32 @@ object uPickleImplicits {
             streetLine1 = streetLine1,
             streetLine2 = streetLine2,
             postCode = postCode
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val chatlocationCodec: ReadWriter[ChatLocation] = {
+    val locationKey = upack.Str("location")
+    val addressKey  = upack.Str("address")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          locationKey -> writeMsg(x.location),
+          addressKey  -> writeMsg(x.address)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          location <- m.get(locationKey).map(x => readBinary[Location](x))
+          address  <- m.get(addressKey).map(x => readBinary[String](x))
+        } yield {
+          ChatLocation(
+            location = location,
+            address = address
           )
         }
         result.get
@@ -3124,36 +3316,44 @@ object uPickleImplicits {
   }
 
   implicit lazy val venueCodec: ReadWriter[Venue] = {
-    val locationKey       = upack.Str("location")
-    val titleKey          = upack.Str("title")
-    val addressKey        = upack.Str("address")
-    val foursquareIdKey   = upack.Str("foursquareId")
-    val foursquareTypeKey = upack.Str("foursquareType")
+    val locationKey        = upack.Str("location")
+    val titleKey           = upack.Str("title")
+    val addressKey         = upack.Str("address")
+    val foursquareIdKey    = upack.Str("foursquareId")
+    val foursquareTypeKey  = upack.Str("foursquareType")
+    val googlePlaceIdKey   = upack.Str("googlePlaceId")
+    val googlePlaceTypeKey = upack.Str("googlePlaceType")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          locationKey       -> writeMsg(x.location),
-          titleKey          -> writeMsg(x.title),
-          addressKey        -> writeMsg(x.address),
-          foursquareIdKey   -> writeMsg(x.foursquareId),
-          foursquareTypeKey -> writeMsg(x.foursquareType)
+          locationKey        -> writeMsg(x.location),
+          titleKey           -> writeMsg(x.title),
+          addressKey         -> writeMsg(x.address),
+          foursquareIdKey    -> writeMsg(x.foursquareId),
+          foursquareTypeKey  -> writeMsg(x.foursquareType),
+          googlePlaceIdKey   -> writeMsg(x.googlePlaceId),
+          googlePlaceTypeKey -> writeMsg(x.googlePlaceType)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          location       <- m.get(locationKey).map(x => readBinary[Location](x))
-          title          <- m.get(titleKey).map(x => readBinary[String](x))
-          address        <- m.get(addressKey).map(x => readBinary[String](x))
-          foursquareId   <- m.get(foursquareIdKey).map(x => readBinary[Option[String]](x))
-          foursquareType <- m.get(foursquareTypeKey).map(x => readBinary[Option[String]](x))
+          location        <- m.get(locationKey).map(x => readBinary[Location](x))
+          title           <- m.get(titleKey).map(x => readBinary[String](x))
+          address         <- m.get(addressKey).map(x => readBinary[String](x))
+          foursquareId    <- m.get(foursquareIdKey).map(x => readBinary[Option[String]](x))
+          foursquareType  <- m.get(foursquareTypeKey).map(x => readBinary[Option[String]](x))
+          googlePlaceId   <- m.get(googlePlaceIdKey).map(x => readBinary[Option[String]](x))
+          googlePlaceType <- m.get(googlePlaceTypeKey).map(x => readBinary[Option[String]](x))
         } yield {
           Venue(
             location = location,
             title = title,
             address = address,
             foursquareId = foursquareId,
-            foursquareType = foursquareType
+            foursquareType = foursquareType,
+            googlePlaceId = googlePlaceId,
+            googlePlaceType = googlePlaceType
           )
         }
         result.get
@@ -3409,6 +3609,7 @@ object uPickleImplicits {
     val durationKey     = upack.Str("duration")
     val performerKey    = upack.Str("performer")
     val titleKey        = upack.Str("title")
+    val fileNameKey     = upack.Str("fileName")
     val mimeTypeKey     = upack.Str("mimeType")
     val fileSizeKey     = upack.Str("fileSize")
     val thumbKey        = upack.Str("thumb")
@@ -3420,6 +3621,7 @@ object uPickleImplicits {
           durationKey     -> writeMsg(x.duration),
           performerKey    -> writeMsg(x.performer),
           titleKey        -> writeMsg(x.title),
+          fileNameKey     -> writeMsg(x.fileName),
           mimeTypeKey     -> writeMsg(x.mimeType),
           fileSizeKey     -> writeMsg(x.fileSize),
           thumbKey        -> writeMsg(x.thumb)
@@ -3433,6 +3635,7 @@ object uPickleImplicits {
           duration     <- m.get(durationKey).map(x => readBinary[Int](x))
           performer    <- m.get(performerKey).map(x => readBinary[Option[String]](x))
           title        <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          fileName     <- m.get(fileNameKey).map(x => readBinary[Option[String]](x))
           mimeType     <- m.get(mimeTypeKey).map(x => readBinary[Option[String]](x))
           fileSize     <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
           thumb        <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
@@ -3443,6 +3646,7 @@ object uPickleImplicits {
             duration = duration,
             performer = performer,
             title = title,
+            fileName = fileName,
             mimeType = mimeType,
             fileSize = fileSize,
             thumb = thumb
@@ -3457,6 +3661,7 @@ object uPickleImplicits {
     val urlKey                  = upack.Str("url")
     val hasCustomCertificateKey = upack.Str("hasCustomCertificate")
     val pendingUpdateCountKey   = upack.Str("pendingUpdateCount")
+    val ipAddressKey            = upack.Str("ipAddress")
     val lastErrorDateKey        = upack.Str("lastErrorDate")
     val lastErrorMessageKey     = upack.Str("lastErrorMessage")
     val maxConnectionsKey       = upack.Str("maxConnections")
@@ -3467,6 +3672,7 @@ object uPickleImplicits {
           urlKey                  -> writeMsg(x.url),
           hasCustomCertificateKey -> writeMsg(x.hasCustomCertificate),
           pendingUpdateCountKey   -> writeMsg(x.pendingUpdateCount),
+          ipAddressKey            -> writeMsg(x.ipAddress),
           lastErrorDateKey        -> writeMsg(x.lastErrorDate),
           lastErrorMessageKey     -> writeMsg(x.lastErrorMessage),
           maxConnectionsKey       -> writeMsg(x.maxConnections),
@@ -3479,6 +3685,7 @@ object uPickleImplicits {
           url                  <- m.get(urlKey).map(x => readBinary[String](x))
           hasCustomCertificate <- m.get(hasCustomCertificateKey).map(x => readBinary[Boolean](x))
           pendingUpdateCount   <- m.get(pendingUpdateCountKey).map(x => readBinary[Int](x))
+          ipAddress            <- m.get(ipAddressKey).map(x => readBinary[Option[String]](x))
           lastErrorDate        <- m.get(lastErrorDateKey).map(x => readBinary[Option[Int]](x))
           lastErrorMessage     <- m.get(lastErrorMessageKey).map(x => readBinary[Option[String]](x))
           maxConnections       <- m.get(maxConnectionsKey).map(x => readBinary[Option[Int]](x))
@@ -3488,10 +3695,41 @@ object uPickleImplicits {
             url = url,
             hasCustomCertificate = hasCustomCertificate,
             pendingUpdateCount = pendingUpdateCount,
+            ipAddress = ipAddress,
             lastErrorDate = lastErrorDate,
             lastErrorMessage = lastErrorMessage,
             maxConnections = maxConnections,
             allowedUpdates = allowedUpdates
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val proximityalerttriggeredCodec: ReadWriter[ProximityAlertTriggered] = {
+    val travelerKey = upack.Str("traveler")
+    val watcherKey  = upack.Str("watcher")
+    val distanceKey = upack.Str("distance")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          travelerKey -> writeMsg(x.traveler),
+          watcherKey  -> writeMsg(x.watcher),
+          distanceKey -> writeMsg(x.distance)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          traveler <- m.get(travelerKey).map(x => readBinary[User](x))
+          watcher  <- m.get(watcherKey).map(x => readBinary[User](x))
+          distance <- m.get(distanceKey).map(x => readBinary[Int](x))
+        } yield {
+          ProximityAlertTriggered(
+            traveler = traveler,
+            watcher = watcher,
+            distance = distance
           )
         }
         result.get
@@ -3784,107 +4022,111 @@ object uPickleImplicits {
   }
 
   implicit lazy val messageCodec: ReadWriter[Message] = {
-    val messageIdKey             = upack.Str("messageId")
-    val fromKey                  = upack.Str("from")
-    val dateKey                  = upack.Str("date")
-    val chatKey                  = upack.Str("chat")
-    val forwardFromKey           = upack.Str("forwardFrom")
-    val forwardFromChatKey       = upack.Str("forwardFromChat")
-    val forwardFromMessageIdKey  = upack.Str("forwardFromMessageId")
-    val forwardSignatureKey      = upack.Str("forwardSignature")
-    val forwardSenderNameKey     = upack.Str("forwardSenderName")
-    val forwardDateKey           = upack.Str("forwardDate")
-    val replyToMessageKey        = upack.Str("replyToMessage")
-    val viaBotKey                = upack.Str("viaBot")
-    val editDateKey              = upack.Str("editDate")
-    val mediaGroupIdKey          = upack.Str("mediaGroupId")
-    val authorSignatureKey       = upack.Str("authorSignature")
-    val textKey                  = upack.Str("text")
-    val entitiesKey              = upack.Str("entities")
-    val animationKey             = upack.Str("animation")
-    val audioKey                 = upack.Str("audio")
-    val documentKey              = upack.Str("document")
-    val photoKey                 = upack.Str("photo")
-    val stickerKey               = upack.Str("sticker")
-    val videoKey                 = upack.Str("video")
-    val videoNoteKey             = upack.Str("videoNote")
-    val voiceKey                 = upack.Str("voice")
-    val captionKey               = upack.Str("caption")
-    val captionEntitiesKey       = upack.Str("captionEntities")
-    val contactKey               = upack.Str("contact")
-    val diceKey                  = upack.Str("dice")
-    val gameKey                  = upack.Str("game")
-    val pollKey                  = upack.Str("poll")
-    val venueKey                 = upack.Str("venue")
-    val locationKey              = upack.Str("location")
-    val newChatMembersKey        = upack.Str("newChatMembers")
-    val leftChatMemberKey        = upack.Str("leftChatMember")
-    val newChatTitleKey          = upack.Str("newChatTitle")
-    val newChatPhotoKey          = upack.Str("newChatPhoto")
-    val deleteChatPhotoKey       = upack.Str("deleteChatPhoto")
-    val groupChatCreatedKey      = upack.Str("groupChatCreated")
-    val supergroupChatCreatedKey = upack.Str("supergroupChatCreated")
-    val channelChatCreatedKey    = upack.Str("channelChatCreated")
-    val migrateToChatIdKey       = upack.Str("migrateToChatId")
-    val migrateFromChatIdKey     = upack.Str("migrateFromChatId")
-    val pinnedMessageKey         = upack.Str("pinnedMessage")
-    val invoiceKey               = upack.Str("invoice")
-    val successfulPaymentKey     = upack.Str("successfulPayment")
-    val connectedWebsiteKey      = upack.Str("connectedWebsite")
-    val passportDataKey          = upack.Str("passportData")
-    val replyMarkupKey           = upack.Str("replyMarkup")
+    val messageIdKey               = upack.Str("messageId")
+    val fromKey                    = upack.Str("from")
+    val senderChatKey              = upack.Str("senderChat")
+    val dateKey                    = upack.Str("date")
+    val chatKey                    = upack.Str("chat")
+    val forwardFromKey             = upack.Str("forwardFrom")
+    val forwardFromChatKey         = upack.Str("forwardFromChat")
+    val forwardFromMessageIdKey    = upack.Str("forwardFromMessageId")
+    val forwardSignatureKey        = upack.Str("forwardSignature")
+    val forwardSenderNameKey       = upack.Str("forwardSenderName")
+    val forwardDateKey             = upack.Str("forwardDate")
+    val replyToMessageKey          = upack.Str("replyToMessage")
+    val viaBotKey                  = upack.Str("viaBot")
+    val editDateKey                = upack.Str("editDate")
+    val mediaGroupIdKey            = upack.Str("mediaGroupId")
+    val authorSignatureKey         = upack.Str("authorSignature")
+    val textKey                    = upack.Str("text")
+    val entitiesKey                = upack.Str("entities")
+    val animationKey               = upack.Str("animation")
+    val audioKey                   = upack.Str("audio")
+    val documentKey                = upack.Str("document")
+    val photoKey                   = upack.Str("photo")
+    val stickerKey                 = upack.Str("sticker")
+    val videoKey                   = upack.Str("video")
+    val videoNoteKey               = upack.Str("videoNote")
+    val voiceKey                   = upack.Str("voice")
+    val captionKey                 = upack.Str("caption")
+    val captionEntitiesKey         = upack.Str("captionEntities")
+    val contactKey                 = upack.Str("contact")
+    val diceKey                    = upack.Str("dice")
+    val gameKey                    = upack.Str("game")
+    val pollKey                    = upack.Str("poll")
+    val venueKey                   = upack.Str("venue")
+    val locationKey                = upack.Str("location")
+    val newChatMembersKey          = upack.Str("newChatMembers")
+    val leftChatMemberKey          = upack.Str("leftChatMember")
+    val newChatTitleKey            = upack.Str("newChatTitle")
+    val newChatPhotoKey            = upack.Str("newChatPhoto")
+    val deleteChatPhotoKey         = upack.Str("deleteChatPhoto")
+    val groupChatCreatedKey        = upack.Str("groupChatCreated")
+    val supergroupChatCreatedKey   = upack.Str("supergroupChatCreated")
+    val channelChatCreatedKey      = upack.Str("channelChatCreated")
+    val migrateToChatIdKey         = upack.Str("migrateToChatId")
+    val migrateFromChatIdKey       = upack.Str("migrateFromChatId")
+    val pinnedMessageKey           = upack.Str("pinnedMessage")
+    val invoiceKey                 = upack.Str("invoice")
+    val successfulPaymentKey       = upack.Str("successfulPayment")
+    val connectedWebsiteKey        = upack.Str("connectedWebsite")
+    val passportDataKey            = upack.Str("passportData")
+    val proximityAlertTriggeredKey = upack.Str("proximityAlertTriggered")
+    val replyMarkupKey             = upack.Str("replyMarkup")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          messageIdKey             -> writeMsg(x.messageId),
-          fromKey                  -> writeMsg(x.from),
-          dateKey                  -> writeMsg(x.date),
-          chatKey                  -> writeMsg(x.chat),
-          forwardFromKey           -> writeMsg(x.forwardFrom),
-          forwardFromChatKey       -> writeMsg(x.forwardFromChat),
-          forwardFromMessageIdKey  -> writeMsg(x.forwardFromMessageId),
-          forwardSignatureKey      -> writeMsg(x.forwardSignature),
-          forwardSenderNameKey     -> writeMsg(x.forwardSenderName),
-          forwardDateKey           -> writeMsg(x.forwardDate),
-          replyToMessageKey        -> writeMsg(x.replyToMessage),
-          viaBotKey                -> writeMsg(x.viaBot),
-          editDateKey              -> writeMsg(x.editDate),
-          mediaGroupIdKey          -> writeMsg(x.mediaGroupId),
-          authorSignatureKey       -> writeMsg(x.authorSignature),
-          textKey                  -> writeMsg(x.text),
-          entitiesKey              -> writeMsg(x.entities),
-          animationKey             -> writeMsg(x.animation),
-          audioKey                 -> writeMsg(x.audio),
-          documentKey              -> writeMsg(x.document),
-          photoKey                 -> writeMsg(x.photo),
-          stickerKey               -> writeMsg(x.sticker),
-          videoKey                 -> writeMsg(x.video),
-          videoNoteKey             -> writeMsg(x.videoNote),
-          voiceKey                 -> writeMsg(x.voice),
-          captionKey               -> writeMsg(x.caption),
-          captionEntitiesKey       -> writeMsg(x.captionEntities),
-          contactKey               -> writeMsg(x.contact),
-          diceKey                  -> writeMsg(x.dice),
-          gameKey                  -> writeMsg(x.game),
-          pollKey                  -> writeMsg(x.poll),
-          venueKey                 -> writeMsg(x.venue),
-          locationKey              -> writeMsg(x.location),
-          newChatMembersKey        -> writeMsg(x.newChatMembers),
-          leftChatMemberKey        -> writeMsg(x.leftChatMember),
-          newChatTitleKey          -> writeMsg(x.newChatTitle),
-          newChatPhotoKey          -> writeMsg(x.newChatPhoto),
-          deleteChatPhotoKey       -> writeMsg(x.deleteChatPhoto),
-          groupChatCreatedKey      -> writeMsg(x.groupChatCreated),
-          supergroupChatCreatedKey -> writeMsg(x.supergroupChatCreated),
-          channelChatCreatedKey    -> writeMsg(x.channelChatCreated),
-          migrateToChatIdKey       -> writeMsg(x.migrateToChatId),
-          migrateFromChatIdKey     -> writeMsg(x.migrateFromChatId),
-          pinnedMessageKey         -> writeMsg(x.pinnedMessage),
-          invoiceKey               -> writeMsg(x.invoice),
-          successfulPaymentKey     -> writeMsg(x.successfulPayment),
-          connectedWebsiteKey      -> writeMsg(x.connectedWebsite),
-          passportDataKey          -> writeMsg(x.passportData),
-          replyMarkupKey           -> writeMsg(x.replyMarkup)
+          messageIdKey               -> writeMsg(x.messageId),
+          fromKey                    -> writeMsg(x.from),
+          senderChatKey              -> writeMsg(x.senderChat),
+          dateKey                    -> writeMsg(x.date),
+          chatKey                    -> writeMsg(x.chat),
+          forwardFromKey             -> writeMsg(x.forwardFrom),
+          forwardFromChatKey         -> writeMsg(x.forwardFromChat),
+          forwardFromMessageIdKey    -> writeMsg(x.forwardFromMessageId),
+          forwardSignatureKey        -> writeMsg(x.forwardSignature),
+          forwardSenderNameKey       -> writeMsg(x.forwardSenderName),
+          forwardDateKey             -> writeMsg(x.forwardDate),
+          replyToMessageKey          -> writeMsg(x.replyToMessage),
+          viaBotKey                  -> writeMsg(x.viaBot),
+          editDateKey                -> writeMsg(x.editDate),
+          mediaGroupIdKey            -> writeMsg(x.mediaGroupId),
+          authorSignatureKey         -> writeMsg(x.authorSignature),
+          textKey                    -> writeMsg(x.text),
+          entitiesKey                -> writeMsg(x.entities),
+          animationKey               -> writeMsg(x.animation),
+          audioKey                   -> writeMsg(x.audio),
+          documentKey                -> writeMsg(x.document),
+          photoKey                   -> writeMsg(x.photo),
+          stickerKey                 -> writeMsg(x.sticker),
+          videoKey                   -> writeMsg(x.video),
+          videoNoteKey               -> writeMsg(x.videoNote),
+          voiceKey                   -> writeMsg(x.voice),
+          captionKey                 -> writeMsg(x.caption),
+          captionEntitiesKey         -> writeMsg(x.captionEntities),
+          contactKey                 -> writeMsg(x.contact),
+          diceKey                    -> writeMsg(x.dice),
+          gameKey                    -> writeMsg(x.game),
+          pollKey                    -> writeMsg(x.poll),
+          venueKey                   -> writeMsg(x.venue),
+          locationKey                -> writeMsg(x.location),
+          newChatMembersKey          -> writeMsg(x.newChatMembers),
+          leftChatMemberKey          -> writeMsg(x.leftChatMember),
+          newChatTitleKey            -> writeMsg(x.newChatTitle),
+          newChatPhotoKey            -> writeMsg(x.newChatPhoto),
+          deleteChatPhotoKey         -> writeMsg(x.deleteChatPhoto),
+          groupChatCreatedKey        -> writeMsg(x.groupChatCreated),
+          supergroupChatCreatedKey   -> writeMsg(x.supergroupChatCreated),
+          channelChatCreatedKey      -> writeMsg(x.channelChatCreated),
+          migrateToChatIdKey         -> writeMsg(x.migrateToChatId),
+          migrateFromChatIdKey       -> writeMsg(x.migrateFromChatId),
+          pinnedMessageKey           -> writeMsg(x.pinnedMessage),
+          invoiceKey                 -> writeMsg(x.invoice),
+          successfulPaymentKey       -> writeMsg(x.successfulPayment),
+          connectedWebsiteKey        -> writeMsg(x.connectedWebsite),
+          passportDataKey            -> writeMsg(x.passportData),
+          proximityAlertTriggeredKey -> writeMsg(x.proximityAlertTriggered),
+          replyMarkupKey             -> writeMsg(x.replyMarkup)
         )
       },
       msg => {
@@ -3892,6 +4134,7 @@ object uPickleImplicits {
         val result = for {
           messageId       <- m.get(messageIdKey).map(x => readBinary[Int](x))
           from            <- m.get(fromKey).map(x => readBinary[Option[User]](x))
+          senderChat      <- m.get(senderChatKey).map(x => readBinary[Option[Chat]](x))
           date            <- m.get(dateKey).map(x => readBinary[Int](x))
           chat            <- m.get(chatKey).map(x => readBinary[Chat](x))
           forwardFrom     <- m.get(forwardFromKey).map(x => readBinary[Option[User]](x))
@@ -3946,11 +4189,15 @@ object uPickleImplicits {
             .map(x => readBinary[Option[SuccessfulPayment]](x))
           connectedWebsite <- m.get(connectedWebsiteKey).map(x => readBinary[Option[String]](x))
           passportData     <- m.get(passportDataKey).map(x => readBinary[Option[PassportData]](x))
-          replyMarkup      <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          proximityAlertTriggered <- m
+            .get(proximityAlertTriggeredKey)
+            .map(x => readBinary[Option[ProximityAlertTriggered]](x))
+          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
         } yield {
           Message(
             messageId = messageId,
             from = from,
+            senderChat = senderChat,
             date = date,
             chat = chat,
             forwardFrom = forwardFrom,
@@ -3997,6 +4244,7 @@ object uPickleImplicits {
             successfulPayment = successfulPayment,
             connectedWebsite = connectedWebsite,
             passportData = passportData,
+            proximityAlertTriggered = proximityAlertTriggered,
             replyMarkup = replyMarkup
           )
         }
@@ -4309,11 +4557,33 @@ object uPickleImplicits {
     )
   }
 
+  implicit lazy val messageidCodec: ReadWriter[MessageId] = {
+    val messageIdKey = upack.Str("messageId")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          messageIdKey -> writeMsg(x.messageId)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          messageId <- m.get(messageIdKey).map(x => readBinary[Int](x))
+        } yield {
+          MessageId(
+            messageId = messageId
+          )
+        }
+        result.get
+      }
+    )
+  }
+
   implicit lazy val chatmemberCodec: ReadWriter[ChatMember] = {
     val userKey                  = upack.Str("user")
     val statusKey                = upack.Str("status")
     val customTitleKey           = upack.Str("customTitle")
-    val untilDateKey             = upack.Str("untilDate")
+    val isAnonymousKey           = upack.Str("isAnonymous")
     val canBeEditedKey           = upack.Str("canBeEdited")
     val canPostMessagesKey       = upack.Str("canPostMessages")
     val canEditMessagesKey       = upack.Str("canEditMessages")
@@ -4329,13 +4599,14 @@ object uPickleImplicits {
     val canSendPollsKey          = upack.Str("canSendPolls")
     val canSendOtherMessagesKey  = upack.Str("canSendOtherMessages")
     val canAddWebPagePreviewsKey = upack.Str("canAddWebPagePreviews")
+    val untilDateKey             = upack.Str("untilDate")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
           userKey                  -> writeMsg(x.user),
           statusKey                -> writeMsg(x.status),
           customTitleKey           -> writeMsg(x.customTitle),
-          untilDateKey             -> writeMsg(x.untilDate),
+          isAnonymousKey           -> writeMsg(x.isAnonymous),
           canBeEditedKey           -> writeMsg(x.canBeEdited),
           canPostMessagesKey       -> writeMsg(x.canPostMessages),
           canEditMessagesKey       -> writeMsg(x.canEditMessages),
@@ -4350,7 +4621,8 @@ object uPickleImplicits {
           canSendMediaMessagesKey  -> writeMsg(x.canSendMediaMessages),
           canSendPollsKey          -> writeMsg(x.canSendPolls),
           canSendOtherMessagesKey  -> writeMsg(x.canSendOtherMessages),
-          canAddWebPagePreviewsKey -> writeMsg(x.canAddWebPagePreviews)
+          canAddWebPagePreviewsKey -> writeMsg(x.canAddWebPagePreviews),
+          untilDateKey             -> writeMsg(x.untilDate)
         )
       },
       msg => {
@@ -4359,7 +4631,7 @@ object uPickleImplicits {
           user              <- m.get(userKey).map(x => readBinary[User](x))
           status            <- m.get(statusKey).map(x => readBinary[String](x))
           customTitle       <- m.get(customTitleKey).map(x => readBinary[Option[String]](x))
-          untilDate         <- m.get(untilDateKey).map(x => readBinary[Option[Int]](x))
+          isAnonymous       <- m.get(isAnonymousKey).map(x => readBinary[Option[Boolean]](x))
           canBeEdited       <- m.get(canBeEditedKey).map(x => readBinary[Option[Boolean]](x))
           canPostMessages   <- m.get(canPostMessagesKey).map(x => readBinary[Option[Boolean]](x))
           canEditMessages   <- m.get(canEditMessagesKey).map(x => readBinary[Option[Boolean]](x))
@@ -4383,12 +4655,13 @@ object uPickleImplicits {
           canAddWebPagePreviews <- m
             .get(canAddWebPagePreviewsKey)
             .map(x => readBinary[Option[Boolean]](x))
+          untilDate <- m.get(untilDateKey).map(x => readBinary[Option[Int]](x))
         } yield {
           ChatMember(
             user = user,
             status = status,
             customTitle = customTitle,
-            untilDate = untilDate,
+            isAnonymous = isAnonymous,
             canBeEdited = canBeEdited,
             canPostMessages = canPostMessages,
             canEditMessages = canEditMessages,
@@ -4403,7 +4676,8 @@ object uPickleImplicits {
             canSendMediaMessages = canSendMediaMessages,
             canSendPolls = canSendPolls,
             canSendOtherMessages = canSendOtherMessages,
-            canAddWebPagePreviews = canAddWebPagePreviews
+            canAddWebPagePreviews = canAddWebPagePreviews,
+            untilDate = untilDate
           )
         }
         result.get
@@ -4460,6 +4734,7 @@ object uPickleImplicits {
     val heightKey       = upack.Str("height")
     val durationKey     = upack.Str("duration")
     val thumbKey        = upack.Str("thumb")
+    val fileNameKey     = upack.Str("fileName")
     val mimeTypeKey     = upack.Str("mimeType")
     val fileSizeKey     = upack.Str("fileSize")
     readwriter[upack.Msg].bimap(
@@ -4471,6 +4746,7 @@ object uPickleImplicits {
           heightKey       -> writeMsg(x.height),
           durationKey     -> writeMsg(x.duration),
           thumbKey        -> writeMsg(x.thumb),
+          fileNameKey     -> writeMsg(x.fileName),
           mimeTypeKey     -> writeMsg(x.mimeType),
           fileSizeKey     -> writeMsg(x.fileSize)
         )
@@ -4484,6 +4760,7 @@ object uPickleImplicits {
           height       <- m.get(heightKey).map(x => readBinary[Int](x))
           duration     <- m.get(durationKey).map(x => readBinary[Int](x))
           thumb        <- m.get(thumbKey).map(x => readBinary[Option[PhotoSize]](x))
+          fileName     <- m.get(fileNameKey).map(x => readBinary[Option[String]](x))
           mimeType     <- m.get(mimeTypeKey).map(x => readBinary[Option[String]](x))
           fileSize     <- m.get(fileSizeKey).map(x => readBinary[Option[Int]](x))
         } yield {
@@ -4494,6 +4771,7 @@ object uPickleImplicits {
             height = height,
             duration = duration,
             thumb = thumb,
+            fileName = fileName,
             mimeType = mimeType,
             fileSize = fileSize
           )
@@ -4555,15 +4833,19 @@ object CirceImplicits {
   import io.circe.HCursor
 
   implicit lazy val emojiEncoder: Encoder[Emoji] = {
-    case EmojiDice       => EmojiDice.asJson
-    case EmojiDarts      => EmojiDarts.asJson
-    case EmojiBasketball => EmojiBasketball.asJson
+    case EmojiDice        => EmojiDice.asJson
+    case EmojiDarts       => EmojiDarts.asJson
+    case EmojiBasketball  => EmojiBasketball.asJson
+    case EmojiFootball    => EmojiFootball.asJson
+    case EmojiSlotMachine => EmojiSlotMachine.asJson
   }
   implicit lazy val emojiDecoder: Decoder[Emoji] = {
     List[Decoder[Emoji]](
       emojidiceDecoder.widen,
       emojidartsDecoder.widen,
-      emojibasketballDecoder.widen
+      emojibasketballDecoder.widen,
+      emojifootballDecoder.widen,
+      emojislotmachineDecoder.widen
     ).reduceLeft(_ or _)
   }
 
@@ -4577,6 +4859,14 @@ object CirceImplicits {
     (x: EmojiBasketball.type) => "🏀".asJson
   implicit lazy val emojibasketballDecoder: Decoder[EmojiBasketball.type] =
     Decoder[String].map(_ => EmojiBasketball)
+  implicit lazy val emojifootballEncoder: Encoder[EmojiFootball.type] = (x: EmojiFootball.type) =>
+    "⚽".asJson
+  implicit lazy val emojifootballDecoder: Decoder[EmojiFootball.type] =
+    Decoder[String].map(_ => EmojiFootball)
+  implicit lazy val emojislotmachineEncoder: Encoder[EmojiSlotMachine.type] =
+    (x: EmojiSlotMachine.type) => "🎰".asJson
+  implicit lazy val emojislotmachineDecoder: Decoder[EmojiSlotMachine.type] =
+    Decoder[String].map(_ => EmojiSlotMachine)
 
   implicit lazy val parsemodeEncoder: Encoder[ParseMode] = {
     case Markdown  => Markdown.asJson
@@ -4761,13 +5051,14 @@ object CirceImplicits {
     (x: InputMediaAnimation) => {
       Json.fromFields(
         List(
-          "media"      -> x.media.asJson,
-          "thumb"      -> x.thumb.asJson,
-          "caption"    -> x.caption.asJson,
-          "parse_mode" -> x.parseMode.asJson,
-          "width"      -> x.width.asJson,
-          "height"     -> x.height.asJson,
-          "duration"   -> x.duration.asJson
+          "media"            -> x.media.asJson,
+          "thumb"            -> x.thumb.asJson,
+          "caption"          -> x.caption.asJson,
+          "parse_mode"       -> x.parseMode.asJson,
+          "caption_entities" -> x.captionEntities.asJson,
+          "width"            -> x.width.asJson,
+          "height"           -> x.height.asJson,
+          "duration"         -> x.duration.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4775,18 +5066,20 @@ object CirceImplicits {
   implicit lazy val inputmediaanimationDecoder: Decoder[InputMediaAnimation] =
     Decoder.instance { h =>
       for {
-        _media     <- h.get[String]("media")
-        _thumb     <- h.get[Option[IFile]]("thumb")
-        _caption   <- h.get[Option[String]]("caption")
-        _parseMode <- h.get[Option[ParseMode]]("parse_mode")
-        _width     <- h.get[Option[Int]]("width")
-        _height    <- h.get[Option[Int]]("height")
-        _duration  <- h.get[Option[Int]]("duration")
+        _media           <- h.get[String]("media")
+        _thumb           <- h.get[Option[IFile]]("thumb")
+        _caption         <- h.get[Option[String]]("caption")
+        _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _width           <- h.get[Option[Int]]("width")
+        _height          <- h.get[Option[Int]]("height")
+        _duration        <- h.get[Option[Int]]("duration")
       } yield {
         InputMediaAnimation(media = _media,
                             thumb = _thumb,
                             caption = _caption,
                             parseMode = _parseMode,
+                            captionEntities = _captionEntities,
                             width = _width,
                             height = _height,
                             duration = _duration)
@@ -4797,9 +5090,10 @@ object CirceImplicits {
     (x: InputMediaPhoto) => {
       Json.fromFields(
         List(
-          "media"      -> x.media.asJson,
-          "caption"    -> x.caption.asJson,
-          "parse_mode" -> x.parseMode.asJson
+          "media"            -> x.media.asJson,
+          "caption"          -> x.caption.asJson,
+          "parse_mode"       -> x.parseMode.asJson,
+          "caption_entities" -> x.captionEntities.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4807,11 +5101,15 @@ object CirceImplicits {
   implicit lazy val inputmediaphotoDecoder: Decoder[InputMediaPhoto] =
     Decoder.instance { h =>
       for {
-        _media     <- h.get[String]("media")
-        _caption   <- h.get[Option[String]]("caption")
-        _parseMode <- h.get[Option[ParseMode]]("parse_mode")
+        _media           <- h.get[String]("media")
+        _caption         <- h.get[Option[String]]("caption")
+        _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
       } yield {
-        InputMediaPhoto(media = _media, caption = _caption, parseMode = _parseMode)
+        InputMediaPhoto(media = _media,
+                        caption = _caption,
+                        parseMode = _parseMode,
+                        captionEntities = _captionEntities)
       }
     }
 
@@ -4823,6 +5121,7 @@ object CirceImplicits {
           "thumb"              -> x.thumb.asJson,
           "caption"            -> x.caption.asJson,
           "parse_mode"         -> x.parseMode.asJson,
+          "caption_entities"   -> x.captionEntities.asJson,
           "width"              -> x.width.asJson,
           "height"             -> x.height.asJson,
           "duration"           -> x.duration.asJson,
@@ -4838,19 +5137,23 @@ object CirceImplicits {
         _thumb             <- h.get[Option[IFile]]("thumb")
         _caption           <- h.get[Option[String]]("caption")
         _parseMode         <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities   <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _width             <- h.get[Option[Int]]("width")
         _height            <- h.get[Option[Int]]("height")
         _duration          <- h.get[Option[Int]]("duration")
         _supportsStreaming <- h.get[Option[Boolean]]("supports_streaming")
       } yield {
-        InputMediaVideo(media = _media,
-                        thumb = _thumb,
-                        caption = _caption,
-                        parseMode = _parseMode,
-                        width = _width,
-                        height = _height,
-                        duration = _duration,
-                        supportsStreaming = _supportsStreaming)
+        InputMediaVideo(
+          media = _media,
+          thumb = _thumb,
+          caption = _caption,
+          parseMode = _parseMode,
+          captionEntities = _captionEntities,
+          width = _width,
+          height = _height,
+          duration = _duration,
+          supportsStreaming = _supportsStreaming
+        )
       }
     }
 
@@ -4858,10 +5161,12 @@ object CirceImplicits {
     (x: InputMediaDocument) => {
       Json.fromFields(
         List(
-          "media"      -> x.media.asJson,
-          "thumb"      -> x.thumb.asJson,
-          "caption"    -> x.caption.asJson,
-          "parse_mode" -> x.parseMode.asJson
+          "media"                          -> x.media.asJson,
+          "thumb"                          -> x.thumb.asJson,
+          "caption"                        -> x.caption.asJson,
+          "parse_mode"                     -> x.parseMode.asJson,
+          "caption_entities"               -> x.captionEntities.asJson,
+          "disable_content_type_detection" -> x.disableContentTypeDetection.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4869,15 +5174,21 @@ object CirceImplicits {
   implicit lazy val inputmediadocumentDecoder: Decoder[InputMediaDocument] =
     Decoder.instance { h =>
       for {
-        _media     <- h.get[String]("media")
-        _thumb     <- h.get[Option[IFile]]("thumb")
-        _caption   <- h.get[Option[String]]("caption")
-        _parseMode <- h.get[Option[ParseMode]]("parse_mode")
+        _media                       <- h.get[String]("media")
+        _thumb                       <- h.get[Option[IFile]]("thumb")
+        _caption                     <- h.get[Option[String]]("caption")
+        _parseMode                   <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities             <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _disableContentTypeDetection <- h.get[Option[Boolean]]("disable_content_type_detection")
       } yield {
-        InputMediaDocument(media = _media,
-                           thumb = _thumb,
-                           caption = _caption,
-                           parseMode = _parseMode)
+        InputMediaDocument(
+          media = _media,
+          thumb = _thumb,
+          caption = _caption,
+          parseMode = _parseMode,
+          captionEntities = _captionEntities,
+          disableContentTypeDetection = _disableContentTypeDetection
+        )
       }
     }
 
@@ -4885,13 +5196,14 @@ object CirceImplicits {
     (x: InputMediaAudio) => {
       Json.fromFields(
         List(
-          "media"      -> x.media.asJson,
-          "thumb"      -> x.thumb.asJson,
-          "caption"    -> x.caption.asJson,
-          "parse_mode" -> x.parseMode.asJson,
-          "duration"   -> x.duration.asJson,
-          "performer"  -> x.performer.asJson,
-          "title"      -> x.title.asJson
+          "media"            -> x.media.asJson,
+          "thumb"            -> x.thumb.asJson,
+          "caption"          -> x.caption.asJson,
+          "parse_mode"       -> x.parseMode.asJson,
+          "caption_entities" -> x.captionEntities.asJson,
+          "duration"         -> x.duration.asJson,
+          "performer"        -> x.performer.asJson,
+          "title"            -> x.title.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4899,18 +5211,20 @@ object CirceImplicits {
   implicit lazy val inputmediaaudioDecoder: Decoder[InputMediaAudio] =
     Decoder.instance { h =>
       for {
-        _media     <- h.get[String]("media")
-        _thumb     <- h.get[Option[IFile]]("thumb")
-        _caption   <- h.get[Option[String]]("caption")
-        _parseMode <- h.get[Option[ParseMode]]("parse_mode")
-        _duration  <- h.get[Option[Int]]("duration")
-        _performer <- h.get[Option[String]]("performer")
-        _title     <- h.get[Option[String]]("title")
+        _media           <- h.get[String]("media")
+        _thumb           <- h.get[Option[IFile]]("thumb")
+        _caption         <- h.get[Option[String]]("caption")
+        _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _duration        <- h.get[Option[Int]]("duration")
+        _performer       <- h.get[Option[String]]("performer")
+        _title           <- h.get[Option[String]]("title")
       } yield {
         InputMediaAudio(media = _media,
                         thumb = _thumb,
                         caption = _caption,
                         parseMode = _parseMode,
+                        captionEntities = _captionEntities,
                         duration = _duration,
                         performer = _performer,
                         title = _title)
@@ -4998,6 +5312,7 @@ object CirceImplicits {
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
+          "caption_entities"      -> x.captionEntities.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
@@ -5017,6 +5332,7 @@ object CirceImplicits {
         _title               <- h.get[Option[String]]("title")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5031,6 +5347,7 @@ object CirceImplicits {
           title = _title,
           caption = _caption,
           parseMode = _parseMode,
+          captionEntities = _captionEntities,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent
         )
@@ -5048,6 +5365,8 @@ object CirceImplicits {
           "address"               -> x.address.asJson,
           "foursquare_id"         -> x.foursquareId.asJson,
           "foursquare_type"       -> x.foursquareType.asJson,
+          "google_place_id"       -> x.googlePlaceId.asJson,
+          "google_place_type"     -> x.googlePlaceType.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson,
           "thumb_url"             -> x.thumbUrl.asJson,
@@ -5067,6 +5386,8 @@ object CirceImplicits {
         _address             <- h.get[String]("address")
         _foursquareId        <- h.get[Option[String]]("foursquare_id")
         _foursquareType      <- h.get[Option[String]]("foursquare_type")
+        _googlePlaceId       <- h.get[Option[String]]("google_place_id")
+        _googlePlaceType     <- h.get[Option[String]]("google_place_type")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
         _thumbUrl            <- h.get[Option[String]]("thumb_url")
@@ -5081,6 +5402,8 @@ object CirceImplicits {
           address = _address,
           foursquareId = _foursquareId,
           foursquareType = _foursquareType,
+          googlePlaceId = _googlePlaceId,
+          googlePlaceType = _googlePlaceType,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent,
           thumbUrl = _thumbUrl,
@@ -5150,6 +5473,7 @@ object CirceImplicits {
           "description"           -> x.description.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
+          "caption_entities"      -> x.captionEntities.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
@@ -5168,6 +5492,7 @@ object CirceImplicits {
         _description         <- h.get[Option[String]]("description")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5181,6 +5506,7 @@ object CirceImplicits {
           description = _description,
           caption = _caption,
           parseMode = _parseMode,
+          captionEntities = _captionEntities,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent
         )
@@ -5195,6 +5521,7 @@ object CirceImplicits {
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
+          "caption_entities"      -> x.captionEntities.asJson,
           "document_url"          -> x.documentUrl.asJson,
           "mime_type"             -> x.mimeType.asJson,
           "description"           -> x.description.asJson,
@@ -5214,6 +5541,7 @@ object CirceImplicits {
         _title               <- h.get[String]("title")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _documentUrl         <- h.get[String]("document_url")
         _mimeType            <- h.get[String]("mime_type")
         _description         <- h.get[Option[String]]("description")
@@ -5228,6 +5556,7 @@ object CirceImplicits {
           title = _title,
           caption = _caption,
           parseMode = _parseMode,
+          captionEntities = _captionEntities,
           documentUrl = _documentUrl,
           mimeType = _mimeType,
           description = _description,
@@ -5249,6 +5578,7 @@ object CirceImplicits {
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
+          "caption_entities"      -> x.captionEntities.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
@@ -5263,16 +5593,20 @@ object CirceImplicits {
         _title               <- h.get[String]("title")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
-        InlineQueryResultCachedVoice(id = _id,
-                                     voiceFileId = _voiceFileId,
-                                     title = _title,
-                                     caption = _caption,
-                                     parseMode = _parseMode,
-                                     replyMarkup = _replyMarkup,
-                                     inputMessageContent = _inputMessageContent)
+        InlineQueryResultCachedVoice(
+          id = _id,
+          voiceFileId = _voiceFileId,
+          title = _title,
+          caption = _caption,
+          parseMode = _parseMode,
+          captionEntities = _captionEntities,
+          replyMarkup = _replyMarkup,
+          inputMessageContent = _inputMessageContent
+        )
       }
     }
 
@@ -5332,6 +5666,7 @@ object CirceImplicits {
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
+          "caption_entities"      -> x.captionEntities.asJson,
           "performer"             -> x.performer.asJson,
           "audio_duration"        -> x.audioDuration.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
@@ -5348,6 +5683,7 @@ object CirceImplicits {
         _title               <- h.get[String]("title")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _performer           <- h.get[Option[String]]("performer")
         _audioDuration       <- h.get[Option[Int]]("audio_duration")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
@@ -5359,6 +5695,7 @@ object CirceImplicits {
           title = _title,
           caption = _caption,
           parseMode = _parseMode,
+          captionEntities = _captionEntities,
           performer = _performer,
           audioDuration = _audioDuration,
           replyMarkup = _replyMarkup,
@@ -5381,6 +5718,7 @@ object CirceImplicits {
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
+          "caption_entities"      -> x.captionEntities.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
@@ -5400,6 +5738,7 @@ object CirceImplicits {
         _title               <- h.get[Option[String]]("title")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5414,6 +5753,7 @@ object CirceImplicits {
           title = _title,
           caption = _caption,
           parseMode = _parseMode,
+          captionEntities = _captionEntities,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent
         )
@@ -5430,6 +5770,7 @@ object CirceImplicits {
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
+          "caption_entities"      -> x.captionEntities.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
@@ -5445,16 +5786,20 @@ object CirceImplicits {
         _title               <- h.get[Option[String]]("title")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
-        InlineQueryResultCachedMpeg4Gif(id = _id,
-                                        mpeg4FileId = _mpeg4FileId,
-                                        title = _title,
-                                        caption = _caption,
-                                        parseMode = _parseMode,
-                                        replyMarkup = _replyMarkup,
-                                        inputMessageContent = _inputMessageContent)
+        InlineQueryResultCachedMpeg4Gif(
+          id = _id,
+          mpeg4FileId = _mpeg4FileId,
+          title = _title,
+          caption = _caption,
+          parseMode = _parseMode,
+          captionEntities = _captionEntities,
+          replyMarkup = _replyMarkup,
+          inputMessageContent = _inputMessageContent
+        )
       }
     }
 
@@ -5469,6 +5814,7 @@ object CirceImplicits {
           "description"           -> x.description.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
+          "caption_entities"      -> x.captionEntities.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
@@ -5485,6 +5831,7 @@ object CirceImplicits {
         _description         <- h.get[Option[String]]("description")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5495,6 +5842,7 @@ object CirceImplicits {
           description = _description,
           caption = _caption,
           parseMode = _parseMode,
+          captionEntities = _captionEntities,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent
         )
@@ -5511,6 +5859,7 @@ object CirceImplicits {
           "description"           -> x.description.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
+          "caption_entities"      -> x.captionEntities.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
@@ -5526,6 +5875,7 @@ object CirceImplicits {
         _description         <- h.get[Option[String]]("description")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5536,6 +5886,7 @@ object CirceImplicits {
           description = _description,
           caption = _caption,
           parseMode = _parseMode,
+          captionEntities = _captionEntities,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent
         )
@@ -5574,6 +5925,7 @@ object CirceImplicits {
           "description"           -> x.description.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
+          "caption_entities"      -> x.captionEntities.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
@@ -5589,6 +5941,7 @@ object CirceImplicits {
         _description         <- h.get[Option[String]]("description")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
@@ -5599,6 +5952,7 @@ object CirceImplicits {
           description = _description,
           caption = _caption,
           parseMode = _parseMode,
+          captionEntities = _captionEntities,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent
         )
@@ -5643,6 +5997,7 @@ object CirceImplicits {
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
+          "caption_entities"      -> x.captionEntities.asJson,
           "video_width"           -> x.videoWidth.asJson,
           "video_height"          -> x.videoHeight.asJson,
           "video_duration"        -> x.videoDuration.asJson,
@@ -5663,6 +6018,7 @@ object CirceImplicits {
         _title               <- h.get[String]("title")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _videoWidth          <- h.get[Option[Int]]("video_width")
         _videoHeight         <- h.get[Option[Int]]("video_height")
         _videoDuration       <- h.get[Option[Int]]("video_duration")
@@ -5678,6 +6034,7 @@ object CirceImplicits {
           title = _title,
           caption = _caption,
           parseMode = _parseMode,
+          captionEntities = _captionEntities,
           videoWidth = _videoWidth,
           videoHeight = _videoHeight,
           videoDuration = _videoDuration,
@@ -5696,6 +6053,7 @@ object CirceImplicits {
           "audio_file_id"         -> x.audioFileId.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
+          "caption_entities"      -> x.captionEntities.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
@@ -5709,15 +6067,19 @@ object CirceImplicits {
         _audioFileId         <- h.get[String]("audio_file_id")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
-        InlineQueryResultCachedAudio(id = _id,
-                                     audioFileId = _audioFileId,
-                                     caption = _caption,
-                                     parseMode = _parseMode,
-                                     replyMarkup = _replyMarkup,
-                                     inputMessageContent = _inputMessageContent)
+        InlineQueryResultCachedAudio(
+          id = _id,
+          audioFileId = _audioFileId,
+          caption = _caption,
+          parseMode = _parseMode,
+          captionEntities = _captionEntities,
+          replyMarkup = _replyMarkup,
+          inputMessageContent = _inputMessageContent
+        )
       }
     }
 
@@ -5725,16 +6087,19 @@ object CirceImplicits {
     (x: InlineQueryResultLocation) => {
       Json.fromFields(
         List(
-          "id"                    -> x.id.asJson,
-          "latitude"              -> x.latitude.asJson,
-          "longitude"             -> x.longitude.asJson,
-          "title"                 -> x.title.asJson,
-          "live_period"           -> x.livePeriod.asJson,
-          "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson,
-          "thumb_url"             -> x.thumbUrl.asJson,
-          "thumb_width"           -> x.thumbWidth.asJson,
-          "thumb_height"          -> x.thumbHeight.asJson
+          "id"                     -> x.id.asJson,
+          "latitude"               -> x.latitude.asJson,
+          "longitude"              -> x.longitude.asJson,
+          "title"                  -> x.title.asJson,
+          "horizontal_accuracy"    -> x.horizontalAccuracy.asJson,
+          "live_period"            -> x.livePeriod.asJson,
+          "heading"                -> x.heading.asJson,
+          "proximity_alert_radius" -> x.proximityAlertRadius.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "input_message_content"  -> x.inputMessageContent.asJson,
+          "thumb_url"              -> x.thumbUrl.asJson,
+          "thumb_width"            -> x.thumbWidth.asJson,
+          "thumb_height"           -> x.thumbHeight.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5742,23 +6107,29 @@ object CirceImplicits {
   implicit lazy val inlinequeryresultlocationDecoder: Decoder[InlineQueryResultLocation] =
     Decoder.instance { h =>
       for {
-        _id                  <- h.get[String]("id")
-        _latitude            <- h.get[Float]("latitude")
-        _longitude           <- h.get[Float]("longitude")
-        _title               <- h.get[String]("title")
-        _livePeriod          <- h.get[Option[Int]]("live_period")
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
-        _thumbUrl            <- h.get[Option[String]]("thumb_url")
-        _thumbWidth          <- h.get[Option[Int]]("thumb_width")
-        _thumbHeight         <- h.get[Option[Int]]("thumb_height")
+        _id                   <- h.get[String]("id")
+        _latitude             <- h.get[Float]("latitude")
+        _longitude            <- h.get[Float]("longitude")
+        _title                <- h.get[String]("title")
+        _horizontalAccuracy   <- h.get[Option[Float]]("horizontal_accuracy")
+        _livePeriod           <- h.get[Option[Int]]("live_period")
+        _heading              <- h.get[Option[Int]]("heading")
+        _proximityAlertRadius <- h.get[Option[Int]]("proximity_alert_radius")
+        _replyMarkup          <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
+        _inputMessageContent  <- h.get[Option[InputMessageContent]]("input_message_content")
+        _thumbUrl             <- h.get[Option[String]]("thumb_url")
+        _thumbWidth           <- h.get[Option[Int]]("thumb_width")
+        _thumbHeight          <- h.get[Option[Int]]("thumb_height")
       } yield {
         InlineQueryResultLocation(
           id = _id,
           latitude = _latitude,
           longitude = _longitude,
           title = _title,
+          horizontalAccuracy = _horizontalAccuracy,
           livePeriod = _livePeriod,
+          heading = _heading,
+          proximityAlertRadius = _proximityAlertRadius,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent,
           thumbUrl = _thumbUrl,
@@ -5777,6 +6148,7 @@ object CirceImplicits {
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
+          "caption_entities"      -> x.captionEntities.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
@@ -5791,16 +6163,20 @@ object CirceImplicits {
         _title               <- h.get[Option[String]]("title")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
-        InlineQueryResultCachedGif(id = _id,
-                                   gifFileId = _gifFileId,
-                                   title = _title,
-                                   caption = _caption,
-                                   parseMode = _parseMode,
-                                   replyMarkup = _replyMarkup,
-                                   inputMessageContent = _inputMessageContent)
+        InlineQueryResultCachedGif(
+          id = _id,
+          gifFileId = _gifFileId,
+          title = _title,
+          caption = _caption,
+          parseMode = _parseMode,
+          captionEntities = _captionEntities,
+          replyMarkup = _replyMarkup,
+          inputMessageContent = _inputMessageContent
+        )
       }
     }
 
@@ -5813,6 +6189,7 @@ object CirceImplicits {
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
+          "caption_entities"      -> x.captionEntities.asJson,
           "voice_duration"        -> x.voiceDuration.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
@@ -5828,6 +6205,7 @@ object CirceImplicits {
         _title               <- h.get[String]("title")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _voiceDuration       <- h.get[Option[Int]]("voice_duration")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
@@ -5838,6 +6216,7 @@ object CirceImplicits {
           title = _title,
           caption = _caption,
           parseMode = _parseMode,
+          captionEntities = _captionEntities,
           voiceDuration = _voiceDuration,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent
@@ -5864,12 +6243,14 @@ object CirceImplicits {
     (x: InputVenueMessageContent) => {
       Json.fromFields(
         List(
-          "latitude"        -> x.latitude.asJson,
-          "longitude"       -> x.longitude.asJson,
-          "title"           -> x.title.asJson,
-          "address"         -> x.address.asJson,
-          "foursquare_id"   -> x.foursquareId.asJson,
-          "foursquare_type" -> x.foursquareType.asJson
+          "latitude"          -> x.latitude.asJson,
+          "longitude"         -> x.longitude.asJson,
+          "title"             -> x.title.asJson,
+          "address"           -> x.address.asJson,
+          "foursquare_id"     -> x.foursquareId.asJson,
+          "foursquare_type"   -> x.foursquareType.asJson,
+          "google_place_id"   -> x.googlePlaceId.asJson,
+          "google_place_type" -> x.googlePlaceType.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5877,19 +6258,25 @@ object CirceImplicits {
   implicit lazy val inputvenuemessagecontentDecoder: Decoder[InputVenueMessageContent] =
     Decoder.instance { h =>
       for {
-        _latitude       <- h.get[Float]("latitude")
-        _longitude      <- h.get[Float]("longitude")
-        _title          <- h.get[String]("title")
-        _address        <- h.get[String]("address")
-        _foursquareId   <- h.get[Option[String]]("foursquare_id")
-        _foursquareType <- h.get[Option[String]]("foursquare_type")
+        _latitude        <- h.get[Float]("latitude")
+        _longitude       <- h.get[Float]("longitude")
+        _title           <- h.get[String]("title")
+        _address         <- h.get[String]("address")
+        _foursquareId    <- h.get[Option[String]]("foursquare_id")
+        _foursquareType  <- h.get[Option[String]]("foursquare_type")
+        _googlePlaceId   <- h.get[Option[String]]("google_place_id")
+        _googlePlaceType <- h.get[Option[String]]("google_place_type")
       } yield {
-        InputVenueMessageContent(latitude = _latitude,
-                                 longitude = _longitude,
-                                 title = _title,
-                                 address = _address,
-                                 foursquareId = _foursquareId,
-                                 foursquareType = _foursquareType)
+        InputVenueMessageContent(
+          latitude = _latitude,
+          longitude = _longitude,
+          title = _title,
+          address = _address,
+          foursquareId = _foursquareId,
+          foursquareType = _foursquareType,
+          googlePlaceId = _googlePlaceId,
+          googlePlaceType = _googlePlaceType
+        )
       }
     }
 
@@ -5924,9 +6311,12 @@ object CirceImplicits {
     (x: InputLocationMessageContent) => {
       Json.fromFields(
         List(
-          "latitude"    -> x.latitude.asJson,
-          "longitude"   -> x.longitude.asJson,
-          "live_period" -> x.livePeriod.asJson
+          "latitude"               -> x.latitude.asJson,
+          "longitude"              -> x.longitude.asJson,
+          "horizontal_accuracy"    -> x.horizontalAccuracy.asJson,
+          "live_period"            -> x.livePeriod.asJson,
+          "heading"                -> x.heading.asJson,
+          "proximity_alert_radius" -> x.proximityAlertRadius.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5934,13 +6324,21 @@ object CirceImplicits {
   implicit lazy val inputlocationmessagecontentDecoder: Decoder[InputLocationMessageContent] =
     Decoder.instance { h =>
       for {
-        _latitude   <- h.get[Float]("latitude")
-        _longitude  <- h.get[Float]("longitude")
-        _livePeriod <- h.get[Option[Int]]("live_period")
+        _latitude             <- h.get[Float]("latitude")
+        _longitude            <- h.get[Float]("longitude")
+        _horizontalAccuracy   <- h.get[Option[Float]]("horizontal_accuracy")
+        _livePeriod           <- h.get[Option[Int]]("live_period")
+        _heading              <- h.get[Option[Int]]("heading")
+        _proximityAlertRadius <- h.get[Option[Int]]("proximity_alert_radius")
       } yield {
-        InputLocationMessageContent(latitude = _latitude,
-                                    longitude = _longitude,
-                                    livePeriod = _livePeriod)
+        InputLocationMessageContent(
+          latitude = _latitude,
+          longitude = _longitude,
+          horizontalAccuracy = _horizontalAccuracy,
+          livePeriod = _livePeriod,
+          heading = _heading,
+          proximityAlertRadius = _proximityAlertRadius
+        )
       }
     }
 
@@ -5950,6 +6348,7 @@ object CirceImplicits {
         List(
           "message_text"             -> x.messageText.asJson,
           "parse_mode"               -> x.parseMode.asJson,
+          "entities"                 -> x.entities.asJson,
           "disable_web_page_preview" -> x.disableWebPagePreview.asJson
         ).filter(!_._2.isNull)
       )
@@ -5960,10 +6359,12 @@ object CirceImplicits {
       for {
         _messageText           <- h.get[String]("message_text")
         _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _entities              <- h.getOrElse[List[MessageEntity]]("entities")(List.empty)
         _disableWebPagePreview <- h.get[Option[Boolean]]("disable_web_page_preview")
       } yield {
         InputTextMessageContent(messageText = _messageText,
                                 parseMode = _parseMode,
+                                entities = _entities,
                                 disableWebPagePreview = _disableWebPagePreview)
       }
     }
@@ -6295,13 +6696,16 @@ object CirceImplicits {
           "first_name"          -> x.firstName.asJson,
           "last_name"           -> x.lastName.asJson,
           "photo"               -> x.photo.asJson,
+          "bio"                 -> x.bio.asJson,
           "description"         -> x.description.asJson,
           "invite_link"         -> x.inviteLink.asJson,
           "pinned_message"      -> x.pinnedMessage.asJson,
           "permissions"         -> x.permissions.asJson,
           "slow_mode_delay"     -> x.slowModeDelay.asJson,
           "sticker_set_name"    -> x.stickerSetName.asJson,
-          "can_set_sticker_set" -> x.canSetStickerSet.asJson
+          "can_set_sticker_set" -> x.canSetStickerSet.asJson,
+          "linked_chat_id"      -> x.linkedChatId.asJson,
+          "location"            -> x.location.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6316,6 +6720,7 @@ object CirceImplicits {
         _firstName        <- h.get[Option[String]]("first_name")
         _lastName         <- h.get[Option[String]]("last_name")
         _photo            <- h.get[Option[ChatPhoto]]("photo")
+        _bio              <- h.get[Option[String]]("bio")
         _description      <- h.get[Option[String]]("description")
         _inviteLink       <- h.get[Option[String]]("invite_link")
         _pinnedMessage    <- h.get[Option[Message]]("pinned_message")
@@ -6323,6 +6728,8 @@ object CirceImplicits {
         _slowModeDelay    <- h.get[Option[Int]]("slow_mode_delay")
         _stickerSetName   <- h.get[Option[String]]("sticker_set_name")
         _canSetStickerSet <- h.get[Option[Boolean]]("can_set_sticker_set")
+        _linkedChatId     <- h.get[Option[Long]]("linked_chat_id")
+        _location         <- h.get[Option[ChatLocation]]("location")
       } yield {
         Chat(
           id = _id,
@@ -6332,13 +6739,16 @@ object CirceImplicits {
           firstName = _firstName,
           lastName = _lastName,
           photo = _photo,
+          bio = _bio,
           description = _description,
           inviteLink = _inviteLink,
           pinnedMessage = _pinnedMessage,
           permissions = _permissions,
           slowModeDelay = _slowModeDelay,
           stickerSetName = _stickerSetName,
-          canSetStickerSet = _canSetStickerSet
+          canSetStickerSet = _canSetStickerSet,
+          linkedChatId = _linkedChatId,
+          location = _location
         )
       }
     }
@@ -6380,8 +6790,12 @@ object CirceImplicits {
     (x: Location) => {
       Json.fromFields(
         List(
-          "longitude" -> x.longitude.asJson,
-          "latitude"  -> x.latitude.asJson
+          "longitude"              -> x.longitude.asJson,
+          "latitude"               -> x.latitude.asJson,
+          "horizontal_accuracy"    -> x.horizontalAccuracy.asJson,
+          "live_period"            -> x.livePeriod.asJson,
+          "heading"                -> x.heading.asJson,
+          "proximity_alert_radius" -> x.proximityAlertRadius.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6389,10 +6803,21 @@ object CirceImplicits {
   implicit lazy val locationDecoder: Decoder[Location] =
     Decoder.instance { h =>
       for {
-        _longitude <- h.get[Float]("longitude")
-        _latitude  <- h.get[Float]("latitude")
+        _longitude            <- h.get[Float]("longitude")
+        _latitude             <- h.get[Float]("latitude")
+        _horizontalAccuracy   <- h.get[Option[Float]]("horizontal_accuracy")
+        _livePeriod           <- h.get[Option[Int]]("live_period")
+        _heading              <- h.get[Option[Int]]("heading")
+        _proximityAlertRadius <- h.get[Option[Int]]("proximity_alert_radius")
       } yield {
-        Location(longitude = _longitude, latitude = _latitude)
+        Location(
+          longitude = _longitude,
+          latitude = _latitude,
+          horizontalAccuracy = _horizontalAccuracy,
+          livePeriod = _livePeriod,
+          heading = _heading,
+          proximityAlertRadius = _proximityAlertRadius
+        )
       }
     }
 
@@ -6514,6 +6939,26 @@ object CirceImplicits {
                         streetLine1 = _streetLine1,
                         streetLine2 = _streetLine2,
                         postCode = _postCode)
+      }
+    }
+
+  implicit lazy val chatlocationEncoder: Encoder[ChatLocation] =
+    (x: ChatLocation) => {
+      Json.fromFields(
+        List(
+          "location" -> x.location.asJson,
+          "address"  -> x.address.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatlocationDecoder: Decoder[ChatLocation] =
+    Decoder.instance { h =>
+      for {
+        _location <- h.get[Location]("location")
+        _address  <- h.get[String]("address")
+      } yield {
+        ChatLocation(location = _location, address = _address)
       }
     }
 
@@ -6916,11 +7361,13 @@ object CirceImplicits {
     (x: Venue) => {
       Json.fromFields(
         List(
-          "location"        -> x.location.asJson,
-          "title"           -> x.title.asJson,
-          "address"         -> x.address.asJson,
-          "foursquare_id"   -> x.foursquareId.asJson,
-          "foursquare_type" -> x.foursquareType.asJson
+          "location"          -> x.location.asJson,
+          "title"             -> x.title.asJson,
+          "address"           -> x.address.asJson,
+          "foursquare_id"     -> x.foursquareId.asJson,
+          "foursquare_type"   -> x.foursquareType.asJson,
+          "google_place_id"   -> x.googlePlaceId.asJson,
+          "google_place_type" -> x.googlePlaceType.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6928,17 +7375,23 @@ object CirceImplicits {
   implicit lazy val venueDecoder: Decoder[Venue] =
     Decoder.instance { h =>
       for {
-        _location       <- h.get[Location]("location")
-        _title          <- h.get[String]("title")
-        _address        <- h.get[String]("address")
-        _foursquareId   <- h.get[Option[String]]("foursquare_id")
-        _foursquareType <- h.get[Option[String]]("foursquare_type")
+        _location        <- h.get[Location]("location")
+        _title           <- h.get[String]("title")
+        _address         <- h.get[String]("address")
+        _foursquareId    <- h.get[Option[String]]("foursquare_id")
+        _foursquareType  <- h.get[Option[String]]("foursquare_type")
+        _googlePlaceId   <- h.get[Option[String]]("google_place_id")
+        _googlePlaceType <- h.get[Option[String]]("google_place_type")
       } yield {
-        Venue(location = _location,
-              title = _title,
-              address = _address,
-              foursquareId = _foursquareId,
-              foursquareType = _foursquareType)
+        Venue(
+          location = _location,
+          title = _title,
+          address = _address,
+          foursquareId = _foursquareId,
+          foursquareType = _foursquareType,
+          googlePlaceId = _googlePlaceId,
+          googlePlaceType = _googlePlaceType
+        )
       }
     }
 
@@ -7139,6 +7592,7 @@ object CirceImplicits {
           "duration"       -> x.duration.asJson,
           "performer"      -> x.performer.asJson,
           "title"          -> x.title.asJson,
+          "file_name"      -> x.fileName.asJson,
           "mime_type"      -> x.mimeType.asJson,
           "file_size"      -> x.fileSize.asJson,
           "thumb"          -> x.thumb.asJson
@@ -7154,18 +7608,22 @@ object CirceImplicits {
         _duration     <- h.get[Int]("duration")
         _performer    <- h.get[Option[String]]("performer")
         _title        <- h.get[Option[String]]("title")
+        _fileName     <- h.get[Option[String]]("file_name")
         _mimeType     <- h.get[Option[String]]("mime_type")
         _fileSize     <- h.get[Option[Int]]("file_size")
         _thumb        <- h.get[Option[PhotoSize]]("thumb")
       } yield {
-        Audio(fileId = _fileId,
-              fileUniqueId = _fileUniqueId,
-              duration = _duration,
-              performer = _performer,
-              title = _title,
-              mimeType = _mimeType,
-              fileSize = _fileSize,
-              thumb = _thumb)
+        Audio(
+          fileId = _fileId,
+          fileUniqueId = _fileUniqueId,
+          duration = _duration,
+          performer = _performer,
+          title = _title,
+          fileName = _fileName,
+          mimeType = _mimeType,
+          fileSize = _fileSize,
+          thumb = _thumb
+        )
       }
     }
 
@@ -7176,6 +7634,7 @@ object CirceImplicits {
           "url"                    -> x.url.asJson,
           "has_custom_certificate" -> x.hasCustomCertificate.asJson,
           "pending_update_count"   -> x.pendingUpdateCount.asJson,
+          "ip_address"             -> x.ipAddress.asJson,
           "last_error_date"        -> x.lastErrorDate.asJson,
           "last_error_message"     -> x.lastErrorMessage.asJson,
           "max_connections"        -> x.maxConnections.asJson,
@@ -7190,6 +7649,7 @@ object CirceImplicits {
         _url                  <- h.get[String]("url")
         _hasCustomCertificate <- h.get[Boolean]("has_custom_certificate")
         _pendingUpdateCount   <- h.get[Int]("pending_update_count")
+        _ipAddress            <- h.get[Option[String]]("ip_address")
         _lastErrorDate        <- h.get[Option[Int]]("last_error_date")
         _lastErrorMessage     <- h.get[Option[String]]("last_error_message")
         _maxConnections       <- h.get[Option[Int]]("max_connections")
@@ -7199,11 +7659,34 @@ object CirceImplicits {
           url = _url,
           hasCustomCertificate = _hasCustomCertificate,
           pendingUpdateCount = _pendingUpdateCount,
+          ipAddress = _ipAddress,
           lastErrorDate = _lastErrorDate,
           lastErrorMessage = _lastErrorMessage,
           maxConnections = _maxConnections,
           allowedUpdates = _allowedUpdates
         )
+      }
+    }
+
+  implicit lazy val proximityalerttriggeredEncoder: Encoder[ProximityAlertTriggered] =
+    (x: ProximityAlertTriggered) => {
+      Json.fromFields(
+        List(
+          "traveler" -> x.traveler.asJson,
+          "watcher"  -> x.watcher.asJson,
+          "distance" -> x.distance.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val proximityalerttriggeredDecoder: Decoder[ProximityAlertTriggered] =
+    Decoder.instance { h =>
+      for {
+        _traveler <- h.get[User]("traveler")
+        _watcher  <- h.get[User]("watcher")
+        _distance <- h.get[Int]("distance")
+      } yield {
+        ProximityAlertTriggered(traveler = _traveler, watcher = _watcher, distance = _distance)
       }
     }
 
@@ -7432,55 +7915,57 @@ object CirceImplicits {
     (x: Message) => {
       Json.fromFields(
         List(
-          "message_id"              -> x.messageId.asJson,
-          "from"                    -> x.from.asJson,
-          "date"                    -> x.date.asJson,
-          "chat"                    -> x.chat.asJson,
-          "forward_from"            -> x.forwardFrom.asJson,
-          "forward_from_chat"       -> x.forwardFromChat.asJson,
-          "forward_from_message_id" -> x.forwardFromMessageId.asJson,
-          "forward_signature"       -> x.forwardSignature.asJson,
-          "forward_sender_name"     -> x.forwardSenderName.asJson,
-          "forward_date"            -> x.forwardDate.asJson,
-          "reply_to_message"        -> x.replyToMessage.asJson,
-          "via_bot"                 -> x.viaBot.asJson,
-          "edit_date"               -> x.editDate.asJson,
-          "media_group_id"          -> x.mediaGroupId.asJson,
-          "author_signature"        -> x.authorSignature.asJson,
-          "text"                    -> x.text.asJson,
-          "entities"                -> x.entities.asJson,
-          "animation"               -> x.animation.asJson,
-          "audio"                   -> x.audio.asJson,
-          "document"                -> x.document.asJson,
-          "photo"                   -> x.photo.asJson,
-          "sticker"                 -> x.sticker.asJson,
-          "video"                   -> x.video.asJson,
-          "video_note"              -> x.videoNote.asJson,
-          "voice"                   -> x.voice.asJson,
-          "caption"                 -> x.caption.asJson,
-          "caption_entities"        -> x.captionEntities.asJson,
-          "contact"                 -> x.contact.asJson,
-          "dice"                    -> x.dice.asJson,
-          "game"                    -> x.game.asJson,
-          "poll"                    -> x.poll.asJson,
-          "venue"                   -> x.venue.asJson,
-          "location"                -> x.location.asJson,
-          "new_chat_members"        -> x.newChatMembers.asJson,
-          "left_chat_member"        -> x.leftChatMember.asJson,
-          "new_chat_title"          -> x.newChatTitle.asJson,
-          "new_chat_photo"          -> x.newChatPhoto.asJson,
-          "delete_chat_photo"       -> x.deleteChatPhoto.asJson,
-          "group_chat_created"      -> x.groupChatCreated.asJson,
-          "supergroup_chat_created" -> x.supergroupChatCreated.asJson,
-          "channel_chat_created"    -> x.channelChatCreated.asJson,
-          "migrate_to_chat_id"      -> x.migrateToChatId.asJson,
-          "migrate_from_chat_id"    -> x.migrateFromChatId.asJson,
-          "pinned_message"          -> x.pinnedMessage.asJson,
-          "invoice"                 -> x.invoice.asJson,
-          "successful_payment"      -> x.successfulPayment.asJson,
-          "connected_website"       -> x.connectedWebsite.asJson,
-          "passport_data"           -> x.passportData.asJson,
-          "reply_markup"            -> x.replyMarkup.asJson
+          "message_id"                -> x.messageId.asJson,
+          "from"                      -> x.from.asJson,
+          "sender_chat"               -> x.senderChat.asJson,
+          "date"                      -> x.date.asJson,
+          "chat"                      -> x.chat.asJson,
+          "forward_from"              -> x.forwardFrom.asJson,
+          "forward_from_chat"         -> x.forwardFromChat.asJson,
+          "forward_from_message_id"   -> x.forwardFromMessageId.asJson,
+          "forward_signature"         -> x.forwardSignature.asJson,
+          "forward_sender_name"       -> x.forwardSenderName.asJson,
+          "forward_date"              -> x.forwardDate.asJson,
+          "reply_to_message"          -> x.replyToMessage.asJson,
+          "via_bot"                   -> x.viaBot.asJson,
+          "edit_date"                 -> x.editDate.asJson,
+          "media_group_id"            -> x.mediaGroupId.asJson,
+          "author_signature"          -> x.authorSignature.asJson,
+          "text"                      -> x.text.asJson,
+          "entities"                  -> x.entities.asJson,
+          "animation"                 -> x.animation.asJson,
+          "audio"                     -> x.audio.asJson,
+          "document"                  -> x.document.asJson,
+          "photo"                     -> x.photo.asJson,
+          "sticker"                   -> x.sticker.asJson,
+          "video"                     -> x.video.asJson,
+          "video_note"                -> x.videoNote.asJson,
+          "voice"                     -> x.voice.asJson,
+          "caption"                   -> x.caption.asJson,
+          "caption_entities"          -> x.captionEntities.asJson,
+          "contact"                   -> x.contact.asJson,
+          "dice"                      -> x.dice.asJson,
+          "game"                      -> x.game.asJson,
+          "poll"                      -> x.poll.asJson,
+          "venue"                     -> x.venue.asJson,
+          "location"                  -> x.location.asJson,
+          "new_chat_members"          -> x.newChatMembers.asJson,
+          "left_chat_member"          -> x.leftChatMember.asJson,
+          "new_chat_title"            -> x.newChatTitle.asJson,
+          "new_chat_photo"            -> x.newChatPhoto.asJson,
+          "delete_chat_photo"         -> x.deleteChatPhoto.asJson,
+          "group_chat_created"        -> x.groupChatCreated.asJson,
+          "supergroup_chat_created"   -> x.supergroupChatCreated.asJson,
+          "channel_chat_created"      -> x.channelChatCreated.asJson,
+          "migrate_to_chat_id"        -> x.migrateToChatId.asJson,
+          "migrate_from_chat_id"      -> x.migrateFromChatId.asJson,
+          "pinned_message"            -> x.pinnedMessage.asJson,
+          "invoice"                   -> x.invoice.asJson,
+          "successful_payment"        -> x.successfulPayment.asJson,
+          "connected_website"         -> x.connectedWebsite.asJson,
+          "passport_data"             -> x.passportData.asJson,
+          "proximity_alert_triggered" -> x.proximityAlertTriggered.asJson,
+          "reply_markup"              -> x.replyMarkup.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -7490,6 +7975,7 @@ object CirceImplicits {
       for {
         _messageId             <- h.get[Int]("message_id")
         _from                  <- h.get[Option[User]]("from")
+        _senderChat            <- h.get[Option[Chat]]("sender_chat")
         _date                  <- h.get[Int]("date")
         _chat                  <- h.get[Chat]("chat")
         _forwardFrom           <- h.get[Option[User]]("forward_from")
@@ -7536,11 +8022,14 @@ object CirceImplicits {
         _successfulPayment     <- h.get[Option[SuccessfulPayment]]("successful_payment")
         _connectedWebsite      <- h.get[Option[String]]("connected_website")
         _passportData          <- h.get[Option[PassportData]]("passport_data")
-        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
+        _proximityAlertTriggered <- h.get[Option[ProximityAlertTriggered]](
+          "proximity_alert_triggered")
+        _replyMarkup <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
       } yield {
         Message(
           messageId = _messageId,
           from = _from,
+          senderChat = _senderChat,
           date = _date,
           chat = _chat,
           forwardFrom = _forwardFrom,
@@ -7587,6 +8076,7 @@ object CirceImplicits {
           successfulPayment = _successfulPayment,
           connectedWebsite = _connectedWebsite,
           passportData = _passportData,
+          proximityAlertTriggered = _proximityAlertTriggered,
           replyMarkup = _replyMarkup
         )
       }
@@ -7826,6 +8316,24 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val messageidEncoder: Encoder[MessageId] =
+    (x: MessageId) => {
+      Json.fromFields(
+        List(
+          "message_id" -> x.messageId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val messageidDecoder: Decoder[MessageId] =
+    Decoder.instance { h =>
+      for {
+        _messageId <- h.get[Int]("message_id")
+      } yield {
+        MessageId(messageId = _messageId)
+      }
+    }
+
   implicit lazy val chatmemberEncoder: Encoder[ChatMember] =
     (x: ChatMember) => {
       Json.fromFields(
@@ -7833,7 +8341,7 @@ object CirceImplicits {
           "user"                      -> x.user.asJson,
           "status"                    -> x.status.asJson,
           "custom_title"              -> x.customTitle.asJson,
-          "until_date"                -> x.untilDate.asJson,
+          "is_anonymous"              -> x.isAnonymous.asJson,
           "can_be_edited"             -> x.canBeEdited.asJson,
           "can_post_messages"         -> x.canPostMessages.asJson,
           "can_edit_messages"         -> x.canEditMessages.asJson,
@@ -7848,7 +8356,8 @@ object CirceImplicits {
           "can_send_media_messages"   -> x.canSendMediaMessages.asJson,
           "can_send_polls"            -> x.canSendPolls.asJson,
           "can_send_other_messages"   -> x.canSendOtherMessages.asJson,
-          "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson
+          "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson,
+          "until_date"                -> x.untilDate.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -7859,7 +8368,7 @@ object CirceImplicits {
         _user                  <- h.get[User]("user")
         _status                <- h.get[String]("status")
         _customTitle           <- h.get[Option[String]]("custom_title")
-        _untilDate             <- h.get[Option[Int]]("until_date")
+        _isAnonymous           <- h.get[Option[Boolean]]("is_anonymous")
         _canBeEdited           <- h.get[Option[Boolean]]("can_be_edited")
         _canPostMessages       <- h.get[Option[Boolean]]("can_post_messages")
         _canEditMessages       <- h.get[Option[Boolean]]("can_edit_messages")
@@ -7875,12 +8384,13 @@ object CirceImplicits {
         _canSendPolls          <- h.get[Option[Boolean]]("can_send_polls")
         _canSendOtherMessages  <- h.get[Option[Boolean]]("can_send_other_messages")
         _canAddWebPagePreviews <- h.get[Option[Boolean]]("can_add_web_page_previews")
+        _untilDate             <- h.get[Option[Int]]("until_date")
       } yield {
         ChatMember(
           user = _user,
           status = _status,
           customTitle = _customTitle,
-          untilDate = _untilDate,
+          isAnonymous = _isAnonymous,
           canBeEdited = _canBeEdited,
           canPostMessages = _canPostMessages,
           canEditMessages = _canEditMessages,
@@ -7895,7 +8405,8 @@ object CirceImplicits {
           canSendMediaMessages = _canSendMediaMessages,
           canSendPolls = _canSendPolls,
           canSendOtherMessages = _canSendOtherMessages,
-          canAddWebPagePreviews = _canAddWebPagePreviews
+          canAddWebPagePreviews = _canAddWebPagePreviews,
+          untilDate = _untilDate
         )
       }
     }
@@ -7943,6 +8454,7 @@ object CirceImplicits {
           "height"         -> x.height.asJson,
           "duration"       -> x.duration.asJson,
           "thumb"          -> x.thumb.asJson,
+          "file_name"      -> x.fileName.asJson,
           "mime_type"      -> x.mimeType.asJson,
           "file_size"      -> x.fileSize.asJson
         ).filter(!_._2.isNull)
@@ -7958,17 +8470,21 @@ object CirceImplicits {
         _height       <- h.get[Int]("height")
         _duration     <- h.get[Int]("duration")
         _thumb        <- h.get[Option[PhotoSize]]("thumb")
+        _fileName     <- h.get[Option[String]]("file_name")
         _mimeType     <- h.get[Option[String]]("mime_type")
         _fileSize     <- h.get[Option[Int]]("file_size")
       } yield {
-        Video(fileId = _fileId,
-              fileUniqueId = _fileUniqueId,
-              width = _width,
-              height = _height,
-              duration = _duration,
-              thumb = _thumb,
-              mimeType = _mimeType,
-              fileSize = _fileSize)
+        Video(
+          fileId = _fileId,
+          fileUniqueId = _fileUniqueId,
+          width = _width,
+          height = _height,
+          duration = _duration,
+          thumb = _thumb,
+          fileName = _fileName,
+          mimeType = _mimeType,
+          fileSize = _fileSize
+        )
       }
     }
 

@@ -6,6 +6,12 @@ final case class Message(
                          messageId: Int,
                          /** Optional. Sender, empty for messages sent to channels*/
                          from: Option[User] = Option.empty,
+                         /** Optional. Sender of the message, sent on behalf of a chat.
+                           * The channel itself for channel messages. The supergroup
+                           * itself for messages from anonymous group administrators. The
+                           * linked channel for messages automatically forwarded to the
+                           * discussion group*/
+                         senderChat: Option[Chat] = Option.empty,
                          /** Date the message was sent in Unix time*/
                          date: Int,
                          /** Conversation the message belongs to*/
@@ -13,8 +19,9 @@ final case class Message(
                          /** Optional. For forwarded messages, sender of the original
                            * message*/
                          forwardFrom: Option[User] = Option.empty,
-                         /** Optional. For messages forwarded from channels, information
-                           * about the original channel*/
+                         /** Optional. For messages forwarded from channels or from
+                           * anonymous administrators, information about the original
+                           * sender chat*/
                          forwardFromChat: Option[Chat] = Option.empty,
                          /** Optional. For messages forwarded from channels, identifier
                            * of the original message in the channel*/
@@ -41,7 +48,8 @@ final case class Message(
                            * this message belongs to*/
                          mediaGroupId: Option[String] = Option.empty,
                          /** Optional. Signature of the post author for messages in
-                           * channels*/
+                           * channels, or the custom title of an anonymous group
+                           * administrator*/
                          authorSignature: Option[String] = Option.empty,
                          /** Optional. For text messages, the actual UTF-8 text of the
                            * message, 0-4096 characters*/
@@ -157,6 +165,9 @@ final case class Message(
                          connectedWebsite: Option[String] = Option.empty,
                          /** Optional. Telegram Passport data*/
                          passportData: Option[PassportData] = Option.empty,
+                         /** Optional. Service message. A user in the chat triggered
+                           * another user's proximity alert while sharing Live Location.*/
+                         proximityAlertTriggered: Option[ProximityAlertTriggered] = Option.empty,
                          /** Optional. Inline keyboard attached to the message.
                            * login_url buttons are represented as ordinary url buttons.*/
                          replyMarkup: Option[InlineKeyboardMarkup] = Option.empty)

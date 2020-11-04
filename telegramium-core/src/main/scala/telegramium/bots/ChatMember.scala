@@ -10,9 +10,9 @@ final case class ChatMember(
                             /** Optional. Owner and administrators only. Custom title for
                               * this user*/
                             customTitle: Option[String] = Option.empty,
-                            /** Optional. Restricted and kicked only. Date when
-                              * restrictions will be lifted for this user; unix time*/
-                            untilDate: Option[Int] = Option.empty,
+                            /** Optional. Owner and administrators only. True, if the
+                              * user's presence in the chat is hidden*/
+                            isAnonymous: Option[Boolean] = Option.empty,
                             /** Optional. Administrators only. True, if the bot is allowed
                               * to edit administrator privileges of that user*/
                             canBeEdited: Option[Boolean] = Option.empty,
@@ -63,4 +63,7 @@ final case class ChatMember(
                             canSendOtherMessages: Option[Boolean] = Option.empty,
                             /** Optional. Restricted only. True, if the user is allowed to
                               * add web page previews to their messages*/
-                            canAddWebPagePreviews: Option[Boolean] = Option.empty)
+                            canAddWebPagePreviews: Option[Boolean] = Option.empty,
+                            /** Optional. Restricted and kicked only. Date when
+                              * restrictions will be lifted for this user; unix time*/
+                            untilDate: Option[Int] = Option.empty)
