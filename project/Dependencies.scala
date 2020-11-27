@@ -7,7 +7,7 @@ object Dependencies {
     val catsCore = "2.2.0"
     val catsEffect = "2.3.0"
     val circe = "0.13.0"
-    val http4s = "0.21.12"
+    val http4s = "0.21.13"
     val slf4j = "1.7.30"
     val logback = "1.2.3"
     val uPickle = "0.8.0"
