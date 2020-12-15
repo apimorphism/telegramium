@@ -1,5 +1,6 @@
 package telegramium.bots.examples
 
+import cats.Parallel
 import cats.effect.{Sync, Timer}
 import cats.syntax.flatMap._
 import cats.syntax.functor._
@@ -10,7 +11,9 @@ import telegramium.bots.{CallbackQuery, ChatIntId, Message}
 /**
  * Show how to use inline keyboards
  */
-class IceCreamParlorBot[F[_]]()(implicit bot: Api[F], syncF: Sync[F], timer: Timer[F]) extends LongPollBot[F](bot) {
+class IceCreamParlorBot[F[_]]()(
+  implicit bot: Api[F], syncF: Sync[F], timer: Timer[F], parallel: Parallel[F]
+) extends LongPollBot[F](bot) {
   override def onMessage(msg: Message): F[Unit] =
     msg.text.filter(_.toLowerCase.startsWith("/order")).fold(syncF.unit) { _ =>
       sendMessage(

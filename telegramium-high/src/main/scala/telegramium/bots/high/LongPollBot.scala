@@ -1,23 +1,24 @@
 package telegramium.bots.high
 
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-import cats.syntax.traverse._
-import cats.syntax.foldable._
-import cats.syntax.applicativeError._
+import cats.Parallel
+import cats.effect.concurrent.Ref
+import cats.effect.{Sync, Timer}
 import cats.instances.int._
 import cats.instances.list._
 import cats.instances.option._
-import cats.effect.{Sync, Timer}
-import cats.effect.concurrent.Ref
-
+import cats.syntax.applicativeError._
+import cats.syntax.flatMap._
+import cats.syntax.foldable._
+import cats.syntax.functor._
+import cats.syntax.parallel._
+import cats.syntax.traverse._
 import telegramium.bots._
 import telegramium.bots.client._
 
-import scala.util.control.NonFatal
 import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
+import scala.util.control.NonFatal
 
-abstract class LongPollBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) extends Methods {
+abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) extends Methods {
 
   import LongPollBot.OffsetKeeper
 
@@ -69,7 +70,7 @@ abstract class LongPollBot[F[_]](bot: Api[F])(implicit syncF: Sync[F], timer: Ti
             _ <- poll(offsetKeeper)
           } yield ()
         }
-      _ <- updates.traverse(onUpdate)
+      _ <- updates.parTraverse(onUpdate)
       _ <- updates.map(_.updateId).maximumOption.traverse(max => offsetKeeper.setOffset(max + 1))
       next <- poll(offsetKeeper)
     } yield {
