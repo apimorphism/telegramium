@@ -102,8 +102,11 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
 
   private def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Option[Method[_]]] = rawReq.as[Update].flatMap(onUpdate)
 
-  def start(): Resource[F, Server[F]] =
-    setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates).flatMap(_ => createServer())
+  /**
+   * @param executionContext Execution Context the underlying blaze futures will be executed upon.
+   */
+  def start(executionContext: ExecutionContext = ExecutionContext.global): Resource[F, Server[F]] =
+    setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates).flatMap(_ => createServer(executionContext))
 
   private def setWebhook(
     url: String,
@@ -118,7 +121,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
       _ => bot.execute(deleteWebhook()).void
     )
 
-  private def createServer(): Resource[F, Server[F]] = {
+  private def createServer(executionContext: ExecutionContext): Resource[F, Server[F]] = {
     val dsl = Http4sDsl[F]
     import dsl._
 
@@ -143,6 +146,6 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
       }
         .orNotFound
 
-    BlazeServerBuilder[F](ExecutionContext.global).bindHttp(port).withHttpApp(app()).resource
+    BlazeServerBuilder[F](executionContext).bindHttp(port).withHttpApp(app()).resource
   }
 }
