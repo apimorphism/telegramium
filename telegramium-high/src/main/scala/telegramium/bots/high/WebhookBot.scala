@@ -12,7 +12,7 @@ import org.http4s.server.Server
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.{EntityDecoder, HttpApp, HttpRoutes}
 import telegramium.bots.CirceImplicits._
-import telegramium.bots.client.{Method, MethodReq, Methods}
+import telegramium.bots.client.{Method, Methods}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
 import telegramium.bots.{CallbackQuery, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
@@ -130,15 +130,14 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
         case req @ POST -> BotPath =>
           handleUpdateReq(req).flatMap {
             _.fold(Ok()) { m =>
-              val methodReq = m.asInstanceOf[MethodReq[_]]
-              val inputPartFiles = methodReq.files.collect {
+              val inputPartFiles = m.payload.files.collect {
                 case (filename, InputPartFile(file)) => (filename, file)
               }
               val attachments = toFileDataParts(inputPartFiles, blocker)
               if (attachments.isEmpty)
-                Ok(methodReq.json)
+                Ok(m.payload.json)
               else {
-                val parts = toMultipartWithFormData(methodReq.json, inputPartFiles.keys.toList, attachments)
+                val parts = toMultipartWithFormData(m.payload.json, inputPartFiles.keys.toList, attachments)
                 Ok(parts).map(_.withHeaders(parts.headers))
               }
             }

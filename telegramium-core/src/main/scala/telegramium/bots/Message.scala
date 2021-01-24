@@ -90,7 +90,7 @@ final case class Message(
                          /** Optional. Message is a shared contact, information about
                            * the contact*/
                          contact: Option[Contact] = Option.empty,
-                         /** Optional. Message is a dice with random value from 1 to 6*/
+                         /** Optional. Message is a dice with random value*/
                          dice: Option[Dice] = Option.empty,
                          /** Optional. Message is a game, information about the game.
                            * More about games »*/

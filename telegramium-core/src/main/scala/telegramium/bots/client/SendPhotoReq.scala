@@ -14,7 +14,9 @@ final case class SendPhotoReq(
                                 * that exists on the Telegram servers (recommended), pass an
                                 * HTTP URL as a String for Telegram to get a photo from the
                                 * Internet, or upload a new photo using multipart/form-data.
-                                * More info on Sending Files »*/
+                                * The photo must be at most 10 MB in size. The photo's width
+                                * and height must not exceed 10000 in total. Width and height
+                                * ratio must be at most 20. More info on Sending Files »*/
                               photo: IFile,
                               /** Photo caption (may also be used when resending photos by
                                 * file_id), 0-1024 characters after entities parsing*/

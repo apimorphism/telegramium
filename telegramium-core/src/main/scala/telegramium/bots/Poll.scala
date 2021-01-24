@@ -4,7 +4,7 @@ package telegramium.bots
 final case class Poll(
                       /** Unique poll identifier*/
                       id: String,
-                      /** Poll question, 1-255 characters*/
+                      /** Poll question, 1-300 characters*/
                       question: String,
                       /** List of poll options*/
                       options: List[PollOption] = List.empty,

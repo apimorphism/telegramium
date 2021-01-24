@@ -15,7 +15,7 @@ import org.http4s.dsl.io._
 import org.http4s.multipart.Part
 import org.http4s.{Request, Uri}
 import telegramium.bots.InputPartFile
-import telegramium.bots.client.{Method, MethodReq}
+import telegramium.bots.client.Method
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
 
 class BotApi[F[_]: Sync: ContextShift: Logger](
@@ -24,16 +24,15 @@ class BotApi[F[_]: Sync: ContextShift: Logger](
   blocker: Blocker
 )(implicit F: MonadError[F, Throwable]) extends Api[F] {
   override def execute[Res](method: Method[Res]): F[Res] = {
-    val methodReq = method.asInstanceOf[MethodReq[Res]]
-    val inputPartFiles = methodReq.files.collect {
+    val inputPartFiles = method.payload.files.collect {
       case (filename, InputPartFile(file)) => (filename, file)
     }
     val attachments = toFileDataParts(inputPartFiles, blocker)
 
     for {
-      uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/${method.name}"))
-      req = mkRequest(uri, methodReq.json, inputPartFiles.keys.toList, attachments)
-      res <- handleResponse[Res](methodReq, req)(methodReq.decoder)
+      uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/${method.payload.name}"))
+      req = mkRequest(uri, method.payload.json, inputPartFiles.keys.toList, attachments)
+      res <- handleResponse[Res](method, req)(method.decoder)
     } yield res
   }
 
@@ -66,7 +65,7 @@ class BotApi[F[_]: Sync: ContextShift: Logger](
       }
     }
 
-  private def handleResponse[A: io.circe.Decoder](methodReq: MethodReq[A], req: Request[F]): F[A] =
+  private def handleResponse[A: io.circe.Decoder](method: Method[A], req: Request[F]): F[A] =
     for {
       response <- http.fetchAs(req)(jsonOf[F, Response[A]])
       result <- response match {
@@ -74,11 +73,11 @@ class BotApi[F[_]: Sync: ContextShift: Logger](
         case Response(_, _, description, errorCode) =>
           val code = errorCode.map(_.toString).getOrElse("")
           val desc = description.getOrElse("")
-          val method = methodReq.name
-          val json = methodReq.json
+          val methodName = method.payload.name
+          val json = method.payload.json
           Logger[F].error(
-            s"""Telegram Bot API request failed: code=$code description="$desc" method=$method, JSON: \n$json"""
-          ) *> FailedRequest(methodReq, errorCode, description).raiseError[F, A]
+            s"""Telegram Bot API request failed: code=$code description="$desc" method=$methodName, JSON: \n$json"""
+          ) *> FailedRequest(method, errorCode, description).raiseError[F, A]
       }
     } yield result
 

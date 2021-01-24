@@ -2,7 +2,6 @@ package telegramium.bots.client
 
 import io.circe.syntax._
 import CirceImplicits._
-import telegramium.bots.client.Method
 import telegramium.bots.WebhookInfo
 import telegramium.bots._
 import telegramium.bots.CirceImplicits._
@@ -587,8 +586,8 @@ trait Methods {
   }
 
   /** Use this method to send a group of photos, videos, documents or audios as an
-    * album. Documents and audio files can be only group in an album with messages of
-    * the same type. On success, an array of Messages that were sent is returned.
+    * album. Documents and audio files can be only grouped in an album with messages
+    * of the same type. On success, an array of Messages that were sent is returned.
 
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format @channelusername)
@@ -1243,7 +1242,7 @@ trait Methods {
 
   /** Use this method to kick a user from a group, a supergroup or a channel. In the
     * case of supergroups and channels, the user will not be able to return to the
-    * group on their own using invite links, etc., unless unbanned first. The bot must
+    * chat on their own using invite links, etc., unless unbanned first. The bot must
     * be an administrator in the chat for this to work and must have the appropriate
     * admin rights. Returns True on success.
 
@@ -1253,7 +1252,8 @@ trait Methods {
     * @param userId Unique identifier of the target user
     * @param untilDate Date when the user will be unbanned, unix time. If user is
     * banned for more than 366 days or less than 30 seconds from
-    * the current time they are considered to be banned forever*/
+    * the current time they are considered to be banned forever.
+    * Applied for supergroups and channels only.*/
   def kickChatMember(chatId: ChatId,
                      userId: Int,
                      untilDate: Option[Int] = Option.empty): Method[Boolean] = {
@@ -1470,8 +1470,9 @@ trait Methods {
   /** Use this method to log out from the cloud Bot API server before launching the
     * bot locally. You must log out the bot before running it locally, otherwise there
     * is no guarantee that the bot will receive updates. After a successful call, you
-    * will not be able to log in again using the same token for 10 minutes. Returns
-    * True on success. Requires no parameters.*/
+    * can immediately log in on a local server, but will not be able to log in back to
+    * the cloud Bot API server for 10 minutes. Returns True on success. Requires no
+    * parameters.*/
   def logOut(): Method[Boolean] = {
     val req = LogOutReq
     MethodReq[Boolean]("logOut", req.asJson)
@@ -1979,7 +1980,9 @@ trait Methods {
     * that exists on the Telegram servers (recommended), pass an
     * HTTP URL as a String for Telegram to get a photo from the
     * Internet, or upload a new photo using multipart/form-data.
-    * More info on Sending Files »
+    * The photo must be at most 10 MB in size. The photo's width
+    * and height must not exceed 10000 in total. Width and height
+    * ratio must be at most 20. More info on Sending Files »
     * @param caption Photo caption (may also be used when resending photos by
     * file_id), 0-1024 characters after entities parsing
     * @param parseMode Mode for parsing entities in the photo caption. See

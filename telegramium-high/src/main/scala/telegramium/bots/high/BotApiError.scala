@@ -10,5 +10,5 @@ final case class FailedRequest[A](
   description: Option[String]
 ) extends BotApiError {
   override def getMessage: String =
-    s"method=${method.name} code=${errorCode.map(_.toString).getOrElse("")} description=${description.getOrElse("")}"
+    s"method=${method.payload.name} code=${errorCode.map(_.toString).getOrElse("")} description=${description.getOrElse("")}"
 }
