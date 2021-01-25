@@ -589,79 +589,28 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val inlinequeryresultCodec: ReadWriter[InlineQueryResult] = {
-    readwriter[upack.Msg].bimap(
-      {
-        case x: InlineQueryResultGif =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("gif"))
-        case x: InlineQueryResultVenue =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("venue"))
-        case x: InlineQueryResultContact =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("contact"))
-        case x: InlineQueryResultPhoto =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("photo"))
-        case x: InlineQueryResultDocument =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("document"))
-        case x: InlineQueryResultCachedVoice =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("voice"))
-        case x: InlineQueryResultArticle =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("article"))
-        case x: InlineQueryResultAudio =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("audio"))
-        case x: InlineQueryResultMpeg4Gif =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("mpeg4_gif"))
-        case x: InlineQueryResultCachedMpeg4Gif =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("mpeg4_gif"))
-        case x: InlineQueryResultCachedDocument =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("document"))
-        case x: InlineQueryResultCachedVideo =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("video"))
-        case x: InlineQueryResultGame =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("game"))
-        case x: InlineQueryResultCachedPhoto =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("photo"))
-        case x: InlineQueryResultCachedSticker =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("sticker"))
-        case x: InlineQueryResultVideo =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("video"))
-        case x: InlineQueryResultCachedAudio =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("audio"))
-        case x: InlineQueryResultLocation =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("location"))
-        case x: InlineQueryResultCachedGif =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("gif"))
-        case x: InlineQueryResultVoice =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("voice"))
-      },
-      msg => {
-        val m = msg.obj
-        m.get(upack.Str("type"))
-          .collect {
-            case upack.Str("gif")       => readBinary[InlineQueryResultGif](msg)
-            case upack.Str("venue")     => readBinary[InlineQueryResultVenue](msg)
-            case upack.Str("contact")   => readBinary[InlineQueryResultContact](msg)
-            case upack.Str("photo")     => readBinary[InlineQueryResultPhoto](msg)
-            case upack.Str("document")  => readBinary[InlineQueryResultDocument](msg)
-            case upack.Str("voice")     => readBinary[InlineQueryResultCachedVoice](msg)
-            case upack.Str("article")   => readBinary[InlineQueryResultArticle](msg)
-            case upack.Str("audio")     => readBinary[InlineQueryResultAudio](msg)
-            case upack.Str("mpeg4_gif") => readBinary[InlineQueryResultMpeg4Gif](msg)
-            case upack.Str("mpeg4_gif") => readBinary[InlineQueryResultCachedMpeg4Gif](msg)
-            case upack.Str("document")  => readBinary[InlineQueryResultCachedDocument](msg)
-            case upack.Str("video")     => readBinary[InlineQueryResultCachedVideo](msg)
-            case upack.Str("game")      => readBinary[InlineQueryResultGame](msg)
-            case upack.Str("photo")     => readBinary[InlineQueryResultCachedPhoto](msg)
-            case upack.Str("sticker")   => readBinary[InlineQueryResultCachedSticker](msg)
-            case upack.Str("video")     => readBinary[InlineQueryResultVideo](msg)
-            case upack.Str("audio")     => readBinary[InlineQueryResultCachedAudio](msg)
-            case upack.Str("location")  => readBinary[InlineQueryResultLocation](msg)
-            case upack.Str("gif")       => readBinary[InlineQueryResultCachedGif](msg)
-            case upack.Str("voice")     => readBinary[InlineQueryResultVoice](msg)
-          }
-          .get
-      }
-    )
-  }
+  implicit lazy val inlinequeryresultCodec: ReadWriter[InlineQueryResult] = ReadWriter.merge(
+    inlinequeryresultgifCodec,
+    inlinequeryresultvenueCodec,
+    inlinequeryresultcontactCodec,
+    inlinequeryresultphotoCodec,
+    inlinequeryresultdocumentCodec,
+    inlinequeryresultcachedvoiceCodec,
+    inlinequeryresultarticleCodec,
+    inlinequeryresultaudioCodec,
+    inlinequeryresultmpeg4gifCodec,
+    inlinequeryresultcachedmpeg4gifCodec,
+    inlinequeryresultcacheddocumentCodec,
+    inlinequeryresultcachedvideoCodec,
+    inlinequeryresultgameCodec,
+    inlinequeryresultcachedphotoCodec,
+    inlinequeryresultcachedstickerCodec,
+    inlinequeryresultvideoCodec,
+    inlinequeryresultcachedaudioCodec,
+    inlinequeryresultlocationCodec,
+    inlinequeryresultcachedgifCodec,
+    inlinequeryresultvoiceCodec
+  )
 
   implicit lazy val inlinequeryresultgifCodec: ReadWriter[InlineQueryResultGif] = {
     val idKey                  = upack.Str("id")
@@ -4849,22 +4798,22 @@ object CirceImplicits {
     ).reduceLeft(_ or _)
   }
 
-  implicit lazy val emojidiceEncoder: Encoder[EmojiDice.type] = (x: EmojiDice.type) => "🎲".asJson
+  implicit lazy val emojidiceEncoder: Encoder[EmojiDice.type] = (_: EmojiDice.type) => "🎲".asJson
   implicit lazy val emojidiceDecoder: Decoder[EmojiDice.type] = Decoder[String].map(_ => EmojiDice)
-  implicit lazy val emojidartsEncoder: Encoder[EmojiDarts.type] = (x: EmojiDarts.type) =>
+  implicit lazy val emojidartsEncoder: Encoder[EmojiDarts.type] = (_: EmojiDarts.type) =>
     "🎯".asJson
   implicit lazy val emojidartsDecoder: Decoder[EmojiDarts.type] =
     Decoder[String].map(_ => EmojiDarts)
   implicit lazy val emojibasketballEncoder: Encoder[EmojiBasketball.type] =
-    (x: EmojiBasketball.type) => "🏀".asJson
+    (_: EmojiBasketball.type) => "🏀".asJson
   implicit lazy val emojibasketballDecoder: Decoder[EmojiBasketball.type] =
     Decoder[String].map(_ => EmojiBasketball)
-  implicit lazy val emojifootballEncoder: Encoder[EmojiFootball.type] = (x: EmojiFootball.type) =>
+  implicit lazy val emojifootballEncoder: Encoder[EmojiFootball.type] = (_: EmojiFootball.type) =>
     "⚽".asJson
   implicit lazy val emojifootballDecoder: Decoder[EmojiFootball.type] =
     Decoder[String].map(_ => EmojiFootball)
   implicit lazy val emojislotmachineEncoder: Encoder[EmojiSlotMachine.type] =
-    (x: EmojiSlotMachine.type) => "🎰".asJson
+    (_: EmojiSlotMachine.type) => "🎰".asJson
   implicit lazy val emojislotmachineDecoder: Decoder[EmojiSlotMachine.type] =
     Decoder[String].map(_ => EmojiSlotMachine)
 
@@ -4881,13 +4830,13 @@ object CirceImplicits {
     ).reduceLeft(_ or _)
   }
 
-  implicit lazy val markdownEncoder: Encoder[Markdown.type] = (x: Markdown.type) =>
+  implicit lazy val markdownEncoder: Encoder[Markdown.type] = (_: Markdown.type) =>
     "Markdown".asJson
   implicit lazy val markdownDecoder: Decoder[Markdown.type] = Decoder[String].map(_ => Markdown)
-  implicit lazy val markdown2Encoder: Encoder[Markdown2.type] = (x: Markdown2.type) =>
+  implicit lazy val markdown2Encoder: Encoder[Markdown2.type] = (_: Markdown2.type) =>
     "MarkdownV2".asJson
   implicit lazy val markdown2Decoder: Decoder[Markdown2.type] = Decoder[String].map(_ => Markdown2)
-  implicit lazy val htmlEncoder: Encoder[Html.type]           = (x: Html.type) => "HTML".asJson
+  implicit lazy val htmlEncoder: Encoder[Html.type]           = (_: Html.type) => "HTML".asJson
   implicit lazy val htmlDecoder: Decoder[Html.type]           = Decoder[String].map(_ => Html)
 
   implicit lazy val chatidEncoder: Encoder[ChatId] = {
@@ -5028,22 +4977,22 @@ object CirceImplicits {
     Decoder[String].map(InputLinkFile)
 
   implicit lazy val inputmediaEncoder: Encoder[InputMedia] = {
-    case animation: InputMediaAnimation =>
-      animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
     case photo: InputMediaPhoto => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case video: InputMediaVideo => video.asJson.mapObject(_.add("type", Json.fromString("video")))
     case document: InputMediaDocument =>
       document.asJson.mapObject(_.add("type", Json.fromString("document")))
     case audio: InputMediaAudio => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
+    case animation: InputMediaAnimation =>
+      animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
+    case video: InputMediaVideo => video.asJson.mapObject(_.add("type", Json.fromString("video")))
   }
   implicit lazy val inputmediaDecoder: Decoder[InputMedia] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "animation" => Decoder[InputMediaAnimation]
       case "photo"     => Decoder[InputMediaPhoto]
-      case "video"     => Decoder[InputMediaVideo]
       case "document"  => Decoder[InputMediaDocument]
       case "audio"     => Decoder[InputMediaAudio]
+      case "animation" => Decoder[InputMediaAnimation]
+      case "video"     => Decoder[InputMediaVideo]
     }
   } yield value
 
@@ -5232,69 +5181,81 @@ object CirceImplicits {
     }
 
   implicit lazy val inlinequeryresultEncoder: Encoder[InlineQueryResult] = {
-    case gif: InlineQueryResultGif => gif.asJson.mapObject(_.add("type", Json.fromString("gif")))
-    case venue: InlineQueryResultVenue =>
-      venue.asJson.mapObject(_.add("type", Json.fromString("venue")))
-    case contact: InlineQueryResultContact =>
-      contact.asJson.mapObject(_.add("type", Json.fromString("contact")))
-    case photo: InlineQueryResultPhoto =>
-      photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case document: InlineQueryResultDocument =>
-      document.asJson.mapObject(_.add("type", Json.fromString("document")))
-    case voice: InlineQueryResultCachedVoice =>
-      voice.asJson.mapObject(_.add("type", Json.fromString("voice")))
-    case article: InlineQueryResultArticle =>
-      article.asJson.mapObject(_.add("type", Json.fromString("article")))
-    case audio: InlineQueryResultAudio =>
-      audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
     case mpeg4_gif: InlineQueryResultMpeg4Gif =>
       mpeg4_gif.asJson.mapObject(_.add("type", Json.fromString("mpeg4_gif")))
     case mpeg4_gif: InlineQueryResultCachedMpeg4Gif =>
       mpeg4_gif.asJson.mapObject(_.add("type", Json.fromString("mpeg4_gif")))
-    case document: InlineQueryResultCachedDocument =>
-      document.asJson.mapObject(_.add("type", Json.fromString("document")))
-    case video: InlineQueryResultCachedVideo =>
-      video.asJson.mapObject(_.add("type", Json.fromString("video")))
-    case game: InlineQueryResultGame =>
-      game.asJson.mapObject(_.add("type", Json.fromString("game")))
-    case photo: InlineQueryResultCachedPhoto =>
-      photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case sticker: InlineQueryResultCachedSticker =>
-      sticker.asJson.mapObject(_.add("type", Json.fromString("sticker")))
-    case video: InlineQueryResultVideo =>
-      video.asJson.mapObject(_.add("type", Json.fromString("video")))
-    case audio: InlineQueryResultCachedAudio =>
-      audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
     case location: InlineQueryResultLocation =>
       location.asJson.mapObject(_.add("type", Json.fromString("location")))
-    case gif: InlineQueryResultCachedGif =>
-      gif.asJson.mapObject(_.add("type", Json.fromString("gif")))
+    case photo: InlineQueryResultPhoto =>
+      photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case photo: InlineQueryResultCachedPhoto =>
+      photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case document: InlineQueryResultDocument =>
+      document.asJson.mapObject(_.add("type", Json.fromString("document")))
+    case document: InlineQueryResultCachedDocument =>
+      document.asJson.mapObject(_.add("type", Json.fromString("document")))
+    case audio: InlineQueryResultAudio =>
+      audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
+    case audio: InlineQueryResultCachedAudio =>
+      audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
+    case voice: InlineQueryResultCachedVoice =>
+      voice.asJson.mapObject(_.add("type", Json.fromString("voice")))
     case voice: InlineQueryResultVoice =>
       voice.asJson.mapObject(_.add("type", Json.fromString("voice")))
+    case article: InlineQueryResultArticle =>
+      article.asJson.mapObject(_.add("type", Json.fromString("article")))
+    case contact: InlineQueryResultContact =>
+      contact.asJson.mapObject(_.add("type", Json.fromString("contact")))
+    case video: InlineQueryResultCachedVideo =>
+      video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case video: InlineQueryResultVideo =>
+      video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case gif: InlineQueryResultGif => gif.asJson.mapObject(_.add("type", Json.fromString("gif")))
+    case gif: InlineQueryResultCachedGif =>
+      gif.asJson.mapObject(_.add("type", Json.fromString("gif")))
+    case sticker: InlineQueryResultCachedSticker =>
+      sticker.asJson.mapObject(_.add("type", Json.fromString("sticker")))
+    case game: InlineQueryResultGame =>
+      game.asJson.mapObject(_.add("type", Json.fromString("game")))
+    case venue: InlineQueryResultVenue =>
+      venue.asJson.mapObject(_.add("type", Json.fromString("venue")))
   }
   implicit lazy val inlinequeryresultDecoder: Decoder[InlineQueryResult] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "gif"       => Decoder[InlineQueryResultGif]
-      case "venue"     => Decoder[InlineQueryResultVenue]
-      case "contact"   => Decoder[InlineQueryResultContact]
-      case "photo"     => Decoder[InlineQueryResultPhoto]
-      case "document"  => Decoder[InlineQueryResultDocument]
-      case "voice"     => Decoder[InlineQueryResultCachedVoice]
-      case "article"   => Decoder[InlineQueryResultArticle]
-      case "audio"     => Decoder[InlineQueryResultAudio]
-      case "mpeg4_gif" => Decoder[InlineQueryResultMpeg4Gif]
-      case "mpeg4_gif" => Decoder[InlineQueryResultCachedMpeg4Gif]
-      case "document"  => Decoder[InlineQueryResultCachedDocument]
-      case "video"     => Decoder[InlineQueryResultCachedVideo]
-      case "game"      => Decoder[InlineQueryResultGame]
-      case "photo"     => Decoder[InlineQueryResultCachedPhoto]
-      case "sticker"   => Decoder[InlineQueryResultCachedSticker]
-      case "video"     => Decoder[InlineQueryResultVideo]
-      case "audio"     => Decoder[InlineQueryResultCachedAudio]
-      case "location"  => Decoder[InlineQueryResultLocation]
-      case "gif"       => Decoder[InlineQueryResultCachedGif]
-      case "voice"     => Decoder[InlineQueryResultVoice]
+      case "mpeg4_gif" =>
+        List[Decoder[InlineQueryResult]](
+          Decoder[InlineQueryResultMpeg4Gif].widen,
+          Decoder[InlineQueryResultCachedMpeg4Gif].widen).reduceLeft(_ or _)
+      case "location" => Decoder[InlineQueryResultLocation]
+      case "photo" =>
+        List[Decoder[InlineQueryResult]](
+          Decoder[InlineQueryResultPhoto].widen,
+          Decoder[InlineQueryResultCachedPhoto].widen).reduceLeft(_ or _)
+      case "document" =>
+        List[Decoder[InlineQueryResult]](
+          Decoder[InlineQueryResultDocument].widen,
+          Decoder[InlineQueryResultCachedDocument].widen).reduceLeft(_ or _)
+      case "audio" =>
+        List[Decoder[InlineQueryResult]](
+          Decoder[InlineQueryResultAudio].widen,
+          Decoder[InlineQueryResultCachedAudio].widen).reduceLeft(_ or _)
+      case "voice" =>
+        List[Decoder[InlineQueryResult]](Decoder[InlineQueryResultCachedVoice].widen,
+                                         Decoder[InlineQueryResultVoice].widen).reduceLeft(_ or _)
+      case "article" => Decoder[InlineQueryResultArticle]
+      case "contact" => Decoder[InlineQueryResultContact]
+      case "video" =>
+        List[Decoder[InlineQueryResult]](Decoder[InlineQueryResultCachedVideo].widen,
+                                         Decoder[InlineQueryResultVideo].widen).reduceLeft(_ or _)
+      case "gif" =>
+        List[Decoder[InlineQueryResult]](
+          Decoder[InlineQueryResultGif].widen,
+          Decoder[InlineQueryResultCachedGif].widen).reduceLeft(_ or _)
+      case "sticker" => Decoder[InlineQueryResultCachedSticker]
+      case "game"    => Decoder[InlineQueryResultGame]
+      case "venue"   => Decoder[InlineQueryResultVenue]
     }
   } yield value
 
@@ -6370,37 +6331,37 @@ object CirceImplicits {
     }
 
   implicit lazy val passportelementerrorEncoder: Encoder[PassportElementError] = {
-    case files: PassportElementErrorFiles =>
-      files.asJson.mapObject(_.add("type", Json.fromString("files")))
-    case data: PassportElementErrorDataField =>
-      data.asJson.mapObject(_.add("type", Json.fromString("data")))
-    case reverse_side: PassportElementErrorReverseSide =>
-      reverse_side.asJson.mapObject(_.add("type", Json.fromString("reverse_side")))
-    case selfie: PassportElementErrorSelfie =>
-      selfie.asJson.mapObject(_.add("type", Json.fromString("selfie")))
-    case front_side: PassportElementErrorFrontSide =>
-      front_side.asJson.mapObject(_.add("type", Json.fromString("front_side")))
-    case file: PassportElementErrorFile =>
-      file.asJson.mapObject(_.add("type", Json.fromString("file")))
-    case unspecified: PassportElementErrorUnspecified =>
-      unspecified.asJson.mapObject(_.add("type", Json.fromString("unspecified")))
     case translation_file: PassportElementErrorTranslationFile =>
       translation_file.asJson.mapObject(_.add("type", Json.fromString("translation_file")))
     case translation_files: PassportElementErrorTranslationFiles =>
       translation_files.asJson.mapObject(_.add("type", Json.fromString("translation_files")))
+    case reverse_side: PassportElementErrorReverseSide =>
+      reverse_side.asJson.mapObject(_.add("type", Json.fromString("reverse_side")))
+    case data: PassportElementErrorDataField =>
+      data.asJson.mapObject(_.add("type", Json.fromString("data")))
+    case front_side: PassportElementErrorFrontSide =>
+      front_side.asJson.mapObject(_.add("type", Json.fromString("front_side")))
+    case files: PassportElementErrorFiles =>
+      files.asJson.mapObject(_.add("type", Json.fromString("files")))
+    case unspecified: PassportElementErrorUnspecified =>
+      unspecified.asJson.mapObject(_.add("type", Json.fromString("unspecified")))
+    case file: PassportElementErrorFile =>
+      file.asJson.mapObject(_.add("type", Json.fromString("file")))
+    case selfie: PassportElementErrorSelfie =>
+      selfie.asJson.mapObject(_.add("type", Json.fromString("selfie")))
   }
   implicit lazy val passportelementerrorDecoder: Decoder[PassportElementError] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "files"             => Decoder[PassportElementErrorFiles]
-      case "data"              => Decoder[PassportElementErrorDataField]
-      case "reverse_side"      => Decoder[PassportElementErrorReverseSide]
-      case "selfie"            => Decoder[PassportElementErrorSelfie]
-      case "front_side"        => Decoder[PassportElementErrorFrontSide]
-      case "file"              => Decoder[PassportElementErrorFile]
-      case "unspecified"       => Decoder[PassportElementErrorUnspecified]
       case "translation_file"  => Decoder[PassportElementErrorTranslationFile]
       case "translation_files" => Decoder[PassportElementErrorTranslationFiles]
+      case "reverse_side"      => Decoder[PassportElementErrorReverseSide]
+      case "data"              => Decoder[PassportElementErrorDataField]
+      case "front_side"        => Decoder[PassportElementErrorFrontSide]
+      case "files"             => Decoder[PassportElementErrorFiles]
+      case "unspecified"       => Decoder[PassportElementErrorUnspecified]
+      case "file"              => Decoder[PassportElementErrorFile]
+      case "selfie"            => Decoder[PassportElementErrorSelfie]
     }
   } yield value
 

@@ -15,7 +15,7 @@ final case class MethodReq[Res](
 
 final case class MethodPayload(
     name: String,
-    json: io.circe.Json,
+    json: Json,
     files: Map[String, IFile]
 )
 
