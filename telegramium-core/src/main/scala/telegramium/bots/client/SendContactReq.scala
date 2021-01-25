@@ -5,7 +5,7 @@ import telegramium.bots.KeyboardMarkup
 
 final case class SendContactReq(
                                 /** Unique identifier for the target chat or username of the
-                                  * target channel (in the format @channelusername)*/
+                                  * target channel (in the format &#064;channelusername)*/
                                 chatId: ChatId,
                                 /** Contact's phone number*/
                                 phoneNumber: String,

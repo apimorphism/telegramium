@@ -5,7 +5,7 @@ import telegramium.bots.InlineKeyboardMarkup
 
 final case class StopPollReq(
                              /** Unique identifier for the target chat or username of the
-                               * target channel (in the format @channelusername)*/
+                               * target channel (in the format &#064;channelusername)*/
                              chatId: ChatId,
                              /** Identifier of the original message with the poll*/
                              messageId: Int,

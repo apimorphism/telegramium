@@ -5,7 +5,7 @@ import telegramium.bots.ChatId
 final case class KickChatMemberReq(
                                    /** Unique identifier for the target group or username of the
                                      * target supergroup or channel (in the format
-                                     * @channelusername)*/
+                                     * &#064;channelusername)*/
                                    chatId: ChatId,
                                    /** Unique identifier of the target user*/
                                    userId: Int,

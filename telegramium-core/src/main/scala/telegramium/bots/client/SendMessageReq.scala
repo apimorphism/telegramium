@@ -7,7 +7,7 @@ import telegramium.bots.KeyboardMarkup
 
 final case class SendMessageReq(
                                 /** Unique identifier for the target chat or username of the
-                                  * target channel (in the format @channelusername)*/
+                                  * target channel (in the format &#064;channelusername)*/
                                 chatId: ChatId,
                                 /** Text of the message to be sent, 1-4096 characters after
                                   * entities parsing*/

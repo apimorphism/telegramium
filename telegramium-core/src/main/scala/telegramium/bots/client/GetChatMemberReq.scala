@@ -5,7 +5,7 @@ import telegramium.bots.ChatId
 final case class GetChatMemberReq(
                                   /** Unique identifier for the target chat or username of the
                                     * target supergroup or channel (in the format
-                                    * @channelusername)*/
+                                    * &#064;channelusername)*/
                                   chatId: ChatId,
                                   /** Unique identifier of the target user*/
                                   userId: Int)

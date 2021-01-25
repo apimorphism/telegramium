@@ -20,7 +20,7 @@ final case class ForceReply(
                             forceReply: Boolean,
                             /** Optional. Use this parameter if you want to force reply
                               * from specific users only. Targets: 1) users that are
-                              * @mentioned in the text of the Message object; 2) if the
+                              * &#064;mentioned in the text of the Message object; 2) if the
                               * bot's message is a reply (has reply_to_message_id), sender
                               * of the original message.*/
                             selective: Option[Boolean] = Option.empty)
@@ -39,7 +39,7 @@ final case class ReplyKeyboardRemove(
                                      removeKeyboard: Boolean,
                                      /** Optional. Use this parameter if you want to remove the
                                        * keyboard for specific users only. Targets: 1) users that are
-                                       * @mentioned in the text of the Message object; 2) if the
+                                       * &#064;mentioned in the text of the Message object; 2) if the
                                        * bot's message is a reply (has reply_to_message_id), sender
                                        * of the original message. Example: A user votes in a poll,
                                        * bot returns confirmation message in reply to the vote and
@@ -69,7 +69,7 @@ final case class ReplyKeyboardMarkup(
                                      oneTimeKeyboard: Option[Boolean] = Option.empty,
                                      /** Optional. Use this parameter if you want to show the
                                        * keyboard to specific users only. Targets: 1) users that are
-                                       * @mentioned in the text of the Message object; 2) if the
+                                       * &#064;mentioned in the text of the Message object; 2) if the
                                        * bot's message is a reply (has reply_to_message_id), sender
                                        * of the original message. Example: A user requests to change
                                        * the bot's language, bot replies to the request with a

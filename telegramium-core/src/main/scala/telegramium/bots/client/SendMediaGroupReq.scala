@@ -5,7 +5,7 @@ import telegramium.bots.InputMedia
 
 final case class SendMediaGroupReq(
                                    /** Unique identifier for the target chat or username of the
-                                     * target channel (in the format @channelusername)*/
+                                     * target channel (in the format &#064;channelusername)*/
                                    chatId: ChatId,
                                    /** A JSON-serialized array describing messages to be sent,
                                      * must include 2-10 items*/

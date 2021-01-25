@@ -6,7 +6,7 @@ import telegramium.bots.KeyboardMarkup
 
 final case class SendPollReq(
                              /** Unique identifier for the target chat or username of the
-                               * target channel (in the format @channelusername)*/
+                               * target channel (in the format &#064;channelusername)*/
                              chatId: ChatId,
                              /** Poll question, 1-300 characters*/
                              question: String,

@@ -6,7 +6,7 @@ import telegramium.bots.InlineKeyboardMarkup
 final case class EditMessageReplyMarkupReq(
                                            /** Required if inline_message_id is not specified. Unique
                                              * identifier for the target chat or username of the target
-                                             * channel (in the format @channelusername)*/
+                                             * channel (in the format &#064;channelusername)*/
                                            chatId: Option[ChatId] = Option.empty,
                                            /** Required if inline_message_id is not specified. Identifier
                                              * of the message to edit*/

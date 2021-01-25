@@ -3,10 +3,10 @@ package telegramium.bots
 /** This object represents one special entity in a text message. For example,
   * hashtags, usernames, URLs, etc.*/
 final case class MessageEntity(
-                               /** Type of the entity. Can be “mention” (@username), “hashtag”
-                                 * (#hashtag), “cashtag” ($USD), “bot_command”
-                                 * (/start@jobs_bot), “url” (https://telegram.org), “email”
-                                 * (do-not-reply@telegram.org), “phone_number”
+                               /** Type of the entity. Can be “mention” (&#064;username),
+                                 * “hashtag” (#hashtag), “cashtag” ($USD), “bot_command”
+                                 * (/start&#064;jobs_bot), “url” (https://telegram.org),
+                                 * “email” (do-not-reply&#064;telegram.org), “phone_number”
                                  * (+1-212-555-0123), “bold” (bold text), “italic” (italic
                                  * text), “underline” (underlined text), “strikethrough”
                                  * (strikethrough text), “code” (monowidth string), “pre”

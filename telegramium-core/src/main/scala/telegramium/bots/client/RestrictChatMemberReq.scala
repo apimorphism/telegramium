@@ -5,7 +5,7 @@ import telegramium.bots.ChatPermissions
 
 final case class RestrictChatMemberReq(
                                        /** Unique identifier for the target chat or username of the
-                                         * target supergroup (in the format @supergroupusername)*/
+                                         * target supergroup (in the format &#064;supergroupusername)*/
                                        chatId: ChatId,
                                        /** Unique identifier of the target user*/
                                        userId: Int,

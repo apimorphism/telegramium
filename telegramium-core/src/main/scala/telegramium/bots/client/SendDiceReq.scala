@@ -6,7 +6,7 @@ import telegramium.bots.KeyboardMarkup
 
 final case class SendDiceReq(
                              /** Unique identifier for the target chat or username of the
-                               * target channel (in the format @channelusername)*/
+                               * target channel (in the format &#064;channelusername)*/
                              chatId: ChatId,
                              /** Emoji on which the dice throw animation is based.
                                * Currently, must be one of EmojiDice, EmojiDarts,

@@ -8,7 +8,7 @@ import telegramium.bots.KeyboardMarkup
 
 final case class SendVideoReq(
                               /** Unique identifier for the target chat or username of the
-                                * target channel (in the format @channelusername)*/
+                                * target channel (in the format &#064;channelusername)*/
                               chatId: ChatId,
                               /** Video to send. Pass a file_id as String to send a video
                                 * that exists on the Telegram servers (recommended), pass an
