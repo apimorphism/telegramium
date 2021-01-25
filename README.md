@@ -76,11 +76,6 @@ X.Y.Z where
 
 Please, note, that this versioning scheme is started from version `1.48.0`.
 
-### Known issues
-
-InlineQueryResultMpeg4Gif and InlineQueryResultCachedMpeg4Gif
-has the same discriminator value which comes from the official docs. Maybe the bug in Tg Bot API itself.
-
 ### Contribution
 
 I'd love to have more testing and more example bots. Ideas and PRs on telegramium-high -
