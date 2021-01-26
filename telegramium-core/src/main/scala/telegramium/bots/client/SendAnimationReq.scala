@@ -14,7 +14,7 @@ final case class SendAnimationReq(
                                     * animation that exists on the Telegram servers (recommended),
                                     * pass an HTTP URL as a String for Telegram to get an
                                     * animation from the Internet, or upload a new animation using
-                                    * multipart/form-data. More info on Sending Files »*/
+                                    * multipart/form-data.*/
                                   animation: IFile,
                                   /** Duration of sent animation in seconds*/
                                   duration: Option[Int] = Option.empty,
@@ -30,8 +30,7 @@ final case class SendAnimationReq(
                                     * multipart/form-data. Thumbnails can't be reused and can be
                                     * only uploaded as a new file, so you can pass
                                     * “attach://<file_attach_name>” if the thumbnail was uploaded
-                                    * using multipart/form-data under <file_attach_name>. More
-                                    * info on Sending Files »*/
+                                    * using multipart/form-data under <file_attach_name>.*/
                                   thumb: Option[IFile] = Option.empty,
                                   /** Animation caption (may also be used when resending
                                     * animation by file_id), 0-1024 characters after entities

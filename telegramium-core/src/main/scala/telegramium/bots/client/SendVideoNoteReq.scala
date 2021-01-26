@@ -10,9 +10,8 @@ final case class SendVideoNoteReq(
                                   chatId: ChatId,
                                   /** Video note to send. Pass a file_id as String to send a
                                     * video note that exists on the Telegram servers (recommended)
-                                    * or upload a new video using multipart/form-data. More info
-                                    * on Sending Files ». Sending video notes by a URL is
-                                    * currently unsupported*/
+                                    * or upload a new video using multipart/form-data. Sending
+                                    * video notes by a URL is currently unsupported*/
                                   videoNote: IFile,
                                   /** Duration of sent video in seconds*/
                                   duration: Option[Int] = Option.empty,
@@ -26,8 +25,7 @@ final case class SendVideoNoteReq(
                                     * multipart/form-data. Thumbnails can't be reused and can be
                                     * only uploaded as a new file, so you can pass
                                     * “attach://<file_attach_name>” if the thumbnail was uploaded
-                                    * using multipart/form-data under <file_attach_name>. More
-                                    * info on Sending Files »*/
+                                    * using multipart/form-data under <file_attach_name>.*/
                                   thumb: Option[IFile] = Option.empty,
                                   /** Sends the message silently. Users will receive a
                                     * notification with no sound.*/

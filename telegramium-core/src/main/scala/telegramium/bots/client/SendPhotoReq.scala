@@ -16,7 +16,7 @@ final case class SendPhotoReq(
                                 * Internet, or upload a new photo using multipart/form-data.
                                 * The photo must be at most 10 MB in size. The photo's width
                                 * and height must not exceed 10000 in total. Width and height
-                                * ratio must be at most 20. More info on Sending Files »*/
+                                * ratio must be at most 20.*/
                               photo: IFile,
                               /** Photo caption (may also be used when resending photos by
                                 * file_id), 0-1024 characters after entities parsing*/

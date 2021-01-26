@@ -312,7 +312,6 @@ trait Methods {
     * send a file that already exists on the Telegram servers,
     * pass an HTTP URL as a String for Telegram to get a file from
     * the Internet, or upload a new one using multipart/form-data.
-    * More info on Sending Files »
     * @param tgsSticker TGS animation with the sticker, uploaded using
     * multipart/form-data. See
     * https://core.telegram.org/animated_stickers#technical-requirements
@@ -351,7 +350,7 @@ trait Methods {
     * @param userId User identifier of sticker file owner
     * @param pngSticker PNG image with the sticker, must be up to 512 kilobytes in
     * size, dimensions must not exceed 512px, and either width or
-    * height must be exactly 512px. More info on Sending Files »*/
+    * height must be exactly 512px.*/
   def uploadStickerFile(userId: Int, pngSticker: IFile): Method[File] = {
     val req = UploadStickerFileReq(userId, pngSticker)
     MethodReq[File](
@@ -525,7 +524,6 @@ trait Methods {
     * send a file that already exists on the Telegram servers,
     * pass an HTTP URL as a String for Telegram to get a file from
     * the Internet, or upload a new one using multipart/form-data.
-    * More info on Sending Files »
     * @param tgsSticker TGS animation with the sticker, uploaded using
     * multipart/form-data. See
     * https://core.telegram.org/animated_stickers#technical-requirements
@@ -932,9 +930,8 @@ trait Methods {
     * target channel (in the format &#064;channelusername)
     * @param videoNote Video note to send. Pass a file_id as String to send a
     * video note that exists on the Telegram servers (recommended)
-    * or upload a new video using multipart/form-data. More info
-    * on Sending Files ». Sending video notes by a URL is
-    * currently unsupported
+    * or upload a new video using multipart/form-data. Sending
+    * video notes by a URL is currently unsupported
     * @param duration Duration of sent video in seconds
     * @param length Video width and height, i.e. diameter of the video message
     * @param thumb Thumbnail of the file sent; can be ignored if thumbnail
@@ -945,8 +942,7 @@ trait Methods {
     * multipart/form-data. Thumbnails can't be reused and can be
     * only uploaded as a new file, so you can pass
     * “attach://<file_attach_name>” if the thumbnail was uploaded
-    * using multipart/form-data under <file_attach_name>. More
-    * info on Sending Files »
+    * using multipart/form-data under <file_attach_name>.
     * @param disableNotification Sends the message silently. Users will receive a
     * notification with no sound.
     * @param replyToMessageId If the message is a reply, ID of the original message
@@ -1116,7 +1112,6 @@ trait Methods {
     * exists on the Telegram servers (recommended), pass an HTTP
     * URL as a String for Telegram to get a file from the
     * Internet, or upload a new one using multipart/form-data.
-    * More info on Sending Files »
     * @param thumb Thumbnail of the file sent; can be ignored if thumbnail
     * generation for the file is supported server-side. The
     * thumbnail should be in JPEG format and less than 200 kB in
@@ -1125,8 +1120,7 @@ trait Methods {
     * multipart/form-data. Thumbnails can't be reused and can be
     * only uploaded as a new file, so you can pass
     * “attach://<file_attach_name>” if the thumbnail was uploaded
-    * using multipart/form-data under <file_attach_name>. More
-    * info on Sending Files »
+    * using multipart/form-data under <file_attach_name>.
     * @param caption Document caption (may also be used when resending documents
     * by file_id), 0-1024 characters after entities parsing
     * @param parseMode Mode for parsing entities in the document caption. See
@@ -1274,7 +1268,7 @@ trait Methods {
     * audio file that exists on the Telegram servers
     * (recommended), pass an HTTP URL as a String for Telegram to
     * get an audio file from the Internet, or upload a new one
-    * using multipart/form-data. More info on Sending Files »
+    * using multipart/form-data.
     * @param caption Audio caption, 0-1024 characters after entities parsing
     * @param parseMode Mode for parsing entities in the audio caption. See
     * formatting options for more details.
@@ -1291,8 +1285,7 @@ trait Methods {
     * multipart/form-data. Thumbnails can't be reused and can be
     * only uploaded as a new file, so you can pass
     * “attach://<file_attach_name>” if the thumbnail was uploaded
-    * using multipart/form-data under <file_attach_name>. More
-    * info on Sending Files »
+    * using multipart/form-data under <file_attach_name>.
     * @param disableNotification Sends the message silently. Users will receive a
     * notification with no sound.
     * @param replyToMessageId If the message is a reply, ID of the original message
@@ -1427,7 +1420,6 @@ trait Methods {
     * that exists on the Telegram servers (recommended), pass an
     * HTTP URL as a String for Telegram to get a file from the
     * Internet, or upload a new one using multipart/form-data.
-    * More info on Sending Files »
     * @param caption Voice message caption, 0-1024 characters after entities
     * parsing
     * @param parseMode Mode for parsing entities in the voice message caption. See
@@ -1629,8 +1621,8 @@ trait Methods {
     * as a String to send a file that already exists on the
     * Telegram servers, pass an HTTP URL as a String for Telegram
     * to get a file from the Internet, or upload a new one using
-    * multipart/form-data. More info on Sending Files ». Animated
-    * sticker set thumbnail can't be uploaded via HTTP URL.*/
+    * multipart/form-data. Animated sticker set thumbnail can't be
+    * uploaded via HTTP URL.*/
   def setStickerSetThumb(name: String,
                          userId: Int,
                          thumb: Option[IFile] = Option.empty): Method[Boolean] = {
@@ -1672,7 +1664,6 @@ trait Methods {
     * that exists on the Telegram servers (recommended), pass an
     * HTTP URL as a String for Telegram to get a video from the
     * Internet, or upload a new video using multipart/form-data.
-    * More info on Sending Files »
     * @param duration Duration of sent video in seconds
     * @param width Video width
     * @param height Video height
@@ -1684,8 +1675,7 @@ trait Methods {
     * multipart/form-data. Thumbnails can't be reused and can be
     * only uploaded as a new file, so you can pass
     * “attach://<file_attach_name>” if the thumbnail was uploaded
-    * using multipart/form-data under <file_attach_name>. More
-    * info on Sending Files »
+    * using multipart/form-data under <file_attach_name>.
     * @param caption Video caption (may also be used when resending videos by
     * file_id), 0-1024 characters after entities parsing
     * @param parseMode Mode for parsing entities in the video caption. See
@@ -1817,7 +1807,7 @@ trait Methods {
     * animation that exists on the Telegram servers (recommended),
     * pass an HTTP URL as a String for Telegram to get an
     * animation from the Internet, or upload a new animation using
-    * multipart/form-data. More info on Sending Files »
+    * multipart/form-data.
     * @param duration Duration of sent animation in seconds
     * @param width Animation width
     * @param height Animation height
@@ -1829,8 +1819,7 @@ trait Methods {
     * multipart/form-data. Thumbnails can't be reused and can be
     * only uploaded as a new file, so you can pass
     * “attach://<file_attach_name>” if the thumbnail was uploaded
-    * using multipart/form-data under <file_attach_name>. More
-    * info on Sending Files »
+    * using multipart/form-data under <file_attach_name>.
     * @param caption Animation caption (may also be used when resending
     * animation by file_id), 0-1024 characters after entities
     * parsing
@@ -1937,7 +1926,6 @@ trait Methods {
     * that exists on the Telegram servers (recommended), pass an
     * HTTP URL as a String for Telegram to get a .WEBP file from
     * the Internet, or upload a new one using multipart/form-data.
-    * More info on Sending Files »
     * @param disableNotification Sends the message silently. Users will receive a
     * notification with no sound.
     * @param replyToMessageId If the message is a reply, ID of the original message
@@ -1983,7 +1971,7 @@ trait Methods {
     * Internet, or upload a new photo using multipart/form-data.
     * The photo must be at most 10 MB in size. The photo's width
     * and height must not exceed 10000 in total. Width and height
-    * ratio must be at most 20. More info on Sending Files »
+    * ratio must be at most 20.
     * @param caption Photo caption (may also be used when resending photos by
     * file_id), 0-1024 characters after entities parsing
     * @param parseMode Mode for parsing entities in the photo caption. See

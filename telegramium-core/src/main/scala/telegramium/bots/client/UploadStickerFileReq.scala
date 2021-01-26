@@ -7,5 +7,5 @@ final case class UploadStickerFileReq(
                                       userId: Int,
                                       /** PNG image with the sticker, must be up to 512 kilobytes in
                                         * size, dimensions must not exceed 512px, and either width or
-                                        * height must be exactly 512px. More info on Sending Files »*/
+                                        * height must be exactly 512px.*/
                                       pngSticker: IFile)

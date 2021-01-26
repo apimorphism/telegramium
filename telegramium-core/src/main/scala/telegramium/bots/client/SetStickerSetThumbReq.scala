@@ -15,6 +15,6 @@ final case class SetStickerSetThumbReq(
                                          * as a String to send a file that already exists on the
                                          * Telegram servers, pass an HTTP URL as a String for Telegram
                                          * to get a file from the Internet, or upload a new one using
-                                         * multipart/form-data. More info on Sending Files ». Animated
-                                         * sticker set thumbnail can't be uploaded via HTTP URL.*/
+                                         * multipart/form-data. Animated sticker set thumbnail can't be
+                                         * uploaded via HTTP URL.*/
                                        thumb: Option[IFile] = Option.empty)

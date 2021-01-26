@@ -11,8 +11,7 @@ final case class SendStickerReq(
                                 /** Sticker to send. Pass a file_id as String to send a file
                                   * that exists on the Telegram servers (recommended), pass an
                                   * HTTP URL as a String for Telegram to get a .WEBP file from
-                                  * the Internet, or upload a new one using multipart/form-data.
-                                  * More info on Sending Files »*/
+                                  * the Internet, or upload a new one using multipart/form-data.*/
                                 sticker: IFile,
                                 /** Sends the message silently. Users will receive a
                                   * notification with no sound.*/

@@ -13,8 +13,7 @@ final case class SendDocumentReq(
                                  /** File to send. Pass a file_id as String to send a file that
                                    * exists on the Telegram servers (recommended), pass an HTTP
                                    * URL as a String for Telegram to get a file from the
-                                   * Internet, or upload a new one using multipart/form-data.
-                                   * More info on Sending Files »*/
+                                   * Internet, or upload a new one using multipart/form-data.*/
                                  document: IFile,
                                  /** Thumbnail of the file sent; can be ignored if thumbnail
                                    * generation for the file is supported server-side. The
@@ -24,8 +23,7 @@ final case class SendDocumentReq(
                                    * multipart/form-data. Thumbnails can't be reused and can be
                                    * only uploaded as a new file, so you can pass
                                    * “attach://<file_attach_name>” if the thumbnail was uploaded
-                                   * using multipart/form-data under <file_attach_name>. More
-                                   * info on Sending Files »*/
+                                   * using multipart/form-data under <file_attach_name>.*/
                                  thumb: Option[IFile] = Option.empty,
                                  /** Document caption (may also be used when resending documents
                                    * by file_id), 0-1024 characters after entities parsing*/
