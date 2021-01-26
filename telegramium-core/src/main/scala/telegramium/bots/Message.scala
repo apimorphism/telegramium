@@ -92,8 +92,7 @@ final case class Message(
                          contact: Option[Contact] = Option.empty,
                          /** Optional. Message is a dice with random value*/
                          dice: Option[Dice] = Option.empty,
-                         /** Optional. Message is a game, information about the game.
-                           * More about games »*/
+                         /** Optional. Message is a game, information about the game.*/
                          game: Option[Game] = Option.empty,
                          /** Optional. Message is a native poll, information about the
                            * poll*/
@@ -154,14 +153,13 @@ final case class Message(
                            * reply_to_message fields even if it is itself a reply.*/
                          pinnedMessage: Option[Message] = Option.empty,
                          /** Optional. Message is an invoice for a payment, information
-                           * about the invoice. More about payments »*/
+                           * about the invoice.*/
                          invoice: Option[Invoice] = Option.empty,
                          /** Optional. Message is a service message about a successful
-                           * payment, information about the payment. More about payments
-                           * »*/
+                           * payment, information about the payment.*/
                          successfulPayment: Option[SuccessfulPayment] = Option.empty,
                          /** Optional. The domain name of the website on which the user
-                           * has logged in. More about Telegram Login »*/
+                           * has logged in.*/
                          connectedWebsite: Option[String] = Option.empty,
                          /** Optional. Telegram Passport data*/
                          passportData: Option[PassportData] = Option.empty,

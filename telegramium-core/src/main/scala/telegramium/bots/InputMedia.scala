@@ -9,8 +9,7 @@ final case class InputMediaAnimation(
                                        * the Telegram servers (recommended), pass an HTTP URL for
                                        * Telegram to get a file from the Internet, or pass
                                        * “attach://<file_attach_name>” to upload a new one using
-                                       * multipart/form-data under <file_attach_name> name. More info
-                                       * on Sending Files »*/
+                                       * multipart/form-data under <file_attach_name> name.*/
                                      media: String,
                                      /** Optional. Thumbnail of the file sent; can be ignored if
                                        * thumbnail generation for the file is supported server-side.
@@ -20,8 +19,7 @@ final case class InputMediaAnimation(
                                        * multipart/form-data. Thumbnails can't be reused and can be
                                        * only uploaded as a new file, so you can pass
                                        * “attach://<file_attach_name>” if the thumbnail was uploaded
-                                       * using multipart/form-data under <file_attach_name>. More
-                                       * info on Sending Files »*/
+                                       * using multipart/form-data under <file_attach_name>.*/
                                      thumb: Option[IFile] = Option.empty,
                                      /** Optional. Caption of the animation to be sent, 0-1024
                                        * characters after entities parsing*/
@@ -46,8 +44,7 @@ final case class InputMediaPhoto(
                                    * the Telegram servers (recommended), pass an HTTP URL for
                                    * Telegram to get a file from the Internet, or pass
                                    * “attach://<file_attach_name>” to upload a new one using
-                                   * multipart/form-data under <file_attach_name> name. More info
-                                   * on Sending Files »*/
+                                   * multipart/form-data under <file_attach_name> name.*/
                                  media: String,
                                  /** Optional. Caption of the photo to be sent, 0-1024
                                    * characters after entities parsing*/
@@ -66,8 +63,7 @@ final case class InputMediaVideo(
                                    * the Telegram servers (recommended), pass an HTTP URL for
                                    * Telegram to get a file from the Internet, or pass
                                    * “attach://<file_attach_name>” to upload a new one using
-                                   * multipart/form-data under <file_attach_name> name. More info
-                                   * on Sending Files »*/
+                                   * multipart/form-data under <file_attach_name> name.*/
                                  media: String,
                                  /** Optional. Thumbnail of the file sent; can be ignored if
                                    * thumbnail generation for the file is supported server-side.
@@ -77,8 +73,7 @@ final case class InputMediaVideo(
                                    * multipart/form-data. Thumbnails can't be reused and can be
                                    * only uploaded as a new file, so you can pass
                                    * “attach://<file_attach_name>” if the thumbnail was uploaded
-                                   * using multipart/form-data under <file_attach_name>. More
-                                   * info on Sending Files »*/
+                                   * using multipart/form-data under <file_attach_name>.*/
                                  thumb: Option[IFile] = Option.empty,
                                  /** Optional. Caption of the video to be sent, 0-1024
                                    * characters after entities parsing*/
@@ -106,8 +101,7 @@ final case class InputMediaDocument(
                                       * the Telegram servers (recommended), pass an HTTP URL for
                                       * Telegram to get a file from the Internet, or pass
                                       * “attach://<file_attach_name>” to upload a new one using
-                                      * multipart/form-data under <file_attach_name> name. More info
-                                      * on Sending Files »*/
+                                      * multipart/form-data under <file_attach_name> name.*/
                                     media: String,
                                     /** Optional. Thumbnail of the file sent; can be ignored if
                                       * thumbnail generation for the file is supported server-side.
@@ -117,8 +111,7 @@ final case class InputMediaDocument(
                                       * multipart/form-data. Thumbnails can't be reused and can be
                                       * only uploaded as a new file, so you can pass
                                       * “attach://<file_attach_name>” if the thumbnail was uploaded
-                                      * using multipart/form-data under <file_attach_name>. More
-                                      * info on Sending Files »*/
+                                      * using multipart/form-data under <file_attach_name>.*/
                                     thumb: Option[IFile] = Option.empty,
                                     /** Optional. Caption of the document to be sent, 0-1024
                                       * characters after entities parsing*/
@@ -141,8 +134,7 @@ final case class InputMediaAudio(
                                    * the Telegram servers (recommended), pass an HTTP URL for
                                    * Telegram to get a file from the Internet, or pass
                                    * “attach://<file_attach_name>” to upload a new one using
-                                   * multipart/form-data under <file_attach_name> name. More info
-                                   * on Sending Files »*/
+                                   * multipart/form-data under <file_attach_name> name.*/
                                  media: String,
                                  /** Optional. Thumbnail of the file sent; can be ignored if
                                    * thumbnail generation for the file is supported server-side.
@@ -152,8 +144,7 @@ final case class InputMediaAudio(
                                    * multipart/form-data. Thumbnails can't be reused and can be
                                    * only uploaded as a new file, so you can pass
                                    * “attach://<file_attach_name>” if the thumbnail was uploaded
-                                   * using multipart/form-data under <file_attach_name>. More
-                                   * info on Sending Files »*/
+                                   * using multipart/form-data under <file_attach_name>.*/
                                  thumb: Option[IFile] = Option.empty,
                                  /** Optional. Caption of the audio to be sent, 0-1024
                                    * characters after entities parsing*/
