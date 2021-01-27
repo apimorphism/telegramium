@@ -4,8 +4,9 @@ import cats.Parallel
 import cats.effect.{Sync, Timer}
 import cats.syntax.flatMap._
 import cats.syntax.functor._
-import telegramium.bots.high._
+import telegramium.bots.high.{Api, LongPollBot}
 import telegramium.bots.high.implicits._
+import telegramium.bots.high.keyboards.{InlineKeyboardButtons, InlineKeyboardMarkups}
 import telegramium.bots.{CallbackQuery, ChatIntId, Message}
 
 /**
@@ -19,13 +20,13 @@ class IceCreamParlorBot[F[_]]()(
       sendMessage(
         chatId = ChatIntId(msg.chat.id),
         text = "Choose your flavor:",
-        replyMarkup = Some(InlineKeyboardMarkup.singleColumn(
+        replyMarkup = Some(InlineKeyboardMarkups.singleColumn(
           List(
-            InlineKeyboardButton.callbackData("Vanilla", callbackData = "vanilla"),
-            InlineKeyboardButton.callbackData("Chocolate", callbackData = "chocolate"),
-            InlineKeyboardButton.callbackData("Cookies & Cream", callbackData = "cookies_cream"),
-            InlineKeyboardButton.callbackData("Mint Chocolate Chip", callbackData = "mint_chocolate_chip"),
-            InlineKeyboardButton.callbackData("Chocolate Chip Cookie Dough", callbackData = "chocolate_chip_cookie_dough")
+            InlineKeyboardButtons.callbackData("Vanilla", callbackData = "vanilla"),
+            InlineKeyboardButtons.callbackData("Chocolate", callbackData = "chocolate"),
+            InlineKeyboardButtons.callbackData("Cookies & Cream", callbackData = "cookies_cream"),
+            InlineKeyboardButtons.callbackData("Mint Chocolate Chip", callbackData = "mint_chocolate_chip"),
+            InlineKeyboardButtons.callbackData("Chocolate Chip Cookie Dough", callbackData = "chocolate_chip_cookie_dough")
           )
         ))
       ).exec.void

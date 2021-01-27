@@ -27,7 +27,6 @@ libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "2.50.0"
 
 Imports:
 ```scala
-import telegramium.bots.high._
 import telegramium.bots.high.implicits._
 ```
 
@@ -64,6 +63,19 @@ You can also perform a request to the Bot API while [sending an answer to the we
 ```scala
 override def onMessageReply(msg: Message): F[Option[Method[_]]] =
   Sync[F].pure(Some(sendMessage(chatId = ChatIntId(msg.chat.id), text = "Hello, world!")))
+```
+
+#### Keyboards
+To use smart and safe constructors for keyboard markups, import `telegramium.bots.high.keyboards._`:
+```scala
+val button: KeyboardButton = KeyboardButtons.text("Hello, world!")
+val keyboard: ReplyKeyboardMarkup = ReplyKeyboardMarkups.singleButton(button)
+
+val inlineButton: InlineKeyboardButton =
+  InlineKeyboardButtons.callbackData(text = "Press me", callbackData = "button_pressed")
+
+val inlineKeyboard: InlineKeyboardMarkup =
+  InlineKeyboardMarkups.singleButton(inlineButton)
 ```
 
 ### Versioning
