@@ -27,6 +27,7 @@ libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "2.50.0"
 
 Imports:
 ```scala
+import telegramium.bots.high._
 import telegramium.bots.high.implicits._
 ```
 
@@ -100,16 +101,17 @@ Except that any PR-s are welcome.
 ### Alternatives
 
 You may also want to have a look at these projects:
-* https://github.com/augustjune/canoe
-* https://github.com/bot4s/telegram
-* https://github.com/paoloboni/telegram4s
+* [augustjune/canoe](https://github.com/augustjune/canoe)
+* [bot4s/telegram](https://github.com/bot4s/telegram)
+* [paoloboni/telegram4s](https://github.com/paoloboni/telegram4s)
 
 ### Known usages
 
-* https://github.com/oybek/playcs_bot : telegram chat bot for creating counter strike 1.6 dedicated servers
-* https://github.com/johnspade/s10ns_bot : Subscription Management Telegram Bot
-* https://github.com/oybek/gdetram : Public transport info aggregator with chat bot interface
-* https://github.com/b1nd/stonks : Investment Portfolio Calculation Bot
+* [oybek/playcs_bot](https://github.com/oybek/playcs_bot): telegram chat bot for creating counter strike 1.6 dedicated servers
+* [oybek/gdetram](https://github.com/oybek/gdetram): Public transport info aggregator with chat bot interface
+* [johnspade/s10ns_bot](https://github.com/johnspade/s10ns_bot): Subscription Management Telegram Bot
+* [johnspade/taskobot-scala](https://github.com/johnspade/taskobot-scala): Taskobot is a task collaboration inline Telegram bot
+* [b1nd/stonks](https://github.com/b1nd/stonks): Investment Portfolio Calculation Bot
 
 ### Note for Yan
 
