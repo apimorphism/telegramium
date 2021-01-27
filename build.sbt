@@ -35,12 +35,7 @@ ThisBuild / developers        := List(Developer(
                                  ))
 
 ThisBuild / publishMavenStyle := true
-ThisBuild / publishTo         := Some(
-                                   if (isSnapshot.value)
-                                     Opts.resolver.sonatypeSnapshots
-                                   else
-                                     Opts.resolver.sonatypeStaging
-                                 )
+ThisBuild / publishTo         := sonatypePublishToBundle.value
 
 usePgpKeyHex("ACBE704D")
 
