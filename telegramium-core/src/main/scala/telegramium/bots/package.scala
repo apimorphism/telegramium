@@ -2316,6 +2316,467 @@ object uPickleImplicits {
     )
   }
 
+  implicit lazy val messageentityCodec: ReadWriter[MessageEntity] = {
+    readwriter[upack.Msg].bimap(
+      {
+        case x: MentionMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("mention"))
+        case x: CashtagMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("cashtag"))
+        case x: CodeMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("code"))
+        case x: BotCommandMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("bot_command"))
+        case x: EmailMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("email"))
+        case x: BoldMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("bold"))
+        case x: PreMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("pre"))
+        case x: ItalicMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("italic"))
+        case x: StrikethroughMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("strikethrough"))
+        case x: UnderlineMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("underline"))
+        case x: HashtagMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("hashtag"))
+        case x: TextMentionMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("text_mention"))
+        case x: TextLinkMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("text_link"))
+        case x: UrlMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("url"))
+        case x: PhoneNumberMessageEntity =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("phone_number"))
+      },
+      msg => {
+        val m = msg.obj
+        m.get(upack.Str("type"))
+          .collect {
+            case upack.Str("mention")       => readBinary[MentionMessageEntity](msg)
+            case upack.Str("cashtag")       => readBinary[CashtagMessageEntity](msg)
+            case upack.Str("code")          => readBinary[CodeMessageEntity](msg)
+            case upack.Str("bot_command")   => readBinary[BotCommandMessageEntity](msg)
+            case upack.Str("email")         => readBinary[EmailMessageEntity](msg)
+            case upack.Str("bold")          => readBinary[BoldMessageEntity](msg)
+            case upack.Str("pre")           => readBinary[PreMessageEntity](msg)
+            case upack.Str("italic")        => readBinary[ItalicMessageEntity](msg)
+            case upack.Str("strikethrough") => readBinary[StrikethroughMessageEntity](msg)
+            case upack.Str("underline")     => readBinary[UnderlineMessageEntity](msg)
+            case upack.Str("hashtag")       => readBinary[HashtagMessageEntity](msg)
+            case upack.Str("text_mention")  => readBinary[TextMentionMessageEntity](msg)
+            case upack.Str("text_link")     => readBinary[TextLinkMessageEntity](msg)
+            case upack.Str("url")           => readBinary[UrlMessageEntity](msg)
+            case upack.Str("phone_number")  => readBinary[PhoneNumberMessageEntity](msg)
+          }
+          .get
+      }
+    )
+  }
+
+  implicit lazy val mentionmessageentityCodec: ReadWriter[MentionMessageEntity] = {
+    val offsetKey = upack.Str("offset")
+    val lengthKey = upack.Str("length")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey -> writeMsg(x.offset),
+          lengthKey -> writeMsg(x.length)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length <- m.get(lengthKey).map(x => readBinary[Int](x))
+        } yield {
+          MentionMessageEntity(
+            offset = offset,
+            length = length
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val cashtagmessageentityCodec: ReadWriter[CashtagMessageEntity] = {
+    val offsetKey = upack.Str("offset")
+    val lengthKey = upack.Str("length")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey -> writeMsg(x.offset),
+          lengthKey -> writeMsg(x.length)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length <- m.get(lengthKey).map(x => readBinary[Int](x))
+        } yield {
+          CashtagMessageEntity(
+            offset = offset,
+            length = length
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val codemessageentityCodec: ReadWriter[CodeMessageEntity] = {
+    val offsetKey = upack.Str("offset")
+    val lengthKey = upack.Str("length")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey -> writeMsg(x.offset),
+          lengthKey -> writeMsg(x.length)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length <- m.get(lengthKey).map(x => readBinary[Int](x))
+        } yield {
+          CodeMessageEntity(
+            offset = offset,
+            length = length
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val botcommandmessageentityCodec: ReadWriter[BotCommandMessageEntity] = {
+    val offsetKey = upack.Str("offset")
+    val lengthKey = upack.Str("length")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey -> writeMsg(x.offset),
+          lengthKey -> writeMsg(x.length)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length <- m.get(lengthKey).map(x => readBinary[Int](x))
+        } yield {
+          BotCommandMessageEntity(
+            offset = offset,
+            length = length
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val emailmessageentityCodec: ReadWriter[EmailMessageEntity] = {
+    val offsetKey = upack.Str("offset")
+    val lengthKey = upack.Str("length")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey -> writeMsg(x.offset),
+          lengthKey -> writeMsg(x.length)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length <- m.get(lengthKey).map(x => readBinary[Int](x))
+        } yield {
+          EmailMessageEntity(
+            offset = offset,
+            length = length
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val boldmessageentityCodec: ReadWriter[BoldMessageEntity] = {
+    val offsetKey = upack.Str("offset")
+    val lengthKey = upack.Str("length")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey -> writeMsg(x.offset),
+          lengthKey -> writeMsg(x.length)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length <- m.get(lengthKey).map(x => readBinary[Int](x))
+        } yield {
+          BoldMessageEntity(
+            offset = offset,
+            length = length
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val premessageentityCodec: ReadWriter[PreMessageEntity] = {
+    val offsetKey   = upack.Str("offset")
+    val lengthKey   = upack.Str("length")
+    val languageKey = upack.Str("language")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey   -> writeMsg(x.offset),
+          lengthKey   -> writeMsg(x.length),
+          languageKey -> writeMsg(x.language)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset   <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length   <- m.get(lengthKey).map(x => readBinary[Int](x))
+          language <- m.get(languageKey).map(x => readBinary[String](x))
+        } yield {
+          PreMessageEntity(
+            offset = offset,
+            length = length,
+            language = language
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val italicmessageentityCodec: ReadWriter[ItalicMessageEntity] = {
+    val offsetKey = upack.Str("offset")
+    val lengthKey = upack.Str("length")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey -> writeMsg(x.offset),
+          lengthKey -> writeMsg(x.length)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length <- m.get(lengthKey).map(x => readBinary[Int](x))
+        } yield {
+          ItalicMessageEntity(
+            offset = offset,
+            length = length
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val strikethroughmessageentityCodec: ReadWriter[StrikethroughMessageEntity] = {
+    val offsetKey = upack.Str("offset")
+    val lengthKey = upack.Str("length")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey -> writeMsg(x.offset),
+          lengthKey -> writeMsg(x.length)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length <- m.get(lengthKey).map(x => readBinary[Int](x))
+        } yield {
+          StrikethroughMessageEntity(
+            offset = offset,
+            length = length
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val underlinemessageentityCodec: ReadWriter[UnderlineMessageEntity] = {
+    val offsetKey = upack.Str("offset")
+    val lengthKey = upack.Str("length")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey -> writeMsg(x.offset),
+          lengthKey -> writeMsg(x.length)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length <- m.get(lengthKey).map(x => readBinary[Int](x))
+        } yield {
+          UnderlineMessageEntity(
+            offset = offset,
+            length = length
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val hashtagmessageentityCodec: ReadWriter[HashtagMessageEntity] = {
+    val offsetKey = upack.Str("offset")
+    val lengthKey = upack.Str("length")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey -> writeMsg(x.offset),
+          lengthKey -> writeMsg(x.length)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length <- m.get(lengthKey).map(x => readBinary[Int](x))
+        } yield {
+          HashtagMessageEntity(
+            offset = offset,
+            length = length
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val textmentionmessageentityCodec: ReadWriter[TextMentionMessageEntity] = {
+    val offsetKey = upack.Str("offset")
+    val lengthKey = upack.Str("length")
+    val userKey   = upack.Str("user")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey -> writeMsg(x.offset),
+          lengthKey -> writeMsg(x.length),
+          userKey   -> writeMsg(x.user)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length <- m.get(lengthKey).map(x => readBinary[Int](x))
+          user   <- m.get(userKey).map(x => readBinary[User](x))
+        } yield {
+          TextMentionMessageEntity(
+            offset = offset,
+            length = length,
+            user = user
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val textlinkmessageentityCodec: ReadWriter[TextLinkMessageEntity] = {
+    val offsetKey = upack.Str("offset")
+    val lengthKey = upack.Str("length")
+    val urlKey    = upack.Str("url")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey -> writeMsg(x.offset),
+          lengthKey -> writeMsg(x.length),
+          urlKey    -> writeMsg(x.url)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length <- m.get(lengthKey).map(x => readBinary[Int](x))
+          url    <- m.get(urlKey).map(x => readBinary[String](x))
+        } yield {
+          TextLinkMessageEntity(
+            offset = offset,
+            length = length,
+            url = url
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val urlmessageentityCodec: ReadWriter[UrlMessageEntity] = {
+    val offsetKey = upack.Str("offset")
+    val lengthKey = upack.Str("length")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey -> writeMsg(x.offset),
+          lengthKey -> writeMsg(x.length)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length <- m.get(lengthKey).map(x => readBinary[Int](x))
+        } yield {
+          UrlMessageEntity(
+            offset = offset,
+            length = length
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val phonenumbermessageentityCodec: ReadWriter[PhoneNumberMessageEntity] = {
+    val offsetKey = upack.Str("offset")
+    val lengthKey = upack.Str("length")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          offsetKey -> writeMsg(x.offset),
+          lengthKey -> writeMsg(x.length)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          offset <- m.get(offsetKey).map(x => readBinary[Int](x))
+          length <- m.get(lengthKey).map(x => readBinary[Int](x))
+        } yield {
+          PhoneNumberMessageEntity(
+            offset = offset,
+            length = length
+          )
+        }
+        result.get
+      }
+    )
+  }
+
   implicit lazy val responseparametersCodec: ReadWriter[ResponseParameters] = {
     val migrateToChatIdKey = upack.Str("migrateToChatId")
     val retryAfterKey      = upack.Str("retryAfter")
@@ -4634,48 +5095,6 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val messageentityCodec: ReadWriter[MessageEntity] = {
-    val typeKey     = upack.Str("type")
-    val offsetKey   = upack.Str("offset")
-    val lengthKey   = upack.Str("length")
-    val urlKey      = upack.Str("url")
-    val userKey     = upack.Str("user")
-    val languageKey = upack.Str("language")
-    readwriter[upack.Msg].bimap(
-      x => {
-        upack.Obj(
-          typeKey     -> writeMsg(x.`type`),
-          offsetKey   -> writeMsg(x.offset),
-          lengthKey   -> writeMsg(x.length),
-          urlKey      -> writeMsg(x.url),
-          userKey     -> writeMsg(x.user),
-          languageKey -> writeMsg(x.language)
-        )
-      },
-      msg => {
-        val m = msg.obj
-        val result = for {
-          `type`   <- m.get(typeKey).map(x => readBinary[String](x))
-          offset   <- m.get(offsetKey).map(x => readBinary[Int](x))
-          length   <- m.get(lengthKey).map(x => readBinary[Int](x))
-          url      <- m.get(urlKey).map(x => readBinary[Option[String]](x))
-          user     <- m.get(userKey).map(x => readBinary[Option[User]](x))
-          language <- m.get(languageKey).map(x => readBinary[Option[String]](x))
-        } yield {
-          MessageEntity(
-            `type` = `type`,
-            offset = offset,
-            length = length,
-            url = url,
-            user = user,
-            language = language
-          )
-        }
-        result.get
-      }
-    )
-  }
-
   implicit lazy val videoCodec: ReadWriter[Video] = {
     val fileIdKey       = upack.Str("fileId")
     val fileUniqueIdKey = upack.Str("fileUniqueId")
@@ -6582,6 +7001,361 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val messageentityEncoder: Encoder[MessageEntity] = {
+    case pre: PreMessageEntity => pre.asJson.mapObject(_.add("type", Json.fromString("pre")))
+    case text_mention: TextMentionMessageEntity =>
+      text_mention.asJson.mapObject(_.add("type", Json.fromString("text_mention")))
+    case bot_command: BotCommandMessageEntity =>
+      bot_command.asJson.mapObject(_.add("type", Json.fromString("bot_command")))
+    case phone_number: PhoneNumberMessageEntity =>
+      phone_number.asJson.mapObject(_.add("type", Json.fromString("phone_number")))
+    case email: EmailMessageEntity =>
+      email.asJson.mapObject(_.add("type", Json.fromString("email")))
+    case url: UrlMessageEntity => url.asJson.mapObject(_.add("type", Json.fromString("url")))
+    case underline: UnderlineMessageEntity =>
+      underline.asJson.mapObject(_.add("type", Json.fromString("underline")))
+    case italic: ItalicMessageEntity =>
+      italic.asJson.mapObject(_.add("type", Json.fromString("italic")))
+    case bold: BoldMessageEntity => bold.asJson.mapObject(_.add("type", Json.fromString("bold")))
+    case cashtag: CashtagMessageEntity =>
+      cashtag.asJson.mapObject(_.add("type", Json.fromString("cashtag")))
+    case code: CodeMessageEntity => code.asJson.mapObject(_.add("type", Json.fromString("code")))
+    case mention: MentionMessageEntity =>
+      mention.asJson.mapObject(_.add("type", Json.fromString("mention")))
+    case hashtag: HashtagMessageEntity =>
+      hashtag.asJson.mapObject(_.add("type", Json.fromString("hashtag")))
+    case text_link: TextLinkMessageEntity =>
+      text_link.asJson.mapObject(_.add("type", Json.fromString("text_link")))
+    case strikethrough: StrikethroughMessageEntity =>
+      strikethrough.asJson.mapObject(_.add("type", Json.fromString("strikethrough")))
+  }
+  implicit lazy val messageentityDecoder: Decoder[MessageEntity] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "pre"           => Decoder[PreMessageEntity]
+      case "text_mention"  => Decoder[TextMentionMessageEntity]
+      case "bot_command"   => Decoder[BotCommandMessageEntity]
+      case "phone_number"  => Decoder[PhoneNumberMessageEntity]
+      case "email"         => Decoder[EmailMessageEntity]
+      case "url"           => Decoder[UrlMessageEntity]
+      case "underline"     => Decoder[UnderlineMessageEntity]
+      case "italic"        => Decoder[ItalicMessageEntity]
+      case "bold"          => Decoder[BoldMessageEntity]
+      case "cashtag"       => Decoder[CashtagMessageEntity]
+      case "code"          => Decoder[CodeMessageEntity]
+      case "mention"       => Decoder[MentionMessageEntity]
+      case "hashtag"       => Decoder[HashtagMessageEntity]
+      case "text_link"     => Decoder[TextLinkMessageEntity]
+      case "strikethrough" => Decoder[StrikethroughMessageEntity]
+    }
+  } yield value
+
+  implicit lazy val mentionmessageentityEncoder: Encoder[MentionMessageEntity] =
+    (x: MentionMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val mentionmessageentityDecoder: Decoder[MentionMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        MentionMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val cashtagmessageentityEncoder: Encoder[CashtagMessageEntity] =
+    (x: CashtagMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val cashtagmessageentityDecoder: Decoder[CashtagMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        CashtagMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val codemessageentityEncoder: Encoder[CodeMessageEntity] =
+    (x: CodeMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val codemessageentityDecoder: Decoder[CodeMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        CodeMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val botcommandmessageentityEncoder: Encoder[BotCommandMessageEntity] =
+    (x: BotCommandMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val botcommandmessageentityDecoder: Decoder[BotCommandMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        BotCommandMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val emailmessageentityEncoder: Encoder[EmailMessageEntity] =
+    (x: EmailMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val emailmessageentityDecoder: Decoder[EmailMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        EmailMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val boldmessageentityEncoder: Encoder[BoldMessageEntity] =
+    (x: BoldMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val boldmessageentityDecoder: Decoder[BoldMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        BoldMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val premessageentityEncoder: Encoder[PreMessageEntity] =
+    (x: PreMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset"   -> x.offset.asJson,
+          "length"   -> x.length.asJson,
+          "language" -> x.language.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val premessageentityDecoder: Decoder[PreMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset   <- h.get[Int]("offset")
+        _length   <- h.get[Int]("length")
+        _language <- h.get[String]("language")
+      } yield {
+        PreMessageEntity(offset = _offset, length = _length, language = _language)
+      }
+    }
+
+  implicit lazy val italicmessageentityEncoder: Encoder[ItalicMessageEntity] =
+    (x: ItalicMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val italicmessageentityDecoder: Decoder[ItalicMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        ItalicMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val strikethroughmessageentityEncoder: Encoder[StrikethroughMessageEntity] =
+    (x: StrikethroughMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val strikethroughmessageentityDecoder: Decoder[StrikethroughMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        StrikethroughMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val underlinemessageentityEncoder: Encoder[UnderlineMessageEntity] =
+    (x: UnderlineMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val underlinemessageentityDecoder: Decoder[UnderlineMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        UnderlineMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val hashtagmessageentityEncoder: Encoder[HashtagMessageEntity] =
+    (x: HashtagMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val hashtagmessageentityDecoder: Decoder[HashtagMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        HashtagMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val textmentionmessageentityEncoder: Encoder[TextMentionMessageEntity] =
+    (x: TextMentionMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson,
+          "user"   -> x.user.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val textmentionmessageentityDecoder: Decoder[TextMentionMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+        _user   <- h.get[User]("user")
+      } yield {
+        TextMentionMessageEntity(offset = _offset, length = _length, user = _user)
+      }
+    }
+
+  implicit lazy val textlinkmessageentityEncoder: Encoder[TextLinkMessageEntity] =
+    (x: TextLinkMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson,
+          "url"    -> x.url.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val textlinkmessageentityDecoder: Decoder[TextLinkMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+        _url    <- h.get[String]("url")
+      } yield {
+        TextLinkMessageEntity(offset = _offset, length = _length, url = _url)
+      }
+    }
+
+  implicit lazy val urlmessageentityEncoder: Encoder[UrlMessageEntity] =
+    (x: UrlMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val urlmessageentityDecoder: Decoder[UrlMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        UrlMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val phonenumbermessageentityEncoder: Encoder[PhoneNumberMessageEntity] =
+    (x: PhoneNumberMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val phonenumbermessageentityDecoder: Decoder[PhoneNumberMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        PhoneNumberMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
   implicit lazy val responseparametersEncoder: Encoder[ResponseParameters] =
     (x: ResponseParameters) => {
       Json.fromFields(
@@ -8369,39 +9143,6 @@ object CirceImplicits {
           canAddWebPagePreviews = _canAddWebPagePreviews,
           untilDate = _untilDate
         )
-      }
-    }
-
-  implicit lazy val messageentityEncoder: Encoder[MessageEntity] =
-    (x: MessageEntity) => {
-      Json.fromFields(
-        List(
-          "type"     -> x.`type`.asJson,
-          "offset"   -> x.offset.asJson,
-          "length"   -> x.length.asJson,
-          "url"      -> x.url.asJson,
-          "user"     -> x.user.asJson,
-          "language" -> x.language.asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val messageentityDecoder: Decoder[MessageEntity] =
-    Decoder.instance { h =>
-      for {
-        _type     <- h.get[String]("type")
-        _offset   <- h.get[Int]("offset")
-        _length   <- h.get[Int]("length")
-        _url      <- h.get[Option[String]]("url")
-        _user     <- h.get[Option[User]]("user")
-        _language <- h.get[Option[String]]("language")
-      } yield {
-        MessageEntity(`type` = _type,
-                      offset = _offset,
-                      length = _length,
-                      url = _url,
-                      user = _user,
-                      language = _language)
       }
     }
 
