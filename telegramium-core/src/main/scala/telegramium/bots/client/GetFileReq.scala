@@ -1,5 +1,4 @@
 package telegramium.bots.client
 
-final case class GetFileReq(
-    /** File identifier to get info about*/
-    fileId: String)
+/** @param fileId File identifier to get info about */
+final case class GetFileReq(fileId: String)

@@ -5,144 +5,144 @@ sealed trait InlineQueryResult {}
 /** Represents a link to an animated GIF file. By default, this animated GIF file
   * will be sent by the user with optional caption. Alternatively, you can use
   * input_message_content to send a message with the specified content instead of
-  * the animation.*/
-final case class InlineQueryResultGif(
-                                      /** Unique identifier for this result, 1-64 bytes*/
-                                      id: String,
-                                      /** A valid URL for the GIF file. File size must not exceed 1MB*/
+  * the animation.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param gifUrl A valid URL for the GIF file. File size must not exceed 1MB
+  * @param gifWidth Optional. Width of the GIF
+  * @param gifHeight Optional. Height of the GIF
+  * @param gifDuration Optional. Duration of the GIF
+  * @param thumbUrl URL of the static (JPEG or GIF) or animated (MPEG4)
+  * thumbnail for the result
+  * @param thumbMimeType Optional. MIME type of the thumbnail, must be one of
+  * “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to
+  * “image/jpeg”
+  * @param title Optional. Title for the result
+  * @param caption Optional. Caption of the GIF file to be sent, 0-1024
+  * characters after entities parsing
+  * @param parseMode Optional. Mode for parsing entities in the caption. See
+  * formatting options for more details.
+  * @param captionEntities Optional. List of special entities that appear in the
+  * caption, which can be specified instead of parse_mode
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * GIF animation */
+final case class InlineQueryResultGif(id: String,
                                       gifUrl: String,
-                                      /** Optional. Width of the GIF*/
                                       gifWidth: Option[Int] = Option.empty,
-                                      /** Optional. Height of the GIF*/
                                       gifHeight: Option[Int] = Option.empty,
-                                      /** Optional. Duration of the GIF*/
                                       gifDuration: Option[Int] = Option.empty,
-                                      /** URL of the static (JPEG or GIF) or animated (MPEG4)
-                                        * thumbnail for the result*/
                                       thumbUrl: String,
-                                      /** Optional. MIME type of the thumbnail, must be one of
-                                        * “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to
-                                        * “image/jpeg”*/
                                       thumbMimeType: Option[String] = Option.empty,
-                                      /** Optional. Title for the result*/
                                       title: Option[String] = Option.empty,
-                                      /** Optional. Caption of the GIF file to be sent, 0-1024
-                                        * characters after entities parsing*/
                                       caption: Option[String] = Option.empty,
-                                      /** Optional. Mode for parsing entities in the caption. See
-                                        * formatting options for more details.*/
                                       parseMode: Option[ParseMode] = Option.empty,
-                                      /** Optional. List of special entities that appear in the
-                                        * caption, which can be specified instead of parse_mode*/
                                       captionEntities: List[MessageEntity] = List.empty,
-                                      /** Optional. Inline keyboard attached to the message*/
                                       replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-                                      /** Optional. Content of the message to be sent instead of the
-                                        * GIF animation*/
                                       inputMessageContent: Option[InputMessageContent] =
                                         Option.empty)
     extends InlineQueryResult
 
 /** Represents a venue. By default, the venue will be sent by the user.
   * Alternatively, you can use input_message_content to send a message with the
-  * specified content instead of the venue.*/
-final case class InlineQueryResultVenue(
-                                        /** Unique identifier for this result, 1-64 Bytes*/
-                                        id: String,
-                                        /** Latitude of the venue location in degrees*/
+  * specified content instead of the venue.
+  *
+  * @param id Unique identifier for this result, 1-64 Bytes
+  * @param latitude Latitude of the venue location in degrees
+  * @param longitude Longitude of the venue location in degrees
+  * @param title Title of the venue
+  * @param address Address of the venue
+  * @param foursquareId Optional. Foursquare identifier of the venue if known
+  * @param foursquareType Optional. Foursquare type of the venue, if known. (For
+  * example, “arts_entertainment/default”,
+  * “arts_entertainment/aquarium” or “food/icecream”.)
+  * @param googlePlaceId Optional. Google Places identifier of the venue
+  * @param googlePlaceType Optional. Google Places type of the venue. (See supported
+  * types.)
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * venue
+  * @param thumbUrl Optional. Url of the thumbnail for the result
+  * @param thumbWidth Optional. Thumbnail width
+  * @param thumbHeight Optional. Thumbnail height */
+final case class InlineQueryResultVenue(id: String,
                                         latitude: Float,
-                                        /** Longitude of the venue location in degrees*/
                                         longitude: Float,
-                                        /** Title of the venue*/
                                         title: String,
-                                        /** Address of the venue*/
                                         address: String,
-                                        /** Optional. Foursquare identifier of the venue if known*/
                                         foursquareId: Option[String] = Option.empty,
-                                        /** Optional. Foursquare type of the venue, if known. (For
-                                          * example, “arts_entertainment/default”,
-                                          * “arts_entertainment/aquarium” or “food/icecream”.)*/
                                         foursquareType: Option[String] = Option.empty,
-                                        /** Optional. Google Places identifier of the venue*/
                                         googlePlaceId: Option[String] = Option.empty,
-                                        /** Optional. Google Places type of the venue. (See supported
-                                          * types.)*/
                                         googlePlaceType: Option[String] = Option.empty,
-                                        /** Optional. Inline keyboard attached to the message*/
                                         replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-                                        /** Optional. Content of the message to be sent instead of the
-                                          * venue*/
                                         inputMessageContent: Option[InputMessageContent] =
                                           Option.empty,
-                                        /** Optional. Url of the thumbnail for the result*/
                                         thumbUrl: Option[String] = Option.empty,
-                                        /** Optional. Thumbnail width*/
                                         thumbWidth: Option[Int] = Option.empty,
-                                        /** Optional. Thumbnail height*/
                                         thumbHeight: Option[Int] = Option.empty)
     extends InlineQueryResult
 
 /** Represents a contact with a phone number. By default, this contact will be sent
   * by the user. Alternatively, you can use input_message_content to send a message
-  * with the specified content instead of the contact.*/
-final case class InlineQueryResultContact(
-                                          /** Unique identifier for this result, 1-64 Bytes*/
-                                          id: String,
-                                          /** Contact's phone number*/
+  * with the specified content instead of the contact.
+  *
+  * @param id Unique identifier for this result, 1-64 Bytes
+  * @param phoneNumber Contact's phone number
+  * @param firstName Contact's first name
+  * @param lastName Optional. Contact's last name
+  * @param vcard Optional. Additional data about the contact in the form of
+  * a vCard, 0-2048 bytes
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * contact
+  * @param thumbUrl Optional. Url of the thumbnail for the result
+  * @param thumbWidth Optional. Thumbnail width
+  * @param thumbHeight Optional. Thumbnail height */
+final case class InlineQueryResultContact(id: String,
                                           phoneNumber: String,
-                                          /** Contact's first name*/
                                           firstName: String,
-                                          /** Optional. Contact's last name*/
                                           lastName: Option[String] = Option.empty,
-                                          /** Optional. Additional data about the contact in the form of
-                                            * a vCard, 0-2048 bytes*/
                                           vcard: Option[String] = Option.empty,
-                                          /** Optional. Inline keyboard attached to the message*/
                                           replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-                                          /** Optional. Content of the message to be sent instead of the
-                                            * contact*/
                                           inputMessageContent: Option[InputMessageContent] =
                                             Option.empty,
-                                          /** Optional. Url of the thumbnail for the result*/
                                           thumbUrl: Option[String] = Option.empty,
-                                          /** Optional. Thumbnail width*/
                                           thumbWidth: Option[Int] = Option.empty,
-                                          /** Optional. Thumbnail height*/
                                           thumbHeight: Option[Int] = Option.empty)
     extends InlineQueryResult
 
 /** Represents a link to a photo. By default, this photo will be sent by the user
   * with optional caption. Alternatively, you can use input_message_content to send
-  * a message with the specified content instead of the photo.*/
-final case class InlineQueryResultPhoto(
-                                        /** Unique identifier for this result, 1-64 bytes*/
-                                        id: String,
-                                        /** A valid URL of the photo. Photo must be in jpeg format.
-                                          * Photo size must not exceed 5MB*/
+  * a message with the specified content instead of the photo.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param photoUrl A valid URL of the photo. Photo must be in jpeg format.
+  * Photo size must not exceed 5MB
+  * @param thumbUrl URL of the thumbnail for the photo
+  * @param photoWidth Optional. Width of the photo
+  * @param photoHeight Optional. Height of the photo
+  * @param title Optional. Title for the result
+  * @param description Optional. Short description of the result
+  * @param caption Optional. Caption of the photo to be sent, 0-1024
+  * characters after entities parsing
+  * @param parseMode Optional. Mode for parsing entities in the photo caption.
+  * See formatting options for more details.
+  * @param captionEntities Optional. List of special entities that appear in the
+  * caption, which can be specified instead of parse_mode
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * photo */
+final case class InlineQueryResultPhoto(id: String,
                                         photoUrl: String,
-                                        /** URL of the thumbnail for the photo*/
                                         thumbUrl: String,
-                                        /** Optional. Width of the photo*/
                                         photoWidth: Option[Int] = Option.empty,
-                                        /** Optional. Height of the photo*/
                                         photoHeight: Option[Int] = Option.empty,
-                                        /** Optional. Title for the result*/
                                         title: Option[String] = Option.empty,
-                                        /** Optional. Short description of the result*/
                                         description: Option[String] = Option.empty,
-                                        /** Optional. Caption of the photo to be sent, 0-1024
-                                          * characters after entities parsing*/
                                         caption: Option[String] = Option.empty,
-                                        /** Optional. Mode for parsing entities in the photo caption.
-                                          * See formatting options for more details.*/
                                         parseMode: Option[ParseMode] = Option.empty,
-                                        /** Optional. List of special entities that appear in the
-                                          * caption, which can be specified instead of parse_mode*/
                                         captionEntities: List[MessageEntity] = List.empty,
-                                        /** Optional. Inline keyboard attached to the message*/
                                         replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-                                        /** Optional. Content of the message to be sent instead of the
-                                          * photo*/
                                         inputMessageContent: Option[InputMessageContent] =
                                           Option.empty)
     extends InlineQueryResult
@@ -150,119 +150,120 @@ final case class InlineQueryResultPhoto(
 /** Represents a link to a file. By default, this file will be sent by the user
   * with an optional caption. Alternatively, you can use input_message_content to
   * send a message with the specified content instead of the file. Currently, only
-  * .PDF and .ZIP files can be sent using this method.*/
-final case class InlineQueryResultDocument(
-                                           /** Unique identifier for this result, 1-64 bytes*/
-                                           id: String,
-                                           /** Title for the result*/
+  * .PDF and .ZIP files can be sent using this method.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param title Title for the result
+  * @param caption Optional. Caption of the document to be sent, 0-1024
+  * characters after entities parsing
+  * @param parseMode Optional. Mode for parsing entities in the document
+  * caption. See formatting options for more details.
+  * @param captionEntities Optional. List of special entities that appear in the
+  * caption, which can be specified instead of parse_mode
+  * @param documentUrl A valid URL for the file
+  * @param mimeType Mime type of the content of the file, either
+  * “application/pdf” or “application/zip”
+  * @param description Optional. Short description of the result
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * file
+  * @param thumbUrl Optional. URL of the thumbnail (jpeg only) for the file
+  * @param thumbWidth Optional. Thumbnail width
+  * @param thumbHeight Optional. Thumbnail height */
+final case class InlineQueryResultDocument(id: String,
                                            title: String,
-                                           /** Optional. Caption of the document to be sent, 0-1024
-                                             * characters after entities parsing*/
                                            caption: Option[String] = Option.empty,
-                                           /** Optional. Mode for parsing entities in the document
-                                             * caption. See formatting options for more details.*/
                                            parseMode: Option[ParseMode] = Option.empty,
-                                           /** Optional. List of special entities that appear in the
-                                             * caption, which can be specified instead of parse_mode*/
                                            captionEntities: List[MessageEntity] = List.empty,
-                                           /** A valid URL for the file*/
                                            documentUrl: String,
-                                           /** Mime type of the content of the file, either
-                                             * “application/pdf” or “application/zip”*/
                                            mimeType: String,
-                                           /** Optional. Short description of the result*/
                                            description: Option[String] = Option.empty,
-                                           /** Optional. Inline keyboard attached to the message*/
                                            replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-                                           /** Optional. Content of the message to be sent instead of the
-                                             * file*/
                                            inputMessageContent: Option[InputMessageContent] =
                                              Option.empty,
-                                           /** Optional. URL of the thumbnail (jpeg only) for the file*/
                                            thumbUrl: Option[String] = Option.empty,
-                                           /** Optional. Thumbnail width*/
                                            thumbWidth: Option[Int] = Option.empty,
-                                           /** Optional. Thumbnail height*/
                                            thumbHeight: Option[Int] = Option.empty)
     extends InlineQueryResult
 
 /** Represents a link to a voice message stored on the Telegram servers. By
   * default, this voice message will be sent by the user. Alternatively, you can use
   * input_message_content to send a message with the specified content instead of
-  * the voice message.*/
+  * the voice message.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param voiceFileId A valid file identifier for the voice message
+  * @param title Voice message title
+  * @param caption Optional. Caption, 0-1024 characters after entities parsing
+  * @param parseMode Optional. Mode for parsing entities in the voice message
+  * caption. See formatting options for more details.
+  * @param captionEntities Optional. List of special entities that appear in the
+  * caption, which can be specified instead of parse_mode
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * voice message */
 final case class InlineQueryResultCachedVoice(
-    /** Unique identifier for this result, 1-64 bytes*/
     id: String,
-    /** A valid file identifier for the voice message*/
     voiceFileId: String,
-    /** Voice message title*/
     title: String,
-    /** Optional. Caption, 0-1024 characters after entities parsing*/
     caption: Option[String] = Option.empty,
-    /** Optional. Mode for parsing entities in the voice message
-      * caption. See formatting options for more details.*/
     parseMode: Option[ParseMode] = Option.empty,
-    /** Optional. List of special entities that appear in the
-      * caption, which can be specified instead of parse_mode*/
     captionEntities: List[MessageEntity] = List.empty,
-    /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-    /** Optional. Content of the message to be sent instead of the
-      * voice message*/
     inputMessageContent: Option[InputMessageContent] = Option.empty)
     extends InlineQueryResult
 
-/** Represents a link to an article or web page.*/
-final case class InlineQueryResultArticle(
-                                          /** Unique identifier for this result, 1-64 Bytes*/
-                                          id: String,
-                                          /** Title of the result*/
+/** Represents a link to an article or web page.
+  *
+  * @param id Unique identifier for this result, 1-64 Bytes
+  * @param title Title of the result
+  * @param inputMessageContent Content of the message to be sent
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param url Optional. URL of the result
+  * @param hideUrl Optional. Pass True, if you don't want the URL to be shown
+  * in the message
+  * @param description Optional. Short description of the result
+  * @param thumbUrl Optional. Url of the thumbnail for the result
+  * @param thumbWidth Optional. Thumbnail width
+  * @param thumbHeight Optional. Thumbnail height */
+final case class InlineQueryResultArticle(id: String,
                                           title: String,
-                                          /** Content of the message to be sent*/
                                           inputMessageContent: InputMessageContent,
-                                          /** Optional. Inline keyboard attached to the message*/
                                           replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-                                          /** Optional. URL of the result*/
                                           url: Option[String] = Option.empty,
-                                          /** Optional. Pass True, if you don't want the URL to be shown
-                                            * in the message*/
                                           hideUrl: Option[Boolean] = Option.empty,
-                                          /** Optional. Short description of the result*/
                                           description: Option[String] = Option.empty,
-                                          /** Optional. Url of the thumbnail for the result*/
                                           thumbUrl: Option[String] = Option.empty,
-                                          /** Optional. Thumbnail width*/
                                           thumbWidth: Option[Int] = Option.empty,
-                                          /** Optional. Thumbnail height*/
                                           thumbHeight: Option[Int] = Option.empty)
     extends InlineQueryResult
 
 /** Represents a link to an MP3 audio file. By default, this audio file will be
   * sent by the user. Alternatively, you can use input_message_content to send a
-  * message with the specified content instead of the audio.*/
-final case class InlineQueryResultAudio(
-                                        /** Unique identifier for this result, 1-64 bytes*/
-                                        id: String,
-                                        /** A valid URL for the audio file*/
+  * message with the specified content instead of the audio.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param audioUrl A valid URL for the audio file
+  * @param title Title
+  * @param caption Optional. Caption, 0-1024 characters after entities parsing
+  * @param parseMode Optional. Mode for parsing entities in the audio caption.
+  * See formatting options for more details.
+  * @param captionEntities Optional. List of special entities that appear in the
+  * caption, which can be specified instead of parse_mode
+  * @param performer Optional. Performer
+  * @param audioDuration Optional. Audio duration in seconds
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * audio */
+final case class InlineQueryResultAudio(id: String,
                                         audioUrl: String,
-                                        /** Title*/
                                         title: String,
-                                        /** Optional. Caption, 0-1024 characters after entities parsing*/
                                         caption: Option[String] = Option.empty,
-                                        /** Optional. Mode for parsing entities in the audio caption.
-                                          * See formatting options for more details.*/
                                         parseMode: Option[ParseMode] = Option.empty,
-                                        /** Optional. List of special entities that appear in the
-                                          * caption, which can be specified instead of parse_mode*/
                                         captionEntities: List[MessageEntity] = List.empty,
-                                        /** Optional. Performer*/
                                         performer: Option[String] = Option.empty,
-                                        /** Optional. Audio duration in seconds*/
                                         audioDuration: Option[Int] = Option.empty,
-                                        /** Optional. Inline keyboard attached to the message*/
                                         replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-                                        /** Optional. Content of the message to be sent instead of the
-                                          * audio*/
                                         inputMessageContent: Option[InputMessageContent] =
                                           Option.empty)
     extends InlineQueryResult
@@ -270,40 +271,40 @@ final case class InlineQueryResultAudio(
 /** Represents a link to a video animation (H.264/MPEG-4 AVC video without sound).
   * By default, this animated MPEG-4 file will be sent by the user with optional
   * caption. Alternatively, you can use input_message_content to send a message with
-  * the specified content instead of the animation.*/
-final case class InlineQueryResultMpeg4Gif(
-                                           /** Unique identifier for this result, 1-64 bytes*/
-                                           id: String,
-                                           /** A valid URL for the MP4 file. File size must not exceed 1MB*/
+  * the specified content instead of the animation.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param mpeg4Url A valid URL for the MP4 file. File size must not exceed 1MB
+  * @param mpeg4Width Optional. Video width
+  * @param mpeg4Height Optional. Video height
+  * @param mpeg4Duration Optional. Video duration
+  * @param thumbUrl URL of the static (JPEG or GIF) or animated (MPEG4)
+  * thumbnail for the result
+  * @param thumbMimeType Optional. MIME type of the thumbnail, must be one of
+  * “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to
+  * “image/jpeg”
+  * @param title Optional. Title for the result
+  * @param caption Optional. Caption of the MPEG-4 file to be sent, 0-1024
+  * characters after entities parsing
+  * @param parseMode Optional. Mode for parsing entities in the caption. See
+  * formatting options for more details.
+  * @param captionEntities Optional. List of special entities that appear in the
+  * caption, which can be specified instead of parse_mode
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * video animation */
+final case class InlineQueryResultMpeg4Gif(id: String,
                                            mpeg4Url: String,
-                                           /** Optional. Video width*/
                                            mpeg4Width: Option[Int] = Option.empty,
-                                           /** Optional. Video height*/
                                            mpeg4Height: Option[Int] = Option.empty,
-                                           /** Optional. Video duration*/
                                            mpeg4Duration: Option[Int] = Option.empty,
-                                           /** URL of the static (JPEG or GIF) or animated (MPEG4)
-                                             * thumbnail for the result*/
                                            thumbUrl: String,
-                                           /** Optional. MIME type of the thumbnail, must be one of
-                                             * “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to
-                                             * “image/jpeg”*/
                                            thumbMimeType: Option[String] = Option.empty,
-                                           /** Optional. Title for the result*/
                                            title: Option[String] = Option.empty,
-                                           /** Optional. Caption of the MPEG-4 file to be sent, 0-1024
-                                             * characters after entities parsing*/
                                            caption: Option[String] = Option.empty,
-                                           /** Optional. Mode for parsing entities in the caption. See
-                                             * formatting options for more details.*/
                                            parseMode: Option[ParseMode] = Option.empty,
-                                           /** Optional. List of special entities that appear in the
-                                             * caption, which can be specified instead of parse_mode*/
                                            captionEntities: List[MessageEntity] = List.empty,
-                                           /** Optional. Inline keyboard attached to the message*/
                                            replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-                                           /** Optional. Content of the message to be sent instead of the
-                                             * video animation*/
                                            inputMessageContent: Option[InputMessageContent] =
                                              Option.empty)
     extends InlineQueryResult
@@ -312,182 +313,187 @@ final case class InlineQueryResultMpeg4Gif(
   * stored on the Telegram servers. By default, this animated MPEG-4 file will be
   * sent by the user with an optional caption. Alternatively, you can use
   * input_message_content to send a message with the specified content instead of
-  * the animation.*/
+  * the animation.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param mpeg4FileId A valid file identifier for the MP4 file
+  * @param title Optional. Title for the result
+  * @param caption Optional. Caption of the MPEG-4 file to be sent, 0-1024
+  * characters after entities parsing
+  * @param parseMode Optional. Mode for parsing entities in the caption. See
+  * formatting options for more details.
+  * @param captionEntities Optional. List of special entities that appear in the
+  * caption, which can be specified instead of parse_mode
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * video animation */
 final case class InlineQueryResultCachedMpeg4Gif(
-    /** Unique identifier for this result, 1-64 bytes*/
     id: String,
-    /** A valid file identifier for the MP4 file*/
     mpeg4FileId: String,
-    /** Optional. Title for the result*/
     title: Option[String] = Option.empty,
-    /** Optional. Caption of the MPEG-4 file to be sent, 0-1024
-      * characters after entities parsing*/
     caption: Option[String] = Option.empty,
-    /** Optional. Mode for parsing entities in the caption. See
-      * formatting options for more details.*/
     parseMode: Option[ParseMode] = Option.empty,
-    /** Optional. List of special entities that appear in the
-      * caption, which can be specified instead of parse_mode*/
     captionEntities: List[MessageEntity] = List.empty,
-    /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-    /** Optional. Content of the message to be sent instead of the
-      * video animation*/
     inputMessageContent: Option[InputMessageContent] = Option.empty)
     extends InlineQueryResult
 
 /** Represents a link to a file stored on the Telegram servers. By default, this
   * file will be sent by the user with an optional caption. Alternatively, you can
   * use input_message_content to send a message with the specified content instead
-  * of the file.*/
+  * of the file.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param title Title for the result
+  * @param documentFileId A valid file identifier for the file
+  * @param description Optional. Short description of the result
+  * @param caption Optional. Caption of the document to be sent, 0-1024
+  * characters after entities parsing
+  * @param parseMode Optional. Mode for parsing entities in the document
+  * caption. See formatting options for more details.
+  * @param captionEntities Optional. List of special entities that appear in the
+  * caption, which can be specified instead of parse_mode
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * file */
 final case class InlineQueryResultCachedDocument(
-    /** Unique identifier for this result, 1-64 bytes*/
     id: String,
-    /** Title for the result*/
     title: String,
-    /** A valid file identifier for the file*/
     documentFileId: String,
-    /** Optional. Short description of the result*/
     description: Option[String] = Option.empty,
-    /** Optional. Caption of the document to be sent, 0-1024
-      * characters after entities parsing*/
     caption: Option[String] = Option.empty,
-    /** Optional. Mode for parsing entities in the document
-      * caption. See formatting options for more details.*/
     parseMode: Option[ParseMode] = Option.empty,
-    /** Optional. List of special entities that appear in the
-      * caption, which can be specified instead of parse_mode*/
     captionEntities: List[MessageEntity] = List.empty,
-    /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-    /** Optional. Content of the message to be sent instead of the
-      * file*/
     inputMessageContent: Option[InputMessageContent] = Option.empty)
     extends InlineQueryResult
 
 /** Represents a link to a video file stored on the Telegram servers. By default,
   * this video file will be sent by the user with an optional caption.
   * Alternatively, you can use input_message_content to send a message with the
-  * specified content instead of the video.*/
+  * specified content instead of the video.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param videoFileId A valid file identifier for the video file
+  * @param title Title for the result
+  * @param description Optional. Short description of the result
+  * @param caption Optional. Caption of the video to be sent, 0-1024
+  * characters after entities parsing
+  * @param parseMode Optional. Mode for parsing entities in the video caption.
+  * See formatting options for more details.
+  * @param captionEntities Optional. List of special entities that appear in the
+  * caption, which can be specified instead of parse_mode
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * video */
 final case class InlineQueryResultCachedVideo(
-    /** Unique identifier for this result, 1-64 bytes*/
     id: String,
-    /** A valid file identifier for the video file*/
     videoFileId: String,
-    /** Title for the result*/
     title: String,
-    /** Optional. Short description of the result*/
     description: Option[String] = Option.empty,
-    /** Optional. Caption of the video to be sent, 0-1024
-      * characters after entities parsing*/
     caption: Option[String] = Option.empty,
-    /** Optional. Mode for parsing entities in the video caption.
-      * See formatting options for more details.*/
     parseMode: Option[ParseMode] = Option.empty,
-    /** Optional. List of special entities that appear in the
-      * caption, which can be specified instead of parse_mode*/
     captionEntities: List[MessageEntity] = List.empty,
-    /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-    /** Optional. Content of the message to be sent instead of the
-      * video*/
     inputMessageContent: Option[InputMessageContent] = Option.empty)
     extends InlineQueryResult
 
-/** Represents a Game.*/
-final case class InlineQueryResultGame(
-                                       /** Unique identifier for this result, 1-64 bytes*/
-                                       id: String,
-                                       /** Short name of the game*/
+/** Represents a Game.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param gameShortName Short name of the game
+  * @param replyMarkup Optional. Inline keyboard attached to the message */
+final case class InlineQueryResultGame(id: String,
                                        gameShortName: String,
-                                       /** Optional. Inline keyboard attached to the message*/
                                        replyMarkup: Option[InlineKeyboardMarkup] = Option.empty)
     extends InlineQueryResult
 
 /** Represents a link to a photo stored on the Telegram servers. By default, this
   * photo will be sent by the user with an optional caption. Alternatively, you can
   * use input_message_content to send a message with the specified content instead
-  * of the photo.*/
+  * of the photo.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param photoFileId A valid file identifier of the photo
+  * @param title Optional. Title for the result
+  * @param description Optional. Short description of the result
+  * @param caption Optional. Caption of the photo to be sent, 0-1024
+  * characters after entities parsing
+  * @param parseMode Optional. Mode for parsing entities in the photo caption.
+  * See formatting options for more details.
+  * @param captionEntities Optional. List of special entities that appear in the
+  * caption, which can be specified instead of parse_mode
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * photo */
 final case class InlineQueryResultCachedPhoto(
-    /** Unique identifier for this result, 1-64 bytes*/
     id: String,
-    /** A valid file identifier of the photo*/
     photoFileId: String,
-    /** Optional. Title for the result*/
     title: Option[String] = Option.empty,
-    /** Optional. Short description of the result*/
     description: Option[String] = Option.empty,
-    /** Optional. Caption of the photo to be sent, 0-1024
-      * characters after entities parsing*/
     caption: Option[String] = Option.empty,
-    /** Optional. Mode for parsing entities in the photo caption.
-      * See formatting options for more details.*/
     parseMode: Option[ParseMode] = Option.empty,
-    /** Optional. List of special entities that appear in the
-      * caption, which can be specified instead of parse_mode*/
     captionEntities: List[MessageEntity] = List.empty,
-    /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-    /** Optional. Content of the message to be sent instead of the
-      * photo*/
     inputMessageContent: Option[InputMessageContent] = Option.empty)
     extends InlineQueryResult
 
 /** Represents a link to a sticker stored on the Telegram servers. By default, this
   * sticker will be sent by the user. Alternatively, you can use
   * input_message_content to send a message with the specified content instead of
-  * the sticker.*/
+  * the sticker.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param stickerFileId A valid file identifier of the sticker
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * sticker */
 final case class InlineQueryResultCachedSticker(
-    /** Unique identifier for this result, 1-64 bytes*/
     id: String,
-    /** A valid file identifier of the sticker*/
     stickerFileId: String,
-    /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-    /** Optional. Content of the message to be sent instead of the
-      * sticker*/
     inputMessageContent: Option[InputMessageContent] = Option.empty)
     extends InlineQueryResult
 
 /** Represents a link to a page containing an embedded video player or a video
   * file. By default, this video file will be sent by the user with an optional
   * caption. Alternatively, you can use input_message_content to send a message with
-  * the specified content instead of the video.*/
-final case class InlineQueryResultVideo(
-                                        /** Unique identifier for this result, 1-64 bytes*/
-                                        id: String,
-                                        /** A valid URL for the embedded video player or video file*/
+  * the specified content instead of the video.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param videoUrl A valid URL for the embedded video player or video file
+  * @param mimeType Mime type of the content of video url, “text/html” or
+  * “video/mp4”
+  * @param thumbUrl URL of the thumbnail (jpeg only) for the video
+  * @param title Title for the result
+  * @param caption Optional. Caption of the video to be sent, 0-1024
+  * characters after entities parsing
+  * @param parseMode Optional. Mode for parsing entities in the video caption.
+  * See formatting options for more details.
+  * @param captionEntities Optional. List of special entities that appear in the
+  * caption, which can be specified instead of parse_mode
+  * @param videoWidth Optional. Video width
+  * @param videoHeight Optional. Video height
+  * @param videoDuration Optional. Video duration in seconds
+  * @param description Optional. Short description of the result
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * video. This field is required if InlineQueryResultVideo is
+  * used to send an HTML-page as a result (e.g., a YouTube
+  * video). */
+final case class InlineQueryResultVideo(id: String,
                                         videoUrl: String,
-                                        /** Mime type of the content of video url, “text/html” or
-                                          * “video/mp4”*/
                                         mimeType: String,
-                                        /** URL of the thumbnail (jpeg only) for the video*/
                                         thumbUrl: String,
-                                        /** Title for the result*/
                                         title: String,
-                                        /** Optional. Caption of the video to be sent, 0-1024
-                                          * characters after entities parsing*/
                                         caption: Option[String] = Option.empty,
-                                        /** Optional. Mode for parsing entities in the video caption.
-                                          * See formatting options for more details.*/
                                         parseMode: Option[ParseMode] = Option.empty,
-                                        /** Optional. List of special entities that appear in the
-                                          * caption, which can be specified instead of parse_mode*/
                                         captionEntities: List[MessageEntity] = List.empty,
-                                        /** Optional. Video width*/
                                         videoWidth: Option[Int] = Option.empty,
-                                        /** Optional. Video height*/
                                         videoHeight: Option[Int] = Option.empty,
-                                        /** Optional. Video duration in seconds*/
                                         videoDuration: Option[Int] = Option.empty,
-                                        /** Optional. Short description of the result*/
                                         description: Option[String] = Option.empty,
-                                        /** Optional. Inline keyboard attached to the message*/
                                         replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-                                        /** Optional. Content of the message to be sent instead of the
-                                          * video. This field is required if InlineQueryResultVideo is
-                                          * used to send an HTML-page as a result (e.g., a YouTube
-                                          * video).*/
                                         inputMessageContent: Option[InputMessageContent] =
                                           Option.empty)
     extends InlineQueryResult
@@ -495,119 +501,121 @@ final case class InlineQueryResultVideo(
 /** Represents a link to an MP3 audio file stored on the Telegram servers. By
   * default, this audio file will be sent by the user. Alternatively, you can use
   * input_message_content to send a message with the specified content instead of
-  * the audio.*/
+  * the audio.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param audioFileId A valid file identifier for the audio file
+  * @param caption Optional. Caption, 0-1024 characters after entities parsing
+  * @param parseMode Optional. Mode for parsing entities in the audio caption.
+  * See formatting options for more details.
+  * @param captionEntities Optional. List of special entities that appear in the
+  * caption, which can be specified instead of parse_mode
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * audio */
 final case class InlineQueryResultCachedAudio(
-    /** Unique identifier for this result, 1-64 bytes*/
     id: String,
-    /** A valid file identifier for the audio file*/
     audioFileId: String,
-    /** Optional. Caption, 0-1024 characters after entities parsing*/
     caption: Option[String] = Option.empty,
-    /** Optional. Mode for parsing entities in the audio caption.
-      * See formatting options for more details.*/
     parseMode: Option[ParseMode] = Option.empty,
-    /** Optional. List of special entities that appear in the
-      * caption, which can be specified instead of parse_mode*/
     captionEntities: List[MessageEntity] = List.empty,
-    /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-    /** Optional. Content of the message to be sent instead of the
-      * audio*/
     inputMessageContent: Option[InputMessageContent] = Option.empty)
     extends InlineQueryResult
 
 /** Represents a location on a map. By default, the location will be sent by the
   * user. Alternatively, you can use input_message_content to send a message with
-  * the specified content instead of the location.*/
-final case class InlineQueryResultLocation(
-                                           /** Unique identifier for this result, 1-64 Bytes*/
-                                           id: String,
-                                           /** Location latitude in degrees*/
+  * the specified content instead of the location.
+  *
+  * @param id Unique identifier for this result, 1-64 Bytes
+  * @param latitude Location latitude in degrees
+  * @param longitude Location longitude in degrees
+  * @param title Location title
+  * @param horizontalAccuracy Optional. The radius of uncertainty for the location,
+  * measured in meters; 0-1500
+  * @param livePeriod Optional. Period in seconds for which the location can be
+  * updated, should be between 60 and 86400.
+  * @param heading Optional. For live locations, a direction in which the user
+  * is moving, in degrees. Must be between 1 and 360 if
+  * specified.
+  * @param proximityAlertRadius Optional. For live locations, a maximum distance for
+  * proximity alerts about approaching another chat member, in
+  * meters. Must be between 1 and 100000 if specified.
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * location
+  * @param thumbUrl Optional. Url of the thumbnail for the result
+  * @param thumbWidth Optional. Thumbnail width
+  * @param thumbHeight Optional. Thumbnail height */
+final case class InlineQueryResultLocation(id: String,
                                            latitude: Float,
-                                           /** Location longitude in degrees*/
                                            longitude: Float,
-                                           /** Location title*/
                                            title: String,
-                                           /** Optional. The radius of uncertainty for the location,
-                                             * measured in meters; 0-1500*/
                                            horizontalAccuracy: Option[Float] = Option.empty,
-                                           /** Optional. Period in seconds for which the location can be
-                                             * updated, should be between 60 and 86400.*/
                                            livePeriod: Option[Int] = Option.empty,
-                                           /** Optional. For live locations, a direction in which the user
-                                             * is moving, in degrees. Must be between 1 and 360 if
-                                             * specified.*/
                                            heading: Option[Int] = Option.empty,
-                                           /** Optional. For live locations, a maximum distance for
-                                             * proximity alerts about approaching another chat member, in
-                                             * meters. Must be between 1 and 100000 if specified.*/
                                            proximityAlertRadius: Option[Int] = Option.empty,
-                                           /** Optional. Inline keyboard attached to the message*/
                                            replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-                                           /** Optional. Content of the message to be sent instead of the
-                                             * location*/
                                            inputMessageContent: Option[InputMessageContent] =
                                              Option.empty,
-                                           /** Optional. Url of the thumbnail for the result*/
                                            thumbUrl: Option[String] = Option.empty,
-                                           /** Optional. Thumbnail width*/
                                            thumbWidth: Option[Int] = Option.empty,
-                                           /** Optional. Thumbnail height*/
                                            thumbHeight: Option[Int] = Option.empty)
     extends InlineQueryResult
 
 /** Represents a link to an animated GIF file stored on the Telegram servers. By
   * default, this animated GIF file will be sent by the user with an optional
   * caption. Alternatively, you can use input_message_content to send a message with
-  * specified content instead of the animation.*/
+  * specified content instead of the animation.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param gifFileId A valid file identifier for the GIF file
+  * @param title Optional. Title for the result
+  * @param caption Optional. Caption of the GIF file to be sent, 0-1024
+  * characters after entities parsing
+  * @param parseMode Optional. Mode for parsing entities in the caption. See
+  * formatting options for more details.
+  * @param captionEntities Optional. List of special entities that appear in the
+  * caption, which can be specified instead of parse_mode
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * GIF animation */
 final case class InlineQueryResultCachedGif(
-    /** Unique identifier for this result, 1-64 bytes*/
     id: String,
-    /** A valid file identifier for the GIF file*/
     gifFileId: String,
-    /** Optional. Title for the result*/
     title: Option[String] = Option.empty,
-    /** Optional. Caption of the GIF file to be sent, 0-1024
-      * characters after entities parsing*/
     caption: Option[String] = Option.empty,
-    /** Optional. Mode for parsing entities in the caption. See
-      * formatting options for more details.*/
     parseMode: Option[ParseMode] = Option.empty,
-    /** Optional. List of special entities that appear in the
-      * caption, which can be specified instead of parse_mode*/
     captionEntities: List[MessageEntity] = List.empty,
-    /** Optional. Inline keyboard attached to the message*/
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-    /** Optional. Content of the message to be sent instead of the
-      * GIF animation*/
     inputMessageContent: Option[InputMessageContent] = Option.empty)
     extends InlineQueryResult
 
 /** Represents a link to a voice recording in an .OGG container encoded with OPUS.
   * By default, this voice recording will be sent by the user. Alternatively, you
   * can use input_message_content to send a message with the specified content
-  * instead of the the voice message.*/
-final case class InlineQueryResultVoice(
-                                        /** Unique identifier for this result, 1-64 bytes*/
-                                        id: String,
-                                        /** A valid URL for the voice recording*/
+  * instead of the the voice message.
+  *
+  * @param id Unique identifier for this result, 1-64 bytes
+  * @param voiceUrl A valid URL for the voice recording
+  * @param title Recording title
+  * @param caption Optional. Caption, 0-1024 characters after entities parsing
+  * @param parseMode Optional. Mode for parsing entities in the voice message
+  * caption. See formatting options for more details.
+  * @param captionEntities Optional. List of special entities that appear in the
+  * caption, which can be specified instead of parse_mode
+  * @param voiceDuration Optional. Recording duration in seconds
+  * @param replyMarkup Optional. Inline keyboard attached to the message
+  * @param inputMessageContent Optional. Content of the message to be sent instead of the
+  * voice recording */
+final case class InlineQueryResultVoice(id: String,
                                         voiceUrl: String,
-                                        /** Recording title*/
                                         title: String,
-                                        /** Optional. Caption, 0-1024 characters after entities parsing*/
                                         caption: Option[String] = Option.empty,
-                                        /** Optional. Mode for parsing entities in the voice message
-                                          * caption. See formatting options for more details.*/
                                         parseMode: Option[ParseMode] = Option.empty,
-                                        /** Optional. List of special entities that appear in the
-                                          * caption, which can be specified instead of parse_mode*/
                                         captionEntities: List[MessageEntity] = List.empty,
-                                        /** Optional. Recording duration in seconds*/
                                         voiceDuration: Option[Int] = Option.empty,
-                                        /** Optional. Inline keyboard attached to the message*/
                                         replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-                                        /** Optional. Content of the message to be sent instead of the
-                                          * voice recording*/
                                         inputMessageContent: Option[InputMessageContent] =
                                           Option.empty)
     extends InlineQueryResult

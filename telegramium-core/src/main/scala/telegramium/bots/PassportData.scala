@@ -1,10 +1,10 @@
 package telegramium.bots
 
 /** Contains information about Telegram Passport data shared with the bot by the
-  * user.*/
-final case class PassportData(
-                              /** Array with information about documents and other Telegram
-                                * Passport elements that was shared with the bot*/
-                              data: List[EncryptedPassportElement] = List.empty,
-                              /** Encrypted credentials required to decrypt the data*/
+  * user.
+  *
+  * @param data Array with information about documents and other Telegram
+  * Passport elements that was shared with the bot
+  * @param credentials Encrypted credentials required to decrypt the data */
+final case class PassportData(data: List[EncryptedPassportElement] = List.empty,
                               credentials: EncryptedCredentials)

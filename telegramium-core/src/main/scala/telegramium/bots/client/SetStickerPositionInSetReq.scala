@@ -1,7 +1,5 @@
 package telegramium.bots.client
 
-final case class SetStickerPositionInSetReq(
-                                            /** File identifier of the sticker*/
-                                            sticker: String,
-                                            /** New sticker position in the set, zero-based*/
-                                            position: Int)
+/** @param sticker File identifier of the sticker
+  * @param position New sticker position in the set, zero-based */
+final case class SetStickerPositionInSetReq(sticker: String, position: Int)

@@ -3,127 +3,119 @@ package telegramium.bots
 sealed trait PassportElementError {}
 
 /** Represents an issue with a list of scans. The error is considered resolved when
-  * the list of files containing the scans changes.*/
-final case class PassportElementErrorFiles(
-                                           /** The section of the user's Telegram Passport which has the
-                                             * issue, one of “utility_bill”, “bank_statement”,
-                                             * “rental_agreement”, “passport_registration”,
-                                             * “temporary_registration”*/
-                                           `type`: String,
-                                           /** List of base64-encoded file hashes*/
+  * the list of files containing the scans changes.
+  *
+  * @param type The section of the user's Telegram Passport which has the
+  * issue, one of “utility_bill”, “bank_statement”,
+  * “rental_agreement”, “passport_registration”,
+  * “temporary_registration”
+  * @param fileHashes List of base64-encoded file hashes
+  * @param message Error message */
+final case class PassportElementErrorFiles(`type`: String,
                                            fileHashes: List[String] = List.empty,
-                                           /** Error message*/
                                            message: String)
     extends PassportElementError
 
 /** Represents an issue in one of the data fields that was provided by the user.
-  * The error is considered resolved when the field's value changes.*/
-final case class PassportElementErrorDataField(
-                                               /** The section of the user's Telegram Passport which has the
-                                                 * error, one of “personal_details”, “passport”,
-                                                 * “driver_license”, “identity_card”, “internal_passport”,
-                                                 * “address”*/
-                                               `type`: String,
-                                               /** Name of the data field which has the error*/
+  * The error is considered resolved when the field's value changes.
+  *
+  * @param type The section of the user's Telegram Passport which has the
+  * error, one of “personal_details”, “passport”,
+  * “driver_license”, “identity_card”, “internal_passport”,
+  * “address”
+  * @param fieldName Name of the data field which has the error
+  * @param dataHash Base64-encoded data hash
+  * @param message Error message */
+final case class PassportElementErrorDataField(`type`: String,
                                                fieldName: String,
-                                               /** Base64-encoded data hash*/
                                                dataHash: String,
-                                               /** Error message*/
                                                message: String)
     extends PassportElementError
 
 /** Represents an issue with the reverse side of a document. The error is
-  * considered resolved when the file with reverse side of the document changes.*/
-final case class PassportElementErrorReverseSide(
-                                                 /** The section of the user's Telegram Passport which has the
-                                                   * issue, one of “driver_license”, “identity_card”*/
-                                                 `type`: String,
-                                                 /** Base64-encoded hash of the file with the reverse side of
-                                                   * the document*/
-                                                 fileHash: String,
-                                                 /** Error message*/
-                                                 message: String)
+  * considered resolved when the file with reverse side of the document changes.
+  *
+  * @param type The section of the user's Telegram Passport which has the
+  * issue, one of “driver_license”, “identity_card”
+  * @param fileHash Base64-encoded hash of the file with the reverse side of
+  * the document
+  * @param message Error message */
+final case class PassportElementErrorReverseSide(`type`: String, fileHash: String, message: String)
     extends PassportElementError
 
 /** Represents an issue with the selfie with a document. The error is considered
-  * resolved when the file with the selfie changes.*/
-final case class PassportElementErrorSelfie(
-                                            /** The section of the user's Telegram Passport which has the
-                                              * issue, one of “passport”, “driver_license”, “identity_card”,
-                                              * “internal_passport”*/
-                                            `type`: String,
-                                            /** Base64-encoded hash of the file with the selfie*/
-                                            fileHash: String,
-                                            /** Error message*/
-                                            message: String)
+  * resolved when the file with the selfie changes.
+  *
+  * @param type The section of the user's Telegram Passport which has the
+  * issue, one of “passport”, “driver_license”, “identity_card”,
+  * “internal_passport”
+  * @param fileHash Base64-encoded hash of the file with the selfie
+  * @param message Error message */
+final case class PassportElementErrorSelfie(`type`: String, fileHash: String, message: String)
     extends PassportElementError
 
 /** Represents an issue with the front side of a document. The error is considered
-  * resolved when the file with the front side of the document changes.*/
-final case class PassportElementErrorFrontSide(
-                                               /** The section of the user's Telegram Passport which has the
-                                                 * issue, one of “passport”, “driver_license”, “identity_card”,
-                                                 * “internal_passport”*/
-                                               `type`: String,
-                                               /** Base64-encoded hash of the file with the front side of the
-                                                 * document*/
-                                               fileHash: String,
-                                               /** Error message*/
-                                               message: String)
+  * resolved when the file with the front side of the document changes.
+  *
+  * @param type The section of the user's Telegram Passport which has the
+  * issue, one of “passport”, “driver_license”, “identity_card”,
+  * “internal_passport”
+  * @param fileHash Base64-encoded hash of the file with the front side of the
+  * document
+  * @param message Error message */
+final case class PassportElementErrorFrontSide(`type`: String, fileHash: String, message: String)
     extends PassportElementError
 
 /** Represents an issue with a document scan. The error is considered resolved when
-  * the file with the document scan changes.*/
-final case class PassportElementErrorFile(
-                                          /** The section of the user's Telegram Passport which has the
-                                            * issue, one of “utility_bill”, “bank_statement”,
-                                            * “rental_agreement”, “passport_registration”,
-                                            * “temporary_registration”*/
-                                          `type`: String,
-                                          /** Base64-encoded file hash*/
-                                          fileHash: String,
-                                          /** Error message*/
-                                          message: String)
+  * the file with the document scan changes.
+  *
+  * @param type The section of the user's Telegram Passport which has the
+  * issue, one of “utility_bill”, “bank_statement”,
+  * “rental_agreement”, “passport_registration”,
+  * “temporary_registration”
+  * @param fileHash Base64-encoded file hash
+  * @param message Error message */
+final case class PassportElementErrorFile(`type`: String, fileHash: String, message: String)
     extends PassportElementError
 
 /** Represents an issue in an unspecified place. The error is considered resolved
-  * when new data is added.*/
-final case class PassportElementErrorUnspecified(
-                                                 /** Type of element of the user's Telegram Passport which has
-                                                   * the issue*/
-                                                 `type`: String,
-                                                 /** Base64-encoded element hash*/
+  * when new data is added.
+  *
+  * @param type Type of element of the user's Telegram Passport which has
+  * the issue
+  * @param elementHash Base64-encoded element hash
+  * @param message Error message */
+final case class PassportElementErrorUnspecified(`type`: String,
                                                  elementHash: String,
-                                                 /** Error message*/
                                                  message: String)
     extends PassportElementError
 
 /** Represents an issue with one of the files that constitute the translation of a
-  * document. The error is considered resolved when the file changes.*/
-final case class PassportElementErrorTranslationFile(
-                                                     /** Type of element of the user's Telegram Passport which has
-                                                       * the issue, one of “passport”, “driver_license”,
-                                                       * “identity_card”, “internal_passport”, “utility_bill”,
-                                                       * “bank_statement”, “rental_agreement”,
-                                                       * “passport_registration”, “temporary_registration”*/
-                                                     `type`: String,
-                                                     /** Base64-encoded file hash*/
+  * document. The error is considered resolved when the file changes.
+  *
+  * @param type Type of element of the user's Telegram Passport which has
+  * the issue, one of “passport”, “driver_license”,
+  * “identity_card”, “internal_passport”, “utility_bill”,
+  * “bank_statement”, “rental_agreement”,
+  * “passport_registration”, “temporary_registration”
+  * @param fileHash Base64-encoded file hash
+  * @param message Error message */
+final case class PassportElementErrorTranslationFile(`type`: String,
                                                      fileHash: String,
-                                                     /** Error message*/
                                                      message: String)
     extends PassportElementError
 
 /** Represents an issue with the translated version of a document. The error is
-  * considered resolved when a file with the document translation change.*/
-final case class PassportElementErrorTranslationFiles(
-                                                      /** Type of element of the user's Telegram Passport which has
-                                                        * the issue, one of “passport”, “driver_license”,
-                                                        * “identity_card”, “internal_passport”, “utility_bill”,
-                                                        * “bank_statement”, “rental_agreement”,
-                                                        * “passport_registration”, “temporary_registration”*/
-                                                      `type`: String,
-                                                      /** List of base64-encoded file hashes*/
+  * considered resolved when a file with the document translation change.
+  *
+  * @param type Type of element of the user's Telegram Passport which has
+  * the issue, one of “passport”, “driver_license”,
+  * “identity_card”, “internal_passport”, “utility_bill”,
+  * “bank_statement”, “rental_agreement”,
+  * “passport_registration”, “temporary_registration”
+  * @param fileHashes List of base64-encoded file hashes
+  * @param message Error message */
+final case class PassportElementErrorTranslationFiles(`type`: String,
                                                       fileHashes: List[String] = List.empty,
-                                                      /** Error message*/
                                                       message: String)
     extends PassportElementError

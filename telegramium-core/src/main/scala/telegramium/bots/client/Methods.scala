@@ -30,7 +30,7 @@ trait Methods {
 
   /** Use this method to get current webhook status. Requires no parameters. On
     * success, returns a WebhookInfo object. If the bot is using getUpdates, will
-    * return an object with the url field empty.*/
+    * return an object with the url field empty. */
   def getWebhookInfo(): Method[WebhookInfo] = {
     val req = GetWebhookInfoReq
     MethodReq[WebhookInfo]("getWebhookInfo", req.asJson)
@@ -38,10 +38,10 @@ trait Methods {
 
   /** Use this method to change the list of the bot's commands. Returns True on
     * success.
-
+    *
     * @param commands A JSON-serialized list of bot commands to be set as the
     * list of the bot's commands. At most 100 commands can be
-    * specified.*/
+    * specified. */
   def setMyCommands(commands: List[BotCommand] = List.empty): Method[Boolean] = {
     val req = SetMyCommandsReq(commands)
     MethodReq[Boolean]("setMyCommands", req.asJson)
@@ -50,10 +50,10 @@ trait Methods {
   /** Use this method to set a new profile photo for the chat. Photos can't be
     * changed for private chats. The bot must be an administrator in the chat for this
     * to work and must have the appropriate admin rights. Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
-    * @param photo New chat photo, uploaded using multipart/form-data*/
+    * @param photo New chat photo, uploaded using multipart/form-data */
   def setChatPhoto(chatId: ChatId, photo: IFile): Method[Boolean] = {
     val req = SetChatPhotoReq(chatId, photo)
     MethodReq[Boolean]("setChatPhoto", req.asJson, Map("photo" -> Option(photo)).collect {
@@ -64,14 +64,14 @@ trait Methods {
   /** Use this method to get data for high score tables. Will return the score of the
     * specified user and several of their neighbors in a game. On success, returns an
     * Array of GameHighScore objects.
-
+    *
     * @param userId Target user id
     * @param chatId Required if inline_message_id is not specified. Unique
     * identifier for the target chat
     * @param messageId Required if inline_message_id is not specified. Identifier
     * of the sent message
     * @param inlineMessageId Required if chat_id and message_id are not specified.
-    * Identifier of the inline message*/
+    * Identifier of the inline message */
   def getGameHighScores(
       userId: Int,
       chatId: Option[Int] = Option.empty,
@@ -85,9 +85,9 @@ trait Methods {
     * not a private chat, the bot must be an administrator in the chat for this to
     * work and must have the 'can_pin_messages' admin right in a supergroup or
     * 'can_edit_messages' admin right in a channel. Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
-    * target channel (in the format &#064;channelusername)*/
+    * target channel (in the format &#064;channelusername) */
   def unpinAllChatMessages(chatId: ChatId): Method[Boolean] = {
     val req = UnpinAllChatMessagesReq(chatId)
     MethodReq[Boolean]("unpinAllChatMessages", req.asJson)
@@ -96,7 +96,7 @@ trait Methods {
   /** Use this method to send answers to callback queries sent from inline keyboards.
     * The answer will be displayed to the user as a notification at the top of the
     * chat screen or as an alert. On success, True is returned.
-
+    *
     * @param callbackQueryId Unique identifier for the query to be answered
     * @param text Text of the notification. If not specified, nothing will be
     * shown to the user, 0-200 characters
@@ -113,7 +113,7 @@ trait Methods {
     * @param cacheTime The maximum amount of time in seconds that the result of
     * the callback query may be cached client-side. Telegram apps
     * will support caching starting in version 3.14. Defaults to
-    * 0.*/
+    * 0. */
   def answerCallbackQuery(callbackQueryId: String,
                           text: Option[String] = Option.empty,
                           showAlert: Option[Boolean] = Option.empty,
@@ -125,7 +125,7 @@ trait Methods {
 
   /** Use this method to send text messages. On success, the sent Message is
     * returned.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param text Text of the message to be sent, 1-4096 characters after
@@ -142,7 +142,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove reply keyboard or to force a reply from the user.*/
+    * remove reply keyboard or to force a reply from the user. */
   def sendMessage(chatId: ChatId,
                   text: String,
                   parseMode: Option[ParseMode] = Option.empty,
@@ -166,12 +166,12 @@ trait Methods {
 
   /** Use this method to get a list of profile pictures for a user. Returns a
     * UserProfilePhotos object.
-
+    *
     * @param userId Unique identifier of the target user
     * @param offset Sequential number of the first photo to be returned. By
     * default, all photos are returned.
     * @param limit Limits the number of photos to be retrieved. Values between
-    * 1-100 are accepted. Defaults to 100.*/
+    * 1-100 are accepted. Defaults to 100. */
   def getUserProfilePhotos(userId: Int,
                            offset: Option[Int] = Option.empty,
                            limit: Option[Int] = Option.empty): Method[UserProfilePhotos] = {
@@ -181,7 +181,7 @@ trait Methods {
 
   /** Use this method to send a native poll. On success, the sent Message is
     * returned.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param question Poll question, 1-300 characters
@@ -215,7 +215,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove reply keyboard or to force a reply from the user.*/
+    * remove reply keyboard or to force a reply from the user. */
   def sendPoll(chatId: ChatId,
                question: String,
                options: List[String] = List.empty,
@@ -257,7 +257,7 @@ trait Methods {
 
   /** Use this method to send phone contacts. On success, the sent Message is
     * returned.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param phoneNumber Contact's phone number
@@ -272,7 +272,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove keyboard or to force a reply from the user.*/
+    * remove keyboard or to force a reply from the user. */
   def sendContact(chatId: ChatId,
                   phoneNumber: String,
                   firstName: String,
@@ -297,7 +297,7 @@ trait Methods {
   /** Use this method to create a new sticker set owned by a user. The bot will be
     * able to edit the sticker set thus created. You must use exactly one of the
     * fields png_sticker or tgs_sticker. Returns True on success.
-
+    *
     * @param userId User identifier of created sticker set owner
     * @param name Short name of sticker set, to be used in t.me/addstickers/
     * URLs (e.g., animals). Can contain only english letters,
@@ -319,7 +319,7 @@ trait Methods {
     * @param emojis One or more emoji corresponding to the sticker
     * @param containsMasks Pass True, if a set of mask stickers should be created
     * @param maskPosition A JSON-serialized object for position where the mask should
-    * be placed on faces*/
+    * be placed on faces */
   def createNewStickerSet(userId: Int,
                           name: String,
                           title: String,
@@ -346,11 +346,11 @@ trait Methods {
   /** Use this method to upload a .PNG file with a sticker for later use in
     * createNewStickerSet and addStickerToSet methods (can be used multiple times).
     * Returns the uploaded File on success.
-
+    *
     * @param userId User identifier of sticker file owner
     * @param pngSticker PNG image with the sticker, must be up to 512 kilobytes in
     * size, dimensions must not exceed 512px, and either width or
-    * height must be exactly 512px.*/
+    * height must be exactly 512px. */
   def uploadStickerFile(userId: Int, pngSticker: IFile): Method[File] = {
     val req = UploadStickerFileReq(userId, pngSticker)
     MethodReq[File](
@@ -362,10 +362,10 @@ trait Methods {
   /** Use this method to set default chat permissions for all members. The bot must
     * be an administrator in the group or a supergroup for this to work and must have
     * the can_restrict_members admin rights. Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target supergroup (in the format &#064;supergroupusername)
-    * @param permissions New default chat permissions*/
+    * @param permissions New default chat permissions */
   def setChatPermissions(chatId: ChatId, permissions: ChatPermissions): Method[Boolean] = {
     val req = SetChatPermissionsReq(chatId, permissions)
     MethodReq[Boolean]("setChatPermissions", req.asJson)
@@ -373,7 +373,7 @@ trait Methods {
 
   /** Use this method to send point on the map. On success, the sent Message is
     * returned.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param latitude Latitude of the location
@@ -394,7 +394,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove reply keyboard or to force a reply from the user.*/
+    * remove reply keyboard or to force a reply from the user. */
   def sendLocation(chatId: ChatId,
                    latitude: Float,
                    longitude: Float,
@@ -426,9 +426,9 @@ trait Methods {
     * be an administrator in the chat for this to work and must have the appropriate
     * admin rights. Use the field can_set_sticker_set optionally returned in getChat
     * requests to check if the bot can use this method. Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
-    * target supergroup (in the format &#064;supergroupusername)*/
+    * target supergroup (in the format &#064;supergroupusername) */
   def deleteChatStickerSet(chatId: ChatId): Method[Boolean] = {
     val req = DeleteChatStickerSetReq(chatId)
     MethodReq[Boolean]("deleteChatStickerSet", req.asJson)
@@ -437,7 +437,7 @@ trait Methods {
   /** Use this method to stop updating a live location message before live_period
     * expires. On success, if the message was sent by the bot, the sent Message is
     * returned, otherwise True is returned.
-
+    *
     * @param chatId Required if inline_message_id is not specified. Unique
     * identifier for the target chat or username of the target
     * channel (in the format &#064;channelusername)
@@ -445,7 +445,7 @@ trait Methods {
     * of the message with live location to stop
     * @param inlineMessageId Required if chat_id and message_id are not specified.
     * Identifier of the inline message
-    * @param replyMarkup A JSON-serialized object for a new inline keyboard.*/
+    * @param replyMarkup A JSON-serialized object for a new inline keyboard. */
   def stopMessageLiveLocation(chatId: Option[ChatId] = Option.empty,
                               messageId: Option[Int] = Option.empty,
                               inlineMessageId: Option[String] = Option.empty,
@@ -459,9 +459,9 @@ trait Methods {
     * generated link is revoked. The bot must be an administrator in the chat for this
     * to work and must have the appropriate admin rights. Returns the new invite link
     * as String on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
-    * target channel (in the format &#064;channelusername)*/
+    * target channel (in the format &#064;channelusername) */
   def exportChatInviteLink(chatId: ChatId): Method[String] = {
     val req = ExportChatInviteLinkReq(chatId)
     MethodReq[String]("exportChatInviteLink", req.asJson)
@@ -469,7 +469,7 @@ trait Methods {
 
   /** Use this method to send an animated emoji that will display a random value. On
     * success, the sent Message is returned.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param emoji Emoji on which the dice throw animation is based.
@@ -485,7 +485,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove reply keyboard or to force a reply from the user.*/
+    * remove reply keyboard or to force a reply from the user. */
   def sendDice(chatId: ChatId,
                emoji: Option[Emoji] = Option.empty,
                disableNotification: Option[Boolean] = Option.empty,
@@ -504,7 +504,7 @@ trait Methods {
   /** Use this method when you need to tell the user that something is happening on
     * the bot's side. The status is set for 5 seconds or less (when a message arrives
     * from your bot, Telegram clients clear its typing status). Returns True on
-    * success.*/
+    * success. */
   def sendChatAction(): Method[Boolean] = {
     val req = SendChatActionReq
     MethodReq[Boolean]("sendChatAction", req.asJson)
@@ -515,7 +515,7 @@ trait Methods {
     * added to animated sticker sets and only to them. Animated sticker sets can have
     * up to 50 stickers. Static sticker sets can have up to 120 stickers. Returns True
     * on success.
-
+    *
     * @param userId User identifier of sticker set owner
     * @param name Sticker set name
     * @param pngSticker PNG image with the sticker, must be up to 512 kilobytes in
@@ -530,7 +530,7 @@ trait Methods {
     * for technical requirements
     * @param emojis One or more emoji corresponding to the sticker
     * @param maskPosition A JSON-serialized object for position where the mask should
-    * be placed on faces*/
+    * be placed on faces */
   def addStickerToSet(userId: Int,
                       name: String,
                       pngSticker: Option[IFile] = Option.empty,
@@ -547,8 +547,8 @@ trait Methods {
 
   /** Use this method to delete a sticker from a set created by the bot. Returns True
     * on success.
-
-    * @param sticker File identifier of the sticker*/
+    *
+    * @param sticker File identifier of the sticker */
   def deleteStickerFromSet(sticker: String): Method[Boolean] = {
     val req = DeleteStickerFromSetReq(sticker)
     MethodReq[Boolean]("deleteStickerFromSet", req.asJson)
@@ -556,11 +556,11 @@ trait Methods {
 
   /** Use this method to stop a poll which was sent by the bot. On success, the
     * stopped Poll with the final results is returned.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param messageId Identifier of the original message with the poll
-    * @param replyMarkup A JSON-serialized object for a new message inline keyboard.*/
+    * @param replyMarkup A JSON-serialized object for a new message inline keyboard. */
   def stopPoll(chatId: ChatId,
                messageId: Int,
                replyMarkup: Option[InlineKeyboardMarkup] = Option.empty): Method[Poll] = {
@@ -573,12 +573,12 @@ trait Methods {
     * for this to work and must have the 'can_pin_messages' admin right in a
     * supergroup or 'can_edit_messages' admin right in a channel. Returns True on
     * success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param messageId Identifier of a message to unpin. If not specified, the
     * most recent pinned message (by sending date) will be
-    * unpinned.*/
+    * unpinned. */
   def unpinChatMessage(chatId: ChatId, messageId: Option[Int] = Option.empty): Method[Boolean] = {
     val req = UnpinChatMessageReq(chatId, messageId)
     MethodReq[Boolean]("unpinChatMessage", req.asJson)
@@ -587,7 +587,7 @@ trait Methods {
   /** Use this method to send a group of photos, videos, documents or audios as an
     * album. Documents and audio files can be only grouped in an album with messages
     * of the same type. On success, an array of Messages that were sent is returned.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param media A JSON-serialized array describing messages to be sent,
@@ -596,7 +596,7 @@ trait Methods {
     * with no sound.
     * @param replyToMessageId If the messages are a reply, ID of the original message
     * @param allowSendingWithoutReply Pass True, if the message should be sent even if the
-    * specified replied-to message is not found*/
+    * specified replied-to message is not found */
   def sendMediaGroup(
       chatId: ChatId,
       media: List[InputMedia] = List.empty,
@@ -612,7 +612,7 @@ trait Methods {
   }
 
   /** Use this method to send a game. On success, the sent Message is returned.
-
+    *
     * @param chatId Unique identifier for the target chat
     * @param gameShortName Short name of the game, serves as the unique identifier for
     * the game. Set up your games via Botfather.
@@ -623,7 +623,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup A JSON-serialized object for an inline keyboard. If empty,
     * one 'Play game_title' button will be shown. If not empty,
-    * the first button must launch the game.*/
+    * the first button must launch the game. */
   def sendGame(chatId: Int,
                gameShortName: String,
                disableNotification: Option[Boolean] = Option.empty,
@@ -641,7 +641,7 @@ trait Methods {
 
   /** Use this method to send information about a venue. On success, the sent Message
     * is returned.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param latitude Latitude of the venue
@@ -661,7 +661,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove reply keyboard or to force a reply from the user.*/
+    * remove reply keyboard or to force a reply from the user. */
   def sendVenue(chatId: ChatId,
                 latitude: Float,
                 longitude: Float,
@@ -700,11 +700,11 @@ trait Methods {
     * the chat, but will be able to join it. So if the user is a member of the chat
     * they will also be removed from the chat. If you don't want this, use the
     * parameter only_if_banned. Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target group or username of the
     * target supergroup or channel (in the format &#064;username)
     * @param userId Unique identifier of the target user
-    * @param onlyIfBanned Do nothing if the user is not banned*/
+    * @param onlyIfBanned Do nothing if the user is not banned */
   def unbanChatMember(chatId: ChatId,
                       userId: Int,
                       onlyIfBanned: Option[Boolean] = Option.empty): Method[Boolean] = {
@@ -715,10 +715,10 @@ trait Methods {
   /** Use this method to change the description of a group, a supergroup or a
     * channel. The bot must be an administrator in the chat for this to work and must
     * have the appropriate admin rights. Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
-    * @param description New chat description, 0-255 characters*/
+    * @param description New chat description, 0-255 characters */
   def setChatDescription(chatId: ChatId,
                          description: Option[String] = Option.empty): Method[Boolean] = {
     val req = SetChatDescriptionReq(chatId, description)
@@ -728,7 +728,7 @@ trait Methods {
   /** Use this method to edit text and game messages. On success, if the edited
     * message is not an inline message, the edited Message is returned, otherwise True
     * is returned.
-
+    *
     * @param chatId Required if inline_message_id is not specified. Unique
     * identifier for the target chat or username of the target
     * channel (in the format &#064;channelusername)
@@ -743,7 +743,7 @@ trait Methods {
     * @param entities List of special entities that appear in message text, which
     * can be specified instead of parse_mode
     * @param disableWebPagePreview Disables link previews for links in this message
-    * @param replyMarkup A JSON-serialized object for an inline keyboard.*/
+    * @param replyMarkup A JSON-serialized object for an inline keyboard. */
   def editMessageText(chatId: Option[ChatId] = Option.empty,
                       messageId: Option[Int] = Option.empty,
                       inlineMessageId: Option[String] = Option.empty,
@@ -768,7 +768,7 @@ trait Methods {
     * its live_period expires or editing is explicitly disabled by a call to
     * stopMessageLiveLocation. On success, if the edited message is not an inline
     * message, the edited Message is returned, otherwise True is returned.
-
+    *
     * @param chatId Required if inline_message_id is not specified. Unique
     * identifier for the target chat or username of the target
     * channel (in the format &#064;channelusername)
@@ -785,7 +785,7 @@ trait Methods {
     * @param proximityAlertRadius Maximum distance for proximity alerts about approaching
     * another chat member, in meters. Must be between 1 and 100000
     * if specified.
-    * @param replyMarkup A JSON-serialized object for a new inline keyboard.*/
+    * @param replyMarkup A JSON-serialized object for a new inline keyboard. */
   def editMessageLiveLocation(chatId: Option[ChatId] = Option.empty,
                               messageId: Option[Int] = Option.empty,
                               inlineMessageId: Option[String] = Option.empty,
@@ -815,8 +815,8 @@ trait Methods {
     * from the response. It is guaranteed that the link will be valid for at least 1
     * hour. When the link expires, a new one can be requested by calling getFile
     * again.
-
-    * @param fileId File identifier to get info about*/
+    *
+    * @param fileId File identifier to get info about */
   def getFile(fileId: String): Method[File] = {
     val req = GetFileReq(fileId)
     MethodReq[File]("getFile", req.asJson)
@@ -826,7 +826,7 @@ trait Methods {
     * if the message was sent by the bot, returns the edited Message, otherwise
     * returns True. Returns an error, if the new score is not greater than the user's
     * current score in the chat and force is False.
-
+    *
     * @param userId User identifier
     * @param score New score, must be non-negative
     * @param force Pass True, if the high score is allowed to decrease. This
@@ -838,7 +838,7 @@ trait Methods {
     * @param messageId Required if inline_message_id is not specified. Identifier
     * of the sent message
     * @param inlineMessageId Required if chat_id and message_id are not specified.
-    * Identifier of the inline message*/
+    * Identifier of the inline message */
   def setGameScore(
       userId: Int,
       score: Int,
@@ -854,10 +854,10 @@ trait Methods {
 
   /** Use this method for your bot to leave a group, supergroup or channel. Returns
     * True on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target supergroup or channel (in the format
-    * &#064;channelusername)*/
+    * &#064;channelusername) */
   def leaveChat(chatId: ChatId): Method[Boolean] = {
     val req = LeaveChatReq(chatId)
     MethodReq[Boolean]("leaveChat", req.asJson)
@@ -866,10 +866,10 @@ trait Methods {
   /** Use this method to change the title of a chat. Titles can't be changed for
     * private chats. The bot must be an administrator in the chat for this to work and
     * must have the appropriate admin rights. Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
-    * @param title New chat title, 1-255 characters*/
+    * @param title New chat title, 1-255 characters */
   def setChatTitle(chatId: ChatId, title: String): Method[Boolean] = {
     val req = SetChatTitleReq(chatId, title)
     MethodReq[Boolean]("setChatTitle", req.asJson)
@@ -878,7 +878,7 @@ trait Methods {
   /** Use this method to copy messages of any kind. The method is analogous to the
     * method forwardMessages, but the copied message doesn't have a link to the
     * original message. Returns the MessageId of the sent message on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param fromChatId Unique identifier for the chat where the original message
@@ -898,7 +898,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove reply keyboard or to force a reply from the user.*/
+    * remove reply keyboard or to force a reply from the user. */
   def copyMessage(chatId: ChatId,
                   fromChatId: ChatId,
                   messageId: Int,
@@ -925,7 +925,7 @@ trait Methods {
   /** As of v.4.0, Telegram clients support rounded square mp4 videos of up to 1
     * minute long. Use this method to send video messages. On success, the sent
     * Message is returned.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param videoNote Video note to send. Pass a file_id as String to send a
@@ -950,7 +950,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove reply keyboard or to force a reply from the user.*/
+    * remove reply keyboard or to force a reply from the user. */
   def sendVideoNote(chatId: ChatId,
                     videoNote: IFile,
                     duration: Option[Int] = Option.empty,
@@ -984,9 +984,9 @@ trait Methods {
     * example, if a birthday date seems invalid, a submitted document is blurry, a
     * scan shows evidence of tampering, etc. Supply some details in the error message
     * to make sure the user knows how to correct the issues.
-
+    *
     * @param userId User identifier
-    * @param errors A JSON-serialized array describing the errors*/
+    * @param errors A JSON-serialized array describing the errors */
   def setPassportDataErrors(userId: Int,
                             errors: List[PassportElementError] = List.empty): Method[Boolean] = {
     val req = SetPassportDataErrorsReq(userId, errors)
@@ -996,16 +996,16 @@ trait Methods {
   /** Use this method to delete a chat photo. Photos can't be changed for private
     * chats. The bot must be an administrator in the chat for this to work and must
     * have the appropriate admin rights. Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
-    * target channel (in the format &#064;channelusername)*/
+    * target channel (in the format &#064;channelusername) */
   def deleteChatPhoto(chatId: ChatId): Method[Boolean] = {
     val req = DeleteChatPhotoReq(chatId)
     MethodReq[Boolean]("deleteChatPhoto", req.asJson)
   }
 
   /** Use this method to send invoices. On success, the sent Message is returned.
-
+    *
     * @param chatId Unique identifier for the target private chat
     * @param title Product name, 1-32 characters
     * @param description Product description, 1-255 characters
@@ -1048,7 +1048,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup A JSON-serialized object for an inline keyboard. If empty,
     * one 'Pay total price' button will be shown. If not empty,
-    * the first button must be a Pay button.*/
+    * the first button must be a Pay button. */
   def sendInvoice(chatId: Int,
                   title: String,
                   description: String,
@@ -1105,7 +1105,7 @@ trait Methods {
   /** Use this method to send general files. On success, the sent Message is
     * returned. Bots can currently send files of any type of up to 50 MB in size, this
     * limit may be changed in the future.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param document File to send. Pass a file_id as String to send a file that
@@ -1136,7 +1136,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove reply keyboard or to force a reply from the user.*/
+    * remove reply keyboard or to force a reply from the user. */
   def sendDocument(chatId: ChatId,
                    document: IFile,
                    thumb: Option[IFile] = Option.empty,
@@ -1177,10 +1177,10 @@ trait Methods {
     * in channels. - If the bot is an administrator of a group, it can delete any
     * message there. - If the bot has can_delete_messages permission in a supergroup
     * or a channel, it can delete any message there. Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
-    * @param messageId Identifier of the message to delete*/
+    * @param messageId Identifier of the message to delete */
   def deleteMessage(chatId: ChatId, messageId: Int): Method[Boolean] = {
     val req = DeleteMessageReq(chatId, messageId)
     MethodReq[Boolean]("deleteMessage", req.asJson)
@@ -1188,7 +1188,7 @@ trait Methods {
 
   /** Use this method to send answers to an inline query. On success, True is
     * returned. No more than 50 results per query are allowed.
-
+    *
     * @param inlineQueryId Unique identifier for the answered query
     * @param results A JSON-serialized array of results for the inline query
     * @param cacheTime The maximum amount of time in seconds that the result of
@@ -1217,7 +1217,7 @@ trait Methods {
     * instructs the bot to return an oauth link. Once done, the
     * bot can offer a switch_inline button so that the user can
     * easily return to the chat where they wanted to use the bot's
-    * inline capabilities.*/
+    * inline capabilities. */
   def answerInlineQuery(inlineQueryId: String,
                         results: List[InlineQueryResult] = List.empty,
                         cacheTime: Option[Int] = Option.empty,
@@ -1240,7 +1240,7 @@ trait Methods {
     * chat on their own using invite links, etc., unless unbanned first. The bot must
     * be an administrator in the chat for this to work and must have the appropriate
     * admin rights. Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target group or username of the
     * target supergroup or channel (in the format
     * &#064;channelusername)
@@ -1248,7 +1248,7 @@ trait Methods {
     * @param untilDate Date when the user will be unbanned, unix time. If user is
     * banned for more than 366 days or less than 30 seconds from
     * the current time they are considered to be banned forever.
-    * Applied for supergroups and channels only.*/
+    * Applied for supergroups and channels only. */
   def kickChatMember(chatId: ChatId,
                      userId: Int,
                      untilDate: Option[Int] = Option.empty): Method[Boolean] = {
@@ -1261,7 +1261,7 @@ trait Methods {
     * success, the sent Message is returned. Bots can currently send audio files of up
     * to 50 MB in size, this limit may be changed in the future. For sending voice
     * messages, use the sendVoice method instead.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param audio Audio file to send. Pass a file_id as String to send an
@@ -1293,7 +1293,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove reply keyboard or to force a reply from the user.*/
+    * remove reply keyboard or to force a reply from the user. */
   def sendAudio(chatId: ChatId,
                 audio: IFile,
                 caption: Option[String] = Option.empty,
@@ -1333,7 +1333,7 @@ trait Methods {
     * administrator in the supergroup for this to work and must have the appropriate
     * admin rights. Pass True for all permissions to lift restrictions from a user.
     * Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target supergroup (in the format &#064;supergroupusername)
     * @param userId Unique identifier of the target user
@@ -1341,7 +1341,7 @@ trait Methods {
     * @param untilDate Date when restrictions will be lifted for the user, unix
     * time. If user is restricted for more than 366 days or less
     * than 30 seconds from the current time, they are considered
-    * to be restricted forever*/
+    * to be restricted forever */
   def restrictChatMember(chatId: ChatId,
                          userId: Int,
                          permissions: ChatPermissions,
@@ -1351,7 +1351,7 @@ trait Methods {
   }
 
   /** A simple method for testing your bot's auth token. Requires no parameters.
-    * Returns basic information about the bot in form of a User object.*/
+    * Returns basic information about the bot in form of a User object. */
   def getMe(): Method[User] = {
     val req = GetMeReq
     MethodReq[User]("getMe", req.asJson)
@@ -1359,7 +1359,7 @@ trait Methods {
 
   /** Use this method to forward messages of any kind. On success, the sent Message
     * is returned.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param fromChatId Unique identifier for the chat where the original message
@@ -1367,7 +1367,7 @@ trait Methods {
     * &#064;channelusername)
     * @param disableNotification Sends the message silently. Users will receive a
     * notification with no sound.
-    * @param messageId Message identifier in the chat specified in from_chat_id*/
+    * @param messageId Message identifier in the chat specified in from_chat_id */
   def forwardMessage(chatId: ChatId,
                      fromChatId: ChatId,
                      disableNotification: Option[Boolean] = Option.empty,
@@ -1378,18 +1378,18 @@ trait Methods {
 
   /** Use this method to get information about a member of a chat. Returns a
     * ChatMember object on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target supergroup or channel (in the format
     * &#064;channelusername)
-    * @param userId Unique identifier of the target user*/
+    * @param userId Unique identifier of the target user */
   def getChatMember(chatId: ChatId, userId: Int): Method[ChatMember] = {
     val req = GetChatMemberReq(chatId, userId)
     MethodReq[ChatMember]("getChatMember", req.asJson)
   }
 
   /** Use this method to get the current list of the bot's commands. Requires no
-    * parameters. Returns Array of BotCommand on success.*/
+    * parameters. Returns Array of BotCommand on success. */
   def getMyCommands(): Method[List[BotCommand]] = {
     val req = GetMyCommandsReq
     MethodReq[List[BotCommand]]("getMyCommands", req.asJson)
@@ -1399,10 +1399,10 @@ trait Methods {
     * an Array of ChatMember objects that contains information about all chat
     * administrators except other bots. If the chat is a group or a supergroup and no
     * administrators were appointed, only the creator will be returned.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target supergroup or channel (in the format
-    * &#064;channelusername)*/
+    * &#064;channelusername) */
   def getChatAdministrators(chatId: ChatId): Method[List[ChatMember]] = {
     val req = GetChatAdministratorsReq(chatId)
     MethodReq[List[ChatMember]]("getChatAdministrators", req.asJson)
@@ -1413,7 +1413,7 @@ trait Methods {
     * .OGG file encoded with OPUS (other formats may be sent as Audio or Document). On
     * success, the sent Message is returned. Bots can currently send voice messages of
     * up to 50 MB in size, this limit may be changed in the future.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param voice Audio file to send. Pass a file_id as String to send a file
@@ -1434,7 +1434,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove reply keyboard or to force a reply from the user.*/
+    * remove reply keyboard or to force a reply from the user. */
   def sendVoice(chatId: ChatId,
                 voice: IFile,
                 caption: Option[String] = Option.empty,
@@ -1465,7 +1465,7 @@ trait Methods {
     * is no guarantee that the bot will receive updates. After a successful call, you
     * can immediately log in on a local server, but will not be able to log in back to
     * the cloud Bot API server for 10 minutes. Returns True on success. Requires no
-    * parameters.*/
+    * parameters. */
   def logOut(): Method[Boolean] = {
     val req = LogOutReq
     MethodReq[Boolean]("logOut", req.asJson)
@@ -1475,7 +1475,7 @@ trait Methods {
     * bot must be an administrator in the chat for this to work and must have the
     * appropriate admin rights. Pass False for all boolean parameters to demote a
     * user. Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param userId Unique identifier of the target user
@@ -1498,7 +1498,7 @@ trait Methods {
     * @param canPromoteMembers Pass True, if the administrator can add new administrators
     * with a subset of their own privileges or demote
     * administrators that he has promoted, directly or indirectly
-    * (promoted by administrators that were appointed by him)*/
+    * (promoted by administrators that were appointed by him) */
   def promoteChatMember(chatId: ChatId,
                         userId: Int,
                         isAnonymous: Option[Boolean] = Option.empty,
@@ -1529,7 +1529,7 @@ trait Methods {
   /** Use this method to edit captions of messages. On success, if the edited message
     * is not an inline message, the edited Message is returned, otherwise True is
     * returned.
-
+    *
     * @param chatId Required if inline_message_id is not specified. Unique
     * identifier for the target chat or username of the target
     * channel (in the format &#064;channelusername)
@@ -1543,7 +1543,7 @@ trait Methods {
     * formatting options for more details.
     * @param captionEntities List of special entities that appear in the caption, which
     * can be specified instead of parse_mode
-    * @param replyMarkup A JSON-serialized object for an inline keyboard.*/
+    * @param replyMarkup A JSON-serialized object for an inline keyboard. */
   def editMessageCaption(chatId: Option[ChatId] = Option.empty,
                          messageId: Option[Int] = Option.empty,
                          inlineMessageId: Option[String] = Option.empty,
@@ -1569,7 +1569,7 @@ trait Methods {
     * Use a previously uploaded file via its file_id or specify a URL. On success, if
     * the edited message was sent by the bot, the edited Message is returned,
     * otherwise True is returned.
-
+    *
     * @param chatId Required if inline_message_id is not specified. Unique
     * identifier for the target chat or username of the target
     * channel (in the format &#064;channelusername)
@@ -1579,7 +1579,7 @@ trait Methods {
     * Identifier of the inline message
     * @param media A JSON-serialized object for a new media content of the
     * message
-    * @param replyMarkup A JSON-serialized object for a new inline keyboard.*/
+    * @param replyMarkup A JSON-serialized object for a new inline keyboard. */
   def editMessageMedia(chatId: Option[ChatId] = Option.empty,
                        messageId: Option[Int] = Option.empty,
                        inlineMessageId: Option[String] = Option.empty,
@@ -1594,13 +1594,13 @@ trait Methods {
     * the chat is not a private chat, the bot must be an administrator in the chat for
     * this to work and must have the 'can_pin_messages' admin right in a supergroup or
     * 'can_edit_messages' admin right in a channel. Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param messageId Identifier of a message to pin
     * @param disableNotification Pass True, if it is not necessary to send a notification to
     * all chat members about the new pinned message. Notifications
-    * are always disabled in channels and private chats.*/
+    * are always disabled in channels and private chats. */
   def pinChatMessage(chatId: ChatId,
                      messageId: Int,
                      disableNotification: Option[Boolean] = Option.empty): Method[Boolean] = {
@@ -1610,7 +1610,7 @@ trait Methods {
 
   /** Use this method to set the thumbnail of a sticker set. Animated thumbnails can
     * be set for animated sticker sets only. Returns True on success.
-
+    *
     * @param name Sticker set name
     * @param userId User identifier of the sticker set owner
     * @param thumb A PNG image with the thumbnail, must be up to 128 kilobytes
@@ -1622,7 +1622,7 @@ trait Methods {
     * Telegram servers, pass an HTTP URL as a String for Telegram
     * to get a file from the Internet, or upload a new one using
     * multipart/form-data. Animated sticker set thumbnail can't be
-    * uploaded via HTTP URL.*/
+    * uploaded via HTTP URL. */
   def setStickerSetThumb(name: String,
                          userId: Int,
                          thumb: Option[IFile] = Option.empty): Method[Boolean] = {
@@ -1635,7 +1635,7 @@ trait Methods {
   /** Use this method to edit only the reply markup of messages. On success, if the
     * edited message is not an inline message, the edited Message is returned,
     * otherwise True is returned.
-
+    *
     * @param chatId Required if inline_message_id is not specified. Unique
     * identifier for the target chat or username of the target
     * channel (in the format &#064;channelusername)
@@ -1643,7 +1643,7 @@ trait Methods {
     * of the message to edit
     * @param inlineMessageId Required if chat_id and message_id are not specified.
     * Identifier of the inline message
-    * @param replyMarkup A JSON-serialized object for an inline keyboard.*/
+    * @param replyMarkup A JSON-serialized object for an inline keyboard. */
   def editMessageReplyMarkup(chatId: Option[ChatId] = Option.empty,
                              messageId: Option[Int] = Option.empty,
                              inlineMessageId: Option[String] = Option.empty,
@@ -1657,7 +1657,7 @@ trait Methods {
     * formats may be sent as Document). On success, the sent Message is returned. Bots
     * can currently send video files of up to 50 MB in size, this limit may be changed
     * in the future.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param video Video to send. Pass a file_id as String to send a video
@@ -1690,7 +1690,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove reply keyboard or to force a reply from the user.*/
+    * remove reply keyboard or to force a reply from the user. */
   def sendVideo(chatId: ChatId,
                 video: IFile,
                 duration: Option[Int] = Option.empty,
@@ -1732,10 +1732,10 @@ trait Methods {
     * be an administrator in the chat for this to work and must have the appropriate
     * admin rights. Use the field can_set_sticker_set optionally returned in getChat
     * requests to check if the bot can use this method. Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target supergroup (in the format &#064;supergroupusername)
-    * @param stickerSetName Name of the sticker set to be set as the group sticker set*/
+    * @param stickerSetName Name of the sticker set to be set as the group sticker set */
   def setChatStickerSet(chatId: ChatId, stickerSetName: String): Method[Boolean] = {
     val req = SetChatStickerSetReq(chatId, stickerSetName)
     MethodReq[Boolean]("setChatStickerSet", req.asJson)
@@ -1744,10 +1744,10 @@ trait Methods {
   /** Use this method to get up to date information about the chat (current name of
     * the user for one-on-one conversations, current username of a user, group or
     * channel, etc.). Returns a Chat object on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target supergroup or channel (in the format
-    * &#064;channelusername)*/
+    * &#064;channelusername) */
   def getChat(chatId: ChatId): Method[Chat] = {
     val req = GetChatReq(chatId)
     MethodReq[Chat]("getChat", req.asJson)
@@ -1755,8 +1755,8 @@ trait Methods {
 
   /** Use this method to remove webhook integration if you decide to switch back to
     * getUpdates. Returns True on success.
-
-    * @param dropPendingUpdates Pass True to drop all pending updates*/
+    *
+    * @param dropPendingUpdates Pass True to drop all pending updates */
   def deleteWebhook(dropPendingUpdates: Option[Boolean] = Option.empty): Method[Boolean] = {
     val req = DeleteWebhookReq(dropPendingUpdates)
     MethodReq[Boolean]("deleteWebhook", req.asJson)
@@ -1766,7 +1766,7 @@ trait Methods {
     * server to another. You need to delete the webhook before calling this method to
     * ensure that the bot isn't launched again after server restart. The method will
     * return error 429 in the first 10 minutes after the bot is launched. Returns True
-    * on success. Requires no parameters.*/
+    * on success. Requires no parameters. */
   def close(): Method[Boolean] = {
     val req = CloseReq
     MethodReq[Boolean]("close", req.asJson)
@@ -1774,9 +1774,9 @@ trait Methods {
 
   /** Use this method to move a sticker in a set created by the bot to a specific
     * position. Returns True on success.
-
+    *
     * @param sticker File identifier of the sticker
-    * @param position New sticker position in the set, zero-based*/
+    * @param position New sticker position in the set, zero-based */
   def setStickerPositionInSet(sticker: String, position: Int): Method[Boolean] = {
     val req = SetStickerPositionInSetReq(sticker, position)
     MethodReq[Boolean]("setStickerPositionInSet", req.asJson)
@@ -1784,12 +1784,12 @@ trait Methods {
 
   /** Use this method to set a custom title for an administrator in a supergroup
     * promoted by the bot. Returns True on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target supergroup (in the format &#064;supergroupusername)
     * @param userId Unique identifier of the target user
     * @param customTitle New custom title for the administrator; 0-16 characters,
-    * emoji are not allowed*/
+    * emoji are not allowed */
   def setChatAdministratorCustomTitle(chatId: ChatId,
                                       userId: Int,
                                       customTitle: String): Method[Boolean] = {
@@ -1800,7 +1800,7 @@ trait Methods {
   /** Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without
     * sound). On success, the sent Message is returned. Bots can currently send
     * animation files of up to 50 MB in size, this limit may be changed in the future.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param animation Animation to send. Pass a file_id as String to send an
@@ -1834,7 +1834,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove reply keyboard or to force a reply from the user.*/
+    * remove reply keyboard or to force a reply from the user. */
   def sendAnimation(chatId: ChatId,
                     animation: IFile,
                     duration: Option[Int] = Option.empty,
@@ -1874,7 +1874,7 @@ trait Methods {
     * is_flexible was specified, the Bot API will send an Update with a shipping_query
     * field to the bot. Use this method to reply to shipping queries. On success, True
     * is returned.
-
+    *
     * @param shippingQueryId Unique identifier for the query to be answered
     * @param ok Specify True if delivery to the specified address is
     * possible and False if there are any problems (for example,
@@ -1885,7 +1885,7 @@ trait Methods {
     * form that explains why it is impossible to complete the
     * order (e.g. "Sorry, delivery to your desired address is
     * unavailable'). Telegram will display this message to the
-    * user.*/
+    * user. */
   def answerShippingQuery(shippingQueryId: String,
                           ok: Boolean,
                           shippingOptions: List[ShippingOption] = List.empty,
@@ -1899,7 +1899,7 @@ trait Methods {
     * pre_checkout_query. Use this method to respond to such pre-checkout queries. On
     * success, True is returned. Note: The Bot API must receive an answer within 10
     * seconds after the pre-checkout query was sent.
-
+    *
     * @param preCheckoutQueryId Unique identifier for the query to be answered
     * @param ok Specify True if everything is alright (goods are available,
     * etc.) and the bot is ready to proceed with the order. Use
@@ -1909,7 +1909,7 @@ trait Methods {
     * the checkout (e.g. "Sorry, somebody just bought the last of
     * our amazing black T-shirts while you were busy filling out
     * your payment details. Please choose a different color or
-    * garment!"). Telegram will display this message to the user.*/
+    * garment!"). Telegram will display this message to the user. */
   def answerPreCheckoutQuery(preCheckoutQueryId: String,
                              ok: Boolean,
                              errorMessage: Option[String] = Option.empty): Method[Update] = {
@@ -1919,7 +1919,7 @@ trait Methods {
 
   /** Use this method to send static .WEBP or animated .TGS stickers. On success, the
     * sent Message is returned.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param sticker Sticker to send. Pass a file_id as String to send a file
@@ -1933,7 +1933,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove reply keyboard or to force a reply from the user.*/
+    * remove reply keyboard or to force a reply from the user. */
   def sendSticker(chatId: ChatId,
                   sticker: IFile,
                   disableNotification: Option[Boolean] = Option.empty,
@@ -1952,17 +1952,17 @@ trait Methods {
   }
 
   /** Use this method to get the number of members in a chat. Returns Int on success.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target supergroup or channel (in the format
-    * &#064;channelusername)*/
+    * &#064;channelusername) */
   def getChatMembersCount(chatId: ChatId): Method[Int] = {
     val req = GetChatMembersCountReq(chatId)
     MethodReq[Int]("getChatMembersCount", req.asJson)
   }
 
   /** Use this method to send photos. On success, the sent Message is returned.
-
+    *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
     * @param photo Photo to send. Pass a file_id as String to send a photo
@@ -1985,7 +1985,7 @@ trait Methods {
     * specified replied-to message is not found
     * @param replyMarkup Additional interface options. A JSON-serialized object for
     * an inline keyboard, custom reply keyboard, instructions to
-    * remove reply keyboard or to force a reply from the user.*/
+    * remove reply keyboard or to force a reply from the user. */
   def sendPhoto(chatId: ChatId,
                 photo: IFile,
                 caption: Option[String] = Option.empty,
@@ -2011,7 +2011,7 @@ trait Methods {
 
   /** Use this method to receive incoming updates using long polling (wiki). An Array
     * of Update objects is returned.
-
+    *
     * @param offset Identifier of the first update to be returned. Must be
     * greater by one than the highest among the identifiers of
     * previously received updates. By default, updates starting
@@ -2035,7 +2035,7 @@ trait Methods {
     * previous setting will be used. Please note that this
     * parameter doesn't affect updates created before the call to
     * the getUpdates, so unwanted updates may be received for a
-    * short period of time.*/
+    * short period of time. */
   def getUpdates(offset: Option[Int] = Option.empty,
                  limit: Option[Int] = Option.empty,
                  timeout: Option[Int] = Option.empty,
@@ -2046,8 +2046,8 @@ trait Methods {
 
   /** Use this method to get a sticker set. On success, a StickerSet object is
     * returned.
-
-    * @param name Name of the sticker set*/
+    *
+    * @param name Name of the sticker set */
   def getStickerSet(name: String): Method[StickerSet] = {
     val req = GetStickerSetReq(name)
     MethodReq[StickerSet]("getStickerSet", req.asJson)
@@ -2061,7 +2061,7 @@ trait Methods {
     * comes from Telegram, we recommend using a secret path in the URL, e.g.
     * https://www.example.com/<token>. Since nobody else knows your bot's token, you
     * can be pretty sure it's us.
-
+    *
     * @param url HTTPS url to send updates to. Use an empty string to remove
     * webhook integration
     * @param certificate Upload your public key certificate so that the root
@@ -2083,7 +2083,7 @@ trait Methods {
     * parameter doesn't affect updates created before the call to
     * the setWebhook, so unwanted updates may be received for a
     * short period of time.
-    * @param dropPendingUpdates Pass True to drop all pending updates*/
+    * @param dropPendingUpdates Pass True to drop all pending updates */
   def setWebhook(url: String,
                  certificate: Option[IFile] = Option.empty,
                  ipAddress: Option[String] = Option.empty,

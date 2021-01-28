@@ -1,5 +1,4 @@
 package telegramium.bots.client
 
-final case class GetStickerSetReq(
-    /** Name of the sticker set*/
-    name: String)
+/** @param name Name of the sticker set */
+final case class GetStickerSetReq(name: String)

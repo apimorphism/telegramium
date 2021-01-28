@@ -1,5 +1,4 @@
 package telegramium.bots.client
 
-final case class DeleteStickerFromSetReq(
-    /** File identifier of the sticker*/
-    sticker: String)
+/** @param sticker File identifier of the sticker */
+final case class DeleteStickerFromSetReq(sticker: String)

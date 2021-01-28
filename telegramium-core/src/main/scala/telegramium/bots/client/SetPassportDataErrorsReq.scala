@@ -2,8 +2,7 @@ package telegramium.bots.client
 
 import telegramium.bots.PassportElementError
 
-final case class SetPassportDataErrorsReq(
-                                          /** User identifier*/
-                                          userId: Int,
-                                          /** A JSON-serialized array describing the errors*/
+/** @param userId User identifier
+  * @param errors A JSON-serialized array describing the errors */
+final case class SetPassportDataErrorsReq(userId: Int,
                                           errors: List[PassportElementError] = List.empty)
