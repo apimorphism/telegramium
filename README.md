@@ -3,7 +3,7 @@
 [![Telegram](https://img.shields.io/badge/Telegram%20Bot%20API-5.0%20(November%2004%2C%202020)-blue)](https://core.telegram.org/bots/api#recent-changes)
 [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 
-F[Tg] is a pure functional Telegram Bot API for scala.
+F[Tg] is a pure functional Telegram Bot API for Scala.
 
 This project is a try to provide a comprehensive, well documented and Scala-idiomatic client/server implementations to work with Telegram Bot API. Please refer to telegramium-examples module for usage examples. There is a support both for polling and webhooks.
 API core is generated from the official documentation, so it is believed to cover all the available methods, entities and to be up to date.
@@ -21,8 +21,8 @@ You may want to start with [Methods.scala](telegramium-core/src/main/scala/teleg
 Create the dependency by adding the following lines to your build.sbt:
 
 ```
-libraryDependencies += "io.github.apimorphism" %% "telegramium-core" % "2.50.0"
-libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "2.50.0"
+libraryDependencies += "io.github.apimorphism" %% "telegramium-core" % "3.50.0"
+libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "3.50.0"
 ```
 
 Imports:
