@@ -42,7 +42,7 @@ BlazeClientBuilder[F](ExecutionContext.global).resource.use { httpClient =>
 
 #### Long polling
 ```scala
-class MyLongPollBot[F[_]: Sync: Timer]()(implicit api: Api[F]) extends LongPollBot[F](api) {
+class MyLongPollBot[F[_]: Sync: Timer: Parallel]()(implicit api: Api[F]) extends LongPollBot[F](api) {
   override def onMessage(msg: Message): F[Unit] =
     Methods.sendMessage(chatId = ChatIntId(msg.chat.id), text = "Hello, world!").exec.void
 }
