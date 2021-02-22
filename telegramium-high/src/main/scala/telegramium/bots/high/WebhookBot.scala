@@ -47,7 +47,8 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   certificate: Option[InputPartFile] = Option.empty,
   ipAddress: Option[String] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
-  allowedUpdates: List[String] = List.empty
+  allowedUpdates: List[String] = List.empty,
+  host: String = org.http4s.server.defaults.Host
 )(implicit syncF: Sync[F], timer: Timer[F]) extends Methods {
 
   private val BotPath = Path(if (path.startsWith("/")) path else "/" + path)
@@ -145,6 +146,6 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
       }
         .orNotFound
 
-    BlazeServerBuilder[F](executionContext).bindHttp(port).withHttpApp(app()).resource
+    BlazeServerBuilder[F](executionContext).bindHttp(port, host).withHttpApp(app()).resource
   }
 }
