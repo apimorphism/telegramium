@@ -9,7 +9,7 @@ ThisBuild / version := Version.mkVersion(
 )
 
 lazy val scala213 = "2.13.4"
-lazy val scala212 = "2.12.12"
+lazy val scala212 = "2.12.13"
 
 ThisBuild / scalaVersion := scala213
 ThisBuild / crossScalaVersions := List(scala213, scala212)
