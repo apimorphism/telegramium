@@ -15,7 +15,7 @@ object Dependencies {
     val testcontainers = "0.39.3"
     val mockServerClient = "5.10.0"
     val scalamock = "5.1.0"
-    val log4cats = "1.1.1"
+    val log4cats = "1.2.0"
   }
 
   val monix = "io.monix" %% "monix" % V.monix
@@ -43,7 +43,7 @@ object Dependencies {
     "org.slf4j"      % "slf4j-api"       % V.slf4j,
     "org.slf4j"      % "slf4j-simple"    % V.slf4j,
     "ch.qos.logback" % "logback-classic" % V.logback,
-    "io.chrisdavenport" %% "log4cats-slf4j" % V.log4cats
+    "org.typelevel" %% "log4cats-slf4j" % V.log4cats
   )
 
   val uPickle = Seq(
