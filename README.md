@@ -21,8 +21,8 @@ You may want to start with [Methods.scala](telegramium-core/src/main/scala/teleg
 Create the dependency by adding the following lines to your build.sbt:
 
 ```
-libraryDependencies += "io.github.apimorphism" %% "telegramium-core" % "3.50.0"
-libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "3.50.0"
+libraryDependencies += "io.github.apimorphism" %% "telegramium-core" % "3.50.2"
+libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "3.50.2"
 ```
 
 Imports:
