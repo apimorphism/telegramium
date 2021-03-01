@@ -107,7 +107,10 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
    * @param executionContext Execution Context the underlying blaze futures will be executed upon.
    */
   def start(executionContext: ExecutionContext = ExecutionContext.global): Resource[F, Server[F]] =
-    createServer(executionContext) <* Resource.liftF(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates))
+    for {
+      server <- createServer(executionContext)
+      _ <- Resource.liftF(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates))
+    } yield server
 
   private def setWebhook(
     url: String,
