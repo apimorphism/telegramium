@@ -107,7 +107,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
    * @param executionContext Execution Context the underlying blaze futures will be executed upon.
    */
   def start(executionContext: ExecutionContext = ExecutionContext.global): Resource[F, Server[F]] =
-    setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates).flatMap(_ => createServer(executionContext))
+    createServer(executionContext) <* Resource.liftF(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates))
 
   private def setWebhook(
     url: String,
@@ -115,12 +115,8 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
     ipAddress: Option[String],
     maxConnections: Option[Int],
     allowedUpdates: List[String]
-  ): Resource[F, Unit] =
-    Resource.make(
-      bot.execute(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates)).void
-    )(
-      _ => bot.execute(deleteWebhook()).void
-    )
+  ): F[Unit] =
+    bot.execute(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates)).void
 
   private def createServer(executionContext: ExecutionContext): Resource[F, Server[F]] = {
     val dsl = Http4sDsl[F]
