@@ -35,6 +35,8 @@ abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F],
   def onPreCheckoutQuery(query: PreCheckoutQuery): F[Unit] = noop(query)
   def onPoll(poll: Poll): F[Unit] = noop(poll)
   def onPollAnswer(pollAnswer: PollAnswer): F[Unit] = noop(pollAnswer)
+  def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit] = noop(myChatMember)
+  def onChatMember(chatMember: ChatMemberUpdated): F[Unit] = noop(chatMember)
 
   def onUpdate(update: Update): F[Unit] = {
     for {
@@ -49,6 +51,8 @@ abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F],
       _ <- update.preCheckoutQuery.fold(syncF.unit)(onPreCheckoutQuery)
       _ <- update.poll.fold(syncF.unit)(onPoll)
       _ <- update.pollAnswer.fold(syncF.unit)(onPollAnswer)
+      _ <- update.myChatMember.fold(syncF.unit)(onMyChatMember)
+      _ <- update.chatMember.fold(syncF.unit)(onChatMember)
     } yield ()
   }
 

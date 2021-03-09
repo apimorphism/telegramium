@@ -14,7 +14,7 @@ import org.http4s.{EntityDecoder, HttpApp, HttpRoutes}
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.{Method, Methods}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
-import telegramium.bots.{CallbackQuery, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
+import telegramium.bots.{CallbackQuery, ChatMemberUpdated, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
 import scala.concurrent.ExecutionContext
 
@@ -66,6 +66,8 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   def onPreCheckoutQuery(query: PreCheckoutQuery): F[Unit] = noop(query)
   def onPoll(poll: Poll): F[Unit] = noop(poll)
   def onPollAnswer(pollAnswer: PollAnswer): F[Unit] = noop(pollAnswer)
+  def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit] = noop(myChatMember)
+  def onChatMember(chatMember: ChatMemberUpdated): F[Unit] = noop(chatMember)
 
   private def noopReply[A](a: A) = syncF.pure(a).map(_ => Option.empty[Method[_]])
 
@@ -81,6 +83,8 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   def onPreCheckoutQueryReply(query: PreCheckoutQuery): F[Option[Method[_]]] = noopReply(query)
   def onPollReply(poll: Poll): F[Option[Method[_]]] = noopReply(poll)
   def onPollAnswerReply(pollAnswer: PollAnswer): F[Option[Method[_]]] = noopReply(pollAnswer)
+  def onMyChatMemberReply(myChatMember: ChatMemberUpdated): F[Option[Method[_]]] = noopReply(myChatMember)
+  def onChatMemberReply(chatMember: ChatMemberUpdated): F[Option[Method[_]]] = noopReply(chatMember)
 
   def onUpdate(update: Update): F[Option[Method[_]]] =
     List(
@@ -94,7 +98,9 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
       update.shippingQuery.map(query => onShippingQueryReply(query) <* onShippingQuery(query)),
       update.preCheckoutQuery.map(query => onPreCheckoutQueryReply(query) <* onPreCheckoutQuery(query)),
       update.poll.map(poll => onPollReply(poll) <* onPoll(poll)),
-      update.pollAnswer.map(pollAnswer => onPollAnswerReply(pollAnswer) <* onPollAnswer(pollAnswer))
+      update.pollAnswer.map(pollAnswer => onPollAnswerReply(pollAnswer) <* onPollAnswer(pollAnswer)),
+      update.myChatMember.map(myChatMember => onMyChatMemberReply(myChatMember) <* onMyChatMember(myChatMember)),
+      update.chatMember.map(chatMember => onChatMemberReply(chatMember) <* onChatMember(chatMember))
     )
       .flatten
       .head

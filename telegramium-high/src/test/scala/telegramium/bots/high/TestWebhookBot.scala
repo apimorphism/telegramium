@@ -6,7 +6,7 @@ import monix.eval.Task
 import monix.execution.Scheduler
 import monix.execution.Scheduler.Implicits.global
 import telegramium.bots.client.Method
-import telegramium.bots.{CallbackQuery, ChatIntId, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery}
+import telegramium.bots.{CallbackQuery, ChatIntId, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery}
 
 class TestWebhookBot(api: Api[Task]) extends WebhookBot[Task](api, 0, "localhost", blocker = Blocker.liftExecutionContext(Scheduler.io())) {
   private def sendMessageMethod(text: String) = sendMessage(ChatIntId(0), text)
@@ -33,6 +33,10 @@ class TestWebhookBot(api: Api[Task]) extends WebhookBot[Task](api, 0, "localhost
     api.execute(sendMessageMethod("onPoll")).void
   override def onPollAnswer(pollAnswer: PollAnswer): Task[Unit] =
     api.execute(sendMessageMethod("onPollAnswer")).void
+  override def onMyChatMember(myChatMember: ChatMemberUpdated): Task[Unit] =
+    api.execute(sendMessageMethod("onMyChatMember")).void
+  override def onChatMember(chatMember: ChatMemberUpdated): Task[Unit] =
+    api.execute(sendMessageMethod("onChatMember")).void
 
   override def onMessageReply(msg: Message): Task[Option[Method[_]]] =
     Task.pure(sendMessageMethod("onMessageReply").some)
@@ -56,4 +60,8 @@ class TestWebhookBot(api: Api[Task]) extends WebhookBot[Task](api, 0, "localhost
     Task.pure(sendMessageMethod("onPollReply").some)
   override def onPollAnswerReply(pollAnswer: PollAnswer): Task[Option[Method[_]]] =
     Task.pure(sendMessageMethod("onPollAnswerReply").some)
+  override def onMyChatMemberReply(myChatMember: ChatMemberUpdated): Task[Option[Method[_]]] =
+    Task.pure(sendMessageMethod("onMyChatMemberReply").some)
+  override def onChatMemberReply(chatMember: ChatMemberUpdated): Task[Option[Method[_]]] =
+    Task.pure(sendMessageMethod("onChatMemberReply").some)
 }

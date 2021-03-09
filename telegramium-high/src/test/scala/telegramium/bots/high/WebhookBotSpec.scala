@@ -10,12 +10,20 @@ import org.scalatest.matchers.should.Matchers
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.CirceImplicits._
 import telegramium.bots.client.{MethodReq, SendMessageReq}
-import telegramium.bots.{CallbackQuery, Chat, ChatIntId, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingAddress, ShippingQuery, Update, User}
+import telegramium.bots.{CallbackQuery, Chat, ChatIntId, ChatMember, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingAddress, ShippingQuery, Update, User}
 
 class WebhookBotSpec extends AnyFreeSpec with MockFactory with Matchers with OptionValues {
   private val testUpdate = Update(updateId = 0)
   private val testMessage = Message(0, date = 0, chat = Chat(0, `type` = ""))
   private val testUser = User(0, isBot = false, "")
+  private val testChatMemberUpdated =
+    ChatMemberUpdated(
+      Chat(0, `type` = ""),
+      testUser,
+      0,
+      ChatMember(testUser, ""),
+      ChatMember(testUser, "")
+    )
 
   "should support all Update types" - {
     "message" in new Test {
@@ -111,6 +119,22 @@ class WebhookBotSpec extends AnyFreeSpec with MockFactory with Matchers with Opt
         testUpdate.copy(pollAnswer = Some(PollAnswer("0", testUser))),
         expectedSentMessage = "onPollAnswer",
         expectedReply = "onPollAnswerReply"
+      )
+    }
+
+    "The bot's chat member status was updated in a chat" in new Test {
+      verifyOnUpdate(
+        testUpdate.copy(myChatMember = Some(testChatMemberUpdated)),
+        expectedSentMessage = "onMyChatMember",
+        expectedReply = "onMyChatMemberReply"
+      )
+    }
+
+    "A chat member's status was updated in a chat" in new Test {
+      verifyOnUpdate(
+        testUpdate.copy(chatMember = Some(testChatMemberUpdated)),
+        expectedSentMessage = "onChatMember",
+        expectedReply = "onChatMemberReply"
       )
     }
   }
