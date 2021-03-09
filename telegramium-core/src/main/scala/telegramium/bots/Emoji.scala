@@ -21,3 +21,7 @@ final case object EmojiFootball extends Emoji {
 final case object EmojiSlotMachine extends Emoji {
   override def toString() = "🎰"
 }
+
+final case object EmojiBowling extends Emoji {
+  override def toString() = "🎳"
+}

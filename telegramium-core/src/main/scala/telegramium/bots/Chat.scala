@@ -2,11 +2,11 @@ package telegramium.bots
 
 /** This object represents a chat.
   *
-  * @param id Unique identifier for this chat. This number may be greater
-  * than 32 bits and some programming languages may have
-  * difficulty/silent defects in interpreting it. But it is
-  * smaller than 52 bits, so a signed 64 bit integer or
-  * double-precision float type are safe for storing this
+  * @param id Unique identifier for this chat. This number may have more
+  * than 32 significant bits and some programming languages may
+  * have difficulty/silent defects in interpreting it. But it
+  * has at most 52 significant bits, so a signed 64-bit integer
+  * or double-precision float type are safe for storing this
   * identifier.
   * @param type Type of chat, can be either “private”, “group”,
   * “supergroup” or “channel”
@@ -20,10 +20,8 @@ package telegramium.bots
   * Returned only in getChat.
   * @param description Optional. Description, for groups, supergroups and channel
   * chats. Returned only in getChat.
-  * @param inviteLink Optional. Chat invite link, for groups, supergroups and
-  * channel chats. Each administrator in a chat generates their
-  * own invite links, so the bot must first generate the link
-  * using exportChatInviteLink. Returned only in getChat.
+  * @param inviteLink Optional. Primary invite link, for groups, supergroups and
+  * channel chats. Returned only in getChat.
   * @param pinnedMessage Optional. The most recent pinned message (by sending date).
   * Returned only in getChat.
   * @param permissions Optional. Default chat member permissions, for groups and
@@ -31,6 +29,9 @@ package telegramium.bots
   * @param slowModeDelay Optional. For supergroups, the minimum allowed delay
   * between consecutive messages sent by each unpriviledged
   * user. Returned only in getChat.
+  * @param messageAutoDeleteTime Optional. The time after which all messages sent to the
+  * chat will be automatically deleted; in seconds. Returned
+  * only in getChat.
   * @param stickerSetName Optional. For supergroups, name of group sticker set.
   * Returned only in getChat.
   * @param canSetStickerSet Optional. True, if the bot can change the group sticker
@@ -58,6 +59,7 @@ final case class Chat(id: Long,
                       pinnedMessage: Option[Message] = Option.empty,
                       permissions: Option[ChatPermissions] = Option.empty,
                       slowModeDelay: Option[Int] = Option.empty,
+                      messageAutoDeleteTime: Option[Int] = Option.empty,
                       stickerSetName: Option[String] = Option.empty,
                       canSetStickerSet: Option[Boolean] = Option.empty,
                       linkedChatId: Option[Long] = Option.empty,

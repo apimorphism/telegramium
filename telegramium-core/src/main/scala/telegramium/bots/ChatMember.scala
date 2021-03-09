@@ -11,6 +11,11 @@ package telegramium.bots
   * user's presence in the chat is hidden
   * @param canBeEdited Optional. Administrators only. True, if the bot is allowed
   * to edit administrator privileges of that user
+  * @param canManageChat Optional. Administrators only. True, if the administrator
+  * can access the chat event log, chat statistics, message
+  * statistics in channels, see channel members, see anonymous
+  * administrators in supergroups and ignore slow mode. Implied
+  * by any other administrator privilege
   * @param canPostMessages Optional. Administrators only. True, if the administrator
   * can post in the channel; channels only
   * @param canEditMessages Optional. Administrators only. True, if the administrator
@@ -18,6 +23,8 @@ package telegramium.bots
   * channels only
   * @param canDeleteMessages Optional. Administrators only. True, if the administrator
   * can delete messages of other users
+  * @param canManageVoiceChats Optional. Administrators only. True, if the administrator
+  * can manage voice chats
   * @param canRestrictMembers Optional. Administrators only. True, if the administrator
   * can restrict, ban or unban chat members
   * @param canPromoteMembers Optional. Administrators only. True, if the administrator
@@ -52,9 +59,11 @@ final case class ChatMember(user: User,
                             customTitle: Option[String] = Option.empty,
                             isAnonymous: Option[Boolean] = Option.empty,
                             canBeEdited: Option[Boolean] = Option.empty,
+                            canManageChat: Option[Boolean] = Option.empty,
                             canPostMessages: Option[Boolean] = Option.empty,
                             canEditMessages: Option[Boolean] = Option.empty,
                             canDeleteMessages: Option[Boolean] = Option.empty,
+                            canManageVoiceChats: Option[Boolean] = Option.empty,
                             canRestrictMembers: Option[Boolean] = Option.empty,
                             canPromoteMembers: Option[Boolean] = Option.empty,
                             canChangeInfo: Option[Boolean] = Option.empty,

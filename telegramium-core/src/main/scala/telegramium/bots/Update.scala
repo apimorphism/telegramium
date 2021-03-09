@@ -33,7 +33,14 @@ package telegramium.bots
   * stopped polls and polls, which are sent by the bot
   * @param pollAnswer Optional. A user changed their answer in a non-anonymous
   * poll. Bots receive new votes only in polls that were sent by
-  * the bot itself. */
+  * the bot itself.
+  * @param myChatMember Optional. The bot's chat member status was updated in a
+  * chat. For private chats, this update is received only when
+  * the bot is blocked or unblocked by the user.
+  * @param chatMember Optional. A chat member's status was updated in a chat. The
+  * bot must be an administrator in the chat and must explicitly
+  * specify “chat_member” in the list of allowed_updates to
+  * receive these updates. */
 final case class Update(updateId: Int,
                         message: Option[Message] = Option.empty,
                         editedMessage: Option[Message] = Option.empty,
@@ -45,4 +52,6 @@ final case class Update(updateId: Int,
                         shippingQuery: Option[ShippingQuery] = Option.empty,
                         preCheckoutQuery: Option[PreCheckoutQuery] = Option.empty,
                         poll: Option[Poll] = Option.empty,
-                        pollAnswer: Option[PollAnswer] = Option.empty)
+                        pollAnswer: Option[PollAnswer] = Option.empty,
+                        myChatMember: Option[ChatMemberUpdated] = Option.empty,
+                        chatMember: Option[ChatMemberUpdated] = Option.empty)

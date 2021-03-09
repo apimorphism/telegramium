@@ -19,6 +19,7 @@ object uPickleImplicits {
         case EmojiBasketball  => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("🏀"))
         case EmojiFootball    => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("⚽"))
         case EmojiSlotMachine => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("🎰"))
+        case EmojiBowling     => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("🎳"))
       },
       msg => {
         val m = msg.obj
@@ -29,6 +30,7 @@ object uPickleImplicits {
             case upack.Str("🏀") => EmojiBasketball
             case upack.Str("⚽")  => EmojiFootball
             case upack.Str("🎰") => EmojiSlotMachine
+            case upack.Str("🎳") => EmojiBowling
           }
           .get
       }
@@ -40,6 +42,7 @@ object uPickleImplicits {
   implicit lazy val emojibasketballCodec: ReadWriter[EmojiBasketball.type]   = macroRW
   implicit lazy val emojifootballCodec: ReadWriter[EmojiFootball.type]       = macroRW
   implicit lazy val emojislotmachineCodec: ReadWriter[EmojiSlotMachine.type] = macroRW
+  implicit lazy val emojibowlingCodec: ReadWriter[EmojiBowling.type]         = macroRW
 
   implicit lazy val parsemodeCodec: ReadWriter[ParseMode] = {
     readwriter[upack.Msg].bimap(
@@ -2858,61 +2861,66 @@ object uPickleImplicits {
   }
 
   implicit lazy val chatCodec: ReadWriter[Chat] = {
-    val idKey               = upack.Str("id")
-    val typeKey             = upack.Str("type")
-    val titleKey            = upack.Str("title")
-    val usernameKey         = upack.Str("username")
-    val firstNameKey        = upack.Str("firstName")
-    val lastNameKey         = upack.Str("lastName")
-    val photoKey            = upack.Str("photo")
-    val bioKey              = upack.Str("bio")
-    val descriptionKey      = upack.Str("description")
-    val inviteLinkKey       = upack.Str("inviteLink")
-    val pinnedMessageKey    = upack.Str("pinnedMessage")
-    val permissionsKey      = upack.Str("permissions")
-    val slowModeDelayKey    = upack.Str("slowModeDelay")
-    val stickerSetNameKey   = upack.Str("stickerSetName")
-    val canSetStickerSetKey = upack.Str("canSetStickerSet")
-    val linkedChatIdKey     = upack.Str("linkedChatId")
-    val locationKey         = upack.Str("location")
+    val idKey                    = upack.Str("id")
+    val typeKey                  = upack.Str("type")
+    val titleKey                 = upack.Str("title")
+    val usernameKey              = upack.Str("username")
+    val firstNameKey             = upack.Str("firstName")
+    val lastNameKey              = upack.Str("lastName")
+    val photoKey                 = upack.Str("photo")
+    val bioKey                   = upack.Str("bio")
+    val descriptionKey           = upack.Str("description")
+    val inviteLinkKey            = upack.Str("inviteLink")
+    val pinnedMessageKey         = upack.Str("pinnedMessage")
+    val permissionsKey           = upack.Str("permissions")
+    val slowModeDelayKey         = upack.Str("slowModeDelay")
+    val messageAutoDeleteTimeKey = upack.Str("messageAutoDeleteTime")
+    val stickerSetNameKey        = upack.Str("stickerSetName")
+    val canSetStickerSetKey      = upack.Str("canSetStickerSet")
+    val linkedChatIdKey          = upack.Str("linkedChatId")
+    val locationKey              = upack.Str("location")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          idKey               -> writeMsg(x.id),
-          typeKey             -> writeMsg(x.`type`),
-          titleKey            -> writeMsg(x.title),
-          usernameKey         -> writeMsg(x.username),
-          firstNameKey        -> writeMsg(x.firstName),
-          lastNameKey         -> writeMsg(x.lastName),
-          photoKey            -> writeMsg(x.photo),
-          bioKey              -> writeMsg(x.bio),
-          descriptionKey      -> writeMsg(x.description),
-          inviteLinkKey       -> writeMsg(x.inviteLink),
-          pinnedMessageKey    -> writeMsg(x.pinnedMessage),
-          permissionsKey      -> writeMsg(x.permissions),
-          slowModeDelayKey    -> writeMsg(x.slowModeDelay),
-          stickerSetNameKey   -> writeMsg(x.stickerSetName),
-          canSetStickerSetKey -> writeMsg(x.canSetStickerSet),
-          linkedChatIdKey     -> writeMsg(x.linkedChatId),
-          locationKey         -> writeMsg(x.location)
+          idKey                    -> writeMsg(x.id),
+          typeKey                  -> writeMsg(x.`type`),
+          titleKey                 -> writeMsg(x.title),
+          usernameKey              -> writeMsg(x.username),
+          firstNameKey             -> writeMsg(x.firstName),
+          lastNameKey              -> writeMsg(x.lastName),
+          photoKey                 -> writeMsg(x.photo),
+          bioKey                   -> writeMsg(x.bio),
+          descriptionKey           -> writeMsg(x.description),
+          inviteLinkKey            -> writeMsg(x.inviteLink),
+          pinnedMessageKey         -> writeMsg(x.pinnedMessage),
+          permissionsKey           -> writeMsg(x.permissions),
+          slowModeDelayKey         -> writeMsg(x.slowModeDelay),
+          messageAutoDeleteTimeKey -> writeMsg(x.messageAutoDeleteTime),
+          stickerSetNameKey        -> writeMsg(x.stickerSetName),
+          canSetStickerSetKey      -> writeMsg(x.canSetStickerSet),
+          linkedChatIdKey          -> writeMsg(x.linkedChatId),
+          locationKey              -> writeMsg(x.location)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          id               <- m.get(idKey).map(x => readBinary[Long](x))
-          `type`           <- m.get(typeKey).map(x => readBinary[String](x))
-          title            <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          username         <- m.get(usernameKey).map(x => readBinary[Option[String]](x))
-          firstName        <- m.get(firstNameKey).map(x => readBinary[Option[String]](x))
-          lastName         <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
-          photo            <- m.get(photoKey).map(x => readBinary[Option[ChatPhoto]](x))
-          bio              <- m.get(bioKey).map(x => readBinary[Option[String]](x))
-          description      <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          inviteLink       <- m.get(inviteLinkKey).map(x => readBinary[Option[String]](x))
-          pinnedMessage    <- m.get(pinnedMessageKey).map(x => readBinary[Option[Message]](x))
-          permissions      <- m.get(permissionsKey).map(x => readBinary[Option[ChatPermissions]](x))
-          slowModeDelay    <- m.get(slowModeDelayKey).map(x => readBinary[Option[Int]](x))
+          id            <- m.get(idKey).map(x => readBinary[Long](x))
+          `type`        <- m.get(typeKey).map(x => readBinary[String](x))
+          title         <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          username      <- m.get(usernameKey).map(x => readBinary[Option[String]](x))
+          firstName     <- m.get(firstNameKey).map(x => readBinary[Option[String]](x))
+          lastName      <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
+          photo         <- m.get(photoKey).map(x => readBinary[Option[ChatPhoto]](x))
+          bio           <- m.get(bioKey).map(x => readBinary[Option[String]](x))
+          description   <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          inviteLink    <- m.get(inviteLinkKey).map(x => readBinary[Option[String]](x))
+          pinnedMessage <- m.get(pinnedMessageKey).map(x => readBinary[Option[Message]](x))
+          permissions   <- m.get(permissionsKey).map(x => readBinary[Option[ChatPermissions]](x))
+          slowModeDelay <- m.get(slowModeDelayKey).map(x => readBinary[Option[Int]](x))
+          messageAutoDeleteTime <- m
+            .get(messageAutoDeleteTimeKey)
+            .map(x => readBinary[Option[Int]](x))
           stickerSetName   <- m.get(stickerSetNameKey).map(x => readBinary[Option[String]](x))
           canSetStickerSet <- m.get(canSetStickerSetKey).map(x => readBinary[Option[Boolean]](x))
           linkedChatId     <- m.get(linkedChatIdKey).map(x => readBinary[Option[Long]](x))
@@ -2932,6 +2940,7 @@ object uPickleImplicits {
             pinnedMessage = pinnedMessage,
             permissions = permissions,
             slowModeDelay = slowModeDelay,
+            messageAutoDeleteTime = messageAutoDeleteTime,
             stickerSetName = stickerSetName,
             canSetStickerSet = canSetStickerSet,
             linkedChatId = linkedChatId,
@@ -3056,6 +3065,28 @@ object uPickleImplicits {
             from = from,
             invoicePayload = invoicePayload,
             shippingAddress = shippingAddress
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val voicechatendedCodec: ReadWriter[VoiceChatEnded] = {
+    val durationKey = upack.Str("duration")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          durationKey -> writeMsg(x.duration)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          duration <- m.get(durationKey).map(x => readBinary[Int](x))
+        } yield {
+          VoiceChatEnded(
+            duration = duration
           )
         }
         result.get
@@ -3264,6 +3295,8 @@ object uPickleImplicits {
     val preCheckoutQueryKey   = upack.Str("preCheckoutQuery")
     val pollKey               = upack.Str("poll")
     val pollAnswerKey         = upack.Str("pollAnswer")
+    val myChatMemberKey       = upack.Str("myChatMember")
+    val chatMemberKey         = upack.Str("chatMember")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
@@ -3278,7 +3311,9 @@ object uPickleImplicits {
           shippingQueryKey      -> writeMsg(x.shippingQuery),
           preCheckoutQueryKey   -> writeMsg(x.preCheckoutQuery),
           pollKey               -> writeMsg(x.poll),
-          pollAnswerKey         -> writeMsg(x.pollAnswer)
+          pollAnswerKey         -> writeMsg(x.pollAnswer),
+          myChatMemberKey       -> writeMsg(x.myChatMember),
+          chatMemberKey         -> writeMsg(x.chatMember)
         )
       },
       msg => {
@@ -3298,8 +3333,10 @@ object uPickleImplicits {
           preCheckoutQuery <- m
             .get(preCheckoutQueryKey)
             .map(x => readBinary[Option[PreCheckoutQuery]](x))
-          poll       <- m.get(pollKey).map(x => readBinary[Option[Poll]](x))
-          pollAnswer <- m.get(pollAnswerKey).map(x => readBinary[Option[PollAnswer]](x))
+          poll         <- m.get(pollKey).map(x => readBinary[Option[Poll]](x))
+          pollAnswer   <- m.get(pollAnswerKey).map(x => readBinary[Option[PollAnswer]](x))
+          myChatMember <- m.get(myChatMemberKey).map(x => readBinary[Option[ChatMemberUpdated]](x))
+          chatMember   <- m.get(chatMemberKey).map(x => readBinary[Option[ChatMemberUpdated]](x))
         } yield {
           Update(
             updateId = updateId,
@@ -3313,7 +3350,9 @@ object uPickleImplicits {
             shippingQuery = shippingQuery,
             preCheckoutQuery = preCheckoutQuery,
             poll = poll,
-            pollAnswer = pollAnswer
+            pollAnswer = pollAnswer,
+            myChatMember = myChatMember,
+            chatMember = chatMember
           )
         }
         result.get
@@ -3653,7 +3692,7 @@ object uPickleImplicits {
           phoneNumber <- m.get(phoneNumberKey).map(x => readBinary[String](x))
           firstName   <- m.get(firstNameKey).map(x => readBinary[String](x))
           lastName    <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
-          userId      <- m.get(userIdKey).map(x => readBinary[Option[Int]](x))
+          userId      <- m.get(userIdKey).map(x => readBinary[Option[Long]](x))
           vcard       <- m.get(vcardKey).map(x => readBinary[Option[String]](x))
         } yield {
           Contact(
@@ -3692,6 +3731,29 @@ object uPickleImplicits {
             position = position,
             user = user,
             score = score
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val messageautodeletetimerchangedCodec
+    : ReadWriter[MessageAutoDeleteTimerChanged] = {
+    val messageAutoDeleteTimeKey = upack.Str("messageAutoDeleteTime")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          messageAutoDeleteTimeKey -> writeMsg(x.messageAutoDeleteTime)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          messageAutoDeleteTime <- m.get(messageAutoDeleteTimeKey).map(x => readBinary[Int](x))
+        } yield {
+          MessageAutoDeleteTimerChanged(
+            messageAutoDeleteTime = messageAutoDeleteTime
           )
         }
         result.get
@@ -3821,6 +3883,48 @@ object uPickleImplicits {
     )
   }
 
+  implicit lazy val chatinvitelinkCodec: ReadWriter[ChatInviteLink] = {
+    val inviteLinkKey  = upack.Str("inviteLink")
+    val creatorKey     = upack.Str("creator")
+    val isPrimaryKey   = upack.Str("isPrimary")
+    val isRevokedKey   = upack.Str("isRevoked")
+    val expireDateKey  = upack.Str("expireDate")
+    val memberLimitKey = upack.Str("memberLimit")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          inviteLinkKey  -> writeMsg(x.inviteLink),
+          creatorKey     -> writeMsg(x.creator),
+          isPrimaryKey   -> writeMsg(x.isPrimary),
+          isRevokedKey   -> writeMsg(x.isRevoked),
+          expireDateKey  -> writeMsg(x.expireDate),
+          memberLimitKey -> writeMsg(x.memberLimit)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          inviteLink  <- m.get(inviteLinkKey).map(x => readBinary[String](x))
+          creator     <- m.get(creatorKey).map(x => readBinary[User](x))
+          isPrimary   <- m.get(isPrimaryKey).map(x => readBinary[Boolean](x))
+          isRevoked   <- m.get(isRevokedKey).map(x => readBinary[Boolean](x))
+          expireDate  <- m.get(expireDateKey).map(x => readBinary[Option[Int]](x))
+          memberLimit <- m.get(memberLimitKey).map(x => readBinary[Option[Int]](x))
+        } yield {
+          ChatInviteLink(
+            inviteLink = inviteLink,
+            creator = creator,
+            isPrimary = isPrimary,
+            isRevoked = isRevoked,
+            expireDate = expireDate,
+            memberLimit = memberLimit
+          )
+        }
+        result.get
+      }
+    )
+  }
+
   implicit lazy val diceCodec: ReadWriter[Dice] = {
     val emojiKey = upack.Str("emoji")
     val valueKey = upack.Str("value")
@@ -3840,6 +3944,48 @@ object uPickleImplicits {
           Dice(
             emoji = emoji,
             value = value
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val chatmemberupdatedCodec: ReadWriter[ChatMemberUpdated] = {
+    val chatKey          = upack.Str("chat")
+    val fromKey          = upack.Str("from")
+    val dateKey          = upack.Str("date")
+    val oldChatMemberKey = upack.Str("oldChatMember")
+    val newChatMemberKey = upack.Str("newChatMember")
+    val inviteLinkKey    = upack.Str("inviteLink")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          chatKey          -> writeMsg(x.chat),
+          fromKey          -> writeMsg(x.from),
+          dateKey          -> writeMsg(x.date),
+          oldChatMemberKey -> writeMsg(x.oldChatMember),
+          newChatMemberKey -> writeMsg(x.newChatMember),
+          inviteLinkKey    -> writeMsg(x.inviteLink)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          chat          <- m.get(chatKey).map(x => readBinary[Chat](x))
+          from          <- m.get(fromKey).map(x => readBinary[User](x))
+          date          <- m.get(dateKey).map(x => readBinary[Int](x))
+          oldChatMember <- m.get(oldChatMemberKey).map(x => readBinary[ChatMember](x))
+          newChatMember <- m.get(newChatMemberKey).map(x => readBinary[ChatMember](x))
+          inviteLink    <- m.get(inviteLinkKey).map(x => readBinary[Option[ChatInviteLink]](x))
+        } yield {
+          ChatMemberUpdated(
+            chat = chat,
+            from = from,
+            date = date,
+            oldChatMember = oldChatMember,
+            newChatMember = newChatMember,
+            inviteLink = inviteLink
           )
         }
         result.get
@@ -4284,7 +4430,7 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id            <- m.get(idKey).map(x => readBinary[Int](x))
+          id            <- m.get(idKey).map(x => readBinary[Long](x))
           isBot         <- m.get(isBotKey).map(x => readBinary[Boolean](x))
           firstName     <- m.get(firstNameKey).map(x => readBinary[String](x))
           lastName      <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
@@ -4432,111 +4578,119 @@ object uPickleImplicits {
   }
 
   implicit lazy val messageCodec: ReadWriter[Message] = {
-    val messageIdKey               = upack.Str("messageId")
-    val fromKey                    = upack.Str("from")
-    val senderChatKey              = upack.Str("senderChat")
-    val dateKey                    = upack.Str("date")
-    val chatKey                    = upack.Str("chat")
-    val forwardFromKey             = upack.Str("forwardFrom")
-    val forwardFromChatKey         = upack.Str("forwardFromChat")
-    val forwardFromMessageIdKey    = upack.Str("forwardFromMessageId")
-    val forwardSignatureKey        = upack.Str("forwardSignature")
-    val forwardSenderNameKey       = upack.Str("forwardSenderName")
-    val forwardDateKey             = upack.Str("forwardDate")
-    val replyToMessageKey          = upack.Str("replyToMessage")
-    val viaBotKey                  = upack.Str("viaBot")
-    val editDateKey                = upack.Str("editDate")
-    val mediaGroupIdKey            = upack.Str("mediaGroupId")
-    val authorSignatureKey         = upack.Str("authorSignature")
-    val textKey                    = upack.Str("text")
-    val entitiesKey                = upack.Str("entities")
-    val animationKey               = upack.Str("animation")
-    val audioKey                   = upack.Str("audio")
-    val documentKey                = upack.Str("document")
-    val photoKey                   = upack.Str("photo")
-    val stickerKey                 = upack.Str("sticker")
-    val videoKey                   = upack.Str("video")
-    val videoNoteKey               = upack.Str("videoNote")
-    val voiceKey                   = upack.Str("voice")
-    val captionKey                 = upack.Str("caption")
-    val captionEntitiesKey         = upack.Str("captionEntities")
-    val contactKey                 = upack.Str("contact")
-    val diceKey                    = upack.Str("dice")
-    val gameKey                    = upack.Str("game")
-    val pollKey                    = upack.Str("poll")
-    val venueKey                   = upack.Str("venue")
-    val locationKey                = upack.Str("location")
-    val newChatMembersKey          = upack.Str("newChatMembers")
-    val leftChatMemberKey          = upack.Str("leftChatMember")
-    val newChatTitleKey            = upack.Str("newChatTitle")
-    val newChatPhotoKey            = upack.Str("newChatPhoto")
-    val deleteChatPhotoKey         = upack.Str("deleteChatPhoto")
-    val groupChatCreatedKey        = upack.Str("groupChatCreated")
-    val supergroupChatCreatedKey   = upack.Str("supergroupChatCreated")
-    val channelChatCreatedKey      = upack.Str("channelChatCreated")
-    val migrateToChatIdKey         = upack.Str("migrateToChatId")
-    val migrateFromChatIdKey       = upack.Str("migrateFromChatId")
-    val pinnedMessageKey           = upack.Str("pinnedMessage")
-    val invoiceKey                 = upack.Str("invoice")
-    val successfulPaymentKey       = upack.Str("successfulPayment")
-    val connectedWebsiteKey        = upack.Str("connectedWebsite")
-    val passportDataKey            = upack.Str("passportData")
-    val proximityAlertTriggeredKey = upack.Str("proximityAlertTriggered")
-    val replyMarkupKey             = upack.Str("replyMarkup")
+    val messageIdKey                     = upack.Str("messageId")
+    val fromKey                          = upack.Str("from")
+    val senderChatKey                    = upack.Str("senderChat")
+    val dateKey                          = upack.Str("date")
+    val chatKey                          = upack.Str("chat")
+    val forwardFromKey                   = upack.Str("forwardFrom")
+    val forwardFromChatKey               = upack.Str("forwardFromChat")
+    val forwardFromMessageIdKey          = upack.Str("forwardFromMessageId")
+    val forwardSignatureKey              = upack.Str("forwardSignature")
+    val forwardSenderNameKey             = upack.Str("forwardSenderName")
+    val forwardDateKey                   = upack.Str("forwardDate")
+    val replyToMessageKey                = upack.Str("replyToMessage")
+    val viaBotKey                        = upack.Str("viaBot")
+    val editDateKey                      = upack.Str("editDate")
+    val mediaGroupIdKey                  = upack.Str("mediaGroupId")
+    val authorSignatureKey               = upack.Str("authorSignature")
+    val textKey                          = upack.Str("text")
+    val entitiesKey                      = upack.Str("entities")
+    val animationKey                     = upack.Str("animation")
+    val audioKey                         = upack.Str("audio")
+    val documentKey                      = upack.Str("document")
+    val photoKey                         = upack.Str("photo")
+    val stickerKey                       = upack.Str("sticker")
+    val videoKey                         = upack.Str("video")
+    val videoNoteKey                     = upack.Str("videoNote")
+    val voiceKey                         = upack.Str("voice")
+    val captionKey                       = upack.Str("caption")
+    val captionEntitiesKey               = upack.Str("captionEntities")
+    val contactKey                       = upack.Str("contact")
+    val diceKey                          = upack.Str("dice")
+    val gameKey                          = upack.Str("game")
+    val pollKey                          = upack.Str("poll")
+    val venueKey                         = upack.Str("venue")
+    val locationKey                      = upack.Str("location")
+    val newChatMembersKey                = upack.Str("newChatMembers")
+    val leftChatMemberKey                = upack.Str("leftChatMember")
+    val newChatTitleKey                  = upack.Str("newChatTitle")
+    val newChatPhotoKey                  = upack.Str("newChatPhoto")
+    val deleteChatPhotoKey               = upack.Str("deleteChatPhoto")
+    val groupChatCreatedKey              = upack.Str("groupChatCreated")
+    val supergroupChatCreatedKey         = upack.Str("supergroupChatCreated")
+    val channelChatCreatedKey            = upack.Str("channelChatCreated")
+    val messageAutoDeleteTimerChangedKey = upack.Str("messageAutoDeleteTimerChanged")
+    val migrateToChatIdKey               = upack.Str("migrateToChatId")
+    val migrateFromChatIdKey             = upack.Str("migrateFromChatId")
+    val pinnedMessageKey                 = upack.Str("pinnedMessage")
+    val invoiceKey                       = upack.Str("invoice")
+    val successfulPaymentKey             = upack.Str("successfulPayment")
+    val connectedWebsiteKey              = upack.Str("connectedWebsite")
+    val passportDataKey                  = upack.Str("passportData")
+    val proximityAlertTriggeredKey       = upack.Str("proximityAlertTriggered")
+    val voiceChatStartedKey              = upack.Str("voiceChatStarted")
+    val voiceChatEndedKey                = upack.Str("voiceChatEnded")
+    val voiceChatParticipantsInvitedKey  = upack.Str("voiceChatParticipantsInvited")
+    val replyMarkupKey                   = upack.Str("replyMarkup")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          messageIdKey               -> writeMsg(x.messageId),
-          fromKey                    -> writeMsg(x.from),
-          senderChatKey              -> writeMsg(x.senderChat),
-          dateKey                    -> writeMsg(x.date),
-          chatKey                    -> writeMsg(x.chat),
-          forwardFromKey             -> writeMsg(x.forwardFrom),
-          forwardFromChatKey         -> writeMsg(x.forwardFromChat),
-          forwardFromMessageIdKey    -> writeMsg(x.forwardFromMessageId),
-          forwardSignatureKey        -> writeMsg(x.forwardSignature),
-          forwardSenderNameKey       -> writeMsg(x.forwardSenderName),
-          forwardDateKey             -> writeMsg(x.forwardDate),
-          replyToMessageKey          -> writeMsg(x.replyToMessage),
-          viaBotKey                  -> writeMsg(x.viaBot),
-          editDateKey                -> writeMsg(x.editDate),
-          mediaGroupIdKey            -> writeMsg(x.mediaGroupId),
-          authorSignatureKey         -> writeMsg(x.authorSignature),
-          textKey                    -> writeMsg(x.text),
-          entitiesKey                -> writeMsg(x.entities),
-          animationKey               -> writeMsg(x.animation),
-          audioKey                   -> writeMsg(x.audio),
-          documentKey                -> writeMsg(x.document),
-          photoKey                   -> writeMsg(x.photo),
-          stickerKey                 -> writeMsg(x.sticker),
-          videoKey                   -> writeMsg(x.video),
-          videoNoteKey               -> writeMsg(x.videoNote),
-          voiceKey                   -> writeMsg(x.voice),
-          captionKey                 -> writeMsg(x.caption),
-          captionEntitiesKey         -> writeMsg(x.captionEntities),
-          contactKey                 -> writeMsg(x.contact),
-          diceKey                    -> writeMsg(x.dice),
-          gameKey                    -> writeMsg(x.game),
-          pollKey                    -> writeMsg(x.poll),
-          venueKey                   -> writeMsg(x.venue),
-          locationKey                -> writeMsg(x.location),
-          newChatMembersKey          -> writeMsg(x.newChatMembers),
-          leftChatMemberKey          -> writeMsg(x.leftChatMember),
-          newChatTitleKey            -> writeMsg(x.newChatTitle),
-          newChatPhotoKey            -> writeMsg(x.newChatPhoto),
-          deleteChatPhotoKey         -> writeMsg(x.deleteChatPhoto),
-          groupChatCreatedKey        -> writeMsg(x.groupChatCreated),
-          supergroupChatCreatedKey   -> writeMsg(x.supergroupChatCreated),
-          channelChatCreatedKey      -> writeMsg(x.channelChatCreated),
-          migrateToChatIdKey         -> writeMsg(x.migrateToChatId),
-          migrateFromChatIdKey       -> writeMsg(x.migrateFromChatId),
-          pinnedMessageKey           -> writeMsg(x.pinnedMessage),
-          invoiceKey                 -> writeMsg(x.invoice),
-          successfulPaymentKey       -> writeMsg(x.successfulPayment),
-          connectedWebsiteKey        -> writeMsg(x.connectedWebsite),
-          passportDataKey            -> writeMsg(x.passportData),
-          proximityAlertTriggeredKey -> writeMsg(x.proximityAlertTriggered),
-          replyMarkupKey             -> writeMsg(x.replyMarkup)
+          messageIdKey                     -> writeMsg(x.messageId),
+          fromKey                          -> writeMsg(x.from),
+          senderChatKey                    -> writeMsg(x.senderChat),
+          dateKey                          -> writeMsg(x.date),
+          chatKey                          -> writeMsg(x.chat),
+          forwardFromKey                   -> writeMsg(x.forwardFrom),
+          forwardFromChatKey               -> writeMsg(x.forwardFromChat),
+          forwardFromMessageIdKey          -> writeMsg(x.forwardFromMessageId),
+          forwardSignatureKey              -> writeMsg(x.forwardSignature),
+          forwardSenderNameKey             -> writeMsg(x.forwardSenderName),
+          forwardDateKey                   -> writeMsg(x.forwardDate),
+          replyToMessageKey                -> writeMsg(x.replyToMessage),
+          viaBotKey                        -> writeMsg(x.viaBot),
+          editDateKey                      -> writeMsg(x.editDate),
+          mediaGroupIdKey                  -> writeMsg(x.mediaGroupId),
+          authorSignatureKey               -> writeMsg(x.authorSignature),
+          textKey                          -> writeMsg(x.text),
+          entitiesKey                      -> writeMsg(x.entities),
+          animationKey                     -> writeMsg(x.animation),
+          audioKey                         -> writeMsg(x.audio),
+          documentKey                      -> writeMsg(x.document),
+          photoKey                         -> writeMsg(x.photo),
+          stickerKey                       -> writeMsg(x.sticker),
+          videoKey                         -> writeMsg(x.video),
+          videoNoteKey                     -> writeMsg(x.videoNote),
+          voiceKey                         -> writeMsg(x.voice),
+          captionKey                       -> writeMsg(x.caption),
+          captionEntitiesKey               -> writeMsg(x.captionEntities),
+          contactKey                       -> writeMsg(x.contact),
+          diceKey                          -> writeMsg(x.dice),
+          gameKey                          -> writeMsg(x.game),
+          pollKey                          -> writeMsg(x.poll),
+          venueKey                         -> writeMsg(x.venue),
+          locationKey                      -> writeMsg(x.location),
+          newChatMembersKey                -> writeMsg(x.newChatMembers),
+          leftChatMemberKey                -> writeMsg(x.leftChatMember),
+          newChatTitleKey                  -> writeMsg(x.newChatTitle),
+          newChatPhotoKey                  -> writeMsg(x.newChatPhoto),
+          deleteChatPhotoKey               -> writeMsg(x.deleteChatPhoto),
+          groupChatCreatedKey              -> writeMsg(x.groupChatCreated),
+          supergroupChatCreatedKey         -> writeMsg(x.supergroupChatCreated),
+          channelChatCreatedKey            -> writeMsg(x.channelChatCreated),
+          messageAutoDeleteTimerChangedKey -> writeMsg(x.messageAutoDeleteTimerChanged),
+          migrateToChatIdKey               -> writeMsg(x.migrateToChatId),
+          migrateFromChatIdKey             -> writeMsg(x.migrateFromChatId),
+          pinnedMessageKey                 -> writeMsg(x.pinnedMessage),
+          invoiceKey                       -> writeMsg(x.invoice),
+          successfulPaymentKey             -> writeMsg(x.successfulPayment),
+          connectedWebsiteKey              -> writeMsg(x.connectedWebsite),
+          passportDataKey                  -> writeMsg(x.passportData),
+          proximityAlertTriggeredKey       -> writeMsg(x.proximityAlertTriggered),
+          voiceChatStartedKey              -> writeMsg(x.voiceChatStarted),
+          voiceChatEndedKey                -> writeMsg(x.voiceChatEnded),
+          voiceChatParticipantsInvitedKey  -> writeMsg(x.voiceChatParticipantsInvited),
+          replyMarkupKey                   -> writeMsg(x.replyMarkup)
         )
       },
       msg => {
@@ -4590,6 +4744,9 @@ object uPickleImplicits {
           channelChatCreated <- m
             .get(channelChatCreatedKey)
             .map(x => readBinary[Option[Boolean]](x))
+          messageAutoDeleteTimerChanged <- m
+            .get(messageAutoDeleteTimerChangedKey)
+            .map(x => readBinary[Option[MessageAutoDeleteTimerChanged]](x))
           migrateToChatId   <- m.get(migrateToChatIdKey).map(x => readBinary[Option[Long]](x))
           migrateFromChatId <- m.get(migrateFromChatIdKey).map(x => readBinary[Option[Long]](x))
           pinnedMessage     <- m.get(pinnedMessageKey).map(x => readBinary[Option[Message]](x))
@@ -4602,6 +4759,13 @@ object uPickleImplicits {
           proximityAlertTriggered <- m
             .get(proximityAlertTriggeredKey)
             .map(x => readBinary[Option[ProximityAlertTriggered]](x))
+          voiceChatStarted <- m
+            .get(voiceChatStartedKey)
+            .map(x => readBinary[Option[VoiceChatStarted.type]](x))
+          voiceChatEnded <- m.get(voiceChatEndedKey).map(x => readBinary[Option[VoiceChatEnded]](x))
+          voiceChatParticipantsInvited <- m
+            .get(voiceChatParticipantsInvitedKey)
+            .map(x => readBinary[Option[VoiceChatParticipantsInvited]](x))
           replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
         } yield {
           Message(
@@ -4647,6 +4811,7 @@ object uPickleImplicits {
             groupChatCreated = groupChatCreated,
             supergroupChatCreated = supergroupChatCreated,
             channelChatCreated = channelChatCreated,
+            messageAutoDeleteTimerChanged = messageAutoDeleteTimerChanged,
             migrateToChatId = migrateToChatId,
             migrateFromChatId = migrateFromChatId,
             pinnedMessage = pinnedMessage,
@@ -4655,6 +4820,9 @@ object uPickleImplicits {
             connectedWebsite = connectedWebsite,
             passportData = passportData,
             proximityAlertTriggered = proximityAlertTriggered,
+            voiceChatStarted = voiceChatStarted,
+            voiceChatEnded = voiceChatEnded,
+            voiceChatParticipantsInvited = voiceChatParticipantsInvited,
             replyMarkup = replyMarkup
           )
         }
@@ -4738,6 +4906,8 @@ object uPickleImplicits {
       }
     )
   }
+
+  implicit lazy val voicechatstartedCodec: ReadWriter[VoiceChatStarted.type] = macroRW
 
   implicit lazy val encryptedcredentialsCodec: ReadWriter[EncryptedCredentials] = {
     val dataKey   = upack.Str("data")
@@ -4895,6 +5065,28 @@ object uPickleImplicits {
     )
   }
 
+  implicit lazy val voicechatparticipantsinvitedCodec: ReadWriter[VoiceChatParticipantsInvited] = {
+    val usersKey = upack.Str("users")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          usersKey -> writeMsg(x.users)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          users <- m.get(usersKey).map(x => readBinary[List[User]](x))
+        } yield {
+          VoiceChatParticipantsInvited(
+            users = users
+          )
+        }
+        result.get
+      }
+    )
+  }
+
   implicit lazy val userprofilephotosCodec: ReadWriter[UserProfilePhotos] = {
     val totalCountKey = upack.Str("totalCount")
     val photosKey     = upack.Str("photos")
@@ -4995,9 +5187,11 @@ object uPickleImplicits {
     val customTitleKey           = upack.Str("customTitle")
     val isAnonymousKey           = upack.Str("isAnonymous")
     val canBeEditedKey           = upack.Str("canBeEdited")
+    val canManageChatKey         = upack.Str("canManageChat")
     val canPostMessagesKey       = upack.Str("canPostMessages")
     val canEditMessagesKey       = upack.Str("canEditMessages")
     val canDeleteMessagesKey     = upack.Str("canDeleteMessages")
+    val canManageVoiceChatsKey   = upack.Str("canManageVoiceChats")
     val canRestrictMembersKey    = upack.Str("canRestrictMembers")
     val canPromoteMembersKey     = upack.Str("canPromoteMembers")
     val canChangeInfoKey         = upack.Str("canChangeInfo")
@@ -5018,9 +5212,11 @@ object uPickleImplicits {
           customTitleKey           -> writeMsg(x.customTitle),
           isAnonymousKey           -> writeMsg(x.isAnonymous),
           canBeEditedKey           -> writeMsg(x.canBeEdited),
+          canManageChatKey         -> writeMsg(x.canManageChat),
           canPostMessagesKey       -> writeMsg(x.canPostMessages),
           canEditMessagesKey       -> writeMsg(x.canEditMessages),
           canDeleteMessagesKey     -> writeMsg(x.canDeleteMessages),
+          canManageVoiceChatsKey   -> writeMsg(x.canManageVoiceChats),
           canRestrictMembersKey    -> writeMsg(x.canRestrictMembers),
           canPromoteMembersKey     -> writeMsg(x.canPromoteMembers),
           canChangeInfoKey         -> writeMsg(x.canChangeInfo),
@@ -5043,9 +5239,13 @@ object uPickleImplicits {
           customTitle       <- m.get(customTitleKey).map(x => readBinary[Option[String]](x))
           isAnonymous       <- m.get(isAnonymousKey).map(x => readBinary[Option[Boolean]](x))
           canBeEdited       <- m.get(canBeEditedKey).map(x => readBinary[Option[Boolean]](x))
+          canManageChat     <- m.get(canManageChatKey).map(x => readBinary[Option[Boolean]](x))
           canPostMessages   <- m.get(canPostMessagesKey).map(x => readBinary[Option[Boolean]](x))
           canEditMessages   <- m.get(canEditMessagesKey).map(x => readBinary[Option[Boolean]](x))
           canDeleteMessages <- m.get(canDeleteMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canManageVoiceChats <- m
+            .get(canManageVoiceChatsKey)
+            .map(x => readBinary[Option[Boolean]](x))
           canRestrictMembers <- m
             .get(canRestrictMembersKey)
             .map(x => readBinary[Option[Boolean]](x))
@@ -5073,9 +5273,11 @@ object uPickleImplicits {
             customTitle = customTitle,
             isAnonymous = isAnonymous,
             canBeEdited = canBeEdited,
+            canManageChat = canManageChat,
             canPostMessages = canPostMessages,
             canEditMessages = canEditMessages,
             canDeleteMessages = canDeleteMessages,
+            canManageVoiceChats = canManageVoiceChats,
             canRestrictMembers = canRestrictMembers,
             canPromoteMembers = canPromoteMembers,
             canChangeInfo = canChangeInfo,
@@ -5206,6 +5408,7 @@ object CirceImplicits {
     case EmojiBasketball  => EmojiBasketball.asJson
     case EmojiFootball    => EmojiFootball.asJson
     case EmojiSlotMachine => EmojiSlotMachine.asJson
+    case EmojiBowling     => EmojiBowling.asJson
   }
   implicit lazy val emojiDecoder: Decoder[Emoji] = {
     List[Decoder[Emoji]](
@@ -5213,7 +5416,8 @@ object CirceImplicits {
       emojidartsDecoder.widen,
       emojibasketballDecoder.widen,
       emojifootballDecoder.widen,
-      emojislotmachineDecoder.widen
+      emojislotmachineDecoder.widen,
+      emojibowlingDecoder.widen
     ).reduceLeft(_ or _)
   }
 
@@ -5235,6 +5439,10 @@ object CirceImplicits {
     (_: EmojiSlotMachine.type) => "🎰".asJson
   implicit lazy val emojislotmachineDecoder: Decoder[EmojiSlotMachine.type] =
     Decoder[String].map(_ => EmojiSlotMachine)
+  implicit lazy val emojibowlingEncoder: Encoder[EmojiBowling.type] = (_: EmojiBowling.type) =>
+    "🎳".asJson
+  implicit lazy val emojibowlingDecoder: Decoder[EmojiBowling.type] =
+    Decoder[String].map(_ => EmojiBowling)
 
   implicit lazy val parsemodeEncoder: Encoder[ParseMode] = {
     case Markdown  => Markdown.asJson
@@ -7424,23 +7632,24 @@ object CirceImplicits {
     (x: Chat) => {
       Json.fromFields(
         List(
-          "id"                  -> x.id.asJson,
-          "type"                -> x.`type`.asJson,
-          "title"               -> x.title.asJson,
-          "username"            -> x.username.asJson,
-          "first_name"          -> x.firstName.asJson,
-          "last_name"           -> x.lastName.asJson,
-          "photo"               -> x.photo.asJson,
-          "bio"                 -> x.bio.asJson,
-          "description"         -> x.description.asJson,
-          "invite_link"         -> x.inviteLink.asJson,
-          "pinned_message"      -> x.pinnedMessage.asJson,
-          "permissions"         -> x.permissions.asJson,
-          "slow_mode_delay"     -> x.slowModeDelay.asJson,
-          "sticker_set_name"    -> x.stickerSetName.asJson,
-          "can_set_sticker_set" -> x.canSetStickerSet.asJson,
-          "linked_chat_id"      -> x.linkedChatId.asJson,
-          "location"            -> x.location.asJson
+          "id"                       -> x.id.asJson,
+          "type"                     -> x.`type`.asJson,
+          "title"                    -> x.title.asJson,
+          "username"                 -> x.username.asJson,
+          "first_name"               -> x.firstName.asJson,
+          "last_name"                -> x.lastName.asJson,
+          "photo"                    -> x.photo.asJson,
+          "bio"                      -> x.bio.asJson,
+          "description"              -> x.description.asJson,
+          "invite_link"              -> x.inviteLink.asJson,
+          "pinned_message"           -> x.pinnedMessage.asJson,
+          "permissions"              -> x.permissions.asJson,
+          "slow_mode_delay"          -> x.slowModeDelay.asJson,
+          "message_auto_delete_time" -> x.messageAutoDeleteTime.asJson,
+          "sticker_set_name"         -> x.stickerSetName.asJson,
+          "can_set_sticker_set"      -> x.canSetStickerSet.asJson,
+          "linked_chat_id"           -> x.linkedChatId.asJson,
+          "location"                 -> x.location.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -7448,23 +7657,24 @@ object CirceImplicits {
   implicit lazy val chatDecoder: Decoder[Chat] =
     Decoder.instance { h =>
       for {
-        _id               <- h.get[Long]("id")
-        _type             <- h.get[String]("type")
-        _title            <- h.get[Option[String]]("title")
-        _username         <- h.get[Option[String]]("username")
-        _firstName        <- h.get[Option[String]]("first_name")
-        _lastName         <- h.get[Option[String]]("last_name")
-        _photo            <- h.get[Option[ChatPhoto]]("photo")
-        _bio              <- h.get[Option[String]]("bio")
-        _description      <- h.get[Option[String]]("description")
-        _inviteLink       <- h.get[Option[String]]("invite_link")
-        _pinnedMessage    <- h.get[Option[Message]]("pinned_message")
-        _permissions      <- h.get[Option[ChatPermissions]]("permissions")
-        _slowModeDelay    <- h.get[Option[Int]]("slow_mode_delay")
-        _stickerSetName   <- h.get[Option[String]]("sticker_set_name")
-        _canSetStickerSet <- h.get[Option[Boolean]]("can_set_sticker_set")
-        _linkedChatId     <- h.get[Option[Long]]("linked_chat_id")
-        _location         <- h.get[Option[ChatLocation]]("location")
+        _id                    <- h.get[Long]("id")
+        _type                  <- h.get[String]("type")
+        _title                 <- h.get[Option[String]]("title")
+        _username              <- h.get[Option[String]]("username")
+        _firstName             <- h.get[Option[String]]("first_name")
+        _lastName              <- h.get[Option[String]]("last_name")
+        _photo                 <- h.get[Option[ChatPhoto]]("photo")
+        _bio                   <- h.get[Option[String]]("bio")
+        _description           <- h.get[Option[String]]("description")
+        _inviteLink            <- h.get[Option[String]]("invite_link")
+        _pinnedMessage         <- h.get[Option[Message]]("pinned_message")
+        _permissions           <- h.get[Option[ChatPermissions]]("permissions")
+        _slowModeDelay         <- h.get[Option[Int]]("slow_mode_delay")
+        _messageAutoDeleteTime <- h.get[Option[Int]]("message_auto_delete_time")
+        _stickerSetName        <- h.get[Option[String]]("sticker_set_name")
+        _canSetStickerSet      <- h.get[Option[Boolean]]("can_set_sticker_set")
+        _linkedChatId          <- h.get[Option[Long]]("linked_chat_id")
+        _location              <- h.get[Option[ChatLocation]]("location")
       } yield {
         Chat(
           id = _id,
@@ -7480,6 +7690,7 @@ object CirceImplicits {
           pinnedMessage = _pinnedMessage,
           permissions = _permissions,
           slowModeDelay = _slowModeDelay,
+          messageAutoDeleteTime = _messageAutoDeleteTime,
           stickerSetName = _stickerSetName,
           canSetStickerSet = _canSetStickerSet,
           linkedChatId = _linkedChatId,
@@ -7580,6 +7791,24 @@ object CirceImplicits {
                       from = _from,
                       invoicePayload = _invoicePayload,
                       shippingAddress = _shippingAddress)
+      }
+    }
+
+  implicit lazy val voicechatendedEncoder: Encoder[VoiceChatEnded] =
+    (x: VoiceChatEnded) => {
+      Json.fromFields(
+        List(
+          "duration" -> x.duration.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val voicechatendedDecoder: Decoder[VoiceChatEnded] =
+    Decoder.instance { h =>
+      for {
+        _duration <- h.get[Int]("duration")
+      } yield {
+        VoiceChatEnded(duration = _duration)
       }
     }
 
@@ -7741,7 +7970,9 @@ object CirceImplicits {
           "shipping_query"       -> x.shippingQuery.asJson,
           "pre_checkout_query"   -> x.preCheckoutQuery.asJson,
           "poll"                 -> x.poll.asJson,
-          "poll_answer"          -> x.pollAnswer.asJson
+          "poll_answer"          -> x.pollAnswer.asJson,
+          "my_chat_member"       -> x.myChatMember.asJson,
+          "chat_member"          -> x.chatMember.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -7761,6 +7992,8 @@ object CirceImplicits {
         _preCheckoutQuery   <- h.get[Option[PreCheckoutQuery]]("pre_checkout_query")
         _poll               <- h.get[Option[Poll]]("poll")
         _pollAnswer         <- h.get[Option[PollAnswer]]("poll_answer")
+        _myChatMember       <- h.get[Option[ChatMemberUpdated]]("my_chat_member")
+        _chatMember         <- h.get[Option[ChatMemberUpdated]]("chat_member")
       } yield {
         Update(
           updateId = _updateId,
@@ -7774,7 +8007,9 @@ object CirceImplicits {
           shippingQuery = _shippingQuery,
           preCheckoutQuery = _preCheckoutQuery,
           poll = _poll,
-          pollAnswer = _pollAnswer
+          pollAnswer = _pollAnswer,
+          myChatMember = _myChatMember,
+          chatMember = _chatMember
         )
       }
     }
@@ -8039,7 +8274,7 @@ object CirceImplicits {
         _phoneNumber <- h.get[String]("phone_number")
         _firstName   <- h.get[String]("first_name")
         _lastName    <- h.get[Option[String]]("last_name")
-        _userId      <- h.get[Option[Int]]("user_id")
+        _userId      <- h.get[Option[Long]]("user_id")
         _vcard       <- h.get[Option[String]]("vcard")
       } yield {
         Contact(phoneNumber = _phoneNumber,
@@ -8069,6 +8304,24 @@ object CirceImplicits {
         _score    <- h.get[Int]("score")
       } yield {
         GameHighScore(position = _position, user = _user, score = _score)
+      }
+    }
+
+  implicit lazy val messageautodeletetimerchangedEncoder: Encoder[MessageAutoDeleteTimerChanged] =
+    (x: MessageAutoDeleteTimerChanged) => {
+      Json.fromFields(
+        List(
+          "message_auto_delete_time" -> x.messageAutoDeleteTime.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val messageautodeletetimerchangedDecoder: Decoder[MessageAutoDeleteTimerChanged] =
+    Decoder.instance { h =>
+      for {
+        _messageAutoDeleteTime <- h.get[Int]("message_auto_delete_time")
+      } yield {
+        MessageAutoDeleteTimerChanged(messageAutoDeleteTime = _messageAutoDeleteTime)
       }
     }
 
@@ -8168,6 +8421,39 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val chatinvitelinkEncoder: Encoder[ChatInviteLink] =
+    (x: ChatInviteLink) => {
+      Json.fromFields(
+        List(
+          "invite_link"  -> x.inviteLink.asJson,
+          "creator"      -> x.creator.asJson,
+          "is_primary"   -> x.isPrimary.asJson,
+          "is_revoked"   -> x.isRevoked.asJson,
+          "expire_date"  -> x.expireDate.asJson,
+          "member_limit" -> x.memberLimit.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatinvitelinkDecoder: Decoder[ChatInviteLink] =
+    Decoder.instance { h =>
+      for {
+        _inviteLink  <- h.get[String]("invite_link")
+        _creator     <- h.get[User]("creator")
+        _isPrimary   <- h.get[Boolean]("is_primary")
+        _isRevoked   <- h.get[Boolean]("is_revoked")
+        _expireDate  <- h.get[Option[Int]]("expire_date")
+        _memberLimit <- h.get[Option[Int]]("member_limit")
+      } yield {
+        ChatInviteLink(inviteLink = _inviteLink,
+                       creator = _creator,
+                       isPrimary = _isPrimary,
+                       isRevoked = _isRevoked,
+                       expireDate = _expireDate,
+                       memberLimit = _memberLimit)
+      }
+    }
+
   implicit lazy val diceEncoder: Encoder[Dice] =
     (x: Dice) => {
       Json.fromFields(
@@ -8185,6 +8471,39 @@ object CirceImplicits {
         _value <- h.get[Int]("value")
       } yield {
         Dice(emoji = _emoji, value = _value)
+      }
+    }
+
+  implicit lazy val chatmemberupdatedEncoder: Encoder[ChatMemberUpdated] =
+    (x: ChatMemberUpdated) => {
+      Json.fromFields(
+        List(
+          "chat"            -> x.chat.asJson,
+          "from"            -> x.from.asJson,
+          "date"            -> x.date.asJson,
+          "old_chat_member" -> x.oldChatMember.asJson,
+          "new_chat_member" -> x.newChatMember.asJson,
+          "invite_link"     -> x.inviteLink.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatmemberupdatedDecoder: Decoder[ChatMemberUpdated] =
+    Decoder.instance { h =>
+      for {
+        _chat          <- h.get[Chat]("chat")
+        _from          <- h.get[User]("from")
+        _date          <- h.get[Int]("date")
+        _oldChatMember <- h.get[ChatMember]("old_chat_member")
+        _newChatMember <- h.get[ChatMember]("new_chat_member")
+        _inviteLink    <- h.get[Option[ChatInviteLink]]("invite_link")
+      } yield {
+        ChatMemberUpdated(chat = _chat,
+                          from = _from,
+                          date = _date,
+                          oldChatMember = _oldChatMember,
+                          newChatMember = _newChatMember,
+                          inviteLink = _inviteLink)
       }
     }
 
@@ -8528,7 +8847,7 @@ object CirceImplicits {
   implicit lazy val userDecoder: Decoder[User] =
     Decoder.instance { h =>
       for {
-        _id                      <- h.get[Int]("id")
+        _id                      <- h.get[Long]("id")
         _isBot                   <- h.get[Boolean]("is_bot")
         _firstName               <- h.get[String]("first_name")
         _lastName                <- h.get[Option[String]]("last_name")
@@ -8650,57 +8969,61 @@ object CirceImplicits {
     (x: Message) => {
       Json.fromFields(
         List(
-          "message_id"                -> x.messageId.asJson,
-          "from"                      -> x.from.asJson,
-          "sender_chat"               -> x.senderChat.asJson,
-          "date"                      -> x.date.asJson,
-          "chat"                      -> x.chat.asJson,
-          "forward_from"              -> x.forwardFrom.asJson,
-          "forward_from_chat"         -> x.forwardFromChat.asJson,
-          "forward_from_message_id"   -> x.forwardFromMessageId.asJson,
-          "forward_signature"         -> x.forwardSignature.asJson,
-          "forward_sender_name"       -> x.forwardSenderName.asJson,
-          "forward_date"              -> x.forwardDate.asJson,
-          "reply_to_message"          -> x.replyToMessage.asJson,
-          "via_bot"                   -> x.viaBot.asJson,
-          "edit_date"                 -> x.editDate.asJson,
-          "media_group_id"            -> x.mediaGroupId.asJson,
-          "author_signature"          -> x.authorSignature.asJson,
-          "text"                      -> x.text.asJson,
-          "entities"                  -> x.entities.asJson,
-          "animation"                 -> x.animation.asJson,
-          "audio"                     -> x.audio.asJson,
-          "document"                  -> x.document.asJson,
-          "photo"                     -> x.photo.asJson,
-          "sticker"                   -> x.sticker.asJson,
-          "video"                     -> x.video.asJson,
-          "video_note"                -> x.videoNote.asJson,
-          "voice"                     -> x.voice.asJson,
-          "caption"                   -> x.caption.asJson,
-          "caption_entities"          -> x.captionEntities.asJson,
-          "contact"                   -> x.contact.asJson,
-          "dice"                      -> x.dice.asJson,
-          "game"                      -> x.game.asJson,
-          "poll"                      -> x.poll.asJson,
-          "venue"                     -> x.venue.asJson,
-          "location"                  -> x.location.asJson,
-          "new_chat_members"          -> x.newChatMembers.asJson,
-          "left_chat_member"          -> x.leftChatMember.asJson,
-          "new_chat_title"            -> x.newChatTitle.asJson,
-          "new_chat_photo"            -> x.newChatPhoto.asJson,
-          "delete_chat_photo"         -> x.deleteChatPhoto.asJson,
-          "group_chat_created"        -> x.groupChatCreated.asJson,
-          "supergroup_chat_created"   -> x.supergroupChatCreated.asJson,
-          "channel_chat_created"      -> x.channelChatCreated.asJson,
-          "migrate_to_chat_id"        -> x.migrateToChatId.asJson,
-          "migrate_from_chat_id"      -> x.migrateFromChatId.asJson,
-          "pinned_message"            -> x.pinnedMessage.asJson,
-          "invoice"                   -> x.invoice.asJson,
-          "successful_payment"        -> x.successfulPayment.asJson,
-          "connected_website"         -> x.connectedWebsite.asJson,
-          "passport_data"             -> x.passportData.asJson,
-          "proximity_alert_triggered" -> x.proximityAlertTriggered.asJson,
-          "reply_markup"              -> x.replyMarkup.asJson
+          "message_id"                        -> x.messageId.asJson,
+          "from"                              -> x.from.asJson,
+          "sender_chat"                       -> x.senderChat.asJson,
+          "date"                              -> x.date.asJson,
+          "chat"                              -> x.chat.asJson,
+          "forward_from"                      -> x.forwardFrom.asJson,
+          "forward_from_chat"                 -> x.forwardFromChat.asJson,
+          "forward_from_message_id"           -> x.forwardFromMessageId.asJson,
+          "forward_signature"                 -> x.forwardSignature.asJson,
+          "forward_sender_name"               -> x.forwardSenderName.asJson,
+          "forward_date"                      -> x.forwardDate.asJson,
+          "reply_to_message"                  -> x.replyToMessage.asJson,
+          "via_bot"                           -> x.viaBot.asJson,
+          "edit_date"                         -> x.editDate.asJson,
+          "media_group_id"                    -> x.mediaGroupId.asJson,
+          "author_signature"                  -> x.authorSignature.asJson,
+          "text"                              -> x.text.asJson,
+          "entities"                          -> x.entities.asJson,
+          "animation"                         -> x.animation.asJson,
+          "audio"                             -> x.audio.asJson,
+          "document"                          -> x.document.asJson,
+          "photo"                             -> x.photo.asJson,
+          "sticker"                           -> x.sticker.asJson,
+          "video"                             -> x.video.asJson,
+          "video_note"                        -> x.videoNote.asJson,
+          "voice"                             -> x.voice.asJson,
+          "caption"                           -> x.caption.asJson,
+          "caption_entities"                  -> x.captionEntities.asJson,
+          "contact"                           -> x.contact.asJson,
+          "dice"                              -> x.dice.asJson,
+          "game"                              -> x.game.asJson,
+          "poll"                              -> x.poll.asJson,
+          "venue"                             -> x.venue.asJson,
+          "location"                          -> x.location.asJson,
+          "new_chat_members"                  -> x.newChatMembers.asJson,
+          "left_chat_member"                  -> x.leftChatMember.asJson,
+          "new_chat_title"                    -> x.newChatTitle.asJson,
+          "new_chat_photo"                    -> x.newChatPhoto.asJson,
+          "delete_chat_photo"                 -> x.deleteChatPhoto.asJson,
+          "group_chat_created"                -> x.groupChatCreated.asJson,
+          "supergroup_chat_created"           -> x.supergroupChatCreated.asJson,
+          "channel_chat_created"              -> x.channelChatCreated.asJson,
+          "message_auto_delete_timer_changed" -> x.messageAutoDeleteTimerChanged.asJson,
+          "migrate_to_chat_id"                -> x.migrateToChatId.asJson,
+          "migrate_from_chat_id"              -> x.migrateFromChatId.asJson,
+          "pinned_message"                    -> x.pinnedMessage.asJson,
+          "invoice"                           -> x.invoice.asJson,
+          "successful_payment"                -> x.successfulPayment.asJson,
+          "connected_website"                 -> x.connectedWebsite.asJson,
+          "passport_data"                     -> x.passportData.asJson,
+          "proximity_alert_triggered"         -> x.proximityAlertTriggered.asJson,
+          "voice_chat_started"                -> x.voiceChatStarted.asJson,
+          "voice_chat_ended"                  -> x.voiceChatEnded.asJson,
+          "voice_chat_participants_invited"   -> x.voiceChatParticipantsInvited.asJson,
+          "reply_markup"                      -> x.replyMarkup.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -8750,15 +9073,21 @@ object CirceImplicits {
         _groupChatCreated      <- h.get[Option[Boolean]]("group_chat_created")
         _supergroupChatCreated <- h.get[Option[Boolean]]("supergroup_chat_created")
         _channelChatCreated    <- h.get[Option[Boolean]]("channel_chat_created")
-        _migrateToChatId       <- h.get[Option[Long]]("migrate_to_chat_id")
-        _migrateFromChatId     <- h.get[Option[Long]]("migrate_from_chat_id")
-        _pinnedMessage         <- h.get[Option[Message]]("pinned_message")
-        _invoice               <- h.get[Option[Invoice]]("invoice")
-        _successfulPayment     <- h.get[Option[SuccessfulPayment]]("successful_payment")
-        _connectedWebsite      <- h.get[Option[String]]("connected_website")
-        _passportData          <- h.get[Option[PassportData]]("passport_data")
+        _messageAutoDeleteTimerChanged <- h.get[Option[MessageAutoDeleteTimerChanged]](
+          "message_auto_delete_timer_changed")
+        _migrateToChatId   <- h.get[Option[Long]]("migrate_to_chat_id")
+        _migrateFromChatId <- h.get[Option[Long]]("migrate_from_chat_id")
+        _pinnedMessage     <- h.get[Option[Message]]("pinned_message")
+        _invoice           <- h.get[Option[Invoice]]("invoice")
+        _successfulPayment <- h.get[Option[SuccessfulPayment]]("successful_payment")
+        _connectedWebsite  <- h.get[Option[String]]("connected_website")
+        _passportData      <- h.get[Option[PassportData]]("passport_data")
         _proximityAlertTriggered <- h.get[Option[ProximityAlertTriggered]](
           "proximity_alert_triggered")
+        _voiceChatStarted <- h.get[Option[VoiceChatStarted.type]]("voice_chat_started")
+        _voiceChatEnded   <- h.get[Option[VoiceChatEnded]]("voice_chat_ended")
+        _voiceChatParticipantsInvited <- h.get[Option[VoiceChatParticipantsInvited]](
+          "voice_chat_participants_invited")
         _replyMarkup <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
       } yield {
         Message(
@@ -8804,6 +9133,7 @@ object CirceImplicits {
           groupChatCreated = _groupChatCreated,
           supergroupChatCreated = _supergroupChatCreated,
           channelChatCreated = _channelChatCreated,
+          messageAutoDeleteTimerChanged = _messageAutoDeleteTimerChanged,
           migrateToChatId = _migrateToChatId,
           migrateFromChatId = _migrateFromChatId,
           pinnedMessage = _pinnedMessage,
@@ -8812,6 +9142,9 @@ object CirceImplicits {
           connectedWebsite = _connectedWebsite,
           passportData = _passportData,
           proximityAlertTriggered = _proximityAlertTriggered,
+          voiceChatStarted = _voiceChatStarted,
+          voiceChatEnded = _voiceChatEnded,
+          voiceChatParticipantsInvited = _voiceChatParticipantsInvited,
           replyMarkup = _replyMarkup
         )
       }
@@ -8875,6 +9208,10 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val voicechatstartedEncoder: Encoder[VoiceChatStarted.type] =
+    (_: VoiceChatStarted.type) => ().asJson
+  implicit lazy val voicechatstartedDecoder: Decoder[VoiceChatStarted.type] = (_: HCursor) =>
+    Right(VoiceChatStarted)
   implicit lazy val encryptedcredentialsEncoder: Encoder[EncryptedCredentials] =
     (x: EncryptedCredentials) => {
       Json.fromFields(
@@ -8995,6 +9332,24 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val voicechatparticipantsinvitedEncoder: Encoder[VoiceChatParticipantsInvited] =
+    (x: VoiceChatParticipantsInvited) => {
+      Json.fromFields(
+        List(
+          "users" -> x.users.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val voicechatparticipantsinvitedDecoder: Decoder[VoiceChatParticipantsInvited] =
+    Decoder.instance { h =>
+      for {
+        _users <- h.getOrElse[List[User]]("users")(List.empty)
+      } yield {
+        VoiceChatParticipantsInvited(users = _users)
+      }
+    }
+
   implicit lazy val userprofilephotosEncoder: Encoder[UserProfilePhotos] =
     (x: UserProfilePhotos) => {
       Json.fromFields(
@@ -9078,9 +9433,11 @@ object CirceImplicits {
           "custom_title"              -> x.customTitle.asJson,
           "is_anonymous"              -> x.isAnonymous.asJson,
           "can_be_edited"             -> x.canBeEdited.asJson,
+          "can_manage_chat"           -> x.canManageChat.asJson,
           "can_post_messages"         -> x.canPostMessages.asJson,
           "can_edit_messages"         -> x.canEditMessages.asJson,
           "can_delete_messages"       -> x.canDeleteMessages.asJson,
+          "can_manage_voice_chats"    -> x.canManageVoiceChats.asJson,
           "can_restrict_members"      -> x.canRestrictMembers.asJson,
           "can_promote_members"       -> x.canPromoteMembers.asJson,
           "can_change_info"           -> x.canChangeInfo.asJson,
@@ -9105,9 +9462,11 @@ object CirceImplicits {
         _customTitle           <- h.get[Option[String]]("custom_title")
         _isAnonymous           <- h.get[Option[Boolean]]("is_anonymous")
         _canBeEdited           <- h.get[Option[Boolean]]("can_be_edited")
+        _canManageChat         <- h.get[Option[Boolean]]("can_manage_chat")
         _canPostMessages       <- h.get[Option[Boolean]]("can_post_messages")
         _canEditMessages       <- h.get[Option[Boolean]]("can_edit_messages")
         _canDeleteMessages     <- h.get[Option[Boolean]]("can_delete_messages")
+        _canManageVoiceChats   <- h.get[Option[Boolean]]("can_manage_voice_chats")
         _canRestrictMembers    <- h.get[Option[Boolean]]("can_restrict_members")
         _canPromoteMembers     <- h.get[Option[Boolean]]("can_promote_members")
         _canChangeInfo         <- h.get[Option[Boolean]]("can_change_info")
@@ -9127,9 +9486,11 @@ object CirceImplicits {
           customTitle = _customTitle,
           isAnonymous = _isAnonymous,
           canBeEdited = _canBeEdited,
+          canManageChat = _canManageChat,
           canPostMessages = _canPostMessages,
           canEditMessages = _canEditMessages,
           canDeleteMessages = _canDeleteMessages,
+          canManageVoiceChats = _canManageVoiceChats,
           canRestrictMembers = _canRestrictMembers,
           canPromoteMembers = _canPromoteMembers,
           canChangeInfo = _canChangeInfo,

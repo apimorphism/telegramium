@@ -15,7 +15,7 @@ package telegramium.bots
   * @param maxConnections Optional. Maximum allowed number of simultaneous HTTPS
   * connections to the webhook for update delivery
   * @param allowedUpdates Optional. A list of update types the bot is subscribed to.
-  * Defaults to all update types */
+  * Defaults to all update types except chat_member */
 final case class WebhookInfo(url: String,
                              hasCustomCertificate: Boolean,
                              pendingUpdateCount: Int,

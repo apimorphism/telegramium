@@ -8,10 +8,11 @@ import telegramium.bots.KeyboardMarkup
   * target channel (in the format &#064;channelusername)
   * @param emoji Emoji on which the dice throw animation is based.
   * Currently, must be one of EmojiDice, EmojiDarts,
-  * EmojiBasketball, EmojiFootball, or EmojiSlotMachine. Dice
-  * can have values 1-6 for EmojiDice and EmojiDarts, values 1-5
-  * for EmojiBasketball and EmojiFootball, and values 1-64 for
-  * EmojiSlotMachine. Defaults to EmojiDice
+  * EmojiBasketball, EmojiFootball, EmojiBowling or
+  * EmojiSlotMachine. Dice can have values 1-6 for EmojiDice,
+  * EmojiDarts and EmojiBowling, values 1-5 for EmojiBasketball
+  * and EmojiFootball, and values 1-64 for EmojiSlotMachine.
+  * Defaults to EmojiDice
   * @param disableNotification Sends the message silently. Users will receive a
   * notification with no sound.
   * @param replyToMessageId If the message is a reply, ID of the original message

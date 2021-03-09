@@ -1469,6 +1469,40 @@ object uPickleImplicits {
     )
   }
 
+  implicit lazy val editchatinvitelinkreqCodec: ReadWriter[EditChatInviteLinkReq] = {
+    val chatIdKey      = upack.Str("chatId")
+    val inviteLinkKey  = upack.Str("inviteLink")
+    val expireDateKey  = upack.Str("expireDate")
+    val memberLimitKey = upack.Str("memberLimit")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          chatIdKey      -> writeMsg(x.chatId),
+          inviteLinkKey  -> writeMsg(x.inviteLink),
+          expireDateKey  -> writeMsg(x.expireDate),
+          memberLimitKey -> writeMsg(x.memberLimit)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          chatId      <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          inviteLink  <- m.get(inviteLinkKey).map(x => readBinary[String](x))
+          expireDate  <- m.get(expireDateKey).map(x => readBinary[Option[Int]](x))
+          memberLimit <- m.get(memberLimitKey).map(x => readBinary[Option[Int]](x))
+        } yield {
+          EditChatInviteLinkReq(
+            chatId = chatId,
+            inviteLink = inviteLink,
+            expireDate = expireDate,
+            memberLimit = memberLimit
+          )
+        }
+        result.get
+      }
+    )
+  }
+
   implicit lazy val sendinvoicereqCodec: ReadWriter[SendInvoiceReq] = {
     val chatIdKey                    = upack.Str("chatId")
     val titleKey                     = upack.Str("title")
@@ -1734,28 +1768,32 @@ object uPickleImplicits {
   }
 
   implicit lazy val kickchatmemberreqCodec: ReadWriter[KickChatMemberReq] = {
-    val chatIdKey    = upack.Str("chatId")
-    val userIdKey    = upack.Str("userId")
-    val untilDateKey = upack.Str("untilDate")
+    val chatIdKey         = upack.Str("chatId")
+    val userIdKey         = upack.Str("userId")
+    val untilDateKey      = upack.Str("untilDate")
+    val revokeMessagesKey = upack.Str("revokeMessages")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          chatIdKey    -> writeMsg(x.chatId),
-          userIdKey    -> writeMsg(x.userId),
-          untilDateKey -> writeMsg(x.untilDate)
+          chatIdKey         -> writeMsg(x.chatId),
+          userIdKey         -> writeMsg(x.userId),
+          untilDateKey      -> writeMsg(x.untilDate),
+          revokeMessagesKey -> writeMsg(x.revokeMessages)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          chatId    <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          userId    <- m.get(userIdKey).map(x => readBinary[Int](x))
-          untilDate <- m.get(untilDateKey).map(x => readBinary[Option[Int]](x))
+          chatId         <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          userId         <- m.get(userIdKey).map(x => readBinary[Int](x))
+          untilDate      <- m.get(untilDateKey).map(x => readBinary[Option[Int]](x))
+          revokeMessages <- m.get(revokeMessagesKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           KickChatMemberReq(
             chatId = chatId,
             userId = userId,
-            untilDate = untilDate
+            untilDate = untilDate,
+            revokeMessages = revokeMessages
           )
         }
         result.get
@@ -2024,31 +2062,35 @@ object uPickleImplicits {
   implicit lazy val logoutreqCodec: ReadWriter[LogOutReq.type] = macroRW
 
   implicit lazy val promotechatmemberreqCodec: ReadWriter[PromoteChatMemberReq] = {
-    val chatIdKey             = upack.Str("chatId")
-    val userIdKey             = upack.Str("userId")
-    val isAnonymousKey        = upack.Str("isAnonymous")
-    val canChangeInfoKey      = upack.Str("canChangeInfo")
-    val canPostMessagesKey    = upack.Str("canPostMessages")
-    val canEditMessagesKey    = upack.Str("canEditMessages")
-    val canDeleteMessagesKey  = upack.Str("canDeleteMessages")
-    val canInviteUsersKey     = upack.Str("canInviteUsers")
-    val canRestrictMembersKey = upack.Str("canRestrictMembers")
-    val canPinMessagesKey     = upack.Str("canPinMessages")
-    val canPromoteMembersKey  = upack.Str("canPromoteMembers")
+    val chatIdKey              = upack.Str("chatId")
+    val userIdKey              = upack.Str("userId")
+    val isAnonymousKey         = upack.Str("isAnonymous")
+    val canManageChatKey       = upack.Str("canManageChat")
+    val canPostMessagesKey     = upack.Str("canPostMessages")
+    val canEditMessagesKey     = upack.Str("canEditMessages")
+    val canDeleteMessagesKey   = upack.Str("canDeleteMessages")
+    val canManageVoiceChatsKey = upack.Str("canManageVoiceChats")
+    val canRestrictMembersKey  = upack.Str("canRestrictMembers")
+    val canPromoteMembersKey   = upack.Str("canPromoteMembers")
+    val canChangeInfoKey       = upack.Str("canChangeInfo")
+    val canInviteUsersKey      = upack.Str("canInviteUsers")
+    val canPinMessagesKey      = upack.Str("canPinMessages")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          chatIdKey             -> writeMsg(x.chatId),
-          userIdKey             -> writeMsg(x.userId),
-          isAnonymousKey        -> writeMsg(x.isAnonymous),
-          canChangeInfoKey      -> writeMsg(x.canChangeInfo),
-          canPostMessagesKey    -> writeMsg(x.canPostMessages),
-          canEditMessagesKey    -> writeMsg(x.canEditMessages),
-          canDeleteMessagesKey  -> writeMsg(x.canDeleteMessages),
-          canInviteUsersKey     -> writeMsg(x.canInviteUsers),
-          canRestrictMembersKey -> writeMsg(x.canRestrictMembers),
-          canPinMessagesKey     -> writeMsg(x.canPinMessages),
-          canPromoteMembersKey  -> writeMsg(x.canPromoteMembers)
+          chatIdKey              -> writeMsg(x.chatId),
+          userIdKey              -> writeMsg(x.userId),
+          isAnonymousKey         -> writeMsg(x.isAnonymous),
+          canManageChatKey       -> writeMsg(x.canManageChat),
+          canPostMessagesKey     -> writeMsg(x.canPostMessages),
+          canEditMessagesKey     -> writeMsg(x.canEditMessages),
+          canDeleteMessagesKey   -> writeMsg(x.canDeleteMessages),
+          canManageVoiceChatsKey -> writeMsg(x.canManageVoiceChats),
+          canRestrictMembersKey  -> writeMsg(x.canRestrictMembers),
+          canPromoteMembersKey   -> writeMsg(x.canPromoteMembers),
+          canChangeInfoKey       -> writeMsg(x.canChangeInfo),
+          canInviteUsersKey      -> writeMsg(x.canInviteUsers),
+          canPinMessagesKey      -> writeMsg(x.canPinMessages)
         )
       },
       msg => {
@@ -2057,29 +2099,35 @@ object uPickleImplicits {
           chatId            <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
           userId            <- m.get(userIdKey).map(x => readBinary[Int](x))
           isAnonymous       <- m.get(isAnonymousKey).map(x => readBinary[Option[Boolean]](x))
-          canChangeInfo     <- m.get(canChangeInfoKey).map(x => readBinary[Option[Boolean]](x))
+          canManageChat     <- m.get(canManageChatKey).map(x => readBinary[Option[Boolean]](x))
           canPostMessages   <- m.get(canPostMessagesKey).map(x => readBinary[Option[Boolean]](x))
           canEditMessages   <- m.get(canEditMessagesKey).map(x => readBinary[Option[Boolean]](x))
           canDeleteMessages <- m.get(canDeleteMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canInviteUsers    <- m.get(canInviteUsersKey).map(x => readBinary[Option[Boolean]](x))
+          canManageVoiceChats <- m
+            .get(canManageVoiceChatsKey)
+            .map(x => readBinary[Option[Boolean]](x))
           canRestrictMembers <- m
             .get(canRestrictMembersKey)
             .map(x => readBinary[Option[Boolean]](x))
-          canPinMessages    <- m.get(canPinMessagesKey).map(x => readBinary[Option[Boolean]](x))
           canPromoteMembers <- m.get(canPromoteMembersKey).map(x => readBinary[Option[Boolean]](x))
+          canChangeInfo     <- m.get(canChangeInfoKey).map(x => readBinary[Option[Boolean]](x))
+          canInviteUsers    <- m.get(canInviteUsersKey).map(x => readBinary[Option[Boolean]](x))
+          canPinMessages    <- m.get(canPinMessagesKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           PromoteChatMemberReq(
             chatId = chatId,
             userId = userId,
             isAnonymous = isAnonymous,
-            canChangeInfo = canChangeInfo,
+            canManageChat = canManageChat,
             canPostMessages = canPostMessages,
             canEditMessages = canEditMessages,
             canDeleteMessages = canDeleteMessages,
-            canInviteUsers = canInviteUsers,
+            canManageVoiceChats = canManageVoiceChats,
             canRestrictMembers = canRestrictMembers,
-            canPinMessages = canPinMessages,
-            canPromoteMembers = canPromoteMembers
+            canPromoteMembers = canPromoteMembers,
+            canChangeInfo = canChangeInfo,
+            canInviteUsers = canInviteUsers,
+            canPinMessages = canPinMessages
           )
         }
         result.get
@@ -2267,6 +2315,36 @@ object uPickleImplicits {
     )
   }
 
+  implicit lazy val createchatinvitelinkreqCodec: ReadWriter[CreateChatInviteLinkReq] = {
+    val chatIdKey      = upack.Str("chatId")
+    val expireDateKey  = upack.Str("expireDate")
+    val memberLimitKey = upack.Str("memberLimit")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          chatIdKey      -> writeMsg(x.chatId),
+          expireDateKey  -> writeMsg(x.expireDate),
+          memberLimitKey -> writeMsg(x.memberLimit)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          chatId      <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          expireDate  <- m.get(expireDateKey).map(x => readBinary[Option[Int]](x))
+          memberLimit <- m.get(memberLimitKey).map(x => readBinary[Option[Int]](x))
+        } yield {
+          CreateChatInviteLinkReq(
+            chatId = chatId,
+            expireDate = expireDate,
+            memberLimit = memberLimit
+          )
+        }
+        result.get
+      }
+    )
+  }
+
   implicit lazy val sendvideoreqCodec: ReadWriter[SendVideoReq] = {
     val chatIdKey                   = upack.Str("chatId")
     val videoKey                    = upack.Str("video")
@@ -2410,6 +2488,32 @@ object uPickleImplicits {
         } yield {
           DeleteWebhookReq(
             dropPendingUpdates = dropPendingUpdates
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val revokechatinvitelinkreqCodec: ReadWriter[RevokeChatInviteLinkReq] = {
+    val chatIdKey     = upack.Str("chatId")
+    val inviteLinkKey = upack.Str("inviteLink")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          chatIdKey     -> writeMsg(x.chatId),
+          inviteLinkKey -> writeMsg(x.inviteLink)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          chatId     <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          inviteLink <- m.get(inviteLinkKey).map(x => readBinary[String](x))
+        } yield {
+          RevokeChatInviteLinkReq(
+            chatId = chatId,
+            inviteLink = inviteLink
           )
         }
         result.get
@@ -4012,6 +4116,34 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val editchatinvitelinkreqEncoder: Encoder[EditChatInviteLinkReq] =
+    (x: EditChatInviteLinkReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"      -> x.chatId.asJson,
+          "invite_link"  -> x.inviteLink.asJson,
+          "expire_date"  -> x.expireDate.asJson,
+          "member_limit" -> x.memberLimit.asJson,
+          "method"       -> "editChatInviteLink".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val editchatinvitelinkreqDecoder: Decoder[EditChatInviteLinkReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId      <- h.get[ChatId]("chat_id")
+        _inviteLink  <- h.get[String]("invite_link")
+        _expireDate  <- h.get[Option[Int]]("expire_date")
+        _memberLimit <- h.get[Option[Int]]("member_limit")
+      } yield {
+        EditChatInviteLinkReq(chatId = _chatId,
+                              inviteLink = _inviteLink,
+                              expireDate = _expireDate,
+                              memberLimit = _memberLimit)
+      }
+    }
+
   implicit lazy val sendinvoicereqEncoder: Encoder[SendInvoiceReq] =
     (x: SendInvoiceReq) => {
       Json.fromFields(
@@ -4217,10 +4349,11 @@ object CirceImplicits {
     (x: KickChatMemberReq) => {
       Json.fromFields(
         List(
-          "chat_id"    -> x.chatId.asJson,
-          "user_id"    -> x.userId.asJson,
-          "until_date" -> x.untilDate.asJson,
-          "method"     -> "kickChatMember".asJson
+          "chat_id"         -> x.chatId.asJson,
+          "user_id"         -> x.userId.asJson,
+          "until_date"      -> x.untilDate.asJson,
+          "revoke_messages" -> x.revokeMessages.asJson,
+          "method"          -> "kickChatMember".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4228,11 +4361,15 @@ object CirceImplicits {
   implicit lazy val kickchatmemberreqDecoder: Decoder[KickChatMemberReq] =
     Decoder.instance { h =>
       for {
-        _chatId    <- h.get[ChatId]("chat_id")
-        _userId    <- h.get[Int]("user_id")
-        _untilDate <- h.get[Option[Int]]("until_date")
+        _chatId         <- h.get[ChatId]("chat_id")
+        _userId         <- h.get[Int]("user_id")
+        _untilDate      <- h.get[Option[Int]]("until_date")
+        _revokeMessages <- h.get[Option[Boolean]]("revoke_messages")
       } yield {
-        KickChatMemberReq(chatId = _chatId, userId = _userId, untilDate = _untilDate)
+        KickChatMemberReq(chatId = _chatId,
+                          userId = _userId,
+                          untilDate = _untilDate,
+                          revokeMessages = _revokeMessages)
       }
     }
 
@@ -4449,18 +4586,20 @@ object CirceImplicits {
     (x: PromoteChatMemberReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "user_id"              -> x.userId.asJson,
-          "is_anonymous"         -> x.isAnonymous.asJson,
-          "can_change_info"      -> x.canChangeInfo.asJson,
-          "can_post_messages"    -> x.canPostMessages.asJson,
-          "can_edit_messages"    -> x.canEditMessages.asJson,
-          "can_delete_messages"  -> x.canDeleteMessages.asJson,
-          "can_invite_users"     -> x.canInviteUsers.asJson,
-          "can_restrict_members" -> x.canRestrictMembers.asJson,
-          "can_pin_messages"     -> x.canPinMessages.asJson,
-          "can_promote_members"  -> x.canPromoteMembers.asJson,
-          "method"               -> "promoteChatMember".asJson
+          "chat_id"                -> x.chatId.asJson,
+          "user_id"                -> x.userId.asJson,
+          "is_anonymous"           -> x.isAnonymous.asJson,
+          "can_manage_chat"        -> x.canManageChat.asJson,
+          "can_post_messages"      -> x.canPostMessages.asJson,
+          "can_edit_messages"      -> x.canEditMessages.asJson,
+          "can_delete_messages"    -> x.canDeleteMessages.asJson,
+          "can_manage_voice_chats" -> x.canManageVoiceChats.asJson,
+          "can_restrict_members"   -> x.canRestrictMembers.asJson,
+          "can_promote_members"    -> x.canPromoteMembers.asJson,
+          "can_change_info"        -> x.canChangeInfo.asJson,
+          "can_invite_users"       -> x.canInviteUsers.asJson,
+          "can_pin_messages"       -> x.canPinMessages.asJson,
+          "method"                 -> "promoteChatMember".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4468,30 +4607,34 @@ object CirceImplicits {
   implicit lazy val promotechatmemberreqDecoder: Decoder[PromoteChatMemberReq] =
     Decoder.instance { h =>
       for {
-        _chatId             <- h.get[ChatId]("chat_id")
-        _userId             <- h.get[Int]("user_id")
-        _isAnonymous        <- h.get[Option[Boolean]]("is_anonymous")
-        _canChangeInfo      <- h.get[Option[Boolean]]("can_change_info")
-        _canPostMessages    <- h.get[Option[Boolean]]("can_post_messages")
-        _canEditMessages    <- h.get[Option[Boolean]]("can_edit_messages")
-        _canDeleteMessages  <- h.get[Option[Boolean]]("can_delete_messages")
-        _canInviteUsers     <- h.get[Option[Boolean]]("can_invite_users")
-        _canRestrictMembers <- h.get[Option[Boolean]]("can_restrict_members")
-        _canPinMessages     <- h.get[Option[Boolean]]("can_pin_messages")
-        _canPromoteMembers  <- h.get[Option[Boolean]]("can_promote_members")
+        _chatId              <- h.get[ChatId]("chat_id")
+        _userId              <- h.get[Int]("user_id")
+        _isAnonymous         <- h.get[Option[Boolean]]("is_anonymous")
+        _canManageChat       <- h.get[Option[Boolean]]("can_manage_chat")
+        _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
+        _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
+        _canDeleteMessages   <- h.get[Option[Boolean]]("can_delete_messages")
+        _canManageVoiceChats <- h.get[Option[Boolean]]("can_manage_voice_chats")
+        _canRestrictMembers  <- h.get[Option[Boolean]]("can_restrict_members")
+        _canPromoteMembers   <- h.get[Option[Boolean]]("can_promote_members")
+        _canChangeInfo       <- h.get[Option[Boolean]]("can_change_info")
+        _canInviteUsers      <- h.get[Option[Boolean]]("can_invite_users")
+        _canPinMessages      <- h.get[Option[Boolean]]("can_pin_messages")
       } yield {
         PromoteChatMemberReq(
           chatId = _chatId,
           userId = _userId,
           isAnonymous = _isAnonymous,
-          canChangeInfo = _canChangeInfo,
+          canManageChat = _canManageChat,
           canPostMessages = _canPostMessages,
           canEditMessages = _canEditMessages,
           canDeleteMessages = _canDeleteMessages,
-          canInviteUsers = _canInviteUsers,
+          canManageVoiceChats = _canManageVoiceChats,
           canRestrictMembers = _canRestrictMembers,
-          canPinMessages = _canPinMessages,
-          canPromoteMembers = _canPromoteMembers
+          canPromoteMembers = _canPromoteMembers,
+          canChangeInfo = _canChangeInfo,
+          canInviteUsers = _canInviteUsers,
+          canPinMessages = _canPinMessages
         )
       }
     }
@@ -4642,6 +4785,31 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val createchatinvitelinkreqEncoder: Encoder[CreateChatInviteLinkReq] =
+    (x: CreateChatInviteLinkReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"      -> x.chatId.asJson,
+          "expire_date"  -> x.expireDate.asJson,
+          "member_limit" -> x.memberLimit.asJson,
+          "method"       -> "createChatInviteLink".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val createchatinvitelinkreqDecoder: Decoder[CreateChatInviteLinkReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId      <- h.get[ChatId]("chat_id")
+        _expireDate  <- h.get[Option[Int]]("expire_date")
+        _memberLimit <- h.get[Option[Int]]("member_limit")
+      } yield {
+        CreateChatInviteLinkReq(chatId = _chatId,
+                                expireDate = _expireDate,
+                                memberLimit = _memberLimit)
+      }
+    }
+
   implicit lazy val sendvideoreqEncoder: Encoder[SendVideoReq] =
     (x: SendVideoReq) => {
       Json.fromFields(
@@ -4758,6 +4926,27 @@ object CirceImplicits {
         _dropPendingUpdates <- h.get[Option[Boolean]]("drop_pending_updates")
       } yield {
         DeleteWebhookReq(dropPendingUpdates = _dropPendingUpdates)
+      }
+    }
+
+  implicit lazy val revokechatinvitelinkreqEncoder: Encoder[RevokeChatInviteLinkReq] =
+    (x: RevokeChatInviteLinkReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"     -> x.chatId.asJson,
+          "invite_link" -> x.inviteLink.asJson,
+          "method"      -> "revokeChatInviteLink".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val revokechatinvitelinkreqDecoder: Decoder[RevokeChatInviteLinkReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId     <- h.get[ChatId]("chat_id")
+        _inviteLink <- h.get[String]("invite_link")
+      } yield {
+        RevokeChatInviteLinkReq(chatId = _chatId, inviteLink = _inviteLink)
       }
     }
 

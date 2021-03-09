@@ -11,6 +11,7 @@ import telegramium.bots.UserProfilePhotos
 import telegramium.bots.File
 import telegramium.bots.Poll
 import telegramium.bots.MessageId
+import telegramium.bots.ChatInviteLink
 import telegramium.bots.User
 import telegramium.bots.ChatMember
 import telegramium.bots.BotCommand
@@ -455,10 +456,10 @@ trait Methods {
     MethodReq[Either[Boolean, Message]]("stopMessageLiveLocation", req.asJson)
   }
 
-  /** Use this method to generate a new invite link for a chat; any previously
-    * generated link is revoked. The bot must be an administrator in the chat for this
-    * to work and must have the appropriate admin rights. Returns the new invite link
-    * as String on success.
+  /** Use this method to generate a new primary invite link for a chat; any
+    * previously generated primary link is revoked. The bot must be an administrator
+    * in the chat for this to work and must have the appropriate admin rights. Returns
+    * the new invite link as String on success.
     *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername) */
@@ -474,10 +475,11 @@ trait Methods {
     * target channel (in the format &#064;channelusername)
     * @param emoji Emoji on which the dice throw animation is based.
     * Currently, must be one of EmojiDice, EmojiDarts,
-    * EmojiBasketball, EmojiFootball, or EmojiSlotMachine. Dice
-    * can have values 1-6 for EmojiDice and EmojiDarts, values 1-5
-    * for EmojiBasketball and EmojiFootball, and values 1-64 for
-    * EmojiSlotMachine. Defaults to EmojiDice
+    * EmojiBasketball, EmojiFootball, EmojiBowling or
+    * EmojiSlotMachine. Dice can have values 1-6 for EmojiDice,
+    * EmojiDarts and EmojiBowling, values 1-5 for EmojiBasketball
+    * and EmojiFootball, and values 1-64 for EmojiSlotMachine.
+    * Defaults to EmojiDice
     * @param disableNotification Sends the message silently. Users will receive a
     * notification with no sound.
     * @param replyToMessageId If the message is a reply, ID of the original message
@@ -876,7 +878,7 @@ trait Methods {
   }
 
   /** Use this method to copy messages of any kind. The method is analogous to the
-    * method forwardMessages, but the copied message doesn't have a link to the
+    * method forwardMessage, but the copied message doesn't have a link to the
     * original message. Returns the MessageId of the sent message on success.
     *
     * @param chatId Unique identifier for the target chat or username of the
@@ -1002,6 +1004,26 @@ trait Methods {
   def deleteChatPhoto(chatId: ChatId): Method[Boolean] = {
     val req = DeleteChatPhotoReq(chatId)
     MethodReq[Boolean]("deleteChatPhoto", req.asJson)
+  }
+
+  /** Use this method to edit a non-primary invite link created by the bot. The bot
+    * must be an administrator in the chat for this to work and must have the
+    * appropriate admin rights. Returns the edited invite link as a ChatInviteLink
+    * object.
+    *
+    * @param chatId Unique identifier for the target chat or username of the
+    * target channel (in the format &#064;channelusername)
+    * @param inviteLink The invite link to edit
+    * @param expireDate Point in time (Unix timestamp) when the link will expire
+    * @param memberLimit Maximum number of users that can be members of the chat
+    * simultaneously after joining the chat via this invite link;
+    * 1-99999 */
+  def editChatInviteLink(chatId: ChatId,
+                         inviteLink: String,
+                         expireDate: Option[Int] = Option.empty,
+                         memberLimit: Option[Int] = Option.empty): Method[ChatInviteLink] = {
+    val req = EditChatInviteLinkReq(chatId, inviteLink, expireDate, memberLimit)
+    MethodReq[ChatInviteLink]("editChatInviteLink", req.asJson)
   }
 
   /** Use this method to send invoices. On success, the sent Message is returned.
@@ -1248,11 +1270,16 @@ trait Methods {
     * @param untilDate Date when the user will be unbanned, unix time. If user is
     * banned for more than 366 days or less than 30 seconds from
     * the current time they are considered to be banned forever.
-    * Applied for supergroups and channels only. */
+    * Applied for supergroups and channels only.
+    * @param revokeMessages Pass True to delete all messages from the chat for the user
+    * that is being removed. If False, the user will be able to
+    * see messages in the group that were sent before the user was
+    * removed. Always True for supergroups and channels. */
   def kickChatMember(chatId: ChatId,
                      userId: Int,
-                     untilDate: Option[Int] = Option.empty): Method[Boolean] = {
-    val req = KickChatMemberReq(chatId, userId, untilDate)
+                     untilDate: Option[Int] = Option.empty,
+                     revokeMessages: Option[Boolean] = Option.empty): Method[Boolean] = {
+    val req = KickChatMemberReq(chatId, userId, untilDate, revokeMessages)
     MethodReq[Boolean]("kickChatMember", req.asJson)
   }
 
@@ -1481,47 +1508,58 @@ trait Methods {
     * @param userId Unique identifier of the target user
     * @param isAnonymous Pass True, if the administrator's presence in the chat is
     * hidden
-    * @param canChangeInfo Pass True, if the administrator can change chat title,
-    * photo and other settings
+    * @param canManageChat Pass True, if the administrator can access the chat event
+    * log, chat statistics, message statistics in channels, see
+    * channel members, see anonymous administrators in supergroups
+    * and ignore slow mode. Implied by any other administrator
+    * privilege
     * @param canPostMessages Pass True, if the administrator can create channel posts,
     * channels only
     * @param canEditMessages Pass True, if the administrator can edit messages of other
     * users and can pin messages, channels only
     * @param canDeleteMessages Pass True, if the administrator can delete messages of
     * other users
-    * @param canInviteUsers Pass True, if the administrator can invite new users to the
-    * chat
+    * @param canManageVoiceChats Pass True, if the administrator can manage voice chats,
+    * supergroups only
     * @param canRestrictMembers Pass True, if the administrator can restrict, ban or unban
     * chat members
-    * @param canPinMessages Pass True, if the administrator can pin messages,
-    * supergroups only
     * @param canPromoteMembers Pass True, if the administrator can add new administrators
     * with a subset of their own privileges or demote
     * administrators that he has promoted, directly or indirectly
-    * (promoted by administrators that were appointed by him) */
+    * (promoted by administrators that were appointed by him)
+    * @param canChangeInfo Pass True, if the administrator can change chat title,
+    * photo and other settings
+    * @param canInviteUsers Pass True, if the administrator can invite new users to the
+    * chat
+    * @param canPinMessages Pass True, if the administrator can pin messages,
+    * supergroups only */
   def promoteChatMember(chatId: ChatId,
                         userId: Int,
                         isAnonymous: Option[Boolean] = Option.empty,
-                        canChangeInfo: Option[Boolean] = Option.empty,
+                        canManageChat: Option[Boolean] = Option.empty,
                         canPostMessages: Option[Boolean] = Option.empty,
                         canEditMessages: Option[Boolean] = Option.empty,
                         canDeleteMessages: Option[Boolean] = Option.empty,
-                        canInviteUsers: Option[Boolean] = Option.empty,
+                        canManageVoiceChats: Option[Boolean] = Option.empty,
                         canRestrictMembers: Option[Boolean] = Option.empty,
-                        canPinMessages: Option[Boolean] = Option.empty,
-                        canPromoteMembers: Option[Boolean] = Option.empty): Method[Boolean] = {
+                        canPromoteMembers: Option[Boolean] = Option.empty,
+                        canChangeInfo: Option[Boolean] = Option.empty,
+                        canInviteUsers: Option[Boolean] = Option.empty,
+                        canPinMessages: Option[Boolean] = Option.empty): Method[Boolean] = {
     val req = PromoteChatMemberReq(
       chatId,
       userId,
       isAnonymous,
-      canChangeInfo,
+      canManageChat,
       canPostMessages,
       canEditMessages,
       canDeleteMessages,
-      canInviteUsers,
+      canManageVoiceChats,
       canRestrictMembers,
-      canPinMessages,
-      canPromoteMembers
+      canPromoteMembers,
+      canChangeInfo,
+      canInviteUsers,
+      canPinMessages
     )
     MethodReq[Boolean]("promoteChatMember", req.asJson)
   }
@@ -1653,6 +1691,24 @@ trait Methods {
     MethodReq[Either[Boolean, Message]]("editMessageReplyMarkup", req.asJson)
   }
 
+  /** Use this method to create an additional invite link for a chat. The bot must be
+    * an administrator in the chat for this to work and must have the appropriate
+    * admin rights. The link can be revoked using the method revokeChatInviteLink.
+    * Returns the new invite link as ChatInviteLink object.
+    *
+    * @param chatId Unique identifier for the target chat or username of the
+    * target channel (in the format &#064;channelusername)
+    * @param expireDate Point in time (Unix timestamp) when the link will expire
+    * @param memberLimit Maximum number of users that can be members of the chat
+    * simultaneously after joining the chat via this invite link;
+    * 1-99999 */
+  def createChatInviteLink(chatId: ChatId,
+                           expireDate: Option[Int] = Option.empty,
+                           memberLimit: Option[Int] = Option.empty): Method[ChatInviteLink] = {
+    val req = CreateChatInviteLinkReq(chatId, expireDate, memberLimit)
+    MethodReq[ChatInviteLink]("createChatInviteLink", req.asJson)
+  }
+
   /** Use this method to send video files, Telegram clients support mp4 videos (other
     * formats may be sent as Document). On success, the sent Message is returned. Bots
     * can currently send video files of up to 50 MB in size, this limit may be changed
@@ -1760,6 +1816,19 @@ trait Methods {
   def deleteWebhook(dropPendingUpdates: Option[Boolean] = Option.empty): Method[Boolean] = {
     val req = DeleteWebhookReq(dropPendingUpdates)
     MethodReq[Boolean]("deleteWebhook", req.asJson)
+  }
+
+  /** Use this method to revoke an invite link created by the bot. If the primary
+    * link is revoked, a new link is automatically generated. The bot must be an
+    * administrator in the chat for this to work and must have the appropriate admin
+    * rights. Returns the revoked invite link as ChatInviteLink object.
+    *
+    * @param chatId Unique identifier of the target chat or username of the
+    * target channel (in the format &#064;channelusername)
+    * @param inviteLink The invite link to revoke */
+  def revokeChatInviteLink(chatId: ChatId, inviteLink: String): Method[ChatInviteLink] = {
+    val req = RevokeChatInviteLinkReq(chatId, inviteLink)
+    MethodReq[ChatInviteLink]("revokeChatInviteLink", req.asJson)
   }
 
   /** Use this method to close the bot instance before moving it from one local
@@ -2031,8 +2100,8 @@ trait Methods {
     * “edited_channel_post”, “callback_query”] to only receive
     * updates of these types. See Update for a complete list of
     * available update types. Specify an empty list to receive all
-    * updates regardless of type (default). If not specified, the
-    * previous setting will be used. Please note that this
+    * update types except chat_member (default). If not specified,
+    * the previous setting will be used. Please note that this
     * parameter doesn't affect updates created before the call to
     * the getUpdates, so unwanted updates may be received for a
     * short period of time. */
@@ -2078,8 +2147,8 @@ trait Methods {
     * “edited_channel_post”, “callback_query”] to only receive
     * updates of these types. See Update for a complete list of
     * available update types. Specify an empty list to receive all
-    * updates regardless of type (default). If not specified, the
-    * previous setting will be used. Please note that this
+    * update types except chat_member (default). If not specified,
+    * the previous setting will be used. Please note that this
     * parameter doesn't affect updates created before the call to
     * the setWebhook, so unwanted updates may be received for a
     * short period of time.

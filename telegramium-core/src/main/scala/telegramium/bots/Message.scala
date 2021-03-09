@@ -90,19 +90,21 @@ package telegramium.bots
   * updates, because bot can't be a member of a channel when it
   * is created. It can only be found in reply_to_message if
   * someone replies to a very first message in a channel.
+  * @param messageAutoDeleteTimerChanged Optional. Service message: auto-delete timer settings
+  * changed in the chat
   * @param migrateToChatId Optional. The group has been migrated to a supergroup with
-  * the specified identifier. This number may be greater than 32
-  * bits and some programming languages may have
-  * difficulty/silent defects in interpreting it. But it is
-  * smaller than 52 bits, so a signed 64 bit integer or
+  * the specified identifier. This number may have more than 32
+  * significant bits and some programming languages may have
+  * difficulty/silent defects in interpreting it. But it has at
+  * most 52 significant bits, so a signed 64-bit integer or
   * double-precision float type are safe for storing this
   * identifier.
   * @param migrateFromChatId Optional. The supergroup has been migrated from a group
-  * with the specified identifier. This number may be greater
-  * than 32 bits and some programming languages may have
-  * difficulty/silent defects in interpreting it. But it is
-  * smaller than 52 bits, so a signed 64 bit integer or
-  * double-precision float type are safe for storing this
+  * with the specified identifier. This number may have more
+  * than 32 significant bits and some programming languages may
+  * have difficulty/silent defects in interpreting it. But it
+  * has at most 52 significant bits, so a signed 64-bit integer
+  * or double-precision float type are safe for storing this
   * identifier.
   * @param pinnedMessage Optional. Specified message was pinned. Note that the
   * Message object in this field will not contain further
@@ -116,56 +118,65 @@ package telegramium.bots
   * @param passportData Optional. Telegram Passport data
   * @param proximityAlertTriggered Optional. Service message. A user in the chat triggered
   * another user's proximity alert while sharing Live Location.
+  * @param voiceChatStarted Optional. Service message: voice chat started
+  * @param voiceChatEnded Optional. Service message: voice chat ended
+  * @param voiceChatParticipantsInvited Optional. Service message: new participants invited to a
+  * voice chat
   * @param replyMarkup Optional. Inline keyboard attached to the message.
   * login_url buttons are represented as ordinary url buttons. */
-final case class Message(messageId: Int,
-                         from: Option[User] = Option.empty,
-                         senderChat: Option[Chat] = Option.empty,
-                         date: Int,
-                         chat: Chat,
-                         forwardFrom: Option[User] = Option.empty,
-                         forwardFromChat: Option[Chat] = Option.empty,
-                         forwardFromMessageId: Option[Int] = Option.empty,
-                         forwardSignature: Option[String] = Option.empty,
-                         forwardSenderName: Option[String] = Option.empty,
-                         forwardDate: Option[Int] = Option.empty,
-                         replyToMessage: Option[Message] = Option.empty,
-                         viaBot: Option[User] = Option.empty,
-                         editDate: Option[Int] = Option.empty,
-                         mediaGroupId: Option[String] = Option.empty,
-                         authorSignature: Option[String] = Option.empty,
-                         text: Option[String] = Option.empty,
-                         entities: List[MessageEntity] = List.empty,
-                         animation: Option[Animation] = Option.empty,
-                         audio: Option[Audio] = Option.empty,
-                         document: Option[Document] = Option.empty,
-                         photo: List[PhotoSize] = List.empty,
-                         sticker: Option[Sticker] = Option.empty,
-                         video: Option[Video] = Option.empty,
-                         videoNote: Option[VideoNote] = Option.empty,
-                         voice: Option[Voice] = Option.empty,
-                         caption: Option[String] = Option.empty,
-                         captionEntities: List[MessageEntity] = List.empty,
-                         contact: Option[Contact] = Option.empty,
-                         dice: Option[Dice] = Option.empty,
-                         game: Option[Game] = Option.empty,
-                         poll: Option[Poll] = Option.empty,
-                         venue: Option[Venue] = Option.empty,
-                         location: Option[Location] = Option.empty,
-                         newChatMembers: List[User] = List.empty,
-                         leftChatMember: Option[User] = Option.empty,
-                         newChatTitle: Option[String] = Option.empty,
-                         newChatPhoto: List[PhotoSize] = List.empty,
-                         deleteChatPhoto: Option[Boolean] = Option.empty,
-                         groupChatCreated: Option[Boolean] = Option.empty,
-                         supergroupChatCreated: Option[Boolean] = Option.empty,
-                         channelChatCreated: Option[Boolean] = Option.empty,
-                         migrateToChatId: Option[Long] = Option.empty,
-                         migrateFromChatId: Option[Long] = Option.empty,
-                         pinnedMessage: Option[Message] = Option.empty,
-                         invoice: Option[Invoice] = Option.empty,
-                         successfulPayment: Option[SuccessfulPayment] = Option.empty,
-                         connectedWebsite: Option[String] = Option.empty,
-                         passportData: Option[PassportData] = Option.empty,
-                         proximityAlertTriggered: Option[ProximityAlertTriggered] = Option.empty,
-                         replyMarkup: Option[InlineKeyboardMarkup] = Option.empty)
+final case class Message(
+    messageId: Int,
+    from: Option[User] = Option.empty,
+    senderChat: Option[Chat] = Option.empty,
+    date: Int,
+    chat: Chat,
+    forwardFrom: Option[User] = Option.empty,
+    forwardFromChat: Option[Chat] = Option.empty,
+    forwardFromMessageId: Option[Int] = Option.empty,
+    forwardSignature: Option[String] = Option.empty,
+    forwardSenderName: Option[String] = Option.empty,
+    forwardDate: Option[Int] = Option.empty,
+    replyToMessage: Option[Message] = Option.empty,
+    viaBot: Option[User] = Option.empty,
+    editDate: Option[Int] = Option.empty,
+    mediaGroupId: Option[String] = Option.empty,
+    authorSignature: Option[String] = Option.empty,
+    text: Option[String] = Option.empty,
+    entities: List[MessageEntity] = List.empty,
+    animation: Option[Animation] = Option.empty,
+    audio: Option[Audio] = Option.empty,
+    document: Option[Document] = Option.empty,
+    photo: List[PhotoSize] = List.empty,
+    sticker: Option[Sticker] = Option.empty,
+    video: Option[Video] = Option.empty,
+    videoNote: Option[VideoNote] = Option.empty,
+    voice: Option[Voice] = Option.empty,
+    caption: Option[String] = Option.empty,
+    captionEntities: List[MessageEntity] = List.empty,
+    contact: Option[Contact] = Option.empty,
+    dice: Option[Dice] = Option.empty,
+    game: Option[Game] = Option.empty,
+    poll: Option[Poll] = Option.empty,
+    venue: Option[Venue] = Option.empty,
+    location: Option[Location] = Option.empty,
+    newChatMembers: List[User] = List.empty,
+    leftChatMember: Option[User] = Option.empty,
+    newChatTitle: Option[String] = Option.empty,
+    newChatPhoto: List[PhotoSize] = List.empty,
+    deleteChatPhoto: Option[Boolean] = Option.empty,
+    groupChatCreated: Option[Boolean] = Option.empty,
+    supergroupChatCreated: Option[Boolean] = Option.empty,
+    channelChatCreated: Option[Boolean] = Option.empty,
+    messageAutoDeleteTimerChanged: Option[MessageAutoDeleteTimerChanged] = Option.empty,
+    migrateToChatId: Option[Long] = Option.empty,
+    migrateFromChatId: Option[Long] = Option.empty,
+    pinnedMessage: Option[Message] = Option.empty,
+    invoice: Option[Invoice] = Option.empty,
+    successfulPayment: Option[SuccessfulPayment] = Option.empty,
+    connectedWebsite: Option[String] = Option.empty,
+    passportData: Option[PassportData] = Option.empty,
+    proximityAlertTriggered: Option[ProximityAlertTriggered] = Option.empty,
+    voiceChatStarted: Option[VoiceChatStarted.type] = Option.empty,
+    voiceChatEnded: Option[VoiceChatEnded] = Option.empty,
+    voiceChatParticipantsInvited: Option[VoiceChatParticipantsInvited] = Option.empty,
+    replyMarkup: Option[InlineKeyboardMarkup] = Option.empty)
