@@ -735,7 +735,31 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val sendchatactionreqCodec: ReadWriter[SendChatActionReq.type] = macroRW
+  implicit lazy val sendchatactionreqCodec: ReadWriter[SendChatActionReq] = {
+    val chatIdKey = upack.Str("chatId")
+    val actionKey = upack.Str("action")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          chatIdKey -> writeMsg(x.chatId),
+          actionKey -> writeMsg(x.action)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          chatId <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          action <- m.get(actionKey).map(x => readBinary[String](x))
+        } yield {
+          SendChatActionReq(
+            chatId = chatId,
+            action = action
+          )
+        }
+        result.get
+      }
+    )
+  }
 
   implicit lazy val addstickertosetreqCodec: ReadWriter[AddStickerToSetReq] = {
     val userIdKey       = upack.Str("userId")
@@ -3529,10 +3553,27 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val sendchatactionreqEncoder: Encoder[SendChatActionReq.type] =
-    (_: SendChatActionReq.type) => ().asJson
-  implicit lazy val sendchatactionreqDecoder: Decoder[SendChatActionReq.type] = (_: HCursor) =>
-    Right(SendChatActionReq)
+  implicit lazy val sendchatactionreqEncoder: Encoder[SendChatActionReq] =
+    (x: SendChatActionReq) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson,
+          "action"  -> x.action.asJson,
+          "method"  -> "sendChatAction".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val sendchatactionreqDecoder: Decoder[SendChatActionReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId <- h.get[ChatId]("chat_id")
+        _action <- h.get[String]("action")
+      } yield {
+        SendChatActionReq(chatId = _chatId, action = _action)
+      }
+    }
+
   implicit lazy val addstickertosetreqEncoder: Encoder[AddStickerToSetReq] =
     (x: AddStickerToSetReq) => {
       Json.fromFields(
