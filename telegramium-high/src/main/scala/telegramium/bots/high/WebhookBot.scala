@@ -115,7 +115,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   def start(executionContext: ExecutionContext = ExecutionContext.global): Resource[F, Server[F]] =
     for {
       server <- createServer(executionContext)
-      _ <- Resource.liftF(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates))
+      _ <- Resource.eval(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates))
     } yield server
 
   private def setWebhook(
