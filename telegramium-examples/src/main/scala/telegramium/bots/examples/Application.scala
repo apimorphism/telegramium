@@ -1,6 +1,5 @@
 package telegramium.bots.examples
 
-import cats.effect.Blocker
 import monix.eval.Task
 import monix.execution.Scheduler
 import monix.execution.Scheduler.Implicits.global
@@ -35,7 +34,7 @@ object Application extends App {
   /**
    * @param token Bot API token got from Botfather
    */
-  private def createBotBackend(http: Client[Task], token: String, blocker: Blocker) =
+  private def createBotBackend(http: Client[Task], token: String) =
     BotApi(http, baseUrl = s"https://api.telegram.org/bot$token", blocker)
 
 }
