@@ -4,14 +4,14 @@ object Dependencies {
 
   object V {
     val monix = "3.3.0"
-    val catsCore = "2.5.0"
-    val catsEffect = "2.5.0"
+    val catsCore = "2.6.0"
+    val catsEffect = "2.4.1"
     val circe = "0.13.0"
     val http4s = "0.21.22"
     val slf4j = "1.7.30"
     val logback = "1.2.3"
     val uPickle = "0.8.0"
-    val scalatest = "3.2.7"
+    val scalatest = "3.2.8"
     val testcontainers = "0.39.3"
     val mockServerClient = "5.10.0"
     val scalamock = "5.1.0"
