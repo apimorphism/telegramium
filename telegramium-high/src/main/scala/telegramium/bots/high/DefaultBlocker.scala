@@ -2,7 +2,6 @@ package telegramium.bots.high
 
 import java.util.concurrent.Executors
 
-import cats.effect.Blocker
 
 import scala.concurrent.ExecutionContext
 
