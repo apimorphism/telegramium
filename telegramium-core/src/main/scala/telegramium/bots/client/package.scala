@@ -1533,9 +1533,11 @@ object uPickleImplicits {
     val descriptionKey               = upack.Str("description")
     val payloadKey                   = upack.Str("payload")
     val providerTokenKey             = upack.Str("providerToken")
-    val startParameterKey            = upack.Str("startParameter")
     val currencyKey                  = upack.Str("currency")
     val pricesKey                    = upack.Str("prices")
+    val maxTipAmountKey              = upack.Str("maxTipAmount")
+    val suggestedTipAmountsKey       = upack.Str("suggestedTipAmounts")
+    val startParameterKey            = upack.Str("startParameter")
     val providerDataKey              = upack.Str("providerData")
     val photoUrlKey                  = upack.Str("photoUrl")
     val photoSizeKey                 = upack.Str("photoSize")
@@ -1560,9 +1562,11 @@ object uPickleImplicits {
           descriptionKey               -> writeMsg(x.description),
           payloadKey                   -> writeMsg(x.payload),
           providerTokenKey             -> writeMsg(x.providerToken),
-          startParameterKey            -> writeMsg(x.startParameter),
           currencyKey                  -> writeMsg(x.currency),
           pricesKey                    -> writeMsg(x.prices),
+          maxTipAmountKey              -> writeMsg(x.maxTipAmount),
+          suggestedTipAmountsKey       -> writeMsg(x.suggestedTipAmounts),
+          startParameterKey            -> writeMsg(x.startParameter),
           providerDataKey              -> writeMsg(x.providerData),
           photoUrlKey                  -> writeMsg(x.photoUrl),
           photoSizeKey                 -> writeMsg(x.photoSize),
@@ -1584,22 +1588,24 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId          <- m.get(chatIdKey).map(x => readBinary[Int](x))
-          title           <- m.get(titleKey).map(x => readBinary[String](x))
-          description     <- m.get(descriptionKey).map(x => readBinary[String](x))
-          payload         <- m.get(payloadKey).map(x => readBinary[String](x))
-          providerToken   <- m.get(providerTokenKey).map(x => readBinary[String](x))
-          startParameter  <- m.get(startParameterKey).map(x => readBinary[String](x))
-          currency        <- m.get(currencyKey).map(x => readBinary[String](x))
-          prices          <- m.get(pricesKey).map(x => readBinary[List[LabeledPrice]](x))
-          providerData    <- m.get(providerDataKey).map(x => readBinary[Option[String]](x))
-          photoUrl        <- m.get(photoUrlKey).map(x => readBinary[Option[String]](x))
-          photoSize       <- m.get(photoSizeKey).map(x => readBinary[Option[Int]](x))
-          photoWidth      <- m.get(photoWidthKey).map(x => readBinary[Option[Int]](x))
-          photoHeight     <- m.get(photoHeightKey).map(x => readBinary[Option[Int]](x))
-          needName        <- m.get(needNameKey).map(x => readBinary[Option[Boolean]](x))
-          needPhoneNumber <- m.get(needPhoneNumberKey).map(x => readBinary[Option[Boolean]](x))
-          needEmail       <- m.get(needEmailKey).map(x => readBinary[Option[Boolean]](x))
+          chatId              <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          title               <- m.get(titleKey).map(x => readBinary[String](x))
+          description         <- m.get(descriptionKey).map(x => readBinary[String](x))
+          payload             <- m.get(payloadKey).map(x => readBinary[String](x))
+          providerToken       <- m.get(providerTokenKey).map(x => readBinary[String](x))
+          currency            <- m.get(currencyKey).map(x => readBinary[String](x))
+          prices              <- m.get(pricesKey).map(x => readBinary[List[LabeledPrice]](x))
+          maxTipAmount        <- m.get(maxTipAmountKey).map(x => readBinary[Option[Int]](x))
+          suggestedTipAmounts <- m.get(suggestedTipAmountsKey).map(x => readBinary[List[Int]](x))
+          startParameter      <- m.get(startParameterKey).map(x => readBinary[Option[String]](x))
+          providerData        <- m.get(providerDataKey).map(x => readBinary[Option[String]](x))
+          photoUrl            <- m.get(photoUrlKey).map(x => readBinary[Option[String]](x))
+          photoSize           <- m.get(photoSizeKey).map(x => readBinary[Option[Int]](x))
+          photoWidth          <- m.get(photoWidthKey).map(x => readBinary[Option[Int]](x))
+          photoHeight         <- m.get(photoHeightKey).map(x => readBinary[Option[Int]](x))
+          needName            <- m.get(needNameKey).map(x => readBinary[Option[Boolean]](x))
+          needPhoneNumber     <- m.get(needPhoneNumberKey).map(x => readBinary[Option[Boolean]](x))
+          needEmail           <- m.get(needEmailKey).map(x => readBinary[Option[Boolean]](x))
           needShippingAddress <- m
             .get(needShippingAddressKey)
             .map(x => readBinary[Option[Boolean]](x))
@@ -1625,9 +1631,11 @@ object uPickleImplicits {
             description = description,
             payload = payload,
             providerToken = providerToken,
-            startParameter = startParameter,
             currency = currency,
             prices = prices,
+            maxTipAmount = maxTipAmount,
+            suggestedTipAmounts = suggestedTipAmounts,
+            startParameter = startParameter,
             providerData = providerData,
             photoUrl = photoUrl,
             photoSize = photoSize,
@@ -4194,9 +4202,11 @@ object CirceImplicits {
           "description"                   -> x.description.asJson,
           "payload"                       -> x.payload.asJson,
           "provider_token"                -> x.providerToken.asJson,
-          "start_parameter"               -> x.startParameter.asJson,
           "currency"                      -> x.currency.asJson,
           "prices"                        -> x.prices.asJson,
+          "max_tip_amount"                -> x.maxTipAmount.asJson,
+          "suggested_tip_amounts"         -> x.suggestedTipAmounts.asJson,
+          "start_parameter"               -> x.startParameter.asJson,
           "provider_data"                 -> x.providerData.asJson,
           "photo_url"                     -> x.photoUrl.asJson,
           "photo_size"                    -> x.photoSize.asJson,
@@ -4221,14 +4231,16 @@ object CirceImplicits {
   implicit lazy val sendinvoicereqDecoder: Decoder[SendInvoiceReq] =
     Decoder.instance { h =>
       for {
-        _chatId                    <- h.get[Int]("chat_id")
+        _chatId                    <- h.get[ChatId]("chat_id")
         _title                     <- h.get[String]("title")
         _description               <- h.get[String]("description")
         _payload                   <- h.get[String]("payload")
         _providerToken             <- h.get[String]("provider_token")
-        _startParameter            <- h.get[String]("start_parameter")
         _currency                  <- h.get[String]("currency")
         _prices                    <- h.getOrElse[List[LabeledPrice]]("prices")(List.empty)
+        _maxTipAmount              <- h.get[Option[Int]]("max_tip_amount")
+        _suggestedTipAmounts       <- h.getOrElse[List[Int]]("suggested_tip_amounts")(List.empty)
+        _startParameter            <- h.get[Option[String]]("start_parameter")
         _providerData              <- h.get[Option[String]]("provider_data")
         _photoUrl                  <- h.get[Option[String]]("photo_url")
         _photoSize                 <- h.get[Option[Int]]("photo_size")
@@ -4252,9 +4264,11 @@ object CirceImplicits {
           description = _description,
           payload = _payload,
           providerToken = _providerToken,
-          startParameter = _startParameter,
           currency = _currency,
           prices = _prices,
+          maxTipAmount = _maxTipAmount,
+          suggestedTipAmounts = _suggestedTipAmounts,
+          startParameter = _startParameter,
           providerData = _providerData,
           photoUrl = _photoUrl,
           photoSize = _photoSize,

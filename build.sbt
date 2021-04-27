@@ -1,7 +1,7 @@
 enablePlugins(GitPlugin)
 
 ThisBuild / version := Version.mkVersion(
-  "4.51.1",
+  "4.52.0",
   git.gitCurrentBranch.value,
   git.gitHeadCommit.value,
   git.gitDescribedVersion.value,
@@ -23,7 +23,7 @@ ThisBuild / buildTimestamp    := Version.timestamp
 ThisBuild / name              := "telegramium"
 ThisBuild / organization      := "io.github.apimorphism"
 ThisBuild / homepage          := Some(url("https://github.com/apimorphism/telegramium"))
-ThisBuild / licenses          := List(("MIT", url("http://opensource.org/licenses/MIT")))
+ThisBuild / licenses          := List(("MIT", url("https://opensource.org/licenses/MIT")))
 ThisBuild / scmInfo           := Some(ScmInfo(
                                    url("https://github.com/apimorphism/telegramium"),
                                    "git@github.com:apimorphism/telegramium.git"
@@ -66,14 +66,14 @@ lazy val `telegramium-examples` = project
   )
   .settings(settings: _*)
   .settings(
-    skip in publish := true
+    publish / skip := true
   )
   .settings(libraryDependencies ++= Dependencies.telegramiumExam)
 
 lazy val telegramium = (project in file("."))
   .settings(
     name := "F[Tg]",
-    skip in publish := true,
+    publish / skip := true,
     crossScalaVersions := Nil,
   )
   .aggregate(

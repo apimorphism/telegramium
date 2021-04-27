@@ -1807,6 +1807,9 @@ object uPickleImplicits {
       {
         case x: InputVenueMessageContent =>
           upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("InputVenueMessageContent"))
+        case x: InputInvoiceMessageContent =>
+          upack.Obj(
+            writeMsg(x).obj += upack.Str("_type_") -> writeMsg("InputInvoiceMessageContent"))
         case x: InputContactMessageContent =>
           upack.Obj(
             writeMsg(x).obj += upack.Str("_type_") -> writeMsg("InputContactMessageContent"))
@@ -1821,6 +1824,8 @@ object uPickleImplicits {
         m.get(upack.Str("type"))
           .collect {
             case upack.Str("InputVenueMessageContent") => readBinary[InputVenueMessageContent](msg)
+            case upack.Str("InputInvoiceMessageContent") =>
+              readBinary[InputInvoiceMessageContent](msg)
             case upack.Str("InputContactMessageContent") =>
               readBinary[InputContactMessageContent](msg)
             case upack.Str("InputLocationMessageContent") =>
@@ -1875,6 +1880,110 @@ object uPickleImplicits {
             foursquareType = foursquareType,
             googlePlaceId = googlePlaceId,
             googlePlaceType = googlePlaceType
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val inputinvoicemessagecontentCodec: ReadWriter[InputInvoiceMessageContent] = {
+    val titleKey                     = upack.Str("title")
+    val descriptionKey               = upack.Str("description")
+    val payloadKey                   = upack.Str("payload")
+    val providerTokenKey             = upack.Str("providerToken")
+    val currencyKey                  = upack.Str("currency")
+    val pricesKey                    = upack.Str("prices")
+    val maxTipAmountKey              = upack.Str("maxTipAmount")
+    val suggestedTipAmountsKey       = upack.Str("suggestedTipAmounts")
+    val providerDataKey              = upack.Str("providerData")
+    val photoUrlKey                  = upack.Str("photoUrl")
+    val photoSizeKey                 = upack.Str("photoSize")
+    val photoWidthKey                = upack.Str("photoWidth")
+    val photoHeightKey               = upack.Str("photoHeight")
+    val needNameKey                  = upack.Str("needName")
+    val needPhoneNumberKey           = upack.Str("needPhoneNumber")
+    val needEmailKey                 = upack.Str("needEmail")
+    val needShippingAddressKey       = upack.Str("needShippingAddress")
+    val sendPhoneNumberToProviderKey = upack.Str("sendPhoneNumberToProvider")
+    val sendEmailToProviderKey       = upack.Str("sendEmailToProvider")
+    val isFlexibleKey                = upack.Str("isFlexible")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          titleKey                     -> writeMsg(x.title),
+          descriptionKey               -> writeMsg(x.description),
+          payloadKey                   -> writeMsg(x.payload),
+          providerTokenKey             -> writeMsg(x.providerToken),
+          currencyKey                  -> writeMsg(x.currency),
+          pricesKey                    -> writeMsg(x.prices),
+          maxTipAmountKey              -> writeMsg(x.maxTipAmount),
+          suggestedTipAmountsKey       -> writeMsg(x.suggestedTipAmounts),
+          providerDataKey              -> writeMsg(x.providerData),
+          photoUrlKey                  -> writeMsg(x.photoUrl),
+          photoSizeKey                 -> writeMsg(x.photoSize),
+          photoWidthKey                -> writeMsg(x.photoWidth),
+          photoHeightKey               -> writeMsg(x.photoHeight),
+          needNameKey                  -> writeMsg(x.needName),
+          needPhoneNumberKey           -> writeMsg(x.needPhoneNumber),
+          needEmailKey                 -> writeMsg(x.needEmail),
+          needShippingAddressKey       -> writeMsg(x.needShippingAddress),
+          sendPhoneNumberToProviderKey -> writeMsg(x.sendPhoneNumberToProvider),
+          sendEmailToProviderKey       -> writeMsg(x.sendEmailToProvider),
+          isFlexibleKey                -> writeMsg(x.isFlexible)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          title               <- m.get(titleKey).map(x => readBinary[String](x))
+          description         <- m.get(descriptionKey).map(x => readBinary[String](x))
+          payload             <- m.get(payloadKey).map(x => readBinary[String](x))
+          providerToken       <- m.get(providerTokenKey).map(x => readBinary[String](x))
+          currency            <- m.get(currencyKey).map(x => readBinary[String](x))
+          prices              <- m.get(pricesKey).map(x => readBinary[List[LabeledPrice]](x))
+          maxTipAmount        <- m.get(maxTipAmountKey).map(x => readBinary[Option[Int]](x))
+          suggestedTipAmounts <- m.get(suggestedTipAmountsKey).map(x => readBinary[List[Int]](x))
+          providerData        <- m.get(providerDataKey).map(x => readBinary[Option[String]](x))
+          photoUrl            <- m.get(photoUrlKey).map(x => readBinary[Option[String]](x))
+          photoSize           <- m.get(photoSizeKey).map(x => readBinary[Option[Int]](x))
+          photoWidth          <- m.get(photoWidthKey).map(x => readBinary[Option[Int]](x))
+          photoHeight         <- m.get(photoHeightKey).map(x => readBinary[Option[Int]](x))
+          needName            <- m.get(needNameKey).map(x => readBinary[Option[Boolean]](x))
+          needPhoneNumber     <- m.get(needPhoneNumberKey).map(x => readBinary[Option[Boolean]](x))
+          needEmail           <- m.get(needEmailKey).map(x => readBinary[Option[Boolean]](x))
+          needShippingAddress <- m
+            .get(needShippingAddressKey)
+            .map(x => readBinary[Option[Boolean]](x))
+          sendPhoneNumberToProvider <- m
+            .get(sendPhoneNumberToProviderKey)
+            .map(x => readBinary[Option[Boolean]](x))
+          sendEmailToProvider <- m
+            .get(sendEmailToProviderKey)
+            .map(x => readBinary[Option[Boolean]](x))
+          isFlexible <- m.get(isFlexibleKey).map(x => readBinary[Option[Boolean]](x))
+        } yield {
+          InputInvoiceMessageContent(
+            title = title,
+            description = description,
+            payload = payload,
+            providerToken = providerToken,
+            currency = currency,
+            prices = prices,
+            maxTipAmount = maxTipAmount,
+            suggestedTipAmounts = suggestedTipAmounts,
+            providerData = providerData,
+            photoUrl = photoUrl,
+            photoSize = photoSize,
+            photoWidth = photoWidth,
+            photoHeight = photoHeight,
+            needName = needName,
+            needPhoneNumber = needPhoneNumber,
+            needEmail = needEmail,
+            needShippingAddress = needShippingAddress,
+            sendPhoneNumberToProvider = sendPhoneNumberToProvider,
+            sendEmailToProvider = sendEmailToProvider,
+            isFlexible = isFlexible
           )
         }
         result.get
@@ -4293,6 +4402,28 @@ object uPickleImplicits {
     )
   }
 
+  implicit lazy val voicechatscheduledCodec: ReadWriter[VoiceChatScheduled] = {
+    val startDateKey = upack.Str("startDate")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          startDateKey -> writeMsg(x.startDate)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          startDate <- m.get(startDateKey).map(x => readBinary[Int](x))
+        } yield {
+          VoiceChatScheduled(
+            startDate = startDate
+          )
+        }
+        result.get
+      }
+    )
+  }
+
   implicit lazy val invoiceCodec: ReadWriter[Invoice] = {
     val titleKey          = upack.Str("title")
     val descriptionKey    = upack.Str("description")
@@ -4368,17 +4499,19 @@ object uPickleImplicits {
   implicit lazy val inlinequeryCodec: ReadWriter[InlineQuery] = {
     val idKey       = upack.Str("id")
     val fromKey     = upack.Str("from")
-    val locationKey = upack.Str("location")
     val queryKey    = upack.Str("query")
     val offsetKey   = upack.Str("offset")
+    val chatTypeKey = upack.Str("chatType")
+    val locationKey = upack.Str("location")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
           idKey       -> writeMsg(x.id),
           fromKey     -> writeMsg(x.from),
-          locationKey -> writeMsg(x.location),
           queryKey    -> writeMsg(x.query),
-          offsetKey   -> writeMsg(x.offset)
+          offsetKey   -> writeMsg(x.offset),
+          chatTypeKey -> writeMsg(x.chatType),
+          locationKey -> writeMsg(x.location)
         )
       },
       msg => {
@@ -4386,16 +4519,18 @@ object uPickleImplicits {
         val result = for {
           id       <- m.get(idKey).map(x => readBinary[String](x))
           from     <- m.get(fromKey).map(x => readBinary[User](x))
-          location <- m.get(locationKey).map(x => readBinary[Option[Location]](x))
           query    <- m.get(queryKey).map(x => readBinary[String](x))
           offset   <- m.get(offsetKey).map(x => readBinary[String](x))
+          chatType <- m.get(chatTypeKey).map(x => readBinary[Option[String]](x))
+          location <- m.get(locationKey).map(x => readBinary[Option[Location]](x))
         } yield {
           InlineQuery(
             id = id,
             from = from,
-            location = location,
             query = query,
-            offset = offset
+            offset = offset,
+            chatType = chatType,
+            location = location
           )
         }
         result.get
@@ -4629,6 +4764,7 @@ object uPickleImplicits {
     val connectedWebsiteKey              = upack.Str("connectedWebsite")
     val passportDataKey                  = upack.Str("passportData")
     val proximityAlertTriggeredKey       = upack.Str("proximityAlertTriggered")
+    val voiceChatScheduledKey            = upack.Str("voiceChatScheduled")
     val voiceChatStartedKey              = upack.Str("voiceChatStarted")
     val voiceChatEndedKey                = upack.Str("voiceChatEnded")
     val voiceChatParticipantsInvitedKey  = upack.Str("voiceChatParticipantsInvited")
@@ -4687,6 +4823,7 @@ object uPickleImplicits {
           connectedWebsiteKey              -> writeMsg(x.connectedWebsite),
           passportDataKey                  -> writeMsg(x.passportData),
           proximityAlertTriggeredKey       -> writeMsg(x.proximityAlertTriggered),
+          voiceChatScheduledKey            -> writeMsg(x.voiceChatScheduled),
           voiceChatStartedKey              -> writeMsg(x.voiceChatStarted),
           voiceChatEndedKey                -> writeMsg(x.voiceChatEnded),
           voiceChatParticipantsInvitedKey  -> writeMsg(x.voiceChatParticipantsInvited),
@@ -4759,6 +4896,9 @@ object uPickleImplicits {
           proximityAlertTriggered <- m
             .get(proximityAlertTriggeredKey)
             .map(x => readBinary[Option[ProximityAlertTriggered]](x))
+          voiceChatScheduled <- m
+            .get(voiceChatScheduledKey)
+            .map(x => readBinary[Option[VoiceChatScheduled]](x))
           voiceChatStarted <- m
             .get(voiceChatStartedKey)
             .map(x => readBinary[Option[VoiceChatStarted.type]](x))
@@ -4820,6 +4960,7 @@ object uPickleImplicits {
             connectedWebsite = connectedWebsite,
             passportData = passportData,
             proximityAlertTriggered = proximityAlertTriggered,
+            voiceChatScheduled = voiceChatScheduled,
             voiceChatStarted = voiceChatStarted,
             voiceChatEnded = voiceChatEnded,
             voiceChatParticipantsInvited = voiceChatParticipantsInvited,
@@ -6814,6 +6955,7 @@ object CirceImplicits {
 
   implicit lazy val inputmessagecontentEncoder: Encoder[InputMessageContent] = {
     case x: InputVenueMessageContent    => x.asJson
+    case x: InputInvoiceMessageContent  => x.asJson
     case x: InputContactMessageContent  => x.asJson
     case x: InputLocationMessageContent => x.asJson
     case x: InputTextMessageContent     => x.asJson
@@ -6821,6 +6963,7 @@ object CirceImplicits {
   implicit lazy val inputmessagecontentDecoder: Decoder[InputMessageContent] = {
     List[Decoder[InputMessageContent]](
       inputvenuemessagecontentDecoder.widen,
+      inputinvoicemessagecontentDecoder.widen,
       inputcontactmessagecontentDecoder.widen,
       inputlocationmessagecontentDecoder.widen,
       inputtextmessagecontentDecoder.widen
@@ -6864,6 +7007,83 @@ object CirceImplicits {
           foursquareType = _foursquareType,
           googlePlaceId = _googlePlaceId,
           googlePlaceType = _googlePlaceType
+        )
+      }
+    }
+
+  implicit lazy val inputinvoicemessagecontentEncoder: Encoder[InputInvoiceMessageContent] =
+    (x: InputInvoiceMessageContent) => {
+      Json.fromFields(
+        List(
+          "title"                         -> x.title.asJson,
+          "description"                   -> x.description.asJson,
+          "payload"                       -> x.payload.asJson,
+          "provider_token"                -> x.providerToken.asJson,
+          "currency"                      -> x.currency.asJson,
+          "prices"                        -> x.prices.asJson,
+          "max_tip_amount"                -> x.maxTipAmount.asJson,
+          "suggested_tip_amounts"         -> x.suggestedTipAmounts.asJson,
+          "provider_data"                 -> x.providerData.asJson,
+          "photo_url"                     -> x.photoUrl.asJson,
+          "photo_size"                    -> x.photoSize.asJson,
+          "photo_width"                   -> x.photoWidth.asJson,
+          "photo_height"                  -> x.photoHeight.asJson,
+          "need_name"                     -> x.needName.asJson,
+          "need_phone_number"             -> x.needPhoneNumber.asJson,
+          "need_email"                    -> x.needEmail.asJson,
+          "need_shipping_address"         -> x.needShippingAddress.asJson,
+          "send_phone_number_to_provider" -> x.sendPhoneNumberToProvider.asJson,
+          "send_email_to_provider"        -> x.sendEmailToProvider.asJson,
+          "is_flexible"                   -> x.isFlexible.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputinvoicemessagecontentDecoder: Decoder[InputInvoiceMessageContent] =
+    Decoder.instance { h =>
+      for {
+        _title                     <- h.get[String]("title")
+        _description               <- h.get[String]("description")
+        _payload                   <- h.get[String]("payload")
+        _providerToken             <- h.get[String]("provider_token")
+        _currency                  <- h.get[String]("currency")
+        _prices                    <- h.getOrElse[List[LabeledPrice]]("prices")(List.empty)
+        _maxTipAmount              <- h.get[Option[Int]]("max_tip_amount")
+        _suggestedTipAmounts       <- h.getOrElse[List[Int]]("suggested_tip_amounts")(List.empty)
+        _providerData              <- h.get[Option[String]]("provider_data")
+        _photoUrl                  <- h.get[Option[String]]("photo_url")
+        _photoSize                 <- h.get[Option[Int]]("photo_size")
+        _photoWidth                <- h.get[Option[Int]]("photo_width")
+        _photoHeight               <- h.get[Option[Int]]("photo_height")
+        _needName                  <- h.get[Option[Boolean]]("need_name")
+        _needPhoneNumber           <- h.get[Option[Boolean]]("need_phone_number")
+        _needEmail                 <- h.get[Option[Boolean]]("need_email")
+        _needShippingAddress       <- h.get[Option[Boolean]]("need_shipping_address")
+        _sendPhoneNumberToProvider <- h.get[Option[Boolean]]("send_phone_number_to_provider")
+        _sendEmailToProvider       <- h.get[Option[Boolean]]("send_email_to_provider")
+        _isFlexible                <- h.get[Option[Boolean]]("is_flexible")
+      } yield {
+        InputInvoiceMessageContent(
+          title = _title,
+          description = _description,
+          payload = _payload,
+          providerToken = _providerToken,
+          currency = _currency,
+          prices = _prices,
+          maxTipAmount = _maxTipAmount,
+          suggestedTipAmounts = _suggestedTipAmounts,
+          providerData = _providerData,
+          photoUrl = _photoUrl,
+          photoSize = _photoSize,
+          photoWidth = _photoWidth,
+          photoHeight = _photoHeight,
+          needName = _needName,
+          needPhoneNumber = _needPhoneNumber,
+          needEmail = _needEmail,
+          needShippingAddress = _needShippingAddress,
+          sendPhoneNumberToProvider = _sendPhoneNumberToProvider,
+          sendEmailToProvider = _sendEmailToProvider,
+          isFlexible = _isFlexible
         )
       }
     }
@@ -8744,6 +8964,24 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val voicechatscheduledEncoder: Encoder[VoiceChatScheduled] =
+    (x: VoiceChatScheduled) => {
+      Json.fromFields(
+        List(
+          "start_date" -> x.startDate.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val voicechatscheduledDecoder: Decoder[VoiceChatScheduled] =
+    Decoder.instance { h =>
+      for {
+        _startDate <- h.get[Int]("start_date")
+      } yield {
+        VoiceChatScheduled(startDate = _startDate)
+      }
+    }
+
   implicit lazy val invoiceEncoder: Encoder[Invoice] =
     (x: Invoice) => {
       Json.fromFields(
@@ -8805,11 +9043,12 @@ object CirceImplicits {
     (x: InlineQuery) => {
       Json.fromFields(
         List(
-          "id"       -> x.id.asJson,
-          "from"     -> x.from.asJson,
-          "location" -> x.location.asJson,
-          "query"    -> x.query.asJson,
-          "offset"   -> x.offset.asJson
+          "id"        -> x.id.asJson,
+          "from"      -> x.from.asJson,
+          "query"     -> x.query.asJson,
+          "offset"    -> x.offset.asJson,
+          "chat_type" -> x.chatType.asJson,
+          "location"  -> x.location.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -8819,11 +9058,17 @@ object CirceImplicits {
       for {
         _id       <- h.get[String]("id")
         _from     <- h.get[User]("from")
-        _location <- h.get[Option[Location]]("location")
         _query    <- h.get[String]("query")
         _offset   <- h.get[String]("offset")
+        _chatType <- h.get[Option[String]]("chat_type")
+        _location <- h.get[Option[Location]]("location")
       } yield {
-        InlineQuery(id = _id, from = _from, location = _location, query = _query, offset = _offset)
+        InlineQuery(id = _id,
+                    from = _from,
+                    query = _query,
+                    offset = _offset,
+                    chatType = _chatType,
+                    location = _location)
       }
     }
 
@@ -9020,6 +9265,7 @@ object CirceImplicits {
           "connected_website"                 -> x.connectedWebsite.asJson,
           "passport_data"                     -> x.passportData.asJson,
           "proximity_alert_triggered"         -> x.proximityAlertTriggered.asJson,
+          "voice_chat_scheduled"              -> x.voiceChatScheduled.asJson,
           "voice_chat_started"                -> x.voiceChatStarted.asJson,
           "voice_chat_ended"                  -> x.voiceChatEnded.asJson,
           "voice_chat_participants_invited"   -> x.voiceChatParticipantsInvited.asJson,
@@ -9084,8 +9330,9 @@ object CirceImplicits {
         _passportData      <- h.get[Option[PassportData]]("passport_data")
         _proximityAlertTriggered <- h.get[Option[ProximityAlertTriggered]](
           "proximity_alert_triggered")
-        _voiceChatStarted <- h.get[Option[VoiceChatStarted.type]]("voice_chat_started")
-        _voiceChatEnded   <- h.get[Option[VoiceChatEnded]]("voice_chat_ended")
+        _voiceChatScheduled <- h.get[Option[VoiceChatScheduled]]("voice_chat_scheduled")
+        _voiceChatStarted   <- h.get[Option[VoiceChatStarted.type]]("voice_chat_started")
+        _voiceChatEnded     <- h.get[Option[VoiceChatEnded]]("voice_chat_ended")
         _voiceChatParticipantsInvited <- h.get[Option[VoiceChatParticipantsInvited]](
           "voice_chat_participants_invited")
         _replyMarkup <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
@@ -9142,6 +9389,7 @@ object CirceImplicits {
           connectedWebsite = _connectedWebsite,
           passportData = _passportData,
           proximityAlertTriggered = _proximityAlertTriggered,
+          voiceChatScheduled = _voiceChatScheduled,
           voiceChatStarted = _voiceChatStarted,
           voiceChatEnded = _voiceChatEnded,
           voiceChatParticipantsInvited = _voiceChatParticipantsInvited,

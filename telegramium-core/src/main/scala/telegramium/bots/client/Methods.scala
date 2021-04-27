@@ -888,9 +888,10 @@ trait Methods {
     MethodReq[Boolean]("setChatTitle", req.asJson)
   }
 
-  /** Use this method to copy messages of any kind. The method is analogous to the
-    * method forwardMessage, but the copied message doesn't have a link to the
-    * original message. Returns the MessageId of the sent message on success.
+  /** Use this method to copy messages of any kind. Service messages and invoice
+    * messages can't be copied. The method is analogous to the method forwardMessage,
+    * but the copied message doesn't have a link to the original message. Returns the
+    * MessageId of the sent message on success.
     *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
@@ -1039,18 +1040,35 @@ trait Methods {
 
   /** Use this method to send invoices. On success, the sent Message is returned.
     *
-    * @param chatId Unique identifier for the target private chat
+    * @param chatId Unique identifier for the target chat or username of the
+    * target channel (in the format &#064;channelusername)
     * @param title Product name, 1-32 characters
     * @param description Product description, 1-255 characters
     * @param payload Bot-defined invoice payload, 1-128 bytes. This will not be
     * displayed to the user, use for your internal processes.
     * @param providerToken Payments provider token, obtained via Botfather
-    * @param startParameter Unique deep-linking parameter that can be used to generate
-    * this invoice when used as a start parameter
     * @param currency Three-letter ISO 4217 currency code, see more on currencies
     * @param prices Price breakdown, a JSON-serialized list of components (e.g.
     * product price, tax, discount, delivery cost, delivery tax,
     * bonus, etc.)
+    * @param maxTipAmount The maximum accepted amount for tips in the smallest units
+    * of the currency (integer, not float/double). For example,
+    * for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See
+    * the exp parameter in currencies.json, it shows the number of
+    * digits past the decimal point for each currency (2 for the
+    * majority of currencies). Defaults to 0
+    * @param suggestedTipAmounts A JSON-serialized array of suggested amounts of tips in the
+    * smallest units of the currency (integer, not float/double).
+    * At most 4 suggested tip amounts can be specified. The
+    * suggested tip amounts must be positive, passed in a strictly
+    * increased order and must not exceed max_tip_amount.
+    * @param startParameter Unique deep-linking parameter. If left empty, forwarded
+    * copies of the sent message will have a Pay button, allowing
+    * multiple users to pay directly from the forwarded message,
+    * using the same invoice. If non-empty, forwarded copies of
+    * the sent message will have a URL button with a deep link to
+    * the bot (instead of a Pay button), with the value used as
+    * the start parameter
     * @param providerData A JSON-serialized data about the invoice, which will be
     * shared with the payment provider. A detailed description of
     * required fields should be provided by the payment provider.
@@ -1082,14 +1100,16 @@ trait Methods {
     * @param replyMarkup A JSON-serialized object for an inline keyboard. If empty,
     * one 'Pay total price' button will be shown. If not empty,
     * the first button must be a Pay button. */
-  def sendInvoice(chatId: Int,
+  def sendInvoice(chatId: ChatId,
                   title: String,
                   description: String,
                   payload: String,
                   providerToken: String,
-                  startParameter: String,
                   currency: String,
                   prices: List[LabeledPrice] = List.empty,
+                  maxTipAmount: Option[Int] = Option.empty,
+                  suggestedTipAmounts: List[Int] = List.empty,
+                  startParameter: Option[String] = Option.empty,
                   providerData: Option[String] = Option.empty,
                   photoUrl: Option[String] = Option.empty,
                   photoSize: Option[Int] = Option.empty,
@@ -1112,9 +1132,11 @@ trait Methods {
       description,
       payload,
       providerToken,
-      startParameter,
       currency,
       prices,
+      maxTipAmount,
+      suggestedTipAmounts,
+      startParameter,
       providerData,
       photoUrl,
       photoSize,
@@ -1395,8 +1417,8 @@ trait Methods {
     MethodReq[User]("getMe", req.asJson)
   }
 
-  /** Use this method to forward messages of any kind. On success, the sent Message
-    * is returned.
+  /** Use this method to forward messages of any kind. Service messages can't be
+    * forwarded. On success, the sent Message is returned.
     *
     * @param chatId Unique identifier for the target chat or username of the
     * target channel (in the format &#064;channelusername)
@@ -1530,8 +1552,7 @@ trait Methods {
     * users and can pin messages, channels only
     * @param canDeleteMessages Pass True, if the administrator can delete messages of
     * other users
-    * @param canManageVoiceChats Pass True, if the administrator can manage voice chats,
-    * supergroups only
+    * @param canManageVoiceChats Pass True, if the administrator can manage voice chats
     * @param canRestrictMembers Pass True, if the administrator can restrict, ban or unban
     * chat members
     * @param canPromoteMembers Pass True, if the administrator can add new administrators

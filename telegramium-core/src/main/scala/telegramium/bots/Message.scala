@@ -118,6 +118,7 @@ package telegramium.bots
   * @param passportData Optional. Telegram Passport data
   * @param proximityAlertTriggered Optional. Service message. A user in the chat triggered
   * another user's proximity alert while sharing Live Location.
+  * @param voiceChatScheduled Optional. Service message: voice chat scheduled
   * @param voiceChatStarted Optional. Service message: voice chat started
   * @param voiceChatEnded Optional. Service message: voice chat ended
   * @param voiceChatParticipantsInvited Optional. Service message: new participants invited to a
@@ -176,6 +177,7 @@ final case class Message(
     connectedWebsite: Option[String] = Option.empty,
     passportData: Option[PassportData] = Option.empty,
     proximityAlertTriggered: Option[ProximityAlertTriggered] = Option.empty,
+    voiceChatScheduled: Option[VoiceChatScheduled] = Option.empty,
     voiceChatStarted: Option[VoiceChatStarted.type] = Option.empty,
     voiceChatEnded: Option[VoiceChatEnded] = Option.empty,
     voiceChatParticipantsInvited: Option[VoiceChatParticipantsInvited] = Option.empty,

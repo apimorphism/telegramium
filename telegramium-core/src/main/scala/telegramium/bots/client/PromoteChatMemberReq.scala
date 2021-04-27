@@ -18,8 +18,7 @@ import telegramium.bots.ChatId
   * users and can pin messages, channels only
   * @param canDeleteMessages Pass True, if the administrator can delete messages of
   * other users
-  * @param canManageVoiceChats Pass True, if the administrator can manage voice chats,
-  * supergroups only
+  * @param canManageVoiceChats Pass True, if the administrator can manage voice chats
   * @param canRestrictMembers Pass True, if the administrator can restrict, ban or unban
   * chat members
   * @param canPromoteMembers Pass True, if the administrator can add new administrators
