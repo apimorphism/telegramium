@@ -15,8 +15,6 @@ import telegramium.bots.ChatInviteLink
 import telegramium.bots.User
 import telegramium.bots.ChatMember
 import telegramium.bots.BotCommand
-import telegramium.bots.Audio
-import telegramium.bots.Document
 import telegramium.bots.Chat
 import telegramium.bots.Update
 import telegramium.bots.StickerSet
@@ -1504,7 +1502,7 @@ trait Methods {
                 disableNotification: Option[Boolean] = Option.empty,
                 replyToMessageId: Option[Int] = Option.empty,
                 allowSendingWithoutReply: Option[Boolean] = Option.empty,
-                replyMarkup: Option[KeyboardMarkup] = Option.empty): Method[Audio] = {
+                replyMarkup: Option[KeyboardMarkup] = Option.empty): Method[Message] = {
     val req = SendVoiceReq(chatId,
                            voice,
                            caption,
@@ -1515,7 +1513,7 @@ trait Methods {
                            replyToMessageId,
                            allowSendingWithoutReply,
                            replyMarkup)
-    MethodReq[Audio]("sendVoice", req.asJson, Map("voice" -> Option(voice)).collect {
+    MethodReq[Message]("sendVoice", req.asJson, Map("voice" -> Option(voice)).collect {
       case (k, Some(v)) => k -> v
     })
   }
@@ -1792,7 +1790,7 @@ trait Methods {
                 disableNotification: Option[Boolean] = Option.empty,
                 replyToMessageId: Option[Int] = Option.empty,
                 allowSendingWithoutReply: Option[Boolean] = Option.empty,
-                replyMarkup: Option[KeyboardMarkup] = Option.empty): Method[Document] = {
+                replyMarkup: Option[KeyboardMarkup] = Option.empty): Method[Message] = {
     val req = SendVideoReq(
       chatId,
       video,
@@ -1809,11 +1807,11 @@ trait Methods {
       allowSendingWithoutReply,
       replyMarkup
     )
-    MethodReq[Document]("sendVideo",
-                        req.asJson,
-                        Map("video" -> Option(video), "thumb" -> thumb).collect {
-                          case (k, Some(v)) => k -> v
-                        })
+    MethodReq[Message]("sendVideo",
+                       req.asJson,
+                       Map("video" -> Option(video), "thumb" -> thumb).collect {
+                         case (k, Some(v)) => k -> v
+                       })
   }
 
   /** Use this method to set a new group sticker set for a supergroup. The bot must
