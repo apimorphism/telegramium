@@ -114,6 +114,7 @@ You may also want to have a look at these projects:
 * [johnspade/s10ns_bot](https://github.com/johnspade/s10ns_bot): Subscription Management Telegram Bot
 * [johnspade/taskobot-scala](https://github.com/johnspade/taskobot-scala): Taskobot is a task collaboration inline Telegram bot
 * [b1nd/stonks](https://github.com/b1nd/stonks): Investment Portfolio Calculation Bot
+* [benkio/myTelegramBot](https://github.com/benkio/myTelegramBot)
 
 ### Note for Yan
 
