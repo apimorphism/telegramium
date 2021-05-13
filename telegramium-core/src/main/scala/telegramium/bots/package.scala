@@ -2660,7 +2660,7 @@ object uPickleImplicits {
         val result = for {
           offset   <- m.get(offsetKey).map(x => readBinary[Int](x))
           length   <- m.get(lengthKey).map(x => readBinary[Int](x))
-          language <- m.get(languageKey).map(x => readBinary[String](x))
+          language <- m.get(languageKey).map(x => readBinary[Option[String]](x))
         } yield {
           PreMessageEntity(
             offset = offset,
@@ -7614,7 +7614,7 @@ object CirceImplicits {
       for {
         _offset   <- h.get[Int]("offset")
         _length   <- h.get[Int]("length")
-        _language <- h.get[String]("language")
+        _language <- h.get[Option[String]]("language")
       } yield {
         PreMessageEntity(offset = _offset, length = _length, language = _language)
       }

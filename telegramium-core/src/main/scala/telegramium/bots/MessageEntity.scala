@@ -49,8 +49,9 @@ final case class BoldMessageEntity(offset: Int, length: Int) extends MessageEnti
   *
   * @param offset Offset in UTF-16 code units to the start of the entity
   * @param length Length of the entity in UTF-16 code units
-  * @param language the programming language of the entity text */
-final case class PreMessageEntity(offset: Int, length: Int, language: String) extends MessageEntity
+  * @param language Optional, the programming language of the entity text */
+final case class PreMessageEntity(offset: Int, length: Int, language: Option[String] = Option.empty)
+    extends MessageEntity
 
 /** italic
   *
