@@ -4,7 +4,7 @@ import Keys._
 object Compiler {
   val settings = Seq(
     scalacOptions ++= options,
-    addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.3" cross CrossVersion.full)
+    addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.12.0" cross CrossVersion.full)
   )
 
   val options = Seq(
