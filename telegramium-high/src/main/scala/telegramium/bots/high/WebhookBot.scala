@@ -1,6 +1,6 @@
 package telegramium.bots.high
 
-import cats.effect.{Blocker, ConcurrentEffect, ContextShift, Resource, Sync, Timer}
+import cats.effect.{ConcurrentEffect, Resource, Sync}
 import cats.syntax.apply._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
@@ -17,6 +17,7 @@ import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormDa
 import telegramium.bots.{CallbackQuery, ChatMemberUpdated, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
 import scala.concurrent.ExecutionContext
+import cats.effect.Temporal
 
 /**
  * @param url            HTTPS url to send updates to. Use an empty string to remove webhook integration
@@ -49,7 +50,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty,
   host: String = org.http4s.server.defaults.Host
-)(implicit syncF: Sync[F], timer: Timer[F]) extends Methods {
+)(implicit syncF: Sync[F], timer: Temporal[F]) extends Methods {
 
   private val BotPath = Path(if (path.startsWith("/")) path else "/" + path)
 
