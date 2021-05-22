@@ -15,7 +15,7 @@ object Dependencies {
     val testcontainers = "0.39.4"
     val mockServerClient = "5.10.0"
     val scalamock = "5.1.0"
-    val log4cats = "1.3.0"
+    val log4cats = "1.3.1"
   }
 
   val monix = "io.monix" %% "monix" % V.monix
