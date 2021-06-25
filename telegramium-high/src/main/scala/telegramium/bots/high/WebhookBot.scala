@@ -12,7 +12,7 @@ import org.http4s.dsl.impl.Path
 import org.http4s.implicits._
 import org.http4s.server.Server
 import org.http4s.server.blaze.BlazeServerBuilder
-import org.http4s.{EntityDecoder , HttpRoutes}
+import org.http4s.{EntityDecoder, HttpRoutes}
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.{Method, Methods}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
