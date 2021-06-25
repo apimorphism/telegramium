@@ -50,7 +50,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   ipAddress: Option[String] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty,
-  host: String = org.http4s.server.defaults.IPv4Host
+  host: String = org.http4s.server.defaults.Host
 )(implicit syncF: Sync[F], timer: Timer[F]) extends Methods {
 
   private val BotPath = Path(if (path.startsWith("/")) path else "/" + path)
