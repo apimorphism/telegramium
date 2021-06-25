@@ -115,10 +115,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
    * @param executionContext Execution Context the underlying blaze futures will be executed upon.
    */
   def start(executionContext: ExecutionContext = ExecutionContext.global): Resource[F, Server[F]] =
-    for {
-      server <- createServer(executionContext)
-      _ <- setWebhookResource()
-    } yield server
+    createServer(executionContext) <* setWebhookResource()
 
   private def setWebhookResource(): Resource[F, Unit] = Resource.eval(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates))
   private def setWebhook(
@@ -169,9 +166,6 @@ object WebhookBot {
     }
     val httpRoutes: HttpRoutes[F] = bots.foldLeft(HttpRoutes.empty[F]) { case (hrs, bot) => hrs <+> bot.routes() }
     val serverResource: Resource[F, Server[F]] = BlazeServerBuilder[F](executionContext).bindHttp(port, host).withHttpApp(httpRoutes.orNotFound).resource
-    for {
-      server <- serverResource
-      _ <- setWebhooksResource
-    } yield server
+    serverResource <* setWebhooksResource
   }
 }
