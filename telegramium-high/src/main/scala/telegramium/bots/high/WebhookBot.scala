@@ -60,7 +60,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   ipAddress: Option[String] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty,
-  host: String = org.http4s.server.defaults.Host
+  host: String = org.http4s.server.defaults.IPv4Host
 )(implicit syncF: Sync[F], timer: Timer[F])
     extends Methods {
 
