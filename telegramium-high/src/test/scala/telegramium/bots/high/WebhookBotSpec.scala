@@ -10,7 +10,23 @@ import org.scalatest.matchers.should.Matchers
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.CirceImplicits._
 import telegramium.bots.client.{MethodReq, SendMessageReq}
-import telegramium.bots.{CallbackQuery, Chat, ChatIntId, ChatMember, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingAddress, ShippingQuery, Update, User}
+import telegramium.bots.{
+  CallbackQuery,
+  Chat,
+  ChatIntId,
+  ChatMember,
+  ChatMemberUpdated,
+  ChosenInlineResult,
+  InlineQuery,
+  Message,
+  Poll,
+  PollAnswer,
+  PreCheckoutQuery,
+  ShippingAddress,
+  ShippingQuery,
+  Update,
+  User
+}
 
 class WebhookBotSpec extends AnyFreeSpec with MockFactory with Matchers with OptionValues {
   private val testUpdate = Update(updateId = 0)
@@ -84,7 +100,9 @@ class WebhookBotSpec extends AnyFreeSpec with MockFactory with Matchers with Opt
 
     "shipping query" in new Test {
       verifyOnUpdate(
-        testUpdate.copy(shippingQuery = Some(ShippingQuery("0", testUser, "", ShippingAddress("", "", "", "", "", "")))),
+        testUpdate.copy(shippingQuery =
+          Some(ShippingQuery("0", testUser, "", ShippingAddress("", "", "", "", "", "")))
+        ),
         expectedSentMessage = "onShippingQuery",
         expectedReply = "onShippingQueryReply"
       )
@@ -100,15 +118,19 @@ class WebhookBotSpec extends AnyFreeSpec with MockFactory with Matchers with Opt
 
     "poll" in new Test {
       verifyOnUpdate(
-        testUpdate.copy(poll = Some(Poll(
-          "0",
-          "",
-          totalVoterCount = 0,
-          isClosed = false,
-          isAnonymous = false,
-          `type` = "",
-          allowsMultipleAnswers = false
-        ))),
+        testUpdate.copy(poll =
+          Some(
+            Poll(
+              "0",
+              "",
+              totalVoterCount = 0,
+              isClosed = false,
+              isAnonymous = false,
+              `type` = "",
+              allowsMultipleAnswers = false
+            )
+          )
+        ),
         expectedSentMessage = "onPoll",
         expectedReply = "onPollReply"
       )

@@ -22,10 +22,11 @@ class BotApi[F[_]: Sync: ContextShift: Logger](
   http: Client[F],
   baseUrl: String,
   blocker: Blocker
-)(implicit F: MonadError[F, Throwable]) extends Api[F] {
+)(implicit F: MonadError[F, Throwable])
+    extends Api[F] {
   override def execute[Res](method: Method[Res]): F[Res] = {
-    val inputPartFiles = method.payload.files.collect {
-      case (filename, InputPartFile(file)) => (filename, file)
+    val inputPartFiles = method.payload.files.collect { case (filename, InputPartFile(file)) =>
+      (filename, file)
     }
     val attachments = toFileDataParts(inputPartFiles, blocker)
 
@@ -53,7 +54,7 @@ class BotApi[F[_]: Sync: ContextShift: Logger](
     errorCode: Option[Int]
   )
 
-  private implicit def responseDecoder[A: Decoder]: Decoder[Response[A]] =
+  implicit private def responseDecoder[A: Decoder]: Decoder[Response[A]] =
     Decoder.instance { h =>
       for {
         _ok <- h.get[Boolean]("ok")
@@ -84,11 +85,15 @@ class BotApi[F[_]: Sync: ContextShift: Logger](
 }
 
 object BotApi {
+
   /**
    * @param blocker The `Blocker` to use for blocking IO operations. If not provided, a default `Blocker` will be used.
    */
-  def apply[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUrl: String, blocker: Blocker = DefaultBlocker.blocker): BotApi[F] =
+  def apply[F[_]: ConcurrentEffect: ContextShift](http: Client[F],
+                                                  baseUrl: String,
+                                                  blocker: Blocker = DefaultBlocker.blocker
+  ): BotApi[F] =
     new BotApi[F](http, baseUrl, blocker)
 
-  private implicit def defaultLogger[F[_]: Sync]: Logger[F] = Slf4jLogger.getLogger[F]
+  implicit private def defaultLogger[F[_]: Sync]: Logger[F] = Slf4jLogger.getLogger[F]
 }

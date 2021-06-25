@@ -3,6 +3,7 @@ package telegramium.bots.high.keyboards
 import telegramium.bots.{KeyboardButton, ReplyKeyboardMarkup}
 
 object ReplyKeyboardMarkups {
+
   /**
    * Creates a reply keyboard markup with one button
    */

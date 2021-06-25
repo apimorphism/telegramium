@@ -3,6 +3,7 @@ package telegramium.bots.high.keyboards
 import telegramium.bots.{InlineKeyboardButton, LoginUrl}
 
 object InlineKeyboardButtons {
+
   /**
    * Creates an inline keyboard button that sends a callback query to bot when pressed
    */
