@@ -4,13 +4,15 @@ import cats.effect.{Blocker, ConcurrentEffect, ContextShift, Resource, Sync, Tim
 import cats.syntax.apply._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
+import cats.syntax.semigroup._
+import cats.syntax.semigroupk._
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.dsl.impl.Path
 import org.http4s.implicits._
 import org.http4s.server.Server
 import org.http4s.server.blaze.BlazeServerBuilder
-import org.http4s.{EntityDecoder, HttpApp, HttpRoutes}
+import org.http4s.{EntityDecoder , HttpRoutes}
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.{Method, Methods}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
@@ -48,7 +50,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   ipAddress: Option[String] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty,
-  host: String = org.http4s.server.defaults.Host
+  host: String = org.http4s.server.defaults.IPv4Host
 )(implicit syncF: Sync[F], timer: Timer[F]) extends Methods {
 
   private val BotPath = Path(if (path.startsWith("/")) path else "/" + path)
@@ -115,9 +117,10 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   def start(executionContext: ExecutionContext = ExecutionContext.global): Resource[F, Server[F]] =
     for {
       server <- createServer(executionContext)
-      _ <- Resource.eval(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates))
+      _ <- setWebhookResource()
     } yield server
 
+  private def setWebhookResource(): Resource[F, Unit] = Resource.eval(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates))
   private def setWebhook(
     url: String,
     certificate: Option[InputPartFile],
@@ -127,30 +130,48 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   ): F[Unit] =
     bot.execute(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates)).void
 
-  private def createServer(executionContext: ExecutionContext): Resource[F, Server[F]] = {
+  private def routes(): HttpRoutes[F] = {
     val dsl = Http4sDsl[F]
     import dsl._
 
-    def app(): HttpApp[F] =
-      HttpRoutes.of[F] {
-        case req @ POST -> BotPath =>
-          handleUpdateReq(req).flatMap {
-            _.fold(Ok()) { m =>
-              val inputPartFiles = m.payload.files.collect {
-                case (filename, InputPartFile(file)) => (filename, file)
-              }
-              val attachments = toFileDataParts(inputPartFiles, blocker)
-              if (attachments.isEmpty)
-                Ok(m.payload.json)
-              else {
-                val parts = toMultipartWithFormData(m.payload.json, inputPartFiles.keys.toList, attachments)
-                Ok(parts).map(_.withHeaders(parts.headers))
-              }
+    HttpRoutes.of[F] {
+      case req @ POST -> BotPath =>
+        handleUpdateReq(req).flatMap {
+          _.fold(Ok()) { m =>
+            val inputPartFiles = m.payload.files.collect {
+              case (filename, InputPartFile(file)) => (filename, file)
+            }
+            val attachments = toFileDataParts(inputPartFiles, blocker)
+            if (attachments.isEmpty)
+              Ok(m.payload.json)
+            else {
+              val parts = toMultipartWithFormData(m.payload.json, inputPartFiles.keys.toList, attachments)
+              Ok(parts).map(_.withHeaders(parts.headers))
             }
           }
-      }
-        .orNotFound
+        }
+    }
+  }
 
-    BlazeServerBuilder[F](executionContext).bindHttp(port, host).withHttpApp(app()).resource
+  private def createServer(executionContext: ExecutionContext): Resource[F, Server[F]] =
+    BlazeServerBuilder[F](executionContext).bindHttp(port, host).withHttpApp(routes().orNotFound).resource
+}
+
+object WebhookBot {
+  def compose[F[_]: ConcurrentEffect: Timer](
+    executionContext: ExecutionContext,
+    bots: List[WebhookBot[F]],
+    port: Int,
+    host: String = org.http4s.server.defaults.IPv4Host) : Resource[F, Server[F]] = {
+
+    val setWebhooksResource: Resource[F, Unit] = bots.foldLeft(Resource.pure(())) {
+      case (webhooks, bot) => webhooks |+| bot.setWebhookResource()
+    }
+    val httpRoutes: HttpRoutes[F] = bots.foldLeft(HttpRoutes.empty[F]) { case (hrs, bot) => hrs <+> bot.routes() }
+    val serverResource: Resource[F, Server[F]] = BlazeServerBuilder[F](executionContext).bindHttp(port, host).withHttpApp(httpRoutes.orNotFound).resource
+    for {
+      server <- serverResource
+      _ <- setWebhooksResource
+    } yield server
   }
 }
