@@ -24,12 +24,13 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
 
   private val (httpClient, finalizer) = BlazeClientBuilder[Task](global).resource.allocated.runSyncUnsafe()
   private lazy val api = BotApi(httpClient, mockServer.getEndpoint)
-  private lazy val bot = new TestWebhookBot(api)
+  private lazy val bot1 = new TestWebhookBot(api, "/bot1")
+  private lazy val bot2 = new TestWebhookBot(api, "/bot2")
 
   "should set a webhook and accept requests" in {
     prepareHttpMocks()
-    bot.start().use { server =>
-      val request = Request[Task]().withMethod(POST).withUri(server.baseUri).withEntity(parse(
+    bot1.start().use { server =>
+      val request = Request[Task]().withMethod(POST).withUri(server.baseUri / "bot1").withEntity(parse(
         """
           {
             "update_id": 0,
@@ -46,6 +47,65 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
         """
       ).valueOr(throw _))
       httpClient.expect[Json](request).runSyncUnsafe() shouldBe parse(
+        """
+          {
+            "chat_id": 0,
+            "text": "onMessageReply",
+            "entities": [],
+            "method": "sendMessage"
+          }
+        """
+      ).valueOr(throw _)
+      Task.unit
+    }.runSyncUnsafe()
+  }
+
+  "composing two webhook bot should result in a server handling requests for both bots" in {
+    prepareHttpMocks()
+    WebhookBot.compose(List(bot1, bot2), 0).use { server =>
+      val request1 = Request[Task]().withMethod(POST).withUri(server.baseUri / "bot1").withEntity(parse(
+        """
+          {
+            "update_id": 0,
+            "message": {
+              "message_id": 0,
+              "date": 1593365356,
+              "chat": {
+                "id": 0,
+                "type": "private"
+              },
+              "text": "Lorem ipsum"
+            }
+          }
+        """
+      ).valueOr(throw _))
+      httpClient.expect[Json](request1).runSyncUnsafe() shouldBe parse(
+        """
+          {
+            "chat_id": 0,
+            "text": "onMessageReply",
+            "entities": [],
+            "method": "sendMessage"
+          }
+        """
+      ).valueOr(throw _)
+      val request2 = Request[Task]().withMethod(POST).withUri(server.baseUri / "bot2").withEntity(parse(
+        """
+          {
+            "update_id": 0,
+            "message": {
+              "message_id": 0,
+              "date": 1593365356,
+              "chat": {
+                "id": 0,
+                "type": "private"
+              },
+              "text": "Lorem ipsum"
+            }
+          }
+        """
+      ).valueOr(throw _))
+      httpClient.expect[Json](request2).runSyncUnsafe() shouldBe parse(
         """
           {
             "chat_id": 0,

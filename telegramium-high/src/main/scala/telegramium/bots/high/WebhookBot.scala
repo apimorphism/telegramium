@@ -159,9 +159,9 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
 
 object WebhookBot {
   def compose[F[_]: ConcurrentEffect: Timer](
-    executionContext: ExecutionContext,
     bots: List[WebhookBot[F]],
     port: Int,
+    executionContext: ExecutionContext = ExecutionContext.global,
     host: String = org.http4s.server.defaults.IPv4Host) : Resource[F, Server[F]] = {
 
     val setWebhooksResource: Resource[F, Unit] = bots.foldLeft(Resource.pure(())) {
