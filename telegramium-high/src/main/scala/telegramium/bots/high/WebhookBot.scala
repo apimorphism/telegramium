@@ -14,19 +14,7 @@ import org.http4s.{EntityDecoder, HttpApp, HttpRoutes}
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.{Method, Methods}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
-import telegramium.bots.{
-  CallbackQuery,
-  ChatMemberUpdated,
-  ChosenInlineResult,
-  InlineQuery,
-  InputPartFile,
-  Message,
-  Poll,
-  PollAnswer,
-  PreCheckoutQuery,
-  ShippingQuery,
-  Update
-}
+import telegramium.bots.{CallbackQuery, ChatMemberUpdated, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
 import scala.concurrent.ExecutionContext
 
@@ -107,18 +95,18 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
       update.editedChannelPost.map(msg => onEditedChannelPostReply(msg) <* onEditedChannelPost(msg)),
       update.inlineQuery.map(query => onInlineQueryReply(query) <* onInlineQuery(query)),
       update.callbackQuery.map(query => onCallbackQueryReply(query) <* onCallbackQuery(query)),
-      update.chosenInlineResult.map(inlineResult =>
-        onChosenInlineResultReply(inlineResult) <* onChosenInlineResult(inlineResult)
-      ),
+      update.chosenInlineResult.map(inlineResult => onChosenInlineResultReply(inlineResult) <* onChosenInlineResult(inlineResult)),
       update.shippingQuery.map(query => onShippingQueryReply(query) <* onShippingQuery(query)),
       update.preCheckoutQuery.map(query => onPreCheckoutQueryReply(query) <* onPreCheckoutQuery(query)),
       update.poll.map(poll => onPollReply(poll) <* onPoll(poll)),
       update.pollAnswer.map(pollAnswer => onPollAnswerReply(pollAnswer) <* onPollAnswer(pollAnswer)),
       update.myChatMember.map(myChatMember => onMyChatMemberReply(myChatMember) <* onMyChatMember(myChatMember)),
       update.chatMember.map(chatMember => onChatMemberReply(chatMember) <* onChatMember(chatMember))
-    ).flatten.head
+    )
+      .flatten
+      .head
 
-  implicit private val HandleUpdateReqEntityDecoder: EntityDecoder[F, Update] = jsonOf[F, Update]
+  private implicit val HandleUpdateReqEntityDecoder: EntityDecoder[F, Update] = jsonOf[F, Update]
 
   private def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Option[Method[_]]] = rawReq.as[Update].flatMap(onUpdate)
 
@@ -145,12 +133,12 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
     import dsl._
 
     def app(): HttpApp[F] =
-      HttpRoutes
-        .of[F] { case req @ POST -> BotPath =>
+      HttpRoutes.of[F] {
+        case req @ POST -> BotPath =>
           handleUpdateReq(req).flatMap {
             _.fold(Ok()) { m =>
-              val inputPartFiles = m.payload.files.collect { case (filename, InputPartFile(file)) =>
-                (filename, file)
+              val inputPartFiles = m.payload.files.collect {
+                case (filename, InputPartFile(file)) => (filename, file)
               }
               val attachments = toFileDataParts(inputPartFiles, blocker)
               if (attachments.isEmpty)
@@ -161,7 +149,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
               }
             }
           }
-        }
+      }
         .orNotFound
 
     BlazeServerBuilder[F](executionContext).bindHttp(port, host).withHttpApp(app()).resource

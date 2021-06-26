@@ -64,17 +64,15 @@ abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F],
     for {
       offset <- offsetKeeper.getOffset
       seconds = pollInterval.toSeconds.toInt
-      updates <- bot
-        .execute(getUpdates(offset = Some(offset), timeout = Some(seconds)))
+      updates <- bot.execute(getUpdates(offset = Some(offset), timeout = Some(seconds)))
         .onError {
           case _: java.util.concurrent.TimeoutException => poll(offsetKeeper)
-          case NonFatal(e) =>
-            for {
-              _ <- onError(e)
-              delay <- onErrorDelay
-              _ <- timer.sleep(delay)
-              _ <- poll(offsetKeeper)
-            } yield ()
+          case NonFatal(e) => for {
+            _ <- onError(e)
+            delay <- onErrorDelay
+            _ <- timer.sleep(delay)
+            _ <- poll(offsetKeeper)
+          } yield ()
         }
       _ <- updates.parTraverse(onUpdate)
       _ <- updates.map(_.updateId).maximumOption.traverse(max => offsetKeeper.setOffset(max + 1))

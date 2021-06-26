@@ -3,7 +3,6 @@ package telegramium.bots.high.keyboards
 import telegramium.bots.{KeyboardButton, KeyboardButtonPollType}
 
 object KeyboardButtons {
-
   /**
    * Text will be sent to the bot as a message when the button is pressed.
    */

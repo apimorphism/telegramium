@@ -3,7 +3,6 @@ package telegramium.bots.high.keyboards
 import telegramium.bots.{InlineKeyboardButton, InlineKeyboardMarkup}
 
 object InlineKeyboardMarkups {
-
   /**
    * Creates an inline keyboard markup with one button
    */
