@@ -3,18 +3,17 @@ package telegramium.bots.high
 import cats.effect.{Blocker, ConcurrentEffect, ContextShift, Resource, Sync, Timer}
 import cats.syntax.apply._
 import cats.syntax.flatMap._
+import cats.syntax.foldable._
 import cats.syntax.functor._
-import cats.syntax.semigroup._
-import cats.syntax.semigroupk._
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.dsl.impl.Path
-import org.http4s.implicits._
+import org.http4s.syntax.kleisli._
 import org.http4s.server.Server
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.{EntityDecoder, HttpRoutes}
 import telegramium.bots.CirceImplicits._
-import telegramium.bots.client.{Method, Methods}
+import telegramium.bots.client.{Method, Methods => Methods1}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
 import telegramium.bots.{CallbackQuery, ChatMemberUpdated, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
@@ -51,7 +50,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty,
   host: String = org.http4s.server.defaults.Host
-)(implicit syncF: Sync[F], timer: Timer[F]) extends Methods {
+)(implicit syncF: Sync[F], timer: Timer[F]) extends Methods1 {
 
   private val BotPath = Path(if (path.startsWith("/")) path else "/" + path)
 
@@ -155,17 +154,22 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
 }
 
 object WebhookBot {
+
   def compose[F[_]: ConcurrentEffect: Timer](
     bots: List[WebhookBot[F]],
     port: Int,
     executionContext: ExecutionContext = ExecutionContext.global,
     host: String = org.http4s.server.defaults.IPv4Host) : Resource[F, Server[F]] = {
 
-    val setWebhooksResource: Resource[F, Unit] = bots.foldLeft(Resource.pure(())) {
-      case (webhooks, bot) => webhooks |+| bot.setWebhookResource()
-    }
-    val httpRoutes: HttpRoutes[F] = bots.foldLeft(HttpRoutes.empty[F]) { case (hrs, bot) => hrs <+> bot.routes() }
-    val serverResource: Resource[F, Server[F]] = BlazeServerBuilder[F](executionContext).bindHttp(port, host).withHttpApp(httpRoutes.orNotFound).resource
+    val setWebhooksResource: Resource[F, Unit] = bots.foldMapM(_.setWebhookResource())
+    val httpRoutes: HttpRoutes[F] = bots.foldMapK(_.routes())
+
+    val serverResource: Resource[F, Server[F]] =
+      BlazeServerBuilder[F](executionContext)
+        .bindHttp(port, host)
+        .withHttpApp(httpRoutes.orNotFound)
+        .resource
+
     serverResource <* setWebhooksResource
   }
 }

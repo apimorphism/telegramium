@@ -3,7 +3,7 @@ import Keys._
 
 object Compiler {
   val settings = Seq(
-    scalacOptions ++= options,
+    scalacOptions ++= (if (scalaBinaryVersion.value.startsWith("2.12")) options :+     "-Ypartial-unification" else options),
     addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.13.0" cross CrossVersion.full)
   )
 

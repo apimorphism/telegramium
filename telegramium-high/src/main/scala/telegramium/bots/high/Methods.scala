@@ -1,5 +1,5 @@
 package telegramium.bots.high
 
-import telegramium.bots.client.Methods
+import telegramium.bots.client.{Methods => Methods1}
 
-object Methods extends Methods
+object Methods extends Methods1
