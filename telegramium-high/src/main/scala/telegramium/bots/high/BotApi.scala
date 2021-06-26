@@ -19,13 +19,15 @@ import telegramium.bots.client.Method
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
 
 class BotApi[F[_]: Sync: ContextShift: Logger](
-  http: Client[F],
-  baseUrl: String,
-  blocker: Blocker
-)(implicit F: MonadError[F, Throwable]) extends Api[F] {
+    http: Client[F],
+    baseUrl: String,
+    blocker: Blocker
+)(implicit F: MonadError[F, Throwable])
+    extends Api[F] {
+
   override def execute[Res](method: Method[Res]): F[Res] = {
-    val inputPartFiles = method.payload.files.collect {
-      case (filename, InputPartFile(file)) => (filename, file)
+    val inputPartFiles = method.payload.files.collect { case (filename, InputPartFile(file)) =>
+      (filename, file)
     }
     val attachments = toFileDataParts(inputPartFiles, blocker)
 
@@ -47,19 +49,19 @@ class BotApi[F[_]: Sync: ContextShift: Logger](
   }
 
   private case class Response[A](
-    ok: Boolean,
-    result: Option[A],
-    description: Option[String],
-    errorCode: Option[Int]
+      ok: Boolean,
+      result: Option[A],
+      description: Option[String],
+      errorCode: Option[Int]
   )
 
   private implicit def responseDecoder[A: Decoder]: Decoder[Response[A]] =
     Decoder.instance { h =>
       for {
-        _ok <- h.get[Boolean]("ok")
-        _result <- h.get[Option[A]]("result")
+        _ok          <- h.get[Boolean]("ok")
+        _result      <- h.get[Option[A]]("result")
         _description <- h.get[Option[String]]("description")
-        _errorCode <- h.get[Option[Int]]("error_code")
+        _errorCode   <- h.get[Option[Int]]("error_code")
       } yield {
         Response[A](ok = _ok, result = _result, description = _description, errorCode = _errorCode)
       }
@@ -71,10 +73,10 @@ class BotApi[F[_]: Sync: ContextShift: Logger](
       result <- response match {
         case Response(true, Some(result), _, _) => F.pure(result)
         case Response(_, _, description, errorCode) =>
-          val code = errorCode.map(_.toString).getOrElse("")
-          val desc = description.getOrElse("")
+          val code       = errorCode.map(_.toString).getOrElse("")
+          val desc       = description.getOrElse("")
           val methodName = method.payload.name
-          val json = method.payload.json
+          val json       = method.payload.json
           Logger[F].error(
             s"""Telegram Bot API request failed: code=$code description="$desc" method=$methodName, JSON: \n$json"""
           ) *> FailedRequest(method, errorCode, description).raiseError[F, A]
@@ -84,10 +86,15 @@ class BotApi[F[_]: Sync: ContextShift: Logger](
 }
 
 object BotApi {
-  /**
-   * @param blocker The `Blocker` to use for blocking IO operations. If not provided, a default `Blocker` will be used.
-   */
-  def apply[F[_]: ConcurrentEffect: ContextShift](http: Client[F], baseUrl: String, blocker: Blocker = DefaultBlocker.blocker): BotApi[F] =
+
+  /** @param blocker
+    *   The `Blocker` to use for blocking IO operations. If not provided, a default `Blocker` will be used.
+    */
+  def apply[F[_]: ConcurrentEffect: ContextShift](
+      http: Client[F],
+      baseUrl: String,
+      blocker: Blocker = DefaultBlocker.blocker
+  ): BotApi[F] =
     new BotApi[F](http, baseUrl, blocker)
 
   private implicit def defaultLogger[F[_]: Sync]: Logger[F] = Slf4jLogger.getLogger[F]

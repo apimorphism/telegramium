@@ -24,19 +24,19 @@ abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F],
 
   private def noop[A](a: A) = syncF.pure(a).void
 
-  def onMessage(msg: Message): F[Unit] = noop(msg)
-  def onEditedMessage(msg: Message): F[Unit] = noop(msg)
-  def onChannelPost(msg: Message): F[Unit] = noop(msg)
-  def onEditedChannelPost(msg: Message): F[Unit] = noop(msg)
-  def onInlineQuery(query: InlineQuery): F[Unit] = noop(query)
-  def onCallbackQuery(query: CallbackQuery): F[Unit] = noop(query)
+  def onMessage(msg: Message): F[Unit]                                = noop(msg)
+  def onEditedMessage(msg: Message): F[Unit]                          = noop(msg)
+  def onChannelPost(msg: Message): F[Unit]                            = noop(msg)
+  def onEditedChannelPost(msg: Message): F[Unit]                      = noop(msg)
+  def onInlineQuery(query: InlineQuery): F[Unit]                      = noop(query)
+  def onCallbackQuery(query: CallbackQuery): F[Unit]                  = noop(query)
   def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit] = noop(inlineResult)
-  def onShippingQuery(query: ShippingQuery): F[Unit] = noop(query)
-  def onPreCheckoutQuery(query: PreCheckoutQuery): F[Unit] = noop(query)
-  def onPoll(poll: Poll): F[Unit] = noop(poll)
-  def onPollAnswer(pollAnswer: PollAnswer): F[Unit] = noop(pollAnswer)
-  def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit] = noop(myChatMember)
-  def onChatMember(chatMember: ChatMemberUpdated): F[Unit] = noop(chatMember)
+  def onShippingQuery(query: ShippingQuery): F[Unit]                  = noop(query)
+  def onPreCheckoutQuery(query: PreCheckoutQuery): F[Unit]            = noop(query)
+  def onPoll(poll: Poll): F[Unit]                                     = noop(poll)
+  def onPollAnswer(pollAnswer: PollAnswer): F[Unit]                   = noop(pollAnswer)
+  def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit]        = noop(myChatMember)
+  def onChatMember(chatMember: ChatMemberUpdated): F[Unit]            = noop(chatMember)
 
   def onUpdate(update: Update): F[Unit] = {
     for {
@@ -64,18 +64,20 @@ abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F],
     for {
       offset <- offsetKeeper.getOffset
       seconds = pollInterval.toSeconds.toInt
-      updates <- bot.execute(getUpdates(offset = Some(offset), timeout = Some(seconds)))
+      updates <- bot
+        .execute(getUpdates(offset = Some(offset), timeout = Some(seconds)))
         .onError {
           case _: java.util.concurrent.TimeoutException => poll(offsetKeeper)
-          case NonFatal(e) => for {
-            _ <- onError(e)
-            delay <- onErrorDelay
-            _ <- timer.sleep(delay)
-            _ <- poll(offsetKeeper)
-          } yield ()
+          case NonFatal(e) =>
+            for {
+              _     <- onError(e)
+              delay <- onErrorDelay
+              _     <- timer.sleep(delay)
+              _     <- poll(offsetKeeper)
+            } yield ()
         }
-      _ <- updates.parTraverse(onUpdate)
-      _ <- updates.map(_.updateId).maximumOption.traverse(max => offsetKeeper.setOffset(max + 1))
+      _    <- updates.parTraverse(onUpdate)
+      _    <- updates.map(_.updateId).maximumOption.traverse(max => offsetKeeper.setOffset(max + 1))
       next <- poll(offsetKeeper)
     } yield {
       next
@@ -84,10 +86,10 @@ abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F],
 
   def start(): F[Unit] = {
     for {
-      _ <- bot.execute(deleteWebhook())
+      _          <- bot.execute(deleteWebhook())
       refCounter <- Ref.of[F, Int](0)
       offsetKeeper = new OffsetKeeper[F] {
-        def getOffset: F[Int] = refCounter.get
+        def getOffset: F[Int]               = refCounter.get
         def setOffset(offset: Int): F[Unit] = refCounter.set(offset)
       }
       _ <- poll(offsetKeeper)
@@ -105,6 +107,7 @@ abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F],
 }
 
 object LongPollBot {
+
   trait OffsetKeeper[F[_]] {
     def getOffset: F[Int]
     def setOffset(offset: Int): F[Unit]

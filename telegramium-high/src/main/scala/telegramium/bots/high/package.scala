@@ -3,6 +3,7 @@ package telegramium.bots
 import telegramium.bots.client.Method
 
 package object high {
+
   object implicits {
     implicit def methodOps[Res](method: Method[Res]): MethodSyntax[Res] = new MethodSyntax[Res](method)
 

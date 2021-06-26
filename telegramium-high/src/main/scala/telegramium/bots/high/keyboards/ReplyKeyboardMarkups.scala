@@ -3,14 +3,14 @@ package telegramium.bots.high.keyboards
 import telegramium.bots.{KeyboardButton, ReplyKeyboardMarkup}
 
 object ReplyKeyboardMarkups {
-  /**
-   * Creates a reply keyboard markup with one button
-   */
+
+  /** Creates a reply keyboard markup with one button
+    */
   def singleButton(
-    button: KeyboardButton,
-    resizeKeyboard: Option[Boolean] = Option.empty,
-    oneTimeKeyboard: Option[Boolean] = Option.empty,
-    selective: Option[Boolean] = Option.empty
+      button: KeyboardButton,
+      resizeKeyboard: Option[Boolean] = Option.empty,
+      oneTimeKeyboard: Option[Boolean] = Option.empty,
+      selective: Option[Boolean] = Option.empty
   ): ReplyKeyboardMarkup =
     ReplyKeyboardMarkup(
       keyboard = List(List(button)),
@@ -19,14 +19,13 @@ object ReplyKeyboardMarkups {
       selective = selective
     )
 
-  /**
-   * Creates a reply keyboard markup with multiple buttons on a single row
-   */
+  /** Creates a reply keyboard markup with multiple buttons on a single row
+    */
   def singleRow(
-    row: List[KeyboardButton],
-    resizeKeyboard: Option[Boolean] = Option.empty,
-    oneTimeKeyboard: Option[Boolean] = Option.empty,
-    selective: Option[Boolean] = Option.empty
+      row: List[KeyboardButton],
+      resizeKeyboard: Option[Boolean] = Option.empty,
+      oneTimeKeyboard: Option[Boolean] = Option.empty,
+      selective: Option[Boolean] = Option.empty
   ): ReplyKeyboardMarkup =
     ReplyKeyboardMarkup(
       keyboard = List(row),
@@ -35,14 +34,13 @@ object ReplyKeyboardMarkups {
       selective = selective
     )
 
-  /**
-   * Creates a reply keyboard markup with multiple buttons on a single column
-   */
+  /** Creates a reply keyboard markup with multiple buttons on a single column
+    */
   def singleColumn(
-    column: List[KeyboardButton],
-    resizeKeyboard: Option[Boolean] = Option.empty,
-    oneTimeKeyboard: Option[Boolean] = Option.empty,
-    selective: Option[Boolean] = Option.empty
+      column: List[KeyboardButton],
+      resizeKeyboard: Option[Boolean] = Option.empty,
+      oneTimeKeyboard: Option[Boolean] = Option.empty,
+      selective: Option[Boolean] = Option.empty
   ): ReplyKeyboardMarkup =
     ReplyKeyboardMarkup(
       keyboard = column.map(List(_)),
