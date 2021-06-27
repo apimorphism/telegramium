@@ -3,9 +3,9 @@ package telegramium.bots.high.keyboards
 import telegramium.bots.{KeyboardButton, ReplyKeyboardMarkup}
 
 object ReplyKeyboardMarkups {
-  /**
-   * Creates a reply keyboard markup with one button
-   */
+
+  /** Creates a reply keyboard markup with one button
+    */
   def singleButton(
     button: KeyboardButton,
     resizeKeyboard: Option[Boolean] = Option.empty,
@@ -19,9 +19,8 @@ object ReplyKeyboardMarkups {
       selective = selective
     )
 
-  /**
-   * Creates a reply keyboard markup with multiple buttons on a single row
-   */
+  /** Creates a reply keyboard markup with multiple buttons on a single row
+    */
   def singleRow(
     row: List[KeyboardButton],
     resizeKeyboard: Option[Boolean] = Option.empty,
@@ -35,9 +34,8 @@ object ReplyKeyboardMarkups {
       selective = selective
     )
 
-  /**
-   * Creates a reply keyboard markup with multiple buttons on a single column
-   */
+  /** Creates a reply keyboard markup with multiple buttons on a single column
+    */
   def singleColumn(
     column: List[KeyboardButton],
     resizeKeyboard: Option[Boolean] = Option.empty,
@@ -50,4 +48,5 @@ object ReplyKeyboardMarkups {
       oneTimeKeyboard = oneTimeKeyboard,
       selective = selective
     )
+
 }

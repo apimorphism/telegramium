@@ -13,28 +13,30 @@ import scala.concurrent.duration.Duration
 
 object Application extends App {
 
-  BlazeClientBuilder[Task](global).resource.use { httpClient =>
-    val blocker = Blocker.liftExecutionContext(Scheduler.io())
-    val http = Logger(logBody = true, logHeaders = true)(httpClient)
-    args match {
-      case Array("EchoBot", token) =>
-        implicit val api: Api[Task] = createBotBackend(http, token, blocker)
-        val echoBot = new EchoBot()
-        echoBot.start()
-      case Array("IceCreamParlorBot", token) =>
-        implicit val api: Api[Task] = createBotBackend(http, token, blocker)
-        val iceCreamParlorBot = new IceCreamParlorBot()
-        iceCreamParlorBot.start()
-      case Array(name, _) =>
-        Task.raiseError(new RuntimeException(s"Unknown bot $name"))
-      case _ =>
-        Task.raiseError(new RuntimeException("Usage:\nApplication $botName $token"))
+  BlazeClientBuilder[Task](global).resource
+    .use { httpClient =>
+      val blocker = Blocker.liftExecutionContext(Scheduler.io())
+      val http    = Logger(logBody = true, logHeaders = true)(httpClient)
+      args match {
+        case Array("EchoBot", token) =>
+          implicit val api: Api[Task] = createBotBackend(http, token, blocker)
+          val echoBot                 = new EchoBot()
+          echoBot.start()
+        case Array("IceCreamParlorBot", token) =>
+          implicit val api: Api[Task] = createBotBackend(http, token, blocker)
+          val iceCreamParlorBot       = new IceCreamParlorBot()
+          iceCreamParlorBot.start()
+        case Array(name, _) =>
+          Task.raiseError(new RuntimeException(s"Unknown bot $name"))
+        case _ =>
+          Task.raiseError(new RuntimeException("Usage:\nApplication $botName $token"))
+      }
     }
-  }.runSyncUnsafe(Duration.Inf)
+    .runSyncUnsafe(Duration.Inf)
 
-  /**
-   * @param token Bot API token got from Botfather
-   */
+  /** @param token
+    *   Bot API token got from Botfather
+    */
   private def createBotBackend(http: Client[Task], token: String, blocker: Blocker) =
     BotApi(http, baseUrl = s"https://api.telegram.org/bot$token", blocker)
 
