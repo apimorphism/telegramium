@@ -12,10 +12,10 @@ import telegramium.bots.{CallbackQuery, ChatIntId, Message}
 /** Show how to use inline keyboards
   */
 class IceCreamParlorBot[F[_]]()(implicit
-    bot: Api[F],
-    syncF: Sync[F],
-    timer: Timer[F],
-    parallel: Parallel[F]
+  bot: Api[F],
+  syncF: Sync[F],
+  timer: Timer[F],
+  parallel: Parallel[F]
 ) extends LongPollBot[F](bot) {
 
   override def onMessage(msg: Message): F[Unit] =

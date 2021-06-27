@@ -19,9 +19,9 @@ import telegramium.bots.client.Method
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
 
 class BotApi[F[_]: Sync: ContextShift: Logger](
-    http: Client[F],
-    baseUrl: String,
-    blocker: Blocker
+  http: Client[F],
+  baseUrl: String,
+  blocker: Blocker
 )(implicit F: MonadError[F, Throwable])
     extends Api[F] {
 
@@ -49,10 +49,10 @@ class BotApi[F[_]: Sync: ContextShift: Logger](
   }
 
   private case class Response[A](
-      ok: Boolean,
-      result: Option[A],
-      description: Option[String],
-      errorCode: Option[Int]
+    ok: Boolean,
+    result: Option[A],
+    description: Option[String],
+    errorCode: Option[Int]
   )
 
   private implicit def responseDecoder[A: Decoder]: Decoder[Response[A]] =
@@ -91,9 +91,9 @@ object BotApi {
     *   The `Blocker` to use for blocking IO operations. If not provided, a default `Blocker` will be used.
     */
   def apply[F[_]: ConcurrentEffect: ContextShift](
-      http: Client[F],
-      baseUrl: String,
-      blocker: Blocker = DefaultBlocker.blocker
+    http: Client[F],
+    baseUrl: String,
+    blocker: Blocker = DefaultBlocker.blocker
   ): BotApi[F] =
     new BotApi[F](http, baseUrl, blocker)
 

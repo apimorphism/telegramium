@@ -10,23 +10,7 @@ import org.scalatest.matchers.should.Matchers
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.CirceImplicits._
 import telegramium.bots.client.{MethodReq, SendMessageReq}
-import telegramium.bots.{
-  CallbackQuery,
-  Chat,
-  ChatIntId,
-  ChatMember,
-  ChatMemberUpdated,
-  ChosenInlineResult,
-  InlineQuery,
-  Message,
-  Poll,
-  PollAnswer,
-  PreCheckoutQuery,
-  ShippingAddress,
-  ShippingQuery,
-  Update,
-  User
-}
+import telegramium.bots.{CallbackQuery, Chat, ChatIntId, ChatMember, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingAddress, ShippingQuery, Update, User}
 
 class WebhookBotSpec extends AnyFreeSpec with MockFactory with Matchers with OptionValues {
   private val testUpdate  = Update(updateId = 0)

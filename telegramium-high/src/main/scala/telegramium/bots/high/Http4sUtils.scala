@@ -14,9 +14,9 @@ private[high] object Http4sUtils {
     }.toVector
 
   def toMultipartWithFormData[F[_]](
-      json: Json,
-      fileFieldNames: List[String],
-      attachments: Vector[Part[F]]
+    json: Json,
+    fileFieldNames: List[String],
+    attachments: Vector[Part[F]]
   ): Multipart[F] =
     Multipart[F] {
       json.asObject

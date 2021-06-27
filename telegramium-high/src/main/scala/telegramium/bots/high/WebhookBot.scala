@@ -14,19 +14,7 @@ import org.http4s.{EntityDecoder, HttpApp, HttpRoutes}
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.{Method, Methods}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
-import telegramium.bots.{
-  CallbackQuery,
-  ChatMemberUpdated,
-  ChosenInlineResult,
-  InlineQuery,
-  InputPartFile,
-  Message,
-  Poll,
-  PollAnswer,
-  PreCheckoutQuery,
-  ShippingQuery,
-  Update
-}
+import telegramium.bots.{CallbackQuery, ChatMemberUpdated, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
 import scala.concurrent.ExecutionContext
 
@@ -51,16 +39,16 @@ import scala.concurrent.ExecutionContext
   *   setWebhook, so unwanted updates may be received for a short period of time.
   */
 abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
-    bot: Api[F],
-    port: Int,
-    url: String,
-    path: String = "/",
-    blocker: Blocker = DefaultBlocker.blocker,
-    certificate: Option[InputPartFile] = Option.empty,
-    ipAddress: Option[String] = Option.empty,
-    maxConnections: Option[Int] = Option.empty,
-    allowedUpdates: List[String] = List.empty,
-    host: String = org.http4s.server.defaults.IPv4Host
+  bot: Api[F],
+  port: Int,
+  url: String,
+  path: String = "/",
+  blocker: Blocker = DefaultBlocker.blocker,
+  certificate: Option[InputPartFile] = Option.empty,
+  ipAddress: Option[String] = Option.empty,
+  maxConnections: Option[Int] = Option.empty,
+  allowedUpdates: List[String] = List.empty,
+  host: String = org.http4s.server.defaults.IPv4Host
 )(implicit syncF: Sync[F], timer: Timer[F])
     extends Methods {
 
@@ -133,11 +121,11 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
     } yield server
 
   private def setWebhook(
-      url: String,
-      certificate: Option[InputPartFile],
-      ipAddress: Option[String],
-      maxConnections: Option[Int],
-      allowedUpdates: List[String]
+    url: String,
+    certificate: Option[InputPartFile],
+    ipAddress: Option[String],
+    maxConnections: Option[Int],
+    allowedUpdates: List[String]
   ): F[Unit] =
     bot.execute(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates)).void
 

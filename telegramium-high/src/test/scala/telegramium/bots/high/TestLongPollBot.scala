@@ -1,18 +1,7 @@
 package telegramium.bots.high
 
 import monix.eval.Task
-import telegramium.bots.{
-  CallbackQuery,
-  ChatIntId,
-  ChatMemberUpdated,
-  ChosenInlineResult,
-  InlineQuery,
-  Message,
-  Poll,
-  PollAnswer,
-  PreCheckoutQuery,
-  ShippingQuery
-}
+import telegramium.bots.{CallbackQuery, ChatIntId, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery}
 
 class TestLongPollBot(api: Api[Task]) extends LongPollBot[Task](api) {
   private def sendMessageTask(text: String) = api.execute(sendMessage(ChatIntId(0), text)).void

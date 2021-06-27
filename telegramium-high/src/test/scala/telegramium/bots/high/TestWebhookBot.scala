@@ -6,18 +6,7 @@ import monix.eval.Task
 import monix.execution.Scheduler
 import monix.execution.Scheduler.Implicits.global
 import telegramium.bots.client.Method
-import telegramium.bots.{
-  CallbackQuery,
-  ChatIntId,
-  ChatMemberUpdated,
-  ChosenInlineResult,
-  InlineQuery,
-  Message,
-  Poll,
-  PollAnswer,
-  PreCheckoutQuery,
-  ShippingQuery
-}
+import telegramium.bots.{CallbackQuery, ChatIntId, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery}
 
 class TestWebhookBot(api: Api[Task])
     extends WebhookBot[Task](api, 0, "localhost", blocker = Blocker.liftExecutionContext(Scheduler.io())) {

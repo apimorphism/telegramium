@@ -6,10 +6,10 @@ import telegramium.bots.high.implicits._
 import telegramium.bots.high.{Api, LongPollBot}
 
 class EchoBot[F[_]]()(implicit
-    bot: Api[F],
-    syncF: Sync[F],
-    timer: Timer[F],
-    parallel: Parallel[F]
+  bot: Api[F],
+  syncF: Sync[F],
+  timer: Timer[F],
+  parallel: Parallel[F]
 ) extends LongPollBot[F](bot) {
 
   import cats.syntax.flatMap._
