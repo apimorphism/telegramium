@@ -40,4 +40,5 @@ object InlineKeyboardButtons {
     */
   def pay(text: String): InlineKeyboardButton =
     InlineKeyboardButton(text, pay = Some(true))
+
 }

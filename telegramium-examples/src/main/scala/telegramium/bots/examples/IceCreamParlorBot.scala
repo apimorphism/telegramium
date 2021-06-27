@@ -56,4 +56,5 @@ class IceCreamParlorBot[F[_]]()(implicit
         }
       }
       .getOrElse(syncF.unit)
+
 }

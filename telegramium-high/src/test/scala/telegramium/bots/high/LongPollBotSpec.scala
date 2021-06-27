@@ -146,5 +146,7 @@ class LongPollBotSpec extends AnyFreeSpec with MockFactory with Matchers with Op
         .once()
       ()
     }
+
   }
+
 }

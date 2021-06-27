@@ -12,4 +12,5 @@ final case class FailedRequest[A](
 
   override def getMessage: String =
     s"method=${method.payload.name} code=${errorCode.map(_.toString).getOrElse("")} description=${description.getOrElse("")}"
+
 }

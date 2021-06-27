@@ -10,5 +10,7 @@ package object high {
     final class MethodSyntax[Res](private val method: Method[Res]) extends AnyVal {
       def exec[F[_]](implicit api: Api[F]): F[Res] = api.execute(method)
     }
+
   }
+
 }

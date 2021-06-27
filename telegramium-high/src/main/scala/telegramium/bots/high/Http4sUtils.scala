@@ -32,4 +32,5 @@ private[high] object Http4sUtils {
         }
         .getOrElse(Vector.empty) ++ attachments
     }
+
 }

@@ -89,4 +89,5 @@ class TestWebhookBot(api: Api[Task])
 
   override def onChatMemberReply(chatMember: ChatMemberUpdated): Task[Option[Method[_]]] =
     Task.pure(sendMessageMethod("onChatMemberReply").some)
+
 }

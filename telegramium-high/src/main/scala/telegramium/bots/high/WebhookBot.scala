@@ -81,6 +81,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
 
   def onChosenInlineResultReply(inlineResult: ChosenInlineResult): F[Option[Method[_]]] =
     syncF.pure(inlineResult).map(_ => Option.empty[Method[_]])
+
   def onShippingQueryReply(query: ShippingQuery): F[Option[Method[_]]]           = noopReply(query)
   def onPreCheckoutQueryReply(query: PreCheckoutQuery): F[Option[Method[_]]]     = noopReply(query)
   def onPollReply(poll: Poll): F[Option[Method[_]]]                              = noopReply(poll)
@@ -155,4 +156,5 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
 
     BlazeServerBuilder[F](executionContext).bindHttp(port, host).withHttpApp(app()).resource
   }
+
 }

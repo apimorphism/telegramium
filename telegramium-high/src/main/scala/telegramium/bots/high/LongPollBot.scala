@@ -104,6 +104,7 @@ abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F],
   def onErrorDelay: F[FiniteDuration] = {
     syncF.delay(5.seconds)
   }
+
 }
 
 object LongPollBot {
@@ -112,4 +113,5 @@ object LongPollBot {
     def getOffset: F[Int]
     def setOffset(offset: Int): F[Unit]
   }
+
 }

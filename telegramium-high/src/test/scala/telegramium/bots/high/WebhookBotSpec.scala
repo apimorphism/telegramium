@@ -160,5 +160,7 @@ class WebhookBotSpec extends AnyFreeSpec with MockFactory with Matchers with Opt
         .once()
       ()
     }
+
   }
+
 }

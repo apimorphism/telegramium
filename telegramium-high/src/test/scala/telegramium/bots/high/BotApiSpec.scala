@@ -136,4 +136,5 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
   override protected def afterAll(): Unit = {
     finalizer.runSyncUnsafe()
   }
+
 }

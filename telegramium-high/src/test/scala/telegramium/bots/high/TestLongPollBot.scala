@@ -16,6 +16,7 @@ class TestLongPollBot(api: Api[Task]) extends LongPollBot[Task](api) {
   override def onChosenInlineResult(inlineResult: ChosenInlineResult): Task[Unit] = sendMessageTask(
     "onChosenInlineResult"
   )
+
   override def onShippingQuery(query: ShippingQuery): Task[Unit]           = sendMessageTask("onShippingQuery")
   override def onPreCheckoutQuery(query: PreCheckoutQuery): Task[Unit]     = sendMessageTask("onPreCheckoutQuery")
   override def onPoll(poll: Poll): Task[Unit]                              = sendMessageTask("onPoll")

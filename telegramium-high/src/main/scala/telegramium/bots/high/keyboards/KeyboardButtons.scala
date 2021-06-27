@@ -20,4 +20,5 @@ object KeyboardButtons {
     */
   def requestPoll(text: String, `type`: KeyboardButtonPollType): KeyboardButton =
     KeyboardButton(text, requestPoll = Some(`type`))
+
 }
