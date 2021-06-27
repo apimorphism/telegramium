@@ -47,10 +47,9 @@ object uPickleImplicits {
   implicit lazy val parsemodeCodec: ReadWriter[ParseMode] = {
     readwriter[upack.Msg].bimap(
       {
-        case Markdown => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("Markdown"))
-        case Markdown2 =>
-          upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("MarkdownV2"))
-        case Html => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("HTML"))
+        case Markdown  => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("Markdown"))
+        case Markdown2 => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("MarkdownV2"))
+        case Html      => upack.Obj(upack.Obj().obj += upack.Str("_type_") -> writeMsg("HTML"))
       },
       msg => {
         val m = msg.obj
@@ -136,8 +135,7 @@ object uPickleImplicits {
       {
         case x: InlineKeyboardMarkup =>
           upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("InlineKeyboardMarkup"))
-        case x: ForceReply =>
-          upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("ForceReply"))
+        case x: ForceReply => upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("ForceReply"))
         case x: ReplyKeyboardRemove =>
           upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("ReplyKeyboardRemove"))
         case x: ReplyKeyboardMarkup =>
@@ -168,9 +166,7 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          inlineKeyboard <- m
-            .get(inlineKeyboardKey)
-            .map(x => readBinary[List[List[InlineKeyboardButton]]](x))
+          inlineKeyboard <- m.get(inlineKeyboardKey).map(x => readBinary[List[List[InlineKeyboardButton]]](x))
         } yield {
           InlineKeyboardMarkup(
             inlineKeyboard = inlineKeyboard
@@ -270,10 +266,8 @@ object uPickleImplicits {
   implicit lazy val ifileCodec: ReadWriter[IFile] = {
     readwriter[upack.Msg].bimap(
       {
-        case x: InputPartFile =>
-          upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("java.io.File"))
-        case x: InputLinkFile =>
-          upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("String"))
+        case x: InputPartFile => upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("java.io.File"))
+        case x: InputLinkFile => upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("String"))
       },
       msg => {
         val m = msg.obj
@@ -334,16 +328,11 @@ object uPickleImplicits {
   implicit lazy val inputmediaCodec: ReadWriter[InputMedia] = {
     readwriter[upack.Msg].bimap(
       {
-        case x: InputMediaAnimation =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("animation"))
-        case x: InputMediaPhoto =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("photo"))
-        case x: InputMediaVideo =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("video"))
-        case x: InputMediaDocument =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("document"))
-        case x: InputMediaAudio =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("audio"))
+        case x: InputMediaAnimation => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("animation"))
+        case x: InputMediaPhoto     => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("photo"))
+        case x: InputMediaVideo     => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("video"))
+        case x: InputMediaDocument  => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("document"))
+        case x: InputMediaAudio     => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("audio"))
       },
       msg => {
         val m = msg.obj
@@ -519,14 +508,12 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          media           <- m.get(mediaKey).map(x => readBinary[String](x))
-          thumb           <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          disableContentTypeDetection <- m
-            .get(disableContentTypeDetectionKey)
-            .map(x => readBinary[Option[Boolean]](x))
+          media                       <- m.get(mediaKey).map(x => readBinary[String](x))
+          thumb                       <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
+          caption                     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode                   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities             <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          disableContentTypeDetection <- m.get(disableContentTypeDetectionKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           InputMediaDocument(
             media = media,
@@ -650,21 +637,19 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          gifUrl          <- m.get(gifUrlKey).map(x => readBinary[String](x))
-          gifWidth        <- m.get(gifWidthKey).map(x => readBinary[Option[Int]](x))
-          gifHeight       <- m.get(gifHeightKey).map(x => readBinary[Option[Int]](x))
-          gifDuration     <- m.get(gifDurationKey).map(x => readBinary[Option[Int]](x))
-          thumbUrl        <- m.get(thumbUrlKey).map(x => readBinary[String](x))
-          thumbMimeType   <- m.get(thumbMimeTypeKey).map(x => readBinary[Option[String]](x))
-          title           <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          gifUrl              <- m.get(gifUrlKey).map(x => readBinary[String](x))
+          gifWidth            <- m.get(gifWidthKey).map(x => readBinary[Option[Int]](x))
+          gifHeight           <- m.get(gifHeightKey).map(x => readBinary[Option[Int]](x))
+          gifDuration         <- m.get(gifDurationKey).map(x => readBinary[Option[Int]](x))
+          thumbUrl            <- m.get(thumbUrlKey).map(x => readBinary[String](x))
+          thumbMimeType       <- m.get(thumbMimeTypeKey).map(x => readBinary[Option[String]](x))
+          title               <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          caption             <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode           <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities     <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
         } yield {
           InlineQueryResultGif(
             id = id,
@@ -724,22 +709,20 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          latitude        <- m.get(latitudeKey).map(x => readBinary[Float](x))
-          longitude       <- m.get(longitudeKey).map(x => readBinary[Float](x))
-          title           <- m.get(titleKey).map(x => readBinary[String](x))
-          address         <- m.get(addressKey).map(x => readBinary[String](x))
-          foursquareId    <- m.get(foursquareIdKey).map(x => readBinary[Option[String]](x))
-          foursquareType  <- m.get(foursquareTypeKey).map(x => readBinary[Option[String]](x))
-          googlePlaceId   <- m.get(googlePlaceIdKey).map(x => readBinary[Option[String]](x))
-          googlePlaceType <- m.get(googlePlaceTypeKey).map(x => readBinary[Option[String]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
-          thumbUrl    <- m.get(thumbUrlKey).map(x => readBinary[Option[String]](x))
-          thumbWidth  <- m.get(thumbWidthKey).map(x => readBinary[Option[Int]](x))
-          thumbHeight <- m.get(thumbHeightKey).map(x => readBinary[Option[Int]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          latitude            <- m.get(latitudeKey).map(x => readBinary[Float](x))
+          longitude           <- m.get(longitudeKey).map(x => readBinary[Float](x))
+          title               <- m.get(titleKey).map(x => readBinary[String](x))
+          address             <- m.get(addressKey).map(x => readBinary[String](x))
+          foursquareId        <- m.get(foursquareIdKey).map(x => readBinary[Option[String]](x))
+          foursquareType      <- m.get(foursquareTypeKey).map(x => readBinary[Option[String]](x))
+          googlePlaceId       <- m.get(googlePlaceIdKey).map(x => readBinary[Option[String]](x))
+          googlePlaceType     <- m.get(googlePlaceTypeKey).map(x => readBinary[Option[String]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
+          thumbUrl            <- m.get(thumbUrlKey).map(x => readBinary[Option[String]](x))
+          thumbWidth          <- m.get(thumbWidthKey).map(x => readBinary[Option[Int]](x))
+          thumbHeight         <- m.get(thumbHeightKey).map(x => readBinary[Option[Int]](x))
         } yield {
           InlineQueryResultVenue(
             id = id,
@@ -792,18 +775,16 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id          <- m.get(idKey).map(x => readBinary[String](x))
-          phoneNumber <- m.get(phoneNumberKey).map(x => readBinary[String](x))
-          firstName   <- m.get(firstNameKey).map(x => readBinary[String](x))
-          lastName    <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
-          vcard       <- m.get(vcardKey).map(x => readBinary[Option[String]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
-          thumbUrl    <- m.get(thumbUrlKey).map(x => readBinary[Option[String]](x))
-          thumbWidth  <- m.get(thumbWidthKey).map(x => readBinary[Option[Int]](x))
-          thumbHeight <- m.get(thumbHeightKey).map(x => readBinary[Option[Int]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          phoneNumber         <- m.get(phoneNumberKey).map(x => readBinary[String](x))
+          firstName           <- m.get(firstNameKey).map(x => readBinary[String](x))
+          lastName            <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
+          vcard               <- m.get(vcardKey).map(x => readBinary[Option[String]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
+          thumbUrl            <- m.get(thumbUrlKey).map(x => readBinary[Option[String]](x))
+          thumbWidth          <- m.get(thumbWidthKey).map(x => readBinary[Option[Int]](x))
+          thumbHeight         <- m.get(thumbHeightKey).map(x => readBinary[Option[Int]](x))
         } yield {
           InlineQueryResultContact(
             id = id,
@@ -856,20 +837,18 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          photoUrl        <- m.get(photoUrlKey).map(x => readBinary[String](x))
-          thumbUrl        <- m.get(thumbUrlKey).map(x => readBinary[String](x))
-          photoWidth      <- m.get(photoWidthKey).map(x => readBinary[Option[Int]](x))
-          photoHeight     <- m.get(photoHeightKey).map(x => readBinary[Option[Int]](x))
-          title           <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          description     <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          photoUrl            <- m.get(photoUrlKey).map(x => readBinary[String](x))
+          thumbUrl            <- m.get(thumbUrlKey).map(x => readBinary[String](x))
+          photoWidth          <- m.get(photoWidthKey).map(x => readBinary[Option[Int]](x))
+          photoHeight         <- m.get(photoHeightKey).map(x => readBinary[Option[Int]](x))
+          title               <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          description         <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          caption             <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode           <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities     <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
         } yield {
           InlineQueryResultPhoto(
             id = id,
@@ -926,21 +905,19 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          title           <- m.get(titleKey).map(x => readBinary[String](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          documentUrl     <- m.get(documentUrlKey).map(x => readBinary[String](x))
-          mimeType        <- m.get(mimeTypeKey).map(x => readBinary[String](x))
-          description     <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
-          thumbUrl    <- m.get(thumbUrlKey).map(x => readBinary[Option[String]](x))
-          thumbWidth  <- m.get(thumbWidthKey).map(x => readBinary[Option[Int]](x))
-          thumbHeight <- m.get(thumbHeightKey).map(x => readBinary[Option[Int]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          title               <- m.get(titleKey).map(x => readBinary[String](x))
+          caption             <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode           <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities     <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          documentUrl         <- m.get(documentUrlKey).map(x => readBinary[String](x))
+          mimeType            <- m.get(mimeTypeKey).map(x => readBinary[String](x))
+          description         <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
+          thumbUrl            <- m.get(thumbUrlKey).map(x => readBinary[Option[String]](x))
+          thumbWidth          <- m.get(thumbWidthKey).map(x => readBinary[Option[Int]](x))
+          thumbHeight         <- m.get(thumbHeightKey).map(x => readBinary[Option[Int]](x))
         } yield {
           InlineQueryResultDocument(
             id = id,
@@ -988,16 +965,14 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          voiceFileId     <- m.get(voiceFileIdKey).map(x => readBinary[String](x))
-          title           <- m.get(titleKey).map(x => readBinary[String](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          voiceFileId         <- m.get(voiceFileIdKey).map(x => readBinary[String](x))
+          title               <- m.get(titleKey).map(x => readBinary[String](x))
+          caption             <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode           <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities     <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
         } yield {
           InlineQueryResultCachedVoice(
             id = id,
@@ -1044,18 +1019,16 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id    <- m.get(idKey).map(x => readBinary[String](x))
-          title <- m.get(titleKey).map(x => readBinary[String](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[InputMessageContent](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          url         <- m.get(urlKey).map(x => readBinary[Option[String]](x))
-          hideUrl     <- m.get(hideUrlKey).map(x => readBinary[Option[Boolean]](x))
-          description <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          thumbUrl    <- m.get(thumbUrlKey).map(x => readBinary[Option[String]](x))
-          thumbWidth  <- m.get(thumbWidthKey).map(x => readBinary[Option[Int]](x))
-          thumbHeight <- m.get(thumbHeightKey).map(x => readBinary[Option[Int]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          title               <- m.get(titleKey).map(x => readBinary[String](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[InputMessageContent](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          url                 <- m.get(urlKey).map(x => readBinary[Option[String]](x))
+          hideUrl             <- m.get(hideUrlKey).map(x => readBinary[Option[Boolean]](x))
+          description         <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          thumbUrl            <- m.get(thumbUrlKey).map(x => readBinary[Option[String]](x))
+          thumbWidth          <- m.get(thumbWidthKey).map(x => readBinary[Option[Int]](x))
+          thumbHeight         <- m.get(thumbHeightKey).map(x => readBinary[Option[Int]](x))
         } yield {
           InlineQueryResultArticle(
             id = id,
@@ -1104,18 +1077,16 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          audioUrl        <- m.get(audioUrlKey).map(x => readBinary[String](x))
-          title           <- m.get(titleKey).map(x => readBinary[String](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          performer       <- m.get(performerKey).map(x => readBinary[Option[String]](x))
-          audioDuration   <- m.get(audioDurationKey).map(x => readBinary[Option[Int]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          audioUrl            <- m.get(audioUrlKey).map(x => readBinary[String](x))
+          title               <- m.get(titleKey).map(x => readBinary[String](x))
+          caption             <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode           <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities     <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          performer           <- m.get(performerKey).map(x => readBinary[Option[String]](x))
+          audioDuration       <- m.get(audioDurationKey).map(x => readBinary[Option[Int]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
         } yield {
           InlineQueryResultAudio(
             id = id,
@@ -1170,21 +1141,19 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          mpeg4Url        <- m.get(mpeg4UrlKey).map(x => readBinary[String](x))
-          mpeg4Width      <- m.get(mpeg4WidthKey).map(x => readBinary[Option[Int]](x))
-          mpeg4Height     <- m.get(mpeg4HeightKey).map(x => readBinary[Option[Int]](x))
-          mpeg4Duration   <- m.get(mpeg4DurationKey).map(x => readBinary[Option[Int]](x))
-          thumbUrl        <- m.get(thumbUrlKey).map(x => readBinary[String](x))
-          thumbMimeType   <- m.get(thumbMimeTypeKey).map(x => readBinary[Option[String]](x))
-          title           <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          mpeg4Url            <- m.get(mpeg4UrlKey).map(x => readBinary[String](x))
+          mpeg4Width          <- m.get(mpeg4WidthKey).map(x => readBinary[Option[Int]](x))
+          mpeg4Height         <- m.get(mpeg4HeightKey).map(x => readBinary[Option[Int]](x))
+          mpeg4Duration       <- m.get(mpeg4DurationKey).map(x => readBinary[Option[Int]](x))
+          thumbUrl            <- m.get(thumbUrlKey).map(x => readBinary[String](x))
+          thumbMimeType       <- m.get(thumbMimeTypeKey).map(x => readBinary[Option[String]](x))
+          title               <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          caption             <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode           <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities     <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
         } yield {
           InlineQueryResultMpeg4Gif(
             id = id,
@@ -1207,8 +1176,7 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val inlinequeryresultcachedmpeg4gifCodec
-    : ReadWriter[InlineQueryResultCachedMpeg4Gif] = {
+  implicit lazy val inlinequeryresultcachedmpeg4gifCodec: ReadWriter[InlineQueryResultCachedMpeg4Gif] = {
     val idKey                  = upack.Str("id")
     val mpeg4FileIdKey         = upack.Str("mpeg4FileId")
     val titleKey               = upack.Str("title")
@@ -1233,16 +1201,14 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          mpeg4FileId     <- m.get(mpeg4FileIdKey).map(x => readBinary[String](x))
-          title           <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          mpeg4FileId         <- m.get(mpeg4FileIdKey).map(x => readBinary[String](x))
+          title               <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          caption             <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode           <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities     <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
         } yield {
           InlineQueryResultCachedMpeg4Gif(
             id = id,
@@ -1260,8 +1226,7 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val inlinequeryresultcacheddocumentCodec
-    : ReadWriter[InlineQueryResultCachedDocument] = {
+  implicit lazy val inlinequeryresultcacheddocumentCodec: ReadWriter[InlineQueryResultCachedDocument] = {
     val idKey                  = upack.Str("id")
     val titleKey               = upack.Str("title")
     val documentFileIdKey      = upack.Str("documentFileId")
@@ -1288,17 +1253,15 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          title           <- m.get(titleKey).map(x => readBinary[String](x))
-          documentFileId  <- m.get(documentFileIdKey).map(x => readBinary[String](x))
-          description     <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          title               <- m.get(titleKey).map(x => readBinary[String](x))
+          documentFileId      <- m.get(documentFileIdKey).map(x => readBinary[String](x))
+          description         <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          caption             <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode           <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities     <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
         } yield {
           InlineQueryResultCachedDocument(
             id = id,
@@ -1344,17 +1307,15 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          videoFileId     <- m.get(videoFileIdKey).map(x => readBinary[String](x))
-          title           <- m.get(titleKey).map(x => readBinary[String](x))
-          description     <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          videoFileId         <- m.get(videoFileIdKey).map(x => readBinary[String](x))
+          title               <- m.get(titleKey).map(x => readBinary[String](x))
+          description         <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          caption             <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode           <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities     <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
         } yield {
           InlineQueryResultCachedVideo(
             id = id,
@@ -1430,17 +1391,15 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          photoFileId     <- m.get(photoFileIdKey).map(x => readBinary[String](x))
-          title           <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          description     <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          photoFileId         <- m.get(photoFileIdKey).map(x => readBinary[String](x))
+          title               <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          description         <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          caption             <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode           <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities     <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
         } yield {
           InlineQueryResultCachedPhoto(
             id = id,
@@ -1459,8 +1418,7 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val inlinequeryresultcachedstickerCodec
-    : ReadWriter[InlineQueryResultCachedSticker] = {
+  implicit lazy val inlinequeryresultcachedstickerCodec: ReadWriter[InlineQueryResultCachedSticker] = {
     val idKey                  = upack.Str("id")
     val stickerFileIdKey       = upack.Str("stickerFileId")
     val replyMarkupKey         = upack.Str("replyMarkup")
@@ -1477,12 +1435,10 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id            <- m.get(idKey).map(x => readBinary[String](x))
-          stickerFileId <- m.get(stickerFileIdKey).map(x => readBinary[String](x))
-          replyMarkup   <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          stickerFileId       <- m.get(stickerFileIdKey).map(x => readBinary[String](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
         } yield {
           InlineQueryResultCachedSticker(
             id = id,
@@ -1533,22 +1489,20 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          videoUrl        <- m.get(videoUrlKey).map(x => readBinary[String](x))
-          mimeType        <- m.get(mimeTypeKey).map(x => readBinary[String](x))
-          thumbUrl        <- m.get(thumbUrlKey).map(x => readBinary[String](x))
-          title           <- m.get(titleKey).map(x => readBinary[String](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          videoWidth      <- m.get(videoWidthKey).map(x => readBinary[Option[Int]](x))
-          videoHeight     <- m.get(videoHeightKey).map(x => readBinary[Option[Int]](x))
-          videoDuration   <- m.get(videoDurationKey).map(x => readBinary[Option[Int]](x))
-          description     <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          videoUrl            <- m.get(videoUrlKey).map(x => readBinary[String](x))
+          mimeType            <- m.get(mimeTypeKey).map(x => readBinary[String](x))
+          thumbUrl            <- m.get(thumbUrlKey).map(x => readBinary[String](x))
+          title               <- m.get(titleKey).map(x => readBinary[String](x))
+          caption             <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode           <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities     <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          videoWidth          <- m.get(videoWidthKey).map(x => readBinary[Option[Int]](x))
+          videoHeight         <- m.get(videoHeightKey).map(x => readBinary[Option[Int]](x))
+          videoDuration       <- m.get(videoDurationKey).map(x => readBinary[Option[Int]](x))
+          description         <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
         } yield {
           InlineQueryResultVideo(
             id = id,
@@ -1595,15 +1549,13 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          audioFileId     <- m.get(audioFileIdKey).map(x => readBinary[String](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          audioFileId         <- m.get(audioFileIdKey).map(x => readBinary[String](x))
+          caption             <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode           <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities     <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
         } yield {
           InlineQueryResultCachedAudio(
             id = id,
@@ -1655,23 +1607,19 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id                 <- m.get(idKey).map(x => readBinary[String](x))
-          latitude           <- m.get(latitudeKey).map(x => readBinary[Float](x))
-          longitude          <- m.get(longitudeKey).map(x => readBinary[Float](x))
-          title              <- m.get(titleKey).map(x => readBinary[String](x))
-          horizontalAccuracy <- m.get(horizontalAccuracyKey).map(x => readBinary[Option[Float]](x))
-          livePeriod         <- m.get(livePeriodKey).map(x => readBinary[Option[Int]](x))
-          heading            <- m.get(headingKey).map(x => readBinary[Option[Int]](x))
-          proximityAlertRadius <- m
-            .get(proximityAlertRadiusKey)
-            .map(x => readBinary[Option[Int]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
-          thumbUrl    <- m.get(thumbUrlKey).map(x => readBinary[Option[String]](x))
-          thumbWidth  <- m.get(thumbWidthKey).map(x => readBinary[Option[Int]](x))
-          thumbHeight <- m.get(thumbHeightKey).map(x => readBinary[Option[Int]](x))
+          id                   <- m.get(idKey).map(x => readBinary[String](x))
+          latitude             <- m.get(latitudeKey).map(x => readBinary[Float](x))
+          longitude            <- m.get(longitudeKey).map(x => readBinary[Float](x))
+          title                <- m.get(titleKey).map(x => readBinary[String](x))
+          horizontalAccuracy   <- m.get(horizontalAccuracyKey).map(x => readBinary[Option[Float]](x))
+          livePeriod           <- m.get(livePeriodKey).map(x => readBinary[Option[Int]](x))
+          heading              <- m.get(headingKey).map(x => readBinary[Option[Int]](x))
+          proximityAlertRadius <- m.get(proximityAlertRadiusKey).map(x => readBinary[Option[Int]](x))
+          replyMarkup          <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent  <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
+          thumbUrl             <- m.get(thumbUrlKey).map(x => readBinary[Option[String]](x))
+          thumbWidth           <- m.get(thumbWidthKey).map(x => readBinary[Option[Int]](x))
+          thumbHeight          <- m.get(thumbHeightKey).map(x => readBinary[Option[Int]](x))
         } yield {
           InlineQueryResultLocation(
             id = id,
@@ -1719,16 +1667,14 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          gifFileId       <- m.get(gifFileIdKey).map(x => readBinary[String](x))
-          title           <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          gifFileId           <- m.get(gifFileIdKey).map(x => readBinary[String](x))
+          title               <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          caption             <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode           <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities     <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
         } yield {
           InlineQueryResultCachedGif(
             id = id,
@@ -1773,17 +1719,15 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id              <- m.get(idKey).map(x => readBinary[String](x))
-          voiceUrl        <- m.get(voiceUrlKey).map(x => readBinary[String](x))
-          title           <- m.get(titleKey).map(x => readBinary[String](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          voiceDuration   <- m.get(voiceDurationKey).map(x => readBinary[Option[Int]](x))
-          replyMarkup     <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
-          inputMessageContent <- m
-            .get(inputMessageContentKey)
-            .map(x => readBinary[Option[InputMessageContent]](x))
+          id                  <- m.get(idKey).map(x => readBinary[String](x))
+          voiceUrl            <- m.get(voiceUrlKey).map(x => readBinary[String](x))
+          title               <- m.get(titleKey).map(x => readBinary[String](x))
+          caption             <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode           <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities     <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          voiceDuration       <- m.get(voiceDurationKey).map(x => readBinary[Option[Int]](x))
+          replyMarkup         <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          inputMessageContent <- m.get(inputMessageContentKey).map(x => readBinary[Option[InputMessageContent]](x))
         } yield {
           InlineQueryResultVoice(
             id = id,
@@ -1808,14 +1752,11 @@ object uPickleImplicits {
         case x: InputVenueMessageContent =>
           upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("InputVenueMessageContent"))
         case x: InputInvoiceMessageContent =>
-          upack.Obj(
-            writeMsg(x).obj += upack.Str("_type_") -> writeMsg("InputInvoiceMessageContent"))
+          upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("InputInvoiceMessageContent"))
         case x: InputContactMessageContent =>
-          upack.Obj(
-            writeMsg(x).obj += upack.Str("_type_") -> writeMsg("InputContactMessageContent"))
+          upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("InputContactMessageContent"))
         case x: InputLocationMessageContent =>
-          upack.Obj(
-            writeMsg(x).obj += upack.Str("_type_") -> writeMsg("InputLocationMessageContent"))
+          upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("InputLocationMessageContent"))
         case x: InputTextMessageContent =>
           upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("InputTextMessageContent"))
       },
@@ -1823,14 +1764,11 @@ object uPickleImplicits {
         val m = msg.obj
         m.get(upack.Str("type"))
           .collect {
-            case upack.Str("InputVenueMessageContent") => readBinary[InputVenueMessageContent](msg)
-            case upack.Str("InputInvoiceMessageContent") =>
-              readBinary[InputInvoiceMessageContent](msg)
-            case upack.Str("InputContactMessageContent") =>
-              readBinary[InputContactMessageContent](msg)
-            case upack.Str("InputLocationMessageContent") =>
-              readBinary[InputLocationMessageContent](msg)
-            case upack.Str("InputTextMessageContent") => readBinary[InputTextMessageContent](msg)
+            case upack.Str("InputVenueMessageContent")    => readBinary[InputVenueMessageContent](msg)
+            case upack.Str("InputInvoiceMessageContent")  => readBinary[InputInvoiceMessageContent](msg)
+            case upack.Str("InputContactMessageContent")  => readBinary[InputContactMessageContent](msg)
+            case upack.Str("InputLocationMessageContent") => readBinary[InputLocationMessageContent](msg)
+            case upack.Str("InputTextMessageContent")     => readBinary[InputTextMessageContent](msg)
           }
           .get
       }
@@ -1936,32 +1874,26 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          title               <- m.get(titleKey).map(x => readBinary[String](x))
-          description         <- m.get(descriptionKey).map(x => readBinary[String](x))
-          payload             <- m.get(payloadKey).map(x => readBinary[String](x))
-          providerToken       <- m.get(providerTokenKey).map(x => readBinary[String](x))
-          currency            <- m.get(currencyKey).map(x => readBinary[String](x))
-          prices              <- m.get(pricesKey).map(x => readBinary[List[LabeledPrice]](x))
-          maxTipAmount        <- m.get(maxTipAmountKey).map(x => readBinary[Option[Int]](x))
-          suggestedTipAmounts <- m.get(suggestedTipAmountsKey).map(x => readBinary[List[Int]](x))
-          providerData        <- m.get(providerDataKey).map(x => readBinary[Option[String]](x))
-          photoUrl            <- m.get(photoUrlKey).map(x => readBinary[Option[String]](x))
-          photoSize           <- m.get(photoSizeKey).map(x => readBinary[Option[Int]](x))
-          photoWidth          <- m.get(photoWidthKey).map(x => readBinary[Option[Int]](x))
-          photoHeight         <- m.get(photoHeightKey).map(x => readBinary[Option[Int]](x))
-          needName            <- m.get(needNameKey).map(x => readBinary[Option[Boolean]](x))
-          needPhoneNumber     <- m.get(needPhoneNumberKey).map(x => readBinary[Option[Boolean]](x))
-          needEmail           <- m.get(needEmailKey).map(x => readBinary[Option[Boolean]](x))
-          needShippingAddress <- m
-            .get(needShippingAddressKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          sendPhoneNumberToProvider <- m
-            .get(sendPhoneNumberToProviderKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          sendEmailToProvider <- m
-            .get(sendEmailToProviderKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          isFlexible <- m.get(isFlexibleKey).map(x => readBinary[Option[Boolean]](x))
+          title                     <- m.get(titleKey).map(x => readBinary[String](x))
+          description               <- m.get(descriptionKey).map(x => readBinary[String](x))
+          payload                   <- m.get(payloadKey).map(x => readBinary[String](x))
+          providerToken             <- m.get(providerTokenKey).map(x => readBinary[String](x))
+          currency                  <- m.get(currencyKey).map(x => readBinary[String](x))
+          prices                    <- m.get(pricesKey).map(x => readBinary[List[LabeledPrice]](x))
+          maxTipAmount              <- m.get(maxTipAmountKey).map(x => readBinary[Option[Int]](x))
+          suggestedTipAmounts       <- m.get(suggestedTipAmountsKey).map(x => readBinary[List[Int]](x))
+          providerData              <- m.get(providerDataKey).map(x => readBinary[Option[String]](x))
+          photoUrl                  <- m.get(photoUrlKey).map(x => readBinary[Option[String]](x))
+          photoSize                 <- m.get(photoSizeKey).map(x => readBinary[Option[Int]](x))
+          photoWidth                <- m.get(photoWidthKey).map(x => readBinary[Option[Int]](x))
+          photoHeight               <- m.get(photoHeightKey).map(x => readBinary[Option[Int]](x))
+          needName                  <- m.get(needNameKey).map(x => readBinary[Option[Boolean]](x))
+          needPhoneNumber           <- m.get(needPhoneNumberKey).map(x => readBinary[Option[Boolean]](x))
+          needEmail                 <- m.get(needEmailKey).map(x => readBinary[Option[Boolean]](x))
+          needShippingAddress       <- m.get(needShippingAddressKey).map(x => readBinary[Option[Boolean]](x))
+          sendPhoneNumberToProvider <- m.get(sendPhoneNumberToProviderKey).map(x => readBinary[Option[Boolean]](x))
+          sendEmailToProvider       <- m.get(sendEmailToProviderKey).map(x => readBinary[Option[Boolean]](x))
+          isFlexible                <- m.get(isFlexibleKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           InputInvoiceMessageContent(
             title = title,
@@ -2046,14 +1978,12 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          latitude           <- m.get(latitudeKey).map(x => readBinary[Float](x))
-          longitude          <- m.get(longitudeKey).map(x => readBinary[Float](x))
-          horizontalAccuracy <- m.get(horizontalAccuracyKey).map(x => readBinary[Option[Float]](x))
-          livePeriod         <- m.get(livePeriodKey).map(x => readBinary[Option[Int]](x))
-          heading            <- m.get(headingKey).map(x => readBinary[Option[Int]](x))
-          proximityAlertRadius <- m
-            .get(proximityAlertRadiusKey)
-            .map(x => readBinary[Option[Int]](x))
+          latitude             <- m.get(latitudeKey).map(x => readBinary[Float](x))
+          longitude            <- m.get(longitudeKey).map(x => readBinary[Float](x))
+          horizontalAccuracy   <- m.get(horizontalAccuracyKey).map(x => readBinary[Option[Float]](x))
+          livePeriod           <- m.get(livePeriodKey).map(x => readBinary[Option[Int]](x))
+          heading              <- m.get(headingKey).map(x => readBinary[Option[Int]](x))
+          proximityAlertRadius <- m.get(proximityAlertRadiusKey).map(x => readBinary[Option[Int]](x))
         } yield {
           InputLocationMessageContent(
             latitude = latitude,
@@ -2086,12 +2016,10 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          messageText <- m.get(messageTextKey).map(x => readBinary[String](x))
-          parseMode   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          entities    <- m.get(entitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          disableWebPagePreview <- m
-            .get(disableWebPagePreviewKey)
-            .map(x => readBinary[Option[Boolean]](x))
+          messageText           <- m.get(messageTextKey).map(x => readBinary[String](x))
+          parseMode             <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          entities              <- m.get(entitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          disableWebPagePreview <- m.get(disableWebPagePreviewKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           InputTextMessageContent(
             messageText = messageText,
@@ -2108,18 +2036,14 @@ object uPickleImplicits {
   implicit lazy val passportelementerrorCodec: ReadWriter[PassportElementError] = {
     readwriter[upack.Msg].bimap(
       {
-        case x: PassportElementErrorFiles =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("files"))
-        case x: PassportElementErrorDataField =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("data"))
+        case x: PassportElementErrorFiles     => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("files"))
+        case x: PassportElementErrorDataField => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("data"))
         case x: PassportElementErrorReverseSide =>
           upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("reverse_side"))
-        case x: PassportElementErrorSelfie =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("selfie"))
+        case x: PassportElementErrorSelfie => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("selfie"))
         case x: PassportElementErrorFrontSide =>
           upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("front_side"))
-        case x: PassportElementErrorFile =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("file"))
+        case x: PassportElementErrorFile => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("file"))
         case x: PassportElementErrorUnspecified =>
           upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("unspecified"))
         case x: PassportElementErrorTranslationFile =>
@@ -2131,17 +2055,15 @@ object uPickleImplicits {
         val m = msg.obj
         m.get(upack.Str("type"))
           .collect {
-            case upack.Str("files")        => readBinary[PassportElementErrorFiles](msg)
-            case upack.Str("data")         => readBinary[PassportElementErrorDataField](msg)
-            case upack.Str("reverse_side") => readBinary[PassportElementErrorReverseSide](msg)
-            case upack.Str("selfie")       => readBinary[PassportElementErrorSelfie](msg)
-            case upack.Str("front_side")   => readBinary[PassportElementErrorFrontSide](msg)
-            case upack.Str("file")         => readBinary[PassportElementErrorFile](msg)
-            case upack.Str("unspecified")  => readBinary[PassportElementErrorUnspecified](msg)
-            case upack.Str("translation_file") =>
-              readBinary[PassportElementErrorTranslationFile](msg)
-            case upack.Str("translation_files") =>
-              readBinary[PassportElementErrorTranslationFiles](msg)
+            case upack.Str("files")             => readBinary[PassportElementErrorFiles](msg)
+            case upack.Str("data")              => readBinary[PassportElementErrorDataField](msg)
+            case upack.Str("reverse_side")      => readBinary[PassportElementErrorReverseSide](msg)
+            case upack.Str("selfie")            => readBinary[PassportElementErrorSelfie](msg)
+            case upack.Str("front_side")        => readBinary[PassportElementErrorFrontSide](msg)
+            case upack.Str("file")              => readBinary[PassportElementErrorFile](msg)
+            case upack.Str("unspecified")       => readBinary[PassportElementErrorUnspecified](msg)
+            case upack.Str("translation_file")  => readBinary[PassportElementErrorTranslationFile](msg)
+            case upack.Str("translation_files") => readBinary[PassportElementErrorTranslationFiles](msg)
           }
           .get
       }
@@ -2178,8 +2100,7 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val passportelementerrordatafieldCodec
-    : ReadWriter[PassportElementErrorDataField] = {
+  implicit lazy val passportelementerrordatafieldCodec: ReadWriter[PassportElementErrorDataField] = {
     val typeKey      = upack.Str("type")
     val fieldNameKey = upack.Str("fieldName")
     val dataHashKey  = upack.Str("dataHash")
@@ -2213,8 +2134,7 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val passportelementerrorreversesideCodec
-    : ReadWriter[PassportElementErrorReverseSide] = {
+  implicit lazy val passportelementerrorreversesideCodec: ReadWriter[PassportElementErrorReverseSide] = {
     val typeKey     = upack.Str("type")
     val fileHashKey = upack.Str("fileHash")
     val messageKey  = upack.Str("message")
@@ -2274,8 +2194,7 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val passportelementerrorfrontsideCodec
-    : ReadWriter[PassportElementErrorFrontSide] = {
+  implicit lazy val passportelementerrorfrontsideCodec: ReadWriter[PassportElementErrorFrontSide] = {
     val typeKey     = upack.Str("type")
     val fileHashKey = upack.Str("fileHash")
     val messageKey  = upack.Str("message")
@@ -2335,8 +2254,7 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val passportelementerrorunspecifiedCodec
-    : ReadWriter[PassportElementErrorUnspecified] = {
+  implicit lazy val passportelementerrorunspecifiedCodec: ReadWriter[PassportElementErrorUnspecified] = {
     val typeKey        = upack.Str("type")
     val elementHashKey = upack.Str("elementHash")
     val messageKey     = upack.Str("message")
@@ -2366,8 +2284,7 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val passportelementerrortranslationfileCodec
-    : ReadWriter[PassportElementErrorTranslationFile] = {
+  implicit lazy val passportelementerrortranslationfileCodec: ReadWriter[PassportElementErrorTranslationFile] = {
     val typeKey     = upack.Str("type")
     val fileHashKey = upack.Str("fileHash")
     val messageKey  = upack.Str("message")
@@ -2397,8 +2314,7 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val passportelementerrortranslationfilesCodec
-    : ReadWriter[PassportElementErrorTranslationFiles] = {
+  implicit lazy val passportelementerrortranslationfilesCodec: ReadWriter[PassportElementErrorTranslationFiles] = {
     val typeKey       = upack.Str("type")
     val fileHashesKey = upack.Str("fileHashes")
     val messageKey    = upack.Str("message")
@@ -2431,36 +2347,22 @@ object uPickleImplicits {
   implicit lazy val messageentityCodec: ReadWriter[MessageEntity] = {
     readwriter[upack.Msg].bimap(
       {
-        case x: MentionMessageEntity =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("mention"))
-        case x: CashtagMessageEntity =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("cashtag"))
-        case x: CodeMessageEntity =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("code"))
-        case x: BotCommandMessageEntity =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("bot_command"))
-        case x: EmailMessageEntity =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("email"))
-        case x: BoldMessageEntity =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("bold"))
-        case x: PreMessageEntity =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("pre"))
-        case x: ItalicMessageEntity =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("italic"))
+        case x: MentionMessageEntity    => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("mention"))
+        case x: CashtagMessageEntity    => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("cashtag"))
+        case x: CodeMessageEntity       => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("code"))
+        case x: BotCommandMessageEntity => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("bot_command"))
+        case x: EmailMessageEntity      => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("email"))
+        case x: BoldMessageEntity       => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("bold"))
+        case x: PreMessageEntity        => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("pre"))
+        case x: ItalicMessageEntity     => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("italic"))
         case x: StrikethroughMessageEntity =>
           upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("strikethrough"))
-        case x: UnderlineMessageEntity =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("underline"))
-        case x: HashtagMessageEntity =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("hashtag"))
-        case x: TextMentionMessageEntity =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("text_mention"))
-        case x: TextLinkMessageEntity =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("text_link"))
-        case x: UrlMessageEntity =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("url"))
-        case x: PhoneNumberMessageEntity =>
-          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("phone_number"))
+        case x: UnderlineMessageEntity   => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("underline"))
+        case x: HashtagMessageEntity     => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("hashtag"))
+        case x: TextMentionMessageEntity => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("text_mention"))
+        case x: TextLinkMessageEntity    => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("text_link"))
+        case x: UrlMessageEntity         => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("url"))
+        case x: PhoneNumberMessageEntity => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("phone_number"))
       },
       msg => {
         val m = msg.obj
@@ -3014,26 +2916,24 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id            <- m.get(idKey).map(x => readBinary[Long](x))
-          `type`        <- m.get(typeKey).map(x => readBinary[String](x))
-          title         <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          username      <- m.get(usernameKey).map(x => readBinary[Option[String]](x))
-          firstName     <- m.get(firstNameKey).map(x => readBinary[Option[String]](x))
-          lastName      <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
-          photo         <- m.get(photoKey).map(x => readBinary[Option[ChatPhoto]](x))
-          bio           <- m.get(bioKey).map(x => readBinary[Option[String]](x))
-          description   <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
-          inviteLink    <- m.get(inviteLinkKey).map(x => readBinary[Option[String]](x))
-          pinnedMessage <- m.get(pinnedMessageKey).map(x => readBinary[Option[Message]](x))
-          permissions   <- m.get(permissionsKey).map(x => readBinary[Option[ChatPermissions]](x))
-          slowModeDelay <- m.get(slowModeDelayKey).map(x => readBinary[Option[Int]](x))
-          messageAutoDeleteTime <- m
-            .get(messageAutoDeleteTimeKey)
-            .map(x => readBinary[Option[Int]](x))
-          stickerSetName   <- m.get(stickerSetNameKey).map(x => readBinary[Option[String]](x))
-          canSetStickerSet <- m.get(canSetStickerSetKey).map(x => readBinary[Option[Boolean]](x))
-          linkedChatId     <- m.get(linkedChatIdKey).map(x => readBinary[Option[Long]](x))
-          location         <- m.get(locationKey).map(x => readBinary[Option[ChatLocation]](x))
+          id                    <- m.get(idKey).map(x => readBinary[Long](x))
+          `type`                <- m.get(typeKey).map(x => readBinary[String](x))
+          title                 <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          username              <- m.get(usernameKey).map(x => readBinary[Option[String]](x))
+          firstName             <- m.get(firstNameKey).map(x => readBinary[Option[String]](x))
+          lastName              <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
+          photo                 <- m.get(photoKey).map(x => readBinary[Option[ChatPhoto]](x))
+          bio                   <- m.get(bioKey).map(x => readBinary[Option[String]](x))
+          description           <- m.get(descriptionKey).map(x => readBinary[Option[String]](x))
+          inviteLink            <- m.get(inviteLinkKey).map(x => readBinary[Option[String]](x))
+          pinnedMessage         <- m.get(pinnedMessageKey).map(x => readBinary[Option[Message]](x))
+          permissions           <- m.get(permissionsKey).map(x => readBinary[Option[ChatPermissions]](x))
+          slowModeDelay         <- m.get(slowModeDelayKey).map(x => readBinary[Option[Int]](x))
+          messageAutoDeleteTime <- m.get(messageAutoDeleteTimeKey).map(x => readBinary[Option[Int]](x))
+          stickerSetName        <- m.get(stickerSetNameKey).map(x => readBinary[Option[String]](x))
+          canSetStickerSet      <- m.get(canSetStickerSetKey).map(x => readBinary[Option[Boolean]](x))
+          linkedChatId          <- m.get(linkedChatIdKey).map(x => readBinary[Option[Long]](x))
+          location              <- m.get(locationKey).map(x => readBinary[Option[ChatLocation]](x))
         } yield {
           Chat(
             id = id,
@@ -3124,14 +3024,12 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          longitude          <- m.get(longitudeKey).map(x => readBinary[Float](x))
-          latitude           <- m.get(latitudeKey).map(x => readBinary[Float](x))
-          horizontalAccuracy <- m.get(horizontalAccuracyKey).map(x => readBinary[Option[Float]](x))
-          livePeriod         <- m.get(livePeriodKey).map(x => readBinary[Option[Int]](x))
-          heading            <- m.get(headingKey).map(x => readBinary[Option[Int]](x))
-          proximityAlertRadius <- m
-            .get(proximityAlertRadiusKey)
-            .map(x => readBinary[Option[Int]](x))
+          longitude            <- m.get(longitudeKey).map(x => readBinary[Float](x))
+          latitude             <- m.get(latitudeKey).map(x => readBinary[Float](x))
+          horizontalAccuracy   <- m.get(horizontalAccuracyKey).map(x => readBinary[Option[Float]](x))
+          livePeriod           <- m.get(livePeriodKey).map(x => readBinary[Option[Int]](x))
+          heading              <- m.get(headingKey).map(x => readBinary[Option[Int]](x))
+          proximityAlertRadius <- m.get(proximityAlertRadiusKey).map(x => readBinary[Option[Int]](x))
         } yield {
           Location(
             longitude = longitude,
@@ -3228,20 +3126,14 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          canSendMessages <- m.get(canSendMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canSendMediaMessages <- m
-            .get(canSendMediaMessagesKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          canSendPolls <- m.get(canSendPollsKey).map(x => readBinary[Option[Boolean]](x))
-          canSendOtherMessages <- m
-            .get(canSendOtherMessagesKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          canAddWebPagePreviews <- m
-            .get(canAddWebPagePreviewsKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          canChangeInfo  <- m.get(canChangeInfoKey).map(x => readBinary[Option[Boolean]](x))
-          canInviteUsers <- m.get(canInviteUsersKey).map(x => readBinary[Option[Boolean]](x))
-          canPinMessages <- m.get(canPinMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canSendMessages       <- m.get(canSendMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canSendMediaMessages  <- m.get(canSendMediaMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canSendPolls          <- m.get(canSendPollsKey).map(x => readBinary[Option[Boolean]](x))
+          canSendOtherMessages  <- m.get(canSendOtherMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canAddWebPagePreviews <- m.get(canAddWebPagePreviewsKey).map(x => readBinary[Option[Boolean]](x))
+          canChangeInfo         <- m.get(canChangeInfoKey).map(x => readBinary[Option[Boolean]](x))
+          canInviteUsers        <- m.get(canInviteUsersKey).map(x => readBinary[Option[Boolean]](x))
+          canPinMessages        <- m.get(canPinMessagesKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           ChatPermissions(
             canSendMessages = canSendMessages,
@@ -3370,12 +3262,10 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          name        <- m.get(nameKey).map(x => readBinary[Option[String]](x))
-          phoneNumber <- m.get(phoneNumberKey).map(x => readBinary[Option[String]](x))
-          email       <- m.get(emailKey).map(x => readBinary[Option[String]](x))
-          shippingAddress <- m
-            .get(shippingAddressKey)
-            .map(x => readBinary[Option[ShippingAddress]](x))
+          name            <- m.get(nameKey).map(x => readBinary[Option[String]](x))
+          phoneNumber     <- m.get(phoneNumberKey).map(x => readBinary[Option[String]](x))
+          email           <- m.get(emailKey).map(x => readBinary[Option[String]](x))
+          shippingAddress <- m.get(shippingAddressKey).map(x => readBinary[Option[ShippingAddress]](x))
         } yield {
           OrderInfo(
             name = name,
@@ -3428,24 +3318,20 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          updateId          <- m.get(updateIdKey).map(x => readBinary[Int](x))
-          message           <- m.get(messageKey).map(x => readBinary[Option[Message]](x))
-          editedMessage     <- m.get(editedMessageKey).map(x => readBinary[Option[Message]](x))
-          channelPost       <- m.get(channelPostKey).map(x => readBinary[Option[Message]](x))
-          editedChannelPost <- m.get(editedChannelPostKey).map(x => readBinary[Option[Message]](x))
-          inlineQuery       <- m.get(inlineQueryKey).map(x => readBinary[Option[InlineQuery]](x))
-          chosenInlineResult <- m
-            .get(chosenInlineResultKey)
-            .map(x => readBinary[Option[ChosenInlineResult]](x))
-          callbackQuery <- m.get(callbackQueryKey).map(x => readBinary[Option[CallbackQuery]](x))
-          shippingQuery <- m.get(shippingQueryKey).map(x => readBinary[Option[ShippingQuery]](x))
-          preCheckoutQuery <- m
-            .get(preCheckoutQueryKey)
-            .map(x => readBinary[Option[PreCheckoutQuery]](x))
-          poll         <- m.get(pollKey).map(x => readBinary[Option[Poll]](x))
-          pollAnswer   <- m.get(pollAnswerKey).map(x => readBinary[Option[PollAnswer]](x))
-          myChatMember <- m.get(myChatMemberKey).map(x => readBinary[Option[ChatMemberUpdated]](x))
-          chatMember   <- m.get(chatMemberKey).map(x => readBinary[Option[ChatMemberUpdated]](x))
+          updateId           <- m.get(updateIdKey).map(x => readBinary[Int](x))
+          message            <- m.get(messageKey).map(x => readBinary[Option[Message]](x))
+          editedMessage      <- m.get(editedMessageKey).map(x => readBinary[Option[Message]](x))
+          channelPost        <- m.get(channelPostKey).map(x => readBinary[Option[Message]](x))
+          editedChannelPost  <- m.get(editedChannelPostKey).map(x => readBinary[Option[Message]](x))
+          inlineQuery        <- m.get(inlineQueryKey).map(x => readBinary[Option[InlineQuery]](x))
+          chosenInlineResult <- m.get(chosenInlineResultKey).map(x => readBinary[Option[ChosenInlineResult]](x))
+          callbackQuery      <- m.get(callbackQueryKey).map(x => readBinary[Option[CallbackQuery]](x))
+          shippingQuery      <- m.get(shippingQueryKey).map(x => readBinary[Option[ShippingQuery]](x))
+          preCheckoutQuery   <- m.get(preCheckoutQueryKey).map(x => readBinary[Option[PreCheckoutQuery]](x))
+          poll               <- m.get(pollKey).map(x => readBinary[Option[Poll]](x))
+          pollAnswer         <- m.get(pollAnswerKey).map(x => readBinary[Option[PollAnswer]](x))
+          myChatMember       <- m.get(myChatMemberKey).map(x => readBinary[Option[ChatMemberUpdated]](x))
+          chatMember         <- m.get(chatMemberKey).map(x => readBinary[Option[ChatMemberUpdated]](x))
         } yield {
           Update(
             updateId = updateId,
@@ -3525,9 +3411,7 @@ object uPickleImplicits {
           text            <- m.get(textKey).map(x => readBinary[String](x))
           requestContact  <- m.get(requestContactKey).map(x => readBinary[Option[Boolean]](x))
           requestLocation <- m.get(requestLocationKey).map(x => readBinary[Option[Boolean]](x))
-          requestPoll <- m
-            .get(requestPollKey)
-            .map(x => readBinary[Option[KeyboardButtonPollType]](x))
+          requestPoll     <- m.get(requestPollKey).map(x => readBinary[Option[KeyboardButtonPollType]](x))
         } yield {
           KeyboardButton(
             text = text,
@@ -3680,11 +3564,9 @@ object uPickleImplicits {
           allowsMultipleAnswers <- m.get(allowsMultipleAnswersKey).map(x => readBinary[Boolean](x))
           correctOptionId       <- m.get(correctOptionIdKey).map(x => readBinary[Option[Int]](x))
           explanation           <- m.get(explanationKey).map(x => readBinary[Option[String]](x))
-          explanationEntities <- m
-            .get(explanationEntitiesKey)
-            .map(x => readBinary[List[MessageEntity]](x))
-          openPeriod <- m.get(openPeriodKey).map(x => readBinary[Option[Int]](x))
-          closeDate  <- m.get(closeDateKey).map(x => readBinary[Option[Int]](x))
+          explanationEntities   <- m.get(explanationEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          openPeriod            <- m.get(openPeriodKey).map(x => readBinary[Option[Int]](x))
+          closeDate             <- m.get(closeDateKey).map(x => readBinary[Option[Int]](x))
         } yield {
           Poll(
             id = id,
@@ -3847,8 +3729,7 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val messageautodeletetimerchangedCodec
-    : ReadWriter[MessageAutoDeleteTimerChanged] = {
+  implicit lazy val messageautodeletetimerchangedCodec: ReadWriter[MessageAutoDeleteTimerChanged] = {
     val messageAutoDeleteTimeKey = upack.Str("messageAutoDeleteTime")
     readwriter[upack.Msg].bimap(
       x => {
@@ -3965,17 +3846,13 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          currency         <- m.get(currencyKey).map(x => readBinary[String](x))
-          totalAmount      <- m.get(totalAmountKey).map(x => readBinary[Int](x))
-          invoicePayload   <- m.get(invoicePayloadKey).map(x => readBinary[String](x))
-          shippingOptionId <- m.get(shippingOptionIdKey).map(x => readBinary[Option[String]](x))
-          orderInfo        <- m.get(orderInfoKey).map(x => readBinary[Option[OrderInfo]](x))
-          telegramPaymentChargeId <- m
-            .get(telegramPaymentChargeIdKey)
-            .map(x => readBinary[String](x))
-          providerPaymentChargeId <- m
-            .get(providerPaymentChargeIdKey)
-            .map(x => readBinary[String](x))
+          currency                <- m.get(currencyKey).map(x => readBinary[String](x))
+          totalAmount             <- m.get(totalAmountKey).map(x => readBinary[Int](x))
+          invoicePayload          <- m.get(invoicePayloadKey).map(x => readBinary[String](x))
+          shippingOptionId        <- m.get(shippingOptionIdKey).map(x => readBinary[Option[String]](x))
+          orderInfo               <- m.get(orderInfoKey).map(x => readBinary[Option[OrderInfo]](x))
+          telegramPaymentChargeId <- m.get(telegramPaymentChargeIdKey).map(x => readBinary[String](x))
+          providerPaymentChargeId <- m.get(providerPaymentChargeIdKey).map(x => readBinary[String](x))
         } yield {
           SuccessfulPayment(
             currency = currency,
@@ -4565,19 +4442,15 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          id            <- m.get(idKey).map(x => readBinary[Long](x))
-          isBot         <- m.get(isBotKey).map(x => readBinary[Boolean](x))
-          firstName     <- m.get(firstNameKey).map(x => readBinary[String](x))
-          lastName      <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
-          username      <- m.get(usernameKey).map(x => readBinary[Option[String]](x))
-          languageCode  <- m.get(languageCodeKey).map(x => readBinary[Option[String]](x))
-          canJoinGroups <- m.get(canJoinGroupsKey).map(x => readBinary[Option[Boolean]](x))
-          canReadAllGroupMessages <- m
-            .get(canReadAllGroupMessagesKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          supportsInlineQueries <- m
-            .get(supportsInlineQueriesKey)
-            .map(x => readBinary[Option[Boolean]](x))
+          id                      <- m.get(idKey).map(x => readBinary[Long](x))
+          isBot                   <- m.get(isBotKey).map(x => readBinary[Boolean](x))
+          firstName               <- m.get(firstNameKey).map(x => readBinary[String](x))
+          lastName                <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
+          username                <- m.get(usernameKey).map(x => readBinary[Option[String]](x))
+          languageCode            <- m.get(languageCodeKey).map(x => readBinary[Option[String]](x))
+          canJoinGroups           <- m.get(canJoinGroupsKey).map(x => readBinary[Option[Boolean]](x))
+          canReadAllGroupMessages <- m.get(canReadAllGroupMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          supportsInlineQueries   <- m.get(supportsInlineQueriesKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           User(
             id = id,
@@ -4833,54 +4706,48 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          messageId       <- m.get(messageIdKey).map(x => readBinary[Int](x))
-          from            <- m.get(fromKey).map(x => readBinary[Option[User]](x))
-          senderChat      <- m.get(senderChatKey).map(x => readBinary[Option[Chat]](x))
-          date            <- m.get(dateKey).map(x => readBinary[Int](x))
-          chat            <- m.get(chatKey).map(x => readBinary[Chat](x))
-          forwardFrom     <- m.get(forwardFromKey).map(x => readBinary[Option[User]](x))
-          forwardFromChat <- m.get(forwardFromChatKey).map(x => readBinary[Option[Chat]](x))
-          forwardFromMessageId <- m
-            .get(forwardFromMessageIdKey)
-            .map(x => readBinary[Option[Int]](x))
-          forwardSignature  <- m.get(forwardSignatureKey).map(x => readBinary[Option[String]](x))
-          forwardSenderName <- m.get(forwardSenderNameKey).map(x => readBinary[Option[String]](x))
-          forwardDate       <- m.get(forwardDateKey).map(x => readBinary[Option[Int]](x))
-          replyToMessage    <- m.get(replyToMessageKey).map(x => readBinary[Option[Message]](x))
-          viaBot            <- m.get(viaBotKey).map(x => readBinary[Option[User]](x))
-          editDate          <- m.get(editDateKey).map(x => readBinary[Option[Int]](x))
-          mediaGroupId      <- m.get(mediaGroupIdKey).map(x => readBinary[Option[String]](x))
-          authorSignature   <- m.get(authorSignatureKey).map(x => readBinary[Option[String]](x))
-          text              <- m.get(textKey).map(x => readBinary[Option[String]](x))
-          entities          <- m.get(entitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          animation         <- m.get(animationKey).map(x => readBinary[Option[Animation]](x))
-          audio             <- m.get(audioKey).map(x => readBinary[Option[Audio]](x))
-          document          <- m.get(documentKey).map(x => readBinary[Option[Document]](x))
-          photo             <- m.get(photoKey).map(x => readBinary[List[PhotoSize]](x))
-          sticker           <- m.get(stickerKey).map(x => readBinary[Option[Sticker]](x))
-          video             <- m.get(videoKey).map(x => readBinary[Option[Video]](x))
-          videoNote         <- m.get(videoNoteKey).map(x => readBinary[Option[VideoNote]](x))
-          voice             <- m.get(voiceKey).map(x => readBinary[Option[Voice]](x))
-          caption           <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          captionEntities   <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          contact           <- m.get(contactKey).map(x => readBinary[Option[Contact]](x))
-          dice              <- m.get(diceKey).map(x => readBinary[Option[Dice]](x))
-          game              <- m.get(gameKey).map(x => readBinary[Option[Game]](x))
-          poll              <- m.get(pollKey).map(x => readBinary[Option[Poll]](x))
-          venue             <- m.get(venueKey).map(x => readBinary[Option[Venue]](x))
-          location          <- m.get(locationKey).map(x => readBinary[Option[Location]](x))
-          newChatMembers    <- m.get(newChatMembersKey).map(x => readBinary[List[User]](x))
-          leftChatMember    <- m.get(leftChatMemberKey).map(x => readBinary[Option[User]](x))
-          newChatTitle      <- m.get(newChatTitleKey).map(x => readBinary[Option[String]](x))
-          newChatPhoto      <- m.get(newChatPhotoKey).map(x => readBinary[List[PhotoSize]](x))
-          deleteChatPhoto   <- m.get(deleteChatPhotoKey).map(x => readBinary[Option[Boolean]](x))
-          groupChatCreated  <- m.get(groupChatCreatedKey).map(x => readBinary[Option[Boolean]](x))
-          supergroupChatCreated <- m
-            .get(supergroupChatCreatedKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          channelChatCreated <- m
-            .get(channelChatCreatedKey)
-            .map(x => readBinary[Option[Boolean]](x))
+          messageId             <- m.get(messageIdKey).map(x => readBinary[Int](x))
+          from                  <- m.get(fromKey).map(x => readBinary[Option[User]](x))
+          senderChat            <- m.get(senderChatKey).map(x => readBinary[Option[Chat]](x))
+          date                  <- m.get(dateKey).map(x => readBinary[Int](x))
+          chat                  <- m.get(chatKey).map(x => readBinary[Chat](x))
+          forwardFrom           <- m.get(forwardFromKey).map(x => readBinary[Option[User]](x))
+          forwardFromChat       <- m.get(forwardFromChatKey).map(x => readBinary[Option[Chat]](x))
+          forwardFromMessageId  <- m.get(forwardFromMessageIdKey).map(x => readBinary[Option[Int]](x))
+          forwardSignature      <- m.get(forwardSignatureKey).map(x => readBinary[Option[String]](x))
+          forwardSenderName     <- m.get(forwardSenderNameKey).map(x => readBinary[Option[String]](x))
+          forwardDate           <- m.get(forwardDateKey).map(x => readBinary[Option[Int]](x))
+          replyToMessage        <- m.get(replyToMessageKey).map(x => readBinary[Option[Message]](x))
+          viaBot                <- m.get(viaBotKey).map(x => readBinary[Option[User]](x))
+          editDate              <- m.get(editDateKey).map(x => readBinary[Option[Int]](x))
+          mediaGroupId          <- m.get(mediaGroupIdKey).map(x => readBinary[Option[String]](x))
+          authorSignature       <- m.get(authorSignatureKey).map(x => readBinary[Option[String]](x))
+          text                  <- m.get(textKey).map(x => readBinary[Option[String]](x))
+          entities              <- m.get(entitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          animation             <- m.get(animationKey).map(x => readBinary[Option[Animation]](x))
+          audio                 <- m.get(audioKey).map(x => readBinary[Option[Audio]](x))
+          document              <- m.get(documentKey).map(x => readBinary[Option[Document]](x))
+          photo                 <- m.get(photoKey).map(x => readBinary[List[PhotoSize]](x))
+          sticker               <- m.get(stickerKey).map(x => readBinary[Option[Sticker]](x))
+          video                 <- m.get(videoKey).map(x => readBinary[Option[Video]](x))
+          videoNote             <- m.get(videoNoteKey).map(x => readBinary[Option[VideoNote]](x))
+          voice                 <- m.get(voiceKey).map(x => readBinary[Option[Voice]](x))
+          caption               <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          captionEntities       <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          contact               <- m.get(contactKey).map(x => readBinary[Option[Contact]](x))
+          dice                  <- m.get(diceKey).map(x => readBinary[Option[Dice]](x))
+          game                  <- m.get(gameKey).map(x => readBinary[Option[Game]](x))
+          poll                  <- m.get(pollKey).map(x => readBinary[Option[Poll]](x))
+          venue                 <- m.get(venueKey).map(x => readBinary[Option[Venue]](x))
+          location              <- m.get(locationKey).map(x => readBinary[Option[Location]](x))
+          newChatMembers        <- m.get(newChatMembersKey).map(x => readBinary[List[User]](x))
+          leftChatMember        <- m.get(leftChatMemberKey).map(x => readBinary[Option[User]](x))
+          newChatTitle          <- m.get(newChatTitleKey).map(x => readBinary[Option[String]](x))
+          newChatPhoto          <- m.get(newChatPhotoKey).map(x => readBinary[List[PhotoSize]](x))
+          deleteChatPhoto       <- m.get(deleteChatPhotoKey).map(x => readBinary[Option[Boolean]](x))
+          groupChatCreated      <- m.get(groupChatCreatedKey).map(x => readBinary[Option[Boolean]](x))
+          supergroupChatCreated <- m.get(supergroupChatCreatedKey).map(x => readBinary[Option[Boolean]](x))
+          channelChatCreated    <- m.get(channelChatCreatedKey).map(x => readBinary[Option[Boolean]](x))
           messageAutoDeleteTimerChanged <- m
             .get(messageAutoDeleteTimerChangedKey)
             .map(x => readBinary[Option[MessageAutoDeleteTimerChanged]](x))
@@ -4888,21 +4755,15 @@ object uPickleImplicits {
           migrateFromChatId <- m.get(migrateFromChatIdKey).map(x => readBinary[Option[Long]](x))
           pinnedMessage     <- m.get(pinnedMessageKey).map(x => readBinary[Option[Message]](x))
           invoice           <- m.get(invoiceKey).map(x => readBinary[Option[Invoice]](x))
-          successfulPayment <- m
-            .get(successfulPaymentKey)
-            .map(x => readBinary[Option[SuccessfulPayment]](x))
-          connectedWebsite <- m.get(connectedWebsiteKey).map(x => readBinary[Option[String]](x))
-          passportData     <- m.get(passportDataKey).map(x => readBinary[Option[PassportData]](x))
+          successfulPayment <- m.get(successfulPaymentKey).map(x => readBinary[Option[SuccessfulPayment]](x))
+          connectedWebsite  <- m.get(connectedWebsiteKey).map(x => readBinary[Option[String]](x))
+          passportData      <- m.get(passportDataKey).map(x => readBinary[Option[PassportData]](x))
           proximityAlertTriggered <- m
             .get(proximityAlertTriggeredKey)
             .map(x => readBinary[Option[ProximityAlertTriggered]](x))
-          voiceChatScheduled <- m
-            .get(voiceChatScheduledKey)
-            .map(x => readBinary[Option[VoiceChatScheduled]](x))
-          voiceChatStarted <- m
-            .get(voiceChatStartedKey)
-            .map(x => readBinary[Option[VoiceChatStarted.type]](x))
-          voiceChatEnded <- m.get(voiceChatEndedKey).map(x => readBinary[Option[VoiceChatEnded]](x))
+          voiceChatScheduled <- m.get(voiceChatScheduledKey).map(x => readBinary[Option[VoiceChatScheduled]](x))
+          voiceChatStarted   <- m.get(voiceChatStartedKey).map(x => readBinary[Option[VoiceChatStarted.type]](x))
+          voiceChatEnded     <- m.get(voiceChatEndedKey).map(x => readBinary[Option[VoiceChatEnded]](x))
           voiceChatParticipantsInvited <- m
             .get(voiceChatParticipantsInvitedKey)
             .map(x => readBinary[Option[VoiceChatParticipantsInvited]](x))
@@ -5105,16 +4966,14 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          text              <- m.get(textKey).map(x => readBinary[String](x))
-          url               <- m.get(urlKey).map(x => readBinary[Option[String]](x))
-          loginUrl          <- m.get(loginUrlKey).map(x => readBinary[Option[LoginUrl]](x))
-          callbackData      <- m.get(callbackDataKey).map(x => readBinary[Option[String]](x))
-          switchInlineQuery <- m.get(switchInlineQueryKey).map(x => readBinary[Option[String]](x))
-          switchInlineQueryCurrentChat <- m
-            .get(switchInlineQueryCurrentChatKey)
-            .map(x => readBinary[Option[String]](x))
-          callbackGame <- m.get(callbackGameKey).map(x => readBinary[Option[String]](x))
-          pay          <- m.get(payKey).map(x => readBinary[Option[Boolean]](x))
+          text                         <- m.get(textKey).map(x => readBinary[String](x))
+          url                          <- m.get(urlKey).map(x => readBinary[Option[String]](x))
+          loginUrl                     <- m.get(loginUrlKey).map(x => readBinary[Option[LoginUrl]](x))
+          callbackData                 <- m.get(callbackDataKey).map(x => readBinary[Option[String]](x))
+          switchInlineQuery            <- m.get(switchInlineQueryKey).map(x => readBinary[Option[String]](x))
+          switchInlineQueryCurrentChat <- m.get(switchInlineQueryCurrentChatKey).map(x => readBinary[Option[String]](x))
+          callbackGame                 <- m.get(callbackGameKey).map(x => readBinary[Option[String]](x))
+          pay                          <- m.get(payKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           InlineKeyboardButton(
             text = text,
@@ -5149,12 +5008,10 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          url         <- m.get(urlKey).map(x => readBinary[String](x))
-          forwardText <- m.get(forwardTextKey).map(x => readBinary[Option[String]](x))
-          botUsername <- m.get(botUsernameKey).map(x => readBinary[Option[String]](x))
-          requestWriteAccess <- m
-            .get(requestWriteAccessKey)
-            .map(x => readBinary[Option[Boolean]](x))
+          url                <- m.get(urlKey).map(x => readBinary[String](x))
+          forwardText        <- m.get(forwardTextKey).map(x => readBinary[Option[String]](x))
+          botUsername        <- m.get(botUsernameKey).map(x => readBinary[Option[String]](x))
+          requestWriteAccess <- m.get(requestWriteAccessKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           LoginUrl(
             url = url,
@@ -5375,38 +5232,28 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          user              <- m.get(userKey).map(x => readBinary[User](x))
-          status            <- m.get(statusKey).map(x => readBinary[String](x))
-          customTitle       <- m.get(customTitleKey).map(x => readBinary[Option[String]](x))
-          isAnonymous       <- m.get(isAnonymousKey).map(x => readBinary[Option[Boolean]](x))
-          canBeEdited       <- m.get(canBeEditedKey).map(x => readBinary[Option[Boolean]](x))
-          canManageChat     <- m.get(canManageChatKey).map(x => readBinary[Option[Boolean]](x))
-          canPostMessages   <- m.get(canPostMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canEditMessages   <- m.get(canEditMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canDeleteMessages <- m.get(canDeleteMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canManageVoiceChats <- m
-            .get(canManageVoiceChatsKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          canRestrictMembers <- m
-            .get(canRestrictMembersKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          canPromoteMembers <- m.get(canPromoteMembersKey).map(x => readBinary[Option[Boolean]](x))
-          canChangeInfo     <- m.get(canChangeInfoKey).map(x => readBinary[Option[Boolean]](x))
-          canInviteUsers    <- m.get(canInviteUsersKey).map(x => readBinary[Option[Boolean]](x))
-          canPinMessages    <- m.get(canPinMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          isMember          <- m.get(isMemberKey).map(x => readBinary[Option[Boolean]](x))
-          canSendMessages   <- m.get(canSendMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canSendMediaMessages <- m
-            .get(canSendMediaMessagesKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          canSendPolls <- m.get(canSendPollsKey).map(x => readBinary[Option[Boolean]](x))
-          canSendOtherMessages <- m
-            .get(canSendOtherMessagesKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          canAddWebPagePreviews <- m
-            .get(canAddWebPagePreviewsKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          untilDate <- m.get(untilDateKey).map(x => readBinary[Option[Int]](x))
+          user                  <- m.get(userKey).map(x => readBinary[User](x))
+          status                <- m.get(statusKey).map(x => readBinary[String](x))
+          customTitle           <- m.get(customTitleKey).map(x => readBinary[Option[String]](x))
+          isAnonymous           <- m.get(isAnonymousKey).map(x => readBinary[Option[Boolean]](x))
+          canBeEdited           <- m.get(canBeEditedKey).map(x => readBinary[Option[Boolean]](x))
+          canManageChat         <- m.get(canManageChatKey).map(x => readBinary[Option[Boolean]](x))
+          canPostMessages       <- m.get(canPostMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canEditMessages       <- m.get(canEditMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canDeleteMessages     <- m.get(canDeleteMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canManageVoiceChats   <- m.get(canManageVoiceChatsKey).map(x => readBinary[Option[Boolean]](x))
+          canRestrictMembers    <- m.get(canRestrictMembersKey).map(x => readBinary[Option[Boolean]](x))
+          canPromoteMembers     <- m.get(canPromoteMembersKey).map(x => readBinary[Option[Boolean]](x))
+          canChangeInfo         <- m.get(canChangeInfoKey).map(x => readBinary[Option[Boolean]](x))
+          canInviteUsers        <- m.get(canInviteUsersKey).map(x => readBinary[Option[Boolean]](x))
+          canPinMessages        <- m.get(canPinMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          isMember              <- m.get(isMemberKey).map(x => readBinary[Option[Boolean]](x))
+          canSendMessages       <- m.get(canSendMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canSendMediaMessages  <- m.get(canSendMediaMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canSendPolls          <- m.get(canSendPollsKey).map(x => readBinary[Option[Boolean]](x))
+          canSendOtherMessages  <- m.get(canSendOtherMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canAddWebPagePreviews <- m.get(canAddWebPagePreviewsKey).map(x => readBinary[Option[Boolean]](x))
+          untilDate             <- m.get(untilDateKey).map(x => readBinary[Option[Int]](x))
         } yield {
           ChatMember(
             user = user,
@@ -5551,6 +5398,7 @@ object CirceImplicits {
     case EmojiSlotMachine => EmojiSlotMachine.asJson
     case EmojiBowling     => EmojiBowling.asJson
   }
+
   implicit lazy val emojiDecoder: Decoder[Emoji] = {
     List[Decoder[Emoji]](
       emojidiceDecoder.widen,
@@ -5562,34 +5410,25 @@ object CirceImplicits {
     ).reduceLeft(_ or _)
   }
 
-  implicit lazy val emojidiceEncoder: Encoder[EmojiDice.type] = (_: EmojiDice.type) => "🎲".asJson
-  implicit lazy val emojidiceDecoder: Decoder[EmojiDice.type] = Decoder[String].map(_ => EmojiDice)
-  implicit lazy val emojidartsEncoder: Encoder[EmojiDarts.type] = (_: EmojiDarts.type) =>
-    "🎯".asJson
-  implicit lazy val emojidartsDecoder: Decoder[EmojiDarts.type] =
-    Decoder[String].map(_ => EmojiDarts)
-  implicit lazy val emojibasketballEncoder: Encoder[EmojiBasketball.type] =
-    (_: EmojiBasketball.type) => "🏀".asJson
-  implicit lazy val emojibasketballDecoder: Decoder[EmojiBasketball.type] =
-    Decoder[String].map(_ => EmojiBasketball)
-  implicit lazy val emojifootballEncoder: Encoder[EmojiFootball.type] = (_: EmojiFootball.type) =>
-    "⚽".asJson
-  implicit lazy val emojifootballDecoder: Decoder[EmojiFootball.type] =
-    Decoder[String].map(_ => EmojiFootball)
-  implicit lazy val emojislotmachineEncoder: Encoder[EmojiSlotMachine.type] =
-    (_: EmojiSlotMachine.type) => "🎰".asJson
-  implicit lazy val emojislotmachineDecoder: Decoder[EmojiSlotMachine.type] =
-    Decoder[String].map(_ => EmojiSlotMachine)
-  implicit lazy val emojibowlingEncoder: Encoder[EmojiBowling.type] = (_: EmojiBowling.type) =>
-    "🎳".asJson
-  implicit lazy val emojibowlingDecoder: Decoder[EmojiBowling.type] =
-    Decoder[String].map(_ => EmojiBowling)
+  implicit lazy val emojidiceEncoder: Encoder[EmojiDice.type]               = (_: EmojiDice.type) => "🎲".asJson
+  implicit lazy val emojidiceDecoder: Decoder[EmojiDice.type]               = Decoder[String].map(_ => EmojiDice)
+  implicit lazy val emojidartsEncoder: Encoder[EmojiDarts.type]             = (_: EmojiDarts.type) => "🎯".asJson
+  implicit lazy val emojidartsDecoder: Decoder[EmojiDarts.type]             = Decoder[String].map(_ => EmojiDarts)
+  implicit lazy val emojibasketballEncoder: Encoder[EmojiBasketball.type]   = (_: EmojiBasketball.type) => "🏀".asJson
+  implicit lazy val emojibasketballDecoder: Decoder[EmojiBasketball.type]   = Decoder[String].map(_ => EmojiBasketball)
+  implicit lazy val emojifootballEncoder: Encoder[EmojiFootball.type]       = (_: EmojiFootball.type) => "⚽".asJson
+  implicit lazy val emojifootballDecoder: Decoder[EmojiFootball.type]       = Decoder[String].map(_ => EmojiFootball)
+  implicit lazy val emojislotmachineEncoder: Encoder[EmojiSlotMachine.type] = (_: EmojiSlotMachine.type) => "🎰".asJson
+  implicit lazy val emojislotmachineDecoder: Decoder[EmojiSlotMachine.type] = Decoder[String].map(_ => EmojiSlotMachine)
+  implicit lazy val emojibowlingEncoder: Encoder[EmojiBowling.type]         = (_: EmojiBowling.type) => "🎳".asJson
+  implicit lazy val emojibowlingDecoder: Decoder[EmojiBowling.type]         = Decoder[String].map(_ => EmojiBowling)
 
   implicit lazy val parsemodeEncoder: Encoder[ParseMode] = {
     case Markdown  => Markdown.asJson
     case Markdown2 => Markdown2.asJson
     case Html      => Html.asJson
   }
+
   implicit lazy val parsemodeDecoder: Decoder[ParseMode] = {
     List[Decoder[ParseMode]](
       markdownDecoder.widen,
@@ -5598,11 +5437,9 @@ object CirceImplicits {
     ).reduceLeft(_ or _)
   }
 
-  implicit lazy val markdownEncoder: Encoder[Markdown.type] = (_: Markdown.type) =>
-    "Markdown".asJson
-  implicit lazy val markdownDecoder: Decoder[Markdown.type] = Decoder[String].map(_ => Markdown)
-  implicit lazy val markdown2Encoder: Encoder[Markdown2.type] = (_: Markdown2.type) =>
-    "MarkdownV2".asJson
+  implicit lazy val markdownEncoder: Encoder[Markdown.type]   = (_: Markdown.type) => "Markdown".asJson
+  implicit lazy val markdownDecoder: Decoder[Markdown.type]   = Decoder[String].map(_ => Markdown)
+  implicit lazy val markdown2Encoder: Encoder[Markdown2.type] = (_: Markdown2.type) => "MarkdownV2".asJson
   implicit lazy val markdown2Decoder: Decoder[Markdown2.type] = Decoder[String].map(_ => Markdown2)
   implicit lazy val htmlEncoder: Encoder[Html.type]           = (_: Html.type) => "HTML".asJson
   implicit lazy val htmlDecoder: Decoder[Html.type]           = Decoder[String].map(_ => Html)
@@ -5611,6 +5448,7 @@ object CirceImplicits {
     case x: ChatIntId => x.asJson
     case x: ChatStrId => x.asJson
   }
+
   implicit lazy val chatidDecoder: Decoder[ChatId] = {
     List[Decoder[ChatId]](
       chatintidDecoder.widen,
@@ -5629,6 +5467,7 @@ object CirceImplicits {
     case x: ReplyKeyboardRemove  => x.asJson
     case x: ReplyKeyboardMarkup  => x.asJson
   }
+
   implicit lazy val keyboardmarkupDecoder: Decoder[KeyboardMarkup] = {
     List[Decoder[KeyboardMarkup]](
       inlinekeyboardmarkupDecoder.widen,
@@ -5650,8 +5489,7 @@ object CirceImplicits {
   implicit lazy val inlinekeyboardmarkupDecoder: Decoder[InlineKeyboardMarkup] =
     Decoder.instance { h =>
       for {
-        _inlineKeyboard <- h
-          .getOrElse[List[List[InlineKeyboardButton]]]("inline_keyboard")(List.empty)
+        _inlineKeyboard <- h.getOrElse[List[List[InlineKeyboardButton]]]("inline_keyboard")(List.empty)
       } yield {
         InlineKeyboardMarkup(inlineKeyboard = _inlineKeyboard)
       }
@@ -5717,10 +5555,12 @@ object CirceImplicits {
         _oneTimeKeyboard <- h.get[Option[Boolean]]("one_time_keyboard")
         _selective       <- h.get[Option[Boolean]]("selective")
       } yield {
-        ReplyKeyboardMarkup(keyboard = _keyboard,
-                            resizeKeyboard = _resizeKeyboard,
-                            oneTimeKeyboard = _oneTimeKeyboard,
-                            selective = _selective)
+        ReplyKeyboardMarkup(
+          keyboard = _keyboard,
+          resizeKeyboard = _resizeKeyboard,
+          oneTimeKeyboard = _oneTimeKeyboard,
+          selective = _selective
+        )
       }
     }
 
@@ -5728,6 +5568,7 @@ object CirceImplicits {
     case x: InputPartFile => x.asJson
     case x: InputLinkFile => x.asJson
   }
+
   implicit lazy val ifileDecoder: Decoder[IFile] = {
     List[Decoder[IFile]](
       inputpartfileDecoder.widen,
@@ -5735,24 +5576,22 @@ object CirceImplicits {
     ).reduceLeft(_ or _)
   }
 
-  implicit lazy val inputpartfileEncoder: Encoder[InputPartFile] = (x: InputPartFile) =>
-    x.file.getName.asJson
+  implicit lazy val inputpartfileEncoder: Encoder[InputPartFile] = (x: InputPartFile) => x.file.getName.asJson
+
   implicit lazy val inputpartfileDecoder: Decoder[InputPartFile] =
     Decoder[String].map(s => InputPartFile(new java.io.File(s)))
-  implicit lazy val inputlinkfileEncoder: Encoder[InputLinkFile] = (x: InputLinkFile) =>
-    x.file.asJson
-  implicit lazy val inputlinkfileDecoder: Decoder[InputLinkFile] =
-    Decoder[String].map(InputLinkFile)
+
+  implicit lazy val inputlinkfileEncoder: Encoder[InputLinkFile] = (x: InputLinkFile) => x.file.asJson
+  implicit lazy val inputlinkfileDecoder: Decoder[InputLinkFile] = Decoder[String].map(InputLinkFile)
 
   implicit lazy val inputmediaEncoder: Encoder[InputMedia] = {
-    case photo: InputMediaPhoto => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case document: InputMediaDocument =>
-      document.asJson.mapObject(_.add("type", Json.fromString("document")))
-    case audio: InputMediaAudio => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
-    case animation: InputMediaAnimation =>
-      animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
-    case video: InputMediaVideo => video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case photo: InputMediaPhoto         => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case document: InputMediaDocument   => document.asJson.mapObject(_.add("type", Json.fromString("document")))
+    case audio: InputMediaAudio         => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
+    case animation: InputMediaAnimation => animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
+    case video: InputMediaVideo         => video.asJson.mapObject(_.add("type", Json.fromString("video")))
   }
+
   implicit lazy val inputmediaDecoder: Decoder[InputMedia] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
@@ -5792,14 +5631,16 @@ object CirceImplicits {
         _height          <- h.get[Option[Int]]("height")
         _duration        <- h.get[Option[Int]]("duration")
       } yield {
-        InputMediaAnimation(media = _media,
-                            thumb = _thumb,
-                            caption = _caption,
-                            parseMode = _parseMode,
-                            captionEntities = _captionEntities,
-                            width = _width,
-                            height = _height,
-                            duration = _duration)
+        InputMediaAnimation(
+          media = _media,
+          thumb = _thumb,
+          caption = _caption,
+          parseMode = _parseMode,
+          captionEntities = _captionEntities,
+          width = _width,
+          height = _height,
+          duration = _duration
+        )
       }
     }
 
@@ -5823,10 +5664,7 @@ object CirceImplicits {
         _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
       } yield {
-        InputMediaPhoto(media = _media,
-                        caption = _caption,
-                        parseMode = _parseMode,
-                        captionEntities = _captionEntities)
+        InputMediaPhoto(media = _media, caption = _caption, parseMode = _parseMode, captionEntities = _captionEntities)
       }
     }
 
@@ -5937,90 +5775,83 @@ object CirceImplicits {
         _performer       <- h.get[Option[String]]("performer")
         _title           <- h.get[Option[String]]("title")
       } yield {
-        InputMediaAudio(media = _media,
-                        thumb = _thumb,
-                        caption = _caption,
-                        parseMode = _parseMode,
-                        captionEntities = _captionEntities,
-                        duration = _duration,
-                        performer = _performer,
-                        title = _title)
+        InputMediaAudio(
+          media = _media,
+          thumb = _thumb,
+          caption = _caption,
+          parseMode = _parseMode,
+          captionEntities = _captionEntities,
+          duration = _duration,
+          performer = _performer,
+          title = _title
+        )
       }
     }
 
   implicit lazy val inlinequeryresultEncoder: Encoder[InlineQueryResult] = {
-    case mpeg4_gif: InlineQueryResultMpeg4Gif =>
-      mpeg4_gif.asJson.mapObject(_.add("type", Json.fromString("mpeg4_gif")))
+    case mpeg4_gif: InlineQueryResultMpeg4Gif => mpeg4_gif.asJson.mapObject(_.add("type", Json.fromString("mpeg4_gif")))
     case mpeg4_gif: InlineQueryResultCachedMpeg4Gif =>
       mpeg4_gif.asJson.mapObject(_.add("type", Json.fromString("mpeg4_gif")))
-    case location: InlineQueryResultLocation =>
-      location.asJson.mapObject(_.add("type", Json.fromString("location")))
-    case photo: InlineQueryResultPhoto =>
-      photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case photo: InlineQueryResultCachedPhoto =>
-      photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case document: InlineQueryResultDocument =>
-      document.asJson.mapObject(_.add("type", Json.fromString("document")))
+    case location: InlineQueryResultLocation => location.asJson.mapObject(_.add("type", Json.fromString("location")))
+    case photo: InlineQueryResultPhoto       => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case photo: InlineQueryResultCachedPhoto => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case document: InlineQueryResultDocument => document.asJson.mapObject(_.add("type", Json.fromString("document")))
     case document: InlineQueryResultCachedDocument =>
       document.asJson.mapObject(_.add("type", Json.fromString("document")))
-    case audio: InlineQueryResultAudio =>
-      audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
-    case audio: InlineQueryResultCachedAudio =>
-      audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
-    case voice: InlineQueryResultCachedVoice =>
-      voice.asJson.mapObject(_.add("type", Json.fromString("voice")))
-    case voice: InlineQueryResultVoice =>
-      voice.asJson.mapObject(_.add("type", Json.fromString("voice")))
-    case article: InlineQueryResultArticle =>
-      article.asJson.mapObject(_.add("type", Json.fromString("article")))
-    case contact: InlineQueryResultContact =>
-      contact.asJson.mapObject(_.add("type", Json.fromString("contact")))
-    case video: InlineQueryResultCachedVideo =>
-      video.asJson.mapObject(_.add("type", Json.fromString("video")))
-    case video: InlineQueryResultVideo =>
-      video.asJson.mapObject(_.add("type", Json.fromString("video")))
-    case gif: InlineQueryResultGif => gif.asJson.mapObject(_.add("type", Json.fromString("gif")))
-    case gif: InlineQueryResultCachedGif =>
-      gif.asJson.mapObject(_.add("type", Json.fromString("gif")))
-    case sticker: InlineQueryResultCachedSticker =>
-      sticker.asJson.mapObject(_.add("type", Json.fromString("sticker")))
-    case game: InlineQueryResultGame =>
-      game.asJson.mapObject(_.add("type", Json.fromString("game")))
-    case venue: InlineQueryResultVenue =>
-      venue.asJson.mapObject(_.add("type", Json.fromString("venue")))
+    case audio: InlineQueryResultAudio           => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
+    case audio: InlineQueryResultCachedAudio     => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
+    case voice: InlineQueryResultCachedVoice     => voice.asJson.mapObject(_.add("type", Json.fromString("voice")))
+    case voice: InlineQueryResultVoice           => voice.asJson.mapObject(_.add("type", Json.fromString("voice")))
+    case article: InlineQueryResultArticle       => article.asJson.mapObject(_.add("type", Json.fromString("article")))
+    case contact: InlineQueryResultContact       => contact.asJson.mapObject(_.add("type", Json.fromString("contact")))
+    case video: InlineQueryResultCachedVideo     => video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case video: InlineQueryResultVideo           => video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case gif: InlineQueryResultGif               => gif.asJson.mapObject(_.add("type", Json.fromString("gif")))
+    case gif: InlineQueryResultCachedGif         => gif.asJson.mapObject(_.add("type", Json.fromString("gif")))
+    case sticker: InlineQueryResultCachedSticker => sticker.asJson.mapObject(_.add("type", Json.fromString("sticker")))
+    case game: InlineQueryResultGame             => game.asJson.mapObject(_.add("type", Json.fromString("game")))
+    case venue: InlineQueryResultVenue           => venue.asJson.mapObject(_.add("type", Json.fromString("venue")))
   }
+
   implicit lazy val inlinequeryresultDecoder: Decoder[InlineQueryResult] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
       case "mpeg4_gif" =>
         List[Decoder[InlineQueryResult]](
           Decoder[InlineQueryResultMpeg4Gif].widen,
-          Decoder[InlineQueryResultCachedMpeg4Gif].widen).reduceLeft(_ or _)
+          Decoder[InlineQueryResultCachedMpeg4Gif].widen
+        ).reduceLeft(_ or _)
       case "location" => Decoder[InlineQueryResultLocation]
       case "photo" =>
         List[Decoder[InlineQueryResult]](
           Decoder[InlineQueryResultPhoto].widen,
-          Decoder[InlineQueryResultCachedPhoto].widen).reduceLeft(_ or _)
+          Decoder[InlineQueryResultCachedPhoto].widen
+        ).reduceLeft(_ or _)
       case "document" =>
         List[Decoder[InlineQueryResult]](
           Decoder[InlineQueryResultDocument].widen,
-          Decoder[InlineQueryResultCachedDocument].widen).reduceLeft(_ or _)
+          Decoder[InlineQueryResultCachedDocument].widen
+        ).reduceLeft(_ or _)
       case "audio" =>
         List[Decoder[InlineQueryResult]](
           Decoder[InlineQueryResultAudio].widen,
-          Decoder[InlineQueryResultCachedAudio].widen).reduceLeft(_ or _)
+          Decoder[InlineQueryResultCachedAudio].widen
+        ).reduceLeft(_ or _)
       case "voice" =>
-        List[Decoder[InlineQueryResult]](Decoder[InlineQueryResultCachedVoice].widen,
-                                         Decoder[InlineQueryResultVoice].widen).reduceLeft(_ or _)
+        List[Decoder[InlineQueryResult]](
+          Decoder[InlineQueryResultCachedVoice].widen,
+          Decoder[InlineQueryResultVoice].widen
+        ).reduceLeft(_ or _)
       case "article" => Decoder[InlineQueryResultArticle]
       case "contact" => Decoder[InlineQueryResultContact]
       case "video" =>
-        List[Decoder[InlineQueryResult]](Decoder[InlineQueryResultCachedVideo].widen,
-                                         Decoder[InlineQueryResultVideo].widen).reduceLeft(_ or _)
-      case "gif" =>
         List[Decoder[InlineQueryResult]](
-          Decoder[InlineQueryResultGif].widen,
-          Decoder[InlineQueryResultCachedGif].widen).reduceLeft(_ or _)
+          Decoder[InlineQueryResultCachedVideo].widen,
+          Decoder[InlineQueryResultVideo].widen
+        ).reduceLeft(_ or _)
+      case "gif" =>
+        List[Decoder[InlineQueryResult]](Decoder[InlineQueryResultGif].widen, Decoder[InlineQueryResultCachedGif].widen)
+          .reduceLeft(_ or _)
       case "sticker" => Decoder[InlineQueryResultCachedSticker]
       case "game"    => Decoder[InlineQueryResultGame]
       case "venue"   => Decoder[InlineQueryResultVenue]
@@ -6489,8 +6320,7 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val inlinequeryresultcachedmpeg4gifEncoder
-    : Encoder[InlineQueryResultCachedMpeg4Gif] =
+  implicit lazy val inlinequeryresultcachedmpeg4gifEncoder: Encoder[InlineQueryResultCachedMpeg4Gif] =
     (x: InlineQueryResultCachedMpeg4Gif) => {
       Json.fromFields(
         List(
@@ -6506,8 +6336,7 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inlinequeryresultcachedmpeg4gifDecoder
-    : Decoder[InlineQueryResultCachedMpeg4Gif] =
+  implicit lazy val inlinequeryresultcachedmpeg4gifDecoder: Decoder[InlineQueryResultCachedMpeg4Gif] =
     Decoder.instance { h =>
       for {
         _id                  <- h.get[String]("id")
@@ -6532,8 +6361,7 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val inlinequeryresultcacheddocumentEncoder
-    : Encoder[InlineQueryResultCachedDocument] =
+  implicit lazy val inlinequeryresultcacheddocumentEncoder: Encoder[InlineQueryResultCachedDocument] =
     (x: InlineQueryResultCachedDocument) => {
       Json.fromFields(
         List(
@@ -6550,8 +6378,7 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inlinequeryresultcacheddocumentDecoder
-    : Decoder[InlineQueryResultCachedDocument] =
+  implicit lazy val inlinequeryresultcacheddocumentDecoder: Decoder[InlineQueryResultCachedDocument] =
     Decoder.instance { h =>
       for {
         _id                  <- h.get[String]("id")
@@ -6708,10 +6535,12 @@ object CirceImplicits {
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
-        InlineQueryResultCachedSticker(id = _id,
-                                       stickerFileId = _stickerFileId,
-                                       replyMarkup = _replyMarkup,
-                                       inputMessageContent = _inputMessageContent)
+        InlineQueryResultCachedSticker(
+          id = _id,
+          stickerFileId = _stickerFileId,
+          replyMarkup = _replyMarkup,
+          inputMessageContent = _inputMessageContent
+        )
       }
     }
 
@@ -6960,6 +6789,7 @@ object CirceImplicits {
     case x: InputLocationMessageContent => x.asJson
     case x: InputTextMessageContent     => x.asJson
   }
+
   implicit lazy val inputmessagecontentDecoder: Decoder[InputMessageContent] = {
     List[Decoder[InputMessageContent]](
       inputvenuemessagecontentDecoder.widen,
@@ -7108,10 +6938,12 @@ object CirceImplicits {
         _lastName    <- h.get[Option[String]]("last_name")
         _vcard       <- h.get[Option[String]]("vcard")
       } yield {
-        InputContactMessageContent(phoneNumber = _phoneNumber,
-                                   firstName = _firstName,
-                                   lastName = _lastName,
-                                   vcard = _vcard)
+        InputContactMessageContent(
+          phoneNumber = _phoneNumber,
+          firstName = _firstName,
+          lastName = _lastName,
+          vcard = _vcard
+        )
       }
     }
 
@@ -7170,10 +7002,12 @@ object CirceImplicits {
         _entities              <- h.getOrElse[List[MessageEntity]]("entities")(List.empty)
         _disableWebPagePreview <- h.get[Option[Boolean]]("disable_web_page_preview")
       } yield {
-        InputTextMessageContent(messageText = _messageText,
-                                parseMode = _parseMode,
-                                entities = _entities,
-                                disableWebPagePreview = _disableWebPagePreview)
+        InputTextMessageContent(
+          messageText = _messageText,
+          parseMode = _parseMode,
+          entities = _entities,
+          disableWebPagePreview = _disableWebPagePreview
+        )
       }
     }
 
@@ -7184,19 +7018,16 @@ object CirceImplicits {
       translation_files.asJson.mapObject(_.add("type", Json.fromString("translation_files")))
     case reverse_side: PassportElementErrorReverseSide =>
       reverse_side.asJson.mapObject(_.add("type", Json.fromString("reverse_side")))
-    case data: PassportElementErrorDataField =>
-      data.asJson.mapObject(_.add("type", Json.fromString("data")))
+    case data: PassportElementErrorDataField => data.asJson.mapObject(_.add("type", Json.fromString("data")))
     case front_side: PassportElementErrorFrontSide =>
       front_side.asJson.mapObject(_.add("type", Json.fromString("front_side")))
-    case files: PassportElementErrorFiles =>
-      files.asJson.mapObject(_.add("type", Json.fromString("files")))
+    case files: PassportElementErrorFiles => files.asJson.mapObject(_.add("type", Json.fromString("files")))
     case unspecified: PassportElementErrorUnspecified =>
       unspecified.asJson.mapObject(_.add("type", Json.fromString("unspecified")))
-    case file: PassportElementErrorFile =>
-      file.asJson.mapObject(_.add("type", Json.fromString("file")))
-    case selfie: PassportElementErrorSelfie =>
-      selfie.asJson.mapObject(_.add("type", Json.fromString("selfie")))
+    case file: PassportElementErrorFile     => file.asJson.mapObject(_.add("type", Json.fromString("file")))
+    case selfie: PassportElementErrorSelfie => selfie.asJson.mapObject(_.add("type", Json.fromString("selfie")))
   }
+
   implicit lazy val passportelementerrorDecoder: Decoder[PassportElementError] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
@@ -7254,15 +7085,11 @@ object CirceImplicits {
         _dataHash  <- h.get[String]("data_hash")
         _message   <- h.get[String]("message")
       } yield {
-        PassportElementErrorDataField(`type` = _type,
-                                      fieldName = _fieldName,
-                                      dataHash = _dataHash,
-                                      message = _message)
+        PassportElementErrorDataField(`type` = _type, fieldName = _fieldName, dataHash = _dataHash, message = _message)
       }
     }
 
-  implicit lazy val passportelementerrorreversesideEncoder
-    : Encoder[PassportElementErrorReverseSide] =
+  implicit lazy val passportelementerrorreversesideEncoder: Encoder[PassportElementErrorReverseSide] =
     (x: PassportElementErrorReverseSide) => {
       Json.fromFields(
         List(
@@ -7273,8 +7100,7 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val passportelementerrorreversesideDecoder
-    : Decoder[PassportElementErrorReverseSide] =
+  implicit lazy val passportelementerrorreversesideDecoder: Decoder[PassportElementErrorReverseSide] =
     Decoder.instance { h =>
       for {
         _type     <- h.get[String]("type")
@@ -7351,8 +7177,7 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val passportelementerrorunspecifiedEncoder
-    : Encoder[PassportElementErrorUnspecified] =
+  implicit lazy val passportelementerrorunspecifiedEncoder: Encoder[PassportElementErrorUnspecified] =
     (x: PassportElementErrorUnspecified) => {
       Json.fromFields(
         List(
@@ -7363,22 +7188,18 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val passportelementerrorunspecifiedDecoder
-    : Decoder[PassportElementErrorUnspecified] =
+  implicit lazy val passportelementerrorunspecifiedDecoder: Decoder[PassportElementErrorUnspecified] =
     Decoder.instance { h =>
       for {
         _type        <- h.get[String]("type")
         _elementHash <- h.get[String]("element_hash")
         _message     <- h.get[String]("message")
       } yield {
-        PassportElementErrorUnspecified(`type` = _type,
-                                        elementHash = _elementHash,
-                                        message = _message)
+        PassportElementErrorUnspecified(`type` = _type, elementHash = _elementHash, message = _message)
       }
     }
 
-  implicit lazy val passportelementerrortranslationfileEncoder
-    : Encoder[PassportElementErrorTranslationFile] =
+  implicit lazy val passportelementerrortranslationfileEncoder: Encoder[PassportElementErrorTranslationFile] =
     (x: PassportElementErrorTranslationFile) => {
       Json.fromFields(
         List(
@@ -7389,22 +7210,18 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val passportelementerrortranslationfileDecoder
-    : Decoder[PassportElementErrorTranslationFile] =
+  implicit lazy val passportelementerrortranslationfileDecoder: Decoder[PassportElementErrorTranslationFile] =
     Decoder.instance { h =>
       for {
         _type     <- h.get[String]("type")
         _fileHash <- h.get[String]("file_hash")
         _message  <- h.get[String]("message")
       } yield {
-        PassportElementErrorTranslationFile(`type` = _type,
-                                            fileHash = _fileHash,
-                                            message = _message)
+        PassportElementErrorTranslationFile(`type` = _type, fileHash = _fileHash, message = _message)
       }
     }
 
-  implicit lazy val passportelementerrortranslationfilesEncoder
-    : Encoder[PassportElementErrorTranslationFiles] =
+  implicit lazy val passportelementerrortranslationfilesEncoder: Encoder[PassportElementErrorTranslationFiles] =
     (x: PassportElementErrorTranslationFiles) => {
       Json.fromFields(
         List(
@@ -7415,17 +7232,14 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val passportelementerrortranslationfilesDecoder
-    : Decoder[PassportElementErrorTranslationFiles] =
+  implicit lazy val passportelementerrortranslationfilesDecoder: Decoder[PassportElementErrorTranslationFiles] =
     Decoder.instance { h =>
       for {
         _type       <- h.get[String]("type")
         _fileHashes <- h.getOrElse[List[String]]("file_hashes")(List.empty)
         _message    <- h.get[String]("message")
       } yield {
-        PassportElementErrorTranslationFiles(`type` = _type,
-                                             fileHashes = _fileHashes,
-                                             message = _message)
+        PassportElementErrorTranslationFiles(`type` = _type, fileHashes = _fileHashes, message = _message)
       }
     }
 
@@ -7437,26 +7251,20 @@ object CirceImplicits {
       bot_command.asJson.mapObject(_.add("type", Json.fromString("bot_command")))
     case phone_number: PhoneNumberMessageEntity =>
       phone_number.asJson.mapObject(_.add("type", Json.fromString("phone_number")))
-    case email: EmailMessageEntity =>
-      email.asJson.mapObject(_.add("type", Json.fromString("email")))
-    case url: UrlMessageEntity => url.asJson.mapObject(_.add("type", Json.fromString("url")))
-    case underline: UnderlineMessageEntity =>
-      underline.asJson.mapObject(_.add("type", Json.fromString("underline")))
-    case italic: ItalicMessageEntity =>
-      italic.asJson.mapObject(_.add("type", Json.fromString("italic")))
-    case bold: BoldMessageEntity => bold.asJson.mapObject(_.add("type", Json.fromString("bold")))
-    case cashtag: CashtagMessageEntity =>
-      cashtag.asJson.mapObject(_.add("type", Json.fromString("cashtag")))
-    case code: CodeMessageEntity => code.asJson.mapObject(_.add("type", Json.fromString("code")))
-    case mention: MentionMessageEntity =>
-      mention.asJson.mapObject(_.add("type", Json.fromString("mention")))
-    case hashtag: HashtagMessageEntity =>
-      hashtag.asJson.mapObject(_.add("type", Json.fromString("hashtag")))
-    case text_link: TextLinkMessageEntity =>
-      text_link.asJson.mapObject(_.add("type", Json.fromString("text_link")))
+    case email: EmailMessageEntity         => email.asJson.mapObject(_.add("type", Json.fromString("email")))
+    case url: UrlMessageEntity             => url.asJson.mapObject(_.add("type", Json.fromString("url")))
+    case underline: UnderlineMessageEntity => underline.asJson.mapObject(_.add("type", Json.fromString("underline")))
+    case italic: ItalicMessageEntity       => italic.asJson.mapObject(_.add("type", Json.fromString("italic")))
+    case bold: BoldMessageEntity           => bold.asJson.mapObject(_.add("type", Json.fromString("bold")))
+    case cashtag: CashtagMessageEntity     => cashtag.asJson.mapObject(_.add("type", Json.fromString("cashtag")))
+    case code: CodeMessageEntity           => code.asJson.mapObject(_.add("type", Json.fromString("code")))
+    case mention: MentionMessageEntity     => mention.asJson.mapObject(_.add("type", Json.fromString("mention")))
+    case hashtag: HashtagMessageEntity     => hashtag.asJson.mapObject(_.add("type", Json.fromString("hashtag")))
+    case text_link: TextLinkMessageEntity  => text_link.asJson.mapObject(_.add("type", Json.fromString("text_link")))
     case strikethrough: StrikethroughMessageEntity =>
       strikethrough.asJson.mapObject(_.add("type", Json.fromString("strikethrough")))
   }
+
   implicit lazy val messageentityDecoder: Decoder[MessageEntity] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
@@ -7943,12 +7751,14 @@ object CirceImplicits {
         _thumb        <- h.get[Option[PhotoSize]]("thumb")
         _fileSize     <- h.get[Option[Int]]("file_size")
       } yield {
-        VideoNote(fileId = _fileId,
-                  fileUniqueId = _fileUniqueId,
-                  length = _length,
-                  duration = _duration,
-                  thumb = _thumb,
-                  fileSize = _fileSize)
+        VideoNote(
+          fileId = _fileId,
+          fileUniqueId = _fileUniqueId,
+          length = _length,
+          duration = _duration,
+          thumb = _thumb,
+          fileSize = _fileSize
+        )
       }
     }
 
@@ -8007,10 +7817,7 @@ object CirceImplicits {
         _invoicePayload  <- h.get[String]("invoice_payload")
         _shippingAddress <- h.get[ShippingAddress]("shipping_address")
       } yield {
-        ShippingQuery(id = _id,
-                      from = _from,
-                      invoicePayload = _invoicePayload,
-                      shippingAddress = _shippingAddress)
+        ShippingQuery(id = _id, from = _from, invoicePayload = _invoicePayload, shippingAddress = _shippingAddress)
       }
     }
 
@@ -8117,12 +7924,14 @@ object CirceImplicits {
         _streetLine2 <- h.get[String]("street_line2")
         _postCode    <- h.get[String]("post_code")
       } yield {
-        ShippingAddress(countryCode = _countryCode,
-                        state = _state,
-                        city = _city,
-                        streetLine1 = _streetLine1,
-                        streetLine2 = _streetLine2,
-                        postCode = _postCode)
+        ShippingAddress(
+          countryCode = _countryCode,
+          state = _state,
+          city = _city,
+          streetLine1 = _streetLine1,
+          streetLine2 = _streetLine2,
+          postCode = _postCode
+        )
       }
     }
 
@@ -8166,15 +7975,13 @@ object CirceImplicits {
         _email           <- h.get[Option[String]]("email")
         _shippingAddress <- h.get[Option[ShippingAddress]]("shipping_address")
       } yield {
-        OrderInfo(name = _name,
-                  phoneNumber = _phoneNumber,
-                  email = _email,
-                  shippingAddress = _shippingAddress)
+        OrderInfo(name = _name, phoneNumber = _phoneNumber, email = _email, shippingAddress = _shippingAddress)
       }
     }
 
   implicit lazy val inputfileEncoder: Encoder[InputFile.type] = (_: InputFile.type) => ().asJson
   implicit lazy val inputfileDecoder: Decoder[InputFile.type] = (_: HCursor) => Right(InputFile)
+
   implicit lazy val updateEncoder: Encoder[Update] =
     (x: Update) => {
       Json.fromFields(
@@ -8258,10 +8065,9 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val callbackgameEncoder: Encoder[CallbackGame.type] = (_: CallbackGame.type) =>
-    ().asJson
-  implicit lazy val callbackgameDecoder: Decoder[CallbackGame.type] = (_: HCursor) =>
-    Right(CallbackGame)
+  implicit lazy val callbackgameEncoder: Encoder[CallbackGame.type] = (_: CallbackGame.type) => ().asJson
+  implicit lazy val callbackgameDecoder: Decoder[CallbackGame.type] = (_: HCursor) => Right(CallbackGame)
+
   implicit lazy val keyboardbuttonEncoder: Encoder[KeyboardButton] =
     (x: KeyboardButton) => {
       Json.fromFields(
@@ -8282,10 +8088,12 @@ object CirceImplicits {
         _requestLocation <- h.get[Option[Boolean]]("request_location")
         _requestPoll     <- h.get[Option[KeyboardButtonPollType]]("request_poll")
       } yield {
-        KeyboardButton(text = _text,
-                       requestContact = _requestContact,
-                       requestLocation = _requestLocation,
-                       requestPoll = _requestPoll)
+        KeyboardButton(
+          text = _text,
+          requestContact = _requestContact,
+          requestLocation = _requestLocation,
+          requestPoll = _requestPoll
+        )
       }
     }
 
@@ -8309,10 +8117,7 @@ object CirceImplicits {
         _fileSize     <- h.get[Int]("file_size")
         _fileDate     <- h.get[Int]("file_date")
       } yield {
-        PassportFile(fileId = _fileId,
-                     fileUniqueId = _fileUniqueId,
-                     fileSize = _fileSize,
-                     fileDate = _fileDate)
+        PassportFile(fileId = _fileId, fileUniqueId = _fileUniqueId, fileSize = _fileSize, fileDate = _fileDate)
       }
     }
 
@@ -8338,11 +8143,13 @@ object CirceImplicits {
         _height       <- h.get[Int]("height")
         _fileSize     <- h.get[Option[Int]]("file_size")
       } yield {
-        PhotoSize(fileId = _fileId,
-                  fileUniqueId = _fileUniqueId,
-                  width = _width,
-                  height = _height,
-                  fileSize = _fileSize)
+        PhotoSize(
+          fileId = _fileId,
+          fileUniqueId = _fileUniqueId,
+          width = _width,
+          height = _height,
+          fileSize = _fileSize
+        )
       }
     }
 
@@ -8444,12 +8251,14 @@ object CirceImplicits {
         _stickers      <- h.getOrElse[List[Sticker]]("stickers")(List.empty)
         _thumb         <- h.get[Option[PhotoSize]]("thumb")
       } yield {
-        StickerSet(name = _name,
-                   title = _title,
-                   isAnimated = _isAnimated,
-                   containsMasks = _containsMasks,
-                   stickers = _stickers,
-                   thumb = _thumb)
+        StickerSet(
+          name = _name,
+          title = _title,
+          isAnimated = _isAnimated,
+          containsMasks = _containsMasks,
+          stickers = _stickers,
+          thumb = _thumb
+        )
       }
     }
 
@@ -8497,11 +8306,13 @@ object CirceImplicits {
         _userId      <- h.get[Option[Long]]("user_id")
         _vcard       <- h.get[Option[String]]("vcard")
       } yield {
-        Contact(phoneNumber = _phoneNumber,
-                firstName = _firstName,
-                lastName = _lastName,
-                userId = _userId,
-                vcard = _vcard)
+        Contact(
+          phoneNumber = _phoneNumber,
+          firstName = _firstName,
+          lastName = _lastName,
+          userId = _userId,
+          vcard = _vcard
+        )
       }
     }
 
@@ -8665,12 +8476,14 @@ object CirceImplicits {
         _expireDate  <- h.get[Option[Int]]("expire_date")
         _memberLimit <- h.get[Option[Int]]("member_limit")
       } yield {
-        ChatInviteLink(inviteLink = _inviteLink,
-                       creator = _creator,
-                       isPrimary = _isPrimary,
-                       isRevoked = _isRevoked,
-                       expireDate = _expireDate,
-                       memberLimit = _memberLimit)
+        ChatInviteLink(
+          inviteLink = _inviteLink,
+          creator = _creator,
+          isPrimary = _isPrimary,
+          isRevoked = _isRevoked,
+          expireDate = _expireDate,
+          memberLimit = _memberLimit
+        )
       }
     }
 
@@ -8718,12 +8531,14 @@ object CirceImplicits {
         _newChatMember <- h.get[ChatMember]("new_chat_member")
         _inviteLink    <- h.get[Option[ChatInviteLink]]("invite_link")
       } yield {
-        ChatMemberUpdated(chat = _chat,
-                          from = _from,
-                          date = _date,
-                          oldChatMember = _oldChatMember,
-                          newChatMember = _newChatMember,
-                          inviteLink = _inviteLink)
+        ChatMemberUpdated(
+          chat = _chat,
+          from = _from,
+          date = _date,
+          oldChatMember = _oldChatMember,
+          newChatMember = _newChatMember,
+          inviteLink = _inviteLink
+        )
       }
     }
 
@@ -8767,10 +8582,7 @@ object CirceImplicits {
         _fileSize     <- h.get[Option[Int]]("file_size")
         _filePath     <- h.get[Option[String]]("file_path")
       } yield {
-        File(fileId = _fileId,
-             fileUniqueId = _fileUniqueId,
-             fileSize = _fileSize,
-             filePath = _filePath)
+        File(fileId = _fileId, fileUniqueId = _fileUniqueId, fileSize = _fileSize, filePath = _filePath)
       }
     }
 
@@ -8798,12 +8610,14 @@ object CirceImplicits {
         _textEntities <- h.getOrElse[List[MessageEntity]]("text_entities")(List.empty)
         _animation    <- h.get[Option[Animation]]("animation")
       } yield {
-        Game(title = _title,
-             description = _description,
-             photo = _photo,
-             text = _text,
-             textEntities = _textEntities,
-             animation = _animation)
+        Game(
+          title = _title,
+          description = _description,
+          photo = _photo,
+          text = _text,
+          textEntities = _textEntities,
+          animation = _animation
+        )
       }
     }
 
@@ -8829,11 +8643,13 @@ object CirceImplicits {
         _inlineMessageId <- h.get[Option[String]]("inline_message_id")
         _query           <- h.get[String]("query")
       } yield {
-        ChosenInlineResult(resultId = _resultId,
-                           from = _from,
-                           location = _location,
-                           inlineMessageId = _inlineMessageId,
-                           query = _query)
+        ChosenInlineResult(
+          resultId = _resultId,
+          from = _from,
+          location = _location,
+          inlineMessageId = _inlineMessageId,
+          query = _query
+        )
       }
     }
 
@@ -9004,11 +8820,13 @@ object CirceImplicits {
         _currency       <- h.get[String]("currency")
         _totalAmount    <- h.get[Int]("total_amount")
       } yield {
-        Invoice(title = _title,
-                description = _description,
-                startParameter = _startParameter,
-                currency = _currency,
-                totalAmount = _totalAmount)
+        Invoice(
+          title = _title,
+          description = _description,
+          startParameter = _startParameter,
+          currency = _currency,
+          totalAmount = _totalAmount
+        )
       }
     }
 
@@ -9032,10 +8850,12 @@ object CirceImplicits {
         _bigFileId         <- h.get[String]("big_file_id")
         _bigFileUniqueId   <- h.get[String]("big_file_unique_id")
       } yield {
-        ChatPhoto(smallFileId = _smallFileId,
-                  smallFileUniqueId = _smallFileUniqueId,
-                  bigFileId = _bigFileId,
-                  bigFileUniqueId = _bigFileUniqueId)
+        ChatPhoto(
+          smallFileId = _smallFileId,
+          smallFileUniqueId = _smallFileUniqueId,
+          bigFileId = _bigFileId,
+          bigFileUniqueId = _bigFileUniqueId
+        )
       }
     }
 
@@ -9063,12 +8883,14 @@ object CirceImplicits {
         _chatType <- h.get[Option[String]]("chat_type")
         _location <- h.get[Option[Location]]("location")
       } yield {
-        InlineQuery(id = _id,
-                    from = _from,
-                    query = _query,
-                    offset = _offset,
-                    chatType = _chatType,
-                    location = _location)
+        InlineQuery(
+          id = _id,
+          from = _from,
+          query = _query,
+          offset = _offset,
+          chatType = _chatType,
+          location = _location
+        )
       }
     }
 
@@ -9320,22 +9142,21 @@ object CirceImplicits {
         _supergroupChatCreated <- h.get[Option[Boolean]]("supergroup_chat_created")
         _channelChatCreated    <- h.get[Option[Boolean]]("channel_chat_created")
         _messageAutoDeleteTimerChanged <- h.get[Option[MessageAutoDeleteTimerChanged]](
-          "message_auto_delete_timer_changed")
-        _migrateToChatId   <- h.get[Option[Long]]("migrate_to_chat_id")
-        _migrateFromChatId <- h.get[Option[Long]]("migrate_from_chat_id")
-        _pinnedMessage     <- h.get[Option[Message]]("pinned_message")
-        _invoice           <- h.get[Option[Invoice]]("invoice")
-        _successfulPayment <- h.get[Option[SuccessfulPayment]]("successful_payment")
-        _connectedWebsite  <- h.get[Option[String]]("connected_website")
-        _passportData      <- h.get[Option[PassportData]]("passport_data")
-        _proximityAlertTriggered <- h.get[Option[ProximityAlertTriggered]](
-          "proximity_alert_triggered")
-        _voiceChatScheduled <- h.get[Option[VoiceChatScheduled]]("voice_chat_scheduled")
-        _voiceChatStarted   <- h.get[Option[VoiceChatStarted.type]]("voice_chat_started")
-        _voiceChatEnded     <- h.get[Option[VoiceChatEnded]]("voice_chat_ended")
-        _voiceChatParticipantsInvited <- h.get[Option[VoiceChatParticipantsInvited]](
-          "voice_chat_participants_invited")
-        _replyMarkup <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
+          "message_auto_delete_timer_changed"
+        )
+        _migrateToChatId              <- h.get[Option[Long]]("migrate_to_chat_id")
+        _migrateFromChatId            <- h.get[Option[Long]]("migrate_from_chat_id")
+        _pinnedMessage                <- h.get[Option[Message]]("pinned_message")
+        _invoice                      <- h.get[Option[Invoice]]("invoice")
+        _successfulPayment            <- h.get[Option[SuccessfulPayment]]("successful_payment")
+        _connectedWebsite             <- h.get[Option[String]]("connected_website")
+        _passportData                 <- h.get[Option[PassportData]]("passport_data")
+        _proximityAlertTriggered      <- h.get[Option[ProximityAlertTriggered]]("proximity_alert_triggered")
+        _voiceChatScheduled           <- h.get[Option[VoiceChatScheduled]]("voice_chat_scheduled")
+        _voiceChatStarted             <- h.get[Option[VoiceChatStarted.type]]("voice_chat_started")
+        _voiceChatEnded               <- h.get[Option[VoiceChatEnded]]("voice_chat_ended")
+        _voiceChatParticipantsInvited <- h.get[Option[VoiceChatParticipantsInvited]]("voice_chat_participants_invited")
+        _replyMarkup                  <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
       } yield {
         Message(
           messageId = _messageId,
@@ -9446,20 +9267,21 @@ object CirceImplicits {
         _shippingOptionId <- h.get[Option[String]]("shipping_option_id")
         _orderInfo        <- h.get[Option[OrderInfo]]("order_info")
       } yield {
-        PreCheckoutQuery(id = _id,
-                         from = _from,
-                         currency = _currency,
-                         totalAmount = _totalAmount,
-                         invoicePayload = _invoicePayload,
-                         shippingOptionId = _shippingOptionId,
-                         orderInfo = _orderInfo)
+        PreCheckoutQuery(
+          id = _id,
+          from = _from,
+          currency = _currency,
+          totalAmount = _totalAmount,
+          invoicePayload = _invoicePayload,
+          shippingOptionId = _shippingOptionId,
+          orderInfo = _orderInfo
+        )
       }
     }
 
-  implicit lazy val voicechatstartedEncoder: Encoder[VoiceChatStarted.type] =
-    (_: VoiceChatStarted.type) => ().asJson
-  implicit lazy val voicechatstartedDecoder: Decoder[VoiceChatStarted.type] = (_: HCursor) =>
-    Right(VoiceChatStarted)
+  implicit lazy val voicechatstartedEncoder: Encoder[VoiceChatStarted.type] = (_: VoiceChatStarted.type) => ().asJson
+  implicit lazy val voicechatstartedDecoder: Decoder[VoiceChatStarted.type] = (_: HCursor) => Right(VoiceChatStarted)
+
   implicit lazy val encryptedcredentialsEncoder: Encoder[EncryptedCredentials] =
     (x: EncryptedCredentials) => {
       Json.fromFields(
@@ -9543,10 +9365,12 @@ object CirceImplicits {
         _botUsername        <- h.get[Option[String]]("bot_username")
         _requestWriteAccess <- h.get[Option[Boolean]]("request_write_access")
       } yield {
-        LoginUrl(url = _url,
-                 forwardText = _forwardText,
-                 botUsername = _botUsername,
-                 requestWriteAccess = _requestWriteAccess)
+        LoginUrl(
+          url = _url,
+          forwardText = _forwardText,
+          botUsername = _botUsername,
+          requestWriteAccess = _requestWriteAccess
+        )
       }
     }
 
@@ -9572,11 +9396,13 @@ object CirceImplicits {
         _mimeType     <- h.get[Option[String]]("mime_type")
         _fileSize     <- h.get[Option[Int]]("file_size")
       } yield {
-        Voice(fileId = _fileId,
-              fileUniqueId = _fileUniqueId,
-              duration = _duration,
-              mimeType = _mimeType,
-              fileSize = _fileSize)
+        Voice(
+          fileId = _fileId,
+          fileUniqueId = _fileUniqueId,
+          duration = _duration,
+          mimeType = _mimeType,
+          fileSize = _fileSize
+        )
       }
     }
 
@@ -9644,13 +9470,15 @@ object CirceImplicits {
         _data            <- h.get[Option[String]]("data")
         _gameShortName   <- h.get[Option[String]]("game_short_name")
       } yield {
-        CallbackQuery(id = _id,
-                      from = _from,
-                      message = _message,
-                      inlineMessageId = _inlineMessageId,
-                      chatInstance = _chatInstance,
-                      data = _data,
-                      gameShortName = _gameShortName)
+        CallbackQuery(
+          id = _id,
+          from = _from,
+          message = _message,
+          inlineMessageId = _inlineMessageId,
+          chatInstance = _chatInstance,
+          data = _data,
+          gameShortName = _gameShortName
+        )
       }
     }
 
@@ -9823,12 +9651,14 @@ object CirceImplicits {
         _mimeType     <- h.get[Option[String]]("mime_type")
         _fileSize     <- h.get[Option[Int]]("file_size")
       } yield {
-        Document(fileId = _fileId,
-                 fileUniqueId = _fileUniqueId,
-                 thumb = _thumb,
-                 fileName = _fileName,
-                 mimeType = _mimeType,
-                 fileSize = _fileSize)
+        Document(
+          fileId = _fileId,
+          fileUniqueId = _fileUniqueId,
+          thumb = _thumb,
+          fileName = _fileName,
+          mimeType = _mimeType,
+          fileSize = _fileSize
+        )
       }
     }
 

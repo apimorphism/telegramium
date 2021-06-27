@@ -10,6 +10,7 @@ object uPickleImplicits {
       msg => new java.io.File(readBinary[String](msg))
     )
   }
+
   import telegramium.bots.BotCommand
   import telegramium.bots.uPickleImplicits._
   import telegramium.bots.ChatId
@@ -224,21 +225,15 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId    <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          text      <- m.get(textKey).map(x => readBinary[String](x))
-          parseMode <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          entities  <- m.get(entitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          disableWebPagePreview <- m
-            .get(disableWebPagePreviewKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          text                     <- m.get(textKey).map(x => readBinary[String](x))
+          parseMode                <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          entities                 <- m.get(entitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          disableWebPagePreview    <- m.get(disableWebPagePreviewKey).map(x => readBinary[Option[Boolean]](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           SendMessageReq(
             chatId = chatId,
@@ -330,33 +325,23 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId      <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          question    <- m.get(questionKey).map(x => readBinary[String](x))
-          options     <- m.get(optionsKey).map(x => readBinary[List[String]](x))
-          isAnonymous <- m.get(isAnonymousKey).map(x => readBinary[Option[Boolean]](x))
-          `type`      <- m.get(typeKey).map(x => readBinary[Option[String]](x))
-          allowsMultipleAnswers <- m
-            .get(allowsMultipleAnswersKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          correctOptionId <- m.get(correctOptionIdKey).map(x => readBinary[Option[Int]](x))
-          explanation     <- m.get(explanationKey).map(x => readBinary[Option[String]](x))
-          explanationParseMode <- m
-            .get(explanationParseModeKey)
-            .map(x => readBinary[Option[String]](x))
-          explanationEntities <- m
-            .get(explanationEntitiesKey)
-            .map(x => readBinary[List[MessageEntity]](x))
-          openPeriod <- m.get(openPeriodKey).map(x => readBinary[Option[Int]](x))
-          closeDate  <- m.get(closeDateKey).map(x => readBinary[Option[Int]](x))
-          isClosed   <- m.get(isClosedKey).map(x => readBinary[Option[Boolean]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          question                 <- m.get(questionKey).map(x => readBinary[String](x))
+          options                  <- m.get(optionsKey).map(x => readBinary[List[String]](x))
+          isAnonymous              <- m.get(isAnonymousKey).map(x => readBinary[Option[Boolean]](x))
+          `type`                   <- m.get(typeKey).map(x => readBinary[Option[String]](x))
+          allowsMultipleAnswers    <- m.get(allowsMultipleAnswersKey).map(x => readBinary[Option[Boolean]](x))
+          correctOptionId          <- m.get(correctOptionIdKey).map(x => readBinary[Option[Int]](x))
+          explanation              <- m.get(explanationKey).map(x => readBinary[Option[String]](x))
+          explanationParseMode     <- m.get(explanationParseModeKey).map(x => readBinary[Option[String]](x))
+          explanationEntities      <- m.get(explanationEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          openPeriod               <- m.get(openPeriodKey).map(x => readBinary[Option[Int]](x))
+          closeDate                <- m.get(closeDateKey).map(x => readBinary[Option[Int]](x))
+          isClosed                 <- m.get(isClosedKey).map(x => readBinary[Option[Boolean]](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           SendPollReq(
             chatId = chatId,
@@ -410,19 +395,15 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId      <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          phoneNumber <- m.get(phoneNumberKey).map(x => readBinary[String](x))
-          firstName   <- m.get(firstNameKey).map(x => readBinary[String](x))
-          lastName    <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
-          vcard       <- m.get(vcardKey).map(x => readBinary[Option[String]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          phoneNumber              <- m.get(phoneNumberKey).map(x => readBinary[String](x))
+          firstName                <- m.get(firstNameKey).map(x => readBinary[String](x))
+          lastName                 <- m.get(lastNameKey).map(x => readBinary[Option[String]](x))
+          vcard                    <- m.get(vcardKey).map(x => readBinary[Option[String]](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           SendContactReq(
             chatId = chatId,
@@ -574,23 +555,17 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId             <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          latitude           <- m.get(latitudeKey).map(x => readBinary[Float](x))
-          longitude          <- m.get(longitudeKey).map(x => readBinary[Float](x))
-          horizontalAccuracy <- m.get(horizontalAccuracyKey).map(x => readBinary[Option[Float]](x))
-          livePeriod         <- m.get(livePeriodKey).map(x => readBinary[Option[Int]](x))
-          heading            <- m.get(headingKey).map(x => readBinary[Option[Int]](x))
-          proximityAlertRadius <- m
-            .get(proximityAlertRadiusKey)
-            .map(x => readBinary[Option[Int]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          latitude                 <- m.get(latitudeKey).map(x => readBinary[Float](x))
+          longitude                <- m.get(longitudeKey).map(x => readBinary[Float](x))
+          horizontalAccuracy       <- m.get(horizontalAccuracyKey).map(x => readBinary[Option[Float]](x))
+          livePeriod               <- m.get(livePeriodKey).map(x => readBinary[Option[Int]](x))
+          heading                  <- m.get(headingKey).map(x => readBinary[Option[Int]](x))
+          proximityAlertRadius     <- m.get(proximityAlertRadiusKey).map(x => readBinary[Option[Int]](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           SendLocationReq(
             chatId = chatId,
@@ -710,16 +685,12 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          emoji  <- m.get(emojiKey).map(x => readBinary[Option[Emoji]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          emoji                    <- m.get(emojiKey).map(x => readBinary[Option[Emoji]](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           SendDiceReq(
             chatId = chatId,
@@ -900,15 +871,11 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          media  <- m.get(mediaKey).map(x => readBinary[List[InputMedia]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          media                    <- m.get(mediaKey).map(x => readBinary[List[InputMedia]](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           SendMediaGroupReq(
             chatId = chatId,
@@ -944,16 +911,12 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId        <- m.get(chatIdKey).map(x => readBinary[Int](x))
-          gameShortName <- m.get(gameShortNameKey).map(x => readBinary[String](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[Int](x))
+          gameShortName            <- m.get(gameShortNameKey).map(x => readBinary[String](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
         } yield {
           SendGameReq(
             chatId = chatId,
@@ -1004,23 +967,19 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId          <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          latitude        <- m.get(latitudeKey).map(x => readBinary[Float](x))
-          longitude       <- m.get(longitudeKey).map(x => readBinary[Float](x))
-          title           <- m.get(titleKey).map(x => readBinary[String](x))
-          address         <- m.get(addressKey).map(x => readBinary[String](x))
-          foursquareId    <- m.get(foursquareIdKey).map(x => readBinary[Option[String]](x))
-          foursquareType  <- m.get(foursquareTypeKey).map(x => readBinary[Option[String]](x))
-          googlePlaceId   <- m.get(googlePlaceIdKey).map(x => readBinary[Option[String]](x))
-          googlePlaceType <- m.get(googlePlaceTypeKey).map(x => readBinary[Option[String]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          latitude                 <- m.get(latitudeKey).map(x => readBinary[Float](x))
+          longitude                <- m.get(longitudeKey).map(x => readBinary[Float](x))
+          title                    <- m.get(titleKey).map(x => readBinary[String](x))
+          address                  <- m.get(addressKey).map(x => readBinary[String](x))
+          foursquareId             <- m.get(foursquareIdKey).map(x => readBinary[Option[String]](x))
+          foursquareType           <- m.get(foursquareTypeKey).map(x => readBinary[Option[String]](x))
+          googlePlaceId            <- m.get(googlePlaceIdKey).map(x => readBinary[Option[String]](x))
+          googlePlaceType          <- m.get(googlePlaceTypeKey).map(x => readBinary[Option[String]](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           SendVenueReq(
             chatId = chatId,
@@ -1124,16 +1083,14 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId          <- m.get(chatIdKey).map(x => readBinary[Option[ChatId]](x))
-          messageId       <- m.get(messageIdKey).map(x => readBinary[Option[Int]](x))
-          inlineMessageId <- m.get(inlineMessageIdKey).map(x => readBinary[Option[String]](x))
-          text            <- m.get(textKey).map(x => readBinary[String](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          entities        <- m.get(entitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          disableWebPagePreview <- m
-            .get(disableWebPagePreviewKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          chatId                <- m.get(chatIdKey).map(x => readBinary[Option[ChatId]](x))
+          messageId             <- m.get(messageIdKey).map(x => readBinary[Option[Int]](x))
+          inlineMessageId       <- m.get(inlineMessageIdKey).map(x => readBinary[Option[String]](x))
+          text                  <- m.get(textKey).map(x => readBinary[String](x))
+          parseMode             <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          entities              <- m.get(entitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          disableWebPagePreview <- m.get(disableWebPagePreviewKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup           <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
         } yield {
           EditMessageTextReq(
             chatId = chatId,
@@ -1178,17 +1135,15 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId             <- m.get(chatIdKey).map(x => readBinary[Option[ChatId]](x))
-          messageId          <- m.get(messageIdKey).map(x => readBinary[Option[Int]](x))
-          inlineMessageId    <- m.get(inlineMessageIdKey).map(x => readBinary[Option[String]](x))
-          latitude           <- m.get(latitudeKey).map(x => readBinary[Float](x))
-          longitude          <- m.get(longitudeKey).map(x => readBinary[Float](x))
-          horizontalAccuracy <- m.get(horizontalAccuracyKey).map(x => readBinary[Option[Float]](x))
-          heading            <- m.get(headingKey).map(x => readBinary[Option[Int]](x))
-          proximityAlertRadius <- m
-            .get(proximityAlertRadiusKey)
-            .map(x => readBinary[Option[Int]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          chatId               <- m.get(chatIdKey).map(x => readBinary[Option[ChatId]](x))
+          messageId            <- m.get(messageIdKey).map(x => readBinary[Option[Int]](x))
+          inlineMessageId      <- m.get(inlineMessageIdKey).map(x => readBinary[Option[String]](x))
+          latitude             <- m.get(latitudeKey).map(x => readBinary[Float](x))
+          longitude            <- m.get(longitudeKey).map(x => readBinary[Float](x))
+          horizontalAccuracy   <- m.get(horizontalAccuracyKey).map(x => readBinary[Option[Float]](x))
+          heading              <- m.get(headingKey).map(x => readBinary[Option[Int]](x))
+          proximityAlertRadius <- m.get(proximityAlertRadiusKey).map(x => readBinary[Option[Int]](x))
+          replyMarkup          <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
         } yield {
           EditMessageLiveLocationReq(
             chatId = chatId,
@@ -1252,15 +1207,13 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          userId <- m.get(userIdKey).map(x => readBinary[Int](x))
-          score  <- m.get(scoreKey).map(x => readBinary[Int](x))
-          force  <- m.get(forceKey).map(x => readBinary[Option[Boolean]](x))
-          disableEditMessage <- m
-            .get(disableEditMessageKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          chatId          <- m.get(chatIdKey).map(x => readBinary[Option[Int]](x))
-          messageId       <- m.get(messageIdKey).map(x => readBinary[Option[Int]](x))
-          inlineMessageId <- m.get(inlineMessageIdKey).map(x => readBinary[Option[String]](x))
+          userId             <- m.get(userIdKey).map(x => readBinary[Int](x))
+          score              <- m.get(scoreKey).map(x => readBinary[Int](x))
+          force              <- m.get(forceKey).map(x => readBinary[Option[Boolean]](x))
+          disableEditMessage <- m.get(disableEditMessageKey).map(x => readBinary[Option[Boolean]](x))
+          chatId             <- m.get(chatIdKey).map(x => readBinary[Option[Int]](x))
+          messageId          <- m.get(messageIdKey).map(x => readBinary[Option[Int]](x))
+          inlineMessageId    <- m.get(inlineMessageIdKey).map(x => readBinary[Option[String]](x))
         } yield {
           SetGameScoreReq(
             userId = userId,
@@ -1354,20 +1307,16 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId          <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          fromChatId      <- m.get(fromChatIdKey).map(x => readBinary[ChatId](x))
-          messageId       <- m.get(messageIdKey).map(x => readBinary[Int](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          fromChatId               <- m.get(fromChatIdKey).map(x => readBinary[ChatId](x))
+          messageId                <- m.get(messageIdKey).map(x => readBinary[Int](x))
+          caption                  <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode                <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities          <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           CopyMessageReq(
             chatId = chatId,
@@ -1414,19 +1363,15 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId    <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          videoNote <- m.get(videoNoteKey).map(x => readBinary[IFile](x))
-          duration  <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
-          length    <- m.get(lengthKey).map(x => readBinary[Option[Int]](x))
-          thumb     <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          videoNote                <- m.get(videoNoteKey).map(x => readBinary[IFile](x))
+          duration                 <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
+          length                   <- m.get(lengthKey).map(x => readBinary[Option[Int]](x))
+          thumb                    <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           SendVideoNoteReq(
             chatId = chatId,
@@ -1588,42 +1533,32 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId              <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          title               <- m.get(titleKey).map(x => readBinary[String](x))
-          description         <- m.get(descriptionKey).map(x => readBinary[String](x))
-          payload             <- m.get(payloadKey).map(x => readBinary[String](x))
-          providerToken       <- m.get(providerTokenKey).map(x => readBinary[String](x))
-          currency            <- m.get(currencyKey).map(x => readBinary[String](x))
-          prices              <- m.get(pricesKey).map(x => readBinary[List[LabeledPrice]](x))
-          maxTipAmount        <- m.get(maxTipAmountKey).map(x => readBinary[Option[Int]](x))
-          suggestedTipAmounts <- m.get(suggestedTipAmountsKey).map(x => readBinary[List[Int]](x))
-          startParameter      <- m.get(startParameterKey).map(x => readBinary[Option[String]](x))
-          providerData        <- m.get(providerDataKey).map(x => readBinary[Option[String]](x))
-          photoUrl            <- m.get(photoUrlKey).map(x => readBinary[Option[String]](x))
-          photoSize           <- m.get(photoSizeKey).map(x => readBinary[Option[Int]](x))
-          photoWidth          <- m.get(photoWidthKey).map(x => readBinary[Option[Int]](x))
-          photoHeight         <- m.get(photoHeightKey).map(x => readBinary[Option[Int]](x))
-          needName            <- m.get(needNameKey).map(x => readBinary[Option[Boolean]](x))
-          needPhoneNumber     <- m.get(needPhoneNumberKey).map(x => readBinary[Option[Boolean]](x))
-          needEmail           <- m.get(needEmailKey).map(x => readBinary[Option[Boolean]](x))
-          needShippingAddress <- m
-            .get(needShippingAddressKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          sendPhoneNumberToProvider <- m
-            .get(sendPhoneNumberToProviderKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          sendEmailToProvider <- m
-            .get(sendEmailToProviderKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          isFlexible <- m.get(isFlexibleKey).map(x => readBinary[Option[Boolean]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
+          chatId                    <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          title                     <- m.get(titleKey).map(x => readBinary[String](x))
+          description               <- m.get(descriptionKey).map(x => readBinary[String](x))
+          payload                   <- m.get(payloadKey).map(x => readBinary[String](x))
+          providerToken             <- m.get(providerTokenKey).map(x => readBinary[String](x))
+          currency                  <- m.get(currencyKey).map(x => readBinary[String](x))
+          prices                    <- m.get(pricesKey).map(x => readBinary[List[LabeledPrice]](x))
+          maxTipAmount              <- m.get(maxTipAmountKey).map(x => readBinary[Option[Int]](x))
+          suggestedTipAmounts       <- m.get(suggestedTipAmountsKey).map(x => readBinary[List[Int]](x))
+          startParameter            <- m.get(startParameterKey).map(x => readBinary[Option[String]](x))
+          providerData              <- m.get(providerDataKey).map(x => readBinary[Option[String]](x))
+          photoUrl                  <- m.get(photoUrlKey).map(x => readBinary[Option[String]](x))
+          photoSize                 <- m.get(photoSizeKey).map(x => readBinary[Option[Int]](x))
+          photoWidth                <- m.get(photoWidthKey).map(x => readBinary[Option[Int]](x))
+          photoHeight               <- m.get(photoHeightKey).map(x => readBinary[Option[Int]](x))
+          needName                  <- m.get(needNameKey).map(x => readBinary[Option[Boolean]](x))
+          needPhoneNumber           <- m.get(needPhoneNumberKey).map(x => readBinary[Option[Boolean]](x))
+          needEmail                 <- m.get(needEmailKey).map(x => readBinary[Option[Boolean]](x))
+          needShippingAddress       <- m.get(needShippingAddressKey).map(x => readBinary[Option[Boolean]](x))
+          sendPhoneNumberToProvider <- m.get(sendPhoneNumberToProviderKey).map(x => readBinary[Option[Boolean]](x))
+          sendEmailToProvider       <- m.get(sendEmailToProviderKey).map(x => readBinary[Option[Boolean]](x))
+          isFlexible                <- m.get(isFlexibleKey).map(x => readBinary[Option[Boolean]](x))
+          disableNotification       <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId          <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply  <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup               <- m.get(replyMarkupKey).map(x => readBinary[Option[InlineKeyboardMarkup]](x))
         } yield {
           SendInvoiceReq(
             chatId = chatId,
@@ -1690,23 +1625,17 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId          <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          document        <- m.get(documentKey).map(x => readBinary[IFile](x))
-          thumb           <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          disableContentTypeDetection <- m
-            .get(disableContentTypeDetectionKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                      <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          document                    <- m.get(documentKey).map(x => readBinary[IFile](x))
+          thumb                       <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
+          caption                     <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode                   <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities             <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          disableContentTypeDetection <- m.get(disableContentTypeDetectionKey).map(x => readBinary[Option[Boolean]](x))
+          disableNotification         <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId            <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply    <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup                 <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           SendDocumentReq(
             chatId = chatId,
@@ -1868,23 +1797,19 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId          <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          audio           <- m.get(audioKey).map(x => readBinary[IFile](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          duration        <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
-          performer       <- m.get(performerKey).map(x => readBinary[Option[String]](x))
-          title           <- m.get(titleKey).map(x => readBinary[Option[String]](x))
-          thumb           <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          audio                    <- m.get(audioKey).map(x => readBinary[IFile](x))
+          caption                  <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode                <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities          <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          duration                 <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
+          performer                <- m.get(performerKey).map(x => readBinary[Option[String]](x))
+          title                    <- m.get(titleKey).map(x => readBinary[Option[String]](x))
+          thumb                    <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           SendAudioReq(
             chatId = chatId,
@@ -1960,12 +1885,10 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId     <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          fromChatId <- m.get(fromChatIdKey).map(x => readBinary[ChatId](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          messageId <- m.get(messageIdKey).map(x => readBinary[Int](x))
+          chatId              <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          fromChatId          <- m.get(fromChatIdKey).map(x => readBinary[ChatId](x))
+          disableNotification <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          messageId           <- m.get(messageIdKey).map(x => readBinary[Int](x))
         } yield {
           ForwardMessageReq(
             chatId = chatId,
@@ -2058,20 +1981,16 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId          <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          voice           <- m.get(voiceKey).map(x => readBinary[IFile](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          duration        <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          voice                    <- m.get(voiceKey).map(x => readBinary[IFile](x))
+          caption                  <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode                <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities          <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          duration                 <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           SendVoiceReq(
             chatId = chatId,
@@ -2128,23 +2047,19 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId            <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          userId            <- m.get(userIdKey).map(x => readBinary[Int](x))
-          isAnonymous       <- m.get(isAnonymousKey).map(x => readBinary[Option[Boolean]](x))
-          canManageChat     <- m.get(canManageChatKey).map(x => readBinary[Option[Boolean]](x))
-          canPostMessages   <- m.get(canPostMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canEditMessages   <- m.get(canEditMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canDeleteMessages <- m.get(canDeleteMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canManageVoiceChats <- m
-            .get(canManageVoiceChatsKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          canRestrictMembers <- m
-            .get(canRestrictMembersKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          canPromoteMembers <- m.get(canPromoteMembersKey).map(x => readBinary[Option[Boolean]](x))
-          canChangeInfo     <- m.get(canChangeInfoKey).map(x => readBinary[Option[Boolean]](x))
-          canInviteUsers    <- m.get(canInviteUsersKey).map(x => readBinary[Option[Boolean]](x))
-          canPinMessages    <- m.get(canPinMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          chatId              <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          userId              <- m.get(userIdKey).map(x => readBinary[Int](x))
+          isAnonymous         <- m.get(isAnonymousKey).map(x => readBinary[Option[Boolean]](x))
+          canManageChat       <- m.get(canManageChatKey).map(x => readBinary[Option[Boolean]](x))
+          canPostMessages     <- m.get(canPostMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canEditMessages     <- m.get(canEditMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canDeleteMessages   <- m.get(canDeleteMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canManageVoiceChats <- m.get(canManageVoiceChatsKey).map(x => readBinary[Option[Boolean]](x))
+          canRestrictMembers  <- m.get(canRestrictMembersKey).map(x => readBinary[Option[Boolean]](x))
+          canPromoteMembers   <- m.get(canPromoteMembersKey).map(x => readBinary[Option[Boolean]](x))
+          canChangeInfo       <- m.get(canChangeInfoKey).map(x => readBinary[Option[Boolean]](x))
+          canInviteUsers      <- m.get(canInviteUsersKey).map(x => readBinary[Option[Boolean]](x))
+          canPinMessages      <- m.get(canPinMessagesKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           PromoteChatMemberReq(
             chatId = chatId,
@@ -2266,11 +2181,9 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId    <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          messageId <- m.get(messageIdKey).map(x => readBinary[Int](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
+          chatId              <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          messageId           <- m.get(messageIdKey).map(x => readBinary[Int](x))
+          disableNotification <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           PinChatMessageReq(
             chatId = chatId,
@@ -2414,24 +2327,20 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId            <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          video             <- m.get(videoKey).map(x => readBinary[IFile](x))
-          duration          <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
-          width             <- m.get(widthKey).map(x => readBinary[Option[Int]](x))
-          height            <- m.get(heightKey).map(x => readBinary[Option[Int]](x))
-          thumb             <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
-          caption           <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode         <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities   <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          supportsStreaming <- m.get(supportsStreamingKey).map(x => readBinary[Option[Boolean]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          video                    <- m.get(videoKey).map(x => readBinary[IFile](x))
+          duration                 <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
+          width                    <- m.get(widthKey).map(x => readBinary[Option[Int]](x))
+          height                   <- m.get(heightKey).map(x => readBinary[Option[Int]](x))
+          thumb                    <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
+          caption                  <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode                <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities          <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          supportsStreaming        <- m.get(supportsStreamingKey).map(x => readBinary[Option[Boolean]](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           SendVideoReq(
             chatId = chatId,
@@ -2514,9 +2423,7 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          dropPendingUpdates <- m
-            .get(dropPendingUpdatesKey)
-            .map(x => readBinary[Option[Boolean]](x))
+          dropPendingUpdates <- m.get(dropPendingUpdatesKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           DeleteWebhookReq(
             dropPendingUpdates = dropPendingUpdates
@@ -2581,8 +2488,7 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val setchatadministratorcustomtitlereqCodec
-    : ReadWriter[SetChatAdministratorCustomTitleReq] = {
+  implicit lazy val setchatadministratorcustomtitlereqCodec: ReadWriter[SetChatAdministratorCustomTitleReq] = {
     val chatIdKey      = upack.Str("chatId")
     val userIdKey      = upack.Str("userId")
     val customTitleKey = upack.Str("customTitle")
@@ -2647,23 +2553,19 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId          <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          animation       <- m.get(animationKey).map(x => readBinary[IFile](x))
-          duration        <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
-          width           <- m.get(widthKey).map(x => readBinary[Option[Int]](x))
-          height          <- m.get(heightKey).map(x => readBinary[Option[Int]](x))
-          thumb           <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          animation                <- m.get(animationKey).map(x => readBinary[IFile](x))
+          duration                 <- m.get(durationKey).map(x => readBinary[Option[Int]](x))
+          width                    <- m.get(widthKey).map(x => readBinary[Option[Int]](x))
+          height                   <- m.get(heightKey).map(x => readBinary[Option[Int]](x))
+          thumb                    <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
+          caption                  <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode                <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities          <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           SendAnimationReq(
             chatId = chatId,
@@ -2771,16 +2673,12 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId  <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          sticker <- m.get(stickerKey).map(x => readBinary[IFile](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          sticker                  <- m.get(stickerKey).map(x => readBinary[IFile](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           SendStickerReq(
             chatId = chatId,
@@ -2845,19 +2743,15 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          chatId          <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          photo           <- m.get(photoKey).map(x => readBinary[IFile](x))
-          caption         <- m.get(captionKey).map(x => readBinary[Option[String]](x))
-          parseMode       <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
-          captionEntities <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
-          disableNotification <- m
-            .get(disableNotificationKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyToMessageId <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
-          allowSendingWithoutReply <- m
-            .get(allowSendingWithoutReplyKey)
-            .map(x => readBinary[Option[Boolean]](x))
-          replyMarkup <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
+          chatId                   <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          photo                    <- m.get(photoKey).map(x => readBinary[IFile](x))
+          caption                  <- m.get(captionKey).map(x => readBinary[Option[String]](x))
+          parseMode                <- m.get(parseModeKey).map(x => readBinary[Option[ParseMode]](x))
+          captionEntities          <- m.get(captionEntitiesKey).map(x => readBinary[List[MessageEntity]](x))
+          disableNotification      <- m.get(disableNotificationKey).map(x => readBinary[Option[Boolean]](x))
+          replyToMessageId         <- m.get(replyToMessageIdKey).map(x => readBinary[Option[Int]](x))
+          allowSendingWithoutReply <- m.get(allowSendingWithoutReplyKey).map(x => readBinary[Option[Boolean]](x))
+          replyMarkup              <- m.get(replyMarkupKey).map(x => readBinary[Option[KeyboardMarkup]](x))
         } yield {
           SendPhotoReq(
             chatId = chatId,
@@ -2953,14 +2847,12 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          url            <- m.get(urlKey).map(x => readBinary[String](x))
-          certificate    <- m.get(certificateKey).map(x => readBinary[Option[IFile]](x))
-          ipAddress      <- m.get(ipAddressKey).map(x => readBinary[Option[String]](x))
-          maxConnections <- m.get(maxConnectionsKey).map(x => readBinary[Option[Int]](x))
-          allowedUpdates <- m.get(allowedUpdatesKey).map(x => readBinary[List[String]](x))
-          dropPendingUpdates <- m
-            .get(dropPendingUpdatesKey)
-            .map(x => readBinary[Option[Boolean]](x))
+          url                <- m.get(urlKey).map(x => readBinary[String](x))
+          certificate        <- m.get(certificateKey).map(x => readBinary[Option[IFile]](x))
+          ipAddress          <- m.get(ipAddressKey).map(x => readBinary[Option[String]](x))
+          maxConnections     <- m.get(maxConnectionsKey).map(x => readBinary[Option[Int]](x))
+          allowedUpdates     <- m.get(allowedUpdatesKey).map(x => readBinary[List[String]](x))
+          dropPendingUpdates <- m.get(dropPendingUpdatesKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           SetWebhookReq(
             url = url,
@@ -3020,10 +2912,9 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val getwebhookinforeqEncoder: Encoder[GetWebhookInfoReq.type] =
-    (_: GetWebhookInfoReq.type) => ().asJson
-  implicit lazy val getwebhookinforeqDecoder: Decoder[GetWebhookInfoReq.type] = (_: HCursor) =>
-    Right(GetWebhookInfoReq)
+  implicit lazy val getwebhookinforeqEncoder: Encoder[GetWebhookInfoReq.type] = (_: GetWebhookInfoReq.type) => ().asJson
+  implicit lazy val getwebhookinforeqDecoder: Decoder[GetWebhookInfoReq.type] = (_: HCursor) => Right(GetWebhookInfoReq)
+
   implicit lazy val setmycommandsreqEncoder: Encoder[SetMyCommandsReq] =
     (x: SetMyCommandsReq) => {
       Json.fromFields(
@@ -3085,10 +2976,12 @@ object CirceImplicits {
         _messageId       <- h.get[Option[Int]]("message_id")
         _inlineMessageId <- h.get[Option[String]]("inline_message_id")
       } yield {
-        GetGameHighScoresReq(userId = _userId,
-                             chatId = _chatId,
-                             messageId = _messageId,
-                             inlineMessageId = _inlineMessageId)
+        GetGameHighScoresReq(
+          userId = _userId,
+          chatId = _chatId,
+          messageId = _messageId,
+          inlineMessageId = _inlineMessageId
+        )
       }
     }
 
@@ -3134,11 +3027,13 @@ object CirceImplicits {
         _url             <- h.get[Option[String]]("url")
         _cacheTime       <- h.get[Option[Int]]("cache_time")
       } yield {
-        AnswerCallbackQueryReq(callbackQueryId = _callbackQueryId,
-                               text = _text,
-                               showAlert = _showAlert,
-                               url = _url,
-                               cacheTime = _cacheTime)
+        AnswerCallbackQueryReq(
+          callbackQueryId = _callbackQueryId,
+          text = _text,
+          showAlert = _showAlert,
+          url = _url,
+          cacheTime = _cacheTime
+        )
       }
     }
 
@@ -3499,10 +3394,12 @@ object CirceImplicits {
         _inlineMessageId <- h.get[Option[String]]("inline_message_id")
         _replyMarkup     <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
       } yield {
-        StopMessageLiveLocationReq(chatId = _chatId,
-                                   messageId = _messageId,
-                                   inlineMessageId = _inlineMessageId,
-                                   replyMarkup = _replyMarkup)
+        StopMessageLiveLocationReq(
+          chatId = _chatId,
+          messageId = _messageId,
+          inlineMessageId = _inlineMessageId,
+          replyMarkup = _replyMarkup
+        )
       }
     }
 
@@ -3607,12 +3504,14 @@ object CirceImplicits {
         _emojis       <- h.get[String]("emojis")
         _maskPosition <- h.get[Option[MaskPosition]]("mask_position")
       } yield {
-        AddStickerToSetReq(userId = _userId,
-                           name = _name,
-                           pngSticker = _pngSticker,
-                           tgsSticker = _tgsSticker,
-                           emojis = _emojis,
-                           maskPosition = _maskPosition)
+        AddStickerToSetReq(
+          userId = _userId,
+          name = _name,
+          pngSticker = _pngSticker,
+          tgsSticker = _tgsSticker,
+          emojis = _emojis,
+          maskPosition = _maskPosition
+        )
       }
     }
 
@@ -3982,13 +3881,15 @@ object CirceImplicits {
         _messageId          <- h.get[Option[Int]]("message_id")
         _inlineMessageId    <- h.get[Option[String]]("inline_message_id")
       } yield {
-        SetGameScoreReq(userId = _userId,
-                        score = _score,
-                        force = _force,
-                        disableEditMessage = _disableEditMessage,
-                        chatId = _chatId,
-                        messageId = _messageId,
-                        inlineMessageId = _inlineMessageId)
+        SetGameScoreReq(
+          userId = _userId,
+          score = _score,
+          force = _force,
+          disableEditMessage = _disableEditMessage,
+          chatId = _chatId,
+          messageId = _messageId,
+          inlineMessageId = _inlineMessageId
+        )
       }
     }
 
@@ -4186,10 +4087,12 @@ object CirceImplicits {
         _expireDate  <- h.get[Option[Int]]("expire_date")
         _memberLimit <- h.get[Option[Int]]("member_limit")
       } yield {
-        EditChatInviteLinkReq(chatId = _chatId,
-                              inviteLink = _inviteLink,
-                              expireDate = _expireDate,
-                              memberLimit = _memberLimit)
+        EditChatInviteLinkReq(
+          chatId = _chatId,
+          inviteLink = _inviteLink,
+          expireDate = _expireDate,
+          memberLimit = _memberLimit
+        )
       }
     }
 
@@ -4421,10 +4324,7 @@ object CirceImplicits {
         _untilDate      <- h.get[Option[Int]]("until_date")
         _revokeMessages <- h.get[Option[Boolean]]("revoke_messages")
       } yield {
-        KickChatMemberReq(chatId = _chatId,
-                          userId = _userId,
-                          untilDate = _untilDate,
-                          revokeMessages = _revokeMessages)
+        KickChatMemberReq(chatId = _chatId, userId = _userId, untilDate = _untilDate, revokeMessages = _revokeMessages)
       }
     }
 
@@ -4506,15 +4406,13 @@ object CirceImplicits {
         _permissions <- h.get[ChatPermissions]("permissions")
         _untilDate   <- h.get[Option[Int]]("until_date")
       } yield {
-        RestrictChatMemberReq(chatId = _chatId,
-                              userId = _userId,
-                              permissions = _permissions,
-                              untilDate = _untilDate)
+        RestrictChatMemberReq(chatId = _chatId, userId = _userId, permissions = _permissions, untilDate = _untilDate)
       }
     }
 
   implicit lazy val getmereqEncoder: Encoder[GetMeReq.type] = (_: GetMeReq.type) => ().asJson
   implicit lazy val getmereqDecoder: Decoder[GetMeReq.type] = (_: HCursor) => Right(GetMeReq)
+
   implicit lazy val forwardmessagereqEncoder: Encoder[ForwardMessageReq] =
     (x: ForwardMessageReq) => {
       Json.fromFields(
@@ -4536,10 +4434,12 @@ object CirceImplicits {
         _disableNotification <- h.get[Option[Boolean]]("disable_notification")
         _messageId           <- h.get[Int]("message_id")
       } yield {
-        ForwardMessageReq(chatId = _chatId,
-                          fromChatId = _fromChatId,
-                          disableNotification = _disableNotification,
-                          messageId = _messageId)
+        ForwardMessageReq(
+          chatId = _chatId,
+          fromChatId = _fromChatId,
+          disableNotification = _disableNotification,
+          messageId = _messageId
+        )
       }
     }
 
@@ -4564,10 +4464,9 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val getmycommandsreqEncoder: Encoder[GetMyCommandsReq.type] =
-    (_: GetMyCommandsReq.type) => ().asJson
-  implicit lazy val getmycommandsreqDecoder: Decoder[GetMyCommandsReq.type] = (_: HCursor) =>
-    Right(GetMyCommandsReq)
+  implicit lazy val getmycommandsreqEncoder: Encoder[GetMyCommandsReq.type] = (_: GetMyCommandsReq.type) => ().asJson
+  implicit lazy val getmycommandsreqDecoder: Decoder[GetMyCommandsReq.type] = (_: HCursor) => Right(GetMyCommandsReq)
+
   implicit lazy val getchatadministratorsreqEncoder: Encoder[GetChatAdministratorsReq] =
     (x: GetChatAdministratorsReq) => {
       Json.fromFields(
@@ -4637,6 +4536,7 @@ object CirceImplicits {
 
   implicit lazy val logoutreqEncoder: Encoder[LogOutReq.type] = (_: LogOutReq.type) => ().asJson
   implicit lazy val logoutreqDecoder: Decoder[LogOutReq.type] = (_: HCursor) => Right(LogOutReq)
+
   implicit lazy val promotechatmemberreqEncoder: Encoder[PromoteChatMemberReq] =
     (x: PromoteChatMemberReq) => {
       Json.fromFields(
@@ -4756,11 +4656,13 @@ object CirceImplicits {
         _media           <- h.get[InputMedia]("media")
         _replyMarkup     <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
       } yield {
-        EditMessageMediaReq(chatId = _chatId,
-                            messageId = _messageId,
-                            inlineMessageId = _inlineMessageId,
-                            media = _media,
-                            replyMarkup = _replyMarkup)
+        EditMessageMediaReq(
+          chatId = _chatId,
+          messageId = _messageId,
+          inlineMessageId = _inlineMessageId,
+          media = _media,
+          replyMarkup = _replyMarkup
+        )
       }
     }
 
@@ -4783,9 +4685,7 @@ object CirceImplicits {
         _messageId           <- h.get[Int]("message_id")
         _disableNotification <- h.get[Option[Boolean]]("disable_notification")
       } yield {
-        PinChatMessageReq(chatId = _chatId,
-                          messageId = _messageId,
-                          disableNotification = _disableNotification)
+        PinChatMessageReq(chatId = _chatId, messageId = _messageId, disableNotification = _disableNotification)
       }
     }
 
@@ -4833,10 +4733,12 @@ object CirceImplicits {
         _inlineMessageId <- h.get[Option[String]]("inline_message_id")
         _replyMarkup     <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
       } yield {
-        EditMessageReplyMarkupReq(chatId = _chatId,
-                                  messageId = _messageId,
-                                  inlineMessageId = _inlineMessageId,
-                                  replyMarkup = _replyMarkup)
+        EditMessageReplyMarkupReq(
+          chatId = _chatId,
+          messageId = _messageId,
+          inlineMessageId = _inlineMessageId,
+          replyMarkup = _replyMarkup
+        )
       }
     }
 
@@ -4859,9 +4761,7 @@ object CirceImplicits {
         _expireDate  <- h.get[Option[Int]]("expire_date")
         _memberLimit <- h.get[Option[Int]]("member_limit")
       } yield {
-        CreateChatInviteLinkReq(chatId = _chatId,
-                                expireDate = _expireDate,
-                                memberLimit = _memberLimit)
+        CreateChatInviteLinkReq(chatId = _chatId, expireDate = _expireDate, memberLimit = _memberLimit)
       }
     }
 
@@ -5007,6 +4907,7 @@ object CirceImplicits {
 
   implicit lazy val closereqEncoder: Encoder[CloseReq.type] = (_: CloseReq.type) => ().asJson
   implicit lazy val closereqDecoder: Decoder[CloseReq.type] = (_: HCursor) => Right(CloseReq)
+
   implicit lazy val setstickerpositioninsetreqEncoder: Encoder[SetStickerPositionInSetReq] =
     (x: SetStickerPositionInSetReq) => {
       Json.fromFields(
@@ -5028,8 +4929,7 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val setchatadministratorcustomtitlereqEncoder
-    : Encoder[SetChatAdministratorCustomTitleReq] =
+  implicit lazy val setchatadministratorcustomtitlereqEncoder: Encoder[SetChatAdministratorCustomTitleReq] =
     (x: SetChatAdministratorCustomTitleReq) => {
       Json.fromFields(
         List(
@@ -5041,17 +4941,14 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val setchatadministratorcustomtitlereqDecoder
-    : Decoder[SetChatAdministratorCustomTitleReq] =
+  implicit lazy val setchatadministratorcustomtitlereqDecoder: Decoder[SetChatAdministratorCustomTitleReq] =
     Decoder.instance { h =>
       for {
         _chatId      <- h.get[ChatId]("chat_id")
         _userId      <- h.get[Int]("user_id")
         _customTitle <- h.get[String]("custom_title")
       } yield {
-        SetChatAdministratorCustomTitleReq(chatId = _chatId,
-                                           userId = _userId,
-                                           customTitle = _customTitle)
+        SetChatAdministratorCustomTitleReq(chatId = _chatId, userId = _userId, customTitle = _customTitle)
       }
     }
 
@@ -5133,10 +5030,12 @@ object CirceImplicits {
         _shippingOptions <- h.getOrElse[List[ShippingOption]]("shipping_options")(List.empty)
         _errorMessage    <- h.get[Option[String]]("error_message")
       } yield {
-        AnswerShippingQueryReq(shippingQueryId = _shippingQueryId,
-                               ok = _ok,
-                               shippingOptions = _shippingOptions,
-                               errorMessage = _errorMessage)
+        AnswerShippingQueryReq(
+          shippingQueryId = _shippingQueryId,
+          ok = _ok,
+          shippingOptions = _shippingOptions,
+          errorMessage = _errorMessage
+        )
       }
     }
 
@@ -5159,9 +5058,7 @@ object CirceImplicits {
         _ok                 <- h.get[Boolean]("ok")
         _errorMessage       <- h.get[Option[String]]("error_message")
       } yield {
-        AnswerPreCheckoutQueryReq(preCheckoutQueryId = _preCheckoutQueryId,
-                                  ok = _ok,
-                                  errorMessage = _errorMessage)
+        AnswerPreCheckoutQueryReq(preCheckoutQueryId = _preCheckoutQueryId, ok = _ok, errorMessage = _errorMessage)
       }
     }
 
@@ -5286,10 +5183,7 @@ object CirceImplicits {
         _timeout        <- h.get[Option[Int]]("timeout")
         _allowedUpdates <- h.getOrElse[List[String]]("allowed_updates")(List.empty)
       } yield {
-        GetUpdatesReq(offset = _offset,
-                      limit = _limit,
-                      timeout = _timeout,
-                      allowedUpdates = _allowedUpdates)
+        GetUpdatesReq(offset = _offset, limit = _limit, timeout = _timeout, allowedUpdates = _allowedUpdates)
       }
     }
 
