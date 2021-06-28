@@ -16,7 +16,7 @@ package telegramium.bots.client
   *   Required if chat_id and message_id are not specified. Identifier of the inline message
   */
 final case class SetGameScoreReq(
-  userId: Int,
+  userId: Long,
   score: Int,
   force: Option[Boolean] = Option.empty,
   disableEditMessage: Option[Boolean] = Option.empty,

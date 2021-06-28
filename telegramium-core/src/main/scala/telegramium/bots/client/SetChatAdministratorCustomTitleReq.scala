@@ -10,4 +10,4 @@ import telegramium.bots.ChatId
   * @param customTitle
   *   New custom title for the administrator; 0-16 characters, emoji are not allowed
   */
-final case class SetChatAdministratorCustomTitleReq(chatId: ChatId, userId: Int, customTitle: String)
+final case class SetChatAdministratorCustomTitleReq(chatId: ChatId, userId: Long, customTitle: String)

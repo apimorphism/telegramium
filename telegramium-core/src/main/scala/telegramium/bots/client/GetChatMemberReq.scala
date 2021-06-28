@@ -8,4 +8,4 @@ import telegramium.bots.ChatId
   * @param userId
   *   Unique identifier of the target user
   */
-final case class GetChatMemberReq(chatId: ChatId, userId: Int)
+final case class GetChatMemberReq(chatId: ChatId, userId: Long)

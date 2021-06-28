@@ -14,4 +14,4 @@ import telegramium.bots.IFile
   *   String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. Animated
   *   sticker set thumbnail can't be uploaded via HTTP URL.
   */
-final case class SetStickerSetThumbReq(name: String, userId: Int, thumb: Option[IFile] = Option.empty)
+final case class SetStickerSetThumbReq(name: String, userId: Long, thumb: Option[IFile] = Option.empty)

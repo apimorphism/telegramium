@@ -178,23 +178,27 @@ object uPickleImplicits {
   }
 
   implicit lazy val forcereplyCodec: ReadWriter[ForceReply] = {
-    val forceReplyKey = upack.Str("forceReply")
-    val selectiveKey  = upack.Str("selective")
+    val forceReplyKey            = upack.Str("forceReply")
+    val inputFieldPlaceholderKey = upack.Str("inputFieldPlaceholder")
+    val selectiveKey             = upack.Str("selective")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          forceReplyKey -> writeMsg(x.forceReply),
-          selectiveKey  -> writeMsg(x.selective)
+          forceReplyKey            -> writeMsg(x.forceReply),
+          inputFieldPlaceholderKey -> writeMsg(x.inputFieldPlaceholder),
+          selectiveKey             -> writeMsg(x.selective)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          forceReply <- m.get(forceReplyKey).map(x => readBinary[Boolean](x))
-          selective  <- m.get(selectiveKey).map(x => readBinary[Option[Boolean]](x))
+          forceReply            <- m.get(forceReplyKey).map(x => readBinary[Boolean](x))
+          inputFieldPlaceholder <- m.get(inputFieldPlaceholderKey).map(x => readBinary[Option[String]](x))
+          selective             <- m.get(selectiveKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           ForceReply(
             forceReply = forceReply,
+            inputFieldPlaceholder = inputFieldPlaceholder,
             selective = selective
           )
         }
@@ -230,31 +234,35 @@ object uPickleImplicits {
   }
 
   implicit lazy val replykeyboardmarkupCodec: ReadWriter[ReplyKeyboardMarkup] = {
-    val keyboardKey        = upack.Str("keyboard")
-    val resizeKeyboardKey  = upack.Str("resizeKeyboard")
-    val oneTimeKeyboardKey = upack.Str("oneTimeKeyboard")
-    val selectiveKey       = upack.Str("selective")
+    val keyboardKey              = upack.Str("keyboard")
+    val resizeKeyboardKey        = upack.Str("resizeKeyboard")
+    val oneTimeKeyboardKey       = upack.Str("oneTimeKeyboard")
+    val inputFieldPlaceholderKey = upack.Str("inputFieldPlaceholder")
+    val selectiveKey             = upack.Str("selective")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          keyboardKey        -> writeMsg(x.keyboard),
-          resizeKeyboardKey  -> writeMsg(x.resizeKeyboard),
-          oneTimeKeyboardKey -> writeMsg(x.oneTimeKeyboard),
-          selectiveKey       -> writeMsg(x.selective)
+          keyboardKey              -> writeMsg(x.keyboard),
+          resizeKeyboardKey        -> writeMsg(x.resizeKeyboard),
+          oneTimeKeyboardKey       -> writeMsg(x.oneTimeKeyboard),
+          inputFieldPlaceholderKey -> writeMsg(x.inputFieldPlaceholder),
+          selectiveKey             -> writeMsg(x.selective)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          keyboard        <- m.get(keyboardKey).map(x => readBinary[List[List[KeyboardButton]]](x))
-          resizeKeyboard  <- m.get(resizeKeyboardKey).map(x => readBinary[Option[Boolean]](x))
-          oneTimeKeyboard <- m.get(oneTimeKeyboardKey).map(x => readBinary[Option[Boolean]](x))
-          selective       <- m.get(selectiveKey).map(x => readBinary[Option[Boolean]](x))
+          keyboard              <- m.get(keyboardKey).map(x => readBinary[List[List[KeyboardButton]]](x))
+          resizeKeyboard        <- m.get(resizeKeyboardKey).map(x => readBinary[Option[Boolean]](x))
+          oneTimeKeyboard       <- m.get(oneTimeKeyboardKey).map(x => readBinary[Option[Boolean]](x))
+          inputFieldPlaceholder <- m.get(inputFieldPlaceholderKey).map(x => readBinary[Option[String]](x))
+          selective             <- m.get(selectiveKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           ReplyKeyboardMarkup(
             keyboard = keyboard,
             resizeKeyboard = resizeKeyboard,
             oneTimeKeyboard = oneTimeKeyboard,
+            inputFieldPlaceholder = inputFieldPlaceholder,
             selective = selective
           )
         }
@@ -324,6 +332,404 @@ object uPickleImplicits {
       }
     )
   }
+
+  implicit lazy val chatmemberCodec: ReadWriter[ChatMember] = {
+    readwriter[upack.Msg].bimap(
+      {
+        case x: ChatMemberOwner => upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("ChatMemberOwner"))
+        case x: ChatMemberAdministrator =>
+          upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("ChatMemberAdministrator"))
+        case x: ChatMemberLeft   => upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("ChatMemberLeft"))
+        case x: ChatMemberMember => upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("ChatMemberMember"))
+        case x: ChatMemberBanned => upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("ChatMemberBanned"))
+        case x: ChatMemberRestricted =>
+          upack.Obj(writeMsg(x).obj += upack.Str("_type_") -> writeMsg("ChatMemberRestricted"))
+      },
+      msg => {
+        val m = msg.obj
+        m.get(upack.Str("type"))
+          .collect {
+            case upack.Str("ChatMemberOwner")         => readBinary[ChatMemberOwner](msg)
+            case upack.Str("ChatMemberAdministrator") => readBinary[ChatMemberAdministrator](msg)
+            case upack.Str("ChatMemberLeft")          => readBinary[ChatMemberLeft](msg)
+            case upack.Str("ChatMemberMember")        => readBinary[ChatMemberMember](msg)
+            case upack.Str("ChatMemberBanned")        => readBinary[ChatMemberBanned](msg)
+            case upack.Str("ChatMemberRestricted")    => readBinary[ChatMemberRestricted](msg)
+          }
+          .get
+      }
+    )
+  }
+
+  implicit lazy val chatmemberownerCodec: ReadWriter[ChatMemberOwner] = {
+    val statusKey      = upack.Str("status")
+    val userKey        = upack.Str("user")
+    val customTitleKey = upack.Str("customTitle")
+    val isAnonymousKey = upack.Str("isAnonymous")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          statusKey      -> writeMsg(x.status),
+          userKey        -> writeMsg(x.user),
+          customTitleKey -> writeMsg(x.customTitle),
+          isAnonymousKey -> writeMsg(x.isAnonymous)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          status      <- m.get(statusKey).map(x => readBinary[String](x))
+          user        <- m.get(userKey).map(x => readBinary[User](x))
+          customTitle <- m.get(customTitleKey).map(x => readBinary[String](x))
+          isAnonymous <- m.get(isAnonymousKey).map(x => readBinary[Boolean](x))
+        } yield {
+          ChatMemberOwner(
+            status = status,
+            user = user,
+            customTitle = customTitle,
+            isAnonymous = isAnonymous
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val chatmemberadministratorCodec: ReadWriter[ChatMemberAdministrator] = {
+    val statusKey              = upack.Str("status")
+    val userKey                = upack.Str("user")
+    val canBeEditedKey         = upack.Str("canBeEdited")
+    val customTitleKey         = upack.Str("customTitle")
+    val isAnonymousKey         = upack.Str("isAnonymous")
+    val canManageChatKey       = upack.Str("canManageChat")
+    val canPostMessagesKey     = upack.Str("canPostMessages")
+    val canEditMessagesKey     = upack.Str("canEditMessages")
+    val canDeleteMessagesKey   = upack.Str("canDeleteMessages")
+    val canManageVoiceChatsKey = upack.Str("canManageVoiceChats")
+    val canRestrictMembersKey  = upack.Str("canRestrictMembers")
+    val canPromoteMembersKey   = upack.Str("canPromoteMembers")
+    val canChangeInfoKey       = upack.Str("canChangeInfo")
+    val canInviteUsersKey      = upack.Str("canInviteUsers")
+    val canPinMessagesKey      = upack.Str("canPinMessages")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          statusKey              -> writeMsg(x.status),
+          userKey                -> writeMsg(x.user),
+          canBeEditedKey         -> writeMsg(x.canBeEdited),
+          customTitleKey         -> writeMsg(x.customTitle),
+          isAnonymousKey         -> writeMsg(x.isAnonymous),
+          canManageChatKey       -> writeMsg(x.canManageChat),
+          canPostMessagesKey     -> writeMsg(x.canPostMessages),
+          canEditMessagesKey     -> writeMsg(x.canEditMessages),
+          canDeleteMessagesKey   -> writeMsg(x.canDeleteMessages),
+          canManageVoiceChatsKey -> writeMsg(x.canManageVoiceChats),
+          canRestrictMembersKey  -> writeMsg(x.canRestrictMembers),
+          canPromoteMembersKey   -> writeMsg(x.canPromoteMembers),
+          canChangeInfoKey       -> writeMsg(x.canChangeInfo),
+          canInviteUsersKey      -> writeMsg(x.canInviteUsers),
+          canPinMessagesKey      -> writeMsg(x.canPinMessages)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          status              <- m.get(statusKey).map(x => readBinary[String](x))
+          user                <- m.get(userKey).map(x => readBinary[User](x))
+          canBeEdited         <- m.get(canBeEditedKey).map(x => readBinary[Boolean](x))
+          customTitle         <- m.get(customTitleKey).map(x => readBinary[String](x))
+          isAnonymous         <- m.get(isAnonymousKey).map(x => readBinary[Boolean](x))
+          canManageChat       <- m.get(canManageChatKey).map(x => readBinary[Boolean](x))
+          canPostMessages     <- m.get(canPostMessagesKey).map(x => readBinary[Boolean](x))
+          canEditMessages     <- m.get(canEditMessagesKey).map(x => readBinary[Boolean](x))
+          canDeleteMessages   <- m.get(canDeleteMessagesKey).map(x => readBinary[Boolean](x))
+          canManageVoiceChats <- m.get(canManageVoiceChatsKey).map(x => readBinary[Boolean](x))
+          canRestrictMembers  <- m.get(canRestrictMembersKey).map(x => readBinary[Boolean](x))
+          canPromoteMembers   <- m.get(canPromoteMembersKey).map(x => readBinary[Boolean](x))
+          canChangeInfo       <- m.get(canChangeInfoKey).map(x => readBinary[Boolean](x))
+          canInviteUsers      <- m.get(canInviteUsersKey).map(x => readBinary[Boolean](x))
+          canPinMessages      <- m.get(canPinMessagesKey).map(x => readBinary[Boolean](x))
+        } yield {
+          ChatMemberAdministrator(
+            status = status,
+            user = user,
+            canBeEdited = canBeEdited,
+            customTitle = customTitle,
+            isAnonymous = isAnonymous,
+            canManageChat = canManageChat,
+            canPostMessages = canPostMessages,
+            canEditMessages = canEditMessages,
+            canDeleteMessages = canDeleteMessages,
+            canManageVoiceChats = canManageVoiceChats,
+            canRestrictMembers = canRestrictMembers,
+            canPromoteMembers = canPromoteMembers,
+            canChangeInfo = canChangeInfo,
+            canInviteUsers = canInviteUsers,
+            canPinMessages = canPinMessages
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val chatmemberleftCodec: ReadWriter[ChatMemberLeft] = {
+    val statusKey = upack.Str("status")
+    val userKey   = upack.Str("user")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          statusKey -> writeMsg(x.status),
+          userKey   -> writeMsg(x.user)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          status <- m.get(statusKey).map(x => readBinary[String](x))
+          user   <- m.get(userKey).map(x => readBinary[User](x))
+        } yield {
+          ChatMemberLeft(
+            status = status,
+            user = user
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val chatmembermemberCodec: ReadWriter[ChatMemberMember] = {
+    val statusKey = upack.Str("status")
+    val userKey   = upack.Str("user")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          statusKey -> writeMsg(x.status),
+          userKey   -> writeMsg(x.user)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          status <- m.get(statusKey).map(x => readBinary[String](x))
+          user   <- m.get(userKey).map(x => readBinary[User](x))
+        } yield {
+          ChatMemberMember(
+            status = status,
+            user = user
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val chatmemberbannedCodec: ReadWriter[ChatMemberBanned] = {
+    val statusKey    = upack.Str("status")
+    val userKey      = upack.Str("user")
+    val untilDateKey = upack.Str("untilDate")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          statusKey    -> writeMsg(x.status),
+          userKey      -> writeMsg(x.user),
+          untilDateKey -> writeMsg(x.untilDate)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          status    <- m.get(statusKey).map(x => readBinary[String](x))
+          user      <- m.get(userKey).map(x => readBinary[User](x))
+          untilDate <- m.get(untilDateKey).map(x => readBinary[Int](x))
+        } yield {
+          ChatMemberBanned(
+            status = status,
+            user = user,
+            untilDate = untilDate
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val chatmemberrestrictedCodec: ReadWriter[ChatMemberRestricted] = {
+    val statusKey                = upack.Str("status")
+    val userKey                  = upack.Str("user")
+    val isMemberKey              = upack.Str("isMember")
+    val canChangeInfoKey         = upack.Str("canChangeInfo")
+    val canInviteUsersKey        = upack.Str("canInviteUsers")
+    val canPinMessagesKey        = upack.Str("canPinMessages")
+    val canSendMessagesKey       = upack.Str("canSendMessages")
+    val canSendMediaMessagesKey  = upack.Str("canSendMediaMessages")
+    val canSendPollsKey          = upack.Str("canSendPolls")
+    val canSendOtherMessagesKey  = upack.Str("canSendOtherMessages")
+    val canAddWebPagePreviewsKey = upack.Str("canAddWebPagePreviews")
+    val untilDateKey             = upack.Str("untilDate")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          statusKey                -> writeMsg(x.status),
+          userKey                  -> writeMsg(x.user),
+          isMemberKey              -> writeMsg(x.isMember),
+          canChangeInfoKey         -> writeMsg(x.canChangeInfo),
+          canInviteUsersKey        -> writeMsg(x.canInviteUsers),
+          canPinMessagesKey        -> writeMsg(x.canPinMessages),
+          canSendMessagesKey       -> writeMsg(x.canSendMessages),
+          canSendMediaMessagesKey  -> writeMsg(x.canSendMediaMessages),
+          canSendPollsKey          -> writeMsg(x.canSendPolls),
+          canSendOtherMessagesKey  -> writeMsg(x.canSendOtherMessages),
+          canAddWebPagePreviewsKey -> writeMsg(x.canAddWebPagePreviews),
+          untilDateKey             -> writeMsg(x.untilDate)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          status                <- m.get(statusKey).map(x => readBinary[String](x))
+          user                  <- m.get(userKey).map(x => readBinary[User](x))
+          isMember              <- m.get(isMemberKey).map(x => readBinary[Boolean](x))
+          canChangeInfo         <- m.get(canChangeInfoKey).map(x => readBinary[Boolean](x))
+          canInviteUsers        <- m.get(canInviteUsersKey).map(x => readBinary[Boolean](x))
+          canPinMessages        <- m.get(canPinMessagesKey).map(x => readBinary[Boolean](x))
+          canSendMessages       <- m.get(canSendMessagesKey).map(x => readBinary[Boolean](x))
+          canSendMediaMessages  <- m.get(canSendMediaMessagesKey).map(x => readBinary[Boolean](x))
+          canSendPolls          <- m.get(canSendPollsKey).map(x => readBinary[Boolean](x))
+          canSendOtherMessages  <- m.get(canSendOtherMessagesKey).map(x => readBinary[Boolean](x))
+          canAddWebPagePreviews <- m.get(canAddWebPagePreviewsKey).map(x => readBinary[Boolean](x))
+          untilDate             <- m.get(untilDateKey).map(x => readBinary[Int](x))
+        } yield {
+          ChatMemberRestricted(
+            status = status,
+            user = user,
+            isMember = isMember,
+            canChangeInfo = canChangeInfo,
+            canInviteUsers = canInviteUsers,
+            canPinMessages = canPinMessages,
+            canSendMessages = canSendMessages,
+            canSendMediaMessages = canSendMediaMessages,
+            canSendPolls = canSendPolls,
+            canSendOtherMessages = canSendOtherMessages,
+            canAddWebPagePreviews = canAddWebPagePreviews,
+            untilDate = untilDate
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val botcommandscopeCodec: ReadWriter[BotCommandScope] = {
+    readwriter[upack.Msg].bimap(
+      {
+        case BotCommandScopeAllChatAdministrators =>
+          upack.Obj(upack.Obj().obj += upack.Str("type") -> writeMsg("all_chat_administrators"))
+        case BotCommandScopeAllGroupChats =>
+          upack.Obj(upack.Obj().obj += upack.Str("type") -> writeMsg("all_group_chats"))
+        case BotCommandScopeDefault => upack.Obj(upack.Obj().obj += upack.Str("type") -> writeMsg("default"))
+        case x: BotCommandScopeChatAdministrators =>
+          upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("chat_administrators"))
+        case x: BotCommandScopeChatMember => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("chat_member"))
+        case x: BotCommandScopeChat       => upack.Obj(writeMsg(x).obj += upack.Str("type") -> writeMsg("chat"))
+        case BotCommandScopeAllPrivateChats =>
+          upack.Obj(upack.Obj().obj += upack.Str("type") -> writeMsg("all_private_chats"))
+      },
+      msg => {
+        val m = msg.obj
+        m.get(upack.Str("type"))
+          .collect {
+            case upack.Str("all_chat_administrators") => BotCommandScopeAllChatAdministrators
+            case upack.Str("all_group_chats")         => BotCommandScopeAllGroupChats
+            case upack.Str("default")                 => BotCommandScopeDefault
+            case upack.Str("chat_administrators")     => readBinary[BotCommandScopeChatAdministrators](msg)
+            case upack.Str("chat_member")             => readBinary[BotCommandScopeChatMember](msg)
+            case upack.Str("chat")                    => readBinary[BotCommandScopeChat](msg)
+            case upack.Str("all_private_chats")       => BotCommandScopeAllPrivateChats
+          }
+          .get
+      }
+    )
+  }
+
+  implicit lazy val botcommandscopeallchatadministratorsCodec: ReadWriter[BotCommandScopeAllChatAdministrators.type] =
+    macroRW
+
+  implicit lazy val botcommandscopeallgroupchatsCodec: ReadWriter[BotCommandScopeAllGroupChats.type] = macroRW
+  implicit lazy val botcommandscopedefaultCodec: ReadWriter[BotCommandScopeDefault.type]             = macroRW
+
+  implicit lazy val botcommandscopechatadministratorsCodec: ReadWriter[BotCommandScopeChatAdministrators] = {
+    val chatIdKey = upack.Str("chatId")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          chatIdKey -> writeMsg(x.chatId)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          chatId <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+        } yield {
+          BotCommandScopeChatAdministrators(
+            chatId = chatId
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val botcommandscopechatmemberCodec: ReadWriter[BotCommandScopeChatMember] = {
+    val chatIdKey = upack.Str("chatId")
+    val userIdKey = upack.Str("userId")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          chatIdKey -> writeMsg(x.chatId),
+          userIdKey -> writeMsg(x.userId)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          chatId <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          userId <- m.get(userIdKey).map(x => readBinary[Long](x))
+        } yield {
+          BotCommandScopeChatMember(
+            chatId = chatId,
+            userId = userId
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val botcommandscopechatCodec: ReadWriter[BotCommandScopeChat] = {
+    val chatIdKey = upack.Str("chatId")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          chatIdKey -> writeMsg(x.chatId)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          chatId <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+        } yield {
+          BotCommandScopeChat(
+            chatId = chatId
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val botcommandscopeallprivatechatsCodec: ReadWriter[BotCommandScopeAllPrivateChats.type] = macroRW
 
   implicit lazy val inputmediaCodec: ReadWriter[InputMedia] = {
     readwriter[upack.Msg].bimap(
@@ -5179,112 +5585,6 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val chatmemberCodec: ReadWriter[ChatMember] = {
-    val userKey                  = upack.Str("user")
-    val statusKey                = upack.Str("status")
-    val customTitleKey           = upack.Str("customTitle")
-    val isAnonymousKey           = upack.Str("isAnonymous")
-    val canBeEditedKey           = upack.Str("canBeEdited")
-    val canManageChatKey         = upack.Str("canManageChat")
-    val canPostMessagesKey       = upack.Str("canPostMessages")
-    val canEditMessagesKey       = upack.Str("canEditMessages")
-    val canDeleteMessagesKey     = upack.Str("canDeleteMessages")
-    val canManageVoiceChatsKey   = upack.Str("canManageVoiceChats")
-    val canRestrictMembersKey    = upack.Str("canRestrictMembers")
-    val canPromoteMembersKey     = upack.Str("canPromoteMembers")
-    val canChangeInfoKey         = upack.Str("canChangeInfo")
-    val canInviteUsersKey        = upack.Str("canInviteUsers")
-    val canPinMessagesKey        = upack.Str("canPinMessages")
-    val isMemberKey              = upack.Str("isMember")
-    val canSendMessagesKey       = upack.Str("canSendMessages")
-    val canSendMediaMessagesKey  = upack.Str("canSendMediaMessages")
-    val canSendPollsKey          = upack.Str("canSendPolls")
-    val canSendOtherMessagesKey  = upack.Str("canSendOtherMessages")
-    val canAddWebPagePreviewsKey = upack.Str("canAddWebPagePreviews")
-    val untilDateKey             = upack.Str("untilDate")
-    readwriter[upack.Msg].bimap(
-      x => {
-        upack.Obj(
-          userKey                  -> writeMsg(x.user),
-          statusKey                -> writeMsg(x.status),
-          customTitleKey           -> writeMsg(x.customTitle),
-          isAnonymousKey           -> writeMsg(x.isAnonymous),
-          canBeEditedKey           -> writeMsg(x.canBeEdited),
-          canManageChatKey         -> writeMsg(x.canManageChat),
-          canPostMessagesKey       -> writeMsg(x.canPostMessages),
-          canEditMessagesKey       -> writeMsg(x.canEditMessages),
-          canDeleteMessagesKey     -> writeMsg(x.canDeleteMessages),
-          canManageVoiceChatsKey   -> writeMsg(x.canManageVoiceChats),
-          canRestrictMembersKey    -> writeMsg(x.canRestrictMembers),
-          canPromoteMembersKey     -> writeMsg(x.canPromoteMembers),
-          canChangeInfoKey         -> writeMsg(x.canChangeInfo),
-          canInviteUsersKey        -> writeMsg(x.canInviteUsers),
-          canPinMessagesKey        -> writeMsg(x.canPinMessages),
-          isMemberKey              -> writeMsg(x.isMember),
-          canSendMessagesKey       -> writeMsg(x.canSendMessages),
-          canSendMediaMessagesKey  -> writeMsg(x.canSendMediaMessages),
-          canSendPollsKey          -> writeMsg(x.canSendPolls),
-          canSendOtherMessagesKey  -> writeMsg(x.canSendOtherMessages),
-          canAddWebPagePreviewsKey -> writeMsg(x.canAddWebPagePreviews),
-          untilDateKey             -> writeMsg(x.untilDate)
-        )
-      },
-      msg => {
-        val m = msg.obj
-        val result = for {
-          user                  <- m.get(userKey).map(x => readBinary[User](x))
-          status                <- m.get(statusKey).map(x => readBinary[String](x))
-          customTitle           <- m.get(customTitleKey).map(x => readBinary[Option[String]](x))
-          isAnonymous           <- m.get(isAnonymousKey).map(x => readBinary[Option[Boolean]](x))
-          canBeEdited           <- m.get(canBeEditedKey).map(x => readBinary[Option[Boolean]](x))
-          canManageChat         <- m.get(canManageChatKey).map(x => readBinary[Option[Boolean]](x))
-          canPostMessages       <- m.get(canPostMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canEditMessages       <- m.get(canEditMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canDeleteMessages     <- m.get(canDeleteMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canManageVoiceChats   <- m.get(canManageVoiceChatsKey).map(x => readBinary[Option[Boolean]](x))
-          canRestrictMembers    <- m.get(canRestrictMembersKey).map(x => readBinary[Option[Boolean]](x))
-          canPromoteMembers     <- m.get(canPromoteMembersKey).map(x => readBinary[Option[Boolean]](x))
-          canChangeInfo         <- m.get(canChangeInfoKey).map(x => readBinary[Option[Boolean]](x))
-          canInviteUsers        <- m.get(canInviteUsersKey).map(x => readBinary[Option[Boolean]](x))
-          canPinMessages        <- m.get(canPinMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          isMember              <- m.get(isMemberKey).map(x => readBinary[Option[Boolean]](x))
-          canSendMessages       <- m.get(canSendMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canSendMediaMessages  <- m.get(canSendMediaMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canSendPolls          <- m.get(canSendPollsKey).map(x => readBinary[Option[Boolean]](x))
-          canSendOtherMessages  <- m.get(canSendOtherMessagesKey).map(x => readBinary[Option[Boolean]](x))
-          canAddWebPagePreviews <- m.get(canAddWebPagePreviewsKey).map(x => readBinary[Option[Boolean]](x))
-          untilDate             <- m.get(untilDateKey).map(x => readBinary[Option[Int]](x))
-        } yield {
-          ChatMember(
-            user = user,
-            status = status,
-            customTitle = customTitle,
-            isAnonymous = isAnonymous,
-            canBeEdited = canBeEdited,
-            canManageChat = canManageChat,
-            canPostMessages = canPostMessages,
-            canEditMessages = canEditMessages,
-            canDeleteMessages = canDeleteMessages,
-            canManageVoiceChats = canManageVoiceChats,
-            canRestrictMembers = canRestrictMembers,
-            canPromoteMembers = canPromoteMembers,
-            canChangeInfo = canChangeInfo,
-            canInviteUsers = canInviteUsers,
-            canPinMessages = canPinMessages,
-            isMember = isMember,
-            canSendMessages = canSendMessages,
-            canSendMediaMessages = canSendMediaMessages,
-            canSendPolls = canSendPolls,
-            canSendOtherMessages = canSendOtherMessages,
-            canAddWebPagePreviews = canAddWebPagePreviews,
-            untilDate = untilDate
-          )
-        }
-        result.get
-      }
-    )
-  }
-
   implicit lazy val videoCodec: ReadWriter[Video] = {
     val fileIdKey       = upack.Str("fileId")
     val fileUniqueIdKey = upack.Str("fileUniqueId")
@@ -5499,8 +5799,9 @@ object CirceImplicits {
     (x: ForceReply) => {
       Json.fromFields(
         List(
-          "force_reply" -> x.forceReply.asJson,
-          "selective"   -> x.selective.asJson
+          "force_reply"             -> x.forceReply.asJson,
+          "input_field_placeholder" -> x.inputFieldPlaceholder.asJson,
+          "selective"               -> x.selective.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5508,10 +5809,11 @@ object CirceImplicits {
   implicit lazy val forcereplyDecoder: Decoder[ForceReply] =
     Decoder.instance { h =>
       for {
-        _forceReply <- h.get[Boolean]("force_reply")
-        _selective  <- h.get[Option[Boolean]]("selective")
+        _forceReply            <- h.get[Boolean]("force_reply")
+        _inputFieldPlaceholder <- h.get[Option[String]]("input_field_placeholder")
+        _selective             <- h.get[Option[Boolean]]("selective")
       } yield {
-        ForceReply(forceReply = _forceReply, selective = _selective)
+        ForceReply(forceReply = _forceReply, inputFieldPlaceholder = _inputFieldPlaceholder, selective = _selective)
       }
     }
 
@@ -5539,10 +5841,11 @@ object CirceImplicits {
     (x: ReplyKeyboardMarkup) => {
       Json.fromFields(
         List(
-          "keyboard"          -> x.keyboard.asJson,
-          "resize_keyboard"   -> x.resizeKeyboard.asJson,
-          "one_time_keyboard" -> x.oneTimeKeyboard.asJson,
-          "selective"         -> x.selective.asJson
+          "keyboard"                -> x.keyboard.asJson,
+          "resize_keyboard"         -> x.resizeKeyboard.asJson,
+          "one_time_keyboard"       -> x.oneTimeKeyboard.asJson,
+          "input_field_placeholder" -> x.inputFieldPlaceholder.asJson,
+          "selective"               -> x.selective.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5550,15 +5853,17 @@ object CirceImplicits {
   implicit lazy val replykeyboardmarkupDecoder: Decoder[ReplyKeyboardMarkup] =
     Decoder.instance { h =>
       for {
-        _keyboard        <- h.getOrElse[List[List[KeyboardButton]]]("keyboard")(List.empty)
-        _resizeKeyboard  <- h.get[Option[Boolean]]("resize_keyboard")
-        _oneTimeKeyboard <- h.get[Option[Boolean]]("one_time_keyboard")
-        _selective       <- h.get[Option[Boolean]]("selective")
+        _keyboard              <- h.getOrElse[List[List[KeyboardButton]]]("keyboard")(List.empty)
+        _resizeKeyboard        <- h.get[Option[Boolean]]("resize_keyboard")
+        _oneTimeKeyboard       <- h.get[Option[Boolean]]("one_time_keyboard")
+        _inputFieldPlaceholder <- h.get[Option[String]]("input_field_placeholder")
+        _selective             <- h.get[Option[Boolean]]("selective")
       } yield {
         ReplyKeyboardMarkup(
           keyboard = _keyboard,
           resizeKeyboard = _resizeKeyboard,
           oneTimeKeyboard = _oneTimeKeyboard,
+          inputFieldPlaceholder = _inputFieldPlaceholder,
           selective = _selective
         )
       }
@@ -5583,6 +5888,335 @@ object CirceImplicits {
 
   implicit lazy val inputlinkfileEncoder: Encoder[InputLinkFile] = (x: InputLinkFile) => x.file.asJson
   implicit lazy val inputlinkfileDecoder: Decoder[InputLinkFile] = Decoder[String].map(InputLinkFile)
+
+  implicit lazy val chatmemberEncoder: Encoder[ChatMember] = {
+    case x: ChatMemberOwner         => x.asJson
+    case x: ChatMemberAdministrator => x.asJson
+    case x: ChatMemberLeft          => x.asJson
+    case x: ChatMemberMember        => x.asJson
+    case x: ChatMemberBanned        => x.asJson
+    case x: ChatMemberRestricted    => x.asJson
+  }
+
+  implicit lazy val chatmemberDecoder: Decoder[ChatMember] = {
+    List[Decoder[ChatMember]](
+      chatmemberownerDecoder.widen,
+      chatmemberadministratorDecoder.widen,
+      chatmemberleftDecoder.widen,
+      chatmembermemberDecoder.widen,
+      chatmemberbannedDecoder.widen,
+      chatmemberrestrictedDecoder.widen
+    ).reduceLeft(_ or _)
+  }
+
+  implicit lazy val chatmemberownerEncoder: Encoder[ChatMemberOwner] =
+    (x: ChatMemberOwner) => {
+      Json.fromFields(
+        List(
+          "status"       -> x.status.asJson,
+          "user"         -> x.user.asJson,
+          "custom_title" -> x.customTitle.asJson,
+          "is_anonymous" -> x.isAnonymous.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatmemberownerDecoder: Decoder[ChatMemberOwner] =
+    Decoder.instance { h =>
+      for {
+        _status      <- h.get[String]("status")
+        _user        <- h.get[User]("user")
+        _customTitle <- h.get[String]("custom_title")
+        _isAnonymous <- h.get[Boolean]("is_anonymous")
+      } yield {
+        ChatMemberOwner(status = _status, user = _user, customTitle = _customTitle, isAnonymous = _isAnonymous)
+      }
+    }
+
+  implicit lazy val chatmemberadministratorEncoder: Encoder[ChatMemberAdministrator] =
+    (x: ChatMemberAdministrator) => {
+      Json.fromFields(
+        List(
+          "status"                 -> x.status.asJson,
+          "user"                   -> x.user.asJson,
+          "can_be_edited"          -> x.canBeEdited.asJson,
+          "custom_title"           -> x.customTitle.asJson,
+          "is_anonymous"           -> x.isAnonymous.asJson,
+          "can_manage_chat"        -> x.canManageChat.asJson,
+          "can_post_messages"      -> x.canPostMessages.asJson,
+          "can_edit_messages"      -> x.canEditMessages.asJson,
+          "can_delete_messages"    -> x.canDeleteMessages.asJson,
+          "can_manage_voice_chats" -> x.canManageVoiceChats.asJson,
+          "can_restrict_members"   -> x.canRestrictMembers.asJson,
+          "can_promote_members"    -> x.canPromoteMembers.asJson,
+          "can_change_info"        -> x.canChangeInfo.asJson,
+          "can_invite_users"       -> x.canInviteUsers.asJson,
+          "can_pin_messages"       -> x.canPinMessages.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatmemberadministratorDecoder: Decoder[ChatMemberAdministrator] =
+    Decoder.instance { h =>
+      for {
+        _status              <- h.get[String]("status")
+        _user                <- h.get[User]("user")
+        _canBeEdited         <- h.get[Boolean]("can_be_edited")
+        _customTitle         <- h.get[String]("custom_title")
+        _isAnonymous         <- h.get[Boolean]("is_anonymous")
+        _canManageChat       <- h.get[Boolean]("can_manage_chat")
+        _canPostMessages     <- h.get[Boolean]("can_post_messages")
+        _canEditMessages     <- h.get[Boolean]("can_edit_messages")
+        _canDeleteMessages   <- h.get[Boolean]("can_delete_messages")
+        _canManageVoiceChats <- h.get[Boolean]("can_manage_voice_chats")
+        _canRestrictMembers  <- h.get[Boolean]("can_restrict_members")
+        _canPromoteMembers   <- h.get[Boolean]("can_promote_members")
+        _canChangeInfo       <- h.get[Boolean]("can_change_info")
+        _canInviteUsers      <- h.get[Boolean]("can_invite_users")
+        _canPinMessages      <- h.get[Boolean]("can_pin_messages")
+      } yield {
+        ChatMemberAdministrator(
+          status = _status,
+          user = _user,
+          canBeEdited = _canBeEdited,
+          customTitle = _customTitle,
+          isAnonymous = _isAnonymous,
+          canManageChat = _canManageChat,
+          canPostMessages = _canPostMessages,
+          canEditMessages = _canEditMessages,
+          canDeleteMessages = _canDeleteMessages,
+          canManageVoiceChats = _canManageVoiceChats,
+          canRestrictMembers = _canRestrictMembers,
+          canPromoteMembers = _canPromoteMembers,
+          canChangeInfo = _canChangeInfo,
+          canInviteUsers = _canInviteUsers,
+          canPinMessages = _canPinMessages
+        )
+      }
+    }
+
+  implicit lazy val chatmemberleftEncoder: Encoder[ChatMemberLeft] =
+    (x: ChatMemberLeft) => {
+      Json.fromFields(
+        List(
+          "status" -> x.status.asJson,
+          "user"   -> x.user.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatmemberleftDecoder: Decoder[ChatMemberLeft] =
+    Decoder.instance { h =>
+      for {
+        _status <- h.get[String]("status")
+        _user   <- h.get[User]("user")
+      } yield {
+        ChatMemberLeft(status = _status, user = _user)
+      }
+    }
+
+  implicit lazy val chatmembermemberEncoder: Encoder[ChatMemberMember] =
+    (x: ChatMemberMember) => {
+      Json.fromFields(
+        List(
+          "status" -> x.status.asJson,
+          "user"   -> x.user.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatmembermemberDecoder: Decoder[ChatMemberMember] =
+    Decoder.instance { h =>
+      for {
+        _status <- h.get[String]("status")
+        _user   <- h.get[User]("user")
+      } yield {
+        ChatMemberMember(status = _status, user = _user)
+      }
+    }
+
+  implicit lazy val chatmemberbannedEncoder: Encoder[ChatMemberBanned] =
+    (x: ChatMemberBanned) => {
+      Json.fromFields(
+        List(
+          "status"     -> x.status.asJson,
+          "user"       -> x.user.asJson,
+          "until_date" -> x.untilDate.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatmemberbannedDecoder: Decoder[ChatMemberBanned] =
+    Decoder.instance { h =>
+      for {
+        _status    <- h.get[String]("status")
+        _user      <- h.get[User]("user")
+        _untilDate <- h.get[Int]("until_date")
+      } yield {
+        ChatMemberBanned(status = _status, user = _user, untilDate = _untilDate)
+      }
+    }
+
+  implicit lazy val chatmemberrestrictedEncoder: Encoder[ChatMemberRestricted] =
+    (x: ChatMemberRestricted) => {
+      Json.fromFields(
+        List(
+          "status"                    -> x.status.asJson,
+          "user"                      -> x.user.asJson,
+          "is_member"                 -> x.isMember.asJson,
+          "can_change_info"           -> x.canChangeInfo.asJson,
+          "can_invite_users"          -> x.canInviteUsers.asJson,
+          "can_pin_messages"          -> x.canPinMessages.asJson,
+          "can_send_messages"         -> x.canSendMessages.asJson,
+          "can_send_media_messages"   -> x.canSendMediaMessages.asJson,
+          "can_send_polls"            -> x.canSendPolls.asJson,
+          "can_send_other_messages"   -> x.canSendOtherMessages.asJson,
+          "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson,
+          "until_date"                -> x.untilDate.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatmemberrestrictedDecoder: Decoder[ChatMemberRestricted] =
+    Decoder.instance { h =>
+      for {
+        _status                <- h.get[String]("status")
+        _user                  <- h.get[User]("user")
+        _isMember              <- h.get[Boolean]("is_member")
+        _canChangeInfo         <- h.get[Boolean]("can_change_info")
+        _canInviteUsers        <- h.get[Boolean]("can_invite_users")
+        _canPinMessages        <- h.get[Boolean]("can_pin_messages")
+        _canSendMessages       <- h.get[Boolean]("can_send_messages")
+        _canSendMediaMessages  <- h.get[Boolean]("can_send_media_messages")
+        _canSendPolls          <- h.get[Boolean]("can_send_polls")
+        _canSendOtherMessages  <- h.get[Boolean]("can_send_other_messages")
+        _canAddWebPagePreviews <- h.get[Boolean]("can_add_web_page_previews")
+        _untilDate             <- h.get[Int]("until_date")
+      } yield {
+        ChatMemberRestricted(
+          status = _status,
+          user = _user,
+          isMember = _isMember,
+          canChangeInfo = _canChangeInfo,
+          canInviteUsers = _canInviteUsers,
+          canPinMessages = _canPinMessages,
+          canSendMessages = _canSendMessages,
+          canSendMediaMessages = _canSendMediaMessages,
+          canSendPolls = _canSendPolls,
+          canSendOtherMessages = _canSendOtherMessages,
+          canAddWebPagePreviews = _canAddWebPagePreviews,
+          untilDate = _untilDate
+        )
+      }
+    }
+
+  implicit lazy val botcommandscopeEncoder: Encoder[BotCommandScope] = {
+    case all_chat_administrators: BotCommandScopeAllChatAdministrators.type =>
+      all_chat_administrators.asJson.mapObject(_.add("type", Json.fromString("all_chat_administrators")))
+    case all_group_chats: BotCommandScopeAllGroupChats.type =>
+      all_group_chats.asJson.mapObject(_.add("type", Json.fromString("all_group_chats")))
+    case chat: BotCommandScopeChat => chat.asJson.mapObject(_.add("type", Json.fromString("chat")))
+    case chat_administrators: BotCommandScopeChatAdministrators =>
+      chat_administrators.asJson.mapObject(_.add("type", Json.fromString("chat_administrators")))
+    case default: BotCommandScopeDefault.type => default.asJson.mapObject(_.add("type", Json.fromString("default")))
+    case all_private_chats: BotCommandScopeAllPrivateChats.type =>
+      all_private_chats.asJson.mapObject(_.add("type", Json.fromString("all_private_chats")))
+    case chat_member: BotCommandScopeChatMember =>
+      chat_member.asJson.mapObject(_.add("type", Json.fromString("chat_member")))
+  }
+
+  implicit lazy val botcommandscopeDecoder: Decoder[BotCommandScope] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "all_chat_administrators" => Decoder[BotCommandScopeAllChatAdministrators.type]
+      case "all_group_chats"         => Decoder[BotCommandScopeAllGroupChats.type]
+      case "chat"                    => Decoder[BotCommandScopeChat]
+      case "chat_administrators"     => Decoder[BotCommandScopeChatAdministrators]
+      case "default"                 => Decoder[BotCommandScopeDefault.type]
+      case "all_private_chats"       => Decoder[BotCommandScopeAllPrivateChats.type]
+      case "chat_member"             => Decoder[BotCommandScopeChatMember]
+    }
+  } yield value
+
+  implicit lazy val botcommandscopeallchatadministratorsEncoder: Encoder[BotCommandScopeAllChatAdministrators.type] =
+    (_: BotCommandScopeAllChatAdministrators.type) => ().asJson
+
+  implicit lazy val botcommandscopeallchatadministratorsDecoder: Decoder[BotCommandScopeAllChatAdministrators.type] =
+    (_: HCursor) => Right(BotCommandScopeAllChatAdministrators)
+
+  implicit lazy val botcommandscopeallgroupchatsEncoder: Encoder[BotCommandScopeAllGroupChats.type] =
+    (_: BotCommandScopeAllGroupChats.type) => ().asJson
+
+  implicit lazy val botcommandscopeallgroupchatsDecoder: Decoder[BotCommandScopeAllGroupChats.type] = (_: HCursor) =>
+    Right(BotCommandScopeAllGroupChats)
+
+  implicit lazy val botcommandscopedefaultEncoder: Encoder[BotCommandScopeDefault.type] =
+    (_: BotCommandScopeDefault.type) => ().asJson
+
+  implicit lazy val botcommandscopedefaultDecoder: Decoder[BotCommandScopeDefault.type] = (_: HCursor) =>
+    Right(BotCommandScopeDefault)
+
+  implicit lazy val botcommandscopechatadministratorsEncoder: Encoder[BotCommandScopeChatAdministrators] =
+    (x: BotCommandScopeChatAdministrators) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val botcommandscopechatadministratorsDecoder: Decoder[BotCommandScopeChatAdministrators] =
+    Decoder.instance { h =>
+      for {
+        _chatId <- h.get[ChatId]("chat_id")
+      } yield {
+        BotCommandScopeChatAdministrators(chatId = _chatId)
+      }
+    }
+
+  implicit lazy val botcommandscopechatmemberEncoder: Encoder[BotCommandScopeChatMember] =
+    (x: BotCommandScopeChatMember) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson,
+          "user_id" -> x.userId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val botcommandscopechatmemberDecoder: Decoder[BotCommandScopeChatMember] =
+    Decoder.instance { h =>
+      for {
+        _chatId <- h.get[ChatId]("chat_id")
+        _userId <- h.get[Long]("user_id")
+      } yield {
+        BotCommandScopeChatMember(chatId = _chatId, userId = _userId)
+      }
+    }
+
+  implicit lazy val botcommandscopechatEncoder: Encoder[BotCommandScopeChat] =
+    (x: BotCommandScopeChat) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val botcommandscopechatDecoder: Decoder[BotCommandScopeChat] =
+    Decoder.instance { h =>
+      for {
+        _chatId <- h.get[ChatId]("chat_id")
+      } yield {
+        BotCommandScopeChat(chatId = _chatId)
+      }
+    }
+
+  implicit lazy val botcommandscopeallprivatechatsEncoder: Encoder[BotCommandScopeAllPrivateChats.type] =
+    (_: BotCommandScopeAllPrivateChats.type) => ().asJson
+
+  implicit lazy val botcommandscopeallprivatechatsDecoder: Decoder[BotCommandScopeAllPrivateChats.type] =
+    (_: HCursor) => Right(BotCommandScopeAllPrivateChats)
 
   implicit lazy val inputmediaEncoder: Encoder[InputMedia] = {
     case photo: InputMediaPhoto         => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
@@ -9497,89 +10131,6 @@ object CirceImplicits {
         _messageId <- h.get[Int]("message_id")
       } yield {
         MessageId(messageId = _messageId)
-      }
-    }
-
-  implicit lazy val chatmemberEncoder: Encoder[ChatMember] =
-    (x: ChatMember) => {
-      Json.fromFields(
-        List(
-          "user"                      -> x.user.asJson,
-          "status"                    -> x.status.asJson,
-          "custom_title"              -> x.customTitle.asJson,
-          "is_anonymous"              -> x.isAnonymous.asJson,
-          "can_be_edited"             -> x.canBeEdited.asJson,
-          "can_manage_chat"           -> x.canManageChat.asJson,
-          "can_post_messages"         -> x.canPostMessages.asJson,
-          "can_edit_messages"         -> x.canEditMessages.asJson,
-          "can_delete_messages"       -> x.canDeleteMessages.asJson,
-          "can_manage_voice_chats"    -> x.canManageVoiceChats.asJson,
-          "can_restrict_members"      -> x.canRestrictMembers.asJson,
-          "can_promote_members"       -> x.canPromoteMembers.asJson,
-          "can_change_info"           -> x.canChangeInfo.asJson,
-          "can_invite_users"          -> x.canInviteUsers.asJson,
-          "can_pin_messages"          -> x.canPinMessages.asJson,
-          "is_member"                 -> x.isMember.asJson,
-          "can_send_messages"         -> x.canSendMessages.asJson,
-          "can_send_media_messages"   -> x.canSendMediaMessages.asJson,
-          "can_send_polls"            -> x.canSendPolls.asJson,
-          "can_send_other_messages"   -> x.canSendOtherMessages.asJson,
-          "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson,
-          "until_date"                -> x.untilDate.asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val chatmemberDecoder: Decoder[ChatMember] =
-    Decoder.instance { h =>
-      for {
-        _user                  <- h.get[User]("user")
-        _status                <- h.get[String]("status")
-        _customTitle           <- h.get[Option[String]]("custom_title")
-        _isAnonymous           <- h.get[Option[Boolean]]("is_anonymous")
-        _canBeEdited           <- h.get[Option[Boolean]]("can_be_edited")
-        _canManageChat         <- h.get[Option[Boolean]]("can_manage_chat")
-        _canPostMessages       <- h.get[Option[Boolean]]("can_post_messages")
-        _canEditMessages       <- h.get[Option[Boolean]]("can_edit_messages")
-        _canDeleteMessages     <- h.get[Option[Boolean]]("can_delete_messages")
-        _canManageVoiceChats   <- h.get[Option[Boolean]]("can_manage_voice_chats")
-        _canRestrictMembers    <- h.get[Option[Boolean]]("can_restrict_members")
-        _canPromoteMembers     <- h.get[Option[Boolean]]("can_promote_members")
-        _canChangeInfo         <- h.get[Option[Boolean]]("can_change_info")
-        _canInviteUsers        <- h.get[Option[Boolean]]("can_invite_users")
-        _canPinMessages        <- h.get[Option[Boolean]]("can_pin_messages")
-        _isMember              <- h.get[Option[Boolean]]("is_member")
-        _canSendMessages       <- h.get[Option[Boolean]]("can_send_messages")
-        _canSendMediaMessages  <- h.get[Option[Boolean]]("can_send_media_messages")
-        _canSendPolls          <- h.get[Option[Boolean]]("can_send_polls")
-        _canSendOtherMessages  <- h.get[Option[Boolean]]("can_send_other_messages")
-        _canAddWebPagePreviews <- h.get[Option[Boolean]]("can_add_web_page_previews")
-        _untilDate             <- h.get[Option[Int]]("until_date")
-      } yield {
-        ChatMember(
-          user = _user,
-          status = _status,
-          customTitle = _customTitle,
-          isAnonymous = _isAnonymous,
-          canBeEdited = _canBeEdited,
-          canManageChat = _canManageChat,
-          canPostMessages = _canPostMessages,
-          canEditMessages = _canEditMessages,
-          canDeleteMessages = _canDeleteMessages,
-          canManageVoiceChats = _canManageVoiceChats,
-          canRestrictMembers = _canRestrictMembers,
-          canPromoteMembers = _canPromoteMembers,
-          canChangeInfo = _canChangeInfo,
-          canInviteUsers = _canInviteUsers,
-          canPinMessages = _canPinMessages,
-          isMember = _isMember,
-          canSendMessages = _canSendMessages,
-          canSendMediaMessages = _canSendMediaMessages,
-          canSendPolls = _canSendPolls,
-          canSendOtherMessages = _canSendOtherMessages,
-          canAddWebPagePreviews = _canAddWebPagePreviews,
-          untilDate = _untilDate
-        )
       }
     }
 

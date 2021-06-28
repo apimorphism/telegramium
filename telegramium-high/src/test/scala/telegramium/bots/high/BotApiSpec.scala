@@ -58,12 +58,12 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
           .withBody(
             new JsonBody(
               """
-              {
-                "chat_id": 0,
-                "text": "Lorem ipsum",
-                "method": "sendMessage"
-              }
-            """
+                {
+                  "chat_id": 0,
+                  "text": "Lorem ipsum",
+                  "method": "sendMessage"
+                }
+              """
             )
           )
       )
@@ -81,12 +81,12 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
           .withBody(
             new JsonBody(
               """
-              {
-                "chat_id": 0,
-                "text": "Bad request",
-                "method": "sendMessage"
-              }
-            """
+                {
+                  "chat_id": 0,
+                  "text": "Bad request",
+                  "method": "sendMessage"
+                }
+              """
             )
           )
       )
@@ -120,11 +120,11 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
           .withBody(
             new JsonBody(
               """
-              {
-                "chat_id": 0,
-                "document": "https://example.com/flowers.png"
-              }
-            """
+                {
+                  "chat_id": 0,
+                  "document": "https://example.com/flowers.png"
+                }
+              """
             )
           )
       )
