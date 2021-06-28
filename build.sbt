@@ -39,6 +39,11 @@ ThisBuild / publishTo         := sonatypePublishToBundle.value
 
 ThisBuild / githubWorkflowJavaVersions := Seq("adopt@1.11", "adopt@1.8")
 ThisBuild / githubWorkflowPublishTargetBranches := Seq.empty
+ThisBuild / githubWorkflowBuildPreamble ++=
+  Seq(
+    WorkflowStep.Sbt(List("scalafmtCheckAll")),
+    WorkflowStep.Sbt(List("scalafmtSbtCheck"))
+  )
 
 val settings = Compiler.settings ++ Seq()
 
