@@ -17,28 +17,36 @@ ThisBuild / crossScalaVersions := List(scala213, scala212)
 val buildCommit    = settingKey[String]("Build info: commit")
 val buildTimestamp = settingKey[String]("Build info: timestamp")
 
-ThisBuild / buildCommit       := Version.commit(git.gitHeadCommit.value)
-ThisBuild / buildTimestamp    := Version.timestamp
+ThisBuild / buildCommit := Version.commit(git.gitHeadCommit.value)
+ThisBuild / buildTimestamp := Version.timestamp
 
-ThisBuild / name              := "telegramium"
-ThisBuild / organization      := "io.github.apimorphism"
-ThisBuild / homepage          := Some(url("https://github.com/apimorphism/telegramium"))
-ThisBuild / licenses          := List(("MIT", url("https://opensource.org/licenses/MIT")))
-ThisBuild / scmInfo           := Some(ScmInfo(
-                                   url("https://github.com/apimorphism/telegramium"),
-                                   "git@github.com:apimorphism/telegramium.git"
-                                 ))
-ThisBuild / developers        := List(Developer(
-                                   "sherzod", "Sherzod Gapirov",
-                                   "sh.gapirov@gmail.com",
-                                   url("https://github.com/sherzodv")
-                                 ))
+ThisBuild / name := "telegramium"
+ThisBuild / organization := "io.github.apimorphism"
+ThisBuild / homepage := Some(url("https://github.com/apimorphism/telegramium"))
+ThisBuild / licenses := List(("MIT", url("https://opensource.org/licenses/MIT")))
+
+ThisBuild / scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/apimorphism/telegramium"),
+    "git@github.com:apimorphism/telegramium.git"
+  )
+)
+
+ThisBuild / developers := List(
+  Developer(
+    "sherzod",
+    "Sherzod Gapirov",
+    "sh.gapirov@gmail.com",
+    url("https://github.com/sherzodv")
+  )
+)
 
 ThisBuild / publishMavenStyle := true
-ThisBuild / publishTo         := sonatypePublishToBundle.value
+ThisBuild / publishTo := sonatypePublishToBundle.value
 
 ThisBuild / githubWorkflowJavaVersions := Seq("adopt@1.11", "adopt@1.8")
 ThisBuild / githubWorkflowPublishTargetBranches := Seq.empty
+
 ThisBuild / githubWorkflowBuildPreamble ++=
   Seq(
     WorkflowStep.Sbt(List("scalafmtCheckAll")),
@@ -54,9 +62,9 @@ lazy val `telegramium-core` = project
   .settings(
     buildInfoKeys := Seq[BuildInfoKey](
       buildCommit,
-      buildTimestamp,
+      buildTimestamp
     ),
-    buildInfoPackage := "telegramium.bots.buildinfo",
+    buildInfoPackage := "telegramium.bots.buildinfo"
   )
 
 lazy val `telegramium-high` = project
@@ -67,7 +75,7 @@ lazy val `telegramium-high` = project
 lazy val `telegramium-examples` = project
   .dependsOn(
     `telegramium-core`,
-    `telegramium-high`,
+    `telegramium-high`
   )
   .settings(settings: _*)
   .settings(
@@ -79,10 +87,10 @@ lazy val telegramium = (project in file("."))
   .settings(
     name := "F[Tg]",
     publish / skip := true,
-    crossScalaVersions := Nil,
+    crossScalaVersions := Nil
   )
   .aggregate(
     `telegramium-core`,
     `telegramium-high`,
-    `telegramium-examples`,
+    `telegramium-examples`
   )

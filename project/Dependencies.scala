@@ -3,30 +3,30 @@ import sbt._
 object Dependencies {
 
   object V {
-    val monix = "3.4.0"
-    val catsCore = "2.6.1"
-    val catsEffect = "2.5.1"
-    val circe = "0.14.1"
-    val http4s = "0.21.24"
-    val slf4j = "1.7.31"
-    val logback = "1.2.3"
-    val uPickle = "0.8.0"
-    val scalatest = "3.2.9"
-    val testcontainers = "0.39.5"
+    val monix            = "3.4.0"
+    val catsCore         = "2.6.1"
+    val catsEffect       = "2.5.1"
+    val circe            = "0.14.1"
+    val http4s           = "0.21.24"
+    val slf4j            = "1.7.31"
+    val logback          = "1.2.3"
+    val uPickle          = "0.8.0"
+    val scalatest        = "3.2.9"
+    val testcontainers   = "0.39.5"
     val mockServerClient = "5.10.0"
-    val scalamock = "5.1.0"
-    val log4cats = "1.3.1"
+    val scalamock        = "5.1.0"
+    val log4cats         = "1.3.1"
   }
 
-  val monix = "io.monix" %% "monix" % V.monix
-  val catsCore = "org.typelevel" %% "cats-core" % V.catsCore
+  val monix      = "io.monix"      %% "monix"       % V.monix
+  val catsCore   = "org.typelevel" %% "cats-core"   % V.catsCore
   val catsEffect = "org.typelevel" %% "cats-effect" % V.catsEffect
-  val scalatest = "org.scalatest" %% "scalatest" % V.scalatest % Test
-  val scalamock = "org.scalamock" %% "scalamock" % V.scalamock % Test
+  val scalatest  = "org.scalatest" %% "scalatest"   % V.scalatest % Test
+  val scalamock  = "org.scalamock" %% "scalamock"   % V.scalamock % Test
 
   val circe = Seq(
-    "io.circe" %% "circe-core"           % V.circe,
-    "io.circe" %% "circe-parser"         % V.circe
+    "io.circe" %% "circe-core"   % V.circe,
+    "io.circe" %% "circe-parser" % V.circe
   )
 
   val http4sClient = Seq(
@@ -43,24 +43,26 @@ object Dependencies {
     "org.slf4j"      % "slf4j-api"       % V.slf4j,
     "org.slf4j"      % "slf4j-simple"    % V.slf4j,
     "ch.qos.logback" % "logback-classic" % V.logback,
-    "org.typelevel" %% "log4cats-slf4j" % V.log4cats
+    "org.typelevel" %% "log4cats-slf4j"  % V.log4cats
   )
 
   val uPickle = Seq(
     "com.lihaoyi" %% "upickle" % V.uPickle,
-    "com.lihaoyi" %% "upack" % V.uPickle
+    "com.lihaoyi" %% "upack"   % V.uPickle
   )
 
   val testcontainers = Seq(
-    "com.dimafeng" %% "testcontainers-scala-scalatest" % V.testcontainers % Test,
-    "com.dimafeng" %% "testcontainers-scala-mockserver" % V.testcontainers % Test,
-    "org.mock-server" % "mockserver-client-java" % V.mockServerClient % Test
+    "com.dimafeng"   %% "testcontainers-scala-scalatest"  % V.testcontainers   % Test,
+    "com.dimafeng"   %% "testcontainers-scala-mockserver" % V.testcontainers   % Test,
+    "org.mock-server" % "mockserver-client-java"          % V.mockServerClient % Test
   )
 
   val common: Seq[ModuleID] = Seq(catsCore) ++ circe ++ uPickle
 
   val telegramiumCore: Seq[ModuleID] = common
+
   val telegramiumHigh: Seq[ModuleID] = common ++ Seq(catsEffect, monix % Test, scalatest, scalamock) ++ http4sServer ++
     http4sClient ++ testcontainers ++ logger
+
   val telegramiumExam: Seq[ModuleID] = common ++ logger ++ Seq(catsEffect, monix) ++ http4sClient
 }
