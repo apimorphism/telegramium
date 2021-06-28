@@ -17,10 +17,10 @@ import telegramium.bots.{ChatIntId, InputLinkFile, InputPartFile, Message}
 
 class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfterAll with Matchers {
   lazy val container: MockServerContainer = MockServerContainer("5.10.0")
-  private val mockServer = container.container
+  private val mockServer                  = container.container
 
   private val (httpClient, finalizer) = BlazeClientBuilder[Task](global).resource.allocated.runSyncUnsafe()
-  private lazy val api = BotApi(httpClient, mockServer.getEndpoint)
+  private lazy val api                = BotApi(httpClient, mockServer.getEndpoint)
 
   private val messageResult = new JsonBody(
     """
@@ -55,15 +55,17 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
         request()
           .withPath("/sendMessage")
           .withMethod("POST")
-          .withBody(new JsonBody(
-            """
+          .withBody(
+            new JsonBody(
+              """
               {
                 "chat_id": 0,
                 "text": "Lorem ipsum",
                 "method": "sendMessage"
               }
             """
-          ))
+            )
+          )
       )
       .respond(response().withBody(messageResult))
 
@@ -76,19 +78,23 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
         request()
           .withPath("/sendMessage")
           .withMethod("POST")
-          .withBody(new JsonBody(
-            """
+          .withBody(
+            new JsonBody(
+              """
               {
                 "chat_id": 0,
                 "text": "Bad request",
                 "method": "sendMessage"
               }
             """
-          ))
+            )
+          )
       )
       .respond(response().withBody(errorResult))
 
-    val thrown = the[FailedRequest[Message]] thrownBy api.execute(Methods.sendMessage(ChatIntId(0L), "Bad request")).runSyncUnsafe()
+    val thrown = the[FailedRequest[Message]] thrownBy api
+      .execute(Methods.sendMessage(ChatIntId(0L), "Bad request"))
+      .runSyncUnsafe()
     thrown.getMessage shouldBe "method=sendMessage code=400 description=Telegram Bot API error"
   }
 
@@ -111,14 +117,16 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
         request()
           .withPath("/sendDocument")
           .withMethod("POST")
-          .withBody(new JsonBody(
-            """
+          .withBody(
+            new JsonBody(
+              """
               {
                 "chat_id": 0,
                 "document": "https://example.com/flowers.png"
               }
             """
-          ))
+            )
+          )
       )
       .respond(response().withBody(messageResult))
 
@@ -128,4 +136,5 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
   override protected def afterAll(): Unit = {
     finalizer.runSyncUnsafe()
   }
+
 }

@@ -5,8 +5,11 @@ import cats.effect.{Sync, Timer}
 import telegramium.bots.high.implicits._
 import telegramium.bots.high.{Api, LongPollBot}
 
-class EchoBot[F[_]]()(
-  implicit bot: Api[F], syncF: Sync[F], timer: Timer[F], parallel: Parallel[F]
+class EchoBot[F[_]]()(implicit
+  bot: Api[F],
+  syncF: Sync[F],
+  timer: Timer[F],
+  parallel: Parallel[F]
 ) extends LongPollBot[F](bot) {
 
   import cats.syntax.flatMap._
@@ -32,11 +35,11 @@ class EchoBot[F[_]]()(
             List(
               InlineKeyboardButton(EmojiDice.toString, callbackData = Some("dice")),
               InlineKeyboardButton(EmojiDarts.toString, callbackData = Some("darts")),
-              InlineKeyboardButton(EmojiBasketball.toString, callbackData = Some("basketball")),
+              InlineKeyboardButton(EmojiBasketball.toString, callbackData = Some("basketball"))
             ),
             List(
-              InlineKeyboardButton("Gimme a quiz", callbackData = Some("quiz")),
-            ),
+              InlineKeyboardButton("Gimme a quiz", callbackData = Some("quiz"))
+            )
           )
         )
       )
@@ -58,11 +61,11 @@ class EchoBot[F[_]]()(
           "3.14",
           "2.72",
           "1.62",
-          "Sunshine in the air!",
+          "Sunshine in the air!"
         ),
         correctOptionId = Some(2),
         isAnonymous = Some(false),
-        explanation = Some("https://en.wikipedia.org/wiki/Golden_ratio"),
+        explanation = Some("https://en.wikipedia.org/wiki/Golden_ratio")
       ).exec.void >>
         answerCallbackQuery(callbackQueryId = query.id).exec.void
     }
@@ -71,35 +74,42 @@ class EchoBot[F[_]]()(
       sendMessage(
         chatId = ChatIntId(chatId),
         text = text,
-        parseMode = Some(parseMode),
+        parseMode = Some(parseMode)
       ).exec.void >> answerCallbackQuery(callbackQueryId = query.id).exec.void
     }
 
-    query.data.map {
-      case "HTML" => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, htmlText, Html))
-      case "Markdown" => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdownText, Markdown))
-      case "Markdown2" => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdown2Text, Markdown2))
-      case "dice" => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id))
-      case "darts" => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id, EmojiDarts))
-      case "basketball" => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id, EmojiBasketball))
-      case "quiz" => query.message.fold(syncF.unit)(m => quiz(m.chat.id))
-      case x => answerCallbackQuery(
-        callbackQueryId = query.id,
-        text = Some(s"Your choice is $x")
-      ).exec.void
-    }.getOrElse(syncF.unit)
+    query.data
+      .map {
+        case "HTML"       => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, htmlText, Html))
+        case "Markdown"   => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdownText, Markdown))
+        case "Markdown2"  => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdown2Text, Markdown2))
+        case "dice"       => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id))
+        case "darts"      => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id, EmojiDarts))
+        case "basketball" => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id, EmojiBasketball))
+        case "quiz"       => query.message.fold(syncF.unit)(m => quiz(m.chat.id))
+        case x =>
+          answerCallbackQuery(
+            callbackQueryId = query.id,
+            text = Some(s"Your choice is $x")
+          ).exec.void
+      }
+      .getOrElse(syncF.unit)
   }
 
   override def onInlineQuery(query: InlineQuery): F[Unit] = {
     answerInlineQuery(
       inlineQueryId = query.id,
-      results = query.query.split(" ").zipWithIndex.map { case (word, idx) =>
-        InlineQueryResultArticle(
-          id = idx.toString,
-          title = word,
-          inputMessageContent = InputTextMessageContent(messageText = word),
-        )
-      }.toList
+      results = query.query
+        .split(" ")
+        .zipWithIndex
+        .map { case (word, idx) =>
+          InlineQueryResultArticle(
+            id = idx.toString,
+            title = word,
+            inputMessageContent = InputTextMessageContent(messageText = word)
+          )
+        }
+        .toList
     ).exec.void
   }
 
@@ -154,4 +164,5 @@ class EchoBot[F[_]]()(
       |pre-formatted fixed-width code block written in the Python programming language
       |```
       |""".stripMargin
+
 }

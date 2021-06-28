@@ -13,9 +13,10 @@ import telegramium.bots.client.{MethodReq, SendMessageReq}
 import telegramium.bots.{CallbackQuery, Chat, ChatIntId, ChatMember, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingAddress, ShippingQuery, Update, User}
 
 class LongPollBotSpec extends AnyFreeSpec with MockFactory with Matchers with OptionValues {
-  private val testUpdate = Update(updateId = 0)
+  private val testUpdate  = Update(updateId = 0)
   private val testMessage = Message(0, date = 0, chat = Chat(0, `type` = ""))
-  private val testUser = User(0, isBot = false, "")
+  private val testUser    = User(0, isBot = false, "")
+
   private val testChatMemberUpdated =
     ChatMemberUpdated(
       Chat(0, `type` = ""),
@@ -77,7 +78,9 @@ class LongPollBotSpec extends AnyFreeSpec with MockFactory with Matchers with Op
 
     "shipping query" in new Test {
       verifyOnUpdate(
-        testUpdate.copy(shippingQuery = Some(ShippingQuery("0", testUser, "", ShippingAddress("", "", "", "", "", "")))),
+        testUpdate.copy(shippingQuery =
+          Some(ShippingQuery("0", testUser, "", ShippingAddress("", "", "", "", "", "")))
+        ),
         expectedSentMessage = "onShippingQuery"
       )
     }
@@ -91,15 +94,19 @@ class LongPollBotSpec extends AnyFreeSpec with MockFactory with Matchers with Op
 
     "poll" in new Test {
       verifyOnUpdate(
-        testUpdate.copy(poll = Some(Poll(
-          "0",
-          "",
-          totalVoterCount = 0,
-          isClosed = false,
-          isAnonymous = false,
-          `type` = "",
-          allowsMultipleAnswers = false
-        ))),
+        testUpdate.copy(poll =
+          Some(
+            Poll(
+              "0",
+              "",
+              totalVoterCount = 0,
+              isClosed = false,
+              isAnonymous = false,
+              `type` = "",
+              allowsMultipleAnswers = false
+            )
+          )
+        ),
         expectedSentMessage = "onPoll"
       )
     }
@@ -127,7 +134,7 @@ class LongPollBotSpec extends AnyFreeSpec with MockFactory with Matchers with Op
   }
 
   private trait Test {
-    protected val api: Api[Task] = stub[Api[Task]]
+    protected val api: Api[Task]       = stub[Api[Task]]
     protected val bot: TestLongPollBot = new TestLongPollBot(api)
 
     (api.execute[Any] _).when(*).returns(Task.unit)
@@ -139,5 +146,7 @@ class LongPollBotSpec extends AnyFreeSpec with MockFactory with Matchers with Op
         .once()
       ()
     }
+
   }
+
 }
