@@ -67,6 +67,32 @@ You can also perform a request to the Bot API while [sending an answer to the we
 override def onMessageReply(msg: Message): F[Option[Method[_]]] =
   Sync[F].pure(Some(sendMessage(chatId = ChatIntId(msg.chat.id), text = "Hello, world!")))
 ```
+In addition, the library provides a way to compose multiple Webhook
+bots into a sigle `Http4s` Server that will handle the webhooks
+registration as well as the incoming requests of all the composed
+bots. You ultimately decide at which host:port the server will be
+binded to:
+
+``` scala
+import scala.concurrent.ExecutionContext.Implicits.global
+
+val api: Api[IO] = BotApi(http, baseUrl = s"https://api.telegram.org/bot$token")
+val bot1: MyWebhookbot = new MyWebhookbot[IO](api, 80, "ServerVisibleFromOutside", "/bot_token1")
+val bot2: MyWebhookbot = new MyWebhookbot[IO](api, 3000, "ServerVisibleFromOutside", "/bot_token2")
+
+WebhookBot.compose[IO](
+    List(bot1, bot2),
+    8080,
+    ExecutionContext.global, //optional, global as default
+    "127.0.0.1" //optional, localhost as default
+  ).useForever.runSyncUnsafe()
+```
+
+Keep in mind that the ports and hosts used in the creation of each bot
+will be not used when composed. The pair host plus port passed as input to
+the `compose` function will be used instead. For details, have a look
+at the [Github Issue](https://github.com/apimorphism/telegramium/issues/143) and
+the related [Pull Request](https://github.com/apimorphism/telegramium/pull/145 ).
 
 #### Keyboards
 To use smart and safe constructors for keyboard markups, import `telegramium.bots.high.keyboards._`:
