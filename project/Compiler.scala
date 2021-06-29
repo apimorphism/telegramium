@@ -6,25 +6,27 @@ object Compiler {
   val settings = Seq(
     scalacOptions ++=
       (if (scalaBinaryVersion.value.startsWith("2.12"))
-        options :+ "-Ypartial-unification"
+         options :+ "-Ypartial-unification"
        else options),
-    addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.13.0" cross CrossVersion.full)
+    addCompilerPlugin(
+      "org.typelevel" %% "kind-projector" % "0.13.0" cross CrossVersion.full
+    )
   )
 
   val options = Seq(
     "-Xlint",
-    "-deprecation", // Emit warning and location for usages of deprecated APIs.
+    "-deprecation",                  // Emit warning and location for usages of deprecated APIs.
     "-encoding",
-    "utf-8",                  // Specify character encoding used by source files.
-    "-explaintypes",          // Explain type errors in more detail.
-    "-feature",               // Emit warning and location for usages of features that should be imported explicitly.
-    "-language:existentials", // Existential types (besides wildcard types) can be written and inferred
+    "utf-8",                         // Specify character encoding used by source files.
+    "-explaintypes",                 // Explain type errors in more detail.
+    "-feature",                      // Emit warning and location for usages of features that should be imported explicitly.
+    "-language:existentials",        // Existential types (besides wildcard types) can be written and inferred
     "-language:experimental.macros", // Allow macro definition (besides implementation and application)
     "-language:higherKinds",         // Allow higher-kinded types
     "-language:implicitConversions", // Allow definition of implicit functions called views
     "-unchecked",                    // Enable additional warnings where generated code depends on assumptions.
     "-Xcheckinit",                   // Wrap field accessors to throw an exception on uninitialized access.
-    // "-Xfatal-warnings",                  // Fail the compilation if there are any warnings.
+    // "-Xfatal-warnings",           // Fail the compilation if there are any warnings.
     "-Xlint:adapted-args",           // Warn if an argument list is modified to match the receiver.
     "-Xlint:constant",               // Evaluation of a constant arithmetic expression results in an error.
     "-Xlint:delayedinit-select",     // Selecting member of DelayedInit.
@@ -50,5 +52,4 @@ object Compiler {
     "-Ywarn-unused:privates",        // Warn if a private member is unused.
     "-Ywarn-value-discard"           // Warn when non-Unit expression results are unused.
   )
-
 }
