@@ -13,7 +13,7 @@ import org.http4s.server.Server
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.{EntityDecoder, HttpRoutes}
 import telegramium.bots.CirceImplicits._
-import telegramium.bots.client.{Method, Methods => Methods1}
+import telegramium.bots.client.{Method, Methods => ApiMethods}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
 import telegramium.bots.{CallbackQuery, ChatMemberUpdated, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
@@ -51,7 +51,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   allowedUpdates: List[String] = List.empty,
   host: String = org.http4s.server.defaults.IPv4Host
 )(implicit syncF: Sync[F], timer: Timer[F])
-    extends Methods1 {
+    extends ApiMethods {
 
   private val BotPath = Path(if (path.startsWith("/")) path else "/" + path)
 
