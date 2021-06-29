@@ -35,7 +35,7 @@ import telegramium.bots.ChatId
   */
 final case class PromoteChatMemberReq(
   chatId: ChatId,
-  userId: Int,
+  userId: Long,
   isAnonymous: Option[Boolean] = Option.empty,
   canManageChat: Option[Boolean] = Option.empty,
   canPostMessages: Option[Boolean] = Option.empty,

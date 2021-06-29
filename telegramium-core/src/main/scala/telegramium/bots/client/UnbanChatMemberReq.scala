@@ -10,4 +10,4 @@ import telegramium.bots.ChatId
   * @param onlyIfBanned
   *   Do nothing if the user is not banned
   */
-final case class UnbanChatMemberReq(chatId: ChatId, userId: Int, onlyIfBanned: Option[Boolean] = Option.empty)
+final case class UnbanChatMemberReq(chatId: ChatId, userId: Long, onlyIfBanned: Option[Boolean] = Option.empty)

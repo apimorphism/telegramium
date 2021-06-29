@@ -10,7 +10,7 @@ package telegramium.bots.client
   *   Required if chat_id and message_id are not specified. Identifier of the inline message
   */
 final case class GetGameHighScoresReq(
-  userId: Int,
+  userId: Long,
   chatId: Option[Int] = Option.empty,
   messageId: Option[Int] = Option.empty,
   inlineMessageId: Option[String] = Option.empty

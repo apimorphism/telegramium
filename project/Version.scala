@@ -13,11 +13,13 @@ object Version {
     commit.map(_.take(8)).getOrElse(throw BuildException("Can't build empty repository"))
   }
 
-  def mkVersion(semVer: String,
-                branch: String,
-                commit: Option[String],
-                gitVer: Option[String],
-                isDirty: Boolean): String = {
+  def mkVersion(
+    semVer: String,
+    branch: String,
+    commit: Option[String],
+    gitVer: Option[String],
+    isDirty: Boolean
+  ): String = {
     val dirty = if (isDirty) "-DIRTY" else ""
     branch match {
       case "rc" =>

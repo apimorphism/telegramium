@@ -16,7 +16,7 @@ import telegramium.bots.ChatPermissions
   */
 final case class RestrictChatMemberReq(
   chatId: ChatId,
-  userId: Int,
+  userId: Long,
   permissions: ChatPermissions,
   untilDate: Option[Int] = Option.empty
 )

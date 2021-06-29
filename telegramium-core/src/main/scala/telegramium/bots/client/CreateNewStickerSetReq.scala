@@ -27,7 +27,7 @@ import telegramium.bots.MaskPosition
   *   A JSON-serialized object for position where the mask should be placed on faces
   */
 final case class CreateNewStickerSetReq(
-  userId: Int,
+  userId: Long,
   name: String,
   title: String,
   pngSticker: Option[IFile] = Option.empty,

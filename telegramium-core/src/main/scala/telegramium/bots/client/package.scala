@@ -12,6 +12,7 @@ object uPickleImplicits {
   }
 
   import telegramium.bots.BotCommand
+  import telegramium.bots.BotCommandScope
   import telegramium.bots.uPickleImplicits._
   import telegramium.bots.ChatId
   import telegramium.bots.IFile
@@ -57,20 +58,28 @@ object uPickleImplicits {
   implicit lazy val getwebhookinforeqCodec: ReadWriter[GetWebhookInfoReq.type] = macroRW
 
   implicit lazy val setmycommandsreqCodec: ReadWriter[SetMyCommandsReq] = {
-    val commandsKey = upack.Str("commands")
+    val commandsKey     = upack.Str("commands")
+    val scopeKey        = upack.Str("scope")
+    val languageCodeKey = upack.Str("languageCode")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
-          commandsKey -> writeMsg(x.commands)
+          commandsKey     -> writeMsg(x.commands),
+          scopeKey        -> writeMsg(x.scope),
+          languageCodeKey -> writeMsg(x.languageCode)
         )
       },
       msg => {
         val m = msg.obj
         val result = for {
-          commands <- m.get(commandsKey).map(x => readBinary[List[BotCommand]](x))
+          commands     <- m.get(commandsKey).map(x => readBinary[List[BotCommand]](x))
+          scope        <- m.get(scopeKey).map(x => readBinary[Option[BotCommandScope]](x))
+          languageCode <- m.get(languageCodeKey).map(x => readBinary[Option[String]](x))
         } yield {
           SetMyCommandsReq(
-            commands = commands
+            commands = commands,
+            scope = scope,
+            languageCode = languageCode
           )
         }
         result.get
@@ -121,7 +130,7 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          userId          <- m.get(userIdKey).map(x => readBinary[Int](x))
+          userId          <- m.get(userIdKey).map(x => readBinary[Long](x))
           chatId          <- m.get(chatIdKey).map(x => readBinary[Option[Int]](x))
           messageId       <- m.get(messageIdKey).map(x => readBinary[Option[Int]](x))
           inlineMessageId <- m.get(inlineMessageIdKey).map(x => readBinary[Option[String]](x))
@@ -267,7 +276,7 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          userId <- m.get(userIdKey).map(x => readBinary[Int](x))
+          userId <- m.get(userIdKey).map(x => readBinary[Long](x))
           offset <- m.get(offsetKey).map(x => readBinary[Option[Int]](x))
           limit  <- m.get(limitKey).map(x => readBinary[Option[Int]](x))
         } yield {
@@ -447,7 +456,7 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          userId        <- m.get(userIdKey).map(x => readBinary[Int](x))
+          userId        <- m.get(userIdKey).map(x => readBinary[Long](x))
           name          <- m.get(nameKey).map(x => readBinary[String](x))
           title         <- m.get(titleKey).map(x => readBinary[String](x))
           pngSticker    <- m.get(pngStickerKey).map(x => readBinary[Option[IFile]](x))
@@ -485,7 +494,7 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          userId     <- m.get(userIdKey).map(x => readBinary[Int](x))
+          userId     <- m.get(userIdKey).map(x => readBinary[Long](x))
           pngSticker <- m.get(pngStickerKey).map(x => readBinary[IFile](x))
         } yield {
           UploadStickerFileReq(
@@ -753,7 +762,7 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          userId       <- m.get(userIdKey).map(x => readBinary[Int](x))
+          userId       <- m.get(userIdKey).map(x => readBinary[Long](x))
           name         <- m.get(nameKey).map(x => readBinary[String](x))
           pngSticker   <- m.get(pngStickerKey).map(x => readBinary[Option[IFile]](x))
           tgsSticker   <- m.get(tgsStickerKey).map(x => readBinary[Option[IFile]](x))
@@ -845,6 +854,28 @@ object uPickleImplicits {
           UnpinChatMessageReq(
             chatId = chatId,
             messageId = messageId
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val getchatmembercountreqCodec: ReadWriter[GetChatMemberCountReq] = {
+    val chatIdKey = upack.Str("chatId")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          chatIdKey -> writeMsg(x.chatId)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          chatId <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+        } yield {
+          GetChatMemberCountReq(
+            chatId = chatId
           )
         }
         result.get
@@ -1018,7 +1049,7 @@ object uPickleImplicits {
         val m = msg.obj
         val result = for {
           chatId       <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          userId       <- m.get(userIdKey).map(x => readBinary[Int](x))
+          userId       <- m.get(userIdKey).map(x => readBinary[Long](x))
           onlyIfBanned <- m.get(onlyIfBannedKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           UnbanChatMemberReq(
@@ -1207,7 +1238,7 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          userId             <- m.get(userIdKey).map(x => readBinary[Int](x))
+          userId             <- m.get(userIdKey).map(x => readBinary[Long](x))
           score              <- m.get(scoreKey).map(x => readBinary[Int](x))
           force              <- m.get(forceKey).map(x => readBinary[Option[Boolean]](x))
           disableEditMessage <- m.get(disableEditMessageKey).map(x => readBinary[Option[Boolean]](x))
@@ -1403,7 +1434,7 @@ object uPickleImplicits {
       msg => {
         val m = msg.obj
         val result = for {
-          userId <- m.get(userIdKey).map(x => readBinary[Int](x))
+          userId <- m.get(userIdKey).map(x => readBinary[Long](x))
           errors <- m.get(errorsKey).map(x => readBinary[List[PassportElementError]](x))
         } yield {
           SetPassportDataErrorsReq(
@@ -1728,40 +1759,6 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val kickchatmemberreqCodec: ReadWriter[KickChatMemberReq] = {
-    val chatIdKey         = upack.Str("chatId")
-    val userIdKey         = upack.Str("userId")
-    val untilDateKey      = upack.Str("untilDate")
-    val revokeMessagesKey = upack.Str("revokeMessages")
-    readwriter[upack.Msg].bimap(
-      x => {
-        upack.Obj(
-          chatIdKey         -> writeMsg(x.chatId),
-          userIdKey         -> writeMsg(x.userId),
-          untilDateKey      -> writeMsg(x.untilDate),
-          revokeMessagesKey -> writeMsg(x.revokeMessages)
-        )
-      },
-      msg => {
-        val m = msg.obj
-        val result = for {
-          chatId         <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          userId         <- m.get(userIdKey).map(x => readBinary[Int](x))
-          untilDate      <- m.get(untilDateKey).map(x => readBinary[Option[Int]](x))
-          revokeMessages <- m.get(revokeMessagesKey).map(x => readBinary[Option[Boolean]](x))
-        } yield {
-          KickChatMemberReq(
-            chatId = chatId,
-            userId = userId,
-            untilDate = untilDate,
-            revokeMessages = revokeMessages
-          )
-        }
-        result.get
-      }
-    )
-  }
-
   implicit lazy val sendaudioreqCodec: ReadWriter[SendAudioReq] = {
     val chatIdKey                   = upack.Str("chatId")
     val audioKey                    = upack.Str("audio")
@@ -1850,7 +1847,7 @@ object uPickleImplicits {
         val m = msg.obj
         val result = for {
           chatId      <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          userId      <- m.get(userIdKey).map(x => readBinary[Int](x))
+          userId      <- m.get(userIdKey).map(x => readBinary[Long](x))
           permissions <- m.get(permissionsKey).map(x => readBinary[ChatPermissions](x))
           untilDate   <- m.get(untilDateKey).map(x => readBinary[Option[Int]](x))
         } yield {
@@ -1916,7 +1913,7 @@ object uPickleImplicits {
         val m = msg.obj
         val result = for {
           chatId <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          userId <- m.get(userIdKey).map(x => readBinary[Int](x))
+          userId <- m.get(userIdKey).map(x => readBinary[Long](x))
         } yield {
           GetChatMemberReq(
             chatId = chatId,
@@ -1928,7 +1925,65 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val getmycommandsreqCodec: ReadWriter[GetMyCommandsReq.type] = macroRW
+  implicit lazy val getmycommandsreqCodec: ReadWriter[GetMyCommandsReq] = {
+    val scopeKey        = upack.Str("scope")
+    val languageCodeKey = upack.Str("languageCode")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          scopeKey        -> writeMsg(x.scope),
+          languageCodeKey -> writeMsg(x.languageCode)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          scope        <- m.get(scopeKey).map(x => readBinary[Option[BotCommandScope]](x))
+          languageCode <- m.get(languageCodeKey).map(x => readBinary[Option[String]](x))
+        } yield {
+          GetMyCommandsReq(
+            scope = scope,
+            languageCode = languageCode
+          )
+        }
+        result.get
+      }
+    )
+  }
+
+  implicit lazy val banchatmemberreqCodec: ReadWriter[BanChatMemberReq] = {
+    val chatIdKey         = upack.Str("chatId")
+    val userIdKey         = upack.Str("userId")
+    val untilDateKey      = upack.Str("untilDate")
+    val revokeMessagesKey = upack.Str("revokeMessages")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          chatIdKey         -> writeMsg(x.chatId),
+          userIdKey         -> writeMsg(x.userId),
+          untilDateKey      -> writeMsg(x.untilDate),
+          revokeMessagesKey -> writeMsg(x.revokeMessages)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          chatId         <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
+          userId         <- m.get(userIdKey).map(x => readBinary[Long](x))
+          untilDate      <- m.get(untilDateKey).map(x => readBinary[Option[Int]](x))
+          revokeMessages <- m.get(revokeMessagesKey).map(x => readBinary[Option[Boolean]](x))
+        } yield {
+          BanChatMemberReq(
+            chatId = chatId,
+            userId = userId,
+            untilDate = untilDate,
+            revokeMessages = revokeMessages
+          )
+        }
+        result.get
+      }
+    )
+  }
 
   implicit lazy val getchatadministratorsreqCodec: ReadWriter[GetChatAdministratorsReq] = {
     val chatIdKey = upack.Str("chatId")
@@ -2048,7 +2103,7 @@ object uPickleImplicits {
         val m = msg.obj
         val result = for {
           chatId              <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          userId              <- m.get(userIdKey).map(x => readBinary[Int](x))
+          userId              <- m.get(userIdKey).map(x => readBinary[Long](x))
           isAnonymous         <- m.get(isAnonymousKey).map(x => readBinary[Option[Boolean]](x))
           canManageChat       <- m.get(canManageChatKey).map(x => readBinary[Option[Boolean]](x))
           canPostMessages     <- m.get(canPostMessagesKey).map(x => readBinary[Option[Boolean]](x))
@@ -2166,6 +2221,32 @@ object uPickleImplicits {
     )
   }
 
+  implicit lazy val deletemycommandsreqCodec: ReadWriter[DeleteMyCommandsReq] = {
+    val scopeKey        = upack.Str("scope")
+    val languageCodeKey = upack.Str("languageCode")
+    readwriter[upack.Msg].bimap(
+      x => {
+        upack.Obj(
+          scopeKey        -> writeMsg(x.scope),
+          languageCodeKey -> writeMsg(x.languageCode)
+        )
+      },
+      msg => {
+        val m = msg.obj
+        val result = for {
+          scope        <- m.get(scopeKey).map(x => readBinary[Option[BotCommandScope]](x))
+          languageCode <- m.get(languageCodeKey).map(x => readBinary[Option[String]](x))
+        } yield {
+          DeleteMyCommandsReq(
+            scope = scope,
+            languageCode = languageCode
+          )
+        }
+        result.get
+      }
+    )
+  }
+
   implicit lazy val pinchatmessagereqCodec: ReadWriter[PinChatMessageReq] = {
     val chatIdKey              = upack.Str("chatId")
     val messageIdKey           = upack.Str("messageId")
@@ -2212,7 +2293,7 @@ object uPickleImplicits {
         val m = msg.obj
         val result = for {
           name   <- m.get(nameKey).map(x => readBinary[String](x))
-          userId <- m.get(userIdKey).map(x => readBinary[Int](x))
+          userId <- m.get(userIdKey).map(x => readBinary[Long](x))
           thumb  <- m.get(thumbKey).map(x => readBinary[Option[IFile]](x))
         } yield {
           SetStickerSetThumbReq(
@@ -2504,7 +2585,7 @@ object uPickleImplicits {
         val m = msg.obj
         val result = for {
           chatId      <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-          userId      <- m.get(userIdKey).map(x => readBinary[Int](x))
+          userId      <- m.get(userIdKey).map(x => readBinary[Long](x))
           customTitle <- m.get(customTitleKey).map(x => readBinary[String](x))
         } yield {
           SetChatAdministratorCustomTitleReq(
@@ -2694,28 +2775,6 @@ object uPickleImplicits {
     )
   }
 
-  implicit lazy val getchatmemberscountreqCodec: ReadWriter[GetChatMembersCountReq] = {
-    val chatIdKey = upack.Str("chatId")
-    readwriter[upack.Msg].bimap(
-      x => {
-        upack.Obj(
-          chatIdKey -> writeMsg(x.chatId)
-        )
-      },
-      msg => {
-        val m = msg.obj
-        val result = for {
-          chatId <- m.get(chatIdKey).map(x => readBinary[ChatId](x))
-        } yield {
-          GetChatMembersCountReq(
-            chatId = chatId
-          )
-        }
-        result.get
-      }
-    )
-  }
-
   implicit lazy val sendphotoreqCodec: ReadWriter[SendPhotoReq] = {
     val chatIdKey                   = upack.Str("chatId")
     val photoKey                    = upack.Str("photo")
@@ -2876,6 +2935,7 @@ object CirceImplicits {
   import io.circe.{Encoder, Decoder, Json}
   import io.circe.HCursor
   import telegramium.bots.BotCommand
+  import telegramium.bots.BotCommandScope
   import telegramium.bots.CirceImplicits._
   import telegramium.bots.ChatId
   import telegramium.bots.IFile
@@ -2919,8 +2979,10 @@ object CirceImplicits {
     (x: SetMyCommandsReq) => {
       Json.fromFields(
         List(
-          "commands" -> x.commands.asJson,
-          "method"   -> "setMyCommands".asJson
+          "commands"      -> x.commands.asJson,
+          "scope"         -> x.scope.asJson,
+          "language_code" -> x.languageCode.asJson,
+          "method"        -> "setMyCommands".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2928,9 +2990,11 @@ object CirceImplicits {
   implicit lazy val setmycommandsreqDecoder: Decoder[SetMyCommandsReq] =
     Decoder.instance { h =>
       for {
-        _commands <- h.getOrElse[List[BotCommand]]("commands")(List.empty)
+        _commands     <- h.getOrElse[List[BotCommand]]("commands")(List.empty)
+        _scope        <- h.get[Option[BotCommandScope]]("scope")
+        _languageCode <- h.get[Option[String]]("language_code")
       } yield {
-        SetMyCommandsReq(commands = _commands)
+        SetMyCommandsReq(commands = _commands, scope = _scope, languageCode = _languageCode)
       }
     }
 
@@ -2971,7 +3035,7 @@ object CirceImplicits {
   implicit lazy val getgamehighscoresreqDecoder: Decoder[GetGameHighScoresReq] =
     Decoder.instance { h =>
       for {
-        _userId          <- h.get[Int]("user_id")
+        _userId          <- h.get[Long]("user_id")
         _chatId          <- h.get[Option[Int]]("chat_id")
         _messageId       <- h.get[Option[Int]]("message_id")
         _inlineMessageId <- h.get[Option[String]]("inline_message_id")
@@ -3097,7 +3161,7 @@ object CirceImplicits {
   implicit lazy val getuserprofilephotosreqDecoder: Decoder[GetUserProfilePhotosReq] =
     Decoder.instance { h =>
       for {
-        _userId <- h.get[Int]("user_id")
+        _userId <- h.get[Long]("user_id")
         _offset <- h.get[Option[Int]]("offset")
         _limit  <- h.get[Option[Int]]("limit")
       } yield {
@@ -3239,7 +3303,7 @@ object CirceImplicits {
   implicit lazy val createnewstickersetreqDecoder: Decoder[CreateNewStickerSetReq] =
     Decoder.instance { h =>
       for {
-        _userId        <- h.get[Int]("user_id")
+        _userId        <- h.get[Long]("user_id")
         _name          <- h.get[String]("name")
         _title         <- h.get[String]("title")
         _pngSticker    <- h.get[Option[IFile]]("png_sticker")
@@ -3275,7 +3339,7 @@ object CirceImplicits {
   implicit lazy val uploadstickerfilereqDecoder: Decoder[UploadStickerFileReq] =
     Decoder.instance { h =>
       for {
-        _userId     <- h.get[Int]("user_id")
+        _userId     <- h.get[Long]("user_id")
         _pngSticker <- h.get[IFile]("png_sticker")
       } yield {
         UploadStickerFileReq(userId = _userId, pngSticker = _pngSticker)
@@ -3497,7 +3561,7 @@ object CirceImplicits {
   implicit lazy val addstickertosetreqDecoder: Decoder[AddStickerToSetReq] =
     Decoder.instance { h =>
       for {
-        _userId       <- h.get[Int]("user_id")
+        _userId       <- h.get[Long]("user_id")
         _name         <- h.get[String]("name")
         _pngSticker   <- h.get[Option[IFile]]("png_sticker")
         _tgsSticker   <- h.get[Option[IFile]]("tgs_sticker")
@@ -3575,6 +3639,25 @@ object CirceImplicits {
         _messageId <- h.get[Option[Int]]("message_id")
       } yield {
         UnpinChatMessageReq(chatId = _chatId, messageId = _messageId)
+      }
+    }
+
+  implicit lazy val getchatmembercountreqEncoder: Encoder[GetChatMemberCountReq] =
+    (x: GetChatMemberCountReq) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "getChatMemberCount".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getchatmembercountreqDecoder: Decoder[GetChatMemberCountReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId <- h.get[ChatId]("chat_id")
+      } yield {
+        GetChatMemberCountReq(chatId = _chatId)
       }
     }
 
@@ -3720,7 +3803,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId       <- h.get[ChatId]("chat_id")
-        _userId       <- h.get[Int]("user_id")
+        _userId       <- h.get[Long]("user_id")
         _onlyIfBanned <- h.get[Option[Boolean]]("only_if_banned")
       } yield {
         UnbanChatMemberReq(chatId = _chatId, userId = _userId, onlyIfBanned = _onlyIfBanned)
@@ -3873,7 +3956,7 @@ object CirceImplicits {
   implicit lazy val setgamescorereqDecoder: Decoder[SetGameScoreReq] =
     Decoder.instance { h =>
       for {
-        _userId             <- h.get[Int]("user_id")
+        _userId             <- h.get[Long]("user_id")
         _score              <- h.get[Int]("score")
         _force              <- h.get[Option[Boolean]]("force")
         _disableEditMessage <- h.get[Option[Boolean]]("disable_edit_message")
@@ -4040,7 +4123,7 @@ object CirceImplicits {
   implicit lazy val setpassportdataerrorsreqDecoder: Decoder[SetPassportDataErrorsReq] =
     Decoder.instance { h =>
       for {
-        _userId <- h.get[Int]("user_id")
+        _userId <- h.get[Long]("user_id")
         _errors <- h.getOrElse[List[PassportElementError]]("errors")(List.empty)
       } yield {
         SetPassportDataErrorsReq(userId = _userId, errors = _errors)
@@ -4303,31 +4386,6 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val kickchatmemberreqEncoder: Encoder[KickChatMemberReq] =
-    (x: KickChatMemberReq) => {
-      Json.fromFields(
-        List(
-          "chat_id"         -> x.chatId.asJson,
-          "user_id"         -> x.userId.asJson,
-          "until_date"      -> x.untilDate.asJson,
-          "revoke_messages" -> x.revokeMessages.asJson,
-          "method"          -> "kickChatMember".asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val kickchatmemberreqDecoder: Decoder[KickChatMemberReq] =
-    Decoder.instance { h =>
-      for {
-        _chatId         <- h.get[ChatId]("chat_id")
-        _userId         <- h.get[Int]("user_id")
-        _untilDate      <- h.get[Option[Int]]("until_date")
-        _revokeMessages <- h.get[Option[Boolean]]("revoke_messages")
-      } yield {
-        KickChatMemberReq(chatId = _chatId, userId = _userId, untilDate = _untilDate, revokeMessages = _revokeMessages)
-      }
-    }
-
   implicit lazy val sendaudioreqEncoder: Encoder[SendAudioReq] =
     (x: SendAudioReq) => {
       Json.fromFields(
@@ -4402,7 +4460,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId      <- h.get[ChatId]("chat_id")
-        _userId      <- h.get[Int]("user_id")
+        _userId      <- h.get[Long]("user_id")
         _permissions <- h.get[ChatPermissions]("permissions")
         _untilDate   <- h.get[Option[Int]]("until_date")
       } yield {
@@ -4458,14 +4516,57 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId <- h.get[ChatId]("chat_id")
-        _userId <- h.get[Int]("user_id")
+        _userId <- h.get[Long]("user_id")
       } yield {
         GetChatMemberReq(chatId = _chatId, userId = _userId)
       }
     }
 
-  implicit lazy val getmycommandsreqEncoder: Encoder[GetMyCommandsReq.type] = (_: GetMyCommandsReq.type) => ().asJson
-  implicit lazy val getmycommandsreqDecoder: Decoder[GetMyCommandsReq.type] = (_: HCursor) => Right(GetMyCommandsReq)
+  implicit lazy val getmycommandsreqEncoder: Encoder[GetMyCommandsReq] =
+    (x: GetMyCommandsReq) => {
+      Json.fromFields(
+        List(
+          "scope"         -> x.scope.asJson,
+          "language_code" -> x.languageCode.asJson,
+          "method"        -> "getMyCommands".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getmycommandsreqDecoder: Decoder[GetMyCommandsReq] =
+    Decoder.instance { h =>
+      for {
+        _scope        <- h.get[Option[BotCommandScope]]("scope")
+        _languageCode <- h.get[Option[String]]("language_code")
+      } yield {
+        GetMyCommandsReq(scope = _scope, languageCode = _languageCode)
+      }
+    }
+
+  implicit lazy val banchatmemberreqEncoder: Encoder[BanChatMemberReq] =
+    (x: BanChatMemberReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"         -> x.chatId.asJson,
+          "user_id"         -> x.userId.asJson,
+          "until_date"      -> x.untilDate.asJson,
+          "revoke_messages" -> x.revokeMessages.asJson,
+          "method"          -> "banChatMember".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val banchatmemberreqDecoder: Decoder[BanChatMemberReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId         <- h.get[ChatId]("chat_id")
+        _userId         <- h.get[Long]("user_id")
+        _untilDate      <- h.get[Option[Int]]("until_date")
+        _revokeMessages <- h.get[Option[Boolean]]("revoke_messages")
+      } yield {
+        BanChatMemberReq(chatId = _chatId, userId = _userId, untilDate = _untilDate, revokeMessages = _revokeMessages)
+      }
+    }
 
   implicit lazy val getchatadministratorsreqEncoder: Encoder[GetChatAdministratorsReq] =
     (x: GetChatAdministratorsReq) => {
@@ -4563,7 +4664,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId              <- h.get[ChatId]("chat_id")
-        _userId              <- h.get[Int]("user_id")
+        _userId              <- h.get[Long]("user_id")
         _isAnonymous         <- h.get[Option[Boolean]]("is_anonymous")
         _canManageChat       <- h.get[Option[Boolean]]("can_manage_chat")
         _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
@@ -4666,6 +4767,27 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val deletemycommandsreqEncoder: Encoder[DeleteMyCommandsReq] =
+    (x: DeleteMyCommandsReq) => {
+      Json.fromFields(
+        List(
+          "scope"         -> x.scope.asJson,
+          "language_code" -> x.languageCode.asJson,
+          "method"        -> "deleteMyCommands".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val deletemycommandsreqDecoder: Decoder[DeleteMyCommandsReq] =
+    Decoder.instance { h =>
+      for {
+        _scope        <- h.get[Option[BotCommandScope]]("scope")
+        _languageCode <- h.get[Option[String]]("language_code")
+      } yield {
+        DeleteMyCommandsReq(scope = _scope, languageCode = _languageCode)
+      }
+    }
+
   implicit lazy val pinchatmessagereqEncoder: Encoder[PinChatMessageReq] =
     (x: PinChatMessageReq) => {
       Json.fromFields(
@@ -4705,7 +4827,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _name   <- h.get[String]("name")
-        _userId <- h.get[Int]("user_id")
+        _userId <- h.get[Long]("user_id")
         _thumb  <- h.get[Option[IFile]]("thumb")
       } yield {
         SetStickerSetThumbReq(name = _name, userId = _userId, thumb = _thumb)
@@ -4945,7 +5067,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId      <- h.get[ChatId]("chat_id")
-        _userId      <- h.get[Int]("user_id")
+        _userId      <- h.get[Long]("user_id")
         _customTitle <- h.get[String]("custom_title")
       } yield {
         SetChatAdministratorCustomTitleReq(chatId = _chatId, userId = _userId, customTitle = _customTitle)
@@ -5095,25 +5217,6 @@ object CirceImplicits {
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
         )
-      }
-    }
-
-  implicit lazy val getchatmemberscountreqEncoder: Encoder[GetChatMembersCountReq] =
-    (x: GetChatMembersCountReq) => {
-      Json.fromFields(
-        List(
-          "chat_id" -> x.chatId.asJson,
-          "method"  -> "getChatMembersCount".asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val getchatmemberscountreqDecoder: Decoder[GetChatMembersCountReq] =
-    Decoder.instance { h =>
-      for {
-        _chatId <- h.get[ChatId]("chat_id")
-      } yield {
-        GetChatMembersCountReq(chatId = _chatId)
       }
     }
 

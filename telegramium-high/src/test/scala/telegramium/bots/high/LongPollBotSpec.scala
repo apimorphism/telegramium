@@ -10,7 +10,7 @@ import org.scalatest.matchers.should.Matchers
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.CirceImplicits._
 import telegramium.bots.client.{MethodReq, SendMessageReq}
-import telegramium.bots.{CallbackQuery, Chat, ChatIntId, ChatMember, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingAddress, ShippingQuery, Update, User}
+import telegramium.bots.{CallbackQuery, Chat, ChatIntId, ChatMemberMember, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingAddress, ShippingQuery, Update, User}
 
 class LongPollBotSpec extends AnyFreeSpec with MockFactory with Matchers with OptionValues {
   private val testUpdate  = Update(updateId = 0)
@@ -22,8 +22,8 @@ class LongPollBotSpec extends AnyFreeSpec with MockFactory with Matchers with Op
       Chat(0, `type` = ""),
       testUser,
       0,
-      ChatMember(testUser, ""),
-      ChatMember(testUser, "")
+      ChatMemberMember("", testUser),
+      ChatMemberMember("", testUser)
     )
 
   "should support all Update types" - {

@@ -14,9 +14,9 @@ import telegramium.bots.ChatId
   *   Pass True to delete all messages from the chat for the user that is being removed. If False, the user will be able
   *   to see messages in the group that were sent before the user was removed. Always True for supergroups and channels.
   */
-final case class KickChatMemberReq(
+final case class BanChatMemberReq(
   chatId: ChatId,
-  userId: Int,
+  userId: Long,
   untilDate: Option[Int] = Option.empty,
   revokeMessages: Option[Boolean] = Option.empty
 )

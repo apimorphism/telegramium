@@ -38,30 +38,30 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
           .withEntity(
             parse(
               """
-          {
-            "update_id": 0,
-            "message": {
-              "message_id": 0,
-              "date": 1593365356,
-              "chat": {
-                "id": 0,
-                "type": "private"
-              },
-              "text": "Lorem ipsum"
-            }
-          }
-        """
+                {
+                  "update_id": 0,
+                  "message": {
+                    "message_id": 0,
+                    "date": 1593365356,
+                    "chat": {
+                      "id": 0,
+                      "type": "private"
+                    },
+                    "text": "Lorem ipsum"
+                  }
+                }
+              """
             ).valueOr(throw _)
           )
         httpClient.expect[Json](request).runSyncUnsafe() shouldBe parse(
           """
-          {
-            "chat_id": 0,
-            "text": "onMessageReply",
-            "entities": [],
-            "method": "sendMessage"
-          }
-        """
+            {
+              "chat_id": 0,
+              "text": "onMessageReply",
+              "entities": [],
+              "method": "sendMessage"
+            }
+          """
         ).valueOr(throw _)
         Task.unit
       }
@@ -154,11 +154,11 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
           .withBody(
             new JsonBody(
               """
-              {
-                "url": "localhost",
-                "method": "setWebhook"
-              }
-            """
+                {
+                  "url": "localhost",
+                  "method": "setWebhook"
+                }
+              """
             )
           )
       )
@@ -166,11 +166,11 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
         response().withBody(
           new JsonBody(
             """
-          {
-            "ok": true,
-            "result": true
-          }
-        """
+              {
+                "ok": true,
+                "result": true
+              }
+            """
           )
         )
       )
@@ -184,11 +184,11 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
         response().withBody(
           new JsonBody(
             """
-          {
-            "ok": true,
-            "result": true
-          }
-        """
+              {
+                "ok": true,
+                "result": true
+              }
+            """
           )
         )
       )
@@ -200,12 +200,12 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
           .withBody(
             new JsonBody(
               """
-              {
-                "chat_id": 0,
-                "text": "onMessage",
-                "method": "sendMessage"
-              }
-            """
+                {
+                  "chat_id": 0,
+                  "text": "onMessage",
+                  "method": "sendMessage"
+                }
+              """
             )
           )
       )
@@ -213,19 +213,19 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
         response().withBody(
           new JsonBody(
             """
-          {
-            "ok": true,
-            "result": {
-              "message_id": 0,
-              "date": 1593365356,
-              "chat": {
-                "id": 0,
-                "type": "private"
-              },
-              "text": "onMessage"
-            }
-          }
-        """
+              {
+                "ok": true,
+                "result": {
+                  "message_id": 0,
+                  "date": 1593365356,
+                  "chat": {
+                    "id": 0,
+                    "type": "private"
+                  },
+                  "text": "onMessage"
+                }
+              }
+            """
           )
         )
       )

@@ -36,14 +36,25 @@ trait Methods {
     MethodReq[WebhookInfo]("getWebhookInfo", req.asJson)
   }
 
-  /** Use this method to change the list of the bot's commands. Returns True on success.
+  /** Use this method to change the list of the bot's commands. See https://core.telegram.org/bots#commands for more
+    * details about bot commands. Returns True on success.
     *
     * @param commands
     *   A JSON-serialized list of bot commands to be set as the list of the bot's commands. At most 100 commands can be
     *   specified.
+    * @param scope
+    *   A JSON-serialized object, describing scope of users for which the commands are relevant. Defaults to
+    *   BotCommandScopeDefault.
+    * @param languageCode
+    *   A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for
+    *   whose language there are no dedicated commands
     */
-  def setMyCommands(commands: List[BotCommand] = List.empty): Method[Boolean] = {
-    val req = SetMyCommandsReq(commands)
+  def setMyCommands(
+    commands: List[BotCommand] = List.empty,
+    scope: Option[BotCommandScope] = Option.empty,
+    languageCode: Option[String] = Option.empty
+  ): Method[Boolean] = {
+    val req = SetMyCommandsReq(commands, scope, languageCode)
     MethodReq[Boolean]("setMyCommands", req.asJson)
   }
 
@@ -78,7 +89,7 @@ trait Methods {
     *   Required if chat_id and message_id are not specified. Identifier of the inline message
     */
   def getGameHighScores(
-    userId: Int,
+    userId: Long,
     chatId: Option[Int] = Option.empty,
     messageId: Option[Int] = Option.empty,
     inlineMessageId: Option[String] = Option.empty
@@ -186,7 +197,7 @@ trait Methods {
     *   Limits the number of photos to be retrieved. Values between 1-100 are accepted. Defaults to 100.
     */
   def getUserProfilePhotos(
-    userId: Int,
+    userId: Long,
     offset: Option[Int] = Option.empty,
     limit: Option[Int] = Option.empty
   ): Method[UserProfilePhotos] = {
@@ -349,7 +360,7 @@ trait Methods {
     *   A JSON-serialized object for position where the mask should be placed on faces
     */
   def createNewStickerSet(
-    userId: Int,
+    userId: Long,
     name: String,
     title: String,
     pngSticker: Option[IFile] = Option.empty,
@@ -375,7 +386,7 @@ trait Methods {
     *   PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either
     *   width or height must be exactly 512px.
     */
-  def uploadStickerFile(userId: Int, pngSticker: IFile): Method[File] = {
+  def uploadStickerFile(userId: Long, pngSticker: IFile): Method[File] = {
     val req = UploadStickerFileReq(userId, pngSticker)
     MethodReq[File](
       "uploadStickerFile",
@@ -574,7 +585,7 @@ trait Methods {
     *   A JSON-serialized object for position where the mask should be placed on faces
     */
   def addStickerToSet(
-    userId: Int,
+    userId: Long,
     name: String,
     pngSticker: Option[IFile] = Option.empty,
     tgsSticker: Option[IFile] = Option.empty,
@@ -631,6 +642,17 @@ trait Methods {
   def unpinChatMessage(chatId: ChatId, messageId: Option[Int] = Option.empty): Method[Boolean] = {
     val req = UnpinChatMessageReq(chatId, messageId)
     MethodReq[Boolean]("unpinChatMessage", req.asJson)
+  }
+
+  /** Use this method to get the number of members in a chat. Returns Int on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup or channel (in the format
+    *   &#064;channelusername)
+    */
+  def getChatMemberCount(chatId: ChatId): Method[Int] = {
+    val req = GetChatMemberCountReq(chatId)
+    MethodReq[Int]("getChatMemberCount", req.asJson)
   }
 
   /** Use this method to send a group of photos, videos, documents or audios as an album. Documents and audio files can
@@ -752,7 +774,7 @@ trait Methods {
     MethodReq[Message]("sendVenue", req.asJson)
   }
 
-  /** Use this method to unban a previously kicked user in a supergroup or channel. The user will not return to the
+  /** Use this method to unban a previously banned user in a supergroup or channel. The user will not return to the
     * group or channel automatically, but will be able to join via link, etc. The bot must be an administrator for this
     * to work. By default, this method guarantees that after the call the user is not a member of the chat, but will be
     * able to join it. So if the user is a member of the chat they will also be removed from the chat. If you don't want
@@ -766,7 +788,7 @@ trait Methods {
     * @param onlyIfBanned
     *   Do nothing if the user is not banned
     */
-  def unbanChatMember(chatId: ChatId, userId: Int, onlyIfBanned: Option[Boolean] = Option.empty): Method[Boolean] = {
+  def unbanChatMember(chatId: ChatId, userId: Long, onlyIfBanned: Option[Boolean] = Option.empty): Method[Boolean] = {
     val req = UnbanChatMemberReq(chatId, userId, onlyIfBanned)
     MethodReq[Boolean]("unbanChatMember", req.asJson)
   }
@@ -912,7 +934,7 @@ trait Methods {
     *   Required if chat_id and message_id are not specified. Identifier of the inline message
     */
   def setGameScore(
-    userId: Int,
+    userId: Long,
     score: Int,
     force: Option[Boolean] = Option.empty,
     disableEditMessage: Option[Boolean] = Option.empty,
@@ -1072,7 +1094,7 @@ trait Methods {
     * @param errors
     *   A JSON-serialized array describing the errors
     */
-  def setPassportDataErrors(userId: Int, errors: List[PassportElementError] = List.empty): Method[Boolean] = {
+  def setPassportDataErrors(userId: Long, errors: List[PassportElementError] = List.empty): Method[Boolean] = {
     val req = SetPassportDataErrorsReq(userId, errors)
     MethodReq[Boolean]("setPassportDataErrors", req.asJson)
   }
@@ -1367,34 +1389,6 @@ trait Methods {
     MethodReq[Boolean]("answerInlineQuery", req.asJson)
   }
 
-  /** Use this method to kick a user from a group, a supergroup or a channel. In the case of supergroups and channels,
-    * the user will not be able to return to the chat on their own using invite links, etc., unless unbanned first. The
-    * bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True
-    * on success.
-    *
-    * @param chatId
-    *   Unique identifier for the target group or username of the target supergroup or channel (in the format
-    *   &#064;channelusername)
-    * @param userId
-    *   Unique identifier of the target user
-    * @param untilDate
-    *   Date when the user will be unbanned, unix time. If user is banned for more than 366 days or less than 30 seconds
-    *   from the current time they are considered to be banned forever. Applied for supergroups and channels only.
-    * @param revokeMessages
-    *   Pass True to delete all messages from the chat for the user that is being removed. If False, the user will be
-    *   able to see messages in the group that were sent before the user was removed. Always True for supergroups and
-    *   channels.
-    */
-  def kickChatMember(
-    chatId: ChatId,
-    userId: Int,
-    untilDate: Option[Int] = Option.empty,
-    revokeMessages: Option[Boolean] = Option.empty
-  ): Method[Boolean] = {
-    val req = KickChatMemberReq(chatId, userId, untilDate, revokeMessages)
-    MethodReq[Boolean]("kickChatMember", req.asJson)
-  }
-
   /** Use this method to send audio files, if you want Telegram clients to display them in the music player. Your audio
     * must be in the .MP3 or .M4A format. On success, the sent Message is returned. Bots can currently send audio files
     * of up to 50 MB in size, this limit may be changed in the future. For sending voice messages, use the sendVoice
@@ -1488,7 +1482,7 @@ trait Methods {
     */
   def restrictChatMember(
     chatId: ChatId,
-    userId: Int,
+    userId: Long,
     permissions: ChatPermissions,
     untilDate: Option[Int] = Option.empty
   ): Method[Boolean] = {
@@ -1535,17 +1529,53 @@ trait Methods {
     * @param userId
     *   Unique identifier of the target user
     */
-  def getChatMember(chatId: ChatId, userId: Int): Method[ChatMember] = {
+  def getChatMember(chatId: ChatId, userId: Long): Method[ChatMember] = {
     val req = GetChatMemberReq(chatId, userId)
     MethodReq[ChatMember]("getChatMember", req.asJson)
   }
 
-  /** Use this method to get the current list of the bot's commands. Requires no parameters. Returns Array of BotCommand
-    * on success.
+  /** Use this method to get the current list of the bot's commands for the given scope and user language. Returns Array
+    * of BotCommand on success. If commands aren't set, an empty list is returned.
+    *
+    * @param scope
+    *   A JSON-serialized object, describing scope of users. Defaults to BotCommandScopeDefault.
+    * @param languageCode
+    *   A two-letter ISO 639-1 language code or an empty string
     */
-  def getMyCommands(): Method[List[BotCommand]] = {
-    val req = GetMyCommandsReq
+  def getMyCommands(
+    scope: Option[BotCommandScope] = Option.empty,
+    languageCode: Option[String] = Option.empty
+  ): Method[List[BotCommand]] = {
+    val req = GetMyCommandsReq(scope, languageCode)
     MethodReq[List[BotCommand]]("getMyCommands", req.asJson)
+  }
+
+  /** Use this method to ban a user in a group, a supergroup or a channel. In the case of supergroups and channels, the
+    * user will not be able to return to the chat on their own using invite links, etc., unless unbanned first. The bot
+    * must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on
+    * success.
+    *
+    * @param chatId
+    *   Unique identifier for the target group or username of the target supergroup or channel (in the format
+    *   &#064;channelusername)
+    * @param userId
+    *   Unique identifier of the target user
+    * @param untilDate
+    *   Date when the user will be unbanned, unix time. If user is banned for more than 366 days or less than 30 seconds
+    *   from the current time they are considered to be banned forever. Applied for supergroups and channels only.
+    * @param revokeMessages
+    *   Pass True to delete all messages from the chat for the user that is being removed. If False, the user will be
+    *   able to see messages in the group that were sent before the user was removed. Always True for supergroups and
+    *   channels.
+    */
+  def banChatMember(
+    chatId: ChatId,
+    userId: Long,
+    untilDate: Option[Int] = Option.empty,
+    revokeMessages: Option[Boolean] = Option.empty
+  ): Method[Boolean] = {
+    val req = BanChatMemberReq(chatId, userId, untilDate, revokeMessages)
+    MethodReq[Boolean]("banChatMember", req.asJson)
   }
 
   /** Use this method to get a list of administrators in a chat. On success, returns an Array of ChatMember objects that
@@ -1664,7 +1694,7 @@ trait Methods {
     */
   def promoteChatMember(
     chatId: ChatId,
-    userId: Int,
+    userId: Long,
     isAnonymous: Option[Boolean] = Option.empty,
     canManageChat: Option[Boolean] = Option.empty,
     canPostMessages: Option[Boolean] = Option.empty,
@@ -1757,6 +1787,24 @@ trait Methods {
     MethodReq[Either[Boolean, Message]]("editMessageMedia", req.asJson)
   }
 
+  /** Use this method to delete the list of the bot's commands for the given scope and user language. After deletion,
+    * higher level commands will be shown to affected users. Returns True on success.
+    *
+    * @param scope
+    *   A JSON-serialized object, describing scope of users for which the commands are relevant. Defaults to
+    *   BotCommandScopeDefault.
+    * @param languageCode
+    *   A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for
+    *   whose language there are no dedicated commands
+    */
+  def deleteMyCommands(
+    scope: Option[BotCommandScope] = Option.empty,
+    languageCode: Option[String] = Option.empty
+  ): Method[Boolean] = {
+    val req = DeleteMyCommandsReq(scope, languageCode)
+    MethodReq[Boolean]("deleteMyCommands", req.asJson)
+  }
+
   /** Use this method to add a message to the list of pinned messages in a chat. If the chat is not a private chat, the
     * bot must be an administrator in the chat for this to work and must have the 'can_pin_messages' admin right in a
     * supergroup or 'can_edit_messages' admin right in a channel. Returns True on success.
@@ -1793,7 +1841,7 @@ trait Methods {
     *   String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. Animated
     *   sticker set thumbnail can't be uploaded via HTTP URL.
     */
-  def setStickerSetThumb(name: String, userId: Int, thumb: Option[IFile] = Option.empty): Method[Boolean] = {
+  def setStickerSetThumb(name: String, userId: Long, thumb: Option[IFile] = Option.empty): Method[Boolean] = {
     val req = SetStickerSetThumbReq(name, userId, thumb)
     MethodReq[Boolean]("setStickerSetThumb", req.asJson, Map("thumb" -> thumb).collect { case (k, Some(v)) => k -> v })
   }
@@ -2005,7 +2053,7 @@ trait Methods {
     * @param customTitle
     *   New custom title for the administrator; 0-16 characters, emoji are not allowed
     */
-  def setChatAdministratorCustomTitle(chatId: ChatId, userId: Int, customTitle: String): Method[Boolean] = {
+  def setChatAdministratorCustomTitle(chatId: ChatId, userId: Long, customTitle: String): Method[Boolean] = {
     val req = SetChatAdministratorCustomTitleReq(chatId, userId, customTitle)
     MethodReq[Boolean]("setChatAdministratorCustomTitle", req.asJson)
   }
@@ -2170,17 +2218,6 @@ trait Methods {
       req.asJson,
       Map("sticker" -> Option(sticker)).collect { case (k, Some(v)) => k -> v }
     )
-  }
-
-  /** Use this method to get the number of members in a chat. Returns Int on success.
-    *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup or channel (in the format
-    *   &#064;channelusername)
-    */
-  def getChatMembersCount(chatId: ChatId): Method[Int] = {
-    val req = GetChatMembersCountReq(chatId)
-    MethodReq[Int]("getChatMembersCount", req.asJson)
   }
 
   /** Use this method to send photos. On success, the sent Message is returned.
