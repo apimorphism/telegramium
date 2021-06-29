@@ -76,9 +76,10 @@ binded to:
 ``` scala
 import scala.concurrent.ExecutionContext.Implicits.global
 
-val api: Api[IO] = BotApi(http, baseUrl = s"https://api.telegram.org/bot$token")
-val bot1: MyWebhookbot = new MyWebhookbot[IO](api, 80, "ServerVisibleFromOutside", "/bot_token1")
-val bot2: MyWebhookbot = new MyWebhookbot[IO](api, 3000, "ServerVisibleFromOutside", "/bot_token2")
+val api1: Api[IO] = BotApi(http, baseUrl = s"https://api.telegram.org/bot$bot_token1")
+val api2: Api[IO] = BotApi(http, baseUrl = s"https://api.telegram.org/bot$bot_token1")
+val bot1: MyWebhookbot = new MyWebhookbot[IO](api1, 80, "ServerVisibleFromOutside", s"/$bot_token1")
+val bot2: MyWebhookbot = new MyWebhookbot[IO](api2, 3000, "ServerVisibleFromOutside", s"/$bot_token2")
 
 WebhookBot.compose[IO](
     List(bot1, bot2),
