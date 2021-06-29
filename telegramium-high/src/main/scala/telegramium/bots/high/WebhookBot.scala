@@ -160,19 +160,19 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
 
 object WebhookBot {
 
-  /** Use this method to compose multiple Webhook bots as a single
-    * Http Server that will register the webhooks and handle the requests.
-    * 
+  /** Use this method to compose multiple Webhook bots as a single Http Server that will register the webhooks and
+    * handle the requests.
+    *
     * @param bots
-    *   List of bots to compose 
+    *   List of bots to compose
     * @param port
     *   Port to bind to
     * @param executionContext
     *   Execution Context used to handle the requests. Optional: global as default
     * @param host
     *   Host to bind to. Default localhost
-    * @return Resource[F, Server[F]]
-    *   Result Http server wrapped into a Resource data type
+    * @return
+    *   Resource[F, Server[F]] Result Http server wrapped into a Resource data type
     */
   def compose[F[_]: ConcurrentEffect: Timer](
     bots: List[WebhookBot[F]],
