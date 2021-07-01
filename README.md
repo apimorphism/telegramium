@@ -38,7 +38,7 @@ Use the `Methods` factory to create requests. You will need an instance of the `
 BlazeClientBuilder[F](ExecutionContext.global).resource.use { httpClient =>
   implicit val api: Api[F] = BotApi(http, baseUrl = s"https://api.telegram.org/bot$token")
   val bot = new MyLongPollBot()
-  bot.start(port, host)
+  bot.start()
 }
 ```
 
