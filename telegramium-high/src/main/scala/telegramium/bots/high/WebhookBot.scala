@@ -18,6 +18,7 @@ import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormDa
 import telegramium.bots.{CallbackQuery, ChatMemberUpdated, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
 import scala.concurrent.ExecutionContext
+import scala.deprecated
 
 /** @param url
   *   HTTPS url to send updates to. Use an empty string to remove webhook integration
@@ -41,7 +42,7 @@ import scala.concurrent.ExecutionContext
   */
 abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   bot: Api[F],
-  port: Int,
+  @deprecated("it might be removed in future versions", "5.53.0") val port: Int,
   url: String,
   path: String = "/",
   blocker: Blocker = DefaultBlocker.blocker,
@@ -49,7 +50,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   ipAddress: Option[String] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty,
-  host: String = org.http4s.server.defaults.IPv4Host
+  @deprecated("it might be removed in future versions", "5.53.0") val host: String = org.http4s.server.defaults.IPv4Host
 )(implicit syncF: Sync[F], timer: Timer[F])
     extends ApiMethods {
 
@@ -116,8 +117,22 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   /** @param executionContext
     *   Execution Context the underlying blaze futures will be executed upon.
     */
+  @deprecated(
+    "This method uses host and port from the old constructor. These are deprecated, please use the start method with explicit host and port input parameters",
+    "5.53.0"
+  )
   def start(executionContext: ExecutionContext = ExecutionContext.global): Resource[F, Server[F]] =
-    createServer(executionContext) <* setWebhookResource()
+    createServer(port, host, executionContext) <* setWebhookResource()
+
+  /** @param host
+    *   host used to bind the resulting Server
+    * @param port
+    *   port used to bind the resulting Server
+    * @param executionContext
+    *   Execution Context the underlying blaze futures will be executed upon.
+    */
+  def start(host: String, port: Int)(implicit executionContext: ExecutionContext): Resource[F, Server[F]] =
+    createServer(port, host, executionContext) <* setWebhookResource()
 
   private def setWebhookResource(): Resource[F, Unit] =
     Resource.eval(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates))
@@ -153,7 +168,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
     }
   }
 
-  private def createServer(executionContext: ExecutionContext): Resource[F, Server[F]] =
+  private def createServer(port: Int, host: String, executionContext: ExecutionContext): Resource[F, Server[F]] =
     BlazeServerBuilder[F](executionContext).bindHttp(port, host).withHttpApp(routes().orNotFound).resource
 
 }

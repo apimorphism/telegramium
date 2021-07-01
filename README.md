@@ -38,7 +38,7 @@ Use the `Methods` factory to create requests. You will need an instance of the `
 BlazeClientBuilder[F](ExecutionContext.global).resource.use { httpClient =>
   implicit val api: Api[F] = BotApi(http, baseUrl = s"https://api.telegram.org/bot$token")
   val bot = new MyLongPollBot()
-  bot.start()
+  bot.start(port, host)
 }
 ```
 
@@ -89,9 +89,15 @@ WebhookBot.compose[IO](
   ).useForever.runSyncUnsafe()
 ```
 
-Keep in mind that the ports and hosts used in the creation of each bot
-will be not used when composed. The pair host plus port passed as input to
-the `compose` function will be used instead. For details, have a look
+For backward compatibility reasons, the webook bot constructor still
+requires the port and host parameters, but they are deprecated and may
+be removed in future releases. Please use the `start` method that
+requires the host and port explicitly as parameters.
+
+Following the same pattern, the pair host plus port passed as input to
+the `compose` function will be used instead of the deprecated one.
+
+For details, have a look
 at the [Github Issue](https://github.com/apimorphism/telegramium/issues/143) and
 the related [Pull Request](https://github.com/apimorphism/telegramium/pull/145 ).
 

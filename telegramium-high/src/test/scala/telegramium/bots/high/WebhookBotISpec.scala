@@ -30,7 +30,7 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
   "should set a webhook and accept requests" in {
     prepareHttpMocks()
     bot1
-      .start()
+      .start("localhost", 0)
       .use { server =>
         val request = Request[Task]()
           .withMethod(POST)
