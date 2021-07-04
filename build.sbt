@@ -11,19 +11,19 @@ ThisBuild / version := Version.mkVersion(
 lazy val scala213 = "2.13.6"
 lazy val scala212 = "2.12.14"
 
-ThisBuild / scalaVersion := scala213
+ThisBuild / scalaVersion       := scala213
 ThisBuild / crossScalaVersions := List(scala213, scala212)
 
 val buildCommit    = settingKey[String]("Build info: commit")
 val buildTimestamp = settingKey[String]("Build info: timestamp")
 
-ThisBuild / buildCommit := Version.commit(git.gitHeadCommit.value)
+ThisBuild / buildCommit    := Version.commit(git.gitHeadCommit.value)
 ThisBuild / buildTimestamp := Version.timestamp
 
-ThisBuild / name := "telegramium"
+ThisBuild / name         := "telegramium"
 ThisBuild / organization := "io.github.apimorphism"
-ThisBuild / homepage := Some(url("https://github.com/apimorphism/telegramium"))
-ThisBuild / licenses := List(("MIT", url("https://opensource.org/licenses/MIT")))
+ThisBuild / homepage     := Some(url("https://github.com/apimorphism/telegramium"))
+ThisBuild / licenses     := List(("MIT", url("https://opensource.org/licenses/MIT")))
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
@@ -42,9 +42,9 @@ ThisBuild / developers := List(
 )
 
 ThisBuild / publishMavenStyle := true
-ThisBuild / publishTo := sonatypePublishToBundle.value
+ThisBuild / publishTo         := sonatypePublishToBundle.value
 
-ThisBuild / githubWorkflowJavaVersions := Seq("adopt@1.11", "adopt@1.8")
+ThisBuild / githubWorkflowJavaVersions          := Seq("adopt@1.11", "adopt@1.8")
 ThisBuild / githubWorkflowPublishTargetBranches := Seq.empty
 
 ThisBuild / githubWorkflowBuildPreamble ++=
@@ -85,8 +85,8 @@ lazy val `telegramium-examples` = project
 
 lazy val telegramium = (project in file("."))
   .settings(
-    name := "F[Tg]",
-    publish / skip := true,
+    name               := "F[Tg]",
+    publish / skip     := true,
     crossScalaVersions := Nil
   )
   .aggregate(
