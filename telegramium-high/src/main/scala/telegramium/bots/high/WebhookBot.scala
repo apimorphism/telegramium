@@ -42,15 +42,13 @@ import scala.deprecated
   */
 abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   bot: Api[F],
-  @deprecated("it might be removed in future versions", "5.53.0") val port: Int,
   url: String,
   path: String = "/",
   blocker: Blocker = DefaultBlocker.blocker,
   certificate: Option[InputPartFile] = Option.empty,
   ipAddress: Option[String] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
-  allowedUpdates: List[String] = List.empty,
-  @deprecated("it might be removed in future versions", "5.53.0") val host: String = org.http4s.server.defaults.IPv4Host
+  allowedUpdates: List[String] = List.empty
 )(implicit syncF: Sync[F], timer: Timer[F])
     extends ApiMethods {
 
@@ -113,16 +111,6 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   private implicit val HandleUpdateReqEntityDecoder: EntityDecoder[F, Update] = jsonOf[F, Update]
 
   private def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Option[Method[_]]] = rawReq.as[Update].flatMap(onUpdate)
-
-  /** @param executionContext
-    *   Execution Context the underlying blaze futures will be executed upon.
-    */
-  @deprecated(
-    "This method uses host and port from the old constructor. These are deprecated, please use the start method with explicit host and port input parameters",
-    "5.53.0"
-  )
-  def start(executionContext: ExecutionContext = ExecutionContext.global): Resource[F, Server[F]] =
-    createServer(port, host, executionContext) <* setWebhookResource()
 
   /** @param host
     *   host used to bind the resulting Server
@@ -187,7 +175,7 @@ object WebhookBot {
     * @param host
     *   Host to bind to. Default localhost
     * @return
-    *   Resource[F, Server[F]] Result Http server wrapped into a Resource data type
+    *   `Resource[F, Server[F]]` Result Http server wrapped into a Resource data type
     */
   def compose[F[_]: ConcurrentEffect: Timer](
     bots: List[WebhookBot[F]],

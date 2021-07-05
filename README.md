@@ -54,9 +54,9 @@ class MyLongPollBot[F[_]: Sync: Timer: Parallel]()(implicit api: Api[F]) extends
 
 #### Webhooks
 ```scala
-class MyWebhookBot[F[_]: ConcurrentEffect: ContextShift: Timer](port: Int, url: String, path: String)(
+class MyWebhookBot[F[_]: ConcurrentEffect: ContextShift: Timer](url: String, path: String)(
   implicit api: Api[F]
-) extends WebhookBot[F](api, port, url, path) {
+) extends WebhookBot[F](api, url, path) {
   override def onMessage(msg: Message): F[Unit] =
     sendMessage(chatId = ChatIntId(msg.chat.id), text = "Hello, world!").exec.void
 }
@@ -68,7 +68,7 @@ override def onMessageReply(msg: Message): F[Option[Method[_]]] =
   Sync[F].pure(Some(sendMessage(chatId = ChatIntId(msg.chat.id), text = "Hello, world!")))
 ```
 In addition, the library provides a way to compose multiple Webhook
-bots into a sigle `Http4s` Server that will handle the webhooks
+bots into a single `Http4s` Server that will handle the webhooks
 registration as well as the incoming requests of all the composed
 bots. You ultimately decide at which host:port the server will be
 binded to:
@@ -78,8 +78,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 val api1: Api[IO] = BotApi(http, baseUrl = s"https://api.telegram.org/bot$bot_token1")
 val api2: Api[IO] = BotApi(http, baseUrl = s"https://api.telegram.org/bot$bot_token1")
-val bot1: MyWebhookbot = new MyWebhookbot[IO](api1, 80, "ServerVisibleFromOutside", s"/$bot_token1")
-val bot2: MyWebhookbot = new MyWebhookbot[IO](api2, 3000, "ServerVisibleFromOutside", s"/$bot_token2")
+val bot1: MyWebhookbot = new MyWebhookbot[IO](api1, "ServerVisibleFromOutside", s"/$bot_token1")
+val bot2: MyWebhookbot = new MyWebhookbot[IO](api2, "ServerVisibleFromOutside", s"/$bot_token2")
 
 WebhookBot.compose[IO](
     List(bot1, bot2),
@@ -88,14 +88,6 @@ WebhookBot.compose[IO](
     "127.0.0.1" //optional, localhost as default
   ).useForever.runSyncUnsafe()
 ```
-
-For backward compatibility reasons, the webook bot constructor still
-requires the port and host parameters, but they are deprecated and may
-be removed in future releases. Please use the `start` method that
-requires the host and port explicitly as parameters.
-
-Following the same pattern, the pair host plus port passed as input to
-the `compose` function will be used instead of the deprecated one.
 
 For details, have a look
 at the [Github Issue](https://github.com/apimorphism/telegramium/issues/143) and
