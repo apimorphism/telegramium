@@ -3,20 +3,22 @@ package telegramium.bots.high
 import cats.effect.{Blocker, ConcurrentEffect, ContextShift, Resource, Sync, Timer}
 import cats.syntax.apply._
 import cats.syntax.flatMap._
+import cats.syntax.foldable._
 import cats.syntax.functor._
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.dsl.impl.Path
-import org.http4s.implicits._
+import org.http4s.syntax.kleisli._
 import org.http4s.server.Server
 import org.http4s.server.blaze.BlazeServerBuilder
-import org.http4s.{EntityDecoder, HttpApp, HttpRoutes}
+import org.http4s.{EntityDecoder, HttpRoutes}
 import telegramium.bots.CirceImplicits._
-import telegramium.bots.client.{Method, Methods}
+import telegramium.bots.client.{Method, Methods => ApiMethods}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
 import telegramium.bots.{CallbackQuery, ChatMemberUpdated, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
 import scala.concurrent.ExecutionContext
+import scala.deprecated
 
 /** @param url
   *   HTTPS url to send updates to. Use an empty string to remove webhook integration
@@ -40,17 +42,15 @@ import scala.concurrent.ExecutionContext
   */
 abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   bot: Api[F],
-  port: Int,
   url: String,
   path: String = "/",
   blocker: Blocker = DefaultBlocker.blocker,
   certificate: Option[InputPartFile] = Option.empty,
   ipAddress: Option[String] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
-  allowedUpdates: List[String] = List.empty,
-  host: String = org.http4s.server.defaults.IPv4Host
+  allowedUpdates: List[String] = List.empty
 )(implicit syncF: Sync[F], timer: Timer[F])
-    extends Methods {
+    extends ApiMethods {
 
   private val BotPath = Path(if (path.startsWith("/")) path else "/" + path)
 
@@ -112,14 +112,18 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
 
   private def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Option[Method[_]]] = rawReq.as[Update].flatMap(onUpdate)
 
-  /** @param executionContext
+  /** @param host
+    *   host used to bind the resulting Server
+    * @param port
+    *   port used to bind the resulting Server
+    * @param executionContext
     *   Execution Context the underlying blaze futures will be executed upon.
     */
-  def start(executionContext: ExecutionContext = ExecutionContext.global): Resource[F, Server[F]] =
-    for {
-      server <- createServer(executionContext)
-      _      <- Resource.eval(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates))
-    } yield server
+  def start(host: String, port: Int)(implicit executionContext: ExecutionContext): Resource[F, Server[F]] =
+    createServer(port, host, executionContext) <* setWebhookResource()
+
+  private def setWebhookResource(): Resource[F, Unit] =
+    Resource.eval(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates))
 
   private def setWebhook(
     url: String,
@@ -130,31 +134,66 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   ): F[Unit] =
     bot.execute(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates)).void
 
-  private def createServer(executionContext: ExecutionContext): Resource[F, Server[F]] = {
+  private def routes(): HttpRoutes[F] = {
     val dsl = Http4sDsl[F]
     import dsl._
 
-    def app(): HttpApp[F] =
-      HttpRoutes
-        .of[F] { case req @ POST -> BotPath =>
-          handleUpdateReq(req).flatMap {
-            _.fold(Ok()) { m =>
-              val inputPartFiles = m.payload.files.collect { case (filename, InputPartFile(file)) =>
-                (filename, file)
-              }
-              val attachments = toFileDataParts(inputPartFiles, blocker)
-              if (attachments.isEmpty)
-                Ok(m.payload.json)
-              else {
-                val parts = toMultipartWithFormData(m.payload.json, inputPartFiles.keys.toList, attachments)
-                Ok(parts).map(_.withHeaders(parts.headers))
-              }
-            }
+    HttpRoutes.of[F] { case req @ POST -> BotPath =>
+      handleUpdateReq(req).flatMap {
+        _.fold(Ok()) { m =>
+          val inputPartFiles = m.payload.files.collect { case (filename, InputPartFile(file)) =>
+            (filename, file)
+          }
+          val attachments = toFileDataParts(inputPartFiles, blocker)
+          if (attachments.isEmpty)
+            Ok(m.payload.json)
+          else {
+            val parts = toMultipartWithFormData(m.payload.json, inputPartFiles.keys.toList, attachments)
+            Ok(parts).map(_.withHeaders(parts.headers))
           }
         }
-        .orNotFound
+      }
+    }
+  }
 
-    BlazeServerBuilder[F](executionContext).bindHttp(port, host).withHttpApp(app()).resource
+  private def createServer(port: Int, host: String, executionContext: ExecutionContext): Resource[F, Server[F]] =
+    BlazeServerBuilder[F](executionContext).bindHttp(port, host).withHttpApp(routes().orNotFound).resource
+
+}
+
+object WebhookBot {
+
+  /** Use this method to compose multiple Webhook bots as a single Http Server that will register the webhooks and
+    * handle the requests.
+    *
+    * @param bots
+    *   List of bots to compose
+    * @param port
+    *   Port to bind to
+    * @param executionContext
+    *   Execution Context used to handle the requests. Optional: global as default
+    * @param host
+    *   Host to bind to. Default localhost
+    * @return
+    *   `Resource[F, Server[F]]` Result Http server wrapped into a Resource data type
+    */
+  def compose[F[_]: ConcurrentEffect: Timer](
+    bots: List[WebhookBot[F]],
+    port: Int,
+    executionContext: ExecutionContext = ExecutionContext.global,
+    host: String = org.http4s.server.defaults.IPv4Host
+  ): Resource[F, Server[F]] = {
+
+    val setWebhooksResource: Resource[F, Unit] = bots.foldMapM(_.setWebhookResource())
+    val httpRoutes: HttpRoutes[F]              = bots.foldMapK(_.routes())
+
+    val serverResource: Resource[F, Server[F]] =
+      BlazeServerBuilder[F](executionContext)
+        .bindHttp(port, host)
+        .withHttpApp(httpRoutes.orNotFound)
+        .resource
+
+    serverResource <* setWebhooksResource
   }
 
 }

@@ -4,8 +4,13 @@ import Keys._
 object Compiler {
 
   val settings = Seq(
-    scalacOptions ++= options,
-    addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.13.0" cross CrossVersion.full)
+    scalacOptions ++=
+      (if (scalaBinaryVersion.value.startsWith("2.12"))
+         options :+ "-Ypartial-unification"
+       else options),
+    addCompilerPlugin(
+      "org.typelevel" %% "kind-projector" % "0.13.0" cross CrossVersion.full
+    )
   )
 
   val options = Seq(
@@ -21,7 +26,7 @@ object Compiler {
     "-language:implicitConversions", // Allow definition of implicit functions called views
     "-unchecked",                    // Enable additional warnings where generated code depends on assumptions.
     "-Xcheckinit",                   // Wrap field accessors to throw an exception on uninitialized access.
-    // "-Xfatal-warnings",                  // Fail the compilation if there are any warnings.
+    // "-Xfatal-warnings",           // Fail the compilation if there are any warnings.
     "-Xlint:adapted-args",           // Warn if an argument list is modified to match the receiver.
     "-Xlint:constant",               // Evaluation of a constant arithmetic expression results in an error.
     "-Xlint:delayedinit-select",     // Selecting member of DelayedInit.
