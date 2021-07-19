@@ -79,30 +79,30 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
           .withEntity(
             parse(
               """
-          {
-            "update_id": 0,
-            "message": {
-              "message_id": 0,
-              "date": 1593365356,
-              "chat": {
-                "id": 0,
-                "type": "private"
-              },
-              "text": "Lorem ipsum"
-            }
-          }
-        """
+                {
+                  "update_id": 0,
+                  "message": {
+                    "message_id": 0,
+                    "date": 1593365356,
+                    "chat": {
+                      "id": 0,
+                      "type": "private"
+                    },
+                    "text": "Lorem ipsum"
+                  }
+                }
+              """
             ).valueOr(throw _)
           )
         httpClient.expect[Json](request1).runSyncUnsafe() shouldBe parse(
           """
-          {
-            "chat_id": 0,
-            "text": "onMessageReply",
-            "entities": [],
-            "method": "sendMessage"
-          }
-        """
+            {
+              "chat_id": 0,
+              "text": "onMessageReply",
+              "entities": [],
+              "method": "sendMessage"
+            }
+          """
         ).valueOr(throw _)
         val request2 = Request[Task]()
           .withMethod(POST)
@@ -110,30 +110,30 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
           .withEntity(
             parse(
               """
-          {
-            "update_id": 0,
-            "message": {
-              "message_id": 0,
-              "date": 1593365356,
-              "chat": {
-                "id": 0,
-                "type": "private"
-              },
-              "text": "Lorem ipsum"
-            }
-          }
-        """
+                {
+                  "update_id": 0,
+                  "message": {
+                    "message_id": 0,
+                    "date": 1593365356,
+                    "chat": {
+                      "id": 0,
+                      "type": "private"
+                    },
+                    "text": "Lorem ipsum"
+                  }
+                }
+              """
             ).valueOr(throw _)
           )
         httpClient.expect[Json](request2).runSyncUnsafe() shouldBe parse(
           """
-          {
-            "chat_id": 0,
-            "text": "onMessageReply",
-            "entities": [],
-            "method": "sendMessage"
-          }
-        """
+            {
+              "chat_id": 0,
+              "text": "onMessageReply",
+              "entities": [],
+              "method": "sendMessage"
+            }
+          """
         ).valueOr(throw _)
         Task.unit
       }

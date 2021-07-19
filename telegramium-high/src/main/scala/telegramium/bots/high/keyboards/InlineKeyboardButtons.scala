@@ -1,6 +1,6 @@
 package telegramium.bots.high.keyboards
 
-import telegramium.bots.{InlineKeyboardButton, LoginUrl}
+import telegramium.bots.{CallbackGame, InlineKeyboardButton, LoginUrl}
 
 object InlineKeyboardButtons {
 
@@ -33,8 +33,8 @@ object InlineKeyboardButtons {
 
   /** Creates an inline keyboard button. Pressing the button will launch the game.
     */
-  def callbackGame(text: String, callbackGame: String): InlineKeyboardButton =
-    InlineKeyboardButton(text, callbackGame = Some(callbackGame))
+  def callbackGame(text: String): InlineKeyboardButton =
+    InlineKeyboardButton(text, callbackGame = Some(CallbackGame))
 
   /** Creates an inline keyboard button for a Pay button
     */

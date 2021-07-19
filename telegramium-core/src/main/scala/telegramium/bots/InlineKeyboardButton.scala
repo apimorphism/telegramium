@@ -36,6 +36,6 @@ final case class InlineKeyboardButton(
   callbackData: Option[String] = Option.empty,
   switchInlineQuery: Option[String] = Option.empty,
   switchInlineQueryCurrentChat: Option[String] = Option.empty,
-  callbackGame: Option[String] = Option.empty,
+  callbackGame: Option[CallbackGame.type] = Option.empty,
   pay: Option[Boolean] = Option.empty
 )

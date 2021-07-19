@@ -364,15 +364,15 @@ object uPickleImplicits {
   implicit lazy val chatmemberownerCodec: ReadWriter[ChatMemberOwner] = {
     val statusKey      = upack.Str("status")
     val userKey        = upack.Str("user")
-    val customTitleKey = upack.Str("customTitle")
     val isAnonymousKey = upack.Str("isAnonymous")
+    val customTitleKey = upack.Str("customTitle")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
           statusKey      -> writeMsg(x.status),
           userKey        -> writeMsg(x.user),
-          customTitleKey -> writeMsg(x.customTitle),
-          isAnonymousKey -> writeMsg(x.isAnonymous)
+          isAnonymousKey -> writeMsg(x.isAnonymous),
+          customTitleKey -> writeMsg(x.customTitle)
         )
       },
       msg => {
@@ -380,14 +380,14 @@ object uPickleImplicits {
         val result = for {
           status      <- m.get(statusKey).map(x => readBinary[String](x))
           user        <- m.get(userKey).map(x => readBinary[User](x))
-          customTitle <- m.get(customTitleKey).map(x => readBinary[String](x))
           isAnonymous <- m.get(isAnonymousKey).map(x => readBinary[Boolean](x))
+          customTitle <- m.get(customTitleKey).map(x => readBinary[Option[String]](x))
         } yield {
           ChatMemberOwner(
             status = status,
             user = user,
-            customTitle = customTitle,
-            isAnonymous = isAnonymous
+            isAnonymous = isAnonymous,
+            customTitle = customTitle
           )
         }
         result.get
@@ -399,36 +399,36 @@ object uPickleImplicits {
     val statusKey              = upack.Str("status")
     val userKey                = upack.Str("user")
     val canBeEditedKey         = upack.Str("canBeEdited")
-    val customTitleKey         = upack.Str("customTitle")
     val isAnonymousKey         = upack.Str("isAnonymous")
     val canManageChatKey       = upack.Str("canManageChat")
-    val canPostMessagesKey     = upack.Str("canPostMessages")
-    val canEditMessagesKey     = upack.Str("canEditMessages")
     val canDeleteMessagesKey   = upack.Str("canDeleteMessages")
     val canManageVoiceChatsKey = upack.Str("canManageVoiceChats")
     val canRestrictMembersKey  = upack.Str("canRestrictMembers")
     val canPromoteMembersKey   = upack.Str("canPromoteMembers")
     val canChangeInfoKey       = upack.Str("canChangeInfo")
     val canInviteUsersKey      = upack.Str("canInviteUsers")
+    val canPostMessagesKey     = upack.Str("canPostMessages")
+    val canEditMessagesKey     = upack.Str("canEditMessages")
     val canPinMessagesKey      = upack.Str("canPinMessages")
+    val customTitleKey         = upack.Str("customTitle")
     readwriter[upack.Msg].bimap(
       x => {
         upack.Obj(
           statusKey              -> writeMsg(x.status),
           userKey                -> writeMsg(x.user),
           canBeEditedKey         -> writeMsg(x.canBeEdited),
-          customTitleKey         -> writeMsg(x.customTitle),
           isAnonymousKey         -> writeMsg(x.isAnonymous),
           canManageChatKey       -> writeMsg(x.canManageChat),
-          canPostMessagesKey     -> writeMsg(x.canPostMessages),
-          canEditMessagesKey     -> writeMsg(x.canEditMessages),
           canDeleteMessagesKey   -> writeMsg(x.canDeleteMessages),
           canManageVoiceChatsKey -> writeMsg(x.canManageVoiceChats),
           canRestrictMembersKey  -> writeMsg(x.canRestrictMembers),
           canPromoteMembersKey   -> writeMsg(x.canPromoteMembers),
           canChangeInfoKey       -> writeMsg(x.canChangeInfo),
           canInviteUsersKey      -> writeMsg(x.canInviteUsers),
-          canPinMessagesKey      -> writeMsg(x.canPinMessages)
+          canPostMessagesKey     -> writeMsg(x.canPostMessages),
+          canEditMessagesKey     -> writeMsg(x.canEditMessages),
+          canPinMessagesKey      -> writeMsg(x.canPinMessages),
+          customTitleKey         -> writeMsg(x.customTitle)
         )
       },
       msg => {
@@ -437,35 +437,35 @@ object uPickleImplicits {
           status              <- m.get(statusKey).map(x => readBinary[String](x))
           user                <- m.get(userKey).map(x => readBinary[User](x))
           canBeEdited         <- m.get(canBeEditedKey).map(x => readBinary[Boolean](x))
-          customTitle         <- m.get(customTitleKey).map(x => readBinary[String](x))
           isAnonymous         <- m.get(isAnonymousKey).map(x => readBinary[Boolean](x))
           canManageChat       <- m.get(canManageChatKey).map(x => readBinary[Boolean](x))
-          canPostMessages     <- m.get(canPostMessagesKey).map(x => readBinary[Boolean](x))
-          canEditMessages     <- m.get(canEditMessagesKey).map(x => readBinary[Boolean](x))
           canDeleteMessages   <- m.get(canDeleteMessagesKey).map(x => readBinary[Boolean](x))
           canManageVoiceChats <- m.get(canManageVoiceChatsKey).map(x => readBinary[Boolean](x))
           canRestrictMembers  <- m.get(canRestrictMembersKey).map(x => readBinary[Boolean](x))
           canPromoteMembers   <- m.get(canPromoteMembersKey).map(x => readBinary[Boolean](x))
           canChangeInfo       <- m.get(canChangeInfoKey).map(x => readBinary[Boolean](x))
           canInviteUsers      <- m.get(canInviteUsersKey).map(x => readBinary[Boolean](x))
-          canPinMessages      <- m.get(canPinMessagesKey).map(x => readBinary[Boolean](x))
+          canPostMessages     <- m.get(canPostMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canEditMessages     <- m.get(canEditMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          canPinMessages      <- m.get(canPinMessagesKey).map(x => readBinary[Option[Boolean]](x))
+          customTitle         <- m.get(customTitleKey).map(x => readBinary[Option[String]](x))
         } yield {
           ChatMemberAdministrator(
             status = status,
             user = user,
             canBeEdited = canBeEdited,
-            customTitle = customTitle,
             isAnonymous = isAnonymous,
             canManageChat = canManageChat,
-            canPostMessages = canPostMessages,
-            canEditMessages = canEditMessages,
             canDeleteMessages = canDeleteMessages,
             canManageVoiceChats = canManageVoiceChats,
             canRestrictMembers = canRestrictMembers,
             canPromoteMembers = canPromoteMembers,
             canChangeInfo = canChangeInfo,
             canInviteUsers = canInviteUsers,
-            canPinMessages = canPinMessages
+            canPostMessages = canPostMessages,
+            canEditMessages = canEditMessages,
+            canPinMessages = canPinMessages,
+            customTitle = customTitle
           )
         }
         result.get
@@ -5378,7 +5378,7 @@ object uPickleImplicits {
           callbackData                 <- m.get(callbackDataKey).map(x => readBinary[Option[String]](x))
           switchInlineQuery            <- m.get(switchInlineQueryKey).map(x => readBinary[Option[String]](x))
           switchInlineQueryCurrentChat <- m.get(switchInlineQueryCurrentChatKey).map(x => readBinary[Option[String]](x))
-          callbackGame                 <- m.get(callbackGameKey).map(x => readBinary[Option[String]](x))
+          callbackGame                 <- m.get(callbackGameKey).map(x => readBinary[Option[CallbackGame.type]](x))
           pay                          <- m.get(payKey).map(x => readBinary[Option[Boolean]](x))
         } yield {
           InlineKeyboardButton(
@@ -5915,8 +5915,8 @@ object CirceImplicits {
         List(
           "status"       -> x.status.asJson,
           "user"         -> x.user.asJson,
-          "custom_title" -> x.customTitle.asJson,
-          "is_anonymous" -> x.isAnonymous.asJson
+          "is_anonymous" -> x.isAnonymous.asJson,
+          "custom_title" -> x.customTitle.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5926,10 +5926,10 @@ object CirceImplicits {
       for {
         _status      <- h.get[String]("status")
         _user        <- h.get[User]("user")
-        _customTitle <- h.get[String]("custom_title")
         _isAnonymous <- h.get[Boolean]("is_anonymous")
+        _customTitle <- h.get[Option[String]]("custom_title")
       } yield {
-        ChatMemberOwner(status = _status, user = _user, customTitle = _customTitle, isAnonymous = _isAnonymous)
+        ChatMemberOwner(status = _status, user = _user, isAnonymous = _isAnonymous, customTitle = _customTitle)
       }
     }
 
@@ -5940,18 +5940,18 @@ object CirceImplicits {
           "status"                 -> x.status.asJson,
           "user"                   -> x.user.asJson,
           "can_be_edited"          -> x.canBeEdited.asJson,
-          "custom_title"           -> x.customTitle.asJson,
           "is_anonymous"           -> x.isAnonymous.asJson,
           "can_manage_chat"        -> x.canManageChat.asJson,
-          "can_post_messages"      -> x.canPostMessages.asJson,
-          "can_edit_messages"      -> x.canEditMessages.asJson,
           "can_delete_messages"    -> x.canDeleteMessages.asJson,
           "can_manage_voice_chats" -> x.canManageVoiceChats.asJson,
           "can_restrict_members"   -> x.canRestrictMembers.asJson,
           "can_promote_members"    -> x.canPromoteMembers.asJson,
           "can_change_info"        -> x.canChangeInfo.asJson,
           "can_invite_users"       -> x.canInviteUsers.asJson,
-          "can_pin_messages"       -> x.canPinMessages.asJson
+          "can_post_messages"      -> x.canPostMessages.asJson,
+          "can_edit_messages"      -> x.canEditMessages.asJson,
+          "can_pin_messages"       -> x.canPinMessages.asJson,
+          "custom_title"           -> x.customTitle.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5962,35 +5962,35 @@ object CirceImplicits {
         _status              <- h.get[String]("status")
         _user                <- h.get[User]("user")
         _canBeEdited         <- h.get[Boolean]("can_be_edited")
-        _customTitle         <- h.get[String]("custom_title")
         _isAnonymous         <- h.get[Boolean]("is_anonymous")
         _canManageChat       <- h.get[Boolean]("can_manage_chat")
-        _canPostMessages     <- h.get[Boolean]("can_post_messages")
-        _canEditMessages     <- h.get[Boolean]("can_edit_messages")
         _canDeleteMessages   <- h.get[Boolean]("can_delete_messages")
         _canManageVoiceChats <- h.get[Boolean]("can_manage_voice_chats")
         _canRestrictMembers  <- h.get[Boolean]("can_restrict_members")
         _canPromoteMembers   <- h.get[Boolean]("can_promote_members")
         _canChangeInfo       <- h.get[Boolean]("can_change_info")
         _canInviteUsers      <- h.get[Boolean]("can_invite_users")
-        _canPinMessages      <- h.get[Boolean]("can_pin_messages")
+        _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
+        _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
+        _canPinMessages      <- h.get[Option[Boolean]]("can_pin_messages")
+        _customTitle         <- h.get[Option[String]]("custom_title")
       } yield {
         ChatMemberAdministrator(
           status = _status,
           user = _user,
           canBeEdited = _canBeEdited,
-          customTitle = _customTitle,
           isAnonymous = _isAnonymous,
           canManageChat = _canManageChat,
-          canPostMessages = _canPostMessages,
-          canEditMessages = _canEditMessages,
           canDeleteMessages = _canDeleteMessages,
           canManageVoiceChats = _canManageVoiceChats,
           canRestrictMembers = _canRestrictMembers,
           canPromoteMembers = _canPromoteMembers,
           canChangeInfo = _canChangeInfo,
           canInviteUsers = _canInviteUsers,
-          canPinMessages = _canPinMessages
+          canPostMessages = _canPostMessages,
+          canEditMessages = _canEditMessages,
+          canPinMessages = _canPinMessages,
+          customTitle = _customTitle
         )
       }
     }
@@ -9963,7 +9963,7 @@ object CirceImplicits {
         _callbackData                 <- h.get[Option[String]]("callback_data")
         _switchInlineQuery            <- h.get[Option[String]]("switch_inline_query")
         _switchInlineQueryCurrentChat <- h.get[Option[String]]("switch_inline_query_current_chat")
-        _callbackGame                 <- h.get[Option[String]]("callback_game")
+        _callbackGame                 <- h.get[Option[CallbackGame.type]]("callback_game")
         _pay                          <- h.get[Option[Boolean]]("pay")
       } yield {
         InlineKeyboardButton(

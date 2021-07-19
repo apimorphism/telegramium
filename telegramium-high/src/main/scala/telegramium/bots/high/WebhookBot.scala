@@ -18,7 +18,6 @@ import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormDa
 import telegramium.bots.{CallbackQuery, ChatMemberUpdated, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
 import scala.concurrent.ExecutionContext
-import scala.deprecated
 
 /** @param url
   *   HTTPS url to send updates to. Use an empty string to remove webhook integration
