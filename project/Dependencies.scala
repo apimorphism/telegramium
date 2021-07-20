@@ -8,7 +8,7 @@ object Dependencies {
     val catsEffect       = "2.5.1"
     val circe            = "0.14.1"
     val http4s           = "0.21.25"
-    val slf4j            = "1.7.31"
+    val slf4j            = "1.7.32"
     val logback          = "1.2.4"
     val uPickle          = "0.8.0"
     val scalatest        = "3.2.9"
