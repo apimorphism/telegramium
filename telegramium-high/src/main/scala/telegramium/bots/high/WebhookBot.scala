@@ -10,7 +10,7 @@ import org.http4s.dsl.Http4sDsl
 import org.http4s.dsl.impl.Path
 import org.http4s.syntax.kleisli._
 import org.http4s.server.Server
-import org.http4s.server.blaze.BlazeServerBuilder
+import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.{EntityDecoder, HttpRoutes}
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.{Method, Methods => ApiMethods}

@@ -5,7 +5,7 @@ import java.io.File
 import com.dimafeng.testcontainers.{ForAllTestContainer, MockServerContainer}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
-import org.http4s.client.blaze.BlazeClientBuilder
+import org.http4s.blaze.client.BlazeClientBuilder
 import org.mockserver.client.MockServerClient
 import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
