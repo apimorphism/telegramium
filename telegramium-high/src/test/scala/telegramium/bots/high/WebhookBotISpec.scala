@@ -8,7 +8,7 @@ import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import org.http4s.Request
 import org.http4s.circe._
-import org.http4s.client.blaze.BlazeClientBuilder
+import org.http4s.blaze.client.BlazeClientBuilder
 import org.http4s.dsl.io._
 import org.mockserver.client.MockServerClient
 import org.mockserver.model.HttpRequest.request
