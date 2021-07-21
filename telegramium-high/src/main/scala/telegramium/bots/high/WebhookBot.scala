@@ -5,12 +5,12 @@ import cats.syntax.apply._
 import cats.syntax.flatMap._
 import cats.syntax.foldable._
 import cats.syntax.functor._
+import org.http4s.Uri.Path
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
-import org.http4s.dsl.impl.Path
 import org.http4s.syntax.kleisli._
 import org.http4s.server.Server
-import org.http4s.server.blaze.BlazeServerBuilder
+import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.{EntityDecoder, HttpRoutes}
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.{Method, Methods => ApiMethods}
@@ -51,7 +51,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
 )(implicit syncF: Sync[F], timer: Timer[F])
     extends ApiMethods {
 
-  private val BotPath = Path(if (path.startsWith("/")) path else "/" + path)
+  private val BotPath = Path.unsafeFromString(if (path.startsWith("/")) path else "/" + path)
 
   private def noop[A](a: A) = syncF.pure(a).void
 
@@ -118,7 +118,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
     * @param executionContext
     *   Execution Context the underlying blaze futures will be executed upon.
     */
-  def start(host: String, port: Int)(implicit executionContext: ExecutionContext): Resource[F, Server[F]] =
+  def start(host: String, port: Int)(implicit executionContext: ExecutionContext): Resource[F, Server] =
     createServer(port, host, executionContext) <* setWebhookResource()
 
   private def setWebhookResource(): Resource[F, Unit] =
@@ -155,7 +155,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
     }
   }
 
-  private def createServer(port: Int, host: String, executionContext: ExecutionContext): Resource[F, Server[F]] =
+  private def createServer(port: Int, host: String, executionContext: ExecutionContext): Resource[F, Server] =
     BlazeServerBuilder[F](executionContext).bindHttp(port, host).withHttpApp(routes().orNotFound).resource
 
 }
@@ -181,12 +181,12 @@ object WebhookBot {
     port: Int,
     executionContext: ExecutionContext = ExecutionContext.global,
     host: String = org.http4s.server.defaults.IPv4Host
-  ): Resource[F, Server[F]] = {
+  ): Resource[F, Server] = {
 
     val setWebhooksResource: Resource[F, Unit] = bots.foldMapM(_.setWebhookResource())
     val httpRoutes: HttpRoutes[F]              = bots.foldMapK(_.routes())
 
-    val serverResource: Resource[F, Server[F]] =
+    val serverResource: Resource[F, Server] =
       BlazeServerBuilder[F](executionContext)
         .bindHttp(port, host)
         .withHttpApp(httpRoutes.orNotFound)
