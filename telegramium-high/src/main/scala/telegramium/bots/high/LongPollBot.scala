@@ -39,7 +39,7 @@ abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F],
   def onChatMember(chatMember: ChatMemberUpdated): F[Unit]            = noop(chatMember)
 
   def onUpdate(update: Update): F[Unit] = {
-    for {
+    (for {
       _ <- update.message.fold(syncF.unit)(onMessage)
       _ <- update.editedMessage.fold(syncF.unit)(onEditedMessage)
       _ <- update.channelPost.fold(syncF.unit)(onChannelPost)
@@ -53,7 +53,10 @@ abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F],
       _ <- update.pollAnswer.fold(syncF.unit)(onPollAnswer)
       _ <- update.myChatMember.fold(syncF.unit)(onMyChatMember)
       _ <- update.chatMember.fold(syncF.unit)(onChatMember)
-    } yield ()
+    } yield ())
+      .recoverWith { case NonFatal(e) =>
+        onError(e)
+      }
   }
 
   def onError(e: Throwable): F[Unit] = {
