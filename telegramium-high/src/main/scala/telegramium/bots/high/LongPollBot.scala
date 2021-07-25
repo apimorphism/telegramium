@@ -1,8 +1,7 @@
 package telegramium.bots.high
 
 import cats.Parallel
-import cats.effect.concurrent.Ref
-import cats.effect.{Sync, Timer}
+import cats.effect.Sync
 import cats.instances.int._
 import cats.instances.list._
 import cats.instances.option._
@@ -17,8 +16,9 @@ import telegramium.bots.client._
 
 import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.util.control.NonFatal
+import cats.effect.{ Ref, Temporal }
 
-abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) extends Methods {
+abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F], timer: Temporal[F]) extends Methods {
 
   import LongPollBot.OffsetKeeper
 
