@@ -5,11 +5,11 @@ object Dependencies {
   object V {
     val monix            = "3.4.0"
     val catsCore         = "2.6.1"
-    val catsEffect       = "3.2.0"
+    val catsEffect       = "2.5.2"
     val circe            = "0.14.1"
     val http4s           = "0.22.0"
     val slf4j            = "1.7.32"
-    val logback          = "1.2.4"
+    val logback          = "1.2.5"
     val uPickle          = "0.8.0"
     val scalatest        = "3.2.9"
     val testcontainers   = "0.39.5"
