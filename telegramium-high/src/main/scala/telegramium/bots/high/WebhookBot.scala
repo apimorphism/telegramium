@@ -1,6 +1,6 @@
 package telegramium.bots.high
 
-import cats.effect.{Blocker, ConcurrentEffect, ContextShift, Resource, Sync, Timer}
+import cats.effect.{ConcurrentEffect, Resource, Sync}
 import cats.syntax.apply._
 import cats.syntax.flatMap._
 import cats.syntax.foldable._
@@ -18,6 +18,7 @@ import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormDa
 import telegramium.bots.{CallbackQuery, ChatMemberUpdated, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
 import scala.concurrent.ExecutionContext
+import cats.effect.Temporal
 
 /** @param url
   *   HTTPS url to send updates to. Use an empty string to remove webhook integration
@@ -48,7 +49,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   ipAddress: Option[String] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty
-)(implicit syncF: Sync[F], timer: Timer[F])
+)(implicit syncF: Sync[F], timer: Temporal[F])
     extends ApiMethods {
 
   private val BotPath = Path.unsafeFromString(if (path.startsWith("/")) path else "/" + path)
@@ -176,7 +177,7 @@ object WebhookBot {
     * @return
     *   `Resource[F, Server[F]]` Result Http server wrapped into a Resource data type
     */
-  def compose[F[_]: ConcurrentEffect: Timer](
+  def compose[F[_]: ConcurrentEffect: Temporal](
     bots: List[WebhookBot[F]],
     port: Int,
     executionContext: ExecutionContext = ExecutionContext.global,
