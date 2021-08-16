@@ -1,6 +1,5 @@
 package telegramium.bots.high
 
-import cats.effect.Blocker
 import cats.syntax.option._
 import monix.eval.Task
 import monix.execution.Scheduler

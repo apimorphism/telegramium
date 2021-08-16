@@ -1,20 +1,21 @@
 package telegramium.bots.examples
 
 import cats.Parallel
-import cats.effect.{Sync, Timer}
+import cats.effect.Sync
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import telegramium.bots.high.{Api, LongPollBot}
 import telegramium.bots.high.implicits._
 import telegramium.bots.high.keyboards.{InlineKeyboardButtons, InlineKeyboardMarkups}
 import telegramium.bots.{CallbackQuery, ChatIntId, Message}
+import cats.effect.Temporal
 
 /** Show how to use inline keyboards
   */
 class IceCreamParlorBot[F[_]]()(implicit
   bot: Api[F],
   syncF: Sync[F],
-  timer: Timer[F],
+  timer: Temporal[F],
   parallel: Parallel[F]
 ) extends LongPollBot[F](bot) {
 
