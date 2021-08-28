@@ -2,13 +2,13 @@ package telegramium.bots.high
 
 import java.io.File
 
-import cats.effect.{Blocker, ContextShift, Sync}
+import cats.effect.Sync
 import io.circe.Json
 import org.http4s.multipart.{Multipart, Part}
 
 private[high] object Http4sUtils {
 
-  def toFileDataParts[F[_]: Sync: ContextShift](files: Map[String, File], blocker: Blocker): Vector[Part[F]] =
+  def toFileDataParts[F[_]: Sync: ContextShift](files: Map[String, File]): Vector[Part[F]] =
     files.map { case (filename, file) =>
       Part.fileData[F](filename, file, blocker)
     }.toVector
