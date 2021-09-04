@@ -9,7 +9,7 @@ object Compiler {
          options :+ "-Ypartial-unification"
        else options),
     addCompilerPlugin(
-      "org.typelevel" %% "kind-projector" % "0.13.1" cross CrossVersion.full
+      "org.typelevel" %% "kind-projector" % "0.13.2" cross CrossVersion.full
     )
   )
 
