@@ -1,7 +1,7 @@
 package telegramium.bots.high
 
 import cats.MonadError
-import cats.effect.{Blocker, ConcurrentEffect, ContextShift, Sync}
+import cats.effect.{ConcurrentEffect, Sync}
 import cats.syntax.applicativeError._
 import cats.syntax.apply._
 import cats.syntax.flatMap._
@@ -92,9 +92,7 @@ object BotApi {
     */
   def apply[F[_]: ConcurrentEffect: ContextShift](
     http: Client[F],
-    baseUrl: String,
-    blocker: Blocker = DefaultBlocker.blocker
-  ): BotApi[F] =
+    baseUrl: String): BotApi[F] =
     new BotApi[F](http, baseUrl, blocker)
 
   private implicit def defaultLogger[F[_]: Sync]: Logger[F] = Slf4jLogger.getLogger[F]
