@@ -1,14 +1,13 @@
 package telegramium.bots.examples
 
 import cats.Parallel
-import cats.effect.{Sync, Timer}
+import cats.effect.Async
 import telegramium.bots.high.implicits._
 import telegramium.bots.high.{Api, LongPollBot}
 
 class EchoBot[F[_]]()(implicit
   bot: Api[F],
-  syncF: Sync[F],
-  timer: Timer[F],
+  asyncF: Async[F],
   parallel: Parallel[F]
 ) extends LongPollBot[F](bot) {
 
@@ -80,20 +79,20 @@ class EchoBot[F[_]]()(implicit
 
     query.data
       .map {
-        case "HTML"       => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, htmlText, Html))
-        case "Markdown"   => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdownText, Markdown))
-        case "Markdown2"  => query.message.fold(syncF.unit)(m => sendMsg(m.chat.id, markdown2Text, Markdown2))
-        case "dice"       => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id))
-        case "darts"      => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id, EmojiDarts))
-        case "basketball" => query.message.fold(syncF.unit)(m => rollTheDice(m.chat.id, EmojiBasketball))
-        case "quiz"       => query.message.fold(syncF.unit)(m => quiz(m.chat.id))
+        case "HTML"       => query.message.fold(asyncF.unit)(m => sendMsg(m.chat.id, htmlText, Html))
+        case "Markdown"   => query.message.fold(asyncF.unit)(m => sendMsg(m.chat.id, markdownText, Markdown))
+        case "Markdown2"  => query.message.fold(asyncF.unit)(m => sendMsg(m.chat.id, markdown2Text, Markdown2))
+        case "dice"       => query.message.fold(asyncF.unit)(m => rollTheDice(m.chat.id))
+        case "darts"      => query.message.fold(asyncF.unit)(m => rollTheDice(m.chat.id, EmojiDarts))
+        case "basketball" => query.message.fold(asyncF.unit)(m => rollTheDice(m.chat.id, EmojiBasketball))
+        case "quiz"       => query.message.fold(asyncF.unit)(m => quiz(m.chat.id))
         case x =>
           answerCallbackQuery(
             callbackQueryId = query.id,
             text = Some(s"Your choice is $x")
           ).exec.void
       }
-      .getOrElse(syncF.unit)
+      .getOrElse(asyncF.unit)
   }
 
   override def onInlineQuery(query: InlineQuery): F[Unit] = {
@@ -116,7 +115,7 @@ class EchoBot[F[_]]()(implicit
   override def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit] = {
     import io.circe.syntax._
     import telegramium.bots.CirceImplicits._
-    syncF.delay {
+    asyncF.delay {
       println(inlineResult.asJson.spaces4)
     }
   }

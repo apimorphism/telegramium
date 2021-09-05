@@ -5,9 +5,9 @@ object Dependencies {
   object V {
     val monix            = "3.4.0"
     val catsCore         = "2.6.1"
-    val catsEffect       = "2.5.3"
+    val catsEffect       = "3.2.5"
     val circe            = "0.14.1"
-    val http4s           = "0.22.2"
+    val http4s           = "0.23.3"
     val slf4j            = "1.7.32"
     val logback          = "1.2.5"
     val uPickle          = "0.8.0"
@@ -15,10 +15,9 @@ object Dependencies {
     val testcontainers   = "0.39.7"
     val mockServerClient = "5.10.0"
     val scalamock        = "5.1.0"
-    val log4cats         = "1.3.1"
+    val log4cats         = "2.1.1"
   }
 
-  val monix      = "io.monix"      %% "monix"       % V.monix
   val catsCore   = "org.typelevel" %% "cats-core"   % V.catsCore
   val catsEffect = "org.typelevel" %% "cats-effect" % V.catsEffect
   val scalatest  = "org.scalatest" %% "scalatest"   % V.scalatest % Test
@@ -61,8 +60,8 @@ object Dependencies {
 
   val telegramiumCore: Seq[ModuleID] = common
 
-  val telegramiumHigh: Seq[ModuleID] = common ++ Seq(catsEffect, monix % Test, scalatest, scalamock) ++ http4sServer ++
+  val telegramiumHigh: Seq[ModuleID] = common ++ Seq(catsEffect, scalatest, scalamock) ++ http4sServer ++
     http4sClient ++ testcontainers ++ logger
 
-  val telegramiumExam: Seq[ModuleID] = common ++ logger ++ Seq(catsEffect, monix) ++ http4sClient
+  val telegramiumExam: Seq[ModuleID] = common ++ logger ++ Seq(catsEffect) ++ http4sClient
 }

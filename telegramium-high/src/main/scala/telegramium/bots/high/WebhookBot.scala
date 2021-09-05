@@ -1,16 +1,14 @@
 package telegramium.bots.high
 
-import cats.effect.{Blocker, ConcurrentEffect, ContextShift, Resource, Sync, Timer}
-import cats.syntax.apply._
-import cats.syntax.flatMap._
-import cats.syntax.foldable._
-import cats.syntax.functor._
+import cats.Monad
+import cats.effect.{Async, Resource}
+import cats.syntax.all._
 import org.http4s.Uri.Path
-import org.http4s.circe.{jsonOf, _}
-import org.http4s.dsl.Http4sDsl
-import org.http4s.syntax.kleisli._
-import org.http4s.server.Server
 import org.http4s.blaze.server.BlazeServerBuilder
+import org.http4s.circe.{jsonEncoder, jsonOf}
+import org.http4s.dsl.Http4sDsl
+import org.http4s.implicits._
+import org.http4s.server.Server
 import org.http4s.{EntityDecoder, HttpRoutes}
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.{Method, Methods => ApiMethods}
@@ -39,21 +37,19 @@ import scala.concurrent.ExecutionContext
   *   setting will be used. Please note that this parameter doesn't affect updates created before the call to the
   *   setWebhook, so unwanted updates may be received for a short period of time.
   */
-abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
+abstract class WebhookBot[F[_]: Async](
   bot: Api[F],
   url: String,
   path: String = "/",
-  blocker: Blocker = DefaultBlocker.blocker,
   certificate: Option[InputPartFile] = Option.empty,
   ipAddress: Option[String] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty
-)(implicit syncF: Sync[F], timer: Timer[F])
-    extends ApiMethods {
+) extends ApiMethods {
 
   private val BotPath = Path.unsafeFromString(if (path.startsWith("/")) path else "/" + path)
 
-  private def noop[A](a: A) = syncF.pure(a).void
+  private def noop[A](a: A) = Monad[F].pure(a).void
 
   def onMessage(msg: Message): F[Unit]                                = noop(msg)
   def onEditedMessage(msg: Message): F[Unit]                          = noop(msg)
@@ -69,7 +65,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit]        = noop(myChatMember)
   def onChatMember(chatMember: ChatMemberUpdated): F[Unit]            = noop(chatMember)
 
-  private def noopReply[A](a: A) = syncF.pure(a).map(_ => Option.empty[Method[_]])
+  private def noopReply[A](a: A) = Monad[F].pure(a).map(_ => Option.empty[Method[_]])
 
   def onMessageReply(msg: Message): F[Option[Method[_]]]               = noopReply(msg)
   def onEditedMessageReply(msg: Message): F[Option[Method[_]]]         = noopReply(msg)
@@ -79,7 +75,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
   def onCallbackQueryReply(query: CallbackQuery): F[Option[Method[_]]] = noopReply(query)
 
   def onChosenInlineResultReply(inlineResult: ChosenInlineResult): F[Option[Method[_]]] =
-    syncF.pure(inlineResult).map(_ => Option.empty[Method[_]])
+    Monad[F].pure(inlineResult).map(_ => Option.empty[Method[_]])
 
   def onShippingQueryReply(query: ShippingQuery): F[Option[Method[_]]]           = noopReply(query)
   def onPreCheckoutQueryReply(query: PreCheckoutQuery): F[Option[Method[_]]]     = noopReply(query)
@@ -143,7 +139,7 @@ abstract class WebhookBot[F[_]: ConcurrentEffect: ContextShift](
           val inputPartFiles = m.payload.files.collect { case (filename, InputPartFile(file)) =>
             (filename, file)
           }
-          val attachments = toFileDataParts(inputPartFiles, blocker)
+          val attachments = toFileDataParts(inputPartFiles)
           if (attachments.isEmpty)
             Ok(m.payload.json)
           else {
@@ -176,7 +172,7 @@ object WebhookBot {
     * @return
     *   `Resource[F, Server[F]]` Result Http server wrapped into a Resource data type
     */
-  def compose[F[_]: ConcurrentEffect: Timer](
+  def compose[F[_]: Async](
     bots: List[WebhookBot[F]],
     port: Int,
     executionContext: ExecutionContext = ExecutionContext.global,

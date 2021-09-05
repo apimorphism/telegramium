@@ -1,9 +1,8 @@
 package telegramium.bots.examples
 
 import cats.Parallel
-import cats.effect.{Sync, Timer}
-import cats.syntax.flatMap._
-import cats.syntax.functor._
+import cats.effect.Async
+import cats.syntax.all._
 import telegramium.bots.high.{Api, LongPollBot}
 import telegramium.bots.high.implicits._
 import telegramium.bots.high.keyboards.{InlineKeyboardButtons, InlineKeyboardMarkups}
@@ -13,13 +12,12 @@ import telegramium.bots.{CallbackQuery, ChatIntId, Message}
   */
 class IceCreamParlorBot[F[_]]()(implicit
   bot: Api[F],
-  syncF: Sync[F],
-  timer: Timer[F],
+  asyncF: Async[F],
   parallel: Parallel[F]
 ) extends LongPollBot[F](bot) {
 
   override def onMessage(msg: Message): F[Unit] =
-    msg.text.filter(_.toLowerCase.startsWith("/order")).fold(syncF.unit) { _ =>
+    msg.text.filter(_.toLowerCase.startsWith("/order")).fold(asyncF.unit) { _ =>
       sendMessage(
         chatId = ChatIntId(msg.chat.id),
         text = "Choose your flavor:",
@@ -55,6 +53,6 @@ class IceCreamParlorBot[F[_]]()(implicit
             ).exec.void
         }
       }
-      .getOrElse(syncF.unit)
+      .getOrElse(asyncF.unit)
 
 }

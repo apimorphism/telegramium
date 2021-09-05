@@ -1,11 +1,11 @@
 package telegramium.bots.high
 
+import cats.effect.IO
+import cats.effect.unsafe.implicits.global
 import cats.syntax.either._
 import com.dimafeng.testcontainers.{ForAllTestContainer, MockServerContainer}
 import io.circe.Json
 import io.circe.parser.parse
-import monix.eval.Task
-import monix.execution.Scheduler.Implicits.global
 import org.http4s.Request
 import org.http4s.circe._
 import org.http4s.blaze.client.BlazeClientBuilder
@@ -22,7 +22,7 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
   lazy val container: MockServerContainer = MockServerContainer("5.10.0")
   private val mockServer                  = container.container
 
-  private val (httpClient, finalizer) = BlazeClientBuilder[Task](global).resource.allocated.runSyncUnsafe()
+  private val (httpClient, finalizer) = BlazeClientBuilder[IO](global.compute).resource.allocated.unsafeRunSync()
   private lazy val api                = BotApi(httpClient, mockServer.getEndpoint)
   private lazy val bot1               = new TestWebhookBot(api, "/bot1")
   private lazy val bot2               = new TestWebhookBot(api, "/bot2")
@@ -30,9 +30,9 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
   "should set a webhook and accept requests" in {
     prepareHttpMocks()
     bot1
-      .start("localhost", 0)
+      .start("localhost", 0)(global.compute)
       .use { server =>
-        val request = Request[Task]()
+        val request = Request[IO]()
           .withMethod(POST)
           .withUri(server.baseUri / "bot1")
           .withEntity(
@@ -53,7 +53,7 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
               """
             ).valueOr(throw _)
           )
-        httpClient.expect[Json](request).runSyncUnsafe() shouldBe parse(
+        httpClient.expect[Json](request).unsafeRunSync() shouldBe parse(
           """
             {
               "chat_id": 0,
@@ -63,9 +63,9 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
             }
           """
         ).valueOr(throw _)
-        Task.unit
+        IO.unit
       }
-      .runSyncUnsafe()
+      .unsafeRunSync()
   }
 
   "composing two webhook bot should result in a server handling requests for both bots" in {
@@ -73,7 +73,7 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
     WebhookBot
       .compose(List(bot1, bot2), 0)
       .use { server =>
-        val request1 = Request[Task]()
+        val request1 = Request[IO]()
           .withMethod(POST)
           .withUri(server.baseUri / "bot1")
           .withEntity(
@@ -94,7 +94,7 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
               """
             ).valueOr(throw _)
           )
-        httpClient.expect[Json](request1).runSyncUnsafe() shouldBe parse(
+        httpClient.expect[Json](request1).unsafeRunSync() shouldBe parse(
           """
             {
               "chat_id": 0,
@@ -104,7 +104,7 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
             }
           """
         ).valueOr(throw _)
-        val request2 = Request[Task]()
+        val request2 = Request[IO]()
           .withMethod(POST)
           .withUri(server.baseUri / "bot2")
           .withEntity(
@@ -125,7 +125,7 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
               """
             ).valueOr(throw _)
           )
-        httpClient.expect[Json](request2).runSyncUnsafe() shouldBe parse(
+        httpClient.expect[Json](request2).unsafeRunSync() shouldBe parse(
           """
             {
               "chat_id": 0,
@@ -135,13 +135,13 @@ class WebhookBotISpec extends AnyFreeSpec with ForAllTestContainer with BeforeAn
             }
           """
         ).valueOr(throw _)
-        Task.unit
+        IO.unit
       }
-      .runSyncUnsafe()
+      .unsafeRunSync()
   }
 
   override protected def afterAll(): Unit = {
-    finalizer.runSyncUnsafe()
+    finalizer.unsafeRunSync()
   }
 
   private def prepareHttpMocks(): Unit = {

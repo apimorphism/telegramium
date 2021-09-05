@@ -1,28 +1,19 @@
 package telegramium.bots.high
 
-import cats.Parallel
-import cats.effect.concurrent.Ref
-import cats.effect.{Sync, Timer}
-import cats.instances.int._
-import cats.instances.list._
-import cats.instances.option._
-import cats.syntax.applicativeError._
-import cats.syntax.flatMap._
-import cats.syntax.foldable._
-import cats.syntax.functor._
-import cats.syntax.parallel._
-import cats.syntax.traverse._
+import cats.effect.{Async, Ref}
+import cats.syntax.all._
+import cats.{Monad, Parallel}
 import telegramium.bots._
 import telegramium.bots.client._
 
 import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.util.control.NonFatal
 
-abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F], timer: Timer[F]) extends Methods {
+abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
 
   import LongPollBot.OffsetKeeper
 
-  private def noop[A](a: A) = syncF.pure(a).void
+  private def noop[A](a: A) = Monad[F].pure(a).void
 
   def onMessage(msg: Message): F[Unit]                                = noop(msg)
   def onEditedMessage(msg: Message): F[Unit]                          = noop(msg)
@@ -40,19 +31,19 @@ abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F],
 
   def onUpdate(update: Update): F[Unit] = {
     (for {
-      _ <- update.message.fold(syncF.unit)(onMessage)
-      _ <- update.editedMessage.fold(syncF.unit)(onEditedMessage)
-      _ <- update.channelPost.fold(syncF.unit)(onChannelPost)
-      _ <- update.editedChannelPost.fold(syncF.unit)(onEditedChannelPost)
-      _ <- update.inlineQuery.fold(syncF.unit)(onInlineQuery)
-      _ <- update.callbackQuery.fold(syncF.unit)(onCallbackQuery)
-      _ <- update.chosenInlineResult.fold(syncF.unit)(onChosenInlineResult)
-      _ <- update.shippingQuery.fold(syncF.unit)(onShippingQuery)
-      _ <- update.preCheckoutQuery.fold(syncF.unit)(onPreCheckoutQuery)
-      _ <- update.poll.fold(syncF.unit)(onPoll)
-      _ <- update.pollAnswer.fold(syncF.unit)(onPollAnswer)
-      _ <- update.myChatMember.fold(syncF.unit)(onMyChatMember)
-      _ <- update.chatMember.fold(syncF.unit)(onChatMember)
+      _ <- update.message.fold(Monad[F].unit)(onMessage)
+      _ <- update.editedMessage.fold(Monad[F].unit)(onEditedMessage)
+      _ <- update.channelPost.fold(Monad[F].unit)(onChannelPost)
+      _ <- update.editedChannelPost.fold(Monad[F].unit)(onEditedChannelPost)
+      _ <- update.inlineQuery.fold(Monad[F].unit)(onInlineQuery)
+      _ <- update.callbackQuery.fold(Monad[F].unit)(onCallbackQuery)
+      _ <- update.chosenInlineResult.fold(Monad[F].unit)(onChosenInlineResult)
+      _ <- update.shippingQuery.fold(Monad[F].unit)(onShippingQuery)
+      _ <- update.preCheckoutQuery.fold(Monad[F].unit)(onPreCheckoutQuery)
+      _ <- update.poll.fold(Monad[F].unit)(onPoll)
+      _ <- update.pollAnswer.fold(Monad[F].unit)(onPollAnswer)
+      _ <- update.myChatMember.fold(Monad[F].unit)(onMyChatMember)
+      _ <- update.chatMember.fold(Monad[F].unit)(onChatMember)
     } yield ())
       .recoverWith { case NonFatal(e) =>
         onError(e)
@@ -60,7 +51,7 @@ abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F],
   }
 
   def onError(e: Throwable): F[Unit] = {
-    syncF.delay(e.printStackTrace())
+    Async[F].delay(e.printStackTrace())
   }
 
   def poll(offsetKeeper: OffsetKeeper[F]): F[Unit] = {
@@ -75,7 +66,7 @@ abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F],
             for {
               _     <- onError(e)
               delay <- onErrorDelay
-              _     <- timer.sleep(delay)
+              _     <- Async[F].sleep(delay)
               _     <- poll(offsetKeeper)
             } yield ()
         }
@@ -105,7 +96,7 @@ abstract class LongPollBot[F[_]: Parallel](bot: Api[F])(implicit syncF: Sync[F],
 
   /* Use effectful override to implement different backoff strategies */
   def onErrorDelay: F[FiniteDuration] = {
-    syncF.delay(5.seconds)
+    Async[F].delay(5.seconds)
   }
 
 }

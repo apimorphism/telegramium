@@ -1,35 +1,30 @@
 package telegramium.bots.high
 
-import cats.MonadError
-import cats.effect.{Blocker, ConcurrentEffect, ContextShift, Sync}
-import cats.syntax.applicativeError._
-import cats.syntax.apply._
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.slf4j.Slf4jLogger
+import cats.effect.{Async, Sync}
+import cats.syntax.all._
 import io.circe.{Decoder, Json}
 import org.http4s.circe._
 import org.http4s.client._
 import org.http4s.dsl.io._
 import org.http4s.multipart.Part
 import org.http4s.{Request, Uri}
+import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 import telegramium.bots.InputPartFile
 import telegramium.bots.client.Method
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
 
-class BotApi[F[_]: Sync: ContextShift: Logger](
+class BotApi[F[_]](
   http: Client[F],
-  baseUrl: String,
-  blocker: Blocker
-)(implicit F: MonadError[F, Throwable])
+  baseUrl: String
+)(implicit F: Async[F], logger: Logger[F])
     extends Api[F] {
 
   override def execute[Res](method: Method[Res]): F[Res] = {
     val inputPartFiles = method.payload.files.collect { case (filename, InputPartFile(file)) =>
       (filename, file)
     }
-    val attachments = toFileDataParts(inputPartFiles, blocker)
+    val attachments = toFileDataParts(inputPartFiles)
 
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/${method.payload.name}"))
@@ -77,7 +72,7 @@ class BotApi[F[_]: Sync: ContextShift: Logger](
           val desc       = description.getOrElse("")
           val methodName = method.payload.name
           val json       = method.payload.json
-          Logger[F].error(
+          logger.error(
             s"""Telegram Bot API request failed: code=$code description="$desc" method=$methodName, JSON: \n$json"""
           ) *> FailedRequest(method, errorCode, description).raiseError[F, A]
       }
@@ -87,15 +82,8 @@ class BotApi[F[_]: Sync: ContextShift: Logger](
 
 object BotApi {
 
-  /** @param blocker
-    *   The `Blocker` to use for blocking IO operations. If not provided, a default `Blocker` will be used.
-    */
-  def apply[F[_]: ConcurrentEffect: ContextShift](
-    http: Client[F],
-    baseUrl: String,
-    blocker: Blocker = DefaultBlocker.blocker
-  ): BotApi[F] =
-    new BotApi[F](http, baseUrl, blocker)
+  def apply[F[_]: Async](http: Client[F], baseUrl: String): BotApi[F] =
+    new BotApi[F](http, baseUrl)
 
   private implicit def defaultLogger[F[_]: Sync]: Logger[F] = Slf4jLogger.getLogger[F]
 }

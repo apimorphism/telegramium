@@ -1,10 +1,10 @@
 package telegramium.bots.high
 
-import java.io.File
+import cats.effect.IO
+import cats.effect.unsafe.implicits.global
 
+import java.io.File
 import com.dimafeng.testcontainers.{ForAllTestContainer, MockServerContainer}
-import monix.eval.Task
-import monix.execution.Scheduler.Implicits.global
 import org.http4s.blaze.client.BlazeClientBuilder
 import org.mockserver.client.MockServerClient
 import org.mockserver.model.HttpRequest.request
@@ -19,7 +19,7 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
   lazy val container: MockServerContainer = MockServerContainer("5.10.0")
   private val mockServer                  = container.container
 
-  private val (httpClient, finalizer) = BlazeClientBuilder[Task](global).resource.allocated.runSyncUnsafe()
+  private val (httpClient, finalizer) = BlazeClientBuilder[IO](global.compute).resource.allocated.unsafeRunSync()
   private lazy val api                = BotApi(httpClient, mockServer.getEndpoint)
 
   private val messageResult = new JsonBody(
@@ -69,7 +69,7 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
       )
       .respond(response().withBody(messageResult))
 
-    api.execute(Methods.sendMessage(ChatIntId(0L), "Lorem ipsum")).runSyncUnsafe()
+    api.execute(Methods.sendMessage(ChatIntId(0L), "Lorem ipsum")).unsafeRunSync()
   }
 
   "should raise errors" in {
@@ -94,7 +94,7 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
 
     val thrown = the[FailedRequest[Message]] thrownBy api
       .execute(Methods.sendMessage(ChatIntId(0L), "Bad request"))
-      .runSyncUnsafe()
+      .unsafeRunSync()
     thrown.getMessage shouldBe "method=sendMessage code=400 description=Telegram Bot API error"
   }
 
@@ -108,7 +108,7 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
       )
       .respond(response().withBody(messageResult))
     val file = new File(this.getClass.getResource("/document.txt").getFile)
-    api.execute(Methods.sendDocument(ChatIntId(0), InputPartFile(file))).runSyncUnsafe()
+    api.execute(Methods.sendDocument(ChatIntId(0), InputPartFile(file))).unsafeRunSync()
   }
 
   "should send a file by link as JSON" in {
@@ -130,11 +130,11 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
       )
       .respond(response().withBody(messageResult))
 
-    api.execute(Methods.sendDocument(ChatIntId(0), InputLinkFile("https://example.com/flowers.png"))).runSyncUnsafe()
+    api.execute(Methods.sendDocument(ChatIntId(0), InputLinkFile("https://example.com/flowers.png"))).unsafeRunSync()
   }
 
   override protected def afterAll(): Unit = {
-    finalizer.runSyncUnsafe()
+    finalizer.unsafeRunSync()
   }
 
 }

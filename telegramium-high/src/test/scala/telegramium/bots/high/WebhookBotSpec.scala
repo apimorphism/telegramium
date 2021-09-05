@@ -1,8 +1,8 @@
 package telegramium.bots.high
 
+import cats.effect.IO
+import cats.effect.unsafe.implicits.global
 import io.circe.syntax._
-import monix.eval.Task
-import monix.execution.Scheduler.Implicits.global
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
@@ -147,13 +147,13 @@ class WebhookBotSpec extends AnyFreeSpec with MockFactory with Matchers with Opt
   }
 
   private trait Test {
-    protected val api: Api[Task]      = stub[Api[Task]]
+    protected val api: Api[IO]        = stub[Api[IO]]
     protected val bot: TestWebhookBot = new TestWebhookBot(api)
 
-    (api.execute[Any] _).when(*).returns(Task.unit)
+    (api.execute[Any] _).when(*).returns(IO.unit)
 
     protected def verifyOnUpdate(update: Update, expectedSentMessage: String, expectedReply: String): Unit = {
-      bot.onUpdate(update).runSyncUnsafe().value shouldBe
+      bot.onUpdate(update).unsafeRunSync().value shouldBe
         MethodReq[Message]("sendMessage", SendMessageReq(ChatIntId(0), expectedReply).asJson)
       (api.execute[Message] _)
         .verify(MethodReq[Message]("sendMessage", SendMessageReq(ChatIntId(0), expectedSentMessage).asJson))
