@@ -1,7 +1,7 @@
 enablePlugins(GitPlugin)
 
 ThisBuild / version := Version.mkVersion(
-  "6.53.0",
+  "7.53.0",
   git.gitCurrentBranch.value,
   git.gitHeadCommit.value,
   git.gitDescribedVersion.value,
