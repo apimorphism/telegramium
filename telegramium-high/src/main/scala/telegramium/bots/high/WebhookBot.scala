@@ -107,14 +107,18 @@ abstract class WebhookBot[F[_]: Async](
 
   private def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Option[Method[_]]] = rawReq.as[Update].flatMap(onUpdate)
 
-  /** @param host
-    *   host used to bind the resulting Server
-    * @param port
+  /** @param port
     *   port used to bind the resulting Server
     * @param executionContext
     *   Execution Context the underlying blaze futures will be executed upon.
+    * @param host
+    *   host used to bind the resulting Server
     */
-  def start(host: String, port: Int)(implicit executionContext: ExecutionContext): Resource[F, Server] =
+  def start(
+    port: Int,
+    executionContext: ExecutionContext,
+    host: String = org.http4s.server.defaults.IPv4Host
+  ): Resource[F, Server] =
     createServer(port, host, executionContext) <* setWebhookResource()
 
   private def setWebhookResource(): Resource[F, Unit] =
