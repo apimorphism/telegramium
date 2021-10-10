@@ -29,8 +29,8 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
   def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit]        = noop(myChatMember)
   def onChatMember(chatMember: ChatMemberUpdated): F[Unit]            = noop(chatMember)
 
-  def onUpdate(update: Update): F[Unit] = {
-    (for {
+  def onUpdate(update: Update): F[Unit] =
+    for {
       _ <- update.message.fold(Monad[F].unit)(onMessage)
       _ <- update.editedMessage.fold(Monad[F].unit)(onEditedMessage)
       _ <- update.channelPost.fold(Monad[F].unit)(onChannelPost)
@@ -44,11 +44,7 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
       _ <- update.pollAnswer.fold(Monad[F].unit)(onPollAnswer)
       _ <- update.myChatMember.fold(Monad[F].unit)(onMyChatMember)
       _ <- update.chatMember.fold(Monad[F].unit)(onChatMember)
-    } yield ())
-      .recoverWith { case NonFatal(e) =>
-        onError(e)
-      }
-  }
+    } yield ()
 
   def onError(e: Throwable): F[Unit] = {
     Async[F].delay(e.printStackTrace())
@@ -70,7 +66,11 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
               _     <- poll(offsetKeeper)
             } yield ()
         }
-      _    <- updates.parTraverse(onUpdate)
+      _ <- updates.parTraverse {
+        onUpdate(_).recoverWith { case NonFatal(e) =>
+          onError(e)
+        }
+      }
       _    <- updates.map(_.updateId).maximumOption.traverse(max => offsetKeeper.setOffset(max + 1))
       next <- poll(offsetKeeper)
     } yield {

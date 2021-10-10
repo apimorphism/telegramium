@@ -9,7 +9,7 @@ import telegramium.bots.high.{Api, BotApi}
 object Application extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] =
-    BlazeClientBuilder[IO](runtime.compute).resource
+    BlazeClientBuilder[IO].resource
       .use { httpClient =>
         val http = Logger(logBody = true, logHeaders = true)(httpClient)
         args match {

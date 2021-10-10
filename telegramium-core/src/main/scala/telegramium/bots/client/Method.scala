@@ -8,7 +8,7 @@ trait Method[Res] {
   def decoder: Decoder[Res]
 }
 
-final case class MethodReq[Res](
+final case class MethodReq[Res] private (
   payload: MethodPayload,
   decoder: Decoder[Res]
 ) extends Method[Res]

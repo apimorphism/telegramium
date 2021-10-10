@@ -24,7 +24,8 @@ import telegramium.bots.KeyboardMarkup
   * @param explanationParseMode
   *   Mode for parsing entities in the explanation. See formatting options for more details.
   * @param explanationEntities
-  *   List of special entities that appear in the poll explanation, which can be specified instead of parse_mode
+  *   A JSON-serialized list of special entities that appear in the poll explanation, which can be specified instead of
+  *   parse_mode
   * @param openPeriod
   *   Amount of time in seconds the poll will be active after creation, 5-600. Can't be used together with close_date.
   * @param closeDate

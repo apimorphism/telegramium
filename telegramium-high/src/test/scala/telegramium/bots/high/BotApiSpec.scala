@@ -16,10 +16,10 @@ import org.scalatest.matchers.should.Matchers
 import telegramium.bots.{ChatIntId, InputLinkFile, InputPartFile, Message}
 
 class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfterAll with Matchers {
-  lazy val container: MockServerContainer = MockServerContainer("5.10.0")
+  lazy val container: MockServerContainer = MockServerContainer("5.11.2")
   private val mockServer                  = container.container
 
-  private val (httpClient, finalizer) = BlazeClientBuilder[IO](global.compute).resource.allocated.unsafeRunSync()
+  private val (httpClient, finalizer) = BlazeClientBuilder[IO].resource.allocated.unsafeRunSync()
   private lazy val api                = BotApi(httpClient, mockServer.getEndpoint)
 
   private val messageResult = new JsonBody(

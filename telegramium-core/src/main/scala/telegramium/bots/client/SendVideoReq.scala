@@ -29,7 +29,8 @@ import telegramium.bots.KeyboardMarkup
   * @param parseMode
   *   Mode for parsing entities in the video caption. See formatting options for more details.
   * @param captionEntities
-  *   List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+  *   parse_mode
   * @param supportsStreaming
   *   Pass True, if the uploaded video is suitable for streaming
   * @param disableNotification

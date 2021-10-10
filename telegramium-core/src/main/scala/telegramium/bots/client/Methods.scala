@@ -149,7 +149,8 @@ trait Methods {
     * @param parseMode
     *   Mode for parsing entities in the message text. See formatting options for more details.
     * @param entities
-    *   List of special entities that appear in message text, which can be specified instead of parse_mode
+    *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
+    *   parse_mode
     * @param disableWebPagePreview
     *   Disables link previews for links in this message
     * @param disableNotification
@@ -227,7 +228,8 @@ trait Methods {
     * @param explanationParseMode
     *   Mode for parsing entities in the explanation. See formatting options for more details.
     * @param explanationEntities
-    *   List of special entities that appear in the poll explanation, which can be specified instead of parse_mode
+    *   A JSON-serialized list of special entities that appear in the poll explanation, which can be specified instead
+    *   of parse_mode
     * @param openPeriod
     *   Amount of time in seconds the poll will be active after creation, 5-600. Can't be used together with close_date.
     * @param closeDate
@@ -402,7 +404,7 @@ trait Methods {
     *   Unique identifier for the target chat or username of the target supergroup (in the format
     *   &#064;supergroupusername)
     * @param permissions
-    *   New default chat permissions
+    *   A JSON-serialized object for new default chat permissions
     */
   def setChatPermissions(chatId: ChatId, permissions: ChatPermissions): Method[Boolean] = {
     val req = SetChatPermissionsReq(chatId, permissions)
@@ -478,8 +480,8 @@ trait Methods {
     MethodReq[Boolean]("deleteChatStickerSet", req.asJson)
   }
 
-  /** Use this method to stop updating a live location message before live_period expires. On success, if the message
-    * was sent by the bot, the sent Message is returned, otherwise True is returned.
+  /** Use this method to stop updating a live location message before live_period expires. On success, if the message is
+    * not an inline message, the edited Message is returned, otherwise True is returned.
     *
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
@@ -610,8 +612,7 @@ trait Methods {
     MethodReq[Boolean]("deleteStickerFromSet", req.asJson)
   }
 
-  /** Use this method to stop a poll which was sent by the bot. On success, the stopped Poll with the final results is
-    * returned.
+  /** Use this method to stop a poll which was sent by the bot. On success, the stopped Poll is returned.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -821,7 +822,8 @@ trait Methods {
     * @param parseMode
     *   Mode for parsing entities in the message text. See formatting options for more details.
     * @param entities
-    *   List of special entities that appear in message text, which can be specified instead of parse_mode
+    *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
+    *   parse_mode
     * @param disableWebPagePreview
     *   Disables link previews for links in this message
     * @param replyMarkup
@@ -914,9 +916,9 @@ trait Methods {
     MethodReq[File]("getFile", req.asJson)
   }
 
-  /** Use this method to set the score of the specified user in a game. On success, if the message was sent by the bot,
-    * returns the edited Message, otherwise returns True. Returns an error, if the new score is not greater than the
-    * user's current score in the chat and force is False.
+  /** Use this method to set the score of the specified user in a game message. On success, if the message is not an
+    * inline message, the Message is returned, otherwise True is returned. Returns an error, if the new score is not
+    * greater than the user's current score in the chat and force is False.
     *
     * @param userId
     *   User identifier
@@ -986,7 +988,8 @@ trait Methods {
     * @param parseMode
     *   Mode for parsing entities in the new caption. See formatting options for more details.
     * @param captionEntities
-    *   List of special entities that appear in the new caption, which can be specified instead of parse_mode
+    *   A JSON-serialized list of special entities that appear in the new caption, which can be specified instead of
+    *   parse_mode
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param replyToMessageId
@@ -1282,7 +1285,8 @@ trait Methods {
     * @param parseMode
     *   Mode for parsing entities in the document caption. See formatting options for more details.
     * @param captionEntities
-    *   List of special entities that appear in the caption, which can be specified instead of parse_mode
+    *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+    *   parse_mode
     * @param disableContentTypeDetection
     *   Disables automatic server-side content type detection for files uploaded using multipart/form-data
     * @param disableNotification
@@ -1405,7 +1409,8 @@ trait Methods {
     * @param parseMode
     *   Mode for parsing entities in the audio caption. See formatting options for more details.
     * @param captionEntities
-    *   List of special entities that appear in the caption, which can be specified instead of parse_mode
+    *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+    *   parse_mode
     * @param duration
     *   Duration of the audio in seconds
     * @param performer
@@ -1607,7 +1612,8 @@ trait Methods {
     * @param parseMode
     *   Mode for parsing entities in the voice message caption. See formatting options for more details.
     * @param captionEntities
-    *   List of special entities that appear in the caption, which can be specified instead of parse_mode
+    *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+    *   parse_mode
     * @param duration
     *   Duration of the voice message in seconds
     * @param disableNotification
@@ -1740,7 +1746,8 @@ trait Methods {
     * @param parseMode
     *   Mode for parsing entities in the message caption. See formatting options for more details.
     * @param captionEntities
-    *   List of special entities that appear in the caption, which can be specified instead of parse_mode
+    *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+    *   parse_mode
     * @param replyMarkup
     *   A JSON-serialized object for an inline keyboard.
     */
@@ -1760,9 +1767,9 @@ trait Methods {
 
   /** Use this method to edit animation, audio, document, photo, or video messages. If a message is part of a message
     * album, then it can be edited only to an audio for audio albums, only to a document for document albums and to a
-    * photo or a video otherwise. When an inline message is edited, a new file can't be uploaded. Use a previously
-    * uploaded file via its file_id or specify a URL. On success, if the edited message was sent by the bot, the edited
-    * Message is returned, otherwise True is returned.
+    * photo or a video otherwise. When an inline message is edited, a new file can't be uploaded; use a previously
+    * uploaded file via its file_id or specify a URL. On success, if the edited message is not an inline message, the
+    * edited Message is returned, otherwise True is returned.
     *
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
@@ -1917,7 +1924,8 @@ trait Methods {
     * @param parseMode
     *   Mode for parsing entities in the video caption. See formatting options for more details.
     * @param captionEntities
-    *   List of special entities that appear in the caption, which can be specified instead of parse_mode
+    *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+    *   parse_mode
     * @param supportsStreaming
     *   Pass True, if the uploaded video is suitable for streaming
     * @param disableNotification
@@ -2086,7 +2094,8 @@ trait Methods {
     * @param parseMode
     *   Mode for parsing entities in the animation caption. See formatting options for more details.
     * @param captionEntities
-    *   List of special entities that appear in the caption, which can be specified instead of parse_mode
+    *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+    *   parse_mode
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param replyToMessageId
@@ -2234,7 +2243,8 @@ trait Methods {
     * @param parseMode
     *   Mode for parsing entities in the photo caption. See formatting options for more details.
     * @param captionEntities
-    *   List of special entities that appear in the caption, which can be specified instead of parse_mode
+    *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+    *   parse_mode
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param replyToMessageId

@@ -12,7 +12,8 @@ import telegramium.bots.KeyboardMarkup
   * @param parseMode
   *   Mode for parsing entities in the message text. See formatting options for more details.
   * @param entities
-  *   List of special entities that appear in message text, which can be specified instead of parse_mode
+  *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
+  *   parse_mode
   * @param disableWebPagePreview
   *   Disables link previews for links in this message
   * @param disableNotification

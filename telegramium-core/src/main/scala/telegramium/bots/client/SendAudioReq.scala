@@ -17,7 +17,8 @@ import telegramium.bots.KeyboardMarkup
   * @param parseMode
   *   Mode for parsing entities in the audio caption. See formatting options for more details.
   * @param captionEntities
-  *   List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+  *   parse_mode
   * @param duration
   *   Duration of the audio in seconds
   * @param performer

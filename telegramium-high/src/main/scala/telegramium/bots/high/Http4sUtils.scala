@@ -1,6 +1,7 @@
 package telegramium.bots.high
 
 import cats.effect.Async
+import fs2.io.file.Path
 import io.circe.Json
 import org.http4s.multipart.{Multipart, Part}
 
@@ -10,7 +11,7 @@ private[high] object Http4sUtils {
 
   def toFileDataParts[F[_]: Async](files: Map[String, File]): Vector[Part[F]] =
     files.map { case (filename, file) =>
-      Part.fileData[F](filename, file)
+      Part.fileData[F](filename, Path.fromNioPath(file.toPath))
     }.toVector
 
   def toMultipartWithFormData[F[_]](
