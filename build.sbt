@@ -8,11 +8,12 @@ ThisBuild / version := Version.mkVersion(
   git.gitUncommittedChanges.value
 )
 
+lazy val scala3   = "3.0.0"
 lazy val scala213 = "2.13.6"
 lazy val scala212 = "2.12.15"
 
-ThisBuild / scalaVersion       := scala213
-ThisBuild / crossScalaVersions := List(scala213, scala212)
+ThisBuild / scalaVersion       := scala3
+ThisBuild / crossScalaVersions := List(scala3, scala213, scala212)
 
 val buildCommit    = settingKey[String]("Build info: commit")
 val buildTimestamp = settingKey[String]("Build info: timestamp")
