@@ -10,7 +10,7 @@ package telegramium.bots
   *   Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used
   *   to download or reuse the file.
   * @param fileSize
-  *   Optional. File size, if known
+  *   Optional. File size in bytes, if known
   * @param filePath
   *   Optional. File path. Use https://api.telegram.org/file/bot<token>/<file_path> to get the file.
   */

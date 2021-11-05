@@ -9,8 +9,8 @@ import org.mockserver.client.MockServerClient
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.{BeforeAndAfterAll, OptionValues}
-import telegramium.bots.high.HttpMocks._
-import telegramium.bots.{CallbackQuery, Chat, ChatMemberMember, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingAddress, ShippingQuery, Update, User}
+import telegramium.bots.high.HttpMocks.*
+import telegramium.bots.{CallbackQuery, Chat, ChatJoinRequest, ChatMemberMember, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingAddress, ShippingQuery, Update, User}
 
 class LongPollBotISpec
     extends AnyFreeSpec
@@ -37,6 +37,13 @@ class LongPollBotISpec
       0,
       ChatMemberMember("", testUser),
       ChatMemberMember("", testUser)
+    )
+
+  private val testChatJoinRequest =
+    ChatJoinRequest(
+      Chat(0, `type` = ""),
+      testUser,
+      0
     )
 
   "should support all Update types" - {
@@ -154,6 +161,13 @@ class LongPollBotISpec
         .when(sendMessageRequest("onChatMember"))
         .respond(sendMessageResponse)
       bot.onUpdate(testUpdate.copy(chatMember = testChatMemberUpdated.some)).unsafeRunSync()
+    }
+
+    "chat join request" in {
+      mockServerClient
+        .when(sendMessageRequest("onChatJoinRequest"))
+        .respond(sendMessageResponse)
+      bot.onUpdate(testUpdate.copy(chatJoinRequest = testChatJoinRequest.some)).unsafeRunSync()
     }
   }
 

@@ -22,8 +22,8 @@ import org.scalatest.{BeforeAndAfterAll, OptionValues}
 import telegramium.bots.CirceImplicits.*
 import telegramium.bots.client.CirceImplicits.*
 import telegramium.bots.client.{MethodReq, SendMessageReq}
-import telegramium.bots.high.HttpMocks._
-import telegramium.bots.{CallbackQuery, Chat, ChatIntId, ChatMemberMember, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingAddress, ShippingQuery, Update, User}
+import telegramium.bots.high.HttpMocks.*
+import telegramium.bots.{CallbackQuery, Chat, ChatIntId, ChatJoinRequest, ChatMemberMember, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingAddress, ShippingQuery, Update, User}
 
 class WebhookBotISpec
     extends AnyFreeSpec
@@ -51,6 +51,13 @@ class WebhookBotISpec
       0,
       ChatMemberMember("", testUser),
       ChatMemberMember("", testUser)
+    )
+
+  private val testChatJoinRequest =
+    ChatJoinRequest(
+      Chat(0, `type` = ""),
+      testUser,
+      0
     )
 
   "should set a webhook and accept requests" in {
@@ -284,6 +291,13 @@ class WebhookBotISpec
         .when(sendMessageRequest("onChatMember"))
         .respond(sendMessageResponse)
       verifyResult(testUpdate.copy(chatMember = testChatMemberUpdated.some), "onChatMemberReply")
+    }
+
+    "chat join request" in {
+      mockServerClient
+        .when(sendMessageRequest("onChatJoinRequest"))
+        .respond(sendMessageResponse)
+      verifyResult(testUpdate.copy(chatJoinRequest = testChatJoinRequest.some), "onChatJoinRequestReply")
     }
   }
 

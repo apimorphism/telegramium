@@ -9,7 +9,7 @@ package telegramium.bots
   * @param horizontalAccuracy
   *   Optional. The radius of uncertainty for the location, measured in meters; 0-1500
   * @param livePeriod
-  *   Optional. Time relative to the message sending date, during which the location can be updated, in seconds. For
+  *   Optional. Time relative to the message sending date, during which the location can be updated; in seconds. For
   *   active live locations only.
   * @param heading
   *   Optional. The direction in which user is moving, in degrees; 1-360. For active live locations only.

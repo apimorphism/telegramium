@@ -20,7 +20,7 @@ package telegramium.bots
   * @param mimeType
   *   Optional. Mime type of a file as defined by sender
   * @param fileSize
-  *   Optional. File size
+  *   Optional. File size in bytes
   */
 final case class Video(
   fileId: String,

@@ -14,7 +14,7 @@ package telegramium.bots
   * @param thumb
   *   Optional. Video thumbnail
   * @param fileSize
-  *   Optional. File size
+  *   Optional. File size in bytes
   */
 final case class VideoNote(
   fileId: String,

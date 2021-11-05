@@ -1,7 +1,7 @@
 package telegramium.bots.high
 
 import cats.effect.IO
-import telegramium.bots.{CallbackQuery, ChatIntId, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery}
+import telegramium.bots.{CallbackQuery, ChatIntId, ChatJoinRequest, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery}
 
 class TestLongPollBot(api: Api[IO]) extends LongPollBot[IO](api) {
   private def sendMessageTask(text: String) = api.execute(sendMessage(ChatIntId(0), text)).void
@@ -23,4 +23,5 @@ class TestLongPollBot(api: Api[IO]) extends LongPollBot[IO](api) {
   override def onPollAnswer(pollAnswer: PollAnswer): IO[Unit]            = sendMessageTask("onPollAnswer")
   override def onMyChatMember(myChatMember: ChatMemberUpdated): IO[Unit] = sendMessageTask("onMyChatMember")
   override def onChatMember(chatMember: ChatMemberUpdated): IO[Unit]     = sendMessageTask("onChatMember")
+  override def onChatJoinRequest(request: ChatJoinRequest): IO[Unit]     = sendMessageTask("onChatJoinRequest")
 }

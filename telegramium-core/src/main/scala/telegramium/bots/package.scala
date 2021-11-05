@@ -2607,6 +2607,32 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val chatjoinrequestEncoder: Encoder[ChatJoinRequest] =
+    (x: ChatJoinRequest) => {
+      Json.fromFields(
+        List(
+          "chat"        -> x.chat.asJson,
+          "from"        -> x.from.asJson,
+          "date"        -> x.date.asJson,
+          "bio"         -> x.bio.asJson,
+          "invite_link" -> x.inviteLink.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatjoinrequestDecoder: Decoder[ChatJoinRequest] =
+    Decoder.instance { h =>
+      for {
+        _chat       <- h.get[Chat]("chat")
+        _from       <- h.get[User]("from")
+        _date       <- h.get[Int]("date")
+        _bio        <- h.get[Option[String]]("bio")
+        _inviteLink <- h.get[Option[ChatInviteLink]]("invite_link")
+      } yield {
+        ChatJoinRequest(chat = _chat, from = _from, date = _date, bio = _bio, inviteLink = _inviteLink)
+      }
+    }
+
   implicit lazy val chatEncoder: Encoder[Chat] =
     (x: Chat) => {
       Json.fromFields(
@@ -2950,7 +2976,8 @@ object CirceImplicits {
           "poll"                 -> x.poll.asJson,
           "poll_answer"          -> x.pollAnswer.asJson,
           "my_chat_member"       -> x.myChatMember.asJson,
-          "chat_member"          -> x.chatMember.asJson
+          "chat_member"          -> x.chatMember.asJson,
+          "chat_join_request"    -> x.chatJoinRequest.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2972,6 +2999,7 @@ object CirceImplicits {
         _pollAnswer         <- h.get[Option[PollAnswer]]("poll_answer")
         _myChatMember       <- h.get[Option[ChatMemberUpdated]]("my_chat_member")
         _chatMember         <- h.get[Option[ChatMemberUpdated]]("chat_member")
+        _chatJoinRequest    <- h.get[Option[ChatJoinRequest]]("chat_join_request")
       } yield {
         Update(
           updateId = _updateId,
@@ -2987,7 +3015,8 @@ object CirceImplicits {
           poll = _poll,
           pollAnswer = _pollAnswer,
           myChatMember = _myChatMember,
-          chatMember = _chatMember
+          chatMember = _chatMember,
+          chatJoinRequest = _chatJoinRequest
         )
       }
     }
@@ -3407,12 +3436,15 @@ object CirceImplicits {
     (x: ChatInviteLink) => {
       Json.fromFields(
         List(
-          "invite_link"  -> x.inviteLink.asJson,
-          "creator"      -> x.creator.asJson,
-          "is_primary"   -> x.isPrimary.asJson,
-          "is_revoked"   -> x.isRevoked.asJson,
-          "expire_date"  -> x.expireDate.asJson,
-          "member_limit" -> x.memberLimit.asJson
+          "invite_link"                -> x.inviteLink.asJson,
+          "creator"                    -> x.creator.asJson,
+          "creates_join_request"       -> x.createsJoinRequest.asJson,
+          "is_primary"                 -> x.isPrimary.asJson,
+          "is_revoked"                 -> x.isRevoked.asJson,
+          "name"                       -> x.name.asJson,
+          "expire_date"                -> x.expireDate.asJson,
+          "member_limit"               -> x.memberLimit.asJson,
+          "pending_join_request_count" -> x.pendingJoinRequestCount.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3420,20 +3452,26 @@ object CirceImplicits {
   implicit lazy val chatinvitelinkDecoder: Decoder[ChatInviteLink] =
     Decoder.instance { h =>
       for {
-        _inviteLink  <- h.get[String]("invite_link")
-        _creator     <- h.get[User]("creator")
-        _isPrimary   <- h.get[Boolean]("is_primary")
-        _isRevoked   <- h.get[Boolean]("is_revoked")
-        _expireDate  <- h.get[Option[Int]]("expire_date")
-        _memberLimit <- h.get[Option[Int]]("member_limit")
+        _inviteLink              <- h.get[String]("invite_link")
+        _creator                 <- h.get[User]("creator")
+        _createsJoinRequest      <- h.get[Boolean]("creates_join_request")
+        _isPrimary               <- h.get[Boolean]("is_primary")
+        _isRevoked               <- h.get[Boolean]("is_revoked")
+        _name                    <- h.get[Option[String]]("name")
+        _expireDate              <- h.get[Option[Int]]("expire_date")
+        _memberLimit             <- h.get[Option[Int]]("member_limit")
+        _pendingJoinRequestCount <- h.get[Option[Int]]("pending_join_request_count")
       } yield {
         ChatInviteLink(
           inviteLink = _inviteLink,
           creator = _creator,
+          createsJoinRequest = _createsJoinRequest,
           isPrimary = _isPrimary,
           isRevoked = _isRevoked,
+          name = _name,
           expireDate = _expireDate,
-          memberLimit = _memberLimit
+          memberLimit = _memberLimit,
+          pendingJoinRequestCount = _pendingJoinRequestCount
         )
       }
     }

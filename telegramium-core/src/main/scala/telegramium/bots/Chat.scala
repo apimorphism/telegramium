@@ -29,8 +29,8 @@ package telegramium.bots
   * @param permissions
   *   Optional. Default chat member permissions, for groups and supergroups. Returned only in getChat.
   * @param slowModeDelay
-  *   Optional. For supergroups, the minimum allowed delay between consecutive messages sent by each unpriviledged user.
-  *   Returned only in getChat.
+  *   Optional. For supergroups, the minimum allowed delay between consecutive messages sent by each unpriviledged user;
+  *   in seconds. Returned only in getChat.
   * @param messageAutoDeleteTime
   *   Optional. The time after which all messages sent to the chat will be automatically deleted; in seconds. Returned
   *   only in getChat.
