@@ -3,16 +3,6 @@ import Keys._
 
 object Compiler {
 
-  val settings = Seq(
-    scalacOptions ++=
-      (if (scalaBinaryVersion.value.startsWith("2.12"))
-         options :+ "-Ypartial-unification"
-       else options),
-    addCompilerPlugin(
-      "org.typelevel" %% "kind-projector" % "0.13.2" cross CrossVersion.full
-    )
-  )
-
   val options = Seq(
     "-Xlint",
     "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -52,6 +42,16 @@ object Compiler {
     "-Ywarn-unused:privates",        // Warn if a private member is unused.
     "-Ywarn-value-discard",          // Warn when non-Unit expression results are unused.
     "-Xsource:3"
+  )
+
+  val settings = Seq(
+    scalacOptions ++=
+      (if (scalaBinaryVersion.value.startsWith("2.12"))
+         options :+ "-Ypartial-unification"
+       else options),
+    addCompilerPlugin(
+      "org.typelevel" %% "kind-projector" % "0.13.2" cross CrossVersion.full
+    )
   )
 
 }

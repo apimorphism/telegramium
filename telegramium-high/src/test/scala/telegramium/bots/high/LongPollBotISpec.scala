@@ -2,7 +2,7 @@ package telegramium.bots.high
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
-import cats.syntax.option._
+import cats.syntax.option.*
 import com.dimafeng.testcontainers.{ForAllTestContainer, MockServerContainer}
 import org.http4s.blaze.client.BlazeClientBuilder
 import org.mockserver.client.MockServerClient

@@ -2,16 +2,16 @@ package telegramium.bots.high
 
 import cats.Monad
 import cats.effect.{Async, Resource}
-import cats.syntax.all._
+import cats.syntax.all.*
 import org.http4s.Uri.Path
 import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.circe.{jsonEncoder, jsonOf}
 import org.http4s.dsl.Http4sDsl
-import org.http4s.implicits._
+import org.http4s.implicits.*
 import org.http4s.server.Server
 import org.http4s.{EntityDecoder, HttpRoutes}
-import telegramium.bots.CirceImplicits._
-import telegramium.bots.client.{Method, Methods => ApiMethods}
+import telegramium.bots.CirceImplicits.*
+import telegramium.bots.client.{Method, Methods as ApiMethods}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
 import telegramium.bots.{CallbackQuery, ChatMemberUpdated, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
@@ -130,7 +130,7 @@ abstract class WebhookBot[F[_]: Async](
 
   private def routes(): HttpRoutes[F] = {
     val dsl = Http4sDsl[F]
-    import dsl._
+    import dsl.*
 
     HttpRoutes.of[F] { case req @ POST -> BotPath =>
       handleUpdateReq(req).flatMap {

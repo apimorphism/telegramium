@@ -16,7 +16,6 @@ object Version {
   def mkVersion(
     semVer: String,
     branch: String,
-    commit: Option[String],
     gitVer: Option[String],
     isDirty: Boolean
   ): String = {
@@ -24,15 +23,15 @@ object Version {
     branch match {
       case "rc" =>
         val tagVer = gitVer.getOrElse(throw BuildException("No tag found to make an RC version"))
-        s"${tagVer}${dirty}"
+        s"$tagVer$dirty"
       case "rl" =>
         if (isDirty) {
           throw BuildException("Can't release with uncommitted changes in repo")
         } else {
-          s"${semVer}${dirty}"
+          s"$semVer$dirty"
         }
       case _ =>
-        s"${semVer}${dirty}-SNAPSHOT"
+        s"$semVer$dirty-SNAPSHOT"
     }
   }
 

@@ -2,16 +2,16 @@ package telegramium.bots.high
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
-import cats.syntax.either._
-import cats.syntax.option._
+import cats.syntax.either.*
+import cats.syntax.option.*
 import com.dimafeng.testcontainers.{ForAllTestContainer, MockServerContainer}
 import io.circe.Json
 import io.circe.parser.parse
-import io.circe.syntax._
+import io.circe.syntax.*
 import org.http4s.Request
 import org.http4s.blaze.client.BlazeClientBuilder
-import org.http4s.circe._
-import org.http4s.dsl.io._
+import org.http4s.circe.*
+import org.http4s.dsl.io.*
 import org.mockserver.client.MockServerClient
 import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
@@ -19,8 +19,8 @@ import org.mockserver.model.JsonBody
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.{BeforeAndAfterAll, OptionValues}
-import telegramium.bots.CirceImplicits._
-import telegramium.bots.client.CirceImplicits._
+import telegramium.bots.CirceImplicits.*
+import telegramium.bots.client.CirceImplicits.*
 import telegramium.bots.client.{MethodReq, SendMessageReq}
 import telegramium.bots.high.HttpMocks._
 import telegramium.bots.{CallbackQuery, Chat, ChatIntId, ChatMemberMember, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingAddress, ShippingQuery, Update, User}

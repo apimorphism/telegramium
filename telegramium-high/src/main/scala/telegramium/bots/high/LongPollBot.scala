@@ -1,10 +1,10 @@
 package telegramium.bots.high
 
 import cats.effect.{Async, Ref}
-import cats.syntax.all._
+import cats.syntax.all.*
 import cats.{Monad, Parallel}
-import telegramium.bots._
-import telegramium.bots.client._
+import telegramium.bots.*
+import telegramium.bots.client.*
 
 import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.util.control.NonFatal

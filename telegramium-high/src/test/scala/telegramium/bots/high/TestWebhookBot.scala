@@ -1,7 +1,7 @@
 package telegramium.bots.high
 
 import cats.effect.IO
-import cats.syntax.option._
+import cats.syntax.option.*
 import telegramium.bots.client.Method
 import telegramium.bots.{CallbackQuery, ChatIntId, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery}
 
