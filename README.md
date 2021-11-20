@@ -74,8 +74,6 @@ bots. You ultimately decide at which host:port the server will be
 binded to:
 
 ``` scala
-import scala.concurrent.ExecutionContext.Implicits.global
-
 val api1: Api[IO] = BotApi(http, baseUrl = s"https://api.telegram.org/bot$bot_token1")
 val api2: Api[IO] = BotApi(http, baseUrl = s"https://api.telegram.org/bot$bot_token1")
 val bot1: MyWebhookbot = new MyWebhookbot[IO](api1, "ServerVisibleFromOutside", s"/$bot_token1")
@@ -84,7 +82,6 @@ val bot2: MyWebhookbot = new MyWebhookbot[IO](api2, "ServerVisibleFromOutside", 
 WebhookBot.compose[IO](
     List(bot1, bot2),
     8080,
-    ExecutionContext.global, //optional, global as default
     "127.0.0.1" //optional, localhost as default
   ).useForever.runSyncUnsafe()
 ```
