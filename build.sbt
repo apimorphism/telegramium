@@ -79,7 +79,8 @@ lazy val `telegramium-examples` = project
   )
   .settings(settings: _*)
   .settings(
-    publish / skip := true
+    crossScalaVersions := Nil,
+    publish / skip     := true
   )
   .settings(libraryDependencies ++= Dependencies.telegramiumExam)
 

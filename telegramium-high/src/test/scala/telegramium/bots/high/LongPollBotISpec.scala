@@ -9,7 +9,7 @@ import org.mockserver.client.MockServerClient
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.{BeforeAndAfterAll, OptionValues}
-import telegramium.bots.high.HttpMocks.*
+import telegramium.bots.high.HttpMocks.{sendMessageResponse, sendMessageRequest}
 import telegramium.bots.{CallbackQuery, Chat, ChatJoinRequest, ChatMemberMember, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingAddress, ShippingQuery, Update, User}
 
 class LongPollBotISpec

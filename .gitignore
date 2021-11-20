@@ -6,4 +6,10 @@ target/
 .project
 .settings/
 *.iml
-.bsp/sbt.json
+.bsp/
+.bloop
+.metals
+project/metals.sbt
+project/.sbt
+project/project/
+.vscode/

@@ -12,7 +12,8 @@ object Compiler {
     "-language:experimental.macros", // Allow macro definition (besides implementation and application)
     "-language:higherKinds",         // Allow higher-kinded types
     "-language:implicitConversions", // Allow definition of implicit functions called views
-    "-unchecked"                     // Enable additional warnings where generated code depends on assumptions.
+    "-unchecked",                    // Enable additional warnings where generated code depends on assumptions.
+    "-Xsource:3"
   )
 
   val settings = Seq(

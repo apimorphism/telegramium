@@ -35,8 +35,7 @@ class BotApi[F[_]](
 
   private def mkRequest(uri: Uri, json: Json, fileFieldNames: List[String], attachments: Vector[Part[F]]) = {
     val reqBuilder = Request[F]().withMethod(POST).withUri(uri)
-    if (attachments.isEmpty)
-      reqBuilder.withEntity(json)
+    if (attachments.isEmpty) reqBuilder.withEntity(json)
     else {
       val parts = toMultipartWithFormData(json, fileFieldNames, attachments)
       reqBuilder.withEntity(parts).withHeaders(parts.headers)
