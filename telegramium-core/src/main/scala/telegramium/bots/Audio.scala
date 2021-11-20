@@ -18,7 +18,7 @@ package telegramium.bots
   * @param mimeType
   *   Optional. MIME type of the file as defined by sender
   * @param fileSize
-  *   Optional. File size
+  *   Optional. File size in bytes
   * @param thumb
   *   Optional. Thumbnail of the album cover to which the music file belongs
   */

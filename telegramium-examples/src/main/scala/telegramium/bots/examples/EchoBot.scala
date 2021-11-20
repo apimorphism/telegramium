@@ -2,7 +2,7 @@ package telegramium.bots.examples
 
 import cats.Parallel
 import cats.effect.Async
-import telegramium.bots.high.implicits._
+import telegramium.bots.high.implicits.*
 import telegramium.bots.high.{Api, LongPollBot}
 
 class EchoBot[F[_]]()(implicit
@@ -11,9 +11,9 @@ class EchoBot[F[_]]()(implicit
   parallel: Parallel[F]
 ) extends LongPollBot[F](bot) {
 
-  import cats.syntax.flatMap._
-  import cats.syntax.functor._
-  import telegramium.bots._
+  import cats.syntax.flatMap.*
+  import cats.syntax.functor.*
+  import telegramium.bots.*
 
   override def onMessage(msg: Message): F[Unit] = {
     sendMessage(
@@ -32,9 +32,9 @@ class EchoBot[F[_]]()(implicit
               InlineKeyboardButton("No", callbackData = Some("No"))
             ),
             List(
-              InlineKeyboardButton(EmojiDice.toString, callbackData = Some("dice")),
-              InlineKeyboardButton(EmojiDarts.toString, callbackData = Some("darts")),
-              InlineKeyboardButton(EmojiBasketball.toString, callbackData = Some("basketball"))
+              InlineKeyboardButton(EmojiDice.toString(), callbackData = Some("dice")),
+              InlineKeyboardButton(EmojiDarts.toString(), callbackData = Some("darts")),
+              InlineKeyboardButton(EmojiBasketball.toString(), callbackData = Some("basketball"))
             ),
             List(
               InlineKeyboardButton("Gimme a quiz", callbackData = Some("quiz"))
@@ -113,30 +113,30 @@ class EchoBot[F[_]]()(implicit
   }
 
   override def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit] = {
-    import io.circe.syntax._
-    import telegramium.bots.CirceImplicits._
+    import io.circe.syntax.*
+    import telegramium.bots.CirceImplicits.*
     asyncF.delay {
       println(inlineResult.asJson.spaces4)
     }
   }
 
-  val htmlText =
+  val htmlText: String =
     """<b>bold</b>, <strong>bold</strong>
       |<i>italic</i>, <em>italic</em>
       |<u>underline</u>, <ins>underline</ins>
       |<s>strikethrough</s>, <strike>strikethrough</strike>, <del>strikethrough</del>
       |<b>bold <i>italic bold <s>italic bold strikethrough</s> <u>underline italic bold</u></i> bold</b>
-      |<a href="http://www.example.com/">inline URL</a>
+      |<a href="https://www.example.com/">inline URL</a>
       |<a href="tg://user?id=123456789">inline mention of a user</a>
       |<code>inline fixed-width code</code>
       |<pre>pre-formatted fixed-width code block</pre>
       |<pre><code class="language-python">pre-formatted fixed-width code block written in the Python programming language</code></pre>
       |""".stripMargin
 
-  val markdownText =
+  val markdownText: String =
     """*bold text*
       |_italic text_
-      |[inline URL](http://www.example.com/)
+      |[inline URL](https://www.example.com/)
       |[inline mention of a user](tg://user?id=123456789)
       |`inline fixed-width code`
       |```
@@ -147,13 +147,13 @@ class EchoBot[F[_]]()(implicit
       |```
       |""".stripMargin
 
-  val markdown2Text =
+  val markdown2Text: String =
     """*bold \*text*
       |_italic \*text_
       |__underline__
       |~strikethrough~
       |*bold _italic bold ~italic bold strikethrough~ __underline italic bold___ bold*
-      |[inline URL](http://www.example.com/)
+      |[inline URL](https://www.example.com/)
       |[inline mention of a user](tg://user?id=123456789)
       |`inline fixed-width code`
       |```

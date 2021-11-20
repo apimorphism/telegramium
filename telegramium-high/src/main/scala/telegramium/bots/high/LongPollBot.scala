@@ -1,10 +1,10 @@
 package telegramium.bots.high
 
 import cats.effect.{Async, Ref}
-import cats.syntax.all._
+import cats.syntax.all.*
 import cats.{Monad, Parallel}
-import telegramium.bots._
-import telegramium.bots.client._
+import telegramium.bots.*
+import telegramium.bots.client.*
 
 import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.util.control.NonFatal
@@ -28,6 +28,7 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
   def onPollAnswer(pollAnswer: PollAnswer): F[Unit]                   = noop(pollAnswer)
   def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit]        = noop(myChatMember)
   def onChatMember(chatMember: ChatMemberUpdated): F[Unit]            = noop(chatMember)
+  def onChatJoinRequest(request: ChatJoinRequest): F[Unit]            = noop(request)
 
   def onUpdate(update: Update): F[Unit] =
     for {
@@ -44,6 +45,7 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
       _ <- update.pollAnswer.fold(Monad[F].unit)(onPollAnswer)
       _ <- update.myChatMember.fold(Monad[F].unit)(onMyChatMember)
       _ <- update.chatMember.fold(Monad[F].unit)(onChatMember)
+      _ <- update.chatJoinRequest.fold(Monad[F].unit)(onChatJoinRequest)
     } yield ()
 
   def onError(e: Throwable): F[Unit] = {

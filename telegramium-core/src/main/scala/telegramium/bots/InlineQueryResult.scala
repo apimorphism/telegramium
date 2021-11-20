@@ -15,7 +15,7 @@ sealed trait InlineQueryResult {}
   * @param gifHeight
   *   Optional. Height of the GIF
   * @param gifDuration
-  *   Optional. Duration of the GIF
+  *   Optional. Duration of the GIF in seconds
   * @param thumbUrl
   *   URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
   * @param thumbMimeType
@@ -143,7 +143,7 @@ final case class InlineQueryResultContact(
   * @param id
   *   Unique identifier for this result, 1-64 bytes
   * @param photoUrl
-  *   A valid URL of the photo. Photo must be in jpeg format. Photo size must not exceed 5MB
+  *   A valid URL of the photo. Photo must be in JPEG format. Photo size must not exceed 5MB
   * @param thumbUrl
   *   URL of the thumbnail for the photo
   * @param photoWidth
@@ -205,7 +205,7 @@ final case class InlineQueryResultPhoto(
   * @param inputMessageContent
   *   Optional. Content of the message to be sent instead of the file
   * @param thumbUrl
-  *   Optional. URL of the thumbnail (jpeg only) for the file
+  *   Optional. URL of the thumbnail (JPEG only) for the file
   * @param thumbWidth
   *   Optional. Thumbnail width
   * @param thumbHeight
@@ -345,7 +345,7 @@ final case class InlineQueryResultAudio(
   * @param mpeg4Height
   *   Optional. Video height
   * @param mpeg4Duration
-  *   Optional. Video duration
+  *   Optional. Video duration in seconds
   * @param thumbUrl
   *   URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
   * @param thumbMimeType
@@ -563,7 +563,7 @@ final case class InlineQueryResultCachedSticker(
   * @param mimeType
   *   Mime type of the content of video url, “text/html” or “video/mp4”
   * @param thumbUrl
-  *   URL of the thumbnail (jpeg only) for the video
+  *   URL of the thumbnail (JPEG only) for the video
   * @param title
   *   Title for the result
   * @param caption

@@ -9,7 +9,7 @@ package telegramium.bots
   *   Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used
   *   to download or reuse the file.
   * @param fileSize
-  *   File size
+  *   File size in bytes
   * @param fileDate
   *   Unix time when the file was uploaded
   */

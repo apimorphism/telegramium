@@ -5,7 +5,7 @@ package telegramium.bots.client
   * @param text
   *   Text of the notification. If not specified, nothing will be shown to the user, 0-200 characters
   * @param showAlert
-  *   If true, an alert will be shown by the client instead of a notification at the top of the chat screen. Defaults to
+  *   If True, an alert will be shown by the client instead of a notification at the top of the chat screen. Defaults to
   *   false.
   * @param url
   *   URL that will be opened by the user's client. If you have created a Game and accepted the conditions via

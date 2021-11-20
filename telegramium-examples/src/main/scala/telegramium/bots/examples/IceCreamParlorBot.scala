@@ -2,9 +2,9 @@ package telegramium.bots.examples
 
 import cats.Parallel
 import cats.effect.Async
-import cats.syntax.all._
+import cats.syntax.all.*
 import telegramium.bots.high.{Api, LongPollBot}
-import telegramium.bots.high.implicits._
+import telegramium.bots.high.implicits.*
 import telegramium.bots.high.keyboards.{InlineKeyboardButtons, InlineKeyboardMarkups}
 import telegramium.bots.{CallbackQuery, ChatIntId, Message}
 

@@ -12,7 +12,7 @@ package telegramium.bots
   * @param height
   *   Photo height
   * @param fileSize
-  *   Optional. File size
+  *   Optional. File size in bytes
   */
 final case class PhotoSize(
   fileId: String,

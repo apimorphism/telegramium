@@ -38,6 +38,9 @@ package telegramium.bots
   * @param chatMember
   *   Optional. A chat member's status was updated in a chat. The bot must be an administrator in the chat and must
   *   explicitly specify “chat_member” in the list of allowed_updates to receive these updates.
+  * @param chatJoinRequest
+  *   Optional. A request to join the chat has been sent. The bot must have the can_invite_users administrator right in
+  *   the chat to receive these updates.
   */
 final case class Update(
   updateId: Int,
@@ -53,5 +56,6 @@ final case class Update(
   poll: Option[Poll] = Option.empty,
   pollAnswer: Option[PollAnswer] = Option.empty,
   myChatMember: Option[ChatMemberUpdated] = Option.empty,
-  chatMember: Option[ChatMemberUpdated] = Option.empty
+  chatMember: Option[ChatMemberUpdated] = Option.empty,
+  chatJoinRequest: Option[ChatJoinRequest] = Option.empty
 )

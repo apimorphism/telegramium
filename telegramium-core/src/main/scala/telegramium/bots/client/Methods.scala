@@ -59,8 +59,8 @@ trait Methods {
   }
 
   /** Use this method to set a new profile photo for the chat. Photos can't be changed for private chats. The bot must
-    * be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on
-    * success.
+    * be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True
+    * on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -99,8 +99,8 @@ trait Methods {
   }
 
   /** Use this method to clear the list of pinned messages in a chat. If the chat is not a private chat, the bot must be
-    * an administrator in the chat for this to work and must have the 'can_pin_messages' admin right in a supergroup or
-    * 'can_edit_messages' admin right in a channel. Returns True on success.
+    * an administrator in the chat for this to work and must have the 'can_pin_messages' administrator right in a
+    * supergroup or 'can_edit_messages' administrator right in a channel. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -118,7 +118,7 @@ trait Methods {
     * @param text
     *   Text of the notification. If not specified, nothing will be shown to the user, 0-200 characters
     * @param showAlert
-    *   If true, an alert will be shown by the client instead of a notification at the top of the chat screen. Defaults
+    *   If True, an alert will be shown by the client instead of a notification at the top of the chat screen. Defaults
     *   to false.
     * @param url
     *   URL that will be opened by the user's client. If you have created a Game and accepted the conditions via
@@ -398,7 +398,8 @@ trait Methods {
   }
 
   /** Use this method to set default chat permissions for all members. The bot must be an administrator in the group or
-    * a supergroup for this to work and must have the can_restrict_members admin rights. Returns True on success.
+    * a supergroup for this to work and must have the can_restrict_members administrator rights. Returns True on
+    * success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup (in the format
@@ -468,8 +469,8 @@ trait Methods {
   }
 
   /** Use this method to delete a group sticker set from a supergroup. The bot must be an administrator in the chat for
-    * this to work and must have the appropriate admin rights. Use the field can_set_sticker_set optionally returned in
-    * getChat requests to check if the bot can use this method. Returns True on success.
+    * this to work and must have the appropriate administrator rights. Use the field can_set_sticker_set optionally
+    * returned in getChat requests to check if the bot can use this method. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup (in the format
@@ -504,8 +505,8 @@ trait Methods {
   }
 
   /** Use this method to generate a new primary invite link for a chat; any previously generated primary link is
-    * revoked. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
-    * Returns the new invite link as String on success.
+    * revoked. The bot must be an administrator in the chat for this to work and must have the appropriate administrator
+    * rights. Returns the new invite link as String on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -513,6 +514,19 @@ trait Methods {
   def exportChatInviteLink(chatId: ChatId): Method[String] = {
     val req = ExportChatInviteLinkReq(chatId)
     MethodReq[String]("exportChatInviteLink", req.asJson)
+  }
+
+  /** Use this method to decline a chat join request. The bot must be an administrator in the chat for this to work and
+    * must have the can_invite_users administrator right. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param userId
+    *   Unique identifier of the target user
+    */
+  def declineChatJoinRequest(chatId: ChatId, userId: Long): Method[Boolean] = {
+    val req = DeclineChatJoinRequestReq(chatId, userId)
+    MethodReq[Boolean]("declineChatJoinRequest", req.asJson)
   }
 
   /** Use this method to send an animated emoji that will display a random value. On success, the sent Message is
@@ -557,8 +571,8 @@ trait Methods {
     * @param action
     *   Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text
     *   messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for
-    *   voice notes, upload_document for general files, find_location for location data, record_video_note or
-    *   upload_video_note for video notes.
+    *   voice notes, upload_document for general files, choose_sticker for stickers, find_location for location data,
+    *   record_video_note or upload_video_note for video notes.
     */
   def sendChatAction(chatId: ChatId, action: String): Method[Boolean] = {
     val req = SendChatActionReq(chatId, action)
@@ -631,8 +645,8 @@ trait Methods {
   }
 
   /** Use this method to remove a message from the list of pinned messages in a chat. If the chat is not a private chat,
-    * the bot must be an administrator in the chat for this to work and must have the 'can_pin_messages' admin right in
-    * a supergroup or 'can_edit_messages' admin right in a channel. Returns True on success.
+    * the bot must be an administrator in the chat for this to work and must have the 'can_pin_messages' administrator
+    * right in a supergroup or 'can_edit_messages' administrator right in a channel. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -795,7 +809,7 @@ trait Methods {
   }
 
   /** Use this method to change the description of a group, a supergroup or a channel. The bot must be an administrator
-    * in the chat for this to work and must have the appropriate admin rights. Returns True on success.
+    * in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -960,7 +974,8 @@ trait Methods {
   }
 
   /** Use this method to change the title of a chat. Titles can't be changed for private chats. The bot must be an
-    * administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
+    * administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on
+    * success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -1103,7 +1118,8 @@ trait Methods {
   }
 
   /** Use this method to delete a chat photo. Photos can't be changed for private chats. The bot must be an
-    * administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
+    * administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on
+    * success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -1114,26 +1130,33 @@ trait Methods {
   }
 
   /** Use this method to edit a non-primary invite link created by the bot. The bot must be an administrator in the chat
-    * for this to work and must have the appropriate admin rights. Returns the edited invite link as a ChatInviteLink
-    * object.
+    * for this to work and must have the appropriate administrator rights. Returns the edited invite link as a
+    * ChatInviteLink object.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
     * @param inviteLink
     *   The invite link to edit
+    * @param name
+    *   Invite link name; 0-32 characters
     * @param expireDate
     *   Point in time (Unix timestamp) when the link will expire
     * @param memberLimit
     *   Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite
     *   link; 1-99999
+    * @param createsJoinRequest
+    *   True, if users joining the chat via the link need to be approved by chat administrators. If True, member_limit
+    *   can't be specified
     */
   def editChatInviteLink(
     chatId: ChatId,
     inviteLink: String,
+    name: Option[String] = Option.empty,
     expireDate: Option[Int] = Option.empty,
-    memberLimit: Option[Int] = Option.empty
+    memberLimit: Option[Int] = Option.empty,
+    createsJoinRequest: Option[Boolean] = Option.empty
   ): Method[ChatInviteLink] = {
-    val req = EditChatInviteLinkReq(chatId, inviteLink, expireDate, memberLimit)
+    val req = EditChatInviteLinkReq(chatId, inviteLink, name, expireDate, memberLimit, createsJoinRequest)
     MethodReq[ChatInviteLink]("editChatInviteLink", req.asJson)
   }
 
@@ -1376,7 +1399,7 @@ trait Methods {
     *   the user to connect the bot to their YouTube account to adapt search results accordingly. To do this, it
     *   displays a 'Connect your YouTube account' button above the results, or even before showing any. The user presses
     *   the button, switches to a private chat with the bot and, in doing so, passes a start parameter that instructs
-    *   the bot to return an oauth link. Once done, the bot can offer a switch_inline button so that the user can easily
+    *   the bot to return an OAuth link. Once done, the bot can offer a switch_inline button so that the user can easily
     *   return to the chat where they wanted to use the bot's inline capabilities.
     */
   def answerInlineQuery(
@@ -1471,8 +1494,8 @@ trait Methods {
   }
 
   /** Use this method to restrict a user in a supergroup. The bot must be an administrator in the supergroup for this to
-    * work and must have the appropriate admin rights. Pass True for all permissions to lift restrictions from a user.
-    * Returns True on success.
+    * work and must have the appropriate administrator rights. Pass True for all permissions to lift restrictions from a
+    * user. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup (in the format
@@ -1495,8 +1518,8 @@ trait Methods {
     MethodReq[Boolean]("restrictChatMember", req.asJson)
   }
 
-  /** A simple method for testing your bot's auth token. Requires no parameters. Returns basic information about the bot
-    * in form of a User object.
+  /** A simple method for testing your bot's authentication token. Requires no parameters. Returns basic information
+    * about the bot in form of a User object.
     */
   def getMe(): Method[User] = {
     val req = GetMeReq
@@ -1557,8 +1580,8 @@ trait Methods {
 
   /** Use this method to ban a user in a group, a supergroup or a channel. In the case of supergroups and channels, the
     * user will not be able to return to the chat on their own using invite links, etc., unless unbanned first. The bot
-    * must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on
-    * success.
+    * must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns
+    * True on success.
     *
     * @param chatId
     *   Unique identifier for the target group or username of the target supergroup or channel (in the format
@@ -1664,8 +1687,8 @@ trait Methods {
   }
 
   /** Use this method to promote or demote a user in a supergroup or a channel. The bot must be an administrator in the
-    * chat for this to work and must have the appropriate admin rights. Pass False for all boolean parameters to demote
-    * a user. Returns True on success.
+    * chat for this to work and must have the appropriate administrator rights. Pass False for all boolean parameters to
+    * demote a user. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -1813,8 +1836,8 @@ trait Methods {
   }
 
   /** Use this method to add a message to the list of pinned messages in a chat. If the chat is not a private chat, the
-    * bot must be an administrator in the chat for this to work and must have the 'can_pin_messages' admin right in a
-    * supergroup or 'can_edit_messages' admin right in a channel. Returns True on success.
+    * bot must be an administrator in the chat for this to work and must have the 'can_pin_messages' administrator right
+    * in a supergroup or 'can_edit_messages' administrator right in a channel. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -1877,23 +1900,30 @@ trait Methods {
   }
 
   /** Use this method to create an additional invite link for a chat. The bot must be an administrator in the chat for
-    * this to work and must have the appropriate admin rights. The link can be revoked using the method
+    * this to work and must have the appropriate administrator rights. The link can be revoked using the method
     * revokeChatInviteLink. Returns the new invite link as ChatInviteLink object.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param name
+    *   Invite link name; 0-32 characters
     * @param expireDate
     *   Point in time (Unix timestamp) when the link will expire
     * @param memberLimit
     *   Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite
     *   link; 1-99999
+    * @param createsJoinRequest
+    *   True, if users joining the chat via the link need to be approved by chat administrators. If True, member_limit
+    *   can't be specified
     */
   def createChatInviteLink(
     chatId: ChatId,
+    name: Option[String] = Option.empty,
     expireDate: Option[Int] = Option.empty,
-    memberLimit: Option[Int] = Option.empty
+    memberLimit: Option[Int] = Option.empty,
+    createsJoinRequest: Option[Boolean] = Option.empty
   ): Method[ChatInviteLink] = {
-    val req = CreateChatInviteLinkReq(chatId, expireDate, memberLimit)
+    val req = CreateChatInviteLinkReq(chatId, name, expireDate, memberLimit, createsJoinRequest)
     MethodReq[ChatInviteLink]("createChatInviteLink", req.asJson)
   }
 
@@ -1978,8 +2008,8 @@ trait Methods {
   }
 
   /** Use this method to set a new group sticker set for a supergroup. The bot must be an administrator in the chat for
-    * this to work and must have the appropriate admin rights. Use the field can_set_sticker_set optionally returned in
-    * getChat requests to check if the bot can use this method. Returns True on success.
+    * this to work and must have the appropriate administrator rights. Use the field can_set_sticker_set optionally
+    * returned in getChat requests to check if the bot can use this method. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup (in the format
@@ -2016,7 +2046,7 @@ trait Methods {
 
   /** Use this method to revoke an invite link created by the bot. If the primary link is revoked, a new link is
     * automatically generated. The bot must be an administrator in the chat for this to work and must have the
-    * appropriate admin rights. Returns the revoked invite link as ChatInviteLink object.
+    * appropriate administrator rights. Returns the revoked invite link as ChatInviteLink object.
     *
     * @param chatId
     *   Unique identifier of the target chat or username of the target channel (in the format &#064;channelusername)
@@ -2164,9 +2194,22 @@ trait Methods {
     ok: Boolean,
     shippingOptions: List[ShippingOption] = List.empty,
     errorMessage: Option[String] = Option.empty
-  ): Method[Update] = {
+  ): Method[Boolean] = {
     val req = AnswerShippingQueryReq(shippingQueryId, ok, shippingOptions, errorMessage)
-    MethodReq[Update]("answerShippingQuery", req.asJson)
+    MethodReq[Boolean]("answerShippingQuery", req.asJson)
+  }
+
+  /** Use this method to approve a chat join request. The bot must be an administrator in the chat for this to work and
+    * must have the can_invite_users administrator right. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param userId
+    *   Unique identifier of the target user
+    */
+  def approveChatJoinRequest(chatId: ChatId, userId: Long): Method[Boolean] = {
+    val req = ApproveChatJoinRequestReq(chatId, userId)
+    MethodReq[Boolean]("approveChatJoinRequest", req.asJson)
   }
 
   /** Once the user has confirmed their payment and shipping details, the Bot API sends the final confirmation in the
@@ -2189,9 +2232,9 @@ trait Methods {
     preCheckoutQueryId: String,
     ok: Boolean,
     errorMessage: Option[String] = Option.empty
-  ): Method[Update] = {
+  ): Method[Boolean] = {
     val req = AnswerPreCheckoutQueryReq(preCheckoutQueryId, ok, errorMessage)
-    MethodReq[Update]("answerPreCheckoutQuery", req.asJson)
+    MethodReq[Boolean]("answerPreCheckoutQuery", req.asJson)
   }
 
   /** Use this method to send static .WEBP or animated .TGS stickers. On success, the sent Message is returned.

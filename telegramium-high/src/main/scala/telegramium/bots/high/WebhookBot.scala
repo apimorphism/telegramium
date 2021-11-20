@@ -2,18 +2,18 @@ package telegramium.bots.high
 
 import cats.Monad
 import cats.effect.{Async, Resource}
-import cats.syntax.all._
+import cats.syntax.all.*
 import org.http4s.Uri.Path
 import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.circe.{jsonEncoder, jsonOf}
 import org.http4s.dsl.Http4sDsl
-import org.http4s.implicits._
+import org.http4s.implicits.*
 import org.http4s.server.Server
 import org.http4s.{EntityDecoder, HttpRoutes}
-import telegramium.bots.CirceImplicits._
-import telegramium.bots.client.{Method, Methods => ApiMethods}
+import telegramium.bots.CirceImplicits.*
+import telegramium.bots.client.{Method, Methods as ApiMethods}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
-import telegramium.bots.{CallbackQuery, ChatMemberUpdated, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
+import telegramium.bots.{CallbackQuery, ChatJoinRequest, ChatMemberUpdated, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
 /** @param url
   *   HTTPS url to send updates to. Use an empty string to remove webhook integration
@@ -62,27 +62,29 @@ abstract class WebhookBot[F[_]: Async](
   def onPollAnswer(pollAnswer: PollAnswer): F[Unit]                   = noop(pollAnswer)
   def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit]        = noop(myChatMember)
   def onChatMember(chatMember: ChatMemberUpdated): F[Unit]            = noop(chatMember)
+  def onChatJoinRequest(request: ChatJoinRequest): F[Unit]            = noop(request)
 
-  private def noopReply[A](a: A) = Monad[F].pure(a).map(_ => Option.empty[Method[_]])
+  private def noopReply[A](a: A) = Monad[F].pure(a).map(_ => Option.empty[Method[?]])
 
-  def onMessageReply(msg: Message): F[Option[Method[_]]]               = noopReply(msg)
-  def onEditedMessageReply(msg: Message): F[Option[Method[_]]]         = noopReply(msg)
-  def onChannelPostReply(msg: Message): F[Option[Method[_]]]           = noopReply(msg)
-  def onEditedChannelPostReply(msg: Message): F[Option[Method[_]]]     = noopReply(msg)
-  def onInlineQueryReply(query: InlineQuery): F[Option[Method[_]]]     = noopReply(query)
-  def onCallbackQueryReply(query: CallbackQuery): F[Option[Method[_]]] = noopReply(query)
+  def onMessageReply(msg: Message): F[Option[Method[?]]]               = noopReply(msg)
+  def onEditedMessageReply(msg: Message): F[Option[Method[?]]]         = noopReply(msg)
+  def onChannelPostReply(msg: Message): F[Option[Method[?]]]           = noopReply(msg)
+  def onEditedChannelPostReply(msg: Message): F[Option[Method[?]]]     = noopReply(msg)
+  def onInlineQueryReply(query: InlineQuery): F[Option[Method[?]]]     = noopReply(query)
+  def onCallbackQueryReply(query: CallbackQuery): F[Option[Method[?]]] = noopReply(query)
 
-  def onChosenInlineResultReply(inlineResult: ChosenInlineResult): F[Option[Method[_]]] =
-    Monad[F].pure(inlineResult).map(_ => Option.empty[Method[_]])
+  def onChosenInlineResultReply(inlineResult: ChosenInlineResult): F[Option[Method[?]]] =
+    Monad[F].pure(inlineResult).map(_ => Option.empty[Method[?]])
 
-  def onShippingQueryReply(query: ShippingQuery): F[Option[Method[_]]]           = noopReply(query)
-  def onPreCheckoutQueryReply(query: PreCheckoutQuery): F[Option[Method[_]]]     = noopReply(query)
-  def onPollReply(poll: Poll): F[Option[Method[_]]]                              = noopReply(poll)
-  def onPollAnswerReply(pollAnswer: PollAnswer): F[Option[Method[_]]]            = noopReply(pollAnswer)
-  def onMyChatMemberReply(myChatMember: ChatMemberUpdated): F[Option[Method[_]]] = noopReply(myChatMember)
-  def onChatMemberReply(chatMember: ChatMemberUpdated): F[Option[Method[_]]]     = noopReply(chatMember)
+  def onShippingQueryReply(query: ShippingQuery): F[Option[Method[?]]]           = noopReply(query)
+  def onPreCheckoutQueryReply(query: PreCheckoutQuery): F[Option[Method[?]]]     = noopReply(query)
+  def onPollReply(poll: Poll): F[Option[Method[?]]]                              = noopReply(poll)
+  def onPollAnswerReply(pollAnswer: PollAnswer): F[Option[Method[?]]]            = noopReply(pollAnswer)
+  def onMyChatMemberReply(myChatMember: ChatMemberUpdated): F[Option[Method[?]]] = noopReply(myChatMember)
+  def onChatMemberReply(chatMember: ChatMemberUpdated): F[Option[Method[?]]]     = noopReply(chatMember)
+  def onChatJoinRequestReply(request: ChatJoinRequest): F[Option[Method[?]]]     = noopReply(request)
 
-  def onUpdate(update: Update): F[Option[Method[_]]] =
+  def onUpdate(update: Update): F[Option[Method[?]]] =
     List(
       update.message.map(msg => onMessageReply(msg) <* onMessage(msg)),
       update.editedMessage.map(msg => onEditedMessageReply(msg) <* onEditedMessage(msg)),
@@ -98,12 +100,13 @@ abstract class WebhookBot[F[_]: Async](
       update.poll.map(poll => onPollReply(poll) <* onPoll(poll)),
       update.pollAnswer.map(pollAnswer => onPollAnswerReply(pollAnswer) <* onPollAnswer(pollAnswer)),
       update.myChatMember.map(myChatMember => onMyChatMemberReply(myChatMember) <* onMyChatMember(myChatMember)),
-      update.chatMember.map(chatMember => onChatMemberReply(chatMember) <* onChatMember(chatMember))
+      update.chatMember.map(chatMember => onChatMemberReply(chatMember) <* onChatMember(chatMember)),
+      update.chatJoinRequest.map(request => onChatJoinRequestReply(request) <* onChatJoinRequest(request))
     ).flatten.head
 
   private implicit val HandleUpdateReqEntityDecoder: EntityDecoder[F, Update] = jsonOf[F, Update]
 
-  private def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Option[Method[_]]] = rawReq.as[Update].flatMap(onUpdate)
+  private def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Option[Method[?]]] = rawReq.as[Update].flatMap(onUpdate)
 
   /** @param port
     *   port used to bind the resulting Server
@@ -130,7 +133,7 @@ abstract class WebhookBot[F[_]: Async](
 
   private def routes(): HttpRoutes[F] = {
     val dsl = Http4sDsl[F]
-    import dsl._
+    import dsl.*
 
     HttpRoutes.of[F] { case req @ POST -> BotPath =>
       handleUpdateReq(req).flatMap {

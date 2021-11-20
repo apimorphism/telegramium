@@ -1,9 +1,9 @@
 package telegramium.bots.high
 
 import cats.effect.IO
-import cats.syntax.option._
+import cats.syntax.option.*
 import telegramium.bots.client.Method
-import telegramium.bots.{CallbackQuery, ChatIntId, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery}
+import telegramium.bots.{CallbackQuery, ChatIntId, ChatJoinRequest, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery}
 
 class TestWebhookBot(api: Api[IO], path: String = "/")
     extends WebhookBot[IO](
@@ -52,43 +52,49 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
   override def onChatMember(chatMember: ChatMemberUpdated): IO[Unit] =
     api.execute(sendMessageMethod("onChatMember")).void
 
-  override def onMessageReply(msg: Message): IO[Option[Method[_]]] =
+  override def onChatJoinRequest(request: ChatJoinRequest): IO[Unit] =
+    api.execute(sendMessageMethod("onChatJoinRequest")).void
+
+  override def onMessageReply(msg: Message): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onMessageReply").some)
 
-  override def onEditedMessageReply(msg: Message): IO[Option[Method[_]]] =
+  override def onEditedMessageReply(msg: Message): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onEditedMessageReply").some)
 
-  override def onChannelPostReply(msg: Message): IO[Option[Method[_]]] =
+  override def onChannelPostReply(msg: Message): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onChannelPostReply").some)
 
-  override def onEditedChannelPostReply(msg: Message): IO[Option[Method[_]]] =
+  override def onEditedChannelPostReply(msg: Message): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onEditedChannelPostReply").some)
 
-  override def onInlineQueryReply(query: InlineQuery): IO[Option[Method[_]]] =
+  override def onInlineQueryReply(query: InlineQuery): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onInlineQueryReply").some)
 
-  override def onCallbackQueryReply(query: CallbackQuery): IO[Option[Method[_]]] =
+  override def onCallbackQueryReply(query: CallbackQuery): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onCallbackQueryReply").some)
 
-  override def onChosenInlineResultReply(inlineResult: ChosenInlineResult): IO[Option[Method[_]]] =
+  override def onChosenInlineResultReply(inlineResult: ChosenInlineResult): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onChosenInlineResultReply").some)
 
-  override def onShippingQueryReply(query: ShippingQuery): IO[Option[Method[_]]] =
+  override def onShippingQueryReply(query: ShippingQuery): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onShippingQueryReply").some)
 
-  override def onPreCheckoutQueryReply(query: PreCheckoutQuery): IO[Option[Method[_]]] =
+  override def onPreCheckoutQueryReply(query: PreCheckoutQuery): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onPreCheckoutQueryReply").some)
 
-  override def onPollReply(poll: Poll): IO[Option[Method[_]]] =
+  override def onPollReply(poll: Poll): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onPollReply").some)
 
-  override def onPollAnswerReply(pollAnswer: PollAnswer): IO[Option[Method[_]]] =
+  override def onPollAnswerReply(pollAnswer: PollAnswer): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onPollAnswerReply").some)
 
-  override def onMyChatMemberReply(myChatMember: ChatMemberUpdated): IO[Option[Method[_]]] =
+  override def onMyChatMemberReply(myChatMember: ChatMemberUpdated): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onMyChatMemberReply").some)
 
-  override def onChatMemberReply(chatMember: ChatMemberUpdated): IO[Option[Method[_]]] =
+  override def onChatMemberReply(chatMember: ChatMemberUpdated): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onChatMemberReply").some)
+
+  override def onChatJoinRequestReply(request: ChatJoinRequest): IO[Option[Method[?]]] =
+    IO.pure(sendMessageMethod("onChatJoinRequestReply").some)
 
 }

@@ -557,6 +557,27 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val declinechatjoinrequestreqEncoder: Encoder[DeclineChatJoinRequestReq] =
+    (x: DeclineChatJoinRequestReq) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson,
+          "user_id" -> x.userId.asJson,
+          "method"  -> "declineChatJoinRequest".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val declinechatjoinrequestreqDecoder: Decoder[DeclineChatJoinRequestReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId <- h.get[ChatId]("chat_id")
+        _userId <- h.get[Long]("user_id")
+      } yield {
+        DeclineChatJoinRequestReq(chatId = _chatId, userId = _userId)
+      }
+    }
+
   implicit lazy val senddicereqEncoder: Encoder[SendDiceReq] =
     (x: SendDiceReq) => {
       Json.fromFields(
@@ -1224,11 +1245,13 @@ object CirceImplicits {
     (x: EditChatInviteLinkReq) => {
       Json.fromFields(
         List(
-          "chat_id"      -> x.chatId.asJson,
-          "invite_link"  -> x.inviteLink.asJson,
-          "expire_date"  -> x.expireDate.asJson,
-          "member_limit" -> x.memberLimit.asJson,
-          "method"       -> "editChatInviteLink".asJson
+          "chat_id"              -> x.chatId.asJson,
+          "invite_link"          -> x.inviteLink.asJson,
+          "name"                 -> x.name.asJson,
+          "expire_date"          -> x.expireDate.asJson,
+          "member_limit"         -> x.memberLimit.asJson,
+          "creates_join_request" -> x.createsJoinRequest.asJson,
+          "method"               -> "editChatInviteLink".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1236,16 +1259,20 @@ object CirceImplicits {
   implicit lazy val editchatinvitelinkreqDecoder: Decoder[EditChatInviteLinkReq] =
     Decoder.instance { h =>
       for {
-        _chatId      <- h.get[ChatId]("chat_id")
-        _inviteLink  <- h.get[String]("invite_link")
-        _expireDate  <- h.get[Option[Int]]("expire_date")
-        _memberLimit <- h.get[Option[Int]]("member_limit")
+        _chatId             <- h.get[ChatId]("chat_id")
+        _inviteLink         <- h.get[String]("invite_link")
+        _name               <- h.get[Option[String]]("name")
+        _expireDate         <- h.get[Option[Int]]("expire_date")
+        _memberLimit        <- h.get[Option[Int]]("member_limit")
+        _createsJoinRequest <- h.get[Option[Boolean]]("creates_join_request")
       } yield {
         EditChatInviteLinkReq(
           chatId = _chatId,
           inviteLink = _inviteLink,
+          name = _name,
           expireDate = _expireDate,
-          memberLimit = _memberLimit
+          memberLimit = _memberLimit,
+          createsJoinRequest = _createsJoinRequest
         )
       }
     }
@@ -1939,10 +1966,12 @@ object CirceImplicits {
     (x: CreateChatInviteLinkReq) => {
       Json.fromFields(
         List(
-          "chat_id"      -> x.chatId.asJson,
-          "expire_date"  -> x.expireDate.asJson,
-          "member_limit" -> x.memberLimit.asJson,
-          "method"       -> "createChatInviteLink".asJson
+          "chat_id"              -> x.chatId.asJson,
+          "name"                 -> x.name.asJson,
+          "expire_date"          -> x.expireDate.asJson,
+          "member_limit"         -> x.memberLimit.asJson,
+          "creates_join_request" -> x.createsJoinRequest.asJson,
+          "method"               -> "createChatInviteLink".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1950,11 +1979,19 @@ object CirceImplicits {
   implicit lazy val createchatinvitelinkreqDecoder: Decoder[CreateChatInviteLinkReq] =
     Decoder.instance { h =>
       for {
-        _chatId      <- h.get[ChatId]("chat_id")
-        _expireDate  <- h.get[Option[Int]]("expire_date")
-        _memberLimit <- h.get[Option[Int]]("member_limit")
+        _chatId             <- h.get[ChatId]("chat_id")
+        _name               <- h.get[Option[String]]("name")
+        _expireDate         <- h.get[Option[Int]]("expire_date")
+        _memberLimit        <- h.get[Option[Int]]("member_limit")
+        _createsJoinRequest <- h.get[Option[Boolean]]("creates_join_request")
       } yield {
-        CreateChatInviteLinkReq(chatId = _chatId, expireDate = _expireDate, memberLimit = _memberLimit)
+        CreateChatInviteLinkReq(
+          chatId = _chatId,
+          name = _name,
+          expireDate = _expireDate,
+          memberLimit = _memberLimit,
+          createsJoinRequest = _createsJoinRequest
+        )
       }
     }
 
@@ -2229,6 +2266,27 @@ object CirceImplicits {
           shippingOptions = _shippingOptions,
           errorMessage = _errorMessage
         )
+      }
+    }
+
+  implicit lazy val approvechatjoinrequestreqEncoder: Encoder[ApproveChatJoinRequestReq] =
+    (x: ApproveChatJoinRequestReq) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson,
+          "user_id" -> x.userId.asJson,
+          "method"  -> "approveChatJoinRequest".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val approvechatjoinrequestreqDecoder: Decoder[ApproveChatJoinRequestReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId <- h.get[ChatId]("chat_id")
+        _userId <- h.get[Long]("user_id")
+      } yield {
+        ApproveChatJoinRequestReq(chatId = _chatId, userId = _userId)
       }
     }
 

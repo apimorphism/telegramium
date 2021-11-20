@@ -25,7 +25,7 @@ sealed trait InputMedia {}
   * @param height
   *   Optional. Animation height
   * @param duration
-  *   Optional. Animation duration
+  *   Optional. Animation duration in seconds
   */
 final case class InputMediaAnimation(
   media: String,
@@ -81,7 +81,7 @@ final case class InputMediaPhoto(
   * @param height
   *   Optional. Video height
   * @param duration
-  *   Optional. Video duration
+  *   Optional. Video duration in seconds
   * @param supportsStreaming
   *   Optional. Pass True, if the uploaded video is suitable for streaming
   */
@@ -117,7 +117,7 @@ final case class InputMediaVideo(
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
   * @param disableContentTypeDetection
   *   Optional. Disables automatic server-side content type detection for files uploaded using multipart/form-data.
-  *   Always true, if the document is sent as part of an album.
+  *   Always True, if the document is sent as part of an album.
   */
 final case class InputMediaDocument(
   media: String,

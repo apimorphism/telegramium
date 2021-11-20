@@ -22,7 +22,7 @@ package telegramium.bots
   * @param maskPosition
   *   Optional. For mask stickers, the position where the mask should be placed
   * @param fileSize
-  *   Optional. File size
+  *   Optional. File size in bytes
   */
 final case class Sticker(
   fileId: String,

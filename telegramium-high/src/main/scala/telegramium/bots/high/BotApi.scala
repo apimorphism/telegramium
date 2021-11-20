@@ -1,11 +1,11 @@
 package telegramium.bots.high
 
 import cats.effect.{Async, Sync}
-import cats.syntax.all._
+import cats.syntax.all.*
 import io.circe.{Decoder, Json}
-import org.http4s.circe._
-import org.http4s.client._
-import org.http4s.dsl.io._
+import org.http4s.circe.*
+import org.http4s.client.*
+import org.http4s.dsl.io.*
 import org.http4s.multipart.Part
 import org.http4s.{Request, Uri}
 import org.typelevel.log4cats.Logger
