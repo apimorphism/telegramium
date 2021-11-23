@@ -15,7 +15,6 @@ Currently the following backends are supported:
 - http4s
 - cats-effect
 - circe
-- uPickle (MsgPack binary serialization, to be used for storing API messages in DB and sending over network)
 
 You may want to start with [Methods.scala](telegramium-core/src/main/scala/telegramium/bots/client/Methods.scala) and [EchoBot.scala](telegramium-examples/src/main/scala/telegramium/bots/examples/EchoBot.scala).
 

@@ -84,5 +84,7 @@ object BotApi {
   def apply[F[_]: Async](http: Client[F], baseUrl: String): BotApi[F] =
     new BotApi[F](http, baseUrl)
 
-  private implicit def defaultLogger[F[_]: Sync]: Logger[F] = Slf4jLogger.getLogger[F]
+  private implicit def defaultLogger[F[_]: Sync]: Logger[F] =
+    Slf4jLogger.getLoggerFromName("telegramium.bots.high.BotApi")
+
 }
