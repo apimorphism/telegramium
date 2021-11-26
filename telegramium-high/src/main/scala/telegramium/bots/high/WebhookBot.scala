@@ -142,8 +142,7 @@ abstract class WebhookBot[F[_]: Async](
             (filename, file)
           }
           val attachments = toFileDataParts(inputPartFiles)
-          if (attachments.isEmpty)
-            Ok(m.payload.json)
+          if (attachments.isEmpty) Ok(m.payload.json)
           else {
             val parts = toMultipartWithFormData(m.payload.json, inputPartFiles.keys.toList, attachments)
             Ok(parts).map(_.withHeaders(parts.headers))

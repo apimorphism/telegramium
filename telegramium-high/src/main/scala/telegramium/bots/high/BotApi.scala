@@ -35,8 +35,7 @@ class BotApi[F[_]](
 
   private def mkRequest(uri: Uri, json: Json, fileFieldNames: List[String], attachments: Vector[Part[F]]) = {
     val reqBuilder = Request[F]().withMethod(POST).withUri(uri)
-    if (attachments.isEmpty)
-      reqBuilder.withEntity(json)
+    if (attachments.isEmpty) reqBuilder.withEntity(json)
     else {
       val parts = toMultipartWithFormData(json, fileFieldNames, attachments)
       reqBuilder.withEntity(parts).withHeaders(parts.headers)
@@ -85,5 +84,7 @@ object BotApi {
   def apply[F[_]: Async](http: Client[F], baseUrl: String): BotApi[F] =
     new BotApi[F](http, baseUrl)
 
-  private implicit def defaultLogger[F[_]: Sync]: Logger[F] = Slf4jLogger.getLogger[F]
+  private implicit def defaultLogger[F[_]: Sync]: Logger[F] =
+    Slf4jLogger.getLoggerFromName("telegramium.bots.high.BotApi")
+
 }

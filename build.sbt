@@ -7,11 +7,11 @@ ThisBuild / version := Version.mkVersion(
   git.gitUncommittedChanges.value
 )
 
+lazy val scala3   = "3.0.2"
 lazy val scala213 = "2.13.7"
 lazy val scala212 = "2.12.15"
 
-ThisBuild / scalaVersion       := scala213
-ThisBuild / crossScalaVersions := List(scala213, scala212)
+ThisBuild / scalaVersion := scala3
 
 val buildCommit    = settingKey[String]("Build info: commit")
 val buildTimestamp = settingKey[String]("Build info: timestamp")
@@ -54,7 +54,8 @@ ThisBuild / githubWorkflowBuildPreamble ++=
 
 val settings = Compiler.settings ++ Seq()
 
-lazy val `telegramium-core` = project
+lazy val `telegramium-core` = (projectMatrix in file("telegramium-core"))
+  .jvmPlatform(scalaVersions = Seq(scala3, scala213, scala212))
   .enablePlugins(BuildInfoPlugin)
   .settings(settings: _*)
   .settings(libraryDependencies ++= Dependencies.telegramiumCore)
@@ -66,12 +67,14 @@ lazy val `telegramium-core` = project
     buildInfoPackage := "telegramium.bots.buildinfo"
   )
 
-lazy val `telegramium-high` = project
+lazy val `telegramium-high` = (projectMatrix in file("telegramium-high"))
+  .jvmPlatform(scalaVersions = Seq(scala3, scala213, scala212))
   .dependsOn(`telegramium-core`)
   .settings(settings: _*)
   .settings(libraryDependencies ++= Dependencies.telegramiumHigh)
 
-lazy val `telegramium-examples` = project
+lazy val `telegramium-examples` = (projectMatrix in file("telegramium-examples"))
+  .jvmPlatform(scalaVersions = Seq(scala3))
   .dependsOn(
     `telegramium-core`,
     `telegramium-high`
@@ -84,12 +87,11 @@ lazy val `telegramium-examples` = project
 
 lazy val telegramium = (project in file("."))
   .settings(
-    name               := "F[Tg]",
-    publish / skip     := true,
-    crossScalaVersions := Nil
+    name           := "F[Tg]",
+    publish / skip := true
   )
   .aggregate(
-    `telegramium-core`,
-    `telegramium-high`,
-    `telegramium-examples`
+    `telegramium-core`.projectRefs ++
+      `telegramium-high`.projectRefs ++
+      `telegramium-examples`.projectRefs: _*
   )
