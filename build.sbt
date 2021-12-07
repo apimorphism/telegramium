@@ -43,7 +43,9 @@ ThisBuild / developers := List(
 ThisBuild / publishMavenStyle := true
 ThisBuild / publishTo         := sonatypePublishToBundle.value
 
-ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.temurin("11"), JavaSpec.temurin("8"))
+ThisBuild / githubWorkflowJavaVersions :=
+  Seq(JavaSpec.temurin("17"), JavaSpec.temurin("11"), JavaSpec.temurin("8"))
+
 ThisBuild / githubWorkflowPublishTargetBranches := Seq.empty
 
 ThisBuild / githubWorkflowBuildPreamble ++=
