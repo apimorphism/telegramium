@@ -2645,12 +2645,14 @@ object CirceImplicits {
           "last_name"                -> x.lastName.asJson,
           "photo"                    -> x.photo.asJson,
           "bio"                      -> x.bio.asJson,
+          "has_private_forwards"     -> x.hasPrivateForwards.asJson,
           "description"              -> x.description.asJson,
           "invite_link"              -> x.inviteLink.asJson,
           "pinned_message"           -> x.pinnedMessage.asJson,
           "permissions"              -> x.permissions.asJson,
           "slow_mode_delay"          -> x.slowModeDelay.asJson,
           "message_auto_delete_time" -> x.messageAutoDeleteTime.asJson,
+          "has_protected_content"    -> x.hasProtectedContent.asJson,
           "sticker_set_name"         -> x.stickerSetName.asJson,
           "can_set_sticker_set"      -> x.canSetStickerSet.asJson,
           "linked_chat_id"           -> x.linkedChatId.asJson,
@@ -2670,12 +2672,14 @@ object CirceImplicits {
         _lastName              <- h.get[Option[String]]("last_name")
         _photo                 <- h.get[Option[ChatPhoto]]("photo")
         _bio                   <- h.get[Option[String]]("bio")
+        _hasPrivateForwards    <- h.get[Option[Boolean]]("has_private_forwards")
         _description           <- h.get[Option[String]]("description")
         _inviteLink            <- h.get[Option[String]]("invite_link")
         _pinnedMessage         <- h.get[Option[Message]]("pinned_message")
         _permissions           <- h.get[Option[ChatPermissions]]("permissions")
         _slowModeDelay         <- h.get[Option[Int]]("slow_mode_delay")
         _messageAutoDeleteTime <- h.get[Option[Int]]("message_auto_delete_time")
+        _hasProtectedContent   <- h.get[Option[Boolean]]("has_protected_content")
         _stickerSetName        <- h.get[Option[String]]("sticker_set_name")
         _canSetStickerSet      <- h.get[Option[Boolean]]("can_set_sticker_set")
         _linkedChatId          <- h.get[Option[Long]]("linked_chat_id")
@@ -2690,12 +2694,14 @@ object CirceImplicits {
           lastName = _lastName,
           photo = _photo,
           bio = _bio,
+          hasPrivateForwards = _hasPrivateForwards,
           description = _description,
           inviteLink = _inviteLink,
           pinnedMessage = _pinnedMessage,
           permissions = _permissions,
           slowModeDelay = _slowModeDelay,
           messageAutoDeleteTime = _messageAutoDeleteTime,
+          hasProtectedContent = _hasProtectedContent,
           stickerSetName = _stickerSetName,
           canSetStickerSet = _canSetStickerSet,
           linkedChatId = _linkedChatId,
@@ -4036,9 +4042,11 @@ object CirceImplicits {
           "forward_signature"                 -> x.forwardSignature.asJson,
           "forward_sender_name"               -> x.forwardSenderName.asJson,
           "forward_date"                      -> x.forwardDate.asJson,
+          "is_automatic_forward"              -> x.isAutomaticForward.asJson,
           "reply_to_message"                  -> x.replyToMessage.asJson,
           "via_bot"                           -> x.viaBot.asJson,
           "edit_date"                         -> x.editDate.asJson,
+          "has_protected_content"             -> x.hasProtectedContent.asJson,
           "media_group_id"                    -> x.mediaGroupId.asJson,
           "author_signature"                  -> x.authorSignature.asJson,
           "text"                              -> x.text.asJson,
@@ -4099,9 +4107,11 @@ object CirceImplicits {
         _forwardSignature      <- h.get[Option[String]]("forward_signature")
         _forwardSenderName     <- h.get[Option[String]]("forward_sender_name")
         _forwardDate           <- h.get[Option[Int]]("forward_date")
+        _isAutomaticForward    <- h.get[Option[Boolean]]("is_automatic_forward")
         _replyToMessage        <- h.get[Option[Message]]("reply_to_message")
         _viaBot                <- h.get[Option[User]]("via_bot")
         _editDate              <- h.get[Option[Int]]("edit_date")
+        _hasProtectedContent   <- h.get[Option[Boolean]]("has_protected_content")
         _mediaGroupId          <- h.get[Option[String]]("media_group_id")
         _authorSignature       <- h.get[Option[String]]("author_signature")
         _text                  <- h.get[Option[String]]("text")
@@ -4159,9 +4169,11 @@ object CirceImplicits {
           forwardSignature = _forwardSignature,
           forwardSenderName = _forwardSenderName,
           forwardDate = _forwardDate,
+          isAutomaticForward = _isAutomaticForward,
           replyToMessage = _replyToMessage,
           viaBot = _viaBot,
           editDate = _editDate,
+          hasProtectedContent = _hasProtectedContent,
           mediaGroupId = _mediaGroupId,
           authorSignature = _authorSignature,
           text = _text,

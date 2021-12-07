@@ -5,7 +5,8 @@ package telegramium.bots
   * @param text
   *   Label text on the button
   * @param url
-  *   Optional. HTTP or tg:// url to be opened when button is pressed
+  *   Optional. HTTP or tg:// url to be opened when the button is pressed. Links tg://user?id=<user_id> can be used to
+  *   mention a user by their ID without using a username, if this is allowed by their privacy settings.
   * @param loginUrl
   *   Optional. An HTTP URL used to automatically authorize the user. Can be used as a replacement for the Telegram
   *   Login Widget.
@@ -27,7 +28,7 @@ package telegramium.bots
   *   button must always be the first button in the first row.
   * @param pay
   *   Optional. Specify True, to send a Pay button. NOTE: This type of button must always be the first button in the
-  *   first row.
+  *   first row and can only be used in invoice messages.
   */
 final case class InlineKeyboardButton(
   text: String,
