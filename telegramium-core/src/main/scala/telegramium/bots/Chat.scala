@@ -20,6 +20,9 @@ package telegramium.bots
   *   Optional. Chat photo. Returned only in getChat.
   * @param bio
   *   Optional. Bio of the other party in a private chat. Returned only in getChat.
+  * @param hasPrivateForwards
+  *   Optional. True, if privacy settings of the other party in the private chat allows to use tg://user?id=<user_id>
+  *   links only in chats with the user. Returned only in getChat.
   * @param description
   *   Optional. Description, for groups, supergroups and channel chats. Returned only in getChat.
   * @param inviteLink
@@ -34,6 +37,8 @@ package telegramium.bots
   * @param messageAutoDeleteTime
   *   Optional. The time after which all messages sent to the chat will be automatically deleted; in seconds. Returned
   *   only in getChat.
+  * @param hasProtectedContent
+  *   Optional. True, if messages from the chat can't be forwarded to other chats. Returned only in getChat.
   * @param stickerSetName
   *   Optional. For supergroups, name of group sticker set. Returned only in getChat.
   * @param canSetStickerSet
@@ -55,12 +60,14 @@ final case class Chat(
   lastName: Option[String] = Option.empty,
   photo: Option[ChatPhoto] = Option.empty,
   bio: Option[String] = Option.empty,
+  hasPrivateForwards: Option[Boolean] = Option.empty,
   description: Option[String] = Option.empty,
   inviteLink: Option[String] = Option.empty,
   pinnedMessage: Option[Message] = Option.empty,
   permissions: Option[ChatPermissions] = Option.empty,
   slowModeDelay: Option[Int] = Option.empty,
   messageAutoDeleteTime: Option[Int] = Option.empty,
+  hasProtectedContent: Option[Boolean] = Option.empty,
   stickerSetName: Option[String] = Option.empty,
   canSetStickerSet: Option[Boolean] = Option.empty,
   linkedChatId: Option[Long] = Option.empty,

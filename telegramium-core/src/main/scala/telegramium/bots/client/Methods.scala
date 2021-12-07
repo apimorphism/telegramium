@@ -412,6 +412,24 @@ trait Methods {
     MethodReq[Boolean]("setChatPermissions", req.asJson)
   }
 
+  /** Use this method to ban a channel chat in a supergroup or a channel. The owner of the chat will not be able to send
+    * messages and join live streams on behalf of the chat, unless it is unbanned first. The bot must be an
+    * administrator in the supergroup or channel for this to work and must have the appropriate administrator rights.
+    * Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param senderChatId
+    *   Unique identifier of the target sender chat
+    * @param untilDate
+    *   Date when the sender chat will be unbanned, unix time. If the chat is banned for more than 366 days or less than
+    *   30 seconds from the current time they are considered to be banned forever.
+    */
+  def banChatSenderChat(chatId: ChatId, senderChatId: Int, untilDate: Option[Int] = Option.empty): Method[Boolean] = {
+    val req = BanChatSenderChatReq(chatId, senderChatId, untilDate)
+    MethodReq[Boolean]("banChatSenderChat", req.asJson)
+  }
+
   /** Use this method to send point on the map. On success, the sent Message is returned.
     *
     * @param chatId
@@ -1414,6 +1432,19 @@ trait Methods {
     val req =
       AnswerInlineQueryReq(inlineQueryId, results, cacheTime, isPersonal, nextOffset, switchPmText, switchPmParameter)
     MethodReq[Boolean]("answerInlineQuery", req.asJson)
+  }
+
+  /** Use this method to unban a previously banned channel chat in a supergroup or channel. The bot must be an
+    * administrator for this to work and must have the appropriate administrator rights. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param senderChatId
+    *   Unique identifier of the target sender chat
+    */
+  def unbanChatSenderChat(chatId: ChatId, senderChatId: Int): Method[Boolean] = {
+    val req = UnbanChatSenderChatReq(chatId, senderChatId)
+    MethodReq[Boolean]("unbanChatSenderChat", req.asJson)
   }
 
   /** Use this method to send audio files, if you want Telegram clients to display them in the music player. Your audio

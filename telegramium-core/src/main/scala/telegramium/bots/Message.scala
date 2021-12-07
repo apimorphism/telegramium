@@ -28,6 +28,9 @@ package telegramium.bots
   *   messages
   * @param forwardDate
   *   Optional. For forwarded messages, date the original message was sent in Unix time
+  * @param isAutomaticForward
+  *   Optional. True, if the message is a channel post that was automatically forwarded to the connected discussion
+  *   group
   * @param replyToMessage
   *   Optional. For replies, the original message. Note that the Message object in this field will not contain further
   *   reply_to_message fields even if it itself is a reply.
@@ -35,6 +38,8 @@ package telegramium.bots
   *   Optional. Bot through which the message was sent
   * @param editDate
   *   Optional. Date the message was last edited in Unix time
+  * @param hasProtectedContent
+  *   Optional. True, if the message can't be forwarded
   * @param mediaGroupId
   *   Optional. The unique identifier of a media message group this message belongs to
   * @param authorSignature
@@ -149,9 +154,11 @@ final case class Message(
   forwardSignature: Option[String] = Option.empty,
   forwardSenderName: Option[String] = Option.empty,
   forwardDate: Option[Int] = Option.empty,
+  isAutomaticForward: Option[Boolean] = Option.empty,
   replyToMessage: Option[Message] = Option.empty,
   viaBot: Option[User] = Option.empty,
   editDate: Option[Int] = Option.empty,
+  hasProtectedContent: Option[Boolean] = Option.empty,
   mediaGroupId: Option[String] = Option.empty,
   authorSignature: Option[String] = Option.empty,
   text: Option[String] = Option.empty,

@@ -438,6 +438,29 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val banchatsenderchatreqEncoder: Encoder[BanChatSenderChatReq] =
+    (x: BanChatSenderChatReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"        -> x.chatId.asJson,
+          "sender_chat_id" -> x.senderChatId.asJson,
+          "until_date"     -> x.untilDate.asJson,
+          "method"         -> "banChatSenderChat".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val banchatsenderchatreqDecoder: Decoder[BanChatSenderChatReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId       <- h.get[ChatId]("chat_id")
+        _senderChatId <- h.get[Int]("sender_chat_id")
+        _untilDate    <- h.get[Option[Int]]("until_date")
+      } yield {
+        BanChatSenderChatReq(chatId = _chatId, senderChatId = _senderChatId, untilDate = _untilDate)
+      }
+    }
+
   implicit lazy val sendlocationreqEncoder: Encoder[SendLocationReq] =
     (x: SendLocationReq) => {
       Json.fromFields(
@@ -1481,6 +1504,27 @@ object CirceImplicits {
           switchPmText = _switchPmText,
           switchPmParameter = _switchPmParameter
         )
+      }
+    }
+
+  implicit lazy val unbanchatsenderchatreqEncoder: Encoder[UnbanChatSenderChatReq] =
+    (x: UnbanChatSenderChatReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"        -> x.chatId.asJson,
+          "sender_chat_id" -> x.senderChatId.asJson,
+          "method"         -> "unbanChatSenderChat".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val unbanchatsenderchatreqDecoder: Decoder[UnbanChatSenderChatReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId       <- h.get[ChatId]("chat_id")
+        _senderChatId <- h.get[Int]("sender_chat_id")
+      } yield {
+        UnbanChatSenderChatReq(chatId = _chatId, senderChatId = _senderChatId)
       }
     }
 
