@@ -9,6 +9,8 @@ import telegramium.bots.ChatId
   *   &#064;channelusername)
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
+  * @param protectContent
+  *   Protects the contents of the forwarded message from forwarding and saving
   * @param messageId
   *   Message identifier in the chat specified in from_chat_id
   */
@@ -16,5 +18,6 @@ final case class ForwardMessageReq(
   chatId: ChatId,
   fromChatId: ChatId,
   disableNotification: Option[Boolean] = Option.empty,
+  protectContent: Option[Boolean] = Option.empty,
   messageId: Int
 )

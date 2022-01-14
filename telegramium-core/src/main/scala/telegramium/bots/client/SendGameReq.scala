@@ -8,6 +8,8 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Short name of the game, serves as the unique identifier for the game. Set up your games via Botfather.
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
+  * @param protectContent
+  *   Protects the contents of the sent message from forwarding and saving
   * @param replyToMessageId
   *   If the message is a reply, ID of the original message
   * @param allowSendingWithoutReply
@@ -20,6 +22,7 @@ final case class SendGameReq(
   chatId: Int,
   gameShortName: String,
   disableNotification: Option[Boolean] = Option.empty,
+  protectContent: Option[Boolean] = Option.empty,
   replyToMessageId: Option[Int] = Option.empty,
   allowSendingWithoutReply: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty

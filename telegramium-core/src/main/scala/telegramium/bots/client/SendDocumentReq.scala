@@ -28,6 +28,8 @@ import telegramium.bots.KeyboardMarkup
   *   Disables automatic server-side content type detection for files uploaded using multipart/form-data
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
+  * @param protectContent
+  *   Protects the contents of the sent message from forwarding and saving
   * @param replyToMessageId
   *   If the message is a reply, ID of the original message
   * @param allowSendingWithoutReply
@@ -45,6 +47,7 @@ final case class SendDocumentReq(
   captionEntities: List[MessageEntity] = List.empty,
   disableContentTypeDetection: Option[Boolean] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
+  protectContent: Option[Boolean] = Option.empty,
   replyToMessageId: Option[Int] = Option.empty,
   allowSendingWithoutReply: Option[Boolean] = Option.empty,
   replyMarkup: Option[KeyboardMarkup] = Option.empty

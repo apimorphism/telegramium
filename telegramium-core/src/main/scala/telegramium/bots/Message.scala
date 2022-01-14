@@ -5,11 +5,13 @@ package telegramium.bots
   * @param messageId
   *   Unique message identifier inside this chat
   * @param from
-  *   Optional. Sender, empty for messages sent to channels
+  *   Optional. Sender of the message; empty for messages sent to channels. For backward compatibility, the field
+  *   contains a fake sender user in non-channel chats, if the message was sent on behalf of a chat.
   * @param senderChat
-  *   Optional. Sender of the message, sent on behalf of a chat. The channel itself for channel messages. The supergroup
-  *   itself for messages from anonymous group administrators. The linked channel for messages automatically forwarded
-  *   to the discussion group
+  *   Optional. Sender of the message, sent on behalf of a chat. For example, the channel itself for channel posts, the
+  *   supergroup itself for messages from anonymous group administrators, the linked channel for messages automatically
+  *   forwarded to the discussion group. For backward compatibility, the field from contains a fake sender user in
+  *   non-channel chats, if the message was sent on behalf of a chat.
   * @param date
   *   Date the message was sent in Unix time
   * @param chat
@@ -22,7 +24,8 @@ package telegramium.bots
   * @param forwardFromMessageId
   *   Optional. For messages forwarded from channels, identifier of the original message in the channel
   * @param forwardSignature
-  *   Optional. For messages forwarded from channels, signature of the post author if present
+  *   Optional. For forwarded messages that were originally sent in channels or by an anonymous chat administrator,
+  *   signature of the message sender if present
   * @param forwardSenderName
   *   Optional. Sender's name for messages forwarded from users who disallow adding a link to their account in forwarded
   *   messages

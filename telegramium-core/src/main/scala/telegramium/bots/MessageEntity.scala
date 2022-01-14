@@ -45,6 +45,15 @@ final case class CodeMessageEntity(offset: Int, length: Int) extends MessageEnti
   */
 final case class BotCommandMessageEntity(offset: Int, length: Int) extends MessageEntity
 
+/** spoiler
+  *
+  * @param offset
+  *   Offset in UTF-16 code units to the start of the entity
+  * @param length
+  *   Length of the entity in UTF-16 code units
+  */
+final case class SpoilerMessageEntity(offset: Int, length: Int) extends MessageEntity
+
 /** email
   *
   * @param offset
