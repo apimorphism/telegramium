@@ -1,14 +1,14 @@
 enablePlugins(GitPlugin)
 
 ThisBuild / version := Version.mkVersion(
-  "7.55.0",
+  "7.56.0",
   git.gitCurrentBranch.value,
   git.gitDescribedVersion.value,
   git.gitUncommittedChanges.value
 )
 
 lazy val scala3   = "3.0.2"
-lazy val scala213 = "2.13.7"
+lazy val scala213 = "2.13.8"
 lazy val scala212 = "2.12.15"
 
 ThisBuild / scalaVersion := scala3

@@ -155,6 +155,8 @@ trait Methods {
     *   Disables link previews for links in this message
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -170,6 +172,7 @@ trait Methods {
     entities: List[MessageEntity] = List.empty,
     disableWebPagePreview: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -181,6 +184,7 @@ trait Methods {
       entities,
       disableWebPagePreview,
       disableNotification,
+      protectContent,
       replyToMessageId,
       allowSendingWithoutReply,
       replyMarkup
@@ -239,6 +243,8 @@ trait Methods {
     *   Pass True, if the poll needs to be immediately closed. This can be useful for poll preview.
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -262,6 +268,7 @@ trait Methods {
     closeDate: Option[Int] = Option.empty,
     isClosed: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -281,6 +288,7 @@ trait Methods {
       closeDate,
       isClosed,
       disableNotification,
+      protectContent,
       replyToMessageId,
       allowSendingWithoutReply,
       replyMarkup
@@ -302,6 +310,8 @@ trait Methods {
     *   Additional data about the contact in the form of a vCard, 0-2048 bytes
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -317,6 +327,7 @@ trait Methods {
     lastName: Option[String] = Option.empty,
     vcard: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -328,6 +339,7 @@ trait Methods {
       lastName,
       vcard,
       disableNotification,
+      protectContent,
       replyToMessageId,
       allowSendingWithoutReply,
       replyMarkup
@@ -412,21 +424,18 @@ trait Methods {
     MethodReq[Boolean]("setChatPermissions", req.asJson)
   }
 
-  /** Use this method to ban a channel chat in a supergroup or a channel. The owner of the chat will not be able to send
-    * messages and join live streams on behalf of the chat, unless it is unbanned first. The bot must be an
-    * administrator in the supergroup or channel for this to work and must have the appropriate administrator rights.
-    * Returns True on success.
+  /** Use this method to ban a channel chat in a supergroup or a channel. Until the chat is unbanned, the owner of the
+    * banned chat won't be able to send messages on behalf of any of their channels. The bot must be an administrator in
+    * the supergroup or channel for this to work and must have the appropriate administrator rights. Returns True on
+    * success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
     * @param senderChatId
     *   Unique identifier of the target sender chat
-    * @param untilDate
-    *   Date when the sender chat will be unbanned, unix time. If the chat is banned for more than 366 days or less than
-    *   30 seconds from the current time they are considered to be banned forever.
     */
-  def banChatSenderChat(chatId: ChatId, senderChatId: Int, untilDate: Option[Int] = Option.empty): Method[Boolean] = {
-    val req = BanChatSenderChatReq(chatId, senderChatId, untilDate)
+  def banChatSenderChat(chatId: ChatId, senderChatId: Int): Method[Boolean] = {
+    val req = BanChatSenderChatReq(chatId, senderChatId)
     MethodReq[Boolean]("banChatSenderChat", req.asJson)
   }
 
@@ -449,6 +458,8 @@ trait Methods {
     *   Must be between 1 and 100000 if specified.
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -466,6 +477,7 @@ trait Methods {
     heading: Option[Int] = Option.empty,
     proximityAlertRadius: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -479,6 +491,7 @@ trait Methods {
       heading,
       proximityAlertRadius,
       disableNotification,
+      protectContent,
       replyToMessageId,
       allowSendingWithoutReply,
       replyMarkup
@@ -559,6 +572,8 @@ trait Methods {
     *   EmojiSlotMachine. Defaults to EmojiDice
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -571,11 +586,20 @@ trait Methods {
     chatId: ChatId,
     emoji: Option[Emoji] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
-    val req = SendDiceReq(chatId, emoji, disableNotification, replyToMessageId, allowSendingWithoutReply, replyMarkup)
+    val req = SendDiceReq(
+      chatId,
+      emoji,
+      disableNotification,
+      protectContent,
+      replyToMessageId,
+      allowSendingWithoutReply,
+      replyMarkup
+    )
     MethodReq[Message]("sendDice", req.asJson)
   }
 
@@ -698,6 +722,8 @@ trait Methods {
     *   A JSON-serialized array describing messages to be sent, must include 2-10 items
     * @param disableNotification
     *   Sends messages silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent messages from forwarding and saving
     * @param replyToMessageId
     *   If the messages are a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -707,10 +733,12 @@ trait Methods {
     chatId: ChatId,
     media: List[InputMedia] = List.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty
   ): Method[List[Message]] = {
-    val req = SendMediaGroupReq(chatId, media, disableNotification, replyToMessageId, allowSendingWithoutReply)
+    val req =
+      SendMediaGroupReq(chatId, media, disableNotification, protectContent, replyToMessageId, allowSendingWithoutReply)
     MethodReq[List[Message]]("sendMediaGroup", req.asJson)
   }
 
@@ -722,6 +750,8 @@ trait Methods {
     *   Short name of the game, serves as the unique identifier for the game. Set up your games via Botfather.
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -734,12 +764,20 @@ trait Methods {
     chatId: Int,
     gameShortName: String,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Message] = {
-    val req =
-      SendGameReq(chatId, gameShortName, disableNotification, replyToMessageId, allowSendingWithoutReply, replyMarkup)
+    val req = SendGameReq(
+      chatId,
+      gameShortName,
+      disableNotification,
+      protectContent,
+      replyToMessageId,
+      allowSendingWithoutReply,
+      replyMarkup
+    )
     MethodReq[Message]("sendGame", req.asJson)
   }
 
@@ -766,6 +804,8 @@ trait Methods {
     *   Google Places type of the venue. (See supported types.)
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -785,6 +825,7 @@ trait Methods {
     googlePlaceId: Option[String] = Option.empty,
     googlePlaceType: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -800,6 +841,7 @@ trait Methods {
       googlePlaceId,
       googlePlaceType,
       disableNotification,
+      protectContent,
       replyToMessageId,
       allowSendingWithoutReply,
       replyMarkup
@@ -1025,6 +1067,8 @@ trait Methods {
     *   parse_mode
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -1041,6 +1085,7 @@ trait Methods {
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -1053,6 +1098,7 @@ trait Methods {
       parseMode,
       captionEntities,
       disableNotification,
+      protectContent,
       replyToMessageId,
       allowSendingWithoutReply,
       replyMarkup
@@ -1081,6 +1127,8 @@ trait Methods {
     *   multipart/form-data under <file_attach_name>.
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -1096,6 +1144,7 @@ trait Methods {
     length: Option[Int] = Option.empty,
     thumb: Option[IFile] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -1107,6 +1156,7 @@ trait Methods {
       length,
       thumb,
       disableNotification,
+      protectContent,
       replyToMessageId,
       allowSendingWithoutReply,
       replyMarkup
@@ -1238,6 +1288,8 @@ trait Methods {
     *   Pass True, if the final price depends on the shipping method
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -1270,6 +1322,7 @@ trait Methods {
     sendEmailToProvider: Option[Boolean] = Option.empty,
     isFlexible: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
@@ -1298,6 +1351,7 @@ trait Methods {
       sendEmailToProvider,
       isFlexible,
       disableNotification,
+      protectContent,
       replyToMessageId,
       allowSendingWithoutReply,
       replyMarkup
@@ -1332,6 +1386,8 @@ trait Methods {
     *   Disables automatic server-side content type detection for files uploaded using multipart/form-data
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -1349,6 +1405,7 @@ trait Methods {
     captionEntities: List[MessageEntity] = List.empty,
     disableContentTypeDetection: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -1362,6 +1419,7 @@ trait Methods {
       captionEntities,
       disableContentTypeDetection,
       disableNotification,
+      protectContent,
       replyToMessageId,
       allowSendingWithoutReply,
       replyMarkup
@@ -1479,6 +1537,8 @@ trait Methods {
     *   multipart/form-data under <file_attach_name>.
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -1498,6 +1558,7 @@ trait Methods {
     title: Option[String] = Option.empty,
     thumb: Option[IFile] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -1513,6 +1574,7 @@ trait Methods {
       title,
       thumb,
       disableNotification,
+      protectContent,
       replyToMessageId,
       allowSendingWithoutReply,
       replyMarkup
@@ -1567,6 +1629,8 @@ trait Methods {
     *   &#064;channelusername)
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the forwarded message from forwarding and saving
     * @param messageId
     *   Message identifier in the chat specified in from_chat_id
     */
@@ -1574,9 +1638,10 @@ trait Methods {
     chatId: ChatId,
     fromChatId: ChatId,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     messageId: Int
   ): Method[Message] = {
-    val req = ForwardMessageReq(chatId, fromChatId, disableNotification, messageId)
+    val req = ForwardMessageReq(chatId, fromChatId, disableNotification, protectContent, messageId)
     MethodReq[Message]("forwardMessage", req.asJson)
   }
 
@@ -1672,6 +1737,8 @@ trait Methods {
     *   Duration of the voice message in seconds
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -1688,6 +1755,7 @@ trait Methods {
     captionEntities: List[MessageEntity] = List.empty,
     duration: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -1700,6 +1768,7 @@ trait Methods {
       captionEntities,
       duration,
       disableNotification,
+      protectContent,
       replyToMessageId,
       allowSendingWithoutReply,
       replyMarkup
@@ -1991,6 +2060,8 @@ trait Methods {
     *   Pass True, if the uploaded video is suitable for streaming
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -2011,6 +2082,7 @@ trait Methods {
     captionEntities: List[MessageEntity] = List.empty,
     supportsStreaming: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -2027,6 +2099,7 @@ trait Methods {
       captionEntities,
       supportsStreaming,
       disableNotification,
+      protectContent,
       replyToMessageId,
       allowSendingWithoutReply,
       replyMarkup
@@ -2159,6 +2232,8 @@ trait Methods {
     *   parse_mode
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -2178,6 +2253,7 @@ trait Methods {
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -2193,6 +2269,7 @@ trait Methods {
       parseMode,
       captionEntities,
       disableNotification,
+      protectContent,
       replyToMessageId,
       allowSendingWithoutReply,
       replyMarkup
@@ -2278,6 +2355,8 @@ trait Methods {
     *   multipart/form-data.
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -2290,12 +2369,20 @@ trait Methods {
     chatId: ChatId,
     sticker: IFile,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
-    val req =
-      SendStickerReq(chatId, sticker, disableNotification, replyToMessageId, allowSendingWithoutReply, replyMarkup)
+    val req = SendStickerReq(
+      chatId,
+      sticker,
+      disableNotification,
+      protectContent,
+      replyToMessageId,
+      allowSendingWithoutReply,
+      replyMarkup
+    )
     MethodReq[Message](
       "sendSticker",
       req.asJson,
@@ -2321,6 +2408,8 @@ trait Methods {
     *   parse_mode
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
@@ -2336,6 +2425,7 @@ trait Methods {
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
     disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -2347,6 +2437,7 @@ trait Methods {
       parseMode,
       captionEntities,
       disableNotification,
+      protectContent,
       replyToMessageId,
       allowSendingWithoutReply,
       replyMarkup

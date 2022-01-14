@@ -20,6 +20,8 @@ import telegramium.bots.KeyboardMarkup
   *   be between 1 and 100000 if specified.
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
+  * @param protectContent
+  *   Protects the contents of the sent message from forwarding and saving
   * @param replyToMessageId
   *   If the message is a reply, ID of the original message
   * @param allowSendingWithoutReply
@@ -37,6 +39,7 @@ final case class SendLocationReq(
   heading: Option[Int] = Option.empty,
   proximityAlertRadius: Option[Int] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
+  protectContent: Option[Boolean] = Option.empty,
   replyToMessageId: Option[Int] = Option.empty,
   allowSendingWithoutReply: Option[Boolean] = Option.empty,
   replyMarkup: Option[KeyboardMarkup] = Option.empty

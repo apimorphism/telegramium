@@ -182,6 +182,7 @@ object CirceImplicits {
           "entities"                    -> x.entities.asJson,
           "disable_web_page_preview"    -> x.disableWebPagePreview.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -199,6 +200,7 @@ object CirceImplicits {
         _entities                 <- h.getOrElse[List[MessageEntity]]("entities")(List.empty)
         _disableWebPagePreview    <- h.get[Option[Boolean]]("disable_web_page_preview")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -210,6 +212,7 @@ object CirceImplicits {
           entities = _entities,
           disableWebPagePreview = _disableWebPagePreview,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -258,6 +261,7 @@ object CirceImplicits {
           "close_date"                  -> x.closeDate.asJson,
           "is_closed"                   -> x.isClosed.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -283,6 +287,7 @@ object CirceImplicits {
         _closeDate                <- h.get[Option[Int]]("close_date")
         _isClosed                 <- h.get[Option[Boolean]]("is_closed")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -302,6 +307,7 @@ object CirceImplicits {
           closeDate = _closeDate,
           isClosed = _isClosed,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -319,6 +325,7 @@ object CirceImplicits {
           "last_name"                   -> x.lastName.asJson,
           "vcard"                       -> x.vcard.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -336,6 +343,7 @@ object CirceImplicits {
         _lastName                 <- h.get[Option[String]]("last_name")
         _vcard                    <- h.get[Option[String]]("vcard")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -347,6 +355,7 @@ object CirceImplicits {
           lastName = _lastName,
           vcard = _vcard,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -444,7 +453,6 @@ object CirceImplicits {
         List(
           "chat_id"        -> x.chatId.asJson,
           "sender_chat_id" -> x.senderChatId.asJson,
-          "until_date"     -> x.untilDate.asJson,
           "method"         -> "banChatSenderChat".asJson
         ).filter(!_._2.isNull)
       )
@@ -455,9 +463,8 @@ object CirceImplicits {
       for {
         _chatId       <- h.get[ChatId]("chat_id")
         _senderChatId <- h.get[Int]("sender_chat_id")
-        _untilDate    <- h.get[Option[Int]]("until_date")
       } yield {
-        BanChatSenderChatReq(chatId = _chatId, senderChatId = _senderChatId, untilDate = _untilDate)
+        BanChatSenderChatReq(chatId = _chatId, senderChatId = _senderChatId)
       }
     }
 
@@ -473,6 +480,7 @@ object CirceImplicits {
           "heading"                     -> x.heading.asJson,
           "proximity_alert_radius"      -> x.proximityAlertRadius.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -492,6 +500,7 @@ object CirceImplicits {
         _heading                  <- h.get[Option[Int]]("heading")
         _proximityAlertRadius     <- h.get[Option[Int]]("proximity_alert_radius")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -505,6 +514,7 @@ object CirceImplicits {
           heading = _heading,
           proximityAlertRadius = _proximityAlertRadius,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -608,6 +618,7 @@ object CirceImplicits {
           "chat_id"                     -> x.chatId.asJson,
           "emoji"                       -> x.emoji.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -622,6 +633,7 @@ object CirceImplicits {
         _chatId                   <- h.get[ChatId]("chat_id")
         _emoji                    <- h.get[Option[Emoji]]("emoji")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -630,6 +642,7 @@ object CirceImplicits {
           chatId = _chatId,
           emoji = _emoji,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -783,6 +796,7 @@ object CirceImplicits {
           "chat_id"                     -> x.chatId.asJson,
           "media"                       -> x.media.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "method"                      -> "sendMediaGroup".asJson
@@ -796,6 +810,7 @@ object CirceImplicits {
         _chatId                   <- h.get[ChatId]("chat_id")
         _media                    <- h.getOrElse[List[InputMedia]]("media")(List.empty)
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
       } yield {
@@ -803,6 +818,7 @@ object CirceImplicits {
           chatId = _chatId,
           media = _media,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply
         )
@@ -816,6 +832,7 @@ object CirceImplicits {
           "chat_id"                     -> x.chatId.asJson,
           "game_short_name"             -> x.gameShortName.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -830,6 +847,7 @@ object CirceImplicits {
         _chatId                   <- h.get[Int]("chat_id")
         _gameShortName            <- h.get[String]("game_short_name")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
@@ -838,6 +856,7 @@ object CirceImplicits {
           chatId = _chatId,
           gameShortName = _gameShortName,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -859,6 +878,7 @@ object CirceImplicits {
           "google_place_id"             -> x.googlePlaceId.asJson,
           "google_place_type"           -> x.googlePlaceType.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -880,6 +900,7 @@ object CirceImplicits {
         _googlePlaceId            <- h.get[Option[String]]("google_place_id")
         _googlePlaceType          <- h.get[Option[String]]("google_place_type")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -895,6 +916,7 @@ object CirceImplicits {
           googlePlaceId = _googlePlaceId,
           googlePlaceType = _googlePlaceType,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -1142,6 +1164,7 @@ object CirceImplicits {
           "parse_mode"                  -> x.parseMode.asJson,
           "caption_entities"            -> x.captionEntities.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -1160,6 +1183,7 @@ object CirceImplicits {
         _parseMode                <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities          <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -1172,6 +1196,7 @@ object CirceImplicits {
           parseMode = _parseMode,
           captionEntities = _captionEntities,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -1189,6 +1214,7 @@ object CirceImplicits {
           "length"                      -> x.length.asJson,
           "thumb"                       -> x.thumb.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -1206,6 +1232,7 @@ object CirceImplicits {
         _length                   <- h.get[Option[Int]]("length")
         _thumb                    <- h.get[Option[IFile]]("thumb")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -1217,6 +1244,7 @@ object CirceImplicits {
           length = _length,
           thumb = _thumb,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -1327,6 +1355,7 @@ object CirceImplicits {
           "send_email_to_provider"        -> x.sendEmailToProvider.asJson,
           "is_flexible"                   -> x.isFlexible.asJson,
           "disable_notification"          -> x.disableNotification.asJson,
+          "protect_content"               -> x.protectContent.asJson,
           "reply_to_message_id"           -> x.replyToMessageId.asJson,
           "allow_sending_without_reply"   -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                  -> x.replyMarkup.asJson,
@@ -1361,6 +1390,7 @@ object CirceImplicits {
         _sendEmailToProvider       <- h.get[Option[Boolean]]("send_email_to_provider")
         _isFlexible                <- h.get[Option[Boolean]]("is_flexible")
         _disableNotification       <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent            <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId          <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply  <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup               <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
@@ -1389,6 +1419,7 @@ object CirceImplicits {
           sendEmailToProvider = _sendEmailToProvider,
           isFlexible = _isFlexible,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -1408,6 +1439,7 @@ object CirceImplicits {
           "caption_entities"               -> x.captionEntities.asJson,
           "disable_content_type_detection" -> x.disableContentTypeDetection.asJson,
           "disable_notification"           -> x.disableNotification.asJson,
+          "protect_content"                -> x.protectContent.asJson,
           "reply_to_message_id"            -> x.replyToMessageId.asJson,
           "allow_sending_without_reply"    -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                   -> x.replyMarkup.asJson,
@@ -1427,6 +1459,7 @@ object CirceImplicits {
         _captionEntities             <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _disableContentTypeDetection <- h.get[Option[Boolean]]("disable_content_type_detection")
         _disableNotification         <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent              <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId            <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply    <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup                 <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -1440,6 +1473,7 @@ object CirceImplicits {
           captionEntities = _captionEntities,
           disableContentTypeDetection = _disableContentTypeDetection,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -1542,6 +1576,7 @@ object CirceImplicits {
           "title"                       -> x.title.asJson,
           "thumb"                       -> x.thumb.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -1563,6 +1598,7 @@ object CirceImplicits {
         _title                    <- h.get[Option[String]]("title")
         _thumb                    <- h.get[Option[IFile]]("thumb")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -1578,6 +1614,7 @@ object CirceImplicits {
           title = _title,
           thumb = _thumb,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -1620,6 +1657,7 @@ object CirceImplicits {
           "chat_id"              -> x.chatId.asJson,
           "from_chat_id"         -> x.fromChatId.asJson,
           "disable_notification" -> x.disableNotification.asJson,
+          "protect_content"      -> x.protectContent.asJson,
           "message_id"           -> x.messageId.asJson,
           "method"               -> "forwardMessage".asJson
         ).filter(!_._2.isNull)
@@ -1632,12 +1670,14 @@ object CirceImplicits {
         _chatId              <- h.get[ChatId]("chat_id")
         _fromChatId          <- h.get[ChatId]("from_chat_id")
         _disableNotification <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent      <- h.get[Option[Boolean]]("protect_content")
         _messageId           <- h.get[Int]("message_id")
       } yield {
         ForwardMessageReq(
           chatId = _chatId,
           fromChatId = _fromChatId,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           messageId = _messageId
         )
       }
@@ -1740,6 +1780,7 @@ object CirceImplicits {
           "caption_entities"            -> x.captionEntities.asJson,
           "duration"                    -> x.duration.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -1758,6 +1799,7 @@ object CirceImplicits {
         _captionEntities          <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _duration                 <- h.get[Option[Int]]("duration")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -1770,6 +1812,7 @@ object CirceImplicits {
           captionEntities = _captionEntities,
           duration = _duration,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -2054,6 +2097,7 @@ object CirceImplicits {
           "caption_entities"            -> x.captionEntities.asJson,
           "supports_streaming"          -> x.supportsStreaming.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -2076,6 +2120,7 @@ object CirceImplicits {
         _captionEntities          <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _supportsStreaming        <- h.get[Option[Boolean]]("supports_streaming")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -2092,6 +2137,7 @@ object CirceImplicits {
           captionEntities = _captionEntities,
           supportsStreaming = _supportsStreaming,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -2240,6 +2286,7 @@ object CirceImplicits {
           "parse_mode"                  -> x.parseMode.asJson,
           "caption_entities"            -> x.captionEntities.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -2261,6 +2308,7 @@ object CirceImplicits {
         _parseMode                <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities          <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -2276,6 +2324,7 @@ object CirceImplicits {
           parseMode = _parseMode,
           captionEntities = _captionEntities,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -2364,6 +2413,7 @@ object CirceImplicits {
           "chat_id"                     -> x.chatId.asJson,
           "sticker"                     -> x.sticker.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -2378,6 +2428,7 @@ object CirceImplicits {
         _chatId                   <- h.get[ChatId]("chat_id")
         _sticker                  <- h.get[IFile]("sticker")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -2386,6 +2437,7 @@ object CirceImplicits {
           chatId = _chatId,
           sticker = _sticker,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
@@ -2403,6 +2455,7 @@ object CirceImplicits {
           "parse_mode"                  -> x.parseMode.asJson,
           "caption_entities"            -> x.captionEntities.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
+          "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "reply_markup"                -> x.replyMarkup.asJson,
@@ -2420,6 +2473,7 @@ object CirceImplicits {
         _parseMode                <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities          <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
         _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
         _replyMarkup              <- h.get[Option[KeyboardMarkup]]("reply_markup")
@@ -2431,6 +2485,7 @@ object CirceImplicits {
           parseMode = _parseMode,
           captionEntities = _captionEntities,
           disableNotification = _disableNotification,
+          protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup

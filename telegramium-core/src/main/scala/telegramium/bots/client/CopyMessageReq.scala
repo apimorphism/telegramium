@@ -21,6 +21,8 @@ import telegramium.bots.KeyboardMarkup
   *   parse_mode
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
+  * @param protectContent
+  *   Protects the contents of the sent message from forwarding and saving
   * @param replyToMessageId
   *   If the message is a reply, ID of the original message
   * @param allowSendingWithoutReply
@@ -37,6 +39,7 @@ final case class CopyMessageReq(
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
   disableNotification: Option[Boolean] = Option.empty,
+  protectContent: Option[Boolean] = Option.empty,
   replyToMessageId: Option[Int] = Option.empty,
   allowSendingWithoutReply: Option[Boolean] = Option.empty,
   replyMarkup: Option[KeyboardMarkup] = Option.empty

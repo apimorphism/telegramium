@@ -2209,6 +2209,7 @@ object CirceImplicits {
     case bold: BoldMessageEntity           => bold.asJson.mapObject(_.add("type", Json.fromString("bold")))
     case cashtag: CashtagMessageEntity     => cashtag.asJson.mapObject(_.add("type", Json.fromString("cashtag")))
     case code: CodeMessageEntity           => code.asJson.mapObject(_.add("type", Json.fromString("code")))
+    case spoiler: SpoilerMessageEntity     => spoiler.asJson.mapObject(_.add("type", Json.fromString("spoiler")))
     case mention: MentionMessageEntity     => mention.asJson.mapObject(_.add("type", Json.fromString("mention")))
     case hashtag: HashtagMessageEntity     => hashtag.asJson.mapObject(_.add("type", Json.fromString("hashtag")))
     case text_link: TextLinkMessageEntity  => text_link.asJson.mapObject(_.add("type", Json.fromString("text_link")))
@@ -2230,6 +2231,7 @@ object CirceImplicits {
       case "bold"          => Decoder[BoldMessageEntity]
       case "cashtag"       => Decoder[CashtagMessageEntity]
       case "code"          => Decoder[CodeMessageEntity]
+      case "spoiler"       => Decoder[SpoilerMessageEntity]
       case "mention"       => Decoder[MentionMessageEntity]
       case "hashtag"       => Decoder[HashtagMessageEntity]
       case "text_link"     => Decoder[TextLinkMessageEntity]
@@ -2314,6 +2316,26 @@ object CirceImplicits {
         _length <- h.get[Int]("length")
       } yield {
         BotCommandMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val spoilermessageentityEncoder: Encoder[SpoilerMessageEntity] =
+    (x: SpoilerMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val spoilermessageentityDecoder: Decoder[SpoilerMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        SpoilerMessageEntity(offset = _offset, length = _length)
       }
     }
 
