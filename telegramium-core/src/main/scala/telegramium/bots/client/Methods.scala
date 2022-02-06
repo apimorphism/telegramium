@@ -348,7 +348,8 @@ trait Methods {
   }
 
   /** Use this method to create a new sticker set owned by a user. The bot will be able to edit the sticker set thus
-    * created. You must use exactly one of the fields png_sticker or tgs_sticker. Returns True on success.
+    * created. You must use exactly one of the fields png_sticker, tgs_sticker, or webm_sticker. Returns True on
+    * success.
     *
     * @param userId
     *   User identifier of created sticker set owner
@@ -365,7 +366,10 @@ trait Methods {
     *   using multipart/form-data.
     * @param tgsSticker
     *   TGS animation with the sticker, uploaded using multipart/form-data. See
-    *   https://core.telegram.org/animated_stickers#technical-requirements for technical requirements
+    *   https://core.telegram.org/stickers#animated-sticker-requirements for technical requirements
+    * @param webmSticker
+    *   WEBM video with the sticker, uploaded using multipart/form-data. See
+    *   https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
     * @param emojis
     *   One or more emoji corresponding to the sticker
     * @param containsMasks
@@ -379,15 +383,28 @@ trait Methods {
     title: String,
     pngSticker: Option[IFile] = Option.empty,
     tgsSticker: Option[IFile] = Option.empty,
+    webmSticker: Option[IFile] = Option.empty,
     emojis: String,
     containsMasks: Option[Boolean] = Option.empty,
     maskPosition: Option[MaskPosition] = Option.empty
   ): Method[Boolean] = {
-    val req = CreateNewStickerSetReq(userId, name, title, pngSticker, tgsSticker, emojis, containsMasks, maskPosition)
+    val req = CreateNewStickerSetReq(
+      userId,
+      name,
+      title,
+      pngSticker,
+      tgsSticker,
+      webmSticker,
+      emojis,
+      containsMasks,
+      maskPosition
+    )
     MethodReq[Boolean](
       "createNewStickerSet",
       req.asJson,
-      Map("png_sticker" -> pngSticker, "tgs_sticker" -> tgsSticker).collect { case (k, Some(v)) => k -> v }
+      Map("png_sticker" -> pngSticker, "tgs_sticker" -> tgsSticker, "webm_sticker" -> webmSticker).collect {
+        case (k, Some(v)) => k -> v
+      }
     )
   }
 
@@ -622,8 +639,9 @@ trait Methods {
   }
 
   /** Use this method to add a new sticker to a set created by the bot. You must use exactly one of the fields
-    * png_sticker or tgs_sticker. Animated stickers can be added to animated sticker sets and only to them. Animated
-    * sticker sets can have up to 50 stickers. Static sticker sets can have up to 120 stickers. Returns True on success.
+    * png_sticker, tgs_sticker, or webm_sticker. Animated stickers can be added to animated sticker sets and only to
+    * them. Animated sticker sets can have up to 50 stickers. Static sticker sets can have up to 120 stickers. Returns
+    * True on success.
     *
     * @param userId
     *   User identifier of sticker set owner
@@ -636,7 +654,10 @@ trait Methods {
     *   using multipart/form-data.
     * @param tgsSticker
     *   TGS animation with the sticker, uploaded using multipart/form-data. See
-    *   https://core.telegram.org/animated_stickers#technical-requirements for technical requirements
+    *   https://core.telegram.org/stickers#animated-sticker-requirements for technical requirements
+    * @param webmSticker
+    *   WEBM video with the sticker, uploaded using multipart/form-data. See
+    *   https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
     * @param emojis
     *   One or more emoji corresponding to the sticker
     * @param maskPosition
@@ -647,14 +668,17 @@ trait Methods {
     name: String,
     pngSticker: Option[IFile] = Option.empty,
     tgsSticker: Option[IFile] = Option.empty,
+    webmSticker: Option[IFile] = Option.empty,
     emojis: String,
     maskPosition: Option[MaskPosition] = Option.empty
   ): Method[Boolean] = {
-    val req = AddStickerToSetReq(userId, name, pngSticker, tgsSticker, emojis, maskPosition)
+    val req = AddStickerToSetReq(userId, name, pngSticker, tgsSticker, webmSticker, emojis, maskPosition)
     MethodReq[Boolean](
       "addStickerToSet",
       req.asJson,
-      Map("png_sticker" -> pngSticker, "tgs_sticker" -> tgsSticker).collect { case (k, Some(v)) => k -> v }
+      Map("png_sticker" -> pngSticker, "tgs_sticker" -> tgsSticker, "webm_sticker" -> webmSticker).collect {
+        case (k, Some(v)) => k -> v
+      }
     )
   }
 
@@ -857,7 +881,7 @@ trait Methods {
     *
     * @param chatId
     *   Unique identifier for the target group or username of the target supergroup or channel (in the format
-    *   &#064;username)
+    *   &#064;channelusername)
     * @param userId
     *   Unique identifier of the target user
     * @param onlyIfBanned
@@ -1957,7 +1981,7 @@ trait Methods {
   }
 
   /** Use this method to set the thumbnail of a sticker set. Animated thumbnails can be set for animated sticker sets
-    * only. Returns True on success.
+    * only. Video thumbnails can be set only for video sticker sets only. Returns True on success.
     *
     * @param name
     *   Sticker set name
@@ -1966,10 +1990,12 @@ trait Methods {
     * @param thumb
     *   A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height exactly 100px, or
     *   a TGS animation with the thumbnail up to 32 kilobytes in size; see
-    *   https://core.telegram.org/animated_stickers#technical-requirements for animated sticker technical requirements.
-    *   Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a
-    *   String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. Animated
-    *   sticker set thumbnail can't be uploaded via HTTP URL.
+    *   https://core.telegram.org/stickers#animated-sticker-requirements for animated sticker technical requirements, or
+    *   a WEBM video with the thumbnail up to 32 kilobytes in size; see
+    *   https://core.telegram.org/stickers#video-sticker-requirements for video sticker technical requirements. Pass a
+    *   file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for
+    *   Telegram to get a file from the Internet, or upload a new one using multipart/form-data. Animated sticker set
+    *   thumbnails can't be uploaded via HTTP URL.
     */
   def setStickerSetThumb(name: String, userId: Long, thumb: Option[IFile] = Option.empty): Method[Boolean] = {
     val req = SetStickerSetThumbReq(name, userId, thumb)
@@ -2345,7 +2371,8 @@ trait Methods {
     MethodReq[Boolean]("answerPreCheckoutQuery", req.asJson)
   }
 
-  /** Use this method to send static .WEBP or animated .TGS stickers. On success, the sent Message is returned.
+  /** Use this method to send static .WEBP, animated .TGS, or video .WEBM stickers. On success, the sent Message is
+    * returned.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)

@@ -14,7 +14,10 @@ import telegramium.bots.MaskPosition
   *   using multipart/form-data.
   * @param tgsSticker
   *   TGS animation with the sticker, uploaded using multipart/form-data. See
-  *   https://core.telegram.org/animated_stickers#technical-requirements for technical requirements
+  *   https://core.telegram.org/stickers#animated-sticker-requirements for technical requirements
+  * @param webmSticker
+  *   WEBM video with the sticker, uploaded using multipart/form-data. See
+  *   https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
   * @param emojis
   *   One or more emoji corresponding to the sticker
   * @param maskPosition
@@ -25,6 +28,7 @@ final case class AddStickerToSetReq(
   name: String,
   pngSticker: Option[IFile] = Option.empty,
   tgsSticker: Option[IFile] = Option.empty,
+  webmSticker: Option[IFile] = Option.empty,
   emojis: String,
   maskPosition: Option[MaskPosition] = Option.empty
 )

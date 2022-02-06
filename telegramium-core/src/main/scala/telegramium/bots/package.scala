@@ -3242,6 +3242,7 @@ object CirceImplicits {
           "name"           -> x.name.asJson,
           "title"          -> x.title.asJson,
           "is_animated"    -> x.isAnimated.asJson,
+          "is_video"       -> x.isVideo.asJson,
           "contains_masks" -> x.containsMasks.asJson,
           "stickers"       -> x.stickers.asJson,
           "thumb"          -> x.thumb.asJson
@@ -3255,6 +3256,7 @@ object CirceImplicits {
         _name          <- h.get[String]("name")
         _title         <- h.get[String]("title")
         _isAnimated    <- h.get[Boolean]("is_animated")
+        _isVideo       <- h.get[Boolean]("is_video")
         _containsMasks <- h.get[Boolean]("contains_masks")
         _stickers      <- h.getOrElse[List[Sticker]]("stickers")(List.empty)
         _thumb         <- h.get[Option[PhotoSize]]("thumb")
@@ -3263,6 +3265,7 @@ object CirceImplicits {
           name = _name,
           title = _title,
           isAnimated = _isAnimated,
+          isVideo = _isVideo,
           containsMasks = _containsMasks,
           stickers = _stickers,
           thumb = _thumb
@@ -4011,6 +4014,7 @@ object CirceImplicits {
           "width"          -> x.width.asJson,
           "height"         -> x.height.asJson,
           "is_animated"    -> x.isAnimated.asJson,
+          "is_video"       -> x.isVideo.asJson,
           "thumb"          -> x.thumb.asJson,
           "emoji"          -> x.emoji.asJson,
           "set_name"       -> x.setName.asJson,
@@ -4028,6 +4032,7 @@ object CirceImplicits {
         _width        <- h.get[Int]("width")
         _height       <- h.get[Int]("height")
         _isAnimated   <- h.get[Boolean]("is_animated")
+        _isVideo      <- h.get[Boolean]("is_video")
         _thumb        <- h.get[Option[PhotoSize]]("thumb")
         _emoji        <- h.get[Option[Emoji]]("emoji")
         _setName      <- h.get[Option[String]]("set_name")
@@ -4040,6 +4045,7 @@ object CirceImplicits {
           width = _width,
           height = _height,
           isAnimated = _isAnimated,
+          isVideo = _isVideo,
           thumb = _thumb,
           emoji = _emoji,
           setName = _setName,

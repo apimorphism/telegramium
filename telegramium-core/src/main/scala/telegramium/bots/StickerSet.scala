@@ -8,17 +8,20 @@ package telegramium.bots
   *   Sticker set title
   * @param isAnimated
   *   True, if the sticker set contains animated stickers
+  * @param isVideo
+  *   True, if the sticker set contains video stickers
   * @param containsMasks
   *   True, if the sticker set contains masks
   * @param stickers
   *   List of all set stickers
   * @param thumb
-  *   Optional. Sticker set thumbnail in the .WEBP or .TGS format
+  *   Optional. Sticker set thumbnail in the .WEBP, .TGS, or .WEBM format
   */
 final case class StickerSet(
   name: String,
   title: String,
   isAnimated: Boolean,
+  isVideo: Boolean,
   containsMasks: Boolean,
   stickers: List[Sticker] = List.empty,
   thumb: Option[PhotoSize] = Option.empty

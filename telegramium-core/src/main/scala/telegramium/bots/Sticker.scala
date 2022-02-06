@@ -13,6 +13,8 @@ package telegramium.bots
   *   Sticker height
   * @param isAnimated
   *   True, if the sticker is animated
+  * @param isVideo
+  *   True, if the sticker is a video sticker
   * @param thumb
   *   Optional. Sticker thumbnail in the .WEBP or .JPG format
   * @param emoji
@@ -30,6 +32,7 @@ final case class Sticker(
   width: Int,
   height: Int,
   isAnimated: Boolean,
+  isVideo: Boolean,
   thumb: Option[PhotoSize] = Option.empty,
   emoji: Option[Emoji] = Option.empty,
   setName: Option[String] = Option.empty,

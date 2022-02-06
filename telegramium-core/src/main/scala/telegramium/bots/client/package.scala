@@ -372,6 +372,7 @@ object CirceImplicits {
           "title"          -> x.title.asJson,
           "png_sticker"    -> x.pngSticker.asJson,
           "tgs_sticker"    -> x.tgsSticker.asJson,
+          "webm_sticker"   -> x.webmSticker.asJson,
           "emojis"         -> x.emojis.asJson,
           "contains_masks" -> x.containsMasks.asJson,
           "mask_position"  -> x.maskPosition.asJson,
@@ -388,6 +389,7 @@ object CirceImplicits {
         _title         <- h.get[String]("title")
         _pngSticker    <- h.get[Option[IFile]]("png_sticker")
         _tgsSticker    <- h.get[Option[IFile]]("tgs_sticker")
+        _webmSticker   <- h.get[Option[IFile]]("webm_sticker")
         _emojis        <- h.get[String]("emojis")
         _containsMasks <- h.get[Option[Boolean]]("contains_masks")
         _maskPosition  <- h.get[Option[MaskPosition]]("mask_position")
@@ -398,6 +400,7 @@ object CirceImplicits {
           title = _title,
           pngSticker = _pngSticker,
           tgsSticker = _tgsSticker,
+          webmSticker = _webmSticker,
           emojis = _emojis,
           containsMasks = _containsMasks,
           maskPosition = _maskPosition
@@ -679,6 +682,7 @@ object CirceImplicits {
           "name"          -> x.name.asJson,
           "png_sticker"   -> x.pngSticker.asJson,
           "tgs_sticker"   -> x.tgsSticker.asJson,
+          "webm_sticker"  -> x.webmSticker.asJson,
           "emojis"        -> x.emojis.asJson,
           "mask_position" -> x.maskPosition.asJson,
           "method"        -> "addStickerToSet".asJson
@@ -693,6 +697,7 @@ object CirceImplicits {
         _name         <- h.get[String]("name")
         _pngSticker   <- h.get[Option[IFile]]("png_sticker")
         _tgsSticker   <- h.get[Option[IFile]]("tgs_sticker")
+        _webmSticker  <- h.get[Option[IFile]]("webm_sticker")
         _emojis       <- h.get[String]("emojis")
         _maskPosition <- h.get[Option[MaskPosition]]("mask_position")
       } yield {
@@ -701,6 +706,7 @@ object CirceImplicits {
           name = _name,
           pngSticker = _pngSticker,
           tgsSticker = _tgsSticker,
+          webmSticker = _webmSticker,
           emojis = _emojis,
           maskPosition = _maskPosition
         )
