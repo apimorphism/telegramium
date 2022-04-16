@@ -260,7 +260,7 @@ object CirceImplicits {
           "is_anonymous"           -> x.isAnonymous.asJson,
           "can_manage_chat"        -> x.canManageChat.asJson,
           "can_delete_messages"    -> x.canDeleteMessages.asJson,
-          "can_manage_voice_chats" -> x.canManageVoiceChats.asJson,
+          "can_manage_video_chats" -> x.canManageVideoChats.asJson,
           "can_restrict_members"   -> x.canRestrictMembers.asJson,
           "can_promote_members"    -> x.canPromoteMembers.asJson,
           "can_change_info"        -> x.canChangeInfo.asJson,
@@ -282,7 +282,7 @@ object CirceImplicits {
         _isAnonymous         <- h.get[Boolean]("is_anonymous")
         _canManageChat       <- h.get[Boolean]("can_manage_chat")
         _canDeleteMessages   <- h.get[Boolean]("can_delete_messages")
-        _canManageVoiceChats <- h.get[Boolean]("can_manage_voice_chats")
+        _canManageVideoChats <- h.get[Boolean]("can_manage_video_chats")
         _canRestrictMembers  <- h.get[Boolean]("can_restrict_members")
         _canPromoteMembers   <- h.get[Boolean]("can_promote_members")
         _canChangeInfo       <- h.get[Boolean]("can_change_info")
@@ -299,7 +299,7 @@ object CirceImplicits {
           isAnonymous = _isAnonymous,
           canManageChat = _canManageChat,
           canDeleteMessages = _canDeleteMessages,
-          canManageVoiceChats = _canManageVoiceChats,
+          canManageVideoChats = _canManageVideoChats,
           canRestrictMembers = _canRestrictMembers,
           canPromoteMembers = _canPromoteMembers,
           canChangeInfo = _canChangeInfo,
@@ -534,6 +534,50 @@ object CirceImplicits {
 
   implicit lazy val botcommandscopeallprivatechatsDecoder: Decoder[BotCommandScopeAllPrivateChats.type] =
     (_: HCursor) => Right(BotCommandScopeAllPrivateChats)
+
+  implicit lazy val menubuttonEncoder: Encoder[MenuButton] = {
+    case web_app: MenuButtonWebApp         => web_app.asJson.mapObject(_.add("type", Json.fromString("web_app")))
+    case default: MenuButtonDefault.type   => default.asJson.mapObject(_.add("type", Json.fromString("default")))
+    case commands: MenuButtonCommands.type => commands.asJson.mapObject(_.add("type", Json.fromString("commands")))
+  }
+
+  implicit lazy val menubuttonDecoder: Decoder[MenuButton] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "web_app"  => Decoder[MenuButtonWebApp]
+      case "default"  => Decoder[MenuButtonDefault.type]
+      case "commands" => Decoder[MenuButtonCommands.type]
+    }
+  } yield value
+
+  implicit lazy val menubuttondefaultEncoder: Encoder[MenuButtonDefault.type] = (_: MenuButtonDefault.type) => ().asJson
+  implicit lazy val menubuttondefaultDecoder: Decoder[MenuButtonDefault.type] = (_: HCursor) => Right(MenuButtonDefault)
+
+  implicit lazy val menubuttonwebappEncoder: Encoder[MenuButtonWebApp] =
+    (x: MenuButtonWebApp) => {
+      Json.fromFields(
+        List(
+          "text"    -> x.text.asJson,
+          "web_app" -> x.webApp.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val menubuttonwebappDecoder: Decoder[MenuButtonWebApp] =
+    Decoder.instance { h =>
+      for {
+        _text   <- h.get[String]("text")
+        _webApp <- h.get[WebAppInfo]("web_app")
+      } yield {
+        MenuButtonWebApp(text = _text, webApp = _webApp)
+      }
+    }
+
+  implicit lazy val menubuttoncommandsEncoder: Encoder[MenuButtonCommands.type] = (_: MenuButtonCommands.type) =>
+    ().asJson
+
+  implicit lazy val menubuttoncommandsDecoder: Decoder[MenuButtonCommands.type] = (_: HCursor) =>
+    Right(MenuButtonCommands)
 
   implicit lazy val inputmediaEncoder: Encoder[InputMedia] = {
     case photo: InputMediaPhoto         => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
@@ -2826,24 +2870,6 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val voicechatendedEncoder: Encoder[VoiceChatEnded] =
-    (x: VoiceChatEnded) => {
-      Json.fromFields(
-        List(
-          "duration" -> x.duration.asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val voicechatendedDecoder: Decoder[VoiceChatEnded] =
-    Decoder.instance { h =>
-      for {
-        _duration <- h.get[Int]("duration")
-      } yield {
-        VoiceChatEnded(duration = _duration)
-      }
-    }
-
   implicit lazy val chatpermissionsEncoder: Encoder[ChatPermissions] =
     (x: ChatPermissions) => {
       Json.fromFields(
@@ -3083,7 +3109,8 @@ object CirceImplicits {
           "text"             -> x.text.asJson,
           "request_contact"  -> x.requestContact.asJson,
           "request_location" -> x.requestLocation.asJson,
-          "request_poll"     -> x.requestPoll.asJson
+          "request_poll"     -> x.requestPoll.asJson,
+          "web_app"          -> x.webApp.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3095,12 +3122,14 @@ object CirceImplicits {
         _requestContact  <- h.get[Option[Boolean]]("request_contact")
         _requestLocation <- h.get[Option[Boolean]]("request_location")
         _requestPoll     <- h.get[Option[KeyboardButtonPollType]]("request_poll")
+        _webApp          <- h.get[Option[WebAppInfo]]("web_app")
       } yield {
         KeyboardButton(
           text = _text,
           requestContact = _requestContact,
           requestLocation = _requestLocation,
-          requestPoll = _requestPoll
+          requestPoll = _requestPoll,
+          webApp = _webApp
         )
       }
     }
@@ -3158,6 +3187,24 @@ object CirceImplicits {
           height = _height,
           fileSize = _fileSize
         )
+      }
+    }
+
+  implicit lazy val videochatparticipantsinvitedEncoder: Encoder[VideoChatParticipantsInvited] =
+    (x: VideoChatParticipantsInvited) => {
+      Json.fromFields(
+        List(
+          "users" -> x.users.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val videochatparticipantsinvitedDecoder: Decoder[VideoChatParticipantsInvited] =
+    Decoder.instance { h =>
+      for {
+        _users <- h.getOrElse[List[User]]("users")(List.empty)
+      } yield {
+        VideoChatParticipantsInvited(users = _users)
       }
     }
 
@@ -3327,6 +3374,24 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val webappinfoEncoder: Encoder[WebAppInfo] =
+    (x: WebAppInfo) => {
+      Json.fromFields(
+        List(
+          "url" -> x.url.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val webappinfoDecoder: Decoder[WebAppInfo] =
+    Decoder.instance { h =>
+      for {
+        _url <- h.get[String]("url")
+      } yield {
+        WebAppInfo(url = _url)
+      }
+    }
+
   implicit lazy val gamehighscoreEncoder: Encoder[GameHighScore] =
     (x: GameHighScore) => {
       Json.fromFields(
@@ -3422,6 +3487,26 @@ object CirceImplicits {
           googlePlaceId = _googlePlaceId,
           googlePlaceType = _googlePlaceType
         )
+      }
+    }
+
+  implicit lazy val webappdataEncoder: Encoder[WebAppData] =
+    (x: WebAppData) => {
+      Json.fromFields(
+        List(
+          "data"        -> x.data.asJson,
+          "button_text" -> x.buttonText.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val webappdataDecoder: Decoder[WebAppData] =
+    Decoder.instance { h =>
+      for {
+        _data       <- h.get[String]("data")
+        _buttonText <- h.get[String]("button_text")
+      } yield {
+        WebAppData(data = _data, buttonText = _buttonText)
       }
     }
 
@@ -3606,6 +3691,24 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val videochatendedEncoder: Encoder[VideoChatEnded] =
+    (x: VideoChatEnded) => {
+      Json.fromFields(
+        List(
+          "duration" -> x.duration.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val videochatendedDecoder: Decoder[VideoChatEnded] =
+    Decoder.instance { h =>
+      for {
+        _duration <- h.get[Int]("duration")
+      } yield {
+        VideoChatEnded(duration = _duration)
+      }
+    }
+
   implicit lazy val gameEncoder: Encoder[Game] =
     (x: Game) => {
       Json.fromFields(
@@ -3741,14 +3844,15 @@ object CirceImplicits {
     (x: WebhookInfo) => {
       Json.fromFields(
         List(
-          "url"                    -> x.url.asJson,
-          "has_custom_certificate" -> x.hasCustomCertificate.asJson,
-          "pending_update_count"   -> x.pendingUpdateCount.asJson,
-          "ip_address"             -> x.ipAddress.asJson,
-          "last_error_date"        -> x.lastErrorDate.asJson,
-          "last_error_message"     -> x.lastErrorMessage.asJson,
-          "max_connections"        -> x.maxConnections.asJson,
-          "allowed_updates"        -> x.allowedUpdates.asJson
+          "url"                             -> x.url.asJson,
+          "has_custom_certificate"          -> x.hasCustomCertificate.asJson,
+          "pending_update_count"            -> x.pendingUpdateCount.asJson,
+          "ip_address"                      -> x.ipAddress.asJson,
+          "last_error_date"                 -> x.lastErrorDate.asJson,
+          "last_error_message"              -> x.lastErrorMessage.asJson,
+          "last_synchronization_error_date" -> x.lastSynchronizationErrorDate.asJson,
+          "max_connections"                 -> x.maxConnections.asJson,
+          "allowed_updates"                 -> x.allowedUpdates.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3756,14 +3860,15 @@ object CirceImplicits {
   implicit lazy val webhookinfoDecoder: Decoder[WebhookInfo] =
     Decoder.instance { h =>
       for {
-        _url                  <- h.get[String]("url")
-        _hasCustomCertificate <- h.get[Boolean]("has_custom_certificate")
-        _pendingUpdateCount   <- h.get[Int]("pending_update_count")
-        _ipAddress            <- h.get[Option[String]]("ip_address")
-        _lastErrorDate        <- h.get[Option[Int]]("last_error_date")
-        _lastErrorMessage     <- h.get[Option[String]]("last_error_message")
-        _maxConnections       <- h.get[Option[Int]]("max_connections")
-        _allowedUpdates       <- h.getOrElse[List[String]]("allowed_updates")(List.empty)
+        _url                          <- h.get[String]("url")
+        _hasCustomCertificate         <- h.get[Boolean]("has_custom_certificate")
+        _pendingUpdateCount           <- h.get[Int]("pending_update_count")
+        _ipAddress                    <- h.get[Option[String]]("ip_address")
+        _lastErrorDate                <- h.get[Option[Int]]("last_error_date")
+        _lastErrorMessage             <- h.get[Option[String]]("last_error_message")
+        _lastSynchronizationErrorDate <- h.get[Option[Int]]("last_synchronization_error_date")
+        _maxConnections               <- h.get[Option[Int]]("max_connections")
+        _allowedUpdates               <- h.getOrElse[List[String]]("allowed_updates")(List.empty)
       } yield {
         WebhookInfo(
           url = _url,
@@ -3772,6 +3877,7 @@ object CirceImplicits {
           ipAddress = _ipAddress,
           lastErrorDate = _lastErrorDate,
           lastErrorMessage = _lastErrorMessage,
+          lastSynchronizationErrorDate = _lastSynchronizationErrorDate,
           maxConnections = _maxConnections,
           allowedUpdates = _allowedUpdates
         )
@@ -3797,24 +3903,6 @@ object CirceImplicits {
         _distance <- h.get[Int]("distance")
       } yield {
         ProximityAlertTriggered(traveler = _traveler, watcher = _watcher, distance = _distance)
-      }
-    }
-
-  implicit lazy val voicechatscheduledEncoder: Encoder[VoiceChatScheduled] =
-    (x: VoiceChatScheduled) => {
-      Json.fromFields(
-        List(
-          "start_date" -> x.startDate.asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val voicechatscheduledDecoder: Decoder[VoiceChatScheduled] =
-    Decoder.instance { h =>
-      for {
-        _startDate <- h.get[Int]("start_date")
-      } yield {
-        VoiceChatScheduled(startDate = _startDate)
       }
     }
 
@@ -3850,6 +3938,24 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val videochatscheduledEncoder: Encoder[VideoChatScheduled] =
+    (x: VideoChatScheduled) => {
+      Json.fromFields(
+        List(
+          "start_date" -> x.startDate.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val videochatscheduledDecoder: Decoder[VideoChatScheduled] =
+    Decoder.instance { h =>
+      for {
+        _startDate <- h.get[Int]("start_date")
+      } yield {
+        VideoChatScheduled(startDate = _startDate)
+      }
+    }
+
   implicit lazy val chatphotoEncoder: Encoder[ChatPhoto] =
     (x: ChatPhoto) => {
       Json.fromFields(
@@ -3876,6 +3982,24 @@ object CirceImplicits {
           bigFileId = _bigFileId,
           bigFileUniqueId = _bigFileUniqueId
         )
+      }
+    }
+
+  implicit lazy val sentwebappmessageEncoder: Encoder[SentWebAppMessage] =
+    (x: SentWebAppMessage) => {
+      Json.fromFields(
+        List(
+          "inline_message_id" -> x.inlineMessageId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val sentwebappmessageDecoder: Decoder[SentWebAppMessage] =
+    Decoder.instance { h =>
+      for {
+        _inlineMessageId <- h.get[Option[String]]("inline_message_id")
+      } yield {
+        SentWebAppMessage(inlineMessageId = _inlineMessageId)
       }
     }
 
@@ -4112,10 +4236,11 @@ object CirceImplicits {
           "connected_website"                 -> x.connectedWebsite.asJson,
           "passport_data"                     -> x.passportData.asJson,
           "proximity_alert_triggered"         -> x.proximityAlertTriggered.asJson,
-          "voice_chat_scheduled"              -> x.voiceChatScheduled.asJson,
-          "voice_chat_started"                -> x.voiceChatStarted.asJson,
-          "voice_chat_ended"                  -> x.voiceChatEnded.asJson,
-          "voice_chat_participants_invited"   -> x.voiceChatParticipantsInvited.asJson,
+          "video_chat_scheduled"              -> x.videoChatScheduled.asJson,
+          "video_chat_started"                -> x.videoChatStarted.asJson,
+          "video_chat_ended"                  -> x.videoChatEnded.asJson,
+          "video_chat_participants_invited"   -> x.videoChatParticipantsInvited.asJson,
+          "web_app_data"                      -> x.webAppData.asJson,
           "reply_markup"                      -> x.replyMarkup.asJson
         ).filter(!_._2.isNull)
       )
@@ -4179,10 +4304,11 @@ object CirceImplicits {
         _connectedWebsite             <- h.get[Option[String]]("connected_website")
         _passportData                 <- h.get[Option[PassportData]]("passport_data")
         _proximityAlertTriggered      <- h.get[Option[ProximityAlertTriggered]]("proximity_alert_triggered")
-        _voiceChatScheduled           <- h.get[Option[VoiceChatScheduled]]("voice_chat_scheduled")
-        _voiceChatStarted             <- h.get[Option[VoiceChatStarted.type]]("voice_chat_started")
-        _voiceChatEnded               <- h.get[Option[VoiceChatEnded]]("voice_chat_ended")
-        _voiceChatParticipantsInvited <- h.get[Option[VoiceChatParticipantsInvited]]("voice_chat_participants_invited")
+        _videoChatScheduled           <- h.get[Option[VideoChatScheduled]]("video_chat_scheduled")
+        _videoChatStarted             <- h.get[Option[VideoChatStarted.type]]("video_chat_started")
+        _videoChatEnded               <- h.get[Option[VideoChatEnded]]("video_chat_ended")
+        _videoChatParticipantsInvited <- h.get[Option[VideoChatParticipantsInvited]]("video_chat_participants_invited")
+        _webAppData                   <- h.get[Option[WebAppData]]("web_app_data")
         _replyMarkup                  <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
       } yield {
         Message(
@@ -4239,10 +4365,11 @@ object CirceImplicits {
           connectedWebsite = _connectedWebsite,
           passportData = _passportData,
           proximityAlertTriggered = _proximityAlertTriggered,
-          voiceChatScheduled = _voiceChatScheduled,
-          voiceChatStarted = _voiceChatStarted,
-          voiceChatEnded = _voiceChatEnded,
-          voiceChatParticipantsInvited = _voiceChatParticipantsInvited,
+          videoChatScheduled = _videoChatScheduled,
+          videoChatStarted = _videoChatStarted,
+          videoChatEnded = _videoChatEnded,
+          videoChatParticipantsInvited = _videoChatParticipantsInvited,
+          webAppData = _webAppData,
           replyMarkup = _replyMarkup
         )
       }
@@ -4267,6 +4394,56 @@ object CirceImplicits {
         _prices <- h.getOrElse[List[LabeledPrice]]("prices")(List.empty)
       } yield {
         ShippingOption(id = _id, title = _title, prices = _prices)
+      }
+    }
+
+  implicit lazy val chatadministratorrightsEncoder: Encoder[ChatAdministratorRights] =
+    (x: ChatAdministratorRights) => {
+      Json.fromFields(
+        List(
+          "is_anonymous"           -> x.isAnonymous.asJson,
+          "can_manage_chat"        -> x.canManageChat.asJson,
+          "can_delete_messages"    -> x.canDeleteMessages.asJson,
+          "can_manage_video_chats" -> x.canManageVideoChats.asJson,
+          "can_restrict_members"   -> x.canRestrictMembers.asJson,
+          "can_promote_members"    -> x.canPromoteMembers.asJson,
+          "can_change_info"        -> x.canChangeInfo.asJson,
+          "can_invite_users"       -> x.canInviteUsers.asJson,
+          "can_post_messages"      -> x.canPostMessages.asJson,
+          "can_edit_messages"      -> x.canEditMessages.asJson,
+          "can_pin_messages"       -> x.canPinMessages.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatadministratorrightsDecoder: Decoder[ChatAdministratorRights] =
+    Decoder.instance { h =>
+      for {
+        _isAnonymous         <- h.get[Boolean]("is_anonymous")
+        _canManageChat       <- h.get[Boolean]("can_manage_chat")
+        _canDeleteMessages   <- h.get[Boolean]("can_delete_messages")
+        _canManageVideoChats <- h.get[Boolean]("can_manage_video_chats")
+        _canRestrictMembers  <- h.get[Boolean]("can_restrict_members")
+        _canPromoteMembers   <- h.get[Boolean]("can_promote_members")
+        _canChangeInfo       <- h.get[Boolean]("can_change_info")
+        _canInviteUsers      <- h.get[Boolean]("can_invite_users")
+        _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
+        _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
+        _canPinMessages      <- h.get[Option[Boolean]]("can_pin_messages")
+      } yield {
+        ChatAdministratorRights(
+          isAnonymous = _isAnonymous,
+          canManageChat = _canManageChat,
+          canDeleteMessages = _canDeleteMessages,
+          canManageVideoChats = _canManageVideoChats,
+          canRestrictMembers = _canRestrictMembers,
+          canPromoteMembers = _canPromoteMembers,
+          canChangeInfo = _canChangeInfo,
+          canInviteUsers = _canInviteUsers,
+          canPostMessages = _canPostMessages,
+          canEditMessages = _canEditMessages,
+          canPinMessages = _canPinMessages
+        )
       }
     }
 
@@ -4308,9 +4485,6 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val voicechatstartedEncoder: Encoder[VoiceChatStarted.type] = (_: VoiceChatStarted.type) => ().asJson
-  implicit lazy val voicechatstartedDecoder: Decoder[VoiceChatStarted.type] = (_: HCursor) => Right(VoiceChatStarted)
-
   implicit lazy val encryptedcredentialsEncoder: Encoder[EncryptedCredentials] =
     (x: EncryptedCredentials) => {
       Json.fromFields(
@@ -4339,8 +4513,9 @@ object CirceImplicits {
         List(
           "text"                             -> x.text.asJson,
           "url"                              -> x.url.asJson,
-          "login_url"                        -> x.loginUrl.asJson,
           "callback_data"                    -> x.callbackData.asJson,
+          "web_app"                          -> x.webApp.asJson,
+          "login_url"                        -> x.loginUrl.asJson,
           "switch_inline_query"              -> x.switchInlineQuery.asJson,
           "switch_inline_query_current_chat" -> x.switchInlineQueryCurrentChat.asJson,
           "callback_game"                    -> x.callbackGame.asJson,
@@ -4354,8 +4529,9 @@ object CirceImplicits {
       for {
         _text                         <- h.get[String]("text")
         _url                          <- h.get[Option[String]]("url")
-        _loginUrl                     <- h.get[Option[LoginUrl]]("login_url")
         _callbackData                 <- h.get[Option[String]]("callback_data")
+        _webApp                       <- h.get[Option[WebAppInfo]]("web_app")
+        _loginUrl                     <- h.get[Option[LoginUrl]]("login_url")
         _switchInlineQuery            <- h.get[Option[String]]("switch_inline_query")
         _switchInlineQueryCurrentChat <- h.get[Option[String]]("switch_inline_query_current_chat")
         _callbackGame                 <- h.get[Option[CallbackGame.type]]("callback_game")
@@ -4364,8 +4540,9 @@ object CirceImplicits {
         InlineKeyboardButton(
           text = _text,
           url = _url,
-          loginUrl = _loginUrl,
           callbackData = _callbackData,
+          webApp = _webApp,
+          loginUrl = _loginUrl,
           switchInlineQuery = _switchInlineQuery,
           switchInlineQueryCurrentChat = _switchInlineQueryCurrentChat,
           callbackGame = _callbackGame,
@@ -4435,23 +4612,8 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val voicechatparticipantsinvitedEncoder: Encoder[VoiceChatParticipantsInvited] =
-    (x: VoiceChatParticipantsInvited) => {
-      Json.fromFields(
-        List(
-          "users" -> x.users.asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val voicechatparticipantsinvitedDecoder: Decoder[VoiceChatParticipantsInvited] =
-    Decoder.instance { h =>
-      for {
-        _users <- h.getOrElse[List[User]]("users")(List.empty)
-      } yield {
-        VoiceChatParticipantsInvited(users = _users)
-      }
-    }
+  implicit lazy val videochatstartedEncoder: Encoder[VideoChatStarted.type] = (_: VideoChatStarted.type) => ().asJson
+  implicit lazy val videochatstartedDecoder: Decoder[VideoChatStarted.type] = (_: HCursor) => Right(VideoChatStarted)
 
   implicit lazy val userprofilephotosEncoder: Encoder[UserProfilePhotos] =
     (x: UserProfilePhotos) => {

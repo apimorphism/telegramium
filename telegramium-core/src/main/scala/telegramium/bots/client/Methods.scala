@@ -6,8 +6,10 @@ import telegramium.bots.WebhookInfo
 import telegramium.bots._
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.GameHighScore
+import telegramium.bots.ChatAdministratorRights
 import telegramium.bots.Message
 import telegramium.bots.UserProfilePhotos
+import telegramium.bots.SentWebAppMessage
 import telegramium.bots.File
 import telegramium.bots.Poll
 import telegramium.bots.MessageId
@@ -16,6 +18,7 @@ import telegramium.bots.User
 import telegramium.bots.ChatMember
 import telegramium.bots.BotCommand
 import telegramium.bots.Chat
+import telegramium.bots.MenuButton
 import telegramium.bots.Update
 import telegramium.bots.StickerSet
 
@@ -138,6 +141,18 @@ trait Methods {
   ): Method[Boolean] = {
     val req = AnswerCallbackQueryReq(callbackQueryId, text, showAlert, url, cacheTime)
     MethodReq[Boolean]("answerCallbackQuery", req.asJson)
+  }
+
+  /** Use this method to get the current default administrator rights of the bot. Returns ChatAdministratorRights on
+    * success.
+    *
+    * @param forChannels
+    *   Pass True to get default administrator rights of the bot in channels. Otherwise, default administrator rights of
+    *   the bot for groups and supergroups will be returned.
+    */
+  def getMyDefaultAdministratorRights(forChannels: Option[Boolean] = Option.empty): Method[ChatAdministratorRights] = {
+    val req = GetMyDefaultAdministratorRightsReq(forChannels)
+    MethodReq[ChatAdministratorRights]("getMyDefaultAdministratorRights", req.asJson)
   }
 
   /** Use this method to send text messages. On success, the sent Message is returned.
@@ -296,6 +311,19 @@ trait Methods {
     MethodReq[Message]("sendPoll", req.asJson)
   }
 
+  /** Use this method to set the result of an interaction with a Web App and send a corresponding message on behalf of
+    * the user to the chat from which the query originated. On success, a SentWebAppMessage object is returned.
+    *
+    * @param webAppQueryId
+    *   Unique identifier for the query to be answered
+    * @param result
+    *   A JSON-serialized object describing the message to be sent
+    */
+  def answerWebAppQuery(webAppQueryId: String, result: InlineQueryResult): Method[SentWebAppMessage] = {
+    val req = AnswerWebAppQueryReq(webAppQueryId, result)
+    MethodReq[SentWebAppMessage]("answerWebAppQuery", req.asJson)
+  }
+
   /** Use this method to send phone contacts. On success, the sent Message is returned.
     *
     * @param chatId
@@ -356,7 +384,7 @@ trait Methods {
     * @param name
     *   Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only english
     *   letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in
-    *   “_by_<bot username>”. <bot_username> is case insensitive. 1-64 characters.
+    *   "_by_<bot_username>". <bot_username> is case insensitive. 1-64 characters.
     * @param title
     *   Sticker set title, 1-64 characters
     * @param pngSticker
@@ -1192,6 +1220,22 @@ trait Methods {
     )
   }
 
+  /** Use this method to change the bot's menu button in a private chat, or the default menu button. Returns True on
+    * success.
+    *
+    * @param chatId
+    *   Unique identifier for the target private chat. If not specified, default bot's menu button will be changed
+    * @param menuButton
+    *   A JSON-serialized object for the new bot's menu button. Defaults to MenuButtonDefault
+    */
+  def setChatMenuButton(
+    chatId: Option[Int] = Option.empty,
+    menuButton: Option[MenuButton] = Option.empty
+  ): Method[Boolean] = {
+    val req = SetChatMenuButtonReq(chatId, menuButton)
+    MethodReq[Boolean]("setChatMenuButton", req.asJson)
+  }
+
   /** Informs a user that some of the Telegram Passport elements they provided contains errors. The user will not be
     * able to re-submit their Passport to you until the errors are fixed (the contents of the field for which you
     * returned the error must change). Returns True on success. Use this if the data submitted by the user doesn't
@@ -1830,8 +1874,8 @@ trait Methods {
     *   Pass True, if the administrator can edit messages of other users and can pin messages, channels only
     * @param canDeleteMessages
     *   Pass True, if the administrator can delete messages of other users
-    * @param canManageVoiceChats
-    *   Pass True, if the administrator can manage voice chats
+    * @param canManageVideoChats
+    *   Pass True, if the administrator can manage video chats
     * @param canRestrictMembers
     *   Pass True, if the administrator can restrict, ban or unban chat members
     * @param canPromoteMembers
@@ -1853,7 +1897,7 @@ trait Methods {
     canPostMessages: Option[Boolean] = Option.empty,
     canEditMessages: Option[Boolean] = Option.empty,
     canDeleteMessages: Option[Boolean] = Option.empty,
-    canManageVoiceChats: Option[Boolean] = Option.empty,
+    canManageVideoChats: Option[Boolean] = Option.empty,
     canRestrictMembers: Option[Boolean] = Option.empty,
     canPromoteMembers: Option[Boolean] = Option.empty,
     canChangeInfo: Option[Boolean] = Option.empty,
@@ -1868,7 +1912,7 @@ trait Methods {
       canPostMessages,
       canEditMessages,
       canDeleteMessages,
-      canManageVoiceChats,
+      canManageVideoChats,
       canRestrictMembers,
       canPromoteMembers,
       canChangeInfo,
@@ -1939,6 +1983,25 @@ trait Methods {
   ): Method[Either[Boolean, Message]] = {
     val req = EditMessageMediaReq(chatId, messageId, inlineMessageId, media, replyMarkup)
     MethodReq[Either[Boolean, Message]]("editMessageMedia", req.asJson)
+  }
+
+  /** Use this method to change the default administrator rights requested by the bot when it's added as an
+    * administrator to groups or channels. These rights will be suggested to users, but they are are free to modify the
+    * list before adding the bot. Returns True on success.
+    *
+    * @param rights
+    *   A JSON-serialized object describing new default administrator rights. If not specified, the default
+    *   administrator rights will be cleared.
+    * @param forChannels
+    *   Pass True to change the default administrator rights of the bot in channels. Otherwise, the default
+    *   administrator rights of the bot for groups and supergroups will be changed.
+    */
+  def setMyDefaultAdministratorRights(
+    rights: Option[ChatAdministratorRights] = Option.empty,
+    forChannels: Option[Boolean] = Option.empty
+  ): Method[Boolean] = {
+    val req = SetMyDefaultAdministratorRightsReq(rights, forChannels)
+    MethodReq[Boolean]("setMyDefaultAdministratorRights", req.asJson)
   }
 
   /** Use this method to delete the list of the bot's commands for the given scope and user language. After deletion,
@@ -2224,6 +2287,17 @@ trait Methods {
   def setChatAdministratorCustomTitle(chatId: ChatId, userId: Long, customTitle: String): Method[Boolean] = {
     val req = SetChatAdministratorCustomTitleReq(chatId, userId, customTitle)
     MethodReq[Boolean]("setChatAdministratorCustomTitle", req.asJson)
+  }
+
+  /** Use this method to get the current value of the bot's menu button in a private chat, or the default menu button.
+    * Returns MenuButton on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target private chat. If not specified, default bot's menu button will be returned
+    */
+  def getChatMenuButton(chatId: Option[Int] = Option.empty): Method[MenuButton] = {
+    val req = GetChatMenuButtonReq(chatId)
+    MethodReq[MenuButton]("getChatMenuButton", req.asJson)
   }
 
   /** Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On success, the sent

@@ -36,8 +36,8 @@ final case class ChatMemberOwner(
   *   administrator privilege
   * @param canDeleteMessages
   *   True, if the administrator can delete messages of other users
-  * @param canManageVoiceChats
-  *   True, if the administrator can manage voice chats
+  * @param canManageVideoChats
+  *   True, if the administrator can manage video chats
   * @param canRestrictMembers
   *   True, if the administrator can restrict, ban or unban chat members
   * @param canPromoteMembers
@@ -64,7 +64,7 @@ final case class ChatMemberAdministrator(
   isAnonymous: Boolean,
   canManageChat: Boolean,
   canDeleteMessages: Boolean,
-  canManageVoiceChats: Boolean,
+  canManageVideoChats: Boolean,
   canRestrictMembers: Boolean,
   canPromoteMembers: Boolean,
   canChangeInfo: Boolean,

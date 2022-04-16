@@ -15,6 +15,9 @@ package telegramium.bots
   * @param lastErrorMessage
   *   Optional. Error message in human-readable format for the most recent error that happened when trying to deliver an
   *   update via webhook
+  * @param lastSynchronizationErrorDate
+  *   Optional. Unix time of the most recent error that happened when trying to synchronize available updates with
+  *   Telegram datacenters
   * @param maxConnections
   *   Optional. Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
   * @param allowedUpdates
@@ -27,6 +30,7 @@ final case class WebhookInfo(
   ipAddress: Option[String] = Option.empty,
   lastErrorDate: Option[Int] = Option.empty,
   lastErrorMessage: Option[String] = Option.empty,
+  lastSynchronizationErrorDate: Option[Int] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty
 )

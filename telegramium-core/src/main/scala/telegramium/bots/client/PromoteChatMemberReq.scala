@@ -18,8 +18,8 @@ import telegramium.bots.ChatId
   *   Pass True, if the administrator can edit messages of other users and can pin messages, channels only
   * @param canDeleteMessages
   *   Pass True, if the administrator can delete messages of other users
-  * @param canManageVoiceChats
-  *   Pass True, if the administrator can manage voice chats
+  * @param canManageVideoChats
+  *   Pass True, if the administrator can manage video chats
   * @param canRestrictMembers
   *   Pass True, if the administrator can restrict, ban or unban chat members
   * @param canPromoteMembers
@@ -41,7 +41,7 @@ final case class PromoteChatMemberReq(
   canPostMessages: Option[Boolean] = Option.empty,
   canEditMessages: Option[Boolean] = Option.empty,
   canDeleteMessages: Option[Boolean] = Option.empty,
-  canManageVoiceChats: Option[Boolean] = Option.empty,
+  canManageVideoChats: Option[Boolean] = Option.empty,
   canRestrictMembers: Option[Boolean] = Option.empty,
   canPromoteMembers: Option[Boolean] = Option.empty,
   canChangeInfo: Option[Boolean] = Option.empty,

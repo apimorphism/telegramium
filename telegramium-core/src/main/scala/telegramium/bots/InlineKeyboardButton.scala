@@ -7,11 +7,15 @@ package telegramium.bots
   * @param url
   *   Optional. HTTP or tg:// url to be opened when the button is pressed. Links tg://user?id=<user_id> can be used to
   *   mention a user by their ID without using a username, if this is allowed by their privacy settings.
+  * @param callbackData
+  *   Optional. Data to be sent in a callback query to the bot when button is pressed, 1-64 bytes
+  * @param webApp
+  *   Optional. Description of the Web App that will be launched when the user presses the button. The Web App will be
+  *   able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. Available only in
+  *   private chats between a user and the bot.
   * @param loginUrl
   *   Optional. An HTTP URL used to automatically authorize the user. Can be used as a replacement for the Telegram
   *   Login Widget.
-  * @param callbackData
-  *   Optional. Data to be sent in a callback query to the bot when button is pressed, 1-64 bytes
   * @param switchInlineQuery
   *   Optional. If set, pressing the button will prompt the user to select one of their chats, open that chat and insert
   *   the bot's username and the specified inline query in the input field. Can be empty, in which case just the bot's
@@ -33,8 +37,9 @@ package telegramium.bots
 final case class InlineKeyboardButton(
   text: String,
   url: Option[String] = Option.empty,
-  loginUrl: Option[LoginUrl] = Option.empty,
   callbackData: Option[String] = Option.empty,
+  webApp: Option[WebAppInfo] = Option.empty,
+  loginUrl: Option[LoginUrl] = Option.empty,
   switchInlineQuery: Option[String] = Option.empty,
   switchInlineQueryCurrentChat: Option[String] = Option.empty,
   callbackGame: Option[CallbackGame.type] = Option.empty,

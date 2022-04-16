@@ -13,14 +13,16 @@ object CirceImplicits {
   import telegramium.bots.ParseMode
   import telegramium.bots.MessageEntity
   import telegramium.bots.KeyboardMarkup
+  import telegramium.bots.InlineQueryResult
   import telegramium.bots.MaskPosition
   import telegramium.bots.ChatPermissions
   import telegramium.bots.InlineKeyboardMarkup
   import telegramium.bots.Emoji
   import telegramium.bots.InputMedia
+  import telegramium.bots.MenuButton
   import telegramium.bots.PassportElementError
   import telegramium.bots.LabeledPrice
-  import telegramium.bots.InlineQueryResult
+  import telegramium.bots.ChatAdministratorRights
   import telegramium.bots.ShippingOption
 
   implicit lazy val responseEncoder: Encoder[Response] =
@@ -172,6 +174,25 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val getmydefaultadministratorrightsreqEncoder: Encoder[GetMyDefaultAdministratorRightsReq] =
+    (x: GetMyDefaultAdministratorRightsReq) => {
+      Json.fromFields(
+        List(
+          "for_channels" -> x.forChannels.asJson,
+          "method"       -> "getMyDefaultAdministratorRights".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getmydefaultadministratorrightsreqDecoder: Decoder[GetMyDefaultAdministratorRightsReq] =
+    Decoder.instance { h =>
+      for {
+        _forChannels <- h.get[Option[Boolean]]("for_channels")
+      } yield {
+        GetMyDefaultAdministratorRightsReq(forChannels = _forChannels)
+      }
+    }
+
   implicit lazy val sendmessagereqEncoder: Encoder[SendMessageReq] =
     (x: SendMessageReq) => {
       Json.fromFields(
@@ -312,6 +333,27 @@ object CirceImplicits {
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
         )
+      }
+    }
+
+  implicit lazy val answerwebappqueryreqEncoder: Encoder[AnswerWebAppQueryReq] =
+    (x: AnswerWebAppQueryReq) => {
+      Json.fromFields(
+        List(
+          "web_app_query_id" -> x.webAppQueryId.asJson,
+          "result"           -> x.result.asJson,
+          "method"           -> "answerWebAppQuery".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val answerwebappqueryreqDecoder: Decoder[AnswerWebAppQueryReq] =
+    Decoder.instance { h =>
+      for {
+        _webAppQueryId <- h.get[String]("web_app_query_id")
+        _result        <- h.get[InlineQueryResult]("result")
+      } yield {
+        AnswerWebAppQueryReq(webAppQueryId = _webAppQueryId, result = _result)
       }
     }
 
@@ -1258,6 +1300,27 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val setchatmenubuttonreqEncoder: Encoder[SetChatMenuButtonReq] =
+    (x: SetChatMenuButtonReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"     -> x.chatId.asJson,
+          "menu_button" -> x.menuButton.asJson,
+          "method"      -> "setChatMenuButton".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setchatmenubuttonreqDecoder: Decoder[SetChatMenuButtonReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId     <- h.get[Option[Int]]("chat_id")
+        _menuButton <- h.get[Option[MenuButton]]("menu_button")
+      } yield {
+        SetChatMenuButtonReq(chatId = _chatId, menuButton = _menuButton)
+      }
+    }
+
   implicit lazy val setpassportdataerrorsreqEncoder: Encoder[SetPassportDataErrorsReq] =
     (x: SetPassportDataErrorsReq) => {
       Json.fromFields(
@@ -1840,7 +1903,7 @@ object CirceImplicits {
           "can_post_messages"      -> x.canPostMessages.asJson,
           "can_edit_messages"      -> x.canEditMessages.asJson,
           "can_delete_messages"    -> x.canDeleteMessages.asJson,
-          "can_manage_voice_chats" -> x.canManageVoiceChats.asJson,
+          "can_manage_video_chats" -> x.canManageVideoChats.asJson,
           "can_restrict_members"   -> x.canRestrictMembers.asJson,
           "can_promote_members"    -> x.canPromoteMembers.asJson,
           "can_change_info"        -> x.canChangeInfo.asJson,
@@ -1861,7 +1924,7 @@ object CirceImplicits {
         _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
         _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
         _canDeleteMessages   <- h.get[Option[Boolean]]("can_delete_messages")
-        _canManageVoiceChats <- h.get[Option[Boolean]]("can_manage_voice_chats")
+        _canManageVideoChats <- h.get[Option[Boolean]]("can_manage_video_chats")
         _canRestrictMembers  <- h.get[Option[Boolean]]("can_restrict_members")
         _canPromoteMembers   <- h.get[Option[Boolean]]("can_promote_members")
         _canChangeInfo       <- h.get[Option[Boolean]]("can_change_info")
@@ -1876,7 +1939,7 @@ object CirceImplicits {
           canPostMessages = _canPostMessages,
           canEditMessages = _canEditMessages,
           canDeleteMessages = _canDeleteMessages,
-          canManageVoiceChats = _canManageVoiceChats,
+          canManageVideoChats = _canManageVideoChats,
           canRestrictMembers = _canRestrictMembers,
           canPromoteMembers = _canPromoteMembers,
           canChangeInfo = _canChangeInfo,
@@ -1955,6 +2018,27 @@ object CirceImplicits {
           media = _media,
           replyMarkup = _replyMarkup
         )
+      }
+    }
+
+  implicit lazy val setmydefaultadministratorrightsreqEncoder: Encoder[SetMyDefaultAdministratorRightsReq] =
+    (x: SetMyDefaultAdministratorRightsReq) => {
+      Json.fromFields(
+        List(
+          "rights"       -> x.rights.asJson,
+          "for_channels" -> x.forChannels.asJson,
+          "method"       -> "setMyDefaultAdministratorRights".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setmydefaultadministratorrightsreqDecoder: Decoder[SetMyDefaultAdministratorRightsReq] =
+    Decoder.instance { h =>
+      for {
+        _rights      <- h.get[Option[ChatAdministratorRights]]("rights")
+        _forChannels <- h.get[Option[Boolean]]("for_channels")
+      } yield {
+        SetMyDefaultAdministratorRightsReq(rights = _rights, forChannels = _forChannels)
       }
     }
 
@@ -2275,6 +2359,25 @@ object CirceImplicits {
         _customTitle <- h.get[String]("custom_title")
       } yield {
         SetChatAdministratorCustomTitleReq(chatId = _chatId, userId = _userId, customTitle = _customTitle)
+      }
+    }
+
+  implicit lazy val getchatmenubuttonreqEncoder: Encoder[GetChatMenuButtonReq] =
+    (x: GetChatMenuButtonReq) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "getChatMenuButton".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getchatmenubuttonreqDecoder: Decoder[GetChatMenuButtonReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId <- h.get[Option[Int]]("chat_id")
+      } yield {
+        GetChatMenuButtonReq(chatId = _chatId)
       }
     }
 

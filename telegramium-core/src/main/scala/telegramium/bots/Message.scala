@@ -134,14 +134,16 @@ package telegramium.bots
   * @param proximityAlertTriggered
   *   Optional. Service message. A user in the chat triggered another user's proximity alert while sharing Live
   *   Location.
-  * @param voiceChatScheduled
-  *   Optional. Service message: voice chat scheduled
-  * @param voiceChatStarted
-  *   Optional. Service message: voice chat started
-  * @param voiceChatEnded
-  *   Optional. Service message: voice chat ended
-  * @param voiceChatParticipantsInvited
-  *   Optional. Service message: new participants invited to a voice chat
+  * @param videoChatScheduled
+  *   Optional. Service message: video chat scheduled
+  * @param videoChatStarted
+  *   Optional. Service message: video chat started
+  * @param videoChatEnded
+  *   Optional. Service message: video chat ended
+  * @param videoChatParticipantsInvited
+  *   Optional. Service message: new participants invited to a video chat
+  * @param webAppData
+  *   Optional. Service message: data sent by a Web App
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message. login_url buttons are represented as ordinary url buttons.
   */
@@ -199,9 +201,10 @@ final case class Message(
   connectedWebsite: Option[String] = Option.empty,
   passportData: Option[PassportData] = Option.empty,
   proximityAlertTriggered: Option[ProximityAlertTriggered] = Option.empty,
-  voiceChatScheduled: Option[VoiceChatScheduled] = Option.empty,
-  voiceChatStarted: Option[VoiceChatStarted.type] = Option.empty,
-  voiceChatEnded: Option[VoiceChatEnded] = Option.empty,
-  voiceChatParticipantsInvited: Option[VoiceChatParticipantsInvited] = Option.empty,
+  videoChatScheduled: Option[VideoChatScheduled] = Option.empty,
+  videoChatStarted: Option[VideoChatStarted.type] = Option.empty,
+  videoChatEnded: Option[VideoChatEnded] = Option.empty,
+  videoChatParticipantsInvited: Option[VideoChatParticipantsInvited] = Option.empty,
+  webAppData: Option[WebAppData] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
 )
