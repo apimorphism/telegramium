@@ -10,7 +10,7 @@ object Dependencies {
     val http4s           = "0.23.11"
     val slf4j            = "1.7.36"
     val logback          = "1.2.11"
-    val scalatest        = "3.2.11"
+    val scalatest        = "3.2.12"
     val testcontainers   = "0.40.5"
     val mockServerClient = "5.11.2"
     val scalamock        = "5.1.0"
