@@ -3,7 +3,7 @@ package telegramium.bots
 /** This object represents a shipping address.
   *
   * @param countryCode
-  *   ISO 3166-1 alpha-2 country code
+  *   Two-letter ISO 3166-1 alpha-2 country code
   * @param state
   *   State, if applicable
   * @param city

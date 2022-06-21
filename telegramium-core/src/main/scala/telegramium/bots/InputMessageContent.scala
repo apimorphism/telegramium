@@ -42,7 +42,7 @@ final case class InputVenueMessageContent(
   * @param payload
   *   Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
   * @param providerToken
-  *   Payment provider token, obtained via Botfather
+  *   Payment provider token, obtained via &#064;BotFather
   * @param currency
   *   Three-letter ISO 4217 currency code, see more on currencies
   * @param prices
@@ -62,9 +62,9 @@ final case class InputVenueMessageContent(
   *   detailed description of the required fields should be provided by the payment provider.
   * @param photoUrl
   *   Optional. URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a
-  *   service. People like it better when they see what they are paying for.
+  *   service.
   * @param photoSize
-  *   Optional. Photo size
+  *   Optional. Photo size in bytes
   * @param photoWidth
   *   Optional. Photo width
   * @param photoHeight
@@ -78,9 +78,9 @@ final case class InputVenueMessageContent(
   * @param needShippingAddress
   *   Optional. Pass True, if you require the user's shipping address to complete the order
   * @param sendPhoneNumberToProvider
-  *   Optional. Pass True, if user's phone number should be sent to provider
+  *   Optional. Pass True, if the user's phone number should be sent to provider
   * @param sendEmailToProvider
-  *   Optional. Pass True, if user's email address should be sent to provider
+  *   Optional. Pass True, if the user's email address should be sent to provider
   * @param isFlexible
   *   Optional. Pass True, if the final price depends on the shipping method
   */
@@ -95,7 +95,7 @@ final case class InputInvoiceMessageContent(
   suggestedTipAmounts: List[Int] = List.empty,
   providerData: Option[String] = Option.empty,
   photoUrl: Option[String] = Option.empty,
-  photoSize: Option[Int] = Option.empty,
+  photoSize: Option[Long] = Option.empty,
   photoWidth: Option[Int] = Option.empty,
   photoHeight: Option[Int] = Option.empty,
   needName: Option[Boolean] = Option.empty,

@@ -49,7 +49,7 @@ package telegramium.bots
   *   Optional. Signature of the post author for messages in channels, or the custom title of an anonymous group
   *   administrator
   * @param text
-  *   Optional. For text messages, the actual UTF-8 text of the message, 0-4096 characters
+  *   Optional. For text messages, the actual UTF-8 text of the message
   * @param entities
   *   Optional. For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text
   * @param animation
@@ -70,7 +70,7 @@ package telegramium.bots
   * @param voice
   *   Optional. Message is a voice message, information about the file
   * @param caption
-  *   Optional. Caption for the animation, audio, document, photo, video or voice, 0-1024 characters
+  *   Optional. Caption for the animation, audio, document, photo, video or voice
   * @param captionEntities
   *   Optional. For messages with a caption, special entities like usernames, URLs, bot commands, etc. that appear in
   *   the caption

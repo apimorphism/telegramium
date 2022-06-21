@@ -21,6 +21,8 @@ package telegramium.bots
   *   Optional. Emoji associated with the sticker
   * @param setName
   *   Optional. Name of the sticker set to which the sticker belongs
+  * @param premiumAnimation
+  *   Optional. Premium animation for the sticker, if the sticker is premium
   * @param maskPosition
   *   Optional. For mask stickers, the position where the mask should be placed
   * @param fileSize
@@ -36,6 +38,7 @@ final case class Sticker(
   thumb: Option[PhotoSize] = Option.empty,
   emoji: Option[Emoji] = Option.empty,
   setName: Option[String] = Option.empty,
+  premiumAnimation: Option[File] = Option.empty,
   maskPosition: Option[MaskPosition] = Option.empty,
-  fileSize: Option[Int] = Option.empty
+  fileSize: Option[Long] = Option.empty
 )

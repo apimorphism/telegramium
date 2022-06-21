@@ -1,6 +1,6 @@
 package telegramium.bots
 
-/** Contains information about why a request was unsuccessful.
+/** Describes why a request was unsuccessful.
   *
   * @param migrateToChatId
   *   Optional. The group has been migrated to a supergroup with the specified identifier. This number may have more

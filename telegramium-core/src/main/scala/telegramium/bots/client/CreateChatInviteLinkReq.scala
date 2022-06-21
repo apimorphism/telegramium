@@ -9,7 +9,7 @@ import telegramium.bots.ChatId
   * @param expireDate
   *   Point in time (Unix timestamp) when the link will expire
   * @param memberLimit
-  *   Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite
+  *   The maximum number of users that can be members of the chat simultaneously after joining the chat via this invite
   *   link; 1-99999
   * @param createsJoinRequest
   *   True, if users joining the chat via the link need to be approved by chat administrators. If True, member_limit

@@ -16,6 +16,10 @@ package telegramium.bots
   *   Optional. User's or bot's username
   * @param languageCode
   *   Optional. IETF language tag of the user's language
+  * @param isPremium
+  *   Optional. True, if this user is a Telegram Premium user
+  * @param addedToAttachmentMenu
+  *   Optional. True, if this user added the bot to the attachment menu
   * @param canJoinGroups
   *   Optional. True, if the bot can be invited to groups. Returned only in getMe.
   * @param canReadAllGroupMessages
@@ -30,6 +34,8 @@ final case class User(
   lastName: Option[String] = Option.empty,
   username: Option[String] = Option.empty,
   languageCode: Option[String] = Option.empty,
+  isPremium: Option[Boolean] = Option.empty,
+  addedToAttachmentMenu: Option[Boolean] = Option.empty,
   canJoinGroups: Option[Boolean] = Option.empty,
   canReadAllGroupMessages: Option[Boolean] = Option.empty,
   supportsInlineQueries: Option[Boolean] = Option.empty

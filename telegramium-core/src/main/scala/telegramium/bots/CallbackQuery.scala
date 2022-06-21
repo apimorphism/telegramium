@@ -18,8 +18,8 @@ package telegramium.bots
   *   Global identifier, uniquely corresponding to the chat to which the message with the callback button was sent.
   *   Useful for high scores in games.
   * @param data
-  *   Optional. Data associated with the callback button. Be aware that a bad client can send arbitrary data in this
-  *   field.
+  *   Optional. Data associated with the callback button. Be aware that the message originated the query can contain no
+  *   callback buttons with this data.
   * @param gameShortName
   *   Optional. Short name of a Game to be returned, serves as the unique identifier for the game
   */

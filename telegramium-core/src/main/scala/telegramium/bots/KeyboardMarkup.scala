@@ -57,7 +57,7 @@ final case class ReplyKeyboardRemove(removeKeyboard: Boolean, selective: Option[
   *   height as the app's standard keyboard.
   * @param oneTimeKeyboard
   *   Optional. Requests clients to hide the keyboard as soon as it's been used. The keyboard will still be available,
-  *   but clients will automatically display the usual letter-keyboard in the chat – the user can press a special button
+  *   but clients will automatically display the usual letter-keyboard in the chat - the user can press a special button
   *   in the input field to see the custom keyboard again. Defaults to false.
   * @param inputFieldPlaceholder
   *   Optional. The placeholder to be shown in the input field when the keyboard is active; 1-64 characters

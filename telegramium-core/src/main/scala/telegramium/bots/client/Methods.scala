@@ -125,7 +125,7 @@ trait Methods {
     *   to false.
     * @param url
     *   URL that will be opened by the user's client. If you have created a Game and accepted the conditions via
-    *   &#064;Botfather, specify the URL that opens your game — note that this will only work if the query comes from a
+    *   &#064;BotFather, specify the URL that opens your game - note that this will only work if the query comes from a
     *   callback_game button. Otherwise, you may use links like t.me/your_bot?start=XXXX that open your bot with a
     *   parameter.
     * @param cacheTime
@@ -382,7 +382,7 @@ trait Methods {
     * @param userId
     *   User identifier of created sticker set owner
     * @param name
-    *   Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only english
+    *   Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only English
     *   letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in
     *   "_by_<bot_username>". <bot_username> is case insensitive. 1-64 characters.
     * @param title
@@ -710,6 +710,104 @@ trait Methods {
     )
   }
 
+  /** Use this method to create a link for an invoice. Returns the created invoice link as String on success.
+    *
+    * @param title
+    *   Product name, 1-32 characters
+    * @param description
+    *   Product description, 1-255 characters
+    * @param payload
+    *   Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal
+    *   processes.
+    * @param providerToken
+    *   Payment provider token, obtained via BotFather
+    * @param currency
+    *   Three-letter ISO 4217 currency code, see more on currencies
+    * @param prices
+    *   Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost,
+    *   delivery tax, bonus, etc.)
+    * @param maxTipAmount
+    *   The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For
+    *   example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it
+    *   shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults
+    *   to 0
+    * @param suggestedTipAmounts
+    *   A JSON-serialized array of suggested amounts of tips in the smallest units of the currency (integer, not
+    *   float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts must be positive,
+    *   passed in a strictly increased order and must not exceed max_tip_amount.
+    * @param providerData
+    *   JSON-serialized data about the invoice, which will be shared with the payment provider. A detailed description
+    *   of required fields should be provided by the payment provider.
+    * @param photoUrl
+    *   URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service.
+    * @param photoSize
+    *   Photo size in bytes
+    * @param photoWidth
+    *   Photo width
+    * @param photoHeight
+    *   Photo height
+    * @param needName
+    *   Pass True, if you require the user's full name to complete the order
+    * @param needPhoneNumber
+    *   Pass True, if you require the user's phone number to complete the order
+    * @param needEmail
+    *   Pass True, if you require the user's email address to complete the order
+    * @param needShippingAddress
+    *   Pass True, if you require the user's shipping address to complete the order
+    * @param sendPhoneNumberToProvider
+    *   Pass True, if the user's phone number should be sent to the provider
+    * @param sendEmailToProvider
+    *   Pass True, if the user's email address should be sent to the provider
+    * @param isFlexible
+    *   Pass True, if the final price depends on the shipping method
+    */
+  def createInvoiceLink(
+    title: String,
+    description: String,
+    payload: String,
+    providerToken: String,
+    currency: String,
+    prices: List[LabeledPrice] = List.empty,
+    maxTipAmount: Option[Int] = Option.empty,
+    suggestedTipAmounts: List[Int] = List.empty,
+    providerData: Option[String] = Option.empty,
+    photoUrl: Option[String] = Option.empty,
+    photoSize: Option[Long] = Option.empty,
+    photoWidth: Option[Int] = Option.empty,
+    photoHeight: Option[Int] = Option.empty,
+    needName: Option[Boolean] = Option.empty,
+    needPhoneNumber: Option[Boolean] = Option.empty,
+    needEmail: Option[Boolean] = Option.empty,
+    needShippingAddress: Option[Boolean] = Option.empty,
+    sendPhoneNumberToProvider: Option[Boolean] = Option.empty,
+    sendEmailToProvider: Option[Boolean] = Option.empty,
+    isFlexible: Option[Boolean] = Option.empty
+  ): Method[String] = {
+    val req = CreateInvoiceLinkReq(
+      title,
+      description,
+      payload,
+      providerToken,
+      currency,
+      prices,
+      maxTipAmount,
+      suggestedTipAmounts,
+      providerData,
+      photoUrl,
+      photoSize,
+      photoWidth,
+      photoHeight,
+      needName,
+      needPhoneNumber,
+      needEmail,
+      needShippingAddress,
+      sendPhoneNumberToProvider,
+      sendEmailToProvider,
+      isFlexible
+    )
+    MethodReq[String]("createInvoiceLink", req.asJson)
+  }
+
   /** Use this method to delete a sticker from a set created by the bot. Returns True on success.
     *
     * @param sticker
@@ -799,7 +897,7 @@ trait Methods {
     * @param chatId
     *   Unique identifier for the target chat
     * @param gameShortName
-    *   Short name of the game, serves as the unique identifier for the game. Set up your games via Botfather.
+    *   Short name of the game, serves as the unique identifier for the game. Set up your games via &#064;BotFather.
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -998,8 +1096,8 @@ trait Methods {
     * @param heading
     *   Direction in which the user is moving, in degrees. Must be between 1 and 360 if specified.
     * @param proximityAlertRadius
-    *   Maximum distance for proximity alerts about approaching another chat member, in meters. Must be between 1 and
-    *   100000 if specified.
+    *   The maximum distance for proximity alerts about approaching another chat member, in meters. Must be between 1
+    *   and 100000 if specified.
     * @param replyMarkup
     *   A JSON-serialized object for a new inline keyboard.
     */
@@ -1028,14 +1126,14 @@ trait Methods {
     MethodReq[Either[Boolean, Message]]("editMessageLiveLocation", req.asJson)
   }
 
-  /** Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download
-    * files of up to 20MB in size. On success, a File object is returned. The file can then be downloaded via the link
-    * https://api.telegram.org/file/bot<token>/<file_path>, where <file_path> is taken from the response. It is
+  /** Use this method to get basic information about a file and prepare it for downloading. For the moment, bots can
+    * download files of up to 20MB in size. On success, a File object is returned. The file can then be downloaded via
+    * the link https://api.telegram.org/file/bot<token>/<file_path>, where <file_path> is taken from the response. It is
     * guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by
     * calling getFile again.
     *
     * @param fileId
-    *   File identifier to get info about
+    *   File identifier to get information about
     */
   def getFile(fileId: String): Method[File] = {
     val req = GetFileReq(fileId)
@@ -1158,7 +1256,7 @@ trait Methods {
     MethodReq[MessageId]("copyMessage", req.asJson)
   }
 
-  /** As of v.4.0, Telegram clients support rounded square mp4 videos of up to 1 minute long. Use this method to send
+  /** As of v.4.0, Telegram clients support rounded square MPEG4 videos of up to 1 minute long. Use this method to send
     * video messages. On success, the sent Message is returned.
     *
     * @param chatId
@@ -1226,7 +1324,7 @@ trait Methods {
     * @param chatId
     *   Unique identifier for the target private chat. If not specified, default bot's menu button will be changed
     * @param menuButton
-    *   A JSON-serialized object for the new bot's menu button. Defaults to MenuButtonDefault
+    *   A JSON-serialized object for the bot's new menu button. Defaults to MenuButtonDefault
     */
   def setChatMenuButton(
     chatId: Option[Int] = Option.empty,
@@ -1278,8 +1376,8 @@ trait Methods {
     * @param expireDate
     *   Point in time (Unix timestamp) when the link will expire
     * @param memberLimit
-    *   Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite
-    *   link; 1-99999
+    *   The maximum number of users that can be members of the chat simultaneously after joining the chat via this
+    *   invite link; 1-99999
     * @param createsJoinRequest
     *   True, if users joining the chat via the link need to be approved by chat administrators. If True, member_limit
     *   can't be specified
@@ -1308,7 +1406,7 @@ trait Methods {
     *   Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal
     *   processes.
     * @param providerToken
-    *   Payments provider token, obtained via Botfather
+    *   Payment provider token, obtained via &#064;BotFather
     * @param currency
     *   Three-letter ISO 4217 currency code, see more on currencies
     * @param prices
@@ -1329,13 +1427,13 @@ trait Methods {
     *   forwarded copies of the sent message will have a URL button with a deep link to the bot (instead of a Pay
     *   button), with the value used as the start parameter
     * @param providerData
-    *   A JSON-serialized data about the invoice, which will be shared with the payment provider. A detailed description
+    *   JSON-serialized data about the invoice, which will be shared with the payment provider. A detailed description
     *   of required fields should be provided by the payment provider.
     * @param photoUrl
     *   URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service. People
     *   like it better when they see what they are paying for.
     * @param photoSize
-    *   Photo size
+    *   Photo size in bytes
     * @param photoWidth
     *   Photo width
     * @param photoHeight
@@ -1349,9 +1447,9 @@ trait Methods {
     * @param needShippingAddress
     *   Pass True, if you require the user's shipping address to complete the order
     * @param sendPhoneNumberToProvider
-    *   Pass True, if user's phone number should be sent to provider
+    *   Pass True, if the user's phone number should be sent to provider
     * @param sendEmailToProvider
-    *   Pass True, if user's email address should be sent to provider
+    *   Pass True, if the user's email address should be sent to provider
     * @param isFlexible
     *   Pass True, if the final price depends on the shipping method
     * @param disableNotification
@@ -1379,7 +1477,7 @@ trait Methods {
     startParameter: Option[String] = Option.empty,
     providerData: Option[String] = Option.empty,
     photoUrl: Option[String] = Option.empty,
-    photoSize: Option[Int] = Option.empty,
+    photoSize: Option[Long] = Option.empty,
     photoWidth: Option[Int] = Option.empty,
     photoHeight: Option[Int] = Option.empty,
     needName: Option[Boolean] = Option.empty,
@@ -2099,8 +2197,8 @@ trait Methods {
     * @param expireDate
     *   Point in time (Unix timestamp) when the link will expire
     * @param memberLimit
-    *   Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite
-    *   link; 1-99999
+    *   The maximum number of users that can be members of the chat simultaneously after joining the chat via this
+    *   invite link; 1-99999
     * @param createsJoinRequest
     *   True, if users joining the chat via the link need to be approved by chat administrators. If True, member_limit
     *   can't be specified
@@ -2116,9 +2214,9 @@ trait Methods {
     MethodReq[ChatInviteLink]("createChatInviteLink", req.asJson)
   }
 
-  /** Use this method to send video files, Telegram clients support mp4 videos (other formats may be sent as Document).
-    * On success, the sent Message is returned. Bots can currently send video files of up to 50 MB in size, this limit
-    * may be changed in the future.
+  /** Use this method to send video files, Telegram clients support MPEG4 videos (other formats may be sent as
+    * Document). On success, the sent Message is returned. Bots can currently send video files of up to 50 MB in size,
+    * this limit may be changed in the future.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -2586,22 +2684,23 @@ trait Methods {
     MethodReq[StickerSet]("getStickerSet", req.asJson)
   }
 
-  /** Use this method to specify a url and receive incoming updates via an outgoing webhook. Whenever there is an update
-    * for the bot, we will send an HTTPS POST request to the specified url, containing a JSON-serialized Update. In case
+  /** Use this method to specify a URL and receive incoming updates via an outgoing webhook. Whenever there is an update
+    * for the bot, we will send an HTTPS POST request to the specified URL, containing a JSON-serialized Update. In case
     * of an unsuccessful request, we will give up after a reasonable amount of attempts. Returns True on success. If
-    * you'd like to make sure that the Webhook request comes from Telegram, we recommend using a secret path in the URL,
-    * e.g. https://www.example.com/<token>. Since nobody else knows your bot's token, you can be pretty sure it's us.
+    * you'd like to make sure that the webhook was set by you, you can specify secret data in the parameter
+    * secret_token. If specified, the request will contain a header “X-Telegram-Bot-Api-Secret-Token” with the secret
+    * token as content.
     *
     * @param url
-    *   HTTPS url to send updates to. Use an empty string to remove webhook integration
+    *   HTTPS URL to send updates to. Use an empty string to remove webhook integration
     * @param certificate
     *   Upload your public key certificate so that the root certificate in use can be checked. See our self-signed guide
     *   for details.
     * @param ipAddress
     *   The fixed IP address which will be used to send webhook requests instead of the IP address resolved through DNS
     * @param maxConnections
-    *   Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery, 1-100. Defaults to
-    *   40. Use lower values to limit the load on your bot's server, and higher values to increase your bot's
+    *   The maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery, 1-100. Defaults
+    *   to 40. Use lower values to limit the load on your bot's server, and higher values to increase your bot's
     *   throughput.
     * @param allowedUpdates
     *   A JSON-serialized list of the update types you want your bot to receive. For example, specify [“message”,
@@ -2611,6 +2710,10 @@ trait Methods {
     *   before the call to the setWebhook, so unwanted updates may be received for a short period of time.
     * @param dropPendingUpdates
     *   Pass True to drop all pending updates
+    * @param secretToken
+    *   A secret token to be sent in a header “X-Telegram-Bot-Api-Secret-Token” in every webhook request, 1-256
+    *   characters. Only characters A-Z, a-z, 0-9, _ and - are allowed. The header is useful to ensure that the request
+    *   comes from a webhook set by you.
     */
   def setWebhook(
     url: String,
@@ -2618,9 +2721,11 @@ trait Methods {
     ipAddress: Option[String] = Option.empty,
     maxConnections: Option[Int] = Option.empty,
     allowedUpdates: List[String] = List.empty,
-    dropPendingUpdates: Option[Boolean] = Option.empty
+    dropPendingUpdates: Option[Boolean] = Option.empty,
+    secretToken: Option[String] = Option.empty
   ): Method[Boolean] = {
-    val req = SetWebhookReq(url, certificate, ipAddress, maxConnections, allowedUpdates, dropPendingUpdates)
+    val req =
+      SetWebhookReq(url, certificate, ipAddress, maxConnections, allowedUpdates, dropPendingUpdates, secretToken)
     MethodReq[Boolean](
       "setWebhook",
       req.asJson,

@@ -5,7 +5,7 @@ import telegramium.bots.InlineKeyboardMarkup
 /** @param chatId
   *   Unique identifier for the target chat
   * @param gameShortName
-  *   Short name of the game, serves as the unique identifier for the game. Set up your games via Botfather.
+  *   Short name of the game, serves as the unique identifier for the game. Set up your games via &#064;BotFather.
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent

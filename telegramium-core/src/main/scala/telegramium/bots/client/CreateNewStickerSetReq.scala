@@ -6,7 +6,7 @@ import telegramium.bots.MaskPosition
 /** @param userId
   *   User identifier of created sticker set owner
   * @param name
-  *   Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only english letters,
+  *   Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only English letters,
   *   digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in
   *   "_by_<bot_username>". <bot_username> is case insensitive. 1-64 characters.
   * @param title

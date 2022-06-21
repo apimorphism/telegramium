@@ -13,7 +13,7 @@ package telegramium.bots
   * @param shippingOptionId
   *   Optional. Identifier of the shipping option chosen by the user
   * @param orderInfo
-  *   Optional. Order info provided by the user
+  *   Optional. Order information provided by the user
   * @param telegramPaymentChargeId
   *   Telegram payment identifier
   * @param providerPaymentChargeId

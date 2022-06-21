@@ -14,7 +14,9 @@ package telegramium.bots
   * @param mimeType
   *   Optional. MIME type of the file as defined by sender
   * @param fileSize
-  *   Optional. File size in bytes
+  *   Optional. File size in bytes. It can be bigger than 2&#94;31 and some programming languages may have
+  *   difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer
+  *   or double-precision float type are safe for storing this value.
   */
 final case class Document(
   fileId: String,
@@ -22,5 +24,5 @@ final case class Document(
   thumb: Option[PhotoSize] = Option.empty,
   fileName: Option[String] = Option.empty,
   mimeType: Option[String] = Option.empty,
-  fileSize: Option[Int] = Option.empty
+  fileSize: Option[Long] = Option.empty
 )

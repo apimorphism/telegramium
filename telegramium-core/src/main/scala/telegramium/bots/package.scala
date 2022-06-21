@@ -1877,7 +1877,7 @@ object CirceImplicits {
         _suggestedTipAmounts       <- h.getOrElse[List[Int]]("suggested_tip_amounts")(List.empty)
         _providerData              <- h.get[Option[String]]("provider_data")
         _photoUrl                  <- h.get[Option[String]]("photo_url")
-        _photoSize                 <- h.get[Option[Int]]("photo_size")
+        _photoSize                 <- h.get[Option[Long]]("photo_size")
         _photoWidth                <- h.get[Option[Int]]("photo_width")
         _photoHeight               <- h.get[Option[Int]]("photo_height")
         _needName                  <- h.get[Option[Boolean]]("need_name")
@@ -2657,7 +2657,7 @@ object CirceImplicits {
         _thumb        <- h.get[Option[PhotoSize]]("thumb")
         _fileName     <- h.get[Option[String]]("file_name")
         _mimeType     <- h.get[Option[String]]("mime_type")
-        _fileSize     <- h.get[Option[Int]]("file_size")
+        _fileSize     <- h.get[Option[Long]]("file_size")
       } yield {
         Animation(
           fileId = _fileId,
@@ -2712,6 +2712,8 @@ object CirceImplicits {
           "photo"                    -> x.photo.asJson,
           "bio"                      -> x.bio.asJson,
           "has_private_forwards"     -> x.hasPrivateForwards.asJson,
+          "join_to_send_messages"    -> x.joinToSendMessages.asJson,
+          "join_by_request"          -> x.joinByRequest.asJson,
           "description"              -> x.description.asJson,
           "invite_link"              -> x.inviteLink.asJson,
           "pinned_message"           -> x.pinnedMessage.asJson,
@@ -2739,6 +2741,8 @@ object CirceImplicits {
         _photo                 <- h.get[Option[ChatPhoto]]("photo")
         _bio                   <- h.get[Option[String]]("bio")
         _hasPrivateForwards    <- h.get[Option[Boolean]]("has_private_forwards")
+        _joinToSendMessages    <- h.get[Option[Boolean]]("join_to_send_messages")
+        _joinByRequest         <- h.get[Option[Boolean]]("join_by_request")
         _description           <- h.get[Option[String]]("description")
         _inviteLink            <- h.get[Option[String]]("invite_link")
         _pinnedMessage         <- h.get[Option[Message]]("pinned_message")
@@ -2761,6 +2765,8 @@ object CirceImplicits {
           photo = _photo,
           bio = _bio,
           hasPrivateForwards = _hasPrivateForwards,
+          joinToSendMessages = _joinToSendMessages,
+          joinByRequest = _joinByRequest,
           description = _description,
           inviteLink = _inviteLink,
           pinnedMessage = _pinnedMessage,
@@ -2798,7 +2804,7 @@ object CirceImplicits {
         _length       <- h.get[Int]("length")
         _duration     <- h.get[Int]("duration")
         _thumb        <- h.get[Option[PhotoSize]]("thumb")
-        _fileSize     <- h.get[Option[Int]]("file_size")
+        _fileSize     <- h.get[Option[Long]]("file_size")
       } yield {
         VideoNote(
           fileId = _fileId,
@@ -3151,7 +3157,7 @@ object CirceImplicits {
       for {
         _fileId       <- h.get[String]("file_id")
         _fileUniqueId <- h.get[String]("file_unique_id")
-        _fileSize     <- h.get[Int]("file_size")
+        _fileSize     <- h.get[Long]("file_size")
         _fileDate     <- h.get[Int]("file_date")
       } yield {
         PassportFile(fileId = _fileId, fileUniqueId = _fileUniqueId, fileSize = _fileSize, fileDate = _fileDate)
@@ -3178,7 +3184,7 @@ object CirceImplicits {
         _fileUniqueId <- h.get[String]("file_unique_id")
         _width        <- h.get[Int]("width")
         _height       <- h.get[Int]("height")
-        _fileSize     <- h.get[Option[Int]]("file_size")
+        _fileSize     <- h.get[Option[Long]]("file_size")
       } yield {
         PhotoSize(
           fileId = _fileId,
@@ -3684,7 +3690,7 @@ object CirceImplicits {
       for {
         _fileId       <- h.get[String]("file_id")
         _fileUniqueId <- h.get[String]("file_unique_id")
-        _fileSize     <- h.get[Option[Int]]("file_size")
+        _fileSize     <- h.get[Option[Long]]("file_size")
         _filePath     <- h.get[Option[String]]("file_path")
       } yield {
         File(fileId = _fileId, fileUniqueId = _fileUniqueId, fileSize = _fileSize, filePath = _filePath)
@@ -3823,7 +3829,7 @@ object CirceImplicits {
         _title        <- h.get[Option[String]]("title")
         _fileName     <- h.get[Option[String]]("file_name")
         _mimeType     <- h.get[Option[String]]("mime_type")
-        _fileSize     <- h.get[Option[Int]]("file_size")
+        _fileSize     <- h.get[Option[Long]]("file_size")
         _thumb        <- h.get[Option[PhotoSize]]("thumb")
       } yield {
         Audio(
@@ -4048,6 +4054,8 @@ object CirceImplicits {
           "last_name"                   -> x.lastName.asJson,
           "username"                    -> x.username.asJson,
           "language_code"               -> x.languageCode.asJson,
+          "is_premium"                  -> x.isPremium.asJson,
+          "added_to_attachment_menu"    -> x.addedToAttachmentMenu.asJson,
           "can_join_groups"             -> x.canJoinGroups.asJson,
           "can_read_all_group_messages" -> x.canReadAllGroupMessages.asJson,
           "supports_inline_queries"     -> x.supportsInlineQueries.asJson
@@ -4064,6 +4072,8 @@ object CirceImplicits {
         _lastName                <- h.get[Option[String]]("last_name")
         _username                <- h.get[Option[String]]("username")
         _languageCode            <- h.get[Option[String]]("language_code")
+        _isPremium               <- h.get[Option[Boolean]]("is_premium")
+        _addedToAttachmentMenu   <- h.get[Option[Boolean]]("added_to_attachment_menu")
         _canJoinGroups           <- h.get[Option[Boolean]]("can_join_groups")
         _canReadAllGroupMessages <- h.get[Option[Boolean]]("can_read_all_group_messages")
         _supportsInlineQueries   <- h.get[Option[Boolean]]("supports_inline_queries")
@@ -4075,6 +4085,8 @@ object CirceImplicits {
           lastName = _lastName,
           username = _username,
           languageCode = _languageCode,
+          isPremium = _isPremium,
+          addedToAttachmentMenu = _addedToAttachmentMenu,
           canJoinGroups = _canJoinGroups,
           canReadAllGroupMessages = _canReadAllGroupMessages,
           supportsInlineQueries = _supportsInlineQueries
@@ -4133,17 +4145,18 @@ object CirceImplicits {
     (x: Sticker) => {
       Json.fromFields(
         List(
-          "file_id"        -> x.fileId.asJson,
-          "file_unique_id" -> x.fileUniqueId.asJson,
-          "width"          -> x.width.asJson,
-          "height"         -> x.height.asJson,
-          "is_animated"    -> x.isAnimated.asJson,
-          "is_video"       -> x.isVideo.asJson,
-          "thumb"          -> x.thumb.asJson,
-          "emoji"          -> x.emoji.asJson,
-          "set_name"       -> x.setName.asJson,
-          "mask_position"  -> x.maskPosition.asJson,
-          "file_size"      -> x.fileSize.asJson
+          "file_id"           -> x.fileId.asJson,
+          "file_unique_id"    -> x.fileUniqueId.asJson,
+          "width"             -> x.width.asJson,
+          "height"            -> x.height.asJson,
+          "is_animated"       -> x.isAnimated.asJson,
+          "is_video"          -> x.isVideo.asJson,
+          "thumb"             -> x.thumb.asJson,
+          "emoji"             -> x.emoji.asJson,
+          "set_name"          -> x.setName.asJson,
+          "premium_animation" -> x.premiumAnimation.asJson,
+          "mask_position"     -> x.maskPosition.asJson,
+          "file_size"         -> x.fileSize.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4151,17 +4164,18 @@ object CirceImplicits {
   implicit lazy val stickerDecoder: Decoder[Sticker] =
     Decoder.instance { h =>
       for {
-        _fileId       <- h.get[String]("file_id")
-        _fileUniqueId <- h.get[String]("file_unique_id")
-        _width        <- h.get[Int]("width")
-        _height       <- h.get[Int]("height")
-        _isAnimated   <- h.get[Boolean]("is_animated")
-        _isVideo      <- h.get[Boolean]("is_video")
-        _thumb        <- h.get[Option[PhotoSize]]("thumb")
-        _emoji        <- h.get[Option[Emoji]]("emoji")
-        _setName      <- h.get[Option[String]]("set_name")
-        _maskPosition <- h.get[Option[MaskPosition]]("mask_position")
-        _fileSize     <- h.get[Option[Int]]("file_size")
+        _fileId           <- h.get[String]("file_id")
+        _fileUniqueId     <- h.get[String]("file_unique_id")
+        _width            <- h.get[Int]("width")
+        _height           <- h.get[Int]("height")
+        _isAnimated       <- h.get[Boolean]("is_animated")
+        _isVideo          <- h.get[Boolean]("is_video")
+        _thumb            <- h.get[Option[PhotoSize]]("thumb")
+        _emoji            <- h.get[Option[Emoji]]("emoji")
+        _setName          <- h.get[Option[String]]("set_name")
+        _premiumAnimation <- h.get[Option[File]]("premium_animation")
+        _maskPosition     <- h.get[Option[MaskPosition]]("mask_position")
+        _fileSize         <- h.get[Option[Long]]("file_size")
       } yield {
         Sticker(
           fileId = _fileId,
@@ -4173,6 +4187,7 @@ object CirceImplicits {
           thumb = _thumb,
           emoji = _emoji,
           setName = _setName,
+          premiumAnimation = _premiumAnimation,
           maskPosition = _maskPosition,
           fileSize = _fileSize
         )
@@ -4600,7 +4615,7 @@ object CirceImplicits {
         _fileUniqueId <- h.get[String]("file_unique_id")
         _duration     <- h.get[Int]("duration")
         _mimeType     <- h.get[Option[String]]("mime_type")
-        _fileSize     <- h.get[Option[Int]]("file_size")
+        _fileSize     <- h.get[Option[Long]]("file_size")
       } yield {
         Voice(
           fileId = _fileId,
@@ -4719,7 +4734,7 @@ object CirceImplicits {
         _thumb        <- h.get[Option[PhotoSize]]("thumb")
         _fileName     <- h.get[Option[String]]("file_name")
         _mimeType     <- h.get[Option[String]]("mime_type")
-        _fileSize     <- h.get[Option[Int]]("file_size")
+        _fileSize     <- h.get[Option[Long]]("file_size")
       } yield {
         Video(
           fileId = _fileId,
@@ -4757,7 +4772,7 @@ object CirceImplicits {
         _thumb        <- h.get[Option[PhotoSize]]("thumb")
         _fileName     <- h.get[Option[String]]("file_name")
         _mimeType     <- h.get[Option[String]]("mime_type")
-        _fileSize     <- h.get[Option[Int]]("file_size")
+        _fileSize     <- h.get[Option[Long]]("file_size")
       } yield {
         Document(
           fileId = _fileId,

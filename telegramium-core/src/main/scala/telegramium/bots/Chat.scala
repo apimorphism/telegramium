@@ -23,6 +23,11 @@ package telegramium.bots
   * @param hasPrivateForwards
   *   Optional. True, if privacy settings of the other party in the private chat allows to use tg://user?id=<user_id>
   *   links only in chats with the user. Returned only in getChat.
+  * @param joinToSendMessages
+  *   Optional. True, if users need to join the supergroup before they can send messages. Returned only in getChat.
+  * @param joinByRequest
+  *   Optional. True, if all users directly joining the supergroup need to be approved by supergroup administrators.
+  *   Returned only in getChat.
   * @param description
   *   Optional. Description, for groups, supergroups and channel chats. Returned only in getChat.
   * @param inviteLink
@@ -61,6 +66,8 @@ final case class Chat(
   photo: Option[ChatPhoto] = Option.empty,
   bio: Option[String] = Option.empty,
   hasPrivateForwards: Option[Boolean] = Option.empty,
+  joinToSendMessages: Option[Boolean] = Option.empty,
+  joinByRequest: Option[Boolean] = Option.empty,
   description: Option[String] = Option.empty,
   inviteLink: Option[String] = Option.empty,
   pinnedMessage: Option[Message] = Option.empty,

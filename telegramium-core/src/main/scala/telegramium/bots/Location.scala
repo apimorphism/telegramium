@@ -14,8 +14,8 @@ package telegramium.bots
   * @param heading
   *   Optional. The direction in which user is moving, in degrees; 1-360. For active live locations only.
   * @param proximityAlertRadius
-  *   Optional. Maximum distance for proximity alerts about approaching another chat member, in meters. For sent live
-  *   locations only.
+  *   Optional. The maximum distance for proximity alerts about approaching another chat member, in meters. For sent
+  *   live locations only.
   */
 final case class Location(
   longitude: Float,

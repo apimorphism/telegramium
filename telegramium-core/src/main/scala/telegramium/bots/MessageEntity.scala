@@ -138,7 +138,7 @@ final case class TextMentionMessageEntity(offset: Int, length: Int, user: User) 
   * @param length
   *   Length of the entity in UTF-16 code units
   * @param url
-  *   url that will be opened after user taps on the text
+  *   URL that will be opened after user taps on the text
   */
 final case class TextLinkMessageEntity(offset: Int, length: Int, url: String) extends MessageEntity
 

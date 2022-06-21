@@ -19,5 +19,5 @@ final case class PhotoSize(
   fileUniqueId: String,
   width: Int,
   height: Int,
-  fileSize: Option[Int] = Option.empty
+  fileSize: Option[Long] = Option.empty
 )

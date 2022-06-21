@@ -22,5 +22,5 @@ final case class VideoNote(
   length: Int,
   duration: Int,
   thumb: Option[PhotoSize] = Option.empty,
-  fileSize: Option[Int] = Option.empty
+  fileSize: Option[Long] = Option.empty
 )

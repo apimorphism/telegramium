@@ -1,6 +1,6 @@
 package telegramium.bots
 
-/** Contains information about the current status of a webhook.
+/** Describes the current status of a webhook.
   *
   * @param url
   *   Webhook URL, may be empty if webhook is not set up
@@ -19,7 +19,7 @@ package telegramium.bots
   *   Optional. Unix time of the most recent error that happened when trying to synchronize available updates with
   *   Telegram datacenters
   * @param maxConnections
-  *   Optional. Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
+  *   Optional. The maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
   * @param allowedUpdates
   *   Optional. A list of update types the bot is subscribed to. Defaults to all update types except chat_member
   */

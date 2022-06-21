@@ -19,7 +19,7 @@ import telegramium.bots.InlineKeyboardMarkup
   * @param heading
   *   Direction in which the user is moving, in degrees. Must be between 1 and 360 if specified.
   * @param proximityAlertRadius
-  *   Maximum distance for proximity alerts about approaching another chat member, in meters. Must be between 1 and
+  *   The maximum distance for proximity alerts about approaching another chat member, in meters. Must be between 1 and
   *   100000 if specified.
   * @param replyMarkup
   *   A JSON-serialized object for a new inline keyboard.

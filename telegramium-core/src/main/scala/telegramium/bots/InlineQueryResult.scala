@@ -197,7 +197,7 @@ final case class InlineQueryResultPhoto(
   * @param documentUrl
   *   A valid URL for the file
   * @param mimeType
-  *   Mime type of the content of the file, either “application/pdf” or “application/zip”
+  *   MIME type of the content of the file, either “application/pdf” or “application/zip”
   * @param description
   *   Optional. Short description of the result
   * @param replyMarkup
@@ -339,7 +339,7 @@ final case class InlineQueryResultAudio(
   * @param id
   *   Unique identifier for this result, 1-64 bytes
   * @param mpeg4Url
-  *   A valid URL for the MP4 file. File size must not exceed 1MB
+  *   A valid URL for the MPEG4 file. File size must not exceed 1MB
   * @param mpeg4Width
   *   Optional. Video width
   * @param mpeg4Height
@@ -387,7 +387,7 @@ final case class InlineQueryResultMpeg4Gif(
   * @param id
   *   Unique identifier for this result, 1-64 bytes
   * @param mpeg4FileId
-  *   A valid file identifier for the MP4 file
+  *   A valid file identifier for the MPEG4 file
   * @param title
   *   Optional. Title for the result
   * @param caption
@@ -561,7 +561,7 @@ final case class InlineQueryResultCachedSticker(
   * @param videoUrl
   *   A valid URL for the embedded video player or video file
   * @param mimeType
-  *   Mime type of the content of video url, “text/html” or “video/mp4”
+  *   MIME type of the content of the video URL, “text/html” or “video/mp4”
   * @param thumbUrl
   *   URL of the thumbnail (JPEG only) for the video
   * @param title

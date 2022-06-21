@@ -1,19 +1,15 @@
 package telegramium.bots.client
 
-import telegramium.bots.ChatId
 import telegramium.bots.LabeledPrice
-import telegramium.bots.InlineKeyboardMarkup
 
-/** @param chatId
-  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
-  * @param title
+/** @param title
   *   Product name, 1-32 characters
   * @param description
   *   Product description, 1-255 characters
   * @param payload
   *   Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
   * @param providerToken
-  *   Payment provider token, obtained via &#064;BotFather
+  *   Payment provider token, obtained via BotFather
   * @param currency
   *   Three-letter ISO 4217 currency code, see more on currencies
   * @param prices
@@ -28,17 +24,11 @@ import telegramium.bots.InlineKeyboardMarkup
   *   A JSON-serialized array of suggested amounts of tips in the smallest units of the currency (integer, not
   *   float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts must be positive,
   *   passed in a strictly increased order and must not exceed max_tip_amount.
-  * @param startParameter
-  *   Unique deep-linking parameter. If left empty, forwarded copies of the sent message will have a Pay button,
-  *   allowing multiple users to pay directly from the forwarded message, using the same invoice. If non-empty,
-  *   forwarded copies of the sent message will have a URL button with a deep link to the bot (instead of a Pay button),
-  *   with the value used as the start parameter
   * @param providerData
   *   JSON-serialized data about the invoice, which will be shared with the payment provider. A detailed description of
   *   required fields should be provided by the payment provider.
   * @param photoUrl
-  *   URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service. People
-  *   like it better when they see what they are paying for.
+  *   URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service.
   * @param photoSize
   *   Photo size in bytes
   * @param photoWidth
@@ -54,25 +44,13 @@ import telegramium.bots.InlineKeyboardMarkup
   * @param needShippingAddress
   *   Pass True, if you require the user's shipping address to complete the order
   * @param sendPhoneNumberToProvider
-  *   Pass True, if the user's phone number should be sent to provider
+  *   Pass True, if the user's phone number should be sent to the provider
   * @param sendEmailToProvider
-  *   Pass True, if the user's email address should be sent to provider
+  *   Pass True, if the user's email address should be sent to the provider
   * @param isFlexible
   *   Pass True, if the final price depends on the shipping method
-  * @param disableNotification
-  *   Sends the message silently. Users will receive a notification with no sound.
-  * @param protectContent
-  *   Protects the contents of the sent message from forwarding and saving
-  * @param replyToMessageId
-  *   If the message is a reply, ID of the original message
-  * @param allowSendingWithoutReply
-  *   Pass True, if the message should be sent even if the specified replied-to message is not found
-  * @param replyMarkup
-  *   A JSON-serialized object for an inline keyboard. If empty, one 'Pay total price' button will be shown. If not
-  *   empty, the first button must be a Pay button.
   */
-final case class SendInvoiceReq(
-  chatId: ChatId,
+final case class CreateInvoiceLinkReq(
   title: String,
   description: String,
   payload: String,
@@ -81,7 +59,6 @@ final case class SendInvoiceReq(
   prices: List[LabeledPrice] = List.empty,
   maxTipAmount: Option[Int] = Option.empty,
   suggestedTipAmounts: List[Int] = List.empty,
-  startParameter: Option[String] = Option.empty,
   providerData: Option[String] = Option.empty,
   photoUrl: Option[String] = Option.empty,
   photoSize: Option[Long] = Option.empty,
@@ -93,10 +70,5 @@ final case class SendInvoiceReq(
   needShippingAddress: Option[Boolean] = Option.empty,
   sendPhoneNumberToProvider: Option[Boolean] = Option.empty,
   sendEmailToProvider: Option[Boolean] = Option.empty,
-  isFlexible: Option[Boolean] = Option.empty,
-  disableNotification: Option[Boolean] = Option.empty,
-  protectContent: Option[Boolean] = Option.empty,
-  replyToMessageId: Option[Int] = Option.empty,
-  allowSendingWithoutReply: Option[Boolean] = Option.empty,
-  replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
+  isFlexible: Option[Boolean] = Option.empty
 )

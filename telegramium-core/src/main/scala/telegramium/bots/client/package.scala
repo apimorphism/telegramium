@@ -18,10 +18,10 @@ object CirceImplicits {
   import telegramium.bots.ChatPermissions
   import telegramium.bots.InlineKeyboardMarkup
   import telegramium.bots.Emoji
+  import telegramium.bots.LabeledPrice
   import telegramium.bots.InputMedia
   import telegramium.bots.MenuButton
   import telegramium.bots.PassportElementError
-  import telegramium.bots.LabeledPrice
   import telegramium.bots.ChatAdministratorRights
   import telegramium.bots.ShippingOption
 
@@ -755,6 +755,84 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val createinvoicelinkreqEncoder: Encoder[CreateInvoiceLinkReq] =
+    (x: CreateInvoiceLinkReq) => {
+      Json.fromFields(
+        List(
+          "title"                         -> x.title.asJson,
+          "description"                   -> x.description.asJson,
+          "payload"                       -> x.payload.asJson,
+          "provider_token"                -> x.providerToken.asJson,
+          "currency"                      -> x.currency.asJson,
+          "prices"                        -> x.prices.asJson,
+          "max_tip_amount"                -> x.maxTipAmount.asJson,
+          "suggested_tip_amounts"         -> x.suggestedTipAmounts.asJson,
+          "provider_data"                 -> x.providerData.asJson,
+          "photo_url"                     -> x.photoUrl.asJson,
+          "photo_size"                    -> x.photoSize.asJson,
+          "photo_width"                   -> x.photoWidth.asJson,
+          "photo_height"                  -> x.photoHeight.asJson,
+          "need_name"                     -> x.needName.asJson,
+          "need_phone_number"             -> x.needPhoneNumber.asJson,
+          "need_email"                    -> x.needEmail.asJson,
+          "need_shipping_address"         -> x.needShippingAddress.asJson,
+          "send_phone_number_to_provider" -> x.sendPhoneNumberToProvider.asJson,
+          "send_email_to_provider"        -> x.sendEmailToProvider.asJson,
+          "is_flexible"                   -> x.isFlexible.asJson,
+          "method"                        -> "createInvoiceLink".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val createinvoicelinkreqDecoder: Decoder[CreateInvoiceLinkReq] =
+    Decoder.instance { h =>
+      for {
+        _title                     <- h.get[String]("title")
+        _description               <- h.get[String]("description")
+        _payload                   <- h.get[String]("payload")
+        _providerToken             <- h.get[String]("provider_token")
+        _currency                  <- h.get[String]("currency")
+        _prices                    <- h.getOrElse[List[LabeledPrice]]("prices")(List.empty)
+        _maxTipAmount              <- h.get[Option[Int]]("max_tip_amount")
+        _suggestedTipAmounts       <- h.getOrElse[List[Int]]("suggested_tip_amounts")(List.empty)
+        _providerData              <- h.get[Option[String]]("provider_data")
+        _photoUrl                  <- h.get[Option[String]]("photo_url")
+        _photoSize                 <- h.get[Option[Long]]("photo_size")
+        _photoWidth                <- h.get[Option[Int]]("photo_width")
+        _photoHeight               <- h.get[Option[Int]]("photo_height")
+        _needName                  <- h.get[Option[Boolean]]("need_name")
+        _needPhoneNumber           <- h.get[Option[Boolean]]("need_phone_number")
+        _needEmail                 <- h.get[Option[Boolean]]("need_email")
+        _needShippingAddress       <- h.get[Option[Boolean]]("need_shipping_address")
+        _sendPhoneNumberToProvider <- h.get[Option[Boolean]]("send_phone_number_to_provider")
+        _sendEmailToProvider       <- h.get[Option[Boolean]]("send_email_to_provider")
+        _isFlexible                <- h.get[Option[Boolean]]("is_flexible")
+      } yield {
+        CreateInvoiceLinkReq(
+          title = _title,
+          description = _description,
+          payload = _payload,
+          providerToken = _providerToken,
+          currency = _currency,
+          prices = _prices,
+          maxTipAmount = _maxTipAmount,
+          suggestedTipAmounts = _suggestedTipAmounts,
+          providerData = _providerData,
+          photoUrl = _photoUrl,
+          photoSize = _photoSize,
+          photoWidth = _photoWidth,
+          photoHeight = _photoHeight,
+          needName = _needName,
+          needPhoneNumber = _needPhoneNumber,
+          needEmail = _needEmail,
+          needShippingAddress = _needShippingAddress,
+          sendPhoneNumberToProvider = _sendPhoneNumberToProvider,
+          sendEmailToProvider = _sendEmailToProvider,
+          isFlexible = _isFlexible
+        )
+      }
+    }
+
   implicit lazy val deletestickerfromsetreqEncoder: Encoder[DeleteStickerFromSetReq] =
     (x: DeleteStickerFromSetReq) => {
       Json.fromFields(
@@ -1448,7 +1526,7 @@ object CirceImplicits {
         _startParameter            <- h.get[Option[String]]("start_parameter")
         _providerData              <- h.get[Option[String]]("provider_data")
         _photoUrl                  <- h.get[Option[String]]("photo_url")
-        _photoSize                 <- h.get[Option[Int]]("photo_size")
+        _photoSize                 <- h.get[Option[Long]]("photo_size")
         _photoWidth                <- h.get[Option[Int]]("photo_width")
         _photoHeight               <- h.get[Option[Int]]("photo_height")
         _needName                  <- h.get[Option[Boolean]]("need_name")
@@ -2656,6 +2734,7 @@ object CirceImplicits {
           "max_connections"      -> x.maxConnections.asJson,
           "allowed_updates"      -> x.allowedUpdates.asJson,
           "drop_pending_updates" -> x.dropPendingUpdates.asJson,
+          "secret_token"         -> x.secretToken.asJson,
           "method"               -> "setWebhook".asJson
         ).filter(!_._2.isNull)
       )
@@ -2670,6 +2749,7 @@ object CirceImplicits {
         _maxConnections     <- h.get[Option[Int]]("max_connections")
         _allowedUpdates     <- h.getOrElse[List[String]]("allowed_updates")(List.empty)
         _dropPendingUpdates <- h.get[Option[Boolean]]("drop_pending_updates")
+        _secretToken        <- h.get[Option[String]]("secret_token")
       } yield {
         SetWebhookReq(
           url = _url,
@@ -2677,7 +2757,8 @@ object CirceImplicits {
           ipAddress = _ipAddress,
           maxConnections = _maxConnections,
           allowedUpdates = _allowedUpdates,
-          dropPendingUpdates = _dropPendingUpdates
+          dropPendingUpdates = _dropPendingUpdates,
+          secretToken = _secretToken
         )
       }
     }
