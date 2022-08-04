@@ -7,13 +7,13 @@ object Dependencies {
     val catsCore         = "2.8.0"
     val catsEffect       = "3.3.14"
     val circe            = "0.14.2"
-    val http4s           = "0.23.12"
+    val http4s           = "0.23.14"
+    val blazeHttp4s      = "0.23.12"
     val slf4j            = "1.7.36"
     val logback          = "1.2.11"
     val scalatest        = "3.2.13"
     val testcontainers   = "0.40.10"
     val mockServerClient = "5.11.2"
-    val scalamock        = "5.1.0"
     val log4cats         = "2.4.0"
   }
 
@@ -28,12 +28,12 @@ object Dependencies {
 
   val http4sClient = Seq(
     "org.http4s" %% "http4s-circe"        % V.http4s,
-    "org.http4s" %% "http4s-blaze-client" % V.http4s
+    "org.http4s" %% "http4s-blaze-client" % V.blazeHttp4s
   )
 
   val http4sServer = Seq(
     "org.http4s" %% "http4s-dsl"          % V.http4s,
-    "org.http4s" %% "http4s-blaze-server" % V.http4s
+    "org.http4s" %% "http4s-blaze-server" % V.blazeHttp4s
   )
 
   val logger = Seq(
