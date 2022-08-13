@@ -38,7 +38,7 @@ import telegramium.bots.KeyboardMarkup
   * @param replyToMessageId
   *   If the message is a reply, ID of the original message
   * @param allowSendingWithoutReply
-  *   Pass True, if the message should be sent even if the specified replied-to message is not found
+  *   Pass True if the message should be sent even if the specified replied-to message is not found
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
   *   to remove reply keyboard or to force a reply from the user.

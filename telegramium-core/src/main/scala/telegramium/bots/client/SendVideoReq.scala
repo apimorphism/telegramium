@@ -32,7 +32,7 @@ import telegramium.bots.KeyboardMarkup
   *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
   *   parse_mode
   * @param supportsStreaming
-  *   Pass True, if the uploaded video is suitable for streaming
+  *   Pass True if the uploaded video is suitable for streaming
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
@@ -40,7 +40,7 @@ import telegramium.bots.KeyboardMarkup
   * @param replyToMessageId
   *   If the message is a reply, ID of the original message
   * @param allowSendingWithoutReply
-  *   Pass True, if the message should be sent even if the specified replied-to message is not found
+  *   Pass True if the message should be sent even if the specified replied-to message is not found
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
   *   to remove reply keyboard or to force a reply from the user.

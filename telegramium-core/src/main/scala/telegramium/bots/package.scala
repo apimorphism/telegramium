@@ -2246,7 +2246,9 @@ object CirceImplicits {
       bot_command.asJson.mapObject(_.add("type", Json.fromString("bot_command")))
     case phone_number: PhoneNumberMessageEntity =>
       phone_number.asJson.mapObject(_.add("type", Json.fromString("phone_number")))
-    case email: EmailMessageEntity         => email.asJson.mapObject(_.add("type", Json.fromString("email")))
+    case email: EmailMessageEntity => email.asJson.mapObject(_.add("type", Json.fromString("email")))
+    case custom_emoji: CustomEmojiMessageEntity =>
+      custom_emoji.asJson.mapObject(_.add("type", Json.fromString("custom_emoji")))
     case url: UrlMessageEntity             => url.asJson.mapObject(_.add("type", Json.fromString("url")))
     case underline: UnderlineMessageEntity => underline.asJson.mapObject(_.add("type", Json.fromString("underline")))
     case italic: ItalicMessageEntity       => italic.asJson.mapObject(_.add("type", Json.fromString("italic")))
@@ -2269,6 +2271,7 @@ object CirceImplicits {
       case "bot_command"   => Decoder[BotCommandMessageEntity]
       case "phone_number"  => Decoder[PhoneNumberMessageEntity]
       case "email"         => Decoder[EmailMessageEntity]
+      case "custom_emoji"  => Decoder[CustomEmojiMessageEntity]
       case "url"           => Decoder[UrlMessageEntity]
       case "underline"     => Decoder[UnderlineMessageEntity]
       case "italic"        => Decoder[ItalicMessageEntity]
@@ -2360,6 +2363,28 @@ object CirceImplicits {
         _length <- h.get[Int]("length")
       } yield {
         BotCommandMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val customemojimessageentityEncoder: Encoder[CustomEmojiMessageEntity] =
+    (x: CustomEmojiMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset"          -> x.offset.asJson,
+          "length"          -> x.length.asJson,
+          "custom_emoji_id" -> x.customEmojiId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val customemojimessageentityDecoder: Decoder[CustomEmojiMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset        <- h.get[Int]("offset")
+        _length        <- h.get[Int]("length")
+        _customEmojiId <- h.get[String]("custom_emoji_id")
+      } yield {
+        CustomEmojiMessageEntity(offset = _offset, length = _length, customEmojiId = _customEmojiId)
       }
     }
 
@@ -2703,28 +2728,29 @@ object CirceImplicits {
     (x: Chat) => {
       Json.fromFields(
         List(
-          "id"                       -> x.id.asJson,
-          "type"                     -> x.`type`.asJson,
-          "title"                    -> x.title.asJson,
-          "username"                 -> x.username.asJson,
-          "first_name"               -> x.firstName.asJson,
-          "last_name"                -> x.lastName.asJson,
-          "photo"                    -> x.photo.asJson,
-          "bio"                      -> x.bio.asJson,
-          "has_private_forwards"     -> x.hasPrivateForwards.asJson,
-          "join_to_send_messages"    -> x.joinToSendMessages.asJson,
-          "join_by_request"          -> x.joinByRequest.asJson,
-          "description"              -> x.description.asJson,
-          "invite_link"              -> x.inviteLink.asJson,
-          "pinned_message"           -> x.pinnedMessage.asJson,
-          "permissions"              -> x.permissions.asJson,
-          "slow_mode_delay"          -> x.slowModeDelay.asJson,
-          "message_auto_delete_time" -> x.messageAutoDeleteTime.asJson,
-          "has_protected_content"    -> x.hasProtectedContent.asJson,
-          "sticker_set_name"         -> x.stickerSetName.asJson,
-          "can_set_sticker_set"      -> x.canSetStickerSet.asJson,
-          "linked_chat_id"           -> x.linkedChatId.asJson,
-          "location"                 -> x.location.asJson
+          "id"                                      -> x.id.asJson,
+          "type"                                    -> x.`type`.asJson,
+          "title"                                   -> x.title.asJson,
+          "username"                                -> x.username.asJson,
+          "first_name"                              -> x.firstName.asJson,
+          "last_name"                               -> x.lastName.asJson,
+          "photo"                                   -> x.photo.asJson,
+          "bio"                                     -> x.bio.asJson,
+          "has_private_forwards"                    -> x.hasPrivateForwards.asJson,
+          "has_restricted_voice_and_video_messages" -> x.hasRestrictedVoiceAndVideoMessages.asJson,
+          "join_to_send_messages"                   -> x.joinToSendMessages.asJson,
+          "join_by_request"                         -> x.joinByRequest.asJson,
+          "description"                             -> x.description.asJson,
+          "invite_link"                             -> x.inviteLink.asJson,
+          "pinned_message"                          -> x.pinnedMessage.asJson,
+          "permissions"                             -> x.permissions.asJson,
+          "slow_mode_delay"                         -> x.slowModeDelay.asJson,
+          "message_auto_delete_time"                -> x.messageAutoDeleteTime.asJson,
+          "has_protected_content"                   -> x.hasProtectedContent.asJson,
+          "sticker_set_name"                        -> x.stickerSetName.asJson,
+          "can_set_sticker_set"                     -> x.canSetStickerSet.asJson,
+          "linked_chat_id"                          -> x.linkedChatId.asJson,
+          "location"                                -> x.location.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2732,28 +2758,29 @@ object CirceImplicits {
   implicit lazy val chatDecoder: Decoder[Chat] =
     Decoder.instance { h =>
       for {
-        _id                    <- h.get[Long]("id")
-        _type                  <- h.get[String]("type")
-        _title                 <- h.get[Option[String]]("title")
-        _username              <- h.get[Option[String]]("username")
-        _firstName             <- h.get[Option[String]]("first_name")
-        _lastName              <- h.get[Option[String]]("last_name")
-        _photo                 <- h.get[Option[ChatPhoto]]("photo")
-        _bio                   <- h.get[Option[String]]("bio")
-        _hasPrivateForwards    <- h.get[Option[Boolean]]("has_private_forwards")
-        _joinToSendMessages    <- h.get[Option[Boolean]]("join_to_send_messages")
-        _joinByRequest         <- h.get[Option[Boolean]]("join_by_request")
-        _description           <- h.get[Option[String]]("description")
-        _inviteLink            <- h.get[Option[String]]("invite_link")
-        _pinnedMessage         <- h.get[Option[Message]]("pinned_message")
-        _permissions           <- h.get[Option[ChatPermissions]]("permissions")
-        _slowModeDelay         <- h.get[Option[Int]]("slow_mode_delay")
-        _messageAutoDeleteTime <- h.get[Option[Int]]("message_auto_delete_time")
-        _hasProtectedContent   <- h.get[Option[Boolean]]("has_protected_content")
-        _stickerSetName        <- h.get[Option[String]]("sticker_set_name")
-        _canSetStickerSet      <- h.get[Option[Boolean]]("can_set_sticker_set")
-        _linkedChatId          <- h.get[Option[Long]]("linked_chat_id")
-        _location              <- h.get[Option[ChatLocation]]("location")
+        _id                                 <- h.get[Long]("id")
+        _type                               <- h.get[String]("type")
+        _title                              <- h.get[Option[String]]("title")
+        _username                           <- h.get[Option[String]]("username")
+        _firstName                          <- h.get[Option[String]]("first_name")
+        _lastName                           <- h.get[Option[String]]("last_name")
+        _photo                              <- h.get[Option[ChatPhoto]]("photo")
+        _bio                                <- h.get[Option[String]]("bio")
+        _hasPrivateForwards                 <- h.get[Option[Boolean]]("has_private_forwards")
+        _hasRestrictedVoiceAndVideoMessages <- h.get[Option[Boolean]]("has_restricted_voice_and_video_messages")
+        _joinToSendMessages                 <- h.get[Option[Boolean]]("join_to_send_messages")
+        _joinByRequest                      <- h.get[Option[Boolean]]("join_by_request")
+        _description                        <- h.get[Option[String]]("description")
+        _inviteLink                         <- h.get[Option[String]]("invite_link")
+        _pinnedMessage                      <- h.get[Option[Message]]("pinned_message")
+        _permissions                        <- h.get[Option[ChatPermissions]]("permissions")
+        _slowModeDelay                      <- h.get[Option[Int]]("slow_mode_delay")
+        _messageAutoDeleteTime              <- h.get[Option[Int]]("message_auto_delete_time")
+        _hasProtectedContent                <- h.get[Option[Boolean]]("has_protected_content")
+        _stickerSetName                     <- h.get[Option[String]]("sticker_set_name")
+        _canSetStickerSet                   <- h.get[Option[Boolean]]("can_set_sticker_set")
+        _linkedChatId                       <- h.get[Option[Long]]("linked_chat_id")
+        _location                           <- h.get[Option[ChatLocation]]("location")
       } yield {
         Chat(
           id = _id,
@@ -2765,6 +2792,7 @@ object CirceImplicits {
           photo = _photo,
           bio = _bio,
           hasPrivateForwards = _hasPrivateForwards,
+          hasRestrictedVoiceAndVideoMessages = _hasRestrictedVoiceAndVideoMessages,
           joinToSendMessages = _joinToSendMessages,
           joinByRequest = _joinByRequest,
           description = _description,
@@ -3292,13 +3320,13 @@ object CirceImplicits {
     (x: StickerSet) => {
       Json.fromFields(
         List(
-          "name"           -> x.name.asJson,
-          "title"          -> x.title.asJson,
-          "is_animated"    -> x.isAnimated.asJson,
-          "is_video"       -> x.isVideo.asJson,
-          "contains_masks" -> x.containsMasks.asJson,
-          "stickers"       -> x.stickers.asJson,
-          "thumb"          -> x.thumb.asJson
+          "name"         -> x.name.asJson,
+          "title"        -> x.title.asJson,
+          "sticker_type" -> x.stickerType.asJson,
+          "is_animated"  -> x.isAnimated.asJson,
+          "is_video"     -> x.isVideo.asJson,
+          "stickers"     -> x.stickers.asJson,
+          "thumb"        -> x.thumb.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3306,20 +3334,20 @@ object CirceImplicits {
   implicit lazy val stickersetDecoder: Decoder[StickerSet] =
     Decoder.instance { h =>
       for {
-        _name          <- h.get[String]("name")
-        _title         <- h.get[String]("title")
-        _isAnimated    <- h.get[Boolean]("is_animated")
-        _isVideo       <- h.get[Boolean]("is_video")
-        _containsMasks <- h.get[Boolean]("contains_masks")
-        _stickers      <- h.getOrElse[List[Sticker]]("stickers")(List.empty)
-        _thumb         <- h.get[Option[PhotoSize]]("thumb")
+        _name        <- h.get[String]("name")
+        _title       <- h.get[String]("title")
+        _stickerType <- h.get[String]("sticker_type")
+        _isAnimated  <- h.get[Boolean]("is_animated")
+        _isVideo     <- h.get[Boolean]("is_video")
+        _stickers    <- h.getOrElse[List[Sticker]]("stickers")(List.empty)
+        _thumb       <- h.get[Option[PhotoSize]]("thumb")
       } yield {
         StickerSet(
           name = _name,
           title = _title,
+          stickerType = _stickerType,
           isAnimated = _isAnimated,
           isVideo = _isVideo,
-          containsMasks = _containsMasks,
           stickers = _stickers,
           thumb = _thumb
         )
@@ -4147,6 +4175,7 @@ object CirceImplicits {
         List(
           "file_id"           -> x.fileId.asJson,
           "file_unique_id"    -> x.fileUniqueId.asJson,
+          "type"              -> x.`type`.asJson,
           "width"             -> x.width.asJson,
           "height"            -> x.height.asJson,
           "is_animated"       -> x.isAnimated.asJson,
@@ -4156,6 +4185,7 @@ object CirceImplicits {
           "set_name"          -> x.setName.asJson,
           "premium_animation" -> x.premiumAnimation.asJson,
           "mask_position"     -> x.maskPosition.asJson,
+          "custom_emoji_id"   -> x.customEmojiId.asJson,
           "file_size"         -> x.fileSize.asJson
         ).filter(!_._2.isNull)
       )
@@ -4166,6 +4196,7 @@ object CirceImplicits {
       for {
         _fileId           <- h.get[String]("file_id")
         _fileUniqueId     <- h.get[String]("file_unique_id")
+        _type             <- h.get[String]("type")
         _width            <- h.get[Int]("width")
         _height           <- h.get[Int]("height")
         _isAnimated       <- h.get[Boolean]("is_animated")
@@ -4175,11 +4206,13 @@ object CirceImplicits {
         _setName          <- h.get[Option[String]]("set_name")
         _premiumAnimation <- h.get[Option[File]]("premium_animation")
         _maskPosition     <- h.get[Option[MaskPosition]]("mask_position")
+        _customEmojiId    <- h.get[Option[String]]("custom_emoji_id")
         _fileSize         <- h.get[Option[Long]]("file_size")
       } yield {
         Sticker(
           fileId = _fileId,
           fileUniqueId = _fileUniqueId,
+          `type` = _type,
           width = _width,
           height = _height,
           isAnimated = _isAnimated,
@@ -4189,6 +4222,7 @@ object CirceImplicits {
           setName = _setName,
           premiumAnimation = _premiumAnimation,
           maskPosition = _maskPosition,
+          customEmojiId = _customEmojiId,
           fileSize = _fileSize
         )
       }

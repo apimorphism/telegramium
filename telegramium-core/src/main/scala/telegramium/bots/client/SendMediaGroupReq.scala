@@ -14,7 +14,7 @@ import telegramium.bots.InputMedia
   * @param replyToMessageId
   *   If the messages are a reply, ID of the original message
   * @param allowSendingWithoutReply
-  *   Pass True, if the message should be sent even if the specified replied-to message is not found
+  *   Pass True if the message should be sent even if the specified replied-to message is not found
   */
 final case class SendMediaGroupReq(
   chatId: ChatId,

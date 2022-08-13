@@ -70,19 +70,19 @@ final case class InputVenueMessageContent(
   * @param photoHeight
   *   Optional. Photo height
   * @param needName
-  *   Optional. Pass True, if you require the user's full name to complete the order
+  *   Optional. Pass True if you require the user's full name to complete the order
   * @param needPhoneNumber
-  *   Optional. Pass True, if you require the user's phone number to complete the order
+  *   Optional. Pass True if you require the user's phone number to complete the order
   * @param needEmail
-  *   Optional. Pass True, if you require the user's email address to complete the order
+  *   Optional. Pass True if you require the user's email address to complete the order
   * @param needShippingAddress
-  *   Optional. Pass True, if you require the user's shipping address to complete the order
+  *   Optional. Pass True if you require the user's shipping address to complete the order
   * @param sendPhoneNumberToProvider
-  *   Optional. Pass True, if the user's phone number should be sent to provider
+  *   Optional. Pass True if the user's phone number should be sent to provider
   * @param sendEmailToProvider
-  *   Optional. Pass True, if the user's email address should be sent to provider
+  *   Optional. Pass True if the user's email address should be sent to provider
   * @param isFlexible
-  *   Optional. Pass True, if the final price depends on the shipping method
+  *   Optional. Pass True if the final price depends on the shipping method
   */
 final case class InputInvoiceMessageContent(
   title: String,

@@ -5,7 +5,7 @@ import telegramium.bots.ShippingOption
 /** @param shippingQueryId
   *   Unique identifier for the query to be answered
   * @param ok
-  *   Specify True if delivery to the specified address is possible and False if there are any problems (for example, if
+  *   Pass True if delivery to the specified address is possible and False if there are any problems (for example, if
   *   delivery to the specified address is not possible)
   * @param shippingOptions
   *   Required if ok is True. A JSON-serialized array of available shipping options.

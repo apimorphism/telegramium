@@ -83,7 +83,7 @@ final case class InputMediaPhoto(
   * @param duration
   *   Optional. Video duration in seconds
   * @param supportsStreaming
-  *   Optional. Pass True, if the uploaded video is suitable for streaming
+  *   Optional. Pass True if the uploaded video is suitable for streaming
   */
 final case class InputMediaVideo(
   media: String,

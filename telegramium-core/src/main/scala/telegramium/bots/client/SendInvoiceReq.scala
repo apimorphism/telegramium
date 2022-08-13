@@ -46,19 +46,19 @@ import telegramium.bots.InlineKeyboardMarkup
   * @param photoHeight
   *   Photo height
   * @param needName
-  *   Pass True, if you require the user's full name to complete the order
+  *   Pass True if you require the user's full name to complete the order
   * @param needPhoneNumber
-  *   Pass True, if you require the user's phone number to complete the order
+  *   Pass True if you require the user's phone number to complete the order
   * @param needEmail
-  *   Pass True, if you require the user's email address to complete the order
+  *   Pass True if you require the user's email address to complete the order
   * @param needShippingAddress
-  *   Pass True, if you require the user's shipping address to complete the order
+  *   Pass True if you require the user's shipping address to complete the order
   * @param sendPhoneNumberToProvider
-  *   Pass True, if the user's phone number should be sent to provider
+  *   Pass True if the user's phone number should be sent to provider
   * @param sendEmailToProvider
-  *   Pass True, if the user's email address should be sent to provider
+  *   Pass True if the user's email address should be sent to provider
   * @param isFlexible
-  *   Pass True, if the final price depends on the shipping method
+  *   Pass True if the final price depends on the shipping method
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
@@ -66,7 +66,7 @@ import telegramium.bots.InlineKeyboardMarkup
   * @param replyToMessageId
   *   If the message is a reply, ID of the original message
   * @param allowSendingWithoutReply
-  *   Pass True, if the message should be sent even if the specified replied-to message is not found
+  *   Pass True if the message should be sent even if the specified replied-to message is not found
   * @param replyMarkup
   *   A JSON-serialized object for an inline keyboard. If empty, one 'Pay total price' button will be shown. If not
   *   empty, the first button must be a Pay button.

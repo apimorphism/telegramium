@@ -23,6 +23,9 @@ package telegramium.bots
   * @param hasPrivateForwards
   *   Optional. True, if privacy settings of the other party in the private chat allows to use tg://user?id=<user_id>
   *   links only in chats with the user. Returned only in getChat.
+  * @param hasRestrictedVoiceAndVideoMessages
+  *   Optional. True, if the privacy settings of the other party restrict sending voice and video note messages in the
+  *   private chat. Returned only in getChat.
   * @param joinToSendMessages
   *   Optional. True, if users need to join the supergroup before they can send messages. Returned only in getChat.
   * @param joinByRequest
@@ -66,6 +69,7 @@ final case class Chat(
   photo: Option[ChatPhoto] = Option.empty,
   bio: Option[String] = Option.empty,
   hasPrivateForwards: Option[Boolean] = Option.empty,
+  hasRestrictedVoiceAndVideoMessages: Option[Boolean] = Option.empty,
   joinToSendMessages: Option[Boolean] = Option.empty,
   joinByRequest: Option[Boolean] = Option.empty,
   description: Option[String] = Option.empty,

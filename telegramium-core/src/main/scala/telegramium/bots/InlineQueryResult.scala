@@ -272,7 +272,7 @@ final case class InlineQueryResultCachedVoice(
   * @param url
   *   Optional. URL of the result
   * @param hideUrl
-  *   Optional. Pass True, if you don't want the URL to be shown in the message
+  *   Optional. Pass True if you don't want the URL to be shown in the message
   * @param description
   *   Optional. Short description of the result
   * @param thumbUrl

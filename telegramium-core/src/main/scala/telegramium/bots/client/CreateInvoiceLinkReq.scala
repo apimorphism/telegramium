@@ -36,19 +36,19 @@ import telegramium.bots.LabeledPrice
   * @param photoHeight
   *   Photo height
   * @param needName
-  *   Pass True, if you require the user's full name to complete the order
+  *   Pass True if you require the user's full name to complete the order
   * @param needPhoneNumber
-  *   Pass True, if you require the user's phone number to complete the order
+  *   Pass True if you require the user's phone number to complete the order
   * @param needEmail
-  *   Pass True, if you require the user's email address to complete the order
+  *   Pass True if you require the user's email address to complete the order
   * @param needShippingAddress
-  *   Pass True, if you require the user's shipping address to complete the order
+  *   Pass True if you require the user's shipping address to complete the order
   * @param sendPhoneNumberToProvider
-  *   Pass True, if the user's phone number should be sent to the provider
+  *   Pass True if the user's phone number should be sent to the provider
   * @param sendEmailToProvider
-  *   Pass True, if the user's email address should be sent to the provider
+  *   Pass True if the user's email address should be sent to the provider
   * @param isFlexible
-  *   Pass True, if the final price depends on the shipping method
+  *   Pass True if the final price depends on the shipping method
   */
 final case class CreateInvoiceLinkReq(
   title: String,

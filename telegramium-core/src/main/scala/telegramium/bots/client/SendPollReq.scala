@@ -32,7 +32,7 @@ import telegramium.bots.KeyboardMarkup
   *   Point in time (Unix timestamp) when the poll will be automatically closed. Must be at least 5 and no more than 600
   *   seconds in the future. Can't be used together with open_period.
   * @param isClosed
-  *   Pass True, if the poll needs to be immediately closed. This can be useful for poll preview.
+  *   Pass True if the poll needs to be immediately closed. This can be useful for poll preview.
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
@@ -40,7 +40,7 @@ import telegramium.bots.KeyboardMarkup
   * @param replyToMessageId
   *   If the message is a reply, ID of the original message
   * @param allowSendingWithoutReply
-  *   Pass True, if the message should be sent even if the specified replied-to message is not found
+  *   Pass True if the message should be sent even if the specified replied-to message is not found
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
   *   to remove reply keyboard or to force a reply from the user.

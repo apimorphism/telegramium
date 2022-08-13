@@ -5,9 +5,9 @@ package telegramium.bots.client
   * @param score
   *   New score, must be non-negative
   * @param force
-  *   Pass True, if the high score is allowed to decrease. This can be useful when fixing mistakes or banning cheaters
+  *   Pass True if the high score is allowed to decrease. This can be useful when fixing mistakes or banning cheaters
   * @param disableEditMessage
-  *   Pass True, if the game message should not be automatically edited to include the current scoreboard
+  *   Pass True if the game message should not be automatically edited to include the current scoreboard
   * @param chatId
   *   Required if inline_message_id is not specified. Unique identifier for the target chat
   * @param messageId

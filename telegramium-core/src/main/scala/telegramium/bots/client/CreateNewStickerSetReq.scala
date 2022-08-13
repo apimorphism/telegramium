@@ -22,10 +22,11 @@ import telegramium.bots.MaskPosition
   * @param webmSticker
   *   WEBM video with the sticker, uploaded using multipart/form-data. See
   *   https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
+  * @param stickerType
+  *   Type of stickers in the set, pass “regular” or “mask”. Custom emoji sticker sets can't be created via the Bot API
+  *   at the moment. By default, a regular sticker set is created.
   * @param emojis
   *   One or more emoji corresponding to the sticker
-  * @param containsMasks
-  *   Pass True, if a set of mask stickers should be created
   * @param maskPosition
   *   A JSON-serialized object for position where the mask should be placed on faces
   */
@@ -36,7 +37,7 @@ final case class CreateNewStickerSetReq(
   pngSticker: Option[IFile] = Option.empty,
   tgsSticker: Option[IFile] = Option.empty,
   webmSticker: Option[IFile] = Option.empty,
+  stickerType: Option[String] = Option.empty,
   emojis: String,
-  containsMasks: Option[Boolean] = Option.empty,
   maskPosition: Option[MaskPosition] = Option.empty
 )

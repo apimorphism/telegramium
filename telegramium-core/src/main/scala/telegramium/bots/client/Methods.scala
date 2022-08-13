@@ -12,6 +12,7 @@ import telegramium.bots.UserProfilePhotos
 import telegramium.bots.SentWebAppMessage
 import telegramium.bots.File
 import telegramium.bots.Poll
+import telegramium.bots.Sticker
 import telegramium.bots.MessageId
 import telegramium.bots.ChatInviteLink
 import telegramium.bots.User
@@ -80,7 +81,7 @@ trait Methods {
   }
 
   /** Use this method to get data for high score tables. Will return the score of the specified user and several of
-    * their neighbors in a game. On success, returns an Array of GameHighScore objects.
+    * their neighbors in a game. Returns an Array of GameHighScore objects.
     *
     * @param userId
     *   Target user id
@@ -175,7 +176,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -255,7 +256,7 @@ trait Methods {
     *   Point in time (Unix timestamp) when the poll will be automatically closed. Must be at least 5 and no more than
     *   600 seconds in the future. Can't be used together with open_period.
     * @param isClosed
-    *   Pass True, if the poll needs to be immediately closed. This can be useful for poll preview.
+    *   Pass True if the poll needs to be immediately closed. This can be useful for poll preview.
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -263,7 +264,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -343,7 +344,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove keyboard or to force a reply from the user.
@@ -398,10 +399,11 @@ trait Methods {
     * @param webmSticker
     *   WEBM video with the sticker, uploaded using multipart/form-data. See
     *   https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
+    * @param stickerType
+    *   Type of stickers in the set, pass “regular” or “mask”. Custom emoji sticker sets can't be created via the Bot
+    *   API at the moment. By default, a regular sticker set is created.
     * @param emojis
     *   One or more emoji corresponding to the sticker
-    * @param containsMasks
-    *   Pass True, if a set of mask stickers should be created
     * @param maskPosition
     *   A JSON-serialized object for position where the mask should be placed on faces
     */
@@ -412,8 +414,8 @@ trait Methods {
     pngSticker: Option[IFile] = Option.empty,
     tgsSticker: Option[IFile] = Option.empty,
     webmSticker: Option[IFile] = Option.empty,
+    stickerType: Option[String] = Option.empty,
     emojis: String,
-    containsMasks: Option[Boolean] = Option.empty,
     maskPosition: Option[MaskPosition] = Option.empty
   ): Method[Boolean] = {
     val req = CreateNewStickerSetReq(
@@ -423,8 +425,8 @@ trait Methods {
       pngSticker,
       tgsSticker,
       webmSticker,
+      stickerType,
       emojis,
-      containsMasks,
       maskPosition
     )
     MethodReq[Boolean](
@@ -508,7 +510,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -622,7 +624,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -747,19 +749,19 @@ trait Methods {
     * @param photoHeight
     *   Photo height
     * @param needName
-    *   Pass True, if you require the user's full name to complete the order
+    *   Pass True if you require the user's full name to complete the order
     * @param needPhoneNumber
-    *   Pass True, if you require the user's phone number to complete the order
+    *   Pass True if you require the user's phone number to complete the order
     * @param needEmail
-    *   Pass True, if you require the user's email address to complete the order
+    *   Pass True if you require the user's email address to complete the order
     * @param needShippingAddress
-    *   Pass True, if you require the user's shipping address to complete the order
+    *   Pass True if you require the user's shipping address to complete the order
     * @param sendPhoneNumberToProvider
-    *   Pass True, if the user's phone number should be sent to the provider
+    *   Pass True if the user's phone number should be sent to the provider
     * @param sendEmailToProvider
-    *   Pass True, if the user's email address should be sent to the provider
+    *   Pass True if the user's email address should be sent to the provider
     * @param isFlexible
-    *   Pass True, if the final price depends on the shipping method
+    *   Pass True if the final price depends on the shipping method
     */
   def createInvoiceLink(
     title: String,
@@ -877,7 +879,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the messages are a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     */
   def sendMediaGroup(
     chatId: ChatId,
@@ -905,7 +907,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   A JSON-serialized object for an inline keyboard. If empty, one 'Play game_title' button will be shown. If not
     *   empty, the first button must launch the game.
@@ -959,7 +961,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -1016,6 +1018,17 @@ trait Methods {
   def unbanChatMember(chatId: ChatId, userId: Long, onlyIfBanned: Option[Boolean] = Option.empty): Method[Boolean] = {
     val req = UnbanChatMemberReq(chatId, userId, onlyIfBanned)
     MethodReq[Boolean]("unbanChatMember", req.asJson)
+  }
+
+  /** Use this method to get information about custom emoji stickers by their identifiers. Returns an Array of Sticker
+    * objects.
+    *
+    * @param customEmojiIds
+    *   List of custom emoji identifiers. At most 200 custom emoji identifiers can be specified.
+    */
+  def getCustomEmojiStickers(customEmojiIds: List[String] = List.empty): Method[List[Sticker]] = {
+    val req = GetCustomEmojiStickersReq(customEmojiIds)
+    MethodReq[List[Sticker]]("getCustomEmojiStickers", req.asJson)
   }
 
   /** Use this method to change the description of a group, a supergroup or a channel. The bot must be an administrator
@@ -1149,9 +1162,9 @@ trait Methods {
     * @param score
     *   New score, must be non-negative
     * @param force
-    *   Pass True, if the high score is allowed to decrease. This can be useful when fixing mistakes or banning cheaters
+    *   Pass True if the high score is allowed to decrease. This can be useful when fixing mistakes or banning cheaters
     * @param disableEditMessage
-    *   Pass True, if the game message should not be automatically edited to include the current scoreboard
+    *   Pass True if the game message should not be automatically edited to include the current scoreboard
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat
     * @param messageId
@@ -1197,9 +1210,10 @@ trait Methods {
     MethodReq[Boolean]("setChatTitle", req.asJson)
   }
 
-  /** Use this method to copy messages of any kind. Service messages and invoice messages can't be copied. The method is
-    * analogous to the method forwardMessage, but the copied message doesn't have a link to the original message.
-    * Returns the MessageId of the sent message on success.
+  /** Use this method to copy messages of any kind. Service messages and invoice messages can't be copied. A quiz poll
+    * can be copied only if the value of the field correct_option_id is known to the bot. The method is analogous to the
+    * method forwardMessage, but the copied message doesn't have a link to the original message. Returns the MessageId
+    * of the sent message on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -1222,7 +1236,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -1282,7 +1296,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -1439,19 +1453,19 @@ trait Methods {
     * @param photoHeight
     *   Photo height
     * @param needName
-    *   Pass True, if you require the user's full name to complete the order
+    *   Pass True if you require the user's full name to complete the order
     * @param needPhoneNumber
-    *   Pass True, if you require the user's phone number to complete the order
+    *   Pass True if you require the user's phone number to complete the order
     * @param needEmail
-    *   Pass True, if you require the user's email address to complete the order
+    *   Pass True if you require the user's email address to complete the order
     * @param needShippingAddress
-    *   Pass True, if you require the user's shipping address to complete the order
+    *   Pass True if you require the user's shipping address to complete the order
     * @param sendPhoneNumberToProvider
-    *   Pass True, if the user's phone number should be sent to provider
+    *   Pass True if the user's phone number should be sent to provider
     * @param sendEmailToProvider
-    *   Pass True, if the user's email address should be sent to provider
+    *   Pass True if the user's email address should be sent to provider
     * @param isFlexible
-    *   Pass True, if the final price depends on the shipping method
+    *   Pass True if the final price depends on the shipping method
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -1459,7 +1473,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   A JSON-serialized object for an inline keyboard. If empty, one 'Pay total price' button will be shown. If not
     *   empty, the first button must be a Pay button.
@@ -1557,7 +1571,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -1626,8 +1640,8 @@ trait Methods {
     *   The maximum amount of time in seconds that the result of the inline query may be cached on the server. Defaults
     *   to 300.
     * @param isPersonal
-    *   Pass True, if results may be cached on the server side only for the user that sent the query. By default,
-    *   results may be returned to any user who sends the same query
+    *   Pass True if results may be cached on the server side only for the user that sent the query. By default, results
+    *   may be returned to any user who sends the same query
     * @param nextOffset
     *   Pass the offset that a client should send in the next query with the same text to receive more results. Pass an
     *   empty string if there are no more results or if you don't support pagination. Offset length can't exceed 64
@@ -1708,7 +1722,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -1824,8 +1838,8 @@ trait Methods {
     MethodReq[ChatMember]("getChatMember", req.asJson)
   }
 
-  /** Use this method to get the current list of the bot's commands for the given scope and user language. Returns Array
-    * of BotCommand on success. If commands aren't set, an empty list is returned.
+  /** Use this method to get the current list of the bot's commands for the given scope and user language. Returns an
+    * Array of BotCommand objects. If commands aren't set, an empty list is returned.
     *
     * @param scope
     *   A JSON-serialized object, describing scope of users. Defaults to BotCommandScopeDefault.
@@ -1868,9 +1882,8 @@ trait Methods {
     MethodReq[Boolean]("banChatMember", req.asJson)
   }
 
-  /** Use this method to get a list of administrators in a chat. On success, returns an Array of ChatMember objects that
-    * contains information about all chat administrators except other bots. If the chat is a group or a supergroup and
-    * no administrators were appointed, only the creator will be returned.
+  /** Use this method to get a list of administrators in a chat, which aren't bots. Returns an Array of ChatMember
+    * objects.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup or channel (in the format
@@ -1908,7 +1921,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -1961,31 +1974,31 @@ trait Methods {
     * @param userId
     *   Unique identifier of the target user
     * @param isAnonymous
-    *   Pass True, if the administrator's presence in the chat is hidden
+    *   Pass True if the administrator's presence in the chat is hidden
     * @param canManageChat
-    *   Pass True, if the administrator can access the chat event log, chat statistics, message statistics in channels,
+    *   Pass True if the administrator can access the chat event log, chat statistics, message statistics in channels,
     *   see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other
     *   administrator privilege
     * @param canPostMessages
-    *   Pass True, if the administrator can create channel posts, channels only
+    *   Pass True if the administrator can create channel posts, channels only
     * @param canEditMessages
-    *   Pass True, if the administrator can edit messages of other users and can pin messages, channels only
+    *   Pass True if the administrator can edit messages of other users and can pin messages, channels only
     * @param canDeleteMessages
-    *   Pass True, if the administrator can delete messages of other users
+    *   Pass True if the administrator can delete messages of other users
     * @param canManageVideoChats
-    *   Pass True, if the administrator can manage video chats
+    *   Pass True if the administrator can manage video chats
     * @param canRestrictMembers
-    *   Pass True, if the administrator can restrict, ban or unban chat members
+    *   Pass True if the administrator can restrict, ban or unban chat members
     * @param canPromoteMembers
-    *   Pass True, if the administrator can add new administrators with a subset of their own privileges or demote
+    *   Pass True if the administrator can add new administrators with a subset of their own privileges or demote
     *   administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by
     *   him)
     * @param canChangeInfo
-    *   Pass True, if the administrator can change chat title, photo and other settings
+    *   Pass True if the administrator can change chat title, photo and other settings
     * @param canInviteUsers
-    *   Pass True, if the administrator can invite new users to the chat
+    *   Pass True if the administrator can invite new users to the chat
     * @param canPinMessages
-    *   Pass True, if the administrator can pin messages, supergroups only
+    *   Pass True if the administrator can pin messages, supergroups only
     */
   def promoteChatMember(
     chatId: ChatId,
@@ -2129,7 +2142,7 @@ trait Methods {
     * @param messageId
     *   Identifier of a message to pin
     * @param disableNotification
-    *   Pass True, if it is not necessary to send a notification to all chat members about the new pinned message.
+    *   Pass True if it is not necessary to send a notification to all chat members about the new pinned message.
     *   Notifications are always disabled in channels and private chats.
     */
   def pinChatMessage(
@@ -2244,7 +2257,7 @@ trait Methods {
     *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
     *   parse_mode
     * @param supportsStreaming
-    *   Pass True, if the uploaded video is suitable for streaming
+    *   Pass True if the uploaded video is suitable for streaming
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -2252,7 +2265,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -2435,7 +2448,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -2486,8 +2499,8 @@ trait Methods {
     * @param shippingQueryId
     *   Unique identifier for the query to be answered
     * @param ok
-    *   Specify True if delivery to the specified address is possible and False if there are any problems (for example,
-    *   if delivery to the specified address is not possible)
+    *   Pass True if delivery to the specified address is possible and False if there are any problems (for example, if
+    *   delivery to the specified address is not possible)
     * @param shippingOptions
     *   Required if ok is True. A JSON-serialized array of available shipping options.
     * @param errorMessage
@@ -2559,7 +2572,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -2612,7 +2625,7 @@ trait Methods {
     * @param replyToMessageId
     *   If the message is a reply, ID of the original message
     * @param allowSendingWithoutReply
-    *   Pass True, if the message should be sent even if the specified replied-to message is not found
+    *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -2644,7 +2657,7 @@ trait Methods {
     MethodReq[Message]("sendPhoto", req.asJson, Map("photo" -> Option(photo)).collect { case (k, Some(v)) => k -> v })
   }
 
-  /** Use this method to receive incoming updates using long polling (wiki). An Array of Update objects is returned.
+  /** Use this method to receive incoming updates using long polling (wiki). Returns an Array of Update objects.
     *
     * @param offset
     *   Identifier of the first update to be returned. Must be greater by one than the highest among the identifiers of

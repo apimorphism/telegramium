@@ -409,16 +409,16 @@ object CirceImplicits {
     (x: CreateNewStickerSetReq) => {
       Json.fromFields(
         List(
-          "user_id"        -> x.userId.asJson,
-          "name"           -> x.name.asJson,
-          "title"          -> x.title.asJson,
-          "png_sticker"    -> x.pngSticker.asJson,
-          "tgs_sticker"    -> x.tgsSticker.asJson,
-          "webm_sticker"   -> x.webmSticker.asJson,
-          "emojis"         -> x.emojis.asJson,
-          "contains_masks" -> x.containsMasks.asJson,
-          "mask_position"  -> x.maskPosition.asJson,
-          "method"         -> "createNewStickerSet".asJson
+          "user_id"       -> x.userId.asJson,
+          "name"          -> x.name.asJson,
+          "title"         -> x.title.asJson,
+          "png_sticker"   -> x.pngSticker.asJson,
+          "tgs_sticker"   -> x.tgsSticker.asJson,
+          "webm_sticker"  -> x.webmSticker.asJson,
+          "sticker_type"  -> x.stickerType.asJson,
+          "emojis"        -> x.emojis.asJson,
+          "mask_position" -> x.maskPosition.asJson,
+          "method"        -> "createNewStickerSet".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -426,15 +426,15 @@ object CirceImplicits {
   implicit lazy val createnewstickersetreqDecoder: Decoder[CreateNewStickerSetReq] =
     Decoder.instance { h =>
       for {
-        _userId        <- h.get[Long]("user_id")
-        _name          <- h.get[String]("name")
-        _title         <- h.get[String]("title")
-        _pngSticker    <- h.get[Option[IFile]]("png_sticker")
-        _tgsSticker    <- h.get[Option[IFile]]("tgs_sticker")
-        _webmSticker   <- h.get[Option[IFile]]("webm_sticker")
-        _emojis        <- h.get[String]("emojis")
-        _containsMasks <- h.get[Option[Boolean]]("contains_masks")
-        _maskPosition  <- h.get[Option[MaskPosition]]("mask_position")
+        _userId       <- h.get[Long]("user_id")
+        _name         <- h.get[String]("name")
+        _title        <- h.get[String]("title")
+        _pngSticker   <- h.get[Option[IFile]]("png_sticker")
+        _tgsSticker   <- h.get[Option[IFile]]("tgs_sticker")
+        _webmSticker  <- h.get[Option[IFile]]("webm_sticker")
+        _stickerType  <- h.get[Option[String]]("sticker_type")
+        _emojis       <- h.get[String]("emojis")
+        _maskPosition <- h.get[Option[MaskPosition]]("mask_position")
       } yield {
         CreateNewStickerSetReq(
           userId = _userId,
@@ -443,8 +443,8 @@ object CirceImplicits {
           pngSticker = _pngSticker,
           tgsSticker = _tgsSticker,
           webmSticker = _webmSticker,
+          stickerType = _stickerType,
           emojis = _emojis,
-          containsMasks = _containsMasks,
           maskPosition = _maskPosition
         )
       }
@@ -1070,6 +1070,25 @@ object CirceImplicits {
         _onlyIfBanned <- h.get[Option[Boolean]]("only_if_banned")
       } yield {
         UnbanChatMemberReq(chatId = _chatId, userId = _userId, onlyIfBanned = _onlyIfBanned)
+      }
+    }
+
+  implicit lazy val getcustomemojistickersreqEncoder: Encoder[GetCustomEmojiStickersReq] =
+    (x: GetCustomEmojiStickersReq) => {
+      Json.fromFields(
+        List(
+          "custom_emoji_ids" -> x.customEmojiIds.asJson,
+          "method"           -> "getCustomEmojiStickers".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getcustomemojistickersreqDecoder: Decoder[GetCustomEmojiStickersReq] =
+    Decoder.instance { h =>
+      for {
+        _customEmojiIds <- h.getOrElse[List[String]]("custom_emoji_ids")(List.empty)
+      } yield {
+        GetCustomEmojiStickersReq(customEmojiIds = _customEmojiIds)
       }
     }
 

@@ -7,7 +7,7 @@ import telegramium.bots.ChatId
   * @param messageId
   *   Identifier of a message to pin
   * @param disableNotification
-  *   Pass True, if it is not necessary to send a notification to all chat members about the new pinned message.
+  *   Pass True if it is not necessary to send a notification to all chat members about the new pinned message.
   *   Notifications are always disabled in channels and private chats.
   */
 final case class PinChatMessageReq(chatId: ChatId, messageId: Int, disableNotification: Option[Boolean] = Option.empty)
