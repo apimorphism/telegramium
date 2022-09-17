@@ -14,7 +14,7 @@ object Dependencies {
     val scalatest        = "3.2.13"
     val testcontainers   = "0.40.10"
     val mockServerClient = "5.11.2"
-    val log4cats         = "2.4.0"
+    val log4cats         = "2.5.0"
   }
 
   val catsCore   = "org.typelevel" %% "cats-core"   % V.catsCore
