@@ -6,7 +6,7 @@ object Dependencies {
     val monix            = "3.4.0"
     val catsCore         = "2.8.0"
     val catsEffect       = "3.3.14"
-    val circe            = "0.14.2"
+    val circe            = "0.14.3"
     val http4s           = "0.23.15"
     val blazeHttp4s      = "0.23.12"
     val slf4j            = "2.0.1"
@@ -14,7 +14,7 @@ object Dependencies {
     val scalatest        = "3.2.13"
     val testcontainers   = "0.40.10"
     val mockServerClient = "5.11.2"
-    val log4cats         = "2.4.0"
+    val log4cats         = "2.5.0"
   }
 
   val catsCore   = "org.typelevel" %% "cats-core"   % V.catsCore
