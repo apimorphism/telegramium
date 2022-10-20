@@ -3,6 +3,8 @@ package telegramium.bots.high
 import cats.effect.{Async, Ref}
 import cats.syntax.all.*
 import cats.{Monad, Parallel}
+import iozhik.DecodingError
+import org.http4s.InvalidMessageBodyFailure
 import telegramium.bots.*
 import telegramium.bots.client.*
 
@@ -58,6 +60,10 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
       seconds = pollInterval.toSeconds.toInt
       updates <- bot
         .execute(getUpdates(offset = Some(offset), timeout = Some(seconds)))
+        .adaptError {
+          case InvalidMessageBodyFailure(details, causeOpt) => responseDecodingError(details, causeOpt)
+          case e @ DecodingError(message)                   => responseDecodingError(message, e.some)
+        }
         .onError {
           case _: java.util.concurrent.TimeoutException => poll(offsetKeeper)
           case NonFatal(e) =>
@@ -100,6 +106,16 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
   def onErrorDelay: F[FiniteDuration] = {
     Async[F].delay(5.seconds)
   }
+
+  private def responseDecodingError(details: String, cause: Option[Throwable]) =
+    ResponseDecodingError(
+      s"""Cannot decode Telegram Bot API response:
+         |$details
+         |
+         |Your Telegramium version might not be compatible with the current Telegram Bot API version, try updating it.
+         |""".stripMargin,
+      cause
+    )
 
 }
 
