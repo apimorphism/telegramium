@@ -4,6 +4,7 @@ object CirceImplicits {
 
   import io.circe.syntax._
   import io.circe.{Encoder, Decoder, Json}
+  import iozhik._
   import cats.syntax.functor._
   import io.circe.HCursor
 
@@ -452,6 +453,7 @@ object CirceImplicits {
       case "default"                 => Decoder[BotCommandScopeDefault.type]
       case "all_private_chats"       => Decoder[BotCommandScopeAllPrivateChats.type]
       case "chat_member"             => Decoder[BotCommandScopeChatMember]
+      case unknown                   => throw DecodingError(s"Unknown type for BotCommandScope: $unknown")
     }
   } yield value
 
@@ -547,6 +549,7 @@ object CirceImplicits {
       case "web_app"  => Decoder[MenuButtonWebApp]
       case "default"  => Decoder[MenuButtonDefault.type]
       case "commands" => Decoder[MenuButtonCommands.type]
+      case unknown    => throw DecodingError(s"Unknown type for MenuButton: $unknown")
     }
   } yield value
 
@@ -595,6 +598,7 @@ object CirceImplicits {
       case "audio"     => Decoder[InputMediaAudio]
       case "animation" => Decoder[InputMediaAnimation]
       case "video"     => Decoder[InputMediaVideo]
+      case unknown     => throw DecodingError(s"Unknown type for InputMedia: $unknown")
     }
   } yield value
 
@@ -850,6 +854,7 @@ object CirceImplicits {
       case "sticker" => Decoder[InlineQueryResultCachedSticker]
       case "game"    => Decoder[InlineQueryResultGame]
       case "venue"   => Decoder[InlineQueryResultVenue]
+      case unknown   => throw DecodingError(s"Unknown type for InlineQueryResult: $unknown")
     }
   } yield value
 
@@ -2035,6 +2040,7 @@ object CirceImplicits {
       case "unspecified"       => Decoder[PassportElementErrorUnspecified]
       case "file"              => Decoder[PassportElementErrorFile]
       case "selfie"            => Decoder[PassportElementErrorSelfie]
+      case unknown             => throw DecodingError(s"Unknown type for PassportElementError: $unknown")
     }
   } yield value
 
@@ -2283,6 +2289,7 @@ object CirceImplicits {
       case "hashtag"       => Decoder[HashtagMessageEntity]
       case "text_link"     => Decoder[TextLinkMessageEntity]
       case "strikethrough" => Decoder[StrikethroughMessageEntity]
+      case unknown         => throw DecodingError(s"Unknown type for MessageEntity: $unknown")
     }
   } yield value
 

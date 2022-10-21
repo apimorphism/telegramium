@@ -4,6 +4,7 @@ object CirceImplicits {
 
   import io.circe.syntax._
   import io.circe.{Encoder, Decoder, Json}
+  import iozhik._
   import io.circe.HCursor
   import telegramium.bots.BotCommand
   import telegramium.bots.BotCommandScope
