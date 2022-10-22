@@ -3,6 +3,7 @@ package telegramium.bots.high
 import cats.effect.{Async, Sync}
 import cats.syntax.all.*
 import io.circe.{Decoder, Json}
+import iozhik.DecodingError
 import org.http4s.circe.*
 import org.http4s.client.*
 import org.http4s.dsl.io.*
@@ -63,7 +64,11 @@ class BotApi[F[_]](
 
   private def handleResponse[A: io.circe.Decoder](method: Method[A], req: Request[F]): F[A] =
     for {
-      response <- http.fetchAs(req)(jsonOf[F, Response[A]])
+      response <- http
+        .fetchAs(req)(jsonOf[F, Response[A]])
+        .adaptError { case e @ DecodingError(message) =>
+          ResponseDecodingError.default(message, e.some)
+        }
       result <- response match {
         case Response(true, Some(result), _, _) => F.pure(result)
         case Response(_, _, description, errorCode) =>

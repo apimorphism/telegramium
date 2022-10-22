@@ -3,12 +3,13 @@ package telegramium.bots.high
 import cats.Monad
 import cats.effect.{Async, Resource}
 import cats.syntax.all.*
+import iozhik.DecodingError
 import org.http4s.Uri.Path
 import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.circe.{jsonEncoder, jsonOf}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.implicits.*
-import org.http4s.server.Server
+import org.http4s.server.{Server, inDefaultServiceErrorHandler}
 import org.http4s.{EntityDecoder, HttpRoutes}
 import telegramium.bots.CirceImplicits.*
 import telegramium.bots.client.{Method, Methods as ApiMethods}
@@ -153,7 +154,17 @@ abstract class WebhookBot[F[_]: Async](
   }
 
   private def createServer(port: Int, host: String): Resource[F, Server] =
-    BlazeServerBuilder[F].bindHttp(port, host).withHttpApp(routes().orNotFound).resource
+    BlazeServerBuilder[F]
+      .bindHttp(port, host)
+      .withHttpApp(routes().orNotFound)
+      .withServiceErrorHandler { req =>
+        {
+          case e @ DecodingError(message) =>
+            inDefaultServiceErrorHandler(Monad[F])(req)(ResponseDecodingError.default(message, e.some))
+          case throwable => inDefaultServiceErrorHandler(Monad[F])(req)(throwable)
+        }
+      }
+      .resource
 
 }
 

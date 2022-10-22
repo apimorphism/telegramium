@@ -14,3 +14,20 @@ final case class FailedRequest[A](
     s"method=${method.payload.name} code=${errorCode.map(_.toString).getOrElse("")} description=${description.getOrElse("")}"
 
 }
+
+final case class ResponseDecodingError(message: String, cause: Option[Throwable])
+    extends Throwable(message, cause.orNull)
+
+object ResponseDecodingError {
+
+  def default(details: String, cause: Option[Throwable]): ResponseDecodingError =
+    ResponseDecodingError(
+      s"""Cannot decode Telegram Bot API response:
+         |$details
+         |
+         |Your Telegramium version might not be compatible with the current Telegram Bot API version, try updating it.
+         |""".stripMargin,
+      cause
+    )
+
+}
