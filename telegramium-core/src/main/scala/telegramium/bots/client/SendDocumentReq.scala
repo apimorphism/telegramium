@@ -11,6 +11,8 @@ import telegramium.bots.KeyboardMarkup
   * @param document
   *   File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an
   *   HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data.
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param thumb
   *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
   *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed
@@ -41,6 +43,7 @@ import telegramium.bots.KeyboardMarkup
 final case class SendDocumentReq(
   chatId: ChatId,
   document: IFile,
+  messageThreadId: Option[Int] = Option.empty,
   thumb: Option[IFile] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,

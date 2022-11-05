@@ -9,6 +9,8 @@ import telegramium.bots.KeyboardMarkup
   *   Latitude of the location
   * @param longitude
   *   Longitude of the location
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param horizontalAccuracy
   *   The radius of uncertainty for the location, measured in meters; 0-1500
   * @param livePeriod
@@ -34,6 +36,7 @@ final case class SendLocationReq(
   chatId: ChatId,
   latitude: Float,
   longitude: Float,
+  messageThreadId: Option[Int] = Option.empty,
   horizontalAccuracy: Option[Float] = Option.empty,
   livePeriod: Option[Int] = Option.empty,
   heading: Option[Int] = Option.empty,

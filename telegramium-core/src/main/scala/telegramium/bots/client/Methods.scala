@@ -6,13 +6,14 @@ import telegramium.bots.WebhookInfo
 import telegramium.bots._
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.GameHighScore
+import telegramium.bots.Sticker
 import telegramium.bots.ChatAdministratorRights
 import telegramium.bots.Message
 import telegramium.bots.UserProfilePhotos
 import telegramium.bots.SentWebAppMessage
 import telegramium.bots.File
 import telegramium.bots.Poll
-import telegramium.bots.Sticker
+import telegramium.bots.ForumTopic
 import telegramium.bots.MessageId
 import telegramium.bots.ChatInviteLink
 import telegramium.bots.User
@@ -40,8 +41,8 @@ trait Methods {
     MethodReq[WebhookInfo]("getWebhookInfo", req.asJson)
   }
 
-  /** Use this method to change the list of the bot's commands. See https://core.telegram.org/bots#commands for more
-    * details about bot commands. Returns True on success.
+  /** Use this method to change the list of the bot's commands. See this manual for more details about bot commands.
+    * Returns True on success.
     *
     * @param commands
     *   A JSON-serialized list of bot commands to be set as the list of the bot's commands. At most 100 commands can be
@@ -102,6 +103,21 @@ trait Methods {
     MethodReq[List[GameHighScore]]("getGameHighScores", req.asJson)
   }
 
+  /** Use this method to reopen a closed topic in a forum supergroup chat. The bot must be an administrator in the chat
+    * for this to work and must have the can_manage_topics administrator rights, unless it is the creator of the topic.
+    * Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup (in the format
+    *   &#064;supergroupusername)
+    * @param messageThreadId
+    *   Unique identifier for the target message thread of the forum topic
+    */
+  def reopenForumTopic(chatId: ChatId, messageThreadId: Int): Method[Boolean] = {
+    val req = ReopenForumTopicReq(chatId, messageThreadId)
+    MethodReq[Boolean]("reopenForumTopic", req.asJson)
+  }
+
   /** Use this method to clear the list of pinned messages in a chat. If the chat is not a private chat, the bot must be
     * an administrator in the chat for this to work and must have the 'can_pin_messages' administrator right in a
     * supergroup or 'can_edit_messages' administrator right in a channel. Returns True on success.
@@ -144,6 +160,14 @@ trait Methods {
     MethodReq[Boolean]("answerCallbackQuery", req.asJson)
   }
 
+  /** Use this method to get custom emoji stickers, which can be used as a forum topic icon by any user. Requires no
+    * parameters. Returns an Array of Sticker objects.
+    */
+  def getForumTopicIconStickers(): Method[List[Sticker]] = {
+    val req = GetForumTopicIconStickersReq
+    MethodReq[List[Sticker]]("getForumTopicIconStickers", req.asJson)
+  }
+
   /** Use this method to get the current default administrator rights of the bot. Returns ChatAdministratorRights on
     * success.
     *
@@ -162,6 +186,8 @@ trait Methods {
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
     * @param text
     *   Text of the message to be sent, 1-4096 characters after entities parsing
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param parseMode
     *   Mode for parsing entities in the message text. See formatting options for more details.
     * @param entities
@@ -184,6 +210,7 @@ trait Methods {
   def sendMessage(
     chatId: ChatId,
     text: String,
+    messageThreadId: Option[Int] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     entities: List[MessageEntity] = List.empty,
     disableWebPagePreview: Option[Boolean] = Option.empty,
@@ -196,6 +223,7 @@ trait Methods {
     val req = SendMessageReq(
       chatId,
       text,
+      messageThreadId,
       parseMode,
       entities,
       disableWebPagePreview,
@@ -232,6 +260,8 @@ trait Methods {
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
     * @param question
     *   Poll question, 1-300 characters
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param options
     *   A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
     * @param isAnonymous
@@ -272,6 +302,7 @@ trait Methods {
   def sendPoll(
     chatId: ChatId,
     question: String,
+    messageThreadId: Option[Int] = Option.empty,
     options: List[String] = List.empty,
     isAnonymous: Option[Boolean] = Option.empty,
     `type`: Option[String] = Option.empty,
@@ -292,6 +323,7 @@ trait Methods {
     val req = SendPollReq(
       chatId,
       question,
+      messageThreadId,
       options,
       isAnonymous,
       `type`,
@@ -333,6 +365,8 @@ trait Methods {
     *   Contact's phone number
     * @param firstName
     *   Contact's first name
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param lastName
     *   Contact's last name
     * @param vcard
@@ -347,12 +381,13 @@ trait Methods {
     *   Pass True if the message should be sent even if the specified replied-to message is not found
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove keyboard or to force a reply from the user.
+    *   instructions to remove reply keyboard or to force a reply from the user.
     */
   def sendContact(
     chatId: ChatId,
     phoneNumber: String,
     firstName: String,
+    messageThreadId: Option[Int] = Option.empty,
     lastName: Option[String] = Option.empty,
     vcard: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
@@ -365,6 +400,7 @@ trait Methods {
       chatId,
       phoneNumber,
       firstName,
+      messageThreadId,
       lastName,
       vcard,
       disableNotification,
@@ -388,6 +424,8 @@ trait Methods {
     *   "_by_<bot_username>". <bot_username> is case insensitive. 1-64 characters.
     * @param title
     *   Sticker set title, 1-64 characters
+    * @param emojis
+    *   One or more emoji corresponding to the sticker
     * @param pngSticker
     *   PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either
     *   width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the
@@ -402,8 +440,6 @@ trait Methods {
     * @param stickerType
     *   Type of stickers in the set, pass “regular” or “mask”. Custom emoji sticker sets can't be created via the Bot
     *   API at the moment. By default, a regular sticker set is created.
-    * @param emojis
-    *   One or more emoji corresponding to the sticker
     * @param maskPosition
     *   A JSON-serialized object for position where the mask should be placed on faces
     */
@@ -411,22 +447,22 @@ trait Methods {
     userId: Long,
     name: String,
     title: String,
+    emojis: String,
     pngSticker: Option[IFile] = Option.empty,
     tgsSticker: Option[IFile] = Option.empty,
     webmSticker: Option[IFile] = Option.empty,
     stickerType: Option[String] = Option.empty,
-    emojis: String,
     maskPosition: Option[MaskPosition] = Option.empty
   ): Method[Boolean] = {
     val req = CreateNewStickerSetReq(
       userId,
       name,
       title,
+      emojis,
       pngSticker,
       tgsSticker,
       webmSticker,
       stickerType,
-      emojis,
       maskPosition
     )
     MethodReq[Boolean](
@@ -494,6 +530,8 @@ trait Methods {
     *   Latitude of the location
     * @param longitude
     *   Longitude of the location
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param horizontalAccuracy
     *   The radius of uncertainty for the location, measured in meters; 0-1500
     * @param livePeriod
@@ -519,6 +557,7 @@ trait Methods {
     chatId: ChatId,
     latitude: Float,
     longitude: Float,
+    messageThreadId: Option[Int] = Option.empty,
     horizontalAccuracy: Option[Float] = Option.empty,
     livePeriod: Option[Int] = Option.empty,
     heading: Option[Int] = Option.empty,
@@ -533,6 +572,7 @@ trait Methods {
       chatId,
       latitude,
       longitude,
+      messageThreadId,
       horizontalAccuracy,
       livePeriod,
       heading,
@@ -612,6 +652,8 @@ trait Methods {
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param emoji
     *   Emoji on which the dice throw animation is based. Currently, must be one of EmojiDice, EmojiDarts,
     *   EmojiBasketball, EmojiFootball, EmojiBowling or EmojiSlotMachine. Dice can have values 1-6 for EmojiDice,
@@ -631,6 +673,7 @@ trait Methods {
     */
   def sendDice(
     chatId: ChatId,
+    messageThreadId: Option[Int] = Option.empty,
     emoji: Option[Emoji] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
@@ -640,6 +683,7 @@ trait Methods {
   ): Method[Message] = {
     val req = SendDiceReq(
       chatId,
+      messageThreadId,
       emoji,
       disableNotification,
       protectContent,
@@ -677,6 +721,8 @@ trait Methods {
     *   User identifier of sticker set owner
     * @param name
     *   Sticker set name
+    * @param emojis
+    *   One or more emoji corresponding to the sticker
     * @param pngSticker
     *   PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either
     *   width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the
@@ -688,21 +734,19 @@ trait Methods {
     * @param webmSticker
     *   WEBM video with the sticker, uploaded using multipart/form-data. See
     *   https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
-    * @param emojis
-    *   One or more emoji corresponding to the sticker
     * @param maskPosition
     *   A JSON-serialized object for position where the mask should be placed on faces
     */
   def addStickerToSet(
     userId: Long,
     name: String,
+    emojis: String,
     pngSticker: Option[IFile] = Option.empty,
     tgsSticker: Option[IFile] = Option.empty,
     webmSticker: Option[IFile] = Option.empty,
-    emojis: String,
     maskPosition: Option[MaskPosition] = Option.empty
   ): Method[Boolean] = {
-    val req = AddStickerToSetReq(userId, name, pngSticker, tgsSticker, webmSticker, emojis, maskPosition)
+    val req = AddStickerToSetReq(userId, name, emojis, pngSticker, tgsSticker, webmSticker, maskPosition)
     MethodReq[Boolean](
       "addStickerToSet",
       req.asJson,
@@ -870,6 +914,8 @@ trait Methods {
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param media
     *   A JSON-serialized array describing messages to be sent, must include 2-10 items
     * @param disableNotification
@@ -883,14 +929,22 @@ trait Methods {
     */
   def sendMediaGroup(
     chatId: ChatId,
+    messageThreadId: Option[Int] = Option.empty,
     media: List[InputMedia] = List.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
     allowSendingWithoutReply: Option[Boolean] = Option.empty
   ): Method[List[Message]] = {
-    val req =
-      SendMediaGroupReq(chatId, media, disableNotification, protectContent, replyToMessageId, allowSendingWithoutReply)
+    val req = SendMediaGroupReq(
+      chatId,
+      messageThreadId,
+      media,
+      disableNotification,
+      protectContent,
+      replyToMessageId,
+      allowSendingWithoutReply
+    )
     MethodReq[List[Message]]("sendMediaGroup", req.asJson)
   }
 
@@ -900,6 +954,8 @@ trait Methods {
     *   Unique identifier for the target chat
     * @param gameShortName
     *   Short name of the game, serves as the unique identifier for the game. Set up your games via &#064;BotFather.
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -915,6 +971,7 @@ trait Methods {
   def sendGame(
     chatId: Int,
     gameShortName: String,
+    messageThreadId: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
@@ -924,6 +981,7 @@ trait Methods {
     val req = SendGameReq(
       chatId,
       gameShortName,
+      messageThreadId,
       disableNotification,
       protectContent,
       replyToMessageId,
@@ -945,6 +1003,8 @@ trait Methods {
     *   Name of the venue
     * @param address
     *   Address of the venue
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param foursquareId
     *   Foursquare identifier of the venue
     * @param foursquareType
@@ -972,6 +1032,7 @@ trait Methods {
     longitude: Float,
     title: String,
     address: String,
+    messageThreadId: Option[Int] = Option.empty,
     foursquareId: Option[String] = Option.empty,
     foursquareType: Option[String] = Option.empty,
     googlePlaceId: Option[String] = Option.empty,
@@ -988,6 +1049,7 @@ trait Methods {
       longitude,
       title,
       address,
+      messageThreadId,
       foursquareId,
       foursquareType,
       googlePlaceId,
@@ -999,6 +1061,32 @@ trait Methods {
       replyMarkup
     )
     MethodReq[Message]("sendVenue", req.asJson)
+  }
+
+  /** Use this method to create a topic in a forum supergroup chat. The bot must be an administrator in the chat for
+    * this to work and must have the can_manage_topics administrator rights. Returns information about the created topic
+    * as a ForumTopic object.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup (in the format
+    *   &#064;supergroupusername)
+    * @param name
+    *   Topic name, 1-128 characters
+    * @param iconColor
+    *   Color of the topic icon in RGB format. Currently, must be one of 0x6FB9F0, 0xFFD67E, 0xCB86DB, 0x8EEE98,
+    *   0xFF93B2, or 0xFB6F5F
+    * @param iconCustomEmojiId
+    *   Unique identifier of the custom emoji shown as the topic icon. Use getForumTopicIconStickers to get all allowed
+    *   custom emoji identifiers.
+    */
+  def createForumTopic(
+    chatId: ChatId,
+    name: String,
+    iconColor: Option[Int] = Option.empty,
+    iconCustomEmojiId: Option[String] = Option.empty
+  ): Method[ForumTopic] = {
+    val req = CreateForumTopicReq(chatId, name, iconColor, iconCustomEmojiId)
+    MethodReq[ForumTopic]("createForumTopic", req.asJson)
   }
 
   /** Use this method to unban a previously banned user in a supergroup or channel. The user will not return to the
@@ -1031,6 +1119,21 @@ trait Methods {
     MethodReq[List[Sticker]]("getCustomEmojiStickers", req.asJson)
   }
 
+  /** Use this method to delete a forum topic along with all its messages in a forum supergroup chat. The bot must be an
+    * administrator in the chat for this to work and must have the can_delete_messages administrator rights. Returns
+    * True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup (in the format
+    *   &#064;supergroupusername)
+    * @param messageThreadId
+    *   Unique identifier for the target message thread of the forum topic
+    */
+  def deleteForumTopic(chatId: ChatId, messageThreadId: Int): Method[Boolean] = {
+    val req = DeleteForumTopicReq(chatId, messageThreadId)
+    MethodReq[Boolean]("deleteForumTopic", req.asJson)
+  }
+
   /** Use this method to change the description of a group, a supergroup or a channel. The bot must be an administrator
     * in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
     *
@@ -1047,6 +1150,8 @@ trait Methods {
   /** Use this method to edit text and game messages. On success, if the edited message is not an inline message, the
     * edited Message is returned, otherwise True is returned.
     *
+    * @param text
+    *   New text of the message, 1-4096 characters after entities parsing
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
     *   channel (in the format &#064;channelusername)
@@ -1054,8 +1159,6 @@ trait Methods {
     *   Required if inline_message_id is not specified. Identifier of the message to edit
     * @param inlineMessageId
     *   Required if chat_id and message_id are not specified. Identifier of the inline message
-    * @param text
-    *   New text of the message, 1-4096 characters after entities parsing
     * @param parseMode
     *   Mode for parsing entities in the message text. See formatting options for more details.
     * @param entities
@@ -1067,20 +1170,20 @@ trait Methods {
     *   A JSON-serialized object for an inline keyboard.
     */
   def editMessageText(
+    text: String,
     chatId: Option[ChatId] = Option.empty,
     messageId: Option[Int] = Option.empty,
     inlineMessageId: Option[String] = Option.empty,
-    text: String,
     parseMode: Option[ParseMode] = Option.empty,
     entities: List[MessageEntity] = List.empty,
     disableWebPagePreview: Option[Boolean] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Either[Boolean, Message]] = {
     val req = EditMessageTextReq(
+      text,
       chatId,
       messageId,
       inlineMessageId,
-      text,
       parseMode,
       entities,
       disableWebPagePreview,
@@ -1093,6 +1196,10 @@ trait Methods {
     * is explicitly disabled by a call to stopMessageLiveLocation. On success, if the edited message is not an inline
     * message, the edited Message is returned, otherwise True is returned.
     *
+    * @param latitude
+    *   Latitude of new location
+    * @param longitude
+    *   Longitude of new location
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
     *   channel (in the format &#064;channelusername)
@@ -1100,10 +1207,6 @@ trait Methods {
     *   Required if inline_message_id is not specified. Identifier of the message to edit
     * @param inlineMessageId
     *   Required if chat_id and message_id are not specified. Identifier of the inline message
-    * @param latitude
-    *   Latitude of new location
-    * @param longitude
-    *   Longitude of new location
     * @param horizontalAccuracy
     *   The radius of uncertainty for the location, measured in meters; 0-1500
     * @param heading
@@ -1115,28 +1218,43 @@ trait Methods {
     *   A JSON-serialized object for a new inline keyboard.
     */
   def editMessageLiveLocation(
+    latitude: Float,
+    longitude: Float,
     chatId: Option[ChatId] = Option.empty,
     messageId: Option[Int] = Option.empty,
     inlineMessageId: Option[String] = Option.empty,
-    latitude: Float,
-    longitude: Float,
     horizontalAccuracy: Option[Float] = Option.empty,
     heading: Option[Int] = Option.empty,
     proximityAlertRadius: Option[Int] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Either[Boolean, Message]] = {
     val req = EditMessageLiveLocationReq(
+      latitude,
+      longitude,
       chatId,
       messageId,
       inlineMessageId,
-      latitude,
-      longitude,
       horizontalAccuracy,
       heading,
       proximityAlertRadius,
       replyMarkup
     )
     MethodReq[Either[Boolean, Message]]("editMessageLiveLocation", req.asJson)
+  }
+
+  /** Use this method to clear the list of pinned messages in a forum topic. The bot must be an administrator in the
+    * chat for this to work and must have the can_pin_messages administrator right in the supergroup. Returns True on
+    * success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup (in the format
+    *   &#064;supergroupusername)
+    * @param messageThreadId
+    *   Unique identifier for the target message thread of the forum topic
+    */
+  def unpinAllForumTopicMessages(chatId: ChatId, messageThreadId: Int): Method[Boolean] = {
+    val req = UnpinAllForumTopicMessagesReq(chatId, messageThreadId)
+    MethodReq[Boolean]("unpinAllForumTopicMessages", req.asJson)
   }
 
   /** Use this method to get basic information about a file and prepare it for downloading. For the moment, bots can
@@ -1203,7 +1321,7 @@ trait Methods {
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
     * @param title
-    *   New chat title, 1-255 characters
+    *   New chat title, 1-128 characters
     */
   def setChatTitle(chatId: ChatId, title: String): Method[Boolean] = {
     val req = SetChatTitleReq(chatId, title)
@@ -1222,6 +1340,8 @@ trait Methods {
     *   &#064;channelusername)
     * @param messageId
     *   Message identifier in the chat specified in from_chat_id
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param caption
     *   New caption for media, 0-1024 characters after entities parsing. If not specified, the original caption is kept
     * @param parseMode
@@ -1245,6 +1365,7 @@ trait Methods {
     chatId: ChatId,
     fromChatId: ChatId,
     messageId: Int,
+    messageThreadId: Option[Int] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -1258,6 +1379,7 @@ trait Methods {
       chatId,
       fromChatId,
       messageId,
+      messageThreadId,
       caption,
       parseMode,
       captionEntities,
@@ -1279,6 +1401,8 @@ trait Methods {
     *   Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers
     *   (recommended) or upload a new video using multipart/form-data. Sending video notes by a URL is currently
     *   unsupported
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param duration
     *   Duration of sent video in seconds
     * @param length
@@ -1304,6 +1428,7 @@ trait Methods {
   def sendVideoNote(
     chatId: ChatId,
     videoNote: IFile,
+    messageThreadId: Option[Int] = Option.empty,
     duration: Option[Int] = Option.empty,
     length: Option[Int] = Option.empty,
     thumb: Option[IFile] = Option.empty,
@@ -1316,6 +1441,7 @@ trait Methods {
     val req = SendVideoNoteReq(
       chatId,
       videoNote,
+      messageThreadId,
       duration,
       length,
       thumb,
@@ -1423,6 +1549,8 @@ trait Methods {
     *   Payment provider token, obtained via &#064;BotFather
     * @param currency
     *   Three-letter ISO 4217 currency code, see more on currencies
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param prices
     *   Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost,
     *   delivery tax, bonus, etc.)
@@ -1485,6 +1613,7 @@ trait Methods {
     payload: String,
     providerToken: String,
     currency: String,
+    messageThreadId: Option[Int] = Option.empty,
     prices: List[LabeledPrice] = List.empty,
     maxTipAmount: Option[Int] = Option.empty,
     suggestedTipAmounts: List[Int] = List.empty,
@@ -1514,6 +1643,7 @@ trait Methods {
       payload,
       providerToken,
       currency,
+      messageThreadId,
       prices,
       maxTipAmount,
       suggestedTipAmounts,
@@ -1548,6 +1678,8 @@ trait Methods {
     *   File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an
     *   HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using
     *   multipart/form-data.
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param thumb
     *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
     *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not
@@ -1579,6 +1711,7 @@ trait Methods {
   def sendDocument(
     chatId: ChatId,
     document: IFile,
+    messageThreadId: Option[Int] = Option.empty,
     thumb: Option[IFile] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
@@ -1593,6 +1726,7 @@ trait Methods {
     val req = SendDocumentReq(
       chatId,
       document,
+      messageThreadId,
       thumb,
       caption,
       parseMode,
@@ -1612,12 +1746,13 @@ trait Methods {
   }
 
   /** Use this method to delete a message, including service messages, with the following limitations: - A message can
-    * only be deleted if it was sent less than 48 hours ago. - A dice message in a private chat can only be deleted if
-    * it was sent more than 24 hours ago. - Bots can delete outgoing messages in private chats, groups, and supergroups.
-    * - Bots can delete incoming messages in private chats. - Bots granted can_post_messages permissions can delete
-    * outgoing messages in channels. - If the bot is an administrator of a group, it can delete any message there. - If
-    * the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there. Returns
-    * True on success.
+    * only be deleted if it was sent less than 48 hours ago. - Service messages about a supergroup, channel, or forum
+    * topic creation can't be deleted. - A dice message in a private chat can only be deleted if it was sent more than
+    * 24 hours ago. - Bots can delete outgoing messages in private chats, groups, and supergroups. - Bots can delete
+    * incoming messages in private chats. - Bots granted can_post_messages permissions can delete outgoing messages in
+    * channels. - If the bot is an administrator of a group, it can delete any message there. - If the bot has
+    * can_delete_messages permission in a supergroup or a channel, it can delete any message there. Returns True on
+    * success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -1696,6 +1831,8 @@ trait Methods {
     *   Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers
     *   (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new
     *   one using multipart/form-data.
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param caption
     *   Audio caption, 0-1024 characters after entities parsing
     * @param parseMode
@@ -1730,6 +1867,7 @@ trait Methods {
   def sendAudio(
     chatId: ChatId,
     audio: IFile,
+    messageThreadId: Option[Int] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -1746,6 +1884,7 @@ trait Methods {
     val req = SendAudioReq(
       chatId,
       audio,
+      messageThreadId,
       caption,
       parseMode,
       captionEntities,
@@ -1807,21 +1946,24 @@ trait Methods {
     * @param fromChatId
     *   Unique identifier for the chat where the original message was sent (or channel username in the format
     *   &#064;channelusername)
+    * @param messageId
+    *   Message identifier in the chat specified in from_chat_id
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the forwarded message from forwarding and saving
-    * @param messageId
-    *   Message identifier in the chat specified in from_chat_id
     */
   def forwardMessage(
     chatId: ChatId,
     fromChatId: ChatId,
+    messageId: Int,
+    messageThreadId: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
-    protectContent: Option[Boolean] = Option.empty,
-    messageId: Int
+    protectContent: Option[Boolean] = Option.empty
   ): Method[Message] = {
-    val req = ForwardMessageReq(chatId, fromChatId, disableNotification, protectContent, messageId)
+    val req = ForwardMessageReq(chatId, fromChatId, messageId, messageThreadId, disableNotification, protectContent)
     MethodReq[Message]("forwardMessage", req.asJson)
   }
 
@@ -1905,6 +2047,8 @@ trait Methods {
     *   Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended),
     *   pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using
     *   multipart/form-data.
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param caption
     *   Voice message caption, 0-1024 characters after entities parsing
     * @param parseMode
@@ -1929,6 +2073,7 @@ trait Methods {
   def sendVoice(
     chatId: ChatId,
     voice: IFile,
+    messageThreadId: Option[Int] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -1942,6 +2087,7 @@ trait Methods {
     val req = SendVoiceReq(
       chatId,
       voice,
+      messageThreadId,
       caption,
       parseMode,
       captionEntities,
@@ -1999,6 +2145,8 @@ trait Methods {
     *   Pass True if the administrator can invite new users to the chat
     * @param canPinMessages
     *   Pass True if the administrator can pin messages, supergroups only
+    * @param canManageTopics
+    *   Pass True if the user is allowed to create, rename, close, and reopen forum topics, supergroups only
     */
   def promoteChatMember(
     chatId: ChatId,
@@ -2013,7 +2161,8 @@ trait Methods {
     canPromoteMembers: Option[Boolean] = Option.empty,
     canChangeInfo: Option[Boolean] = Option.empty,
     canInviteUsers: Option[Boolean] = Option.empty,
-    canPinMessages: Option[Boolean] = Option.empty
+    canPinMessages: Option[Boolean] = Option.empty,
+    canManageTopics: Option[Boolean] = Option.empty
   ): Method[Boolean] = {
     val req = PromoteChatMemberReq(
       chatId,
@@ -2028,7 +2177,8 @@ trait Methods {
       canPromoteMembers,
       canChangeInfo,
       canInviteUsers,
-      canPinMessages
+      canPinMessages,
+      canManageTopics
     )
     MethodReq[Boolean]("promoteChatMember", req.asJson)
   }
@@ -2073,6 +2223,8 @@ trait Methods {
     * uploaded file via its file_id or specify a URL. On success, if the edited message is not an inline message, the
     * edited Message is returned, otherwise True is returned.
     *
+    * @param media
+    *   A JSON-serialized object for a new media content of the message
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
     *   channel (in the format &#064;channelusername)
@@ -2080,19 +2232,17 @@ trait Methods {
     *   Required if inline_message_id is not specified. Identifier of the message to edit
     * @param inlineMessageId
     *   Required if chat_id and message_id are not specified. Identifier of the inline message
-    * @param media
-    *   A JSON-serialized object for a new media content of the message
     * @param replyMarkup
     *   A JSON-serialized object for a new inline keyboard.
     */
   def editMessageMedia(
+    media: InputMedia,
     chatId: Option[ChatId] = Option.empty,
     messageId: Option[Int] = Option.empty,
     inlineMessageId: Option[String] = Option.empty,
-    media: InputMedia,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Either[Boolean, Message]] = {
-    val req = EditMessageMediaReq(chatId, messageId, inlineMessageId, media, replyMarkup)
+    val req = EditMessageMediaReq(media, chatId, messageId, inlineMessageId, replyMarkup)
     MethodReq[Either[Boolean, Message]]("editMessageMedia", req.asJson)
   }
 
@@ -2237,6 +2387,8 @@ trait Methods {
     *   Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass
     *   an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using
     *   multipart/form-data.
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param duration
     *   Duration of sent video in seconds
     * @param width
@@ -2273,6 +2425,7 @@ trait Methods {
   def sendVideo(
     chatId: ChatId,
     video: IFile,
+    messageThreadId: Option[Int] = Option.empty,
     duration: Option[Int] = Option.empty,
     width: Option[Int] = Option.empty,
     height: Option[Int] = Option.empty,
@@ -2290,6 +2443,7 @@ trait Methods {
     val req = SendVideoReq(
       chatId,
       video,
+      messageThreadId,
       duration,
       width,
       height,
@@ -2400,6 +2554,21 @@ trait Methods {
     MethodReq[Boolean]("setChatAdministratorCustomTitle", req.asJson)
   }
 
+  /** Use this method to close an open topic in a forum supergroup chat. The bot must be an administrator in the chat
+    * for this to work and must have the can_manage_topics administrator rights, unless it is the creator of the topic.
+    * Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup (in the format
+    *   &#064;supergroupusername)
+    * @param messageThreadId
+    *   Unique identifier for the target message thread of the forum topic
+    */
+  def closeForumTopic(chatId: ChatId, messageThreadId: Int): Method[Boolean] = {
+    val req = CloseForumTopicReq(chatId, messageThreadId)
+    MethodReq[Boolean]("closeForumTopic", req.asJson)
+  }
+
   /** Use this method to get the current value of the bot's menu button in a private chat, or the default menu button.
     * Returns MenuButton on success.
     *
@@ -2421,6 +2590,8 @@ trait Methods {
     *   Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers
     *   (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new
     *   animation using multipart/form-data.
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param duration
     *   Duration of sent animation in seconds
     * @param width
@@ -2456,6 +2627,7 @@ trait Methods {
   def sendAnimation(
     chatId: ChatId,
     animation: IFile,
+    messageThreadId: Option[Int] = Option.empty,
     duration: Option[Int] = Option.empty,
     width: Option[Int] = Option.empty,
     height: Option[Int] = Option.empty,
@@ -2472,6 +2644,7 @@ trait Methods {
     val req = SendAnimationReq(
       chatId,
       animation,
+      messageThreadId,
       duration,
       width,
       height,
@@ -2565,6 +2738,8 @@ trait Methods {
     *   Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass
     *   an HTTP URL as a String for Telegram to get a .WEBP file from the Internet, or upload a new one using
     *   multipart/form-data.
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -2580,6 +2755,7 @@ trait Methods {
   def sendSticker(
     chatId: ChatId,
     sticker: IFile,
+    messageThreadId: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
@@ -2589,6 +2765,7 @@ trait Methods {
     val req = SendStickerReq(
       chatId,
       sticker,
+      messageThreadId,
       disableNotification,
       protectContent,
       replyToMessageId,
@@ -2602,6 +2779,26 @@ trait Methods {
     )
   }
 
+  /** Use this method to edit name and icon of a topic in a forum supergroup chat. The bot must be an administrator in
+    * the chat for this to work and must have can_manage_topics administrator rights, unless it is the creator of the
+    * topic. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup (in the format
+    *   &#064;supergroupusername)
+    * @param messageThreadId
+    *   Unique identifier for the target message thread of the forum topic
+    * @param name
+    *   New topic name, 1-128 characters
+    * @param iconCustomEmojiId
+    *   New unique identifier of the custom emoji shown as the topic icon. Use getForumTopicIconStickers to get all
+    *   allowed custom emoji identifiers
+    */
+  def editForumTopic(chatId: ChatId, messageThreadId: Int, name: String, iconCustomEmojiId: String): Method[Boolean] = {
+    val req = EditForumTopicReq(chatId, messageThreadId, name, iconCustomEmojiId)
+    MethodReq[Boolean]("editForumTopic", req.asJson)
+  }
+
   /** Use this method to send photos. On success, the sent Message is returned.
     *
     * @param chatId
@@ -2611,6 +2808,8 @@ trait Methods {
     *   an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using
     *   multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000
     *   in total. Width and height ratio must be at most 20.
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param caption
     *   Photo caption (may also be used when resending photos by file_id), 0-1024 characters after entities parsing
     * @param parseMode
@@ -2633,6 +2832,7 @@ trait Methods {
   def sendPhoto(
     chatId: ChatId,
     photo: IFile,
+    messageThreadId: Option[Int] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -2645,6 +2845,7 @@ trait Methods {
     val req = SendPhotoReq(
       chatId,
       photo,
+      messageThreadId,
       caption,
       parseMode,
       captionEntities,

@@ -11,6 +11,8 @@ import telegramium.bots.MaskPosition
   *   "_by_<bot_username>". <bot_username> is case insensitive. 1-64 characters.
   * @param title
   *   Sticker set title, 1-64 characters
+  * @param emojis
+  *   One or more emoji corresponding to the sticker
   * @param pngSticker
   *   PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either
   *   width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the
@@ -25,8 +27,6 @@ import telegramium.bots.MaskPosition
   * @param stickerType
   *   Type of stickers in the set, pass “regular” or “mask”. Custom emoji sticker sets can't be created via the Bot API
   *   at the moment. By default, a regular sticker set is created.
-  * @param emojis
-  *   One or more emoji corresponding to the sticker
   * @param maskPosition
   *   A JSON-serialized object for position where the mask should be placed on faces
   */
@@ -34,10 +34,10 @@ final case class CreateNewStickerSetReq(
   userId: Long,
   name: String,
   title: String,
+  emojis: String,
   pngSticker: Option[IFile] = Option.empty,
   tgsSticker: Option[IFile] = Option.empty,
   webmSticker: Option[IFile] = Option.empty,
   stickerType: Option[String] = Option.empty,
-  emojis: String,
   maskPosition: Option[MaskPosition] = Option.empty
 )

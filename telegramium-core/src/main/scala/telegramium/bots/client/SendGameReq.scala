@@ -6,6 +6,8 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Unique identifier for the target chat
   * @param gameShortName
   *   Short name of the game, serves as the unique identifier for the game. Set up your games via &#064;BotFather.
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
@@ -21,6 +23,7 @@ import telegramium.bots.InlineKeyboardMarkup
 final case class SendGameReq(
   chatId: Int,
   gameShortName: String,
+  messageThreadId: Option[Int] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
   replyToMessageId: Option[Int] = Option.empty,

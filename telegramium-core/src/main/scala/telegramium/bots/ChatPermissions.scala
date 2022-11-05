@@ -21,6 +21,9 @@ package telegramium.bots
   *   Optional. True, if the user is allowed to invite new users to the chat
   * @param canPinMessages
   *   Optional. True, if the user is allowed to pin messages. Ignored in public supergroups
+  * @param canManageTopics
+  *   Optional. True, if the user is allowed to create forum topics. If omitted defaults to the value of
+  *   can_pin_messages
   */
 final case class ChatPermissions(
   canSendMessages: Option[Boolean] = Option.empty,
@@ -30,5 +33,6 @@ final case class ChatPermissions(
   canAddWebPagePreviews: Option[Boolean] = Option.empty,
   canChangeInfo: Option[Boolean] = Option.empty,
   canInviteUsers: Option[Boolean] = Option.empty,
-  canPinMessages: Option[Boolean] = Option.empty
+  canPinMessages: Option[Boolean] = Option.empty,
+  canManageTopics: Option[Boolean] = Option.empty
 )

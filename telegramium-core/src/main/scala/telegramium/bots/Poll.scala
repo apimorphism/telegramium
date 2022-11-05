@@ -6,8 +6,6 @@ package telegramium.bots
   *   Unique poll identifier
   * @param question
   *   Poll question, 1-300 characters
-  * @param options
-  *   List of poll options
   * @param totalVoterCount
   *   Total number of users that voted in the poll
   * @param isClosed
@@ -18,6 +16,8 @@ package telegramium.bots
   *   Poll type, currently can be “regular” or “quiz”
   * @param allowsMultipleAnswers
   *   True, if the poll allows multiple answers
+  * @param options
+  *   List of poll options
   * @param correctOptionId
   *   Optional. 0-based identifier of the correct answer option. Available only for polls in the quiz mode, which are
   *   closed, or was sent (not forwarded) by the bot or to the private chat with the bot.
@@ -34,12 +34,12 @@ package telegramium.bots
 final case class Poll(
   id: String,
   question: String,
-  options: List[PollOption] = List.empty,
   totalVoterCount: Int,
   isClosed: Boolean,
   isAnonymous: Boolean,
   `type`: String,
   allowsMultipleAnswers: Boolean,
+  options: List[PollOption] = List.empty,
   correctOptionId: Option[Int] = Option.empty,
   explanation: Option[String] = Option.empty,
   explanationEntities: List[MessageEntity] = List.empty,

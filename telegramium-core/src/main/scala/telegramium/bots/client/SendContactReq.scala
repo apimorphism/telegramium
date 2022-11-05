@@ -9,6 +9,8 @@ import telegramium.bots.KeyboardMarkup
   *   Contact's phone number
   * @param firstName
   *   Contact's first name
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param lastName
   *   Contact's last name
   * @param vcard
@@ -23,12 +25,13 @@ import telegramium.bots.KeyboardMarkup
   *   Pass True if the message should be sent even if the specified replied-to message is not found
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove keyboard or to force a reply from the user.
+  *   to remove reply keyboard or to force a reply from the user.
   */
 final case class SendContactReq(
   chatId: ChatId,
   phoneNumber: String,
   firstName: String,
+  messageThreadId: Option[Int] = Option.empty,
   lastName: Option[String] = Option.empty,
   vcard: Option[String] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,

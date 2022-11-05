@@ -6,6 +6,8 @@ package telegramium.bots
   *   Element type. One of “personal_details”, “passport”, “driver_license”, “identity_card”, “internal_passport”,
   *   “address”, “utility_bill”, “bank_statement”, “rental_agreement”, “passport_registration”,
   *   “temporary_registration”, “phone_number”, “email”.
+  * @param hash
+  *   Base64-encoded element hash for using in PassportElementErrorUnspecified
   * @param data
   *   Optional. Base64-encoded encrypted Telegram Passport element data provided by the user, available for
   *   “personal_details”, “passport”, “driver_license”, “identity_card”, “internal_passport” and “address” types. Can be
@@ -35,11 +37,10 @@ package telegramium.bots
   *   requested for “passport”, “driver_license”, “identity_card”, “internal_passport”, “utility_bill”,
   *   “bank_statement”, “rental_agreement”, “passport_registration” and “temporary_registration” types. Files can be
   *   decrypted and verified using the accompanying EncryptedCredentials.
-  * @param hash
-  *   Base64-encoded element hash for using in PassportElementErrorUnspecified
   */
 final case class EncryptedPassportElement(
   `type`: String,
+  hash: String,
   data: Option[String] = Option.empty,
   phoneNumber: Option[String] = Option.empty,
   email: Option[String] = Option.empty,
@@ -47,6 +48,5 @@ final case class EncryptedPassportElement(
   frontSide: Option[PassportFile] = Option.empty,
   reverseSide: Option[PassportFile] = Option.empty,
   selfie: Option[PassportFile] = Option.empty,
-  translation: List[PassportFile] = List.empty,
-  hash: String
+  translation: List[PassportFile] = List.empty
 )

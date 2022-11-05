@@ -8,12 +8,12 @@ sealed trait PassportElementError {}
   * @param type
   *   The section of the user's Telegram Passport which has the issue, one of “utility_bill”, “bank_statement”,
   *   “rental_agreement”, “passport_registration”, “temporary_registration”
-  * @param fileHashes
-  *   List of base64-encoded file hashes
   * @param message
   *   Error message
+  * @param fileHashes
+  *   List of base64-encoded file hashes
   */
-final case class PassportElementErrorFiles(`type`: String, fileHashes: List[String] = List.empty, message: String)
+final case class PassportElementErrorFiles(`type`: String, message: String, fileHashes: List[String] = List.empty)
     extends PassportElementError
 
 /** Represents an issue in one of the data fields that was provided by the user. The error is considered resolved when
@@ -121,13 +121,13 @@ final case class PassportElementErrorTranslationFile(`type`: String, fileHash: S
   *   Type of element of the user's Telegram Passport which has the issue, one of “passport”, “driver_license”,
   *   “identity_card”, “internal_passport”, “utility_bill”, “bank_statement”, “rental_agreement”,
   *   “passport_registration”, “temporary_registration”
-  * @param fileHashes
-  *   List of base64-encoded file hashes
   * @param message
   *   Error message
+  * @param fileHashes
+  *   List of base64-encoded file hashes
   */
 final case class PassportElementErrorTranslationFiles(
   `type`: String,
-  fileHashes: List[String] = List.empty,
-  message: String
+  message: String,
+  fileHashes: List[String] = List.empty
 ) extends PassportElementError

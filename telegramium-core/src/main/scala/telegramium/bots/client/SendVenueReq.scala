@@ -13,6 +13,8 @@ import telegramium.bots.KeyboardMarkup
   *   Name of the venue
   * @param address
   *   Address of the venue
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param foursquareId
   *   Foursquare identifier of the venue
   * @param foursquareType
@@ -40,6 +42,7 @@ final case class SendVenueReq(
   longitude: Float,
   title: String,
   address: String,
+  messageThreadId: Option[Int] = Option.empty,
   foursquareId: Option[String] = Option.empty,
   foursquareType: Option[String] = Option.empty,
   googlePlaceId: Option[String] = Option.empty,

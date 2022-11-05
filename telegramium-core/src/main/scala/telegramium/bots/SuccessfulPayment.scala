@@ -10,21 +10,21 @@ package telegramium.bots
   *   point for each currency (2 for the majority of currencies).
   * @param invoicePayload
   *   Bot specified invoice payload
-  * @param shippingOptionId
-  *   Optional. Identifier of the shipping option chosen by the user
-  * @param orderInfo
-  *   Optional. Order information provided by the user
   * @param telegramPaymentChargeId
   *   Telegram payment identifier
   * @param providerPaymentChargeId
   *   Provider payment identifier
+  * @param shippingOptionId
+  *   Optional. Identifier of the shipping option chosen by the user
+  * @param orderInfo
+  *   Optional. Order information provided by the user
   */
 final case class SuccessfulPayment(
   currency: String,
   totalAmount: Int,
   invoicePayload: String,
-  shippingOptionId: Option[String] = Option.empty,
-  orderInfo: Option[OrderInfo] = Option.empty,
   telegramPaymentChargeId: String,
-  providerPaymentChargeId: String
+  providerPaymentChargeId: String,
+  shippingOptionId: Option[String] = Option.empty,
+  orderInfo: Option[OrderInfo] = Option.empty
 )

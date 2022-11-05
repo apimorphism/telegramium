@@ -3,17 +3,17 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 import telegramium.bots.InlineKeyboardMarkup
 
-/** @param chatId
+/** @param latitude
+  *   Latitude of new location
+  * @param longitude
+  *   Longitude of new location
+  * @param chatId
   *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
   *   channel (in the format &#064;channelusername)
   * @param messageId
   *   Required if inline_message_id is not specified. Identifier of the message to edit
   * @param inlineMessageId
   *   Required if chat_id and message_id are not specified. Identifier of the inline message
-  * @param latitude
-  *   Latitude of new location
-  * @param longitude
-  *   Longitude of new location
   * @param horizontalAccuracy
   *   The radius of uncertainty for the location, measured in meters; 0-1500
   * @param heading
@@ -25,11 +25,11 @@ import telegramium.bots.InlineKeyboardMarkup
   *   A JSON-serialized object for a new inline keyboard.
   */
 final case class EditMessageLiveLocationReq(
+  latitude: Float,
+  longitude: Float,
   chatId: Option[ChatId] = Option.empty,
   messageId: Option[Int] = Option.empty,
   inlineMessageId: Option[String] = Option.empty,
-  latitude: Float,
-  longitude: Float,
   horizontalAccuracy: Option[Float] = Option.empty,
   heading: Option[Int] = Option.empty,
   proximityAlertRadius: Option[Int] = Option.empty,

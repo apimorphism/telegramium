@@ -10,6 +10,8 @@ import telegramium.bots.KeyboardMarkup
   *   Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass
   *   an HTTP URL as a String for Telegram to get a .WEBP file from the Internet, or upload a new one using
   *   multipart/form-data.
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
@@ -25,6 +27,7 @@ import telegramium.bots.KeyboardMarkup
 final case class SendStickerReq(
   chatId: ChatId,
   sticker: IFile,
+  messageThreadId: Option[Int] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
   replyToMessageId: Option[Int] = Option.empty,

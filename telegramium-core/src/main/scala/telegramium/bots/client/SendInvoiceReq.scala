@@ -16,6 +16,8 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Payment provider token, obtained via &#064;BotFather
   * @param currency
   *   Three-letter ISO 4217 currency code, see more on currencies
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param prices
   *   Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery
   *   tax, bonus, etc.)
@@ -78,6 +80,7 @@ final case class SendInvoiceReq(
   payload: String,
   providerToken: String,
   currency: String,
+  messageThreadId: Option[Int] = Option.empty,
   prices: List[LabeledPrice] = List.empty,
   maxTipAmount: Option[Int] = Option.empty,
   suggestedTipAmounts: List[Int] = List.empty,

@@ -54,6 +54,8 @@ final case class ChatMemberOwner(
   *   Optional. True, if the administrator can edit messages of other users and can pin messages; channels only
   * @param canPinMessages
   *   Optional. True, if the user is allowed to pin messages; groups and supergroups only
+  * @param canManageTopics
+  *   Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only
   * @param customTitle
   *   Optional. Custom title for this user
   */
@@ -72,6 +74,7 @@ final case class ChatMemberAdministrator(
   canPostMessages: Option[Boolean] = Option.empty,
   canEditMessages: Option[Boolean] = Option.empty,
   canPinMessages: Option[Boolean] = Option.empty,
+  canManageTopics: Option[Boolean] = Option.empty,
   customTitle: Option[String] = Option.empty
 ) extends ChatMember
 
@@ -118,6 +121,8 @@ final case class ChatMemberBanned(status: String, user: User, untilDate: Int) ex
   *   True, if the user is allowed to invite new users to the chat
   * @param canPinMessages
   *   True, if the user is allowed to pin messages
+  * @param canManageTopics
+  *   True, if the user is allowed to create forum topics
   * @param canSendMessages
   *   True, if the user is allowed to send text messages, contacts, locations and venues
   * @param canSendMediaMessages
@@ -138,6 +143,7 @@ final case class ChatMemberRestricted(
   canChangeInfo: Boolean,
   canInviteUsers: Boolean,
   canPinMessages: Boolean,
+  canManageTopics: Boolean,
   canSendMessages: Boolean,
   canSendMediaMessages: Boolean,
   canSendPolls: Boolean,

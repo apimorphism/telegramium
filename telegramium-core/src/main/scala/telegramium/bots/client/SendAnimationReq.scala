@@ -12,6 +12,8 @@ import telegramium.bots.KeyboardMarkup
   *   Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers
   *   (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new
   *   animation using multipart/form-data.
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param duration
   *   Duration of sent animation in seconds
   * @param width
@@ -46,6 +48,7 @@ import telegramium.bots.KeyboardMarkup
 final case class SendAnimationReq(
   chatId: ChatId,
   animation: IFile,
+  messageThreadId: Option[Int] = Option.empty,
   duration: Option[Int] = Option.empty,
   width: Option[Int] = Option.empty,
   height: Option[Int] = Option.empty,

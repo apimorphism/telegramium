@@ -4,6 +4,12 @@ package telegramium.bots
   *
   * @param messageId
   *   Unique message identifier inside this chat
+  * @param date
+  *   Date the message was sent in Unix time
+  * @param chat
+  *   Conversation the message belongs to
+  * @param messageThreadId
+  *   Optional. Unique identifier of a message thread to which the message belongs; for supergroups only
   * @param from
   *   Optional. Sender of the message; empty for messages sent to channels. For backward compatibility, the field
   *   contains a fake sender user in non-channel chats, if the message was sent on behalf of a chat.
@@ -12,10 +18,6 @@ package telegramium.bots
   *   supergroup itself for messages from anonymous group administrators, the linked channel for messages automatically
   *   forwarded to the discussion group. For backward compatibility, the field from contains a fake sender user in
   *   non-channel chats, if the message was sent on behalf of a chat.
-  * @param date
-  *   Date the message was sent in Unix time
-  * @param chat
-  *   Conversation the message belongs to
   * @param forwardFrom
   *   Optional. For forwarded messages, sender of the original message
   * @param forwardFromChat
@@ -31,6 +33,8 @@ package telegramium.bots
   *   messages
   * @param forwardDate
   *   Optional. For forwarded messages, date the original message was sent in Unix time
+  * @param isTopicMessage
+  *   Optional. True, if the message is sent to a forum topic
   * @param isAutomaticForward
   *   Optional. True, if the message is a channel post that was automatically forwarded to the connected discussion
   *   group
@@ -134,6 +138,12 @@ package telegramium.bots
   * @param proximityAlertTriggered
   *   Optional. Service message. A user in the chat triggered another user's proximity alert while sharing Live
   *   Location.
+  * @param forumTopicCreated
+  *   Optional. Service message: forum topic created
+  * @param forumTopicClosed
+  *   Optional. Service message: forum topic closed
+  * @param forumTopicReopened
+  *   Optional. Service message: forum topic reopened
   * @param videoChatScheduled
   *   Optional. Service message: video chat scheduled
   * @param videoChatStarted
@@ -149,16 +159,18 @@ package telegramium.bots
   */
 final case class Message(
   messageId: Int,
-  from: Option[User] = Option.empty,
-  senderChat: Option[Chat] = Option.empty,
   date: Int,
   chat: Chat,
+  messageThreadId: Option[Int] = Option.empty,
+  from: Option[User] = Option.empty,
+  senderChat: Option[Chat] = Option.empty,
   forwardFrom: Option[User] = Option.empty,
   forwardFromChat: Option[Chat] = Option.empty,
   forwardFromMessageId: Option[Int] = Option.empty,
   forwardSignature: Option[String] = Option.empty,
   forwardSenderName: Option[String] = Option.empty,
   forwardDate: Option[Int] = Option.empty,
+  isTopicMessage: Option[Boolean] = Option.empty,
   isAutomaticForward: Option[Boolean] = Option.empty,
   replyToMessage: Option[Message] = Option.empty,
   viaBot: Option[User] = Option.empty,
@@ -201,6 +213,9 @@ final case class Message(
   connectedWebsite: Option[String] = Option.empty,
   passportData: Option[PassportData] = Option.empty,
   proximityAlertTriggered: Option[ProximityAlertTriggered] = Option.empty,
+  forumTopicCreated: Option[ForumTopicCreated] = Option.empty,
+  forumTopicClosed: Option[ForumTopicClosed.type] = Option.empty,
+  forumTopicReopened: Option[ForumTopicReopened.type] = Option.empty,
   videoChatScheduled: Option[VideoChatScheduled] = Option.empty,
   videoChatStarted: Option[VideoChatStarted.type] = Option.empty,
   videoChatEnded: Option[VideoChatEnded] = Option.empty,

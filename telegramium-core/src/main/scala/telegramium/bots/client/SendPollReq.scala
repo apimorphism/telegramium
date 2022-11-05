@@ -8,6 +8,8 @@ import telegramium.bots.KeyboardMarkup
   *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
   * @param question
   *   Poll question, 1-300 characters
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param options
   *   A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
   * @param isAnonymous
@@ -48,6 +50,7 @@ import telegramium.bots.KeyboardMarkup
 final case class SendPollReq(
   chatId: ChatId,
   question: String,
+  messageThreadId: Option[Int] = Option.empty,
   options: List[String] = List.empty,
   isAnonymous: Option[Boolean] = Option.empty,
   `type`: Option[String] = Option.empty,

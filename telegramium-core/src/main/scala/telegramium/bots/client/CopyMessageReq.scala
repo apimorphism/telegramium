@@ -12,6 +12,8 @@ import telegramium.bots.KeyboardMarkup
   *   &#064;channelusername)
   * @param messageId
   *   Message identifier in the chat specified in from_chat_id
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param caption
   *   New caption for media, 0-1024 characters after entities parsing. If not specified, the original caption is kept
   * @param parseMode
@@ -35,6 +37,7 @@ final case class CopyMessageReq(
   chatId: ChatId,
   fromChatId: ChatId,
   messageId: Int,
+  messageThreadId: Option[Int] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,

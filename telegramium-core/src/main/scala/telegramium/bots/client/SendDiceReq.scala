@@ -6,6 +6,8 @@ import telegramium.bots.KeyboardMarkup
 
 /** @param chatId
   *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param emoji
   *   Emoji on which the dice throw animation is based. Currently, must be one of EmojiDice, EmojiDarts,
   *   EmojiBasketball, EmojiFootball, EmojiBowling or EmojiSlotMachine. Dice can have values 1-6 for EmojiDice,
@@ -25,6 +27,7 @@ import telegramium.bots.KeyboardMarkup
   */
 final case class SendDiceReq(
   chatId: ChatId,
+  messageThreadId: Option[Int] = Option.empty,
   emoji: Option[Emoji] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,

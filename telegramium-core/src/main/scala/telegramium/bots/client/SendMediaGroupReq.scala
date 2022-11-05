@@ -5,6 +5,8 @@ import telegramium.bots.InputMedia
 
 /** @param chatId
   *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param media
   *   A JSON-serialized array describing messages to be sent, must include 2-10 items
   * @param disableNotification
@@ -18,6 +20,7 @@ import telegramium.bots.InputMedia
   */
 final case class SendMediaGroupReq(
   chatId: ChatId,
+  messageThreadId: Option[Int] = Option.empty,
   media: List[InputMedia] = List.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,

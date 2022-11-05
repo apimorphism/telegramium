@@ -123,6 +123,27 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val reopenforumtopicreqEncoder: Encoder[ReopenForumTopicReq] =
+    (x: ReopenForumTopicReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"           -> x.chatId.asJson,
+          "message_thread_id" -> x.messageThreadId.asJson,
+          "method"            -> "reopenForumTopic".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val reopenforumtopicreqDecoder: Decoder[ReopenForumTopicReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId          <- h.get[ChatId]("chat_id")
+        _messageThreadId <- h.get[Int]("message_thread_id")
+      } yield {
+        ReopenForumTopicReq(chatId = _chatId, messageThreadId = _messageThreadId)
+      }
+    }
+
   implicit lazy val unpinallchatmessagesreqEncoder: Encoder[UnpinAllChatMessagesReq] =
     (x: UnpinAllChatMessagesReq) => {
       Json.fromFields(
@@ -175,6 +196,12 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val getforumtopiciconstickersreqEncoder: Encoder[GetForumTopicIconStickersReq.type] =
+    (_: GetForumTopicIconStickersReq.type) => ().asJson
+
+  implicit lazy val getforumtopiciconstickersreqDecoder: Decoder[GetForumTopicIconStickersReq.type] = (_: HCursor) =>
+    Right(GetForumTopicIconStickersReq)
+
   implicit lazy val getmydefaultadministratorrightsreqEncoder: Encoder[GetMyDefaultAdministratorRightsReq] =
     (x: GetMyDefaultAdministratorRightsReq) => {
       Json.fromFields(
@@ -199,6 +226,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "text"                        -> x.text.asJson,
           "parse_mode"                  -> x.parseMode.asJson,
           "entities"                    -> x.entities.asJson,
@@ -217,6 +245,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _text                     <- h.get[String]("text")
         _parseMode                <- h.get[Option[ParseMode]]("parse_mode")
         _entities                 <- h.getOrElse[List[MessageEntity]]("entities")(List.empty)
@@ -229,6 +258,7 @@ object CirceImplicits {
       } yield {
         SendMessageReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           text = _text,
           parseMode = _parseMode,
           entities = _entities,
@@ -270,6 +300,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "question"                    -> x.question.asJson,
           "options"                     -> x.options.asJson,
           "is_anonymous"                -> x.isAnonymous.asJson,
@@ -296,6 +327,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _question                 <- h.get[String]("question")
         _options                  <- h.getOrElse[List[String]]("options")(List.empty)
         _isAnonymous              <- h.get[Option[Boolean]]("is_anonymous")
@@ -316,6 +348,7 @@ object CirceImplicits {
       } yield {
         SendPollReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           question = _question,
           options = _options,
           isAnonymous = _isAnonymous,
@@ -363,6 +396,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "phone_number"                -> x.phoneNumber.asJson,
           "first_name"                  -> x.firstName.asJson,
           "last_name"                   -> x.lastName.asJson,
@@ -381,6 +415,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _phoneNumber              <- h.get[String]("phone_number")
         _firstName                <- h.get[String]("first_name")
         _lastName                 <- h.get[Option[String]]("last_name")
@@ -393,6 +428,7 @@ object CirceImplicits {
       } yield {
         SendContactReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           phoneNumber = _phoneNumber,
           firstName = _firstName,
           lastName = _lastName,
@@ -519,6 +555,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "latitude"                    -> x.latitude.asJson,
           "longitude"                   -> x.longitude.asJson,
           "horizontal_accuracy"         -> x.horizontalAccuracy.asJson,
@@ -539,6 +576,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _latitude                 <- h.get[Float]("latitude")
         _longitude                <- h.get[Float]("longitude")
         _horizontalAccuracy       <- h.get[Option[Float]]("horizontal_accuracy")
@@ -553,6 +591,7 @@ object CirceImplicits {
       } yield {
         SendLocationReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           latitude = _latitude,
           longitude = _longitude,
           horizontalAccuracy = _horizontalAccuracy,
@@ -662,6 +701,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "emoji"                       -> x.emoji.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
           "protect_content"             -> x.protectContent.asJson,
@@ -677,6 +717,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _emoji                    <- h.get[Option[Emoji]]("emoji")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
         _protectContent           <- h.get[Option[Boolean]]("protect_content")
@@ -686,6 +727,7 @@ object CirceImplicits {
       } yield {
         SendDiceReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           emoji = _emoji,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
@@ -921,6 +963,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "media"                       -> x.media.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
           "protect_content"             -> x.protectContent.asJson,
@@ -935,6 +978,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _media                    <- h.getOrElse[List[InputMedia]]("media")(List.empty)
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
         _protectContent           <- h.get[Option[Boolean]]("protect_content")
@@ -943,6 +987,7 @@ object CirceImplicits {
       } yield {
         SendMediaGroupReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           media = _media,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
@@ -957,6 +1002,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "game_short_name"             -> x.gameShortName.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
           "protect_content"             -> x.protectContent.asJson,
@@ -972,6 +1018,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[Int]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _gameShortName            <- h.get[String]("game_short_name")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
         _protectContent           <- h.get[Option[Boolean]]("protect_content")
@@ -981,6 +1028,7 @@ object CirceImplicits {
       } yield {
         SendGameReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           gameShortName = _gameShortName,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
@@ -996,6 +1044,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "latitude"                    -> x.latitude.asJson,
           "longitude"                   -> x.longitude.asJson,
           "title"                       -> x.title.asJson,
@@ -1018,6 +1067,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _latitude                 <- h.get[Float]("latitude")
         _longitude                <- h.get[Float]("longitude")
         _title                    <- h.get[String]("title")
@@ -1034,6 +1084,7 @@ object CirceImplicits {
       } yield {
         SendVenueReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           latitude = _latitude,
           longitude = _longitude,
           title = _title,
@@ -1047,6 +1098,36 @@ object CirceImplicits {
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
+        )
+      }
+    }
+
+  implicit lazy val createforumtopicreqEncoder: Encoder[CreateForumTopicReq] =
+    (x: CreateForumTopicReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"              -> x.chatId.asJson,
+          "name"                 -> x.name.asJson,
+          "icon_color"           -> x.iconColor.asJson,
+          "icon_custom_emoji_id" -> x.iconCustomEmojiId.asJson,
+          "method"               -> "createForumTopic".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val createforumtopicreqDecoder: Decoder[CreateForumTopicReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId            <- h.get[ChatId]("chat_id")
+        _name              <- h.get[String]("name")
+        _iconColor         <- h.get[Option[Int]]("icon_color")
+        _iconCustomEmojiId <- h.get[Option[String]]("icon_custom_emoji_id")
+      } yield {
+        CreateForumTopicReq(
+          chatId = _chatId,
+          name = _name,
+          iconColor = _iconColor,
+          iconCustomEmojiId = _iconCustomEmojiId
         )
       }
     }
@@ -1090,6 +1171,27 @@ object CirceImplicits {
         _customEmojiIds <- h.getOrElse[List[String]]("custom_emoji_ids")(List.empty)
       } yield {
         GetCustomEmojiStickersReq(customEmojiIds = _customEmojiIds)
+      }
+    }
+
+  implicit lazy val deleteforumtopicreqEncoder: Encoder[DeleteForumTopicReq] =
+    (x: DeleteForumTopicReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"           -> x.chatId.asJson,
+          "message_thread_id" -> x.messageThreadId.asJson,
+          "method"            -> "deleteForumTopic".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val deleteforumtopicreqDecoder: Decoder[DeleteForumTopicReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId          <- h.get[ChatId]("chat_id")
+        _messageThreadId <- h.get[Int]("message_thread_id")
+      } yield {
+        DeleteForumTopicReq(chatId = _chatId, messageThreadId = _messageThreadId)
       }
     }
 
@@ -1201,6 +1303,27 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val unpinallforumtopicmessagesreqEncoder: Encoder[UnpinAllForumTopicMessagesReq] =
+    (x: UnpinAllForumTopicMessagesReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"           -> x.chatId.asJson,
+          "message_thread_id" -> x.messageThreadId.asJson,
+          "method"            -> "unpinAllForumTopicMessages".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val unpinallforumtopicmessagesreqDecoder: Decoder[UnpinAllForumTopicMessagesReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId          <- h.get[ChatId]("chat_id")
+        _messageThreadId <- h.get[Int]("message_thread_id")
+      } yield {
+        UnpinAllForumTopicMessagesReq(chatId = _chatId, messageThreadId = _messageThreadId)
+      }
+    }
+
   implicit lazy val getfilereqEncoder: Encoder[GetFileReq] =
     (x: GetFileReq) => {
       Json.fromFields(
@@ -1304,6 +1427,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "from_chat_id"                -> x.fromChatId.asJson,
           "message_id"                  -> x.messageId.asJson,
           "caption"                     -> x.caption.asJson,
@@ -1323,6 +1447,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _fromChatId               <- h.get[ChatId]("from_chat_id")
         _messageId                <- h.get[Int]("message_id")
         _caption                  <- h.get[Option[String]]("caption")
@@ -1336,6 +1461,7 @@ object CirceImplicits {
       } yield {
         CopyMessageReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           fromChatId = _fromChatId,
           messageId = _messageId,
           caption = _caption,
@@ -1355,6 +1481,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "video_note"                  -> x.videoNote.asJson,
           "duration"                    -> x.duration.asJson,
           "length"                      -> x.length.asJson,
@@ -1373,6 +1500,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _videoNote                <- h.get[IFile]("video_note")
         _duration                 <- h.get[Option[Int]]("duration")
         _length                   <- h.get[Option[Int]]("length")
@@ -1385,6 +1513,7 @@ object CirceImplicits {
       } yield {
         SendVideoNoteReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           videoNote = _videoNote,
           duration = _duration,
           length = _length,
@@ -1500,6 +1629,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                       -> x.chatId.asJson,
+          "message_thread_id"             -> x.messageThreadId.asJson,
           "title"                         -> x.title.asJson,
           "description"                   -> x.description.asJson,
           "payload"                       -> x.payload.asJson,
@@ -1535,6 +1665,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                    <- h.get[ChatId]("chat_id")
+        _messageThreadId           <- h.get[Option[Int]]("message_thread_id")
         _title                     <- h.get[String]("title")
         _description               <- h.get[String]("description")
         _payload                   <- h.get[String]("payload")
@@ -1564,6 +1695,7 @@ object CirceImplicits {
       } yield {
         SendInvoiceReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           title = _title,
           description = _description,
           payload = _payload,
@@ -1599,6 +1731,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                        -> x.chatId.asJson,
+          "message_thread_id"              -> x.messageThreadId.asJson,
           "document"                       -> x.document.asJson,
           "thumb"                          -> x.thumb.asJson,
           "caption"                        -> x.caption.asJson,
@@ -1619,6 +1752,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                      <- h.get[ChatId]("chat_id")
+        _messageThreadId             <- h.get[Option[Int]]("message_thread_id")
         _document                    <- h.get[IFile]("document")
         _thumb                       <- h.get[Option[IFile]]("thumb")
         _caption                     <- h.get[Option[String]]("caption")
@@ -1633,6 +1767,7 @@ object CirceImplicits {
       } yield {
         SendDocumentReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           document = _document,
           thumb = _thumb,
           caption = _caption,
@@ -1734,6 +1869,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "audio"                       -> x.audio.asJson,
           "caption"                     -> x.caption.asJson,
           "parse_mode"                  -> x.parseMode.asJson,
@@ -1756,6 +1892,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _audio                    <- h.get[IFile]("audio")
         _caption                  <- h.get[Option[String]]("caption")
         _parseMode                <- h.get[Option[ParseMode]]("parse_mode")
@@ -1772,6 +1909,7 @@ object CirceImplicits {
       } yield {
         SendAudioReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           audio = _audio,
           caption = _caption,
           parseMode = _parseMode,
@@ -1822,6 +1960,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"              -> x.chatId.asJson,
+          "message_thread_id"    -> x.messageThreadId.asJson,
           "from_chat_id"         -> x.fromChatId.asJson,
           "disable_notification" -> x.disableNotification.asJson,
           "protect_content"      -> x.protectContent.asJson,
@@ -1835,6 +1974,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId              <- h.get[ChatId]("chat_id")
+        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
         _fromChatId          <- h.get[ChatId]("from_chat_id")
         _disableNotification <- h.get[Option[Boolean]]("disable_notification")
         _protectContent      <- h.get[Option[Boolean]]("protect_content")
@@ -1842,6 +1982,7 @@ object CirceImplicits {
       } yield {
         ForwardMessageReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           fromChatId = _fromChatId,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
@@ -1941,6 +2082,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "voice"                       -> x.voice.asJson,
           "caption"                     -> x.caption.asJson,
           "parse_mode"                  -> x.parseMode.asJson,
@@ -1960,6 +2102,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _voice                    <- h.get[IFile]("voice")
         _caption                  <- h.get[Option[String]]("caption")
         _parseMode                <- h.get[Option[ParseMode]]("parse_mode")
@@ -1973,6 +2116,7 @@ object CirceImplicits {
       } yield {
         SendVoiceReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           voice = _voice,
           caption = _caption,
           parseMode = _parseMode,
@@ -2007,6 +2151,7 @@ object CirceImplicits {
           "can_change_info"        -> x.canChangeInfo.asJson,
           "can_invite_users"       -> x.canInviteUsers.asJson,
           "can_pin_messages"       -> x.canPinMessages.asJson,
+          "can_manage_topics"      -> x.canManageTopics.asJson,
           "method"                 -> "promoteChatMember".asJson
         ).filter(!_._2.isNull)
       )
@@ -2028,6 +2173,7 @@ object CirceImplicits {
         _canChangeInfo       <- h.get[Option[Boolean]]("can_change_info")
         _canInviteUsers      <- h.get[Option[Boolean]]("can_invite_users")
         _canPinMessages      <- h.get[Option[Boolean]]("can_pin_messages")
+        _canManageTopics     <- h.get[Option[Boolean]]("can_manage_topics")
       } yield {
         PromoteChatMemberReq(
           chatId = _chatId,
@@ -2042,7 +2188,8 @@ object CirceImplicits {
           canPromoteMembers = _canPromoteMembers,
           canChangeInfo = _canChangeInfo,
           canInviteUsers = _canInviteUsers,
-          canPinMessages = _canPinMessages
+          canPinMessages = _canPinMessages,
+          canManageTopics = _canManageTopics
         )
       }
     }
@@ -2275,6 +2422,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "video"                       -> x.video.asJson,
           "duration"                    -> x.duration.asJson,
           "width"                       -> x.width.asJson,
@@ -2298,6 +2446,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _video                    <- h.get[IFile]("video")
         _duration                 <- h.get[Option[Int]]("duration")
         _width                    <- h.get[Option[Int]]("width")
@@ -2315,6 +2464,7 @@ object CirceImplicits {
       } yield {
         SendVideoReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           video = _video,
           duration = _duration,
           width = _width,
@@ -2460,6 +2610,27 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val closeforumtopicreqEncoder: Encoder[CloseForumTopicReq] =
+    (x: CloseForumTopicReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"           -> x.chatId.asJson,
+          "message_thread_id" -> x.messageThreadId.asJson,
+          "method"            -> "closeForumTopic".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val closeforumtopicreqDecoder: Decoder[CloseForumTopicReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId          <- h.get[ChatId]("chat_id")
+        _messageThreadId <- h.get[Int]("message_thread_id")
+      } yield {
+        CloseForumTopicReq(chatId = _chatId, messageThreadId = _messageThreadId)
+      }
+    }
+
   implicit lazy val getchatmenubuttonreqEncoder: Encoder[GetChatMenuButtonReq] =
     (x: GetChatMenuButtonReq) => {
       Json.fromFields(
@@ -2484,6 +2655,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "animation"                   -> x.animation.asJson,
           "duration"                    -> x.duration.asJson,
           "width"                       -> x.width.asJson,
@@ -2506,6 +2678,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _animation                <- h.get[IFile]("animation")
         _duration                 <- h.get[Option[Int]]("duration")
         _width                    <- h.get[Option[Int]]("width")
@@ -2522,6 +2695,7 @@ object CirceImplicits {
       } yield {
         SendAnimationReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           animation = _animation,
           duration = _duration,
           width = _width,
@@ -2618,6 +2792,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "sticker"                     -> x.sticker.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
           "protect_content"             -> x.protectContent.asJson,
@@ -2633,6 +2808,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _sticker                  <- h.get[IFile]("sticker")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
         _protectContent           <- h.get[Option[Boolean]]("protect_content")
@@ -2642,6 +2818,7 @@ object CirceImplicits {
       } yield {
         SendStickerReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           sticker = _sticker,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
@@ -2652,11 +2829,42 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val editforumtopicreqEncoder: Encoder[EditForumTopicReq] =
+    (x: EditForumTopicReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"              -> x.chatId.asJson,
+          "message_thread_id"    -> x.messageThreadId.asJson,
+          "name"                 -> x.name.asJson,
+          "icon_custom_emoji_id" -> x.iconCustomEmojiId.asJson,
+          "method"               -> "editForumTopic".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val editforumtopicreqDecoder: Decoder[EditForumTopicReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId            <- h.get[ChatId]("chat_id")
+        _messageThreadId   <- h.get[Int]("message_thread_id")
+        _name              <- h.get[String]("name")
+        _iconCustomEmojiId <- h.get[String]("icon_custom_emoji_id")
+      } yield {
+        EditForumTopicReq(
+          chatId = _chatId,
+          messageThreadId = _messageThreadId,
+          name = _name,
+          iconCustomEmojiId = _iconCustomEmojiId
+        )
+      }
+    }
+
   implicit lazy val sendphotoreqEncoder: Encoder[SendPhotoReq] =
     (x: SendPhotoReq) => {
       Json.fromFields(
         List(
           "chat_id"                     -> x.chatId.asJson,
+          "message_thread_id"           -> x.messageThreadId.asJson,
           "photo"                       -> x.photo.asJson,
           "caption"                     -> x.caption.asJson,
           "parse_mode"                  -> x.parseMode.asJson,
@@ -2675,6 +2883,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
+        _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _photo                    <- h.get[IFile]("photo")
         _caption                  <- h.get[Option[String]]("caption")
         _parseMode                <- h.get[Option[ParseMode]]("parse_mode")
@@ -2687,6 +2896,7 @@ object CirceImplicits {
       } yield {
         SendPhotoReq(
           chatId = _chatId,
+          messageThreadId = _messageThreadId,
           photo = _photo,
           caption = _caption,
           parseMode = _parseMode,

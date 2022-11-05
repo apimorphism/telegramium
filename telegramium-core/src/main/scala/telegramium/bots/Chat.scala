@@ -16,8 +16,15 @@ package telegramium.bots
   *   Optional. First name of the other party in a private chat
   * @param lastName
   *   Optional. Last name of the other party in a private chat
+  * @param isForum
+  *   Optional. True, if the supergroup chat is a forum (has topics enabled)
   * @param photo
   *   Optional. Chat photo. Returned only in getChat.
+  * @param activeUsernames
+  *   Optional. If non-empty, the list of all active chat usernames; for private chats, supergroups and channels.
+  *   Returned only in getChat.
+  * @param emojiStatusCustomEmojiId
+  *   Optional. Custom emoji identifier of emoji status of the other party in a private chat. Returned only in getChat.
   * @param bio
   *   Optional. Bio of the other party in a private chat. Returned only in getChat.
   * @param hasPrivateForwards
@@ -66,7 +73,10 @@ final case class Chat(
   username: Option[String] = Option.empty,
   firstName: Option[String] = Option.empty,
   lastName: Option[String] = Option.empty,
+  isForum: Option[Boolean] = Option.empty,
   photo: Option[ChatPhoto] = Option.empty,
+  activeUsernames: List[String] = List.empty,
+  emojiStatusCustomEmojiId: Option[String] = Option.empty,
   bio: Option[String] = Option.empty,
   hasPrivateForwards: Option[Boolean] = Option.empty,
   hasRestrictedVoiceAndVideoMessages: Option[Boolean] = Option.empty,

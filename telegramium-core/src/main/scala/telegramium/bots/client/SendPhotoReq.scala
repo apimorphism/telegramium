@@ -13,6 +13,8 @@ import telegramium.bots.KeyboardMarkup
   *   HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using
   *   multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000
   *   in total. Width and height ratio must be at most 20.
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param caption
   *   Photo caption (may also be used when resending photos by file_id), 0-1024 characters after entities parsing
   * @param parseMode
@@ -35,6 +37,7 @@ import telegramium.bots.KeyboardMarkup
 final case class SendPhotoReq(
   chatId: ChatId,
   photo: IFile,
+  messageThreadId: Option[Int] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,

@@ -10,14 +10,14 @@ sealed trait InlineQueryResult {}
   *   Unique identifier for this result, 1-64 bytes
   * @param gifUrl
   *   A valid URL for the GIF file. File size must not exceed 1MB
+  * @param thumbUrl
+  *   URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
   * @param gifWidth
   *   Optional. Width of the GIF
   * @param gifHeight
   *   Optional. Height of the GIF
   * @param gifDuration
   *   Optional. Duration of the GIF in seconds
-  * @param thumbUrl
-  *   URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
   * @param thumbMimeType
   *   Optional. MIME type of the thumbnail, must be one of “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to
   *   “image/jpeg”
@@ -37,10 +37,10 @@ sealed trait InlineQueryResult {}
 final case class InlineQueryResultGif(
   id: String,
   gifUrl: String,
+  thumbUrl: String,
   gifWidth: Option[Int] = Option.empty,
   gifHeight: Option[Int] = Option.empty,
   gifDuration: Option[Int] = Option.empty,
-  thumbUrl: String,
   thumbMimeType: Option[String] = Option.empty,
   title: Option[String] = Option.empty,
   caption: Option[String] = Option.empty,
@@ -188,16 +188,16 @@ final case class InlineQueryResultPhoto(
   *   Unique identifier for this result, 1-64 bytes
   * @param title
   *   Title for the result
+  * @param documentUrl
+  *   A valid URL for the file
+  * @param mimeType
+  *   MIME type of the content of the file, either “application/pdf” or “application/zip”
   * @param caption
   *   Optional. Caption of the document to be sent, 0-1024 characters after entities parsing
   * @param parseMode
   *   Optional. Mode for parsing entities in the document caption. See formatting options for more details.
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
-  * @param documentUrl
-  *   A valid URL for the file
-  * @param mimeType
-  *   MIME type of the content of the file, either “application/pdf” or “application/zip”
   * @param description
   *   Optional. Short description of the result
   * @param replyMarkup
@@ -214,11 +214,11 @@ final case class InlineQueryResultPhoto(
 final case class InlineQueryResultDocument(
   id: String,
   title: String,
+  documentUrl: String,
+  mimeType: String,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
-  documentUrl: String,
-  mimeType: String,
   description: Option[String] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty,
@@ -340,14 +340,14 @@ final case class InlineQueryResultAudio(
   *   Unique identifier for this result, 1-64 bytes
   * @param mpeg4Url
   *   A valid URL for the MPEG4 file. File size must not exceed 1MB
+  * @param thumbUrl
+  *   URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
   * @param mpeg4Width
   *   Optional. Video width
   * @param mpeg4Height
   *   Optional. Video height
   * @param mpeg4Duration
   *   Optional. Video duration in seconds
-  * @param thumbUrl
-  *   URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
   * @param thumbMimeType
   *   Optional. MIME type of the thumbnail, must be one of “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to
   *   “image/jpeg”
@@ -367,10 +367,10 @@ final case class InlineQueryResultAudio(
 final case class InlineQueryResultMpeg4Gif(
   id: String,
   mpeg4Url: String,
+  thumbUrl: String,
   mpeg4Width: Option[Int] = Option.empty,
   mpeg4Height: Option[Int] = Option.empty,
   mpeg4Duration: Option[Int] = Option.empty,
-  thumbUrl: String,
   thumbMimeType: Option[String] = Option.empty,
   title: Option[String] = Option.empty,
   caption: Option[String] = Option.empty,

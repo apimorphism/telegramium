@@ -9,6 +9,8 @@ import telegramium.bots.KeyboardMarkup
   *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
   * @param text
   *   Text of the message to be sent, 1-4096 characters after entities parsing
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param parseMode
   *   Mode for parsing entities in the message text. See formatting options for more details.
   * @param entities
@@ -31,6 +33,7 @@ import telegramium.bots.KeyboardMarkup
 final case class SendMessageReq(
   chatId: ChatId,
   text: String,
+  messageThreadId: Option[Int] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   entities: List[MessageEntity] = List.empty,
   disableWebPagePreview: Option[Boolean] = Option.empty,

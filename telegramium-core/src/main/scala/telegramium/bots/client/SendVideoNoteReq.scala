@@ -10,6 +10,8 @@ import telegramium.bots.KeyboardMarkup
   *   Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers
   *   (recommended) or upload a new video using multipart/form-data. Sending video notes by a URL is currently
   *   unsupported
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param duration
   *   Duration of sent video in seconds
   * @param length
@@ -35,6 +37,7 @@ import telegramium.bots.KeyboardMarkup
 final case class SendVideoNoteReq(
   chatId: ChatId,
   videoNote: IFile,
+  messageThreadId: Option[Int] = Option.empty,
   duration: Option[Int] = Option.empty,
   length: Option[Int] = Option.empty,
   thumb: Option[IFile] = Option.empty,

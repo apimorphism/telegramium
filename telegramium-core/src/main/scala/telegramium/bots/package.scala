@@ -269,6 +269,7 @@ object CirceImplicits {
           "can_post_messages"      -> x.canPostMessages.asJson,
           "can_edit_messages"      -> x.canEditMessages.asJson,
           "can_pin_messages"       -> x.canPinMessages.asJson,
+          "can_manage_topics"      -> x.canManageTopics.asJson,
           "custom_title"           -> x.customTitle.asJson
         ).filter(!_._2.isNull)
       )
@@ -291,6 +292,7 @@ object CirceImplicits {
         _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
         _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
         _canPinMessages      <- h.get[Option[Boolean]]("can_pin_messages")
+        _canManageTopics     <- h.get[Option[Boolean]]("can_manage_topics")
         _customTitle         <- h.get[Option[String]]("custom_title")
       } yield {
         ChatMemberAdministrator(
@@ -308,6 +310,7 @@ object CirceImplicits {
           canPostMessages = _canPostMessages,
           canEditMessages = _canEditMessages,
           canPinMessages = _canPinMessages,
+          canManageTopics = _canManageTopics,
           customTitle = _customTitle
         )
       }
@@ -385,6 +388,7 @@ object CirceImplicits {
           "can_change_info"           -> x.canChangeInfo.asJson,
           "can_invite_users"          -> x.canInviteUsers.asJson,
           "can_pin_messages"          -> x.canPinMessages.asJson,
+          "can_manage_topics"         -> x.canManageTopics.asJson,
           "can_send_messages"         -> x.canSendMessages.asJson,
           "can_send_media_messages"   -> x.canSendMediaMessages.asJson,
           "can_send_polls"            -> x.canSendPolls.asJson,
@@ -404,6 +408,7 @@ object CirceImplicits {
         _canChangeInfo         <- h.get[Boolean]("can_change_info")
         _canInviteUsers        <- h.get[Boolean]("can_invite_users")
         _canPinMessages        <- h.get[Boolean]("can_pin_messages")
+        _canManageTopics       <- h.get[Boolean]("can_manage_topics")
         _canSendMessages       <- h.get[Boolean]("can_send_messages")
         _canSendMediaMessages  <- h.get[Boolean]("can_send_media_messages")
         _canSendPolls          <- h.get[Boolean]("can_send_polls")
@@ -418,6 +423,7 @@ object CirceImplicits {
           canChangeInfo = _canChangeInfo,
           canInviteUsers = _canInviteUsers,
           canPinMessages = _canPinMessages,
+          canManageTopics = _canManageTopics,
           canSendMessages = _canSendMessages,
           canSendMediaMessages = _canSendMediaMessages,
           canSendPolls = _canSendPolls,
@@ -2641,6 +2647,12 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val forumtopicreopenedEncoder: Encoder[ForumTopicReopened.type] = (_: ForumTopicReopened.type) =>
+    ().asJson
+
+  implicit lazy val forumtopicreopenedDecoder: Decoder[ForumTopicReopened.type] = (_: HCursor) =>
+    Right(ForumTopicReopened)
+
   implicit lazy val responseparametersEncoder: Encoder[ResponseParameters] =
     (x: ResponseParameters) => {
       Json.fromFields(
@@ -2741,7 +2753,10 @@ object CirceImplicits {
           "username"                                -> x.username.asJson,
           "first_name"                              -> x.firstName.asJson,
           "last_name"                               -> x.lastName.asJson,
+          "is_forum"                                -> x.isForum.asJson,
           "photo"                                   -> x.photo.asJson,
+          "active_usernames"                        -> x.activeUsernames.asJson,
+          "emoji_status_custom_emoji_id"            -> x.emojiStatusCustomEmojiId.asJson,
           "bio"                                     -> x.bio.asJson,
           "has_private_forwards"                    -> x.hasPrivateForwards.asJson,
           "has_restricted_voice_and_video_messages" -> x.hasRestrictedVoiceAndVideoMessages.asJson,
@@ -2771,7 +2786,10 @@ object CirceImplicits {
         _username                           <- h.get[Option[String]]("username")
         _firstName                          <- h.get[Option[String]]("first_name")
         _lastName                           <- h.get[Option[String]]("last_name")
+        _isForum                            <- h.get[Option[Boolean]]("is_forum")
         _photo                              <- h.get[Option[ChatPhoto]]("photo")
+        _activeUsernames                    <- h.getOrElse[List[String]]("active_usernames")(List.empty)
+        _emojiStatusCustomEmojiId           <- h.get[Option[String]]("emoji_status_custom_emoji_id")
         _bio                                <- h.get[Option[String]]("bio")
         _hasPrivateForwards                 <- h.get[Option[Boolean]]("has_private_forwards")
         _hasRestrictedVoiceAndVideoMessages <- h.get[Option[Boolean]]("has_restricted_voice_and_video_messages")
@@ -2796,7 +2814,10 @@ object CirceImplicits {
           username = _username,
           firstName = _firstName,
           lastName = _lastName,
+          isForum = _isForum,
           photo = _photo,
+          activeUsernames = _activeUsernames,
+          emojiStatusCustomEmojiId = _emojiStatusCustomEmojiId,
           bio = _bio,
           hasPrivateForwards = _hasPrivateForwards,
           hasRestrictedVoiceAndVideoMessages = _hasRestrictedVoiceAndVideoMessages,
@@ -2922,7 +2943,8 @@ object CirceImplicits {
           "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson,
           "can_change_info"           -> x.canChangeInfo.asJson,
           "can_invite_users"          -> x.canInviteUsers.asJson,
-          "can_pin_messages"          -> x.canPinMessages.asJson
+          "can_pin_messages"          -> x.canPinMessages.asJson,
+          "can_manage_topics"         -> x.canManageTopics.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2938,6 +2960,7 @@ object CirceImplicits {
         _canChangeInfo         <- h.get[Option[Boolean]]("can_change_info")
         _canInviteUsers        <- h.get[Option[Boolean]]("can_invite_users")
         _canPinMessages        <- h.get[Option[Boolean]]("can_pin_messages")
+        _canManageTopics       <- h.get[Option[Boolean]]("can_manage_topics")
       } yield {
         ChatPermissions(
           canSendMessages = _canSendMessages,
@@ -2947,7 +2970,8 @@ object CirceImplicits {
           canAddWebPagePreviews = _canAddWebPagePreviews,
           canChangeInfo = _canChangeInfo,
           canInviteUsers = _canInviteUsers,
-          canPinMessages = _canPinMessages
+          canPinMessages = _canPinMessages,
+          canManageTopics = _canManageTopics
         )
       }
     }
@@ -3708,6 +3732,9 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val forumtopicclosedEncoder: Encoder[ForumTopicClosed.type] = (_: ForumTopicClosed.type) => ().asJson
+  implicit lazy val forumtopicclosedDecoder: Decoder[ForumTopicClosed.type] = (_: HCursor) => Right(ForumTopicClosed)
+
   implicit lazy val fileEncoder: Encoder[File] =
     (x: File) => {
       Json.fromFields(
@@ -3944,6 +3971,35 @@ object CirceImplicits {
         _distance <- h.get[Int]("distance")
       } yield {
         ProximityAlertTriggered(traveler = _traveler, watcher = _watcher, distance = _distance)
+      }
+    }
+
+  implicit lazy val forumtopicEncoder: Encoder[ForumTopic] =
+    (x: ForumTopic) => {
+      Json.fromFields(
+        List(
+          "message_thread_id"    -> x.messageThreadId.asJson,
+          "name"                 -> x.name.asJson,
+          "icon_color"           -> x.iconColor.asJson,
+          "icon_custom_emoji_id" -> x.iconCustomEmojiId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val forumtopicDecoder: Decoder[ForumTopic] =
+    Decoder.instance { h =>
+      for {
+        _messageThreadId   <- h.get[Int]("message_thread_id")
+        _name              <- h.get[String]("name")
+        _iconColor         <- h.get[Int]("icon_color")
+        _iconCustomEmojiId <- h.get[Option[String]]("icon_custom_emoji_id")
+      } yield {
+        ForumTopic(
+          messageThreadId = _messageThreadId,
+          name = _name,
+          iconColor = _iconColor,
+          iconCustomEmojiId = _iconCustomEmojiId
+        )
       }
     }
 
@@ -4240,6 +4296,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "message_id"                        -> x.messageId.asJson,
+          "message_thread_id"                 -> x.messageThreadId.asJson,
           "from"                              -> x.from.asJson,
           "sender_chat"                       -> x.senderChat.asJson,
           "date"                              -> x.date.asJson,
@@ -4250,6 +4307,7 @@ object CirceImplicits {
           "forward_signature"                 -> x.forwardSignature.asJson,
           "forward_sender_name"               -> x.forwardSenderName.asJson,
           "forward_date"                      -> x.forwardDate.asJson,
+          "is_topic_message"                  -> x.isTopicMessage.asJson,
           "is_automatic_forward"              -> x.isAutomaticForward.asJson,
           "reply_to_message"                  -> x.replyToMessage.asJson,
           "via_bot"                           -> x.viaBot.asJson,
@@ -4292,6 +4350,9 @@ object CirceImplicits {
           "connected_website"                 -> x.connectedWebsite.asJson,
           "passport_data"                     -> x.passportData.asJson,
           "proximity_alert_triggered"         -> x.proximityAlertTriggered.asJson,
+          "forum_topic_created"               -> x.forumTopicCreated.asJson,
+          "forum_topic_closed"                -> x.forumTopicClosed.asJson,
+          "forum_topic_reopened"              -> x.forumTopicReopened.asJson,
           "video_chat_scheduled"              -> x.videoChatScheduled.asJson,
           "video_chat_started"                -> x.videoChatStarted.asJson,
           "video_chat_ended"                  -> x.videoChatEnded.asJson,
@@ -4306,6 +4367,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _messageId             <- h.get[Int]("message_id")
+        _messageThreadId       <- h.get[Option[Int]]("message_thread_id")
         _from                  <- h.get[Option[User]]("from")
         _senderChat            <- h.get[Option[Chat]]("sender_chat")
         _date                  <- h.get[Int]("date")
@@ -4316,6 +4378,7 @@ object CirceImplicits {
         _forwardSignature      <- h.get[Option[String]]("forward_signature")
         _forwardSenderName     <- h.get[Option[String]]("forward_sender_name")
         _forwardDate           <- h.get[Option[Int]]("forward_date")
+        _isTopicMessage        <- h.get[Option[Boolean]]("is_topic_message")
         _isAutomaticForward    <- h.get[Option[Boolean]]("is_automatic_forward")
         _replyToMessage        <- h.get[Option[Message]]("reply_to_message")
         _viaBot                <- h.get[Option[User]]("via_bot")
@@ -4360,6 +4423,9 @@ object CirceImplicits {
         _connectedWebsite             <- h.get[Option[String]]("connected_website")
         _passportData                 <- h.get[Option[PassportData]]("passport_data")
         _proximityAlertTriggered      <- h.get[Option[ProximityAlertTriggered]]("proximity_alert_triggered")
+        _forumTopicCreated            <- h.get[Option[ForumTopicCreated]]("forum_topic_created")
+        _forumTopicClosed             <- h.get[Option[ForumTopicClosed.type]]("forum_topic_closed")
+        _forumTopicReopened           <- h.get[Option[ForumTopicReopened.type]]("forum_topic_reopened")
         _videoChatScheduled           <- h.get[Option[VideoChatScheduled]]("video_chat_scheduled")
         _videoChatStarted             <- h.get[Option[VideoChatStarted.type]]("video_chat_started")
         _videoChatEnded               <- h.get[Option[VideoChatEnded]]("video_chat_ended")
@@ -4369,6 +4435,7 @@ object CirceImplicits {
       } yield {
         Message(
           messageId = _messageId,
+          messageThreadId = _messageThreadId,
           from = _from,
           senderChat = _senderChat,
           date = _date,
@@ -4379,6 +4446,7 @@ object CirceImplicits {
           forwardSignature = _forwardSignature,
           forwardSenderName = _forwardSenderName,
           forwardDate = _forwardDate,
+          isTopicMessage = _isTopicMessage,
           isAutomaticForward = _isAutomaticForward,
           replyToMessage = _replyToMessage,
           viaBot = _viaBot,
@@ -4421,6 +4489,9 @@ object CirceImplicits {
           connectedWebsite = _connectedWebsite,
           passportData = _passportData,
           proximityAlertTriggered = _proximityAlertTriggered,
+          forumTopicCreated = _forumTopicCreated,
+          forumTopicClosed = _forumTopicClosed,
+          forumTopicReopened = _forumTopicReopened,
           videoChatScheduled = _videoChatScheduled,
           videoChatStarted = _videoChatStarted,
           videoChatEnded = _videoChatEnded,
@@ -4467,7 +4538,8 @@ object CirceImplicits {
           "can_invite_users"       -> x.canInviteUsers.asJson,
           "can_post_messages"      -> x.canPostMessages.asJson,
           "can_edit_messages"      -> x.canEditMessages.asJson,
-          "can_pin_messages"       -> x.canPinMessages.asJson
+          "can_pin_messages"       -> x.canPinMessages.asJson,
+          "can_manage_topics"      -> x.canManageTopics.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4486,6 +4558,7 @@ object CirceImplicits {
         _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
         _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
         _canPinMessages      <- h.get[Option[Boolean]]("can_pin_messages")
+        _canManageTopics     <- h.get[Option[Boolean]]("can_manage_topics")
       } yield {
         ChatAdministratorRights(
           isAnonymous = _isAnonymous,
@@ -4498,7 +4571,8 @@ object CirceImplicits {
           canInviteUsers = _canInviteUsers,
           canPostMessages = _canPostMessages,
           canEditMessages = _canEditMessages,
-          canPinMessages = _canPinMessages
+          canPinMessages = _canPinMessages,
+          canManageTopics = _canManageTopics
         )
       }
     }
@@ -4744,6 +4818,28 @@ object CirceImplicits {
         _messageId <- h.get[Int]("message_id")
       } yield {
         MessageId(messageId = _messageId)
+      }
+    }
+
+  implicit lazy val forumtopiccreatedEncoder: Encoder[ForumTopicCreated] =
+    (x: ForumTopicCreated) => {
+      Json.fromFields(
+        List(
+          "name"                 -> x.name.asJson,
+          "icon_color"           -> x.iconColor.asJson,
+          "icon_custom_emoji_id" -> x.iconCustomEmojiId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val forumtopiccreatedDecoder: Decoder[ForumTopicCreated] =
+    Decoder.instance { h =>
+      for {
+        _name              <- h.get[String]("name")
+        _iconColor         <- h.get[Int]("icon_color")
+        _iconCustomEmojiId <- h.get[Option[String]]("icon_custom_emoji_id")
+      } yield {
+        ForumTopicCreated(name = _name, iconColor = _iconColor, iconCustomEmojiId = _iconCustomEmojiId)
       }
     }
 

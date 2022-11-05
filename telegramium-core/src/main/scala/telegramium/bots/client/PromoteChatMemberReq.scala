@@ -32,6 +32,8 @@ import telegramium.bots.ChatId
   *   Pass True if the administrator can invite new users to the chat
   * @param canPinMessages
   *   Pass True if the administrator can pin messages, supergroups only
+  * @param canManageTopics
+  *   Pass True if the user is allowed to create, rename, close, and reopen forum topics, supergroups only
   */
 final case class PromoteChatMemberReq(
   chatId: ChatId,
@@ -46,5 +48,6 @@ final case class PromoteChatMemberReq(
   canPromoteMembers: Option[Boolean] = Option.empty,
   canChangeInfo: Option[Boolean] = Option.empty,
   canInviteUsers: Option[Boolean] = Option.empty,
-  canPinMessages: Option[Boolean] = Option.empty
+  canPinMessages: Option[Boolean] = Option.empty,
+  canManageTopics: Option[Boolean] = Option.empty
 )

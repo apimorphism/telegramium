@@ -47,7 +47,7 @@ class EchoBot[F[_]]()(implicit
 
   override def onCallbackQuery(query: CallbackQuery): F[Unit] = {
     def rollTheDice(chatId: Long, emoji: Emoji = EmojiDice): F[Unit] = {
-      sendDice(ChatIntId(chatId), Some(emoji)).exec.void >>
+      sendDice(ChatIntId(chatId), emoji = Some(emoji)).exec.void >>
         answerCallbackQuery(callbackQueryId = query.id).exec.void
     }
 

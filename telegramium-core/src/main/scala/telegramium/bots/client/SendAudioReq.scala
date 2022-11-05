@@ -12,6 +12,8 @@ import telegramium.bots.KeyboardMarkup
   *   Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers
   *   (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new
   *   one using multipart/form-data.
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param caption
   *   Audio caption, 0-1024 characters after entities parsing
   * @param parseMode
@@ -46,6 +48,7 @@ import telegramium.bots.KeyboardMarkup
 final case class SendAudioReq(
   chatId: ChatId,
   audio: IFile,
+  messageThreadId: Option[Int] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
