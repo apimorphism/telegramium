@@ -4,7 +4,7 @@ object Dependencies {
 
   object V {
     val monix            = "3.4.0"
-    val catsCore         = "2.8.0"
+    val catsCore         = "2.9.0"
     val catsEffect       = "3.3.14"
     val circe            = "0.14.3"
     val http4s           = "0.23.16"
