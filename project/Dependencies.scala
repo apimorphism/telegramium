@@ -9,10 +9,10 @@ object Dependencies {
     val circe            = "0.14.3"
     val http4s           = "0.23.16"
     val blazeHttp4s      = "0.23.12"
-    val slf4j            = "2.0.5"
+    val slf4j            = "2.0.6"
     val logback          = "1.2.11"
     val scalatest        = "3.2.14"
-    val testcontainers   = "0.40.11"
+    val testcontainers   = "0.40.12"
     val mockServerClient = "5.11.2"
     val log4cats         = "2.5.0"
   }
