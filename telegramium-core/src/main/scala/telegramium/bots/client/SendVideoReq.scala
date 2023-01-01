@@ -33,6 +33,8 @@ import telegramium.bots.KeyboardMarkup
   * @param captionEntities
   *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
   *   parse_mode
+  * @param hasSpoiler
+  *   Pass True if the video needs to be covered with a spoiler animation
   * @param supportsStreaming
   *   Pass True if the uploaded video is suitable for streaming
   * @param disableNotification
@@ -58,6 +60,7 @@ final case class SendVideoReq(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  hasSpoiler: Option[Boolean] = Option.empty,
   supportsStreaming: Option[Boolean] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,

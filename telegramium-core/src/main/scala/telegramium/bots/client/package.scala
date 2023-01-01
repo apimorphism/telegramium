@@ -6,10 +6,10 @@ object CirceImplicits {
   import io.circe.{Encoder, Decoder, Json}
   import iozhik._
   import io.circe.HCursor
+  import telegramium.bots.ChatId
+  import telegramium.bots.CirceImplicits._
   import telegramium.bots.BotCommand
   import telegramium.bots.BotCommandScope
-  import telegramium.bots.CirceImplicits._
-  import telegramium.bots.ChatId
   import telegramium.bots.IFile
   import telegramium.bots.ParseMode
   import telegramium.bots.MessageEntity
@@ -48,6 +48,44 @@ object CirceImplicits {
 
   implicit lazy val getwebhookinforeqEncoder: Encoder[GetWebhookInfoReq.type] = (_: GetWebhookInfoReq.type) => ().asJson
   implicit lazy val getwebhookinforeqDecoder: Decoder[GetWebhookInfoReq.type] = (_: HCursor) => Right(GetWebhookInfoReq)
+
+  implicit lazy val unhidegeneralforumtopicreqEncoder: Encoder[UnhideGeneralForumTopicReq] =
+    (x: UnhideGeneralForumTopicReq) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "unhideGeneralForumTopic".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val unhidegeneralforumtopicreqDecoder: Decoder[UnhideGeneralForumTopicReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId <- h.get[ChatId]("chat_id")
+      } yield {
+        UnhideGeneralForumTopicReq(chatId = _chatId)
+      }
+    }
+
+  implicit lazy val reopengeneralforumtopicreqEncoder: Encoder[ReopenGeneralForumTopicReq] =
+    (x: ReopenGeneralForumTopicReq) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "reopenGeneralForumTopic".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val reopengeneralforumtopicreqDecoder: Decoder[ReopenGeneralForumTopicReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId <- h.get[ChatId]("chat_id")
+      } yield {
+        ReopenGeneralForumTopicReq(chatId = _chatId)
+      }
+    }
 
   implicit lazy val setmycommandsreqEncoder: Encoder[SetMyCommandsReq] =
     (x: SetMyCommandsReq) => {
@@ -742,9 +780,10 @@ object CirceImplicits {
     (x: SendChatActionReq) => {
       Json.fromFields(
         List(
-          "chat_id" -> x.chatId.asJson,
-          "action"  -> x.action.asJson,
-          "method"  -> "sendChatAction".asJson
+          "chat_id"           -> x.chatId.asJson,
+          "message_thread_id" -> x.messageThreadId.asJson,
+          "action"            -> x.action.asJson,
+          "method"            -> "sendChatAction".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -752,10 +791,11 @@ object CirceImplicits {
   implicit lazy val sendchatactionreqDecoder: Decoder[SendChatActionReq] =
     Decoder.instance { h =>
       for {
-        _chatId <- h.get[ChatId]("chat_id")
-        _action <- h.get[String]("action")
+        _chatId          <- h.get[ChatId]("chat_id")
+        _messageThreadId <- h.get[Option[Int]]("message_thread_id")
+        _action          <- h.get[String]("action")
       } yield {
-        SendChatActionReq(chatId = _chatId, action = _action)
+        SendChatActionReq(chatId = _chatId, messageThreadId = _messageThreadId, action = _action)
       }
     }
 
@@ -1129,6 +1169,27 @@ object CirceImplicits {
           iconColor = _iconColor,
           iconCustomEmojiId = _iconCustomEmojiId
         )
+      }
+    }
+
+  implicit lazy val editgeneralforumtopicreqEncoder: Encoder[EditGeneralForumTopicReq] =
+    (x: EditGeneralForumTopicReq) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson,
+          "name"    -> x.name.asJson,
+          "method"  -> "editGeneralForumTopic".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val editgeneralforumtopicreqDecoder: Decoder[EditGeneralForumTopicReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId <- h.get[ChatId]("chat_id")
+        _name   <- h.get[String]("name")
+      } yield {
+        EditGeneralForumTopicReq(chatId = _chatId, name = _name)
       }
     }
 
@@ -1864,6 +1925,25 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val closegeneralforumtopicreqEncoder: Encoder[CloseGeneralForumTopicReq] =
+    (x: CloseGeneralForumTopicReq) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "closeGeneralForumTopic".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val closegeneralforumtopicreqDecoder: Decoder[CloseGeneralForumTopicReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId <- h.get[ChatId]("chat_id")
+      } yield {
+        CloseGeneralForumTopicReq(chatId = _chatId)
+      }
+    }
+
   implicit lazy val sendaudioreqEncoder: Encoder[SendAudioReq] =
     (x: SendAudioReq) => {
       Json.fromFields(
@@ -2431,6 +2511,7 @@ object CirceImplicits {
           "caption"                     -> x.caption.asJson,
           "parse_mode"                  -> x.parseMode.asJson,
           "caption_entities"            -> x.captionEntities.asJson,
+          "has_spoiler"                 -> x.hasSpoiler.asJson,
           "supports_streaming"          -> x.supportsStreaming.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
           "protect_content"             -> x.protectContent.asJson,
@@ -2455,6 +2536,7 @@ object CirceImplicits {
         _caption                  <- h.get[Option[String]]("caption")
         _parseMode                <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities          <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _hasSpoiler               <- h.get[Option[Boolean]]("has_spoiler")
         _supportsStreaming        <- h.get[Option[Boolean]]("supports_streaming")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
         _protectContent           <- h.get[Option[Boolean]]("protect_content")
@@ -2473,6 +2555,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          hasSpoiler = _hasSpoiler,
           supportsStreaming = _supportsStreaming,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
@@ -2610,6 +2693,25 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val hidegeneralforumtopicreqEncoder: Encoder[HideGeneralForumTopicReq] =
+    (x: HideGeneralForumTopicReq) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "hideGeneralForumTopic".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val hidegeneralforumtopicreqDecoder: Decoder[HideGeneralForumTopicReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId <- h.get[ChatId]("chat_id")
+      } yield {
+        HideGeneralForumTopicReq(chatId = _chatId)
+      }
+    }
+
   implicit lazy val closeforumtopicreqEncoder: Encoder[CloseForumTopicReq] =
     (x: CloseForumTopicReq) => {
       Json.fromFields(
@@ -2664,6 +2766,7 @@ object CirceImplicits {
           "caption"                     -> x.caption.asJson,
           "parse_mode"                  -> x.parseMode.asJson,
           "caption_entities"            -> x.captionEntities.asJson,
+          "has_spoiler"                 -> x.hasSpoiler.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
           "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
@@ -2687,6 +2790,7 @@ object CirceImplicits {
         _caption                  <- h.get[Option[String]]("caption")
         _parseMode                <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities          <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _hasSpoiler               <- h.get[Option[Boolean]]("has_spoiler")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
         _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
@@ -2704,6 +2808,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          hasSpoiler = _hasSpoiler,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
@@ -2847,8 +2952,8 @@ object CirceImplicits {
       for {
         _chatId            <- h.get[ChatId]("chat_id")
         _messageThreadId   <- h.get[Int]("message_thread_id")
-        _name              <- h.get[String]("name")
-        _iconCustomEmojiId <- h.get[String]("icon_custom_emoji_id")
+        _name              <- h.get[Option[String]]("name")
+        _iconCustomEmojiId <- h.get[Option[String]]("icon_custom_emoji_id")
       } yield {
         EditForumTopicReq(
           chatId = _chatId,
@@ -2869,6 +2974,7 @@ object CirceImplicits {
           "caption"                     -> x.caption.asJson,
           "parse_mode"                  -> x.parseMode.asJson,
           "caption_entities"            -> x.captionEntities.asJson,
+          "has_spoiler"                 -> x.hasSpoiler.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
           "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
@@ -2888,6 +2994,7 @@ object CirceImplicits {
         _caption                  <- h.get[Option[String]]("caption")
         _parseMode                <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities          <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _hasSpoiler               <- h.get[Option[Boolean]]("has_spoiler")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
         _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
@@ -2901,6 +3008,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          hasSpoiler = _hasSpoiler,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,

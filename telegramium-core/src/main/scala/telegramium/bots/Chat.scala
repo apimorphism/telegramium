@@ -52,6 +52,12 @@ package telegramium.bots
   * @param messageAutoDeleteTime
   *   Optional. The time after which all messages sent to the chat will be automatically deleted; in seconds. Returned
   *   only in getChat.
+  * @param hasAggressiveAntiSpamEnabled
+  *   Optional. True, if aggressive anti-spam checks are enabled in the supergroup. The field is only available to chat
+  *   administrators. Returned only in getChat.
+  * @param hasHiddenMembers
+  *   Optional. True, if non-administrators can only get the list of bots and administrators in the chat. Returned only
+  *   in getChat.
   * @param hasProtectedContent
   *   Optional. True, if messages from the chat can't be forwarded to other chats. Returned only in getChat.
   * @param stickerSetName
@@ -88,6 +94,8 @@ final case class Chat(
   permissions: Option[ChatPermissions] = Option.empty,
   slowModeDelay: Option[Int] = Option.empty,
   messageAutoDeleteTime: Option[Int] = Option.empty,
+  hasAggressiveAntiSpamEnabled: Option[Boolean] = Option.empty,
+  hasHiddenMembers: Option[Boolean] = Option.empty,
   hasProtectedContent: Option[Boolean] = Option.empty,
   stickerSetName: Option[String] = Option.empty,
   canSetStickerSet: Option[Boolean] = Option.empty,
