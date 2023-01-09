@@ -78,6 +78,8 @@ package telegramium.bots
   * @param captionEntities
   *   Optional. For messages with a caption, special entities like usernames, URLs, bot commands, etc. that appear in
   *   the caption
+  * @param hasMediaSpoiler
+  *   Optional. True, if the message media is covered by a spoiler animation
   * @param contact
   *   Optional. Message is a shared contact, information about the contact
   * @param dice
@@ -133,6 +135,8 @@ package telegramium.bots
   *   Optional. Message is a service message about a successful payment, information about the payment.
   * @param connectedWebsite
   *   Optional. The domain name of the website on which the user has logged in.
+  * @param writeAccessAllowed
+  *   Optional. Service message: the user allowed the bot added to the attachment menu to write messages
   * @param passportData
   *   Optional. Telegram Passport data
   * @param proximityAlertTriggered
@@ -140,10 +144,16 @@ package telegramium.bots
   *   Location.
   * @param forumTopicCreated
   *   Optional. Service message: forum topic created
+  * @param forumTopicEdited
+  *   Optional. Service message: forum topic edited
   * @param forumTopicClosed
   *   Optional. Service message: forum topic closed
   * @param forumTopicReopened
   *   Optional. Service message: forum topic reopened
+  * @param generalForumTopicHidden
+  *   Optional. Service message: the 'General' forum topic hidden
+  * @param generalForumTopicUnhidden
+  *   Optional. Service message: the 'General' forum topic unhidden
   * @param videoChatScheduled
   *   Optional. Service message: video chat scheduled
   * @param videoChatStarted
@@ -190,6 +200,7 @@ final case class Message(
   voice: Option[Voice] = Option.empty,
   caption: Option[String] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  hasMediaSpoiler: Option[Boolean] = Option.empty,
   contact: Option[Contact] = Option.empty,
   dice: Option[Dice] = Option.empty,
   game: Option[Game] = Option.empty,
@@ -211,11 +222,15 @@ final case class Message(
   invoice: Option[Invoice] = Option.empty,
   successfulPayment: Option[SuccessfulPayment] = Option.empty,
   connectedWebsite: Option[String] = Option.empty,
+  writeAccessAllowed: Option[WriteAccessAllowed.type] = Option.empty,
   passportData: Option[PassportData] = Option.empty,
   proximityAlertTriggered: Option[ProximityAlertTriggered] = Option.empty,
   forumTopicCreated: Option[ForumTopicCreated] = Option.empty,
+  forumTopicEdited: Option[ForumTopicEdited] = Option.empty,
   forumTopicClosed: Option[ForumTopicClosed.type] = Option.empty,
   forumTopicReopened: Option[ForumTopicReopened.type] = Option.empty,
+  generalForumTopicHidden: Option[GeneralForumTopicHidden.type] = Option.empty,
+  generalForumTopicUnhidden: Option[GeneralForumTopicUnhidden.type] = Option.empty,
   videoChatScheduled: Option[VideoChatScheduled] = Option.empty,
   videoChatStarted: Option[VideoChatStarted.type] = Option.empty,
   videoChatEnded: Option[VideoChatEnded] = Option.empty,

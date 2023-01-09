@@ -26,6 +26,8 @@ sealed trait InputMedia {}
   *   Optional. Animation height
   * @param duration
   *   Optional. Animation duration in seconds
+  * @param hasSpoiler
+  *   Optional. Pass True if the animation needs to be covered with a spoiler animation
   */
 final case class InputMediaAnimation(
   media: String,
@@ -35,7 +37,8 @@ final case class InputMediaAnimation(
   captionEntities: List[MessageEntity] = List.empty,
   width: Option[Int] = Option.empty,
   height: Option[Int] = Option.empty,
-  duration: Option[Int] = Option.empty
+  duration: Option[Int] = Option.empty,
+  hasSpoiler: Option[Boolean] = Option.empty
 ) extends InputMedia
 
 /** Represents a photo to be sent.
@@ -50,12 +53,15 @@ final case class InputMediaAnimation(
   *   Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param hasSpoiler
+  *   Optional. Pass True if the photo needs to be covered with a spoiler animation
   */
 final case class InputMediaPhoto(
   media: String,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[MessageEntity] = List.empty
+  captionEntities: List[MessageEntity] = List.empty,
+  hasSpoiler: Option[Boolean] = Option.empty
 ) extends InputMedia
 
 /** Represents a video to be sent.
@@ -84,6 +90,8 @@ final case class InputMediaPhoto(
   *   Optional. Video duration in seconds
   * @param supportsStreaming
   *   Optional. Pass True if the uploaded video is suitable for streaming
+  * @param hasSpoiler
+  *   Optional. Pass True if the video needs to be covered with a spoiler animation
   */
 final case class InputMediaVideo(
   media: String,
@@ -94,7 +102,8 @@ final case class InputMediaVideo(
   width: Option[Int] = Option.empty,
   height: Option[Int] = Option.empty,
   duration: Option[Int] = Option.empty,
-  supportsStreaming: Option[Boolean] = Option.empty
+  supportsStreaming: Option[Boolean] = Option.empty,
+  hasSpoiler: Option[Boolean] = Option.empty
 ) extends InputMedia
 
 /** Represents a general file to be sent.

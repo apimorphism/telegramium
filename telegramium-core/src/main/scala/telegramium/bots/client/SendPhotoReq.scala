@@ -22,6 +22,8 @@ import telegramium.bots.KeyboardMarkup
   * @param captionEntities
   *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
   *   parse_mode
+  * @param hasSpoiler
+  *   Pass True if the photo needs to be covered with a spoiler animation
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
@@ -41,6 +43,7 @@ final case class SendPhotoReq(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  hasSpoiler: Option[Boolean] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
   replyToMessageId: Option[Int] = Option.empty,

@@ -160,6 +160,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "keyboard"                -> x.keyboard.asJson,
+          "is_persistent"           -> x.isPersistent.asJson,
           "resize_keyboard"         -> x.resizeKeyboard.asJson,
           "one_time_keyboard"       -> x.oneTimeKeyboard.asJson,
           "input_field_placeholder" -> x.inputFieldPlaceholder.asJson,
@@ -172,6 +173,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _keyboard              <- h.getOrElse[List[List[KeyboardButton]]]("keyboard")(List.empty)
+        _isPersistent          <- h.get[Option[Boolean]]("is_persistent")
         _resizeKeyboard        <- h.get[Option[Boolean]]("resize_keyboard")
         _oneTimeKeyboard       <- h.get[Option[Boolean]]("one_time_keyboard")
         _inputFieldPlaceholder <- h.get[Option[String]]("input_field_placeholder")
@@ -179,6 +181,7 @@ object CirceImplicits {
       } yield {
         ReplyKeyboardMarkup(
           keyboard = _keyboard,
+          isPersistent = _isPersistent,
           resizeKeyboard = _resizeKeyboard,
           oneTimeKeyboard = _oneTimeKeyboard,
           inputFieldPlaceholder = _inputFieldPlaceholder,
@@ -619,7 +622,8 @@ object CirceImplicits {
           "caption_entities" -> x.captionEntities.asJson,
           "width"            -> x.width.asJson,
           "height"           -> x.height.asJson,
-          "duration"         -> x.duration.asJson
+          "duration"         -> x.duration.asJson,
+          "has_spoiler"      -> x.hasSpoiler.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -635,6 +639,7 @@ object CirceImplicits {
         _width           <- h.get[Option[Int]]("width")
         _height          <- h.get[Option[Int]]("height")
         _duration        <- h.get[Option[Int]]("duration")
+        _hasSpoiler      <- h.get[Option[Boolean]]("has_spoiler")
       } yield {
         InputMediaAnimation(
           media = _media,
@@ -644,7 +649,8 @@ object CirceImplicits {
           captionEntities = _captionEntities,
           width = _width,
           height = _height,
-          duration = _duration
+          duration = _duration,
+          hasSpoiler = _hasSpoiler
         )
       }
     }
@@ -656,7 +662,8 @@ object CirceImplicits {
           "media"            -> x.media.asJson,
           "caption"          -> x.caption.asJson,
           "parse_mode"       -> x.parseMode.asJson,
-          "caption_entities" -> x.captionEntities.asJson
+          "caption_entities" -> x.captionEntities.asJson,
+          "has_spoiler"      -> x.hasSpoiler.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -668,8 +675,15 @@ object CirceImplicits {
         _caption         <- h.get[Option[String]]("caption")
         _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _hasSpoiler      <- h.get[Option[Boolean]]("has_spoiler")
       } yield {
-        InputMediaPhoto(media = _media, caption = _caption, parseMode = _parseMode, captionEntities = _captionEntities)
+        InputMediaPhoto(
+          media = _media,
+          caption = _caption,
+          parseMode = _parseMode,
+          captionEntities = _captionEntities,
+          hasSpoiler = _hasSpoiler
+        )
       }
     }
 
@@ -685,7 +699,8 @@ object CirceImplicits {
           "width"              -> x.width.asJson,
           "height"             -> x.height.asJson,
           "duration"           -> x.duration.asJson,
-          "supports_streaming" -> x.supportsStreaming.asJson
+          "supports_streaming" -> x.supportsStreaming.asJson,
+          "has_spoiler"        -> x.hasSpoiler.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -702,6 +717,7 @@ object CirceImplicits {
         _height            <- h.get[Option[Int]]("height")
         _duration          <- h.get[Option[Int]]("duration")
         _supportsStreaming <- h.get[Option[Boolean]]("supports_streaming")
+        _hasSpoiler        <- h.get[Option[Boolean]]("has_spoiler")
       } yield {
         InputMediaVideo(
           media = _media,
@@ -712,7 +728,8 @@ object CirceImplicits {
           width = _width,
           height = _height,
           duration = _duration,
-          supportsStreaming = _supportsStreaming
+          supportsStreaming = _supportsStreaming,
+          hasSpoiler = _hasSpoiler
         )
       }
     }
@@ -2768,6 +2785,8 @@ object CirceImplicits {
           "permissions"                             -> x.permissions.asJson,
           "slow_mode_delay"                         -> x.slowModeDelay.asJson,
           "message_auto_delete_time"                -> x.messageAutoDeleteTime.asJson,
+          "has_aggressive_anti_spam_enabled"        -> x.hasAggressiveAntiSpamEnabled.asJson,
+          "has_hidden_members"                      -> x.hasHiddenMembers.asJson,
           "has_protected_content"                   -> x.hasProtectedContent.asJson,
           "sticker_set_name"                        -> x.stickerSetName.asJson,
           "can_set_sticker_set"                     -> x.canSetStickerSet.asJson,
@@ -2801,6 +2820,8 @@ object CirceImplicits {
         _permissions                        <- h.get[Option[ChatPermissions]]("permissions")
         _slowModeDelay                      <- h.get[Option[Int]]("slow_mode_delay")
         _messageAutoDeleteTime              <- h.get[Option[Int]]("message_auto_delete_time")
+        _hasAggressiveAntiSpamEnabled       <- h.get[Option[Boolean]]("has_aggressive_anti_spam_enabled")
+        _hasHiddenMembers                   <- h.get[Option[Boolean]]("has_hidden_members")
         _hasProtectedContent                <- h.get[Option[Boolean]]("has_protected_content")
         _stickerSetName                     <- h.get[Option[String]]("sticker_set_name")
         _canSetStickerSet                   <- h.get[Option[Boolean]]("can_set_sticker_set")
@@ -2829,6 +2850,8 @@ object CirceImplicits {
           permissions = _permissions,
           slowModeDelay = _slowModeDelay,
           messageAutoDeleteTime = _messageAutoDeleteTime,
+          hasAggressiveAntiSpamEnabled = _hasAggressiveAntiSpamEnabled,
+          hasHiddenMembers = _hasHiddenMembers,
           hasProtectedContent = _hasProtectedContent,
           stickerSetName = _stickerSetName,
           canSetStickerSet = _canSetStickerSet,
@@ -3075,6 +3098,12 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val writeaccessallowedEncoder: Encoder[WriteAccessAllowed.type] = (_: WriteAccessAllowed.type) =>
+    ().asJson
+
+  implicit lazy val writeaccessallowedDecoder: Decoder[WriteAccessAllowed.type] = (_: HCursor) =>
+    Right(WriteAccessAllowed)
+
   implicit lazy val inputfileEncoder: Encoder[InputFile.type] = (_: InputFile.type) => ().asJson
   implicit lazy val inputfileDecoder: Decoder[InputFile.type] = (_: HCursor) => Right(InputFile)
 
@@ -3290,6 +3319,12 @@ object CirceImplicits {
         KeyboardButtonPollType(`type` = _type)
       }
     }
+
+  implicit lazy val generalforumtopichiddenEncoder: Encoder[GeneralForumTopicHidden.type] =
+    (_: GeneralForumTopicHidden.type) => ().asJson
+
+  implicit lazy val generalforumtopichiddenDecoder: Decoder[GeneralForumTopicHidden.type] = (_: HCursor) =>
+    Right(GeneralForumTopicHidden)
 
   implicit lazy val pollEncoder: Encoder[Poll] =
     (x: Poll) => {
@@ -4135,6 +4170,12 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val generalforumtopicunhiddenEncoder: Encoder[GeneralForumTopicUnhidden.type] =
+    (_: GeneralForumTopicUnhidden.type) => ().asJson
+
+  implicit lazy val generalforumtopicunhiddenDecoder: Decoder[GeneralForumTopicUnhidden.type] = (_: HCursor) =>
+    Right(GeneralForumTopicUnhidden)
+
   implicit lazy val userEncoder: Encoder[User] =
     (x: User) => {
       Json.fromFields(
@@ -4327,6 +4368,7 @@ object CirceImplicits {
           "voice"                             -> x.voice.asJson,
           "caption"                           -> x.caption.asJson,
           "caption_entities"                  -> x.captionEntities.asJson,
+          "has_media_spoiler"                 -> x.hasMediaSpoiler.asJson,
           "contact"                           -> x.contact.asJson,
           "dice"                              -> x.dice.asJson,
           "game"                              -> x.game.asJson,
@@ -4348,11 +4390,15 @@ object CirceImplicits {
           "invoice"                           -> x.invoice.asJson,
           "successful_payment"                -> x.successfulPayment.asJson,
           "connected_website"                 -> x.connectedWebsite.asJson,
+          "write_access_allowed"              -> x.writeAccessAllowed.asJson,
           "passport_data"                     -> x.passportData.asJson,
           "proximity_alert_triggered"         -> x.proximityAlertTriggered.asJson,
           "forum_topic_created"               -> x.forumTopicCreated.asJson,
+          "forum_topic_edited"                -> x.forumTopicEdited.asJson,
           "forum_topic_closed"                -> x.forumTopicClosed.asJson,
           "forum_topic_reopened"              -> x.forumTopicReopened.asJson,
+          "general_forum_topic_hidden"        -> x.generalForumTopicHidden.asJson,
+          "general_forum_topic_unhidden"      -> x.generalForumTopicUnhidden.asJson,
           "video_chat_scheduled"              -> x.videoChatScheduled.asJson,
           "video_chat_started"                -> x.videoChatStarted.asJson,
           "video_chat_ended"                  -> x.videoChatEnded.asJson,
@@ -4398,6 +4444,7 @@ object CirceImplicits {
         _voice                 <- h.get[Option[Voice]]("voice")
         _caption               <- h.get[Option[String]]("caption")
         _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _hasMediaSpoiler       <- h.get[Option[Boolean]]("has_media_spoiler")
         _contact               <- h.get[Option[Contact]]("contact")
         _dice                  <- h.get[Option[Dice]]("dice")
         _game                  <- h.get[Option[Game]]("game")
@@ -4421,11 +4468,15 @@ object CirceImplicits {
         _invoice                      <- h.get[Option[Invoice]]("invoice")
         _successfulPayment            <- h.get[Option[SuccessfulPayment]]("successful_payment")
         _connectedWebsite             <- h.get[Option[String]]("connected_website")
+        _writeAccessAllowed           <- h.get[Option[WriteAccessAllowed.type]]("write_access_allowed")
         _passportData                 <- h.get[Option[PassportData]]("passport_data")
         _proximityAlertTriggered      <- h.get[Option[ProximityAlertTriggered]]("proximity_alert_triggered")
         _forumTopicCreated            <- h.get[Option[ForumTopicCreated]]("forum_topic_created")
+        _forumTopicEdited             <- h.get[Option[ForumTopicEdited]]("forum_topic_edited")
         _forumTopicClosed             <- h.get[Option[ForumTopicClosed.type]]("forum_topic_closed")
         _forumTopicReopened           <- h.get[Option[ForumTopicReopened.type]]("forum_topic_reopened")
+        _generalForumTopicHidden      <- h.get[Option[GeneralForumTopicHidden.type]]("general_forum_topic_hidden")
+        _generalForumTopicUnhidden    <- h.get[Option[GeneralForumTopicUnhidden.type]]("general_forum_topic_unhidden")
         _videoChatScheduled           <- h.get[Option[VideoChatScheduled]]("video_chat_scheduled")
         _videoChatStarted             <- h.get[Option[VideoChatStarted.type]]("video_chat_started")
         _videoChatEnded               <- h.get[Option[VideoChatEnded]]("video_chat_ended")
@@ -4466,6 +4517,7 @@ object CirceImplicits {
           voice = _voice,
           caption = _caption,
           captionEntities = _captionEntities,
+          hasMediaSpoiler = _hasMediaSpoiler,
           contact = _contact,
           dice = _dice,
           game = _game,
@@ -4487,11 +4539,15 @@ object CirceImplicits {
           invoice = _invoice,
           successfulPayment = _successfulPayment,
           connectedWebsite = _connectedWebsite,
+          writeAccessAllowed = _writeAccessAllowed,
           passportData = _passportData,
           proximityAlertTriggered = _proximityAlertTriggered,
           forumTopicCreated = _forumTopicCreated,
+          forumTopicEdited = _forumTopicEdited,
           forumTopicClosed = _forumTopicClosed,
           forumTopicReopened = _forumTopicReopened,
+          generalForumTopicHidden = _generalForumTopicHidden,
+          generalForumTopicUnhidden = _generalForumTopicUnhidden,
           videoChatScheduled = _videoChatScheduled,
           videoChatStarted = _videoChatStarted,
           videoChatEnded = _videoChatEnded,
@@ -4612,6 +4668,26 @@ object CirceImplicits {
           shippingOptionId = _shippingOptionId,
           orderInfo = _orderInfo
         )
+      }
+    }
+
+  implicit lazy val forumtopiceditedEncoder: Encoder[ForumTopicEdited] =
+    (x: ForumTopicEdited) => {
+      Json.fromFields(
+        List(
+          "name"                 -> x.name.asJson,
+          "icon_custom_emoji_id" -> x.iconCustomEmojiId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val forumtopiceditedDecoder: Decoder[ForumTopicEdited] =
+    Decoder.instance { h =>
+      for {
+        _name              <- h.get[Option[String]]("name")
+        _iconCustomEmojiId <- h.get[Option[String]]("icon_custom_emoji_id")
+      } yield {
+        ForumTopicEdited(name = _name, iconCustomEmojiId = _iconCustomEmojiId)
       }
     }
 

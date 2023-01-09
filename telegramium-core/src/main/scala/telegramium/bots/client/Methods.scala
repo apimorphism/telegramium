@@ -41,6 +41,31 @@ trait Methods {
     MethodReq[WebhookInfo]("getWebhookInfo", req.asJson)
   }
 
+  /** Use this method to unhide the 'General' topic in a forum supergroup chat. The bot must be an administrator in the
+    * chat for this to work and must have the can_manage_topics administrator rights. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup (in the format
+    *   &#064;supergroupusername)
+    */
+  def unhideGeneralForumTopic(chatId: ChatId): Method[Boolean] = {
+    val req = UnhideGeneralForumTopicReq(chatId)
+    MethodReq[Boolean]("unhideGeneralForumTopic", req.asJson)
+  }
+
+  /** Use this method to reopen a closed 'General' topic in a forum supergroup chat. The bot must be an administrator in
+    * the chat for this to work and must have the can_manage_topics administrator rights. The topic will be
+    * automatically unhidden if it was hidden. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup (in the format
+    *   &#064;supergroupusername)
+    */
+  def reopenGeneralForumTopic(chatId: ChatId): Method[Boolean] = {
+    val req = ReopenGeneralForumTopicReq(chatId)
+    MethodReq[Boolean]("reopenGeneralForumTopic", req.asJson)
+  }
+
   /** Use this method to change the list of the bot's commands. See this manual for more details about bot commands.
     * Returns True on success.
     *
@@ -706,9 +731,11 @@ trait Methods {
     *   messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for
     *   voice notes, upload_document for general files, choose_sticker for stickers, find_location for location data,
     *   record_video_note or upload_video_note for video notes.
+    * @param messageThreadId
+    *   Unique identifier for the target message thread; supergroups only
     */
-  def sendChatAction(chatId: ChatId, action: String): Method[Boolean] = {
-    val req = SendChatActionReq(chatId, action)
+  def sendChatAction(chatId: ChatId, action: String, messageThreadId: Option[Int] = Option.empty): Method[Boolean] = {
+    val req = SendChatActionReq(chatId, action, messageThreadId)
     MethodReq[Boolean]("sendChatAction", req.asJson)
   }
 
@@ -1073,8 +1100,8 @@ trait Methods {
     * @param name
     *   Topic name, 1-128 characters
     * @param iconColor
-    *   Color of the topic icon in RGB format. Currently, must be one of 0x6FB9F0, 0xFFD67E, 0xCB86DB, 0x8EEE98,
-    *   0xFF93B2, or 0xFB6F5F
+    *   Color of the topic icon in RGB format. Currently, must be one of 7322096 (0x6FB9F0), 16766590 (0xFFD67E),
+    *   13338331 (0xCB86DB), 9367192 (0x8EEE98), 16749490 (0xFF93B2), or 16478047 (0xFB6F5F)
     * @param iconCustomEmojiId
     *   Unique identifier of the custom emoji shown as the topic icon. Use getForumTopicIconStickers to get all allowed
     *   custom emoji identifiers.
@@ -1087,6 +1114,21 @@ trait Methods {
   ): Method[ForumTopic] = {
     val req = CreateForumTopicReq(chatId, name, iconColor, iconCustomEmojiId)
     MethodReq[ForumTopic]("createForumTopic", req.asJson)
+  }
+
+  /** Use this method to edit the name of the 'General' topic in a forum supergroup chat. The bot must be an
+    * administrator in the chat for this to work and must have can_manage_topics administrator rights. Returns True on
+    * success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup (in the format
+    *   &#064;supergroupusername)
+    * @param name
+    *   New topic name, 1-128 characters
+    */
+  def editGeneralForumTopic(chatId: ChatId, name: String): Method[Boolean] = {
+    val req = EditGeneralForumTopicReq(chatId, name)
+    MethodReq[Boolean]("editGeneralForumTopic", req.asJson)
   }
 
   /** Use this method to unban a previously banned user in a supergroup or channel. The user will not return to the
@@ -1820,6 +1862,18 @@ trait Methods {
     MethodReq[Boolean]("unbanChatSenderChat", req.asJson)
   }
 
+  /** Use this method to close an open 'General' topic in a forum supergroup chat. The bot must be an administrator in
+    * the chat for this to work and must have the can_manage_topics administrator rights. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup (in the format
+    *   &#064;supergroupusername)
+    */
+  def closeGeneralForumTopic(chatId: ChatId): Method[Boolean] = {
+    val req = CloseGeneralForumTopicReq(chatId)
+    MethodReq[Boolean]("closeGeneralForumTopic", req.asJson)
+  }
+
   /** Use this method to send audio files, if you want Telegram clients to display them in the music player. Your audio
     * must be in the .MP3 or .M4A format. On success, the sent Message is returned. Bots can currently send audio files
     * of up to 50 MB in size, this limit may be changed in the future. For sending voice messages, use the sendVoice
@@ -1967,7 +2021,8 @@ trait Methods {
     MethodReq[Message]("forwardMessage", req.asJson)
   }
 
-  /** Use this method to get information about a member of a chat. Returns a ChatMember object on success.
+  /** Use this method to get information about a member of a chat. The method is guaranteed to work only if the bot is
+    * an administrator in the chat. Returns a ChatMember object on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup or channel (in the format
@@ -2408,6 +2463,8 @@ trait Methods {
     * @param captionEntities
     *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
     *   parse_mode
+    * @param hasSpoiler
+    *   Pass True if the video needs to be covered with a spoiler animation
     * @param supportsStreaming
     *   Pass True if the uploaded video is suitable for streaming
     * @param disableNotification
@@ -2433,6 +2490,7 @@ trait Methods {
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
+    hasSpoiler: Option[Boolean] = Option.empty,
     supportsStreaming: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
@@ -2451,6 +2509,7 @@ trait Methods {
       caption,
       parseMode,
       captionEntities,
+      hasSpoiler,
       supportsStreaming,
       disableNotification,
       protectContent,
@@ -2554,6 +2613,19 @@ trait Methods {
     MethodReq[Boolean]("setChatAdministratorCustomTitle", req.asJson)
   }
 
+  /** Use this method to hide the 'General' topic in a forum supergroup chat. The bot must be an administrator in the
+    * chat for this to work and must have the can_manage_topics administrator rights. The topic will be automatically
+    * closed if it was open. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup (in the format
+    *   &#064;supergroupusername)
+    */
+  def hideGeneralForumTopic(chatId: ChatId): Method[Boolean] = {
+    val req = HideGeneralForumTopicReq(chatId)
+    MethodReq[Boolean]("hideGeneralForumTopic", req.asJson)
+  }
+
   /** Use this method to close an open topic in a forum supergroup chat. The bot must be an administrator in the chat
     * for this to work and must have the can_manage_topics administrator rights, unless it is the creator of the topic.
     * Returns True on success.
@@ -2612,6 +2684,8 @@ trait Methods {
     * @param captionEntities
     *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
     *   parse_mode
+    * @param hasSpoiler
+    *   Pass True if the animation needs to be covered with a spoiler animation
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -2635,6 +2709,7 @@ trait Methods {
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
+    hasSpoiler: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
@@ -2652,6 +2727,7 @@ trait Methods {
       caption,
       parseMode,
       captionEntities,
+      hasSpoiler,
       disableNotification,
       protectContent,
       replyToMessageId,
@@ -2789,12 +2865,18 @@ trait Methods {
     * @param messageThreadId
     *   Unique identifier for the target message thread of the forum topic
     * @param name
-    *   New topic name, 1-128 characters
+    *   New topic name, 0-128 characters. If not specified or empty, the current name of the topic will be kept
     * @param iconCustomEmojiId
     *   New unique identifier of the custom emoji shown as the topic icon. Use getForumTopicIconStickers to get all
-    *   allowed custom emoji identifiers
+    *   allowed custom emoji identifiers. Pass an empty string to remove the icon. If not specified, the current icon
+    *   will be kept
     */
-  def editForumTopic(chatId: ChatId, messageThreadId: Int, name: String, iconCustomEmojiId: String): Method[Boolean] = {
+  def editForumTopic(
+    chatId: ChatId,
+    messageThreadId: Int,
+    name: Option[String] = Option.empty,
+    iconCustomEmojiId: Option[String] = Option.empty
+  ): Method[Boolean] = {
     val req = EditForumTopicReq(chatId, messageThreadId, name, iconCustomEmojiId)
     MethodReq[Boolean]("editForumTopic", req.asJson)
   }
@@ -2817,6 +2899,8 @@ trait Methods {
     * @param captionEntities
     *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
     *   parse_mode
+    * @param hasSpoiler
+    *   Pass True if the photo needs to be covered with a spoiler animation
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -2836,6 +2920,7 @@ trait Methods {
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
+    hasSpoiler: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
@@ -2849,6 +2934,7 @@ trait Methods {
       caption,
       parseMode,
       captionEntities,
+      hasSpoiler,
       disableNotification,
       protectContent,
       replyToMessageId,
