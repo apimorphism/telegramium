@@ -1,6 +1,6 @@
 package telegramium.bots.high.keyboards
 
-import telegramium.bots.{KeyboardButton, KeyboardButtonPollType}
+import telegramium.bots.{KeyboardButton, KeyboardButtonPollType, KeyboardButtonRequestChat, KeyboardButtonRequestUser}
 
 object KeyboardButtons {
 
@@ -20,5 +20,17 @@ object KeyboardButtons {
     */
   def requestPoll(text: String, `type`: KeyboardButtonPollType): KeyboardButton =
     KeyboardButton(text, requestPoll = Some(`type`))
+
+  /** Pressing the button will open a list of suitable users. Tapping on any user will send their identifier to the bot
+    * in a “user_shared” service message.
+    */
+  def requestUser(text: String, requestUser: KeyboardButtonRequestUser) =
+    KeyboardButton(text, requestUser = Some(requestUser))
+
+  /** Pressing the button will open a list of suitable chats. Tapping on a chat will send its identifier to the bot in a
+    * “chat_shared” service message.
+    */
+  def requestChat(text: String, requestChat: KeyboardButtonRequestChat) =
+    KeyboardButton(text, requestChat = Some(requestChat))
 
 }

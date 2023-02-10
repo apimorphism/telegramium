@@ -526,9 +526,18 @@ trait Methods {
     *   &#064;supergroupusername)
     * @param permissions
     *   A JSON-serialized object for new default chat permissions
+    * @param useIndependentChatPermissions
+    *   Pass True if chat permissions are set independently. Otherwise, the can_send_other_messages and
+    *   can_add_web_page_previews permissions will imply the can_send_messages, can_send_audios, can_send_documents,
+    *   can_send_photos, can_send_videos, can_send_video_notes, and can_send_voice_notes permissions; the can_send_polls
+    *   permission will imply the can_send_messages permission.
     */
-  def setChatPermissions(chatId: ChatId, permissions: ChatPermissions): Method[Boolean] = {
-    val req = SetChatPermissionsReq(chatId, permissions)
+  def setChatPermissions(
+    chatId: ChatId,
+    permissions: ChatPermissions,
+    useIndependentChatPermissions: Option[Boolean] = Option.empty
+  ): Method[Boolean] = {
+    val req = SetChatPermissionsReq(chatId, permissions, useIndependentChatPermissions)
     MethodReq[Boolean]("setChatPermissions", req.asJson)
   }
 
@@ -1970,6 +1979,11 @@ trait Methods {
     *   Unique identifier of the target user
     * @param permissions
     *   A JSON-serialized object for new user permissions
+    * @param useIndependentChatPermissions
+    *   Pass True if chat permissions are set independently. Otherwise, the can_send_other_messages and
+    *   can_add_web_page_previews permissions will imply the can_send_messages, can_send_audios, can_send_documents,
+    *   can_send_photos, can_send_videos, can_send_video_notes, and can_send_voice_notes permissions; the can_send_polls
+    *   permission will imply the can_send_messages permission.
     * @param untilDate
     *   Date when restrictions will be lifted for the user, unix time. If user is restricted for more than 366 days or
     *   less than 30 seconds from the current time, they are considered to be restricted forever
@@ -1978,9 +1992,10 @@ trait Methods {
     chatId: ChatId,
     userId: Long,
     permissions: ChatPermissions,
+    useIndependentChatPermissions: Option[Boolean] = Option.empty,
     untilDate: Option[Int] = Option.empty
   ): Method[Boolean] = {
-    val req = RestrictChatMemberReq(chatId, userId, permissions, untilDate)
+    val req = RestrictChatMemberReq(chatId, userId, permissions, useIndependentChatPermissions, untilDate)
     MethodReq[Boolean]("restrictChatMember", req.asJson)
   }
 
@@ -2021,8 +2036,8 @@ trait Methods {
     MethodReq[Message]("forwardMessage", req.asJson)
   }
 
-  /** Use this method to get information about a member of a chat. The method is guaranteed to work only if the bot is
-    * an administrator in the chat. Returns a ChatMember object on success.
+  /** Use this method to get information about a member of a chat. The method is only guaranteed to work for other users
+    * if the bot is an administrator in the chat. Returns a ChatMember object on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup or channel (in the format
@@ -2192,8 +2207,8 @@ trait Methods {
     *   Pass True if the administrator can restrict, ban or unban chat members
     * @param canPromoteMembers
     *   Pass True if the administrator can add new administrators with a subset of their own privileges or demote
-    *   administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by
-    *   him)
+    *   administrators that they have promoted, directly or indirectly (promoted by administrators that were appointed
+    *   by him)
     * @param canChangeInfo
     *   Pass True if the administrator can change chat title, photo and other settings
     * @param canInviteUsers

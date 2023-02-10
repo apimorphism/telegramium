@@ -42,8 +42,8 @@ final case class ChatMemberOwner(
   *   True, if the administrator can restrict, ban or unban chat members
   * @param canPromoteMembers
   *   True, if the administrator can add new administrators with a subset of their own privileges or demote
-  *   administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by the
-  *   user)
+  *   administrators that they have promoted, directly or indirectly (promoted by administrators that were appointed by
+  *   the user)
   * @param canChangeInfo
   *   True, if the user is allowed to change the chat title, photo and other settings
   * @param canInviteUsers
@@ -115,6 +115,26 @@ final case class ChatMemberBanned(status: String, user: User, untilDate: Int) ex
   *   Information about the user
   * @param isMember
   *   True, if the user is a member of the chat at the moment of the request
+  * @param canSendMessages
+  *   True, if the user is allowed to send text messages, contacts, invoices, locations and venues
+  * @param canSendAudios
+  *   True, if the user is allowed to send audios
+  * @param canSendDocuments
+  *   True, if the user is allowed to send documents
+  * @param canSendPhotos
+  *   True, if the user is allowed to send photos
+  * @param canSendVideos
+  *   True, if the user is allowed to send videos
+  * @param canSendVideoNotes
+  *   True, if the user is allowed to send video notes
+  * @param canSendVoiceNotes
+  *   True, if the user is allowed to send voice notes
+  * @param canSendPolls
+  *   True, if the user is allowed to send polls
+  * @param canSendOtherMessages
+  *   True, if the user is allowed to send animations, games, stickers and use inline bots
+  * @param canAddWebPagePreviews
+  *   True, if the user is allowed to add web page previews to their messages
   * @param canChangeInfo
   *   True, if the user is allowed to change the chat title, photo and other settings
   * @param canInviteUsers
@@ -123,16 +143,6 @@ final case class ChatMemberBanned(status: String, user: User, untilDate: Int) ex
   *   True, if the user is allowed to pin messages
   * @param canManageTopics
   *   True, if the user is allowed to create forum topics
-  * @param canSendMessages
-  *   True, if the user is allowed to send text messages, contacts, locations and venues
-  * @param canSendMediaMessages
-  *   True, if the user is allowed to send audios, documents, photos, videos, video notes and voice notes
-  * @param canSendPolls
-  *   True, if the user is allowed to send polls
-  * @param canSendOtherMessages
-  *   True, if the user is allowed to send animations, games, stickers and use inline bots
-  * @param canAddWebPagePreviews
-  *   True, if the user is allowed to add web page previews to their messages
   * @param untilDate
   *   Date when restrictions will be lifted for this user; unix time. If 0, then the user is restricted forever
   */
@@ -140,14 +150,19 @@ final case class ChatMemberRestricted(
   status: String,
   user: User,
   isMember: Boolean,
+  canSendMessages: Boolean,
+  canSendAudios: Boolean,
+  canSendDocuments: Boolean,
+  canSendPhotos: Boolean,
+  canSendVideos: Boolean,
+  canSendVideoNotes: Boolean,
+  canSendVoiceNotes: Boolean,
+  canSendPolls: Boolean,
+  canSendOtherMessages: Boolean,
+  canAddWebPagePreviews: Boolean,
   canChangeInfo: Boolean,
   canInviteUsers: Boolean,
   canPinMessages: Boolean,
   canManageTopics: Boolean,
-  canSendMessages: Boolean,
-  canSendMediaMessages: Boolean,
-  canSendPolls: Boolean,
-  canSendOtherMessages: Boolean,
-  canAddWebPagePreviews: Boolean,
   untilDate: Int
 ) extends ChatMember

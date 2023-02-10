@@ -550,9 +550,10 @@ object CirceImplicits {
     (x: SetChatPermissionsReq) => {
       Json.fromFields(
         List(
-          "chat_id"     -> x.chatId.asJson,
-          "permissions" -> x.permissions.asJson,
-          "method"      -> "setChatPermissions".asJson
+          "chat_id"                          -> x.chatId.asJson,
+          "permissions"                      -> x.permissions.asJson,
+          "use_independent_chat_permissions" -> x.useIndependentChatPermissions.asJson,
+          "method"                           -> "setChatPermissions".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -560,10 +561,15 @@ object CirceImplicits {
   implicit lazy val setchatpermissionsreqDecoder: Decoder[SetChatPermissionsReq] =
     Decoder.instance { h =>
       for {
-        _chatId      <- h.get[ChatId]("chat_id")
-        _permissions <- h.get[ChatPermissions]("permissions")
+        _chatId                        <- h.get[ChatId]("chat_id")
+        _permissions                   <- h.get[ChatPermissions]("permissions")
+        _useIndependentChatPermissions <- h.get[Option[Boolean]]("use_independent_chat_permissions")
       } yield {
-        SetChatPermissionsReq(chatId = _chatId, permissions = _permissions)
+        SetChatPermissionsReq(
+          chatId = _chatId,
+          permissions = _permissions,
+          useIndependentChatPermissions = _useIndependentChatPermissions
+        )
       }
     }
 
@@ -2011,11 +2017,12 @@ object CirceImplicits {
     (x: RestrictChatMemberReq) => {
       Json.fromFields(
         List(
-          "chat_id"     -> x.chatId.asJson,
-          "user_id"     -> x.userId.asJson,
-          "permissions" -> x.permissions.asJson,
-          "until_date"  -> x.untilDate.asJson,
-          "method"      -> "restrictChatMember".asJson
+          "chat_id"                          -> x.chatId.asJson,
+          "user_id"                          -> x.userId.asJson,
+          "permissions"                      -> x.permissions.asJson,
+          "use_independent_chat_permissions" -> x.useIndependentChatPermissions.asJson,
+          "until_date"                       -> x.untilDate.asJson,
+          "method"                           -> "restrictChatMember".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2023,12 +2030,19 @@ object CirceImplicits {
   implicit lazy val restrictchatmemberreqDecoder: Decoder[RestrictChatMemberReq] =
     Decoder.instance { h =>
       for {
-        _chatId      <- h.get[ChatId]("chat_id")
-        _userId      <- h.get[Long]("user_id")
-        _permissions <- h.get[ChatPermissions]("permissions")
-        _untilDate   <- h.get[Option[Int]]("until_date")
+        _chatId                        <- h.get[ChatId]("chat_id")
+        _userId                        <- h.get[Long]("user_id")
+        _permissions                   <- h.get[ChatPermissions]("permissions")
+        _useIndependentChatPermissions <- h.get[Option[Boolean]]("use_independent_chat_permissions")
+        _untilDate                     <- h.get[Option[Int]]("until_date")
       } yield {
-        RestrictChatMemberReq(chatId = _chatId, userId = _userId, permissions = _permissions, untilDate = _untilDate)
+        RestrictChatMemberReq(
+          chatId = _chatId,
+          userId = _userId,
+          permissions = _permissions,
+          useIndependentChatPermissions = _useIndependentChatPermissions,
+          untilDate = _untilDate
+        )
       }
     }
 

@@ -133,6 +133,10 @@ package telegramium.bots
   *   Optional. Message is an invoice for a payment, information about the invoice.
   * @param successfulPayment
   *   Optional. Message is a service message about a successful payment, information about the payment.
+  * @param userShared
+  *   Optional. Service message: a user was shared with the bot
+  * @param chatShared
+  *   Optional. Service message: a chat was shared with the bot
   * @param connectedWebsite
   *   Optional. The domain name of the website on which the user has logged in.
   * @param writeAccessAllowed
@@ -221,6 +225,8 @@ final case class Message(
   pinnedMessage: Option[Message] = Option.empty,
   invoice: Option[Invoice] = Option.empty,
   successfulPayment: Option[SuccessfulPayment] = Option.empty,
+  userShared: Option[UserShared] = Option.empty,
+  chatShared: Option[ChatShared] = Option.empty,
   connectedWebsite: Option[String] = Option.empty,
   writeAccessAllowed: Option[WriteAccessAllowed.type] = Option.empty,
   passportData: Option[PassportData] = Option.empty,

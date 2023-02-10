@@ -43,6 +43,7 @@ class LongPollBotISpec
     ChatJoinRequest(
       Chat(0, `type` = ""),
       testUser,
+      0L,
       0
     )
 

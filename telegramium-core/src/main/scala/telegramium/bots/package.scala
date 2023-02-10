@@ -388,15 +388,20 @@ object CirceImplicits {
           "status"                    -> x.status.asJson,
           "user"                      -> x.user.asJson,
           "is_member"                 -> x.isMember.asJson,
+          "can_send_messages"         -> x.canSendMessages.asJson,
+          "can_send_audios"           -> x.canSendAudios.asJson,
+          "can_send_documents"        -> x.canSendDocuments.asJson,
+          "can_send_photos"           -> x.canSendPhotos.asJson,
+          "can_send_videos"           -> x.canSendVideos.asJson,
+          "can_send_video_notes"      -> x.canSendVideoNotes.asJson,
+          "can_send_voice_notes"      -> x.canSendVoiceNotes.asJson,
+          "can_send_polls"            -> x.canSendPolls.asJson,
+          "can_send_other_messages"   -> x.canSendOtherMessages.asJson,
+          "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson,
           "can_change_info"           -> x.canChangeInfo.asJson,
           "can_invite_users"          -> x.canInviteUsers.asJson,
           "can_pin_messages"          -> x.canPinMessages.asJson,
           "can_manage_topics"         -> x.canManageTopics.asJson,
-          "can_send_messages"         -> x.canSendMessages.asJson,
-          "can_send_media_messages"   -> x.canSendMediaMessages.asJson,
-          "can_send_polls"            -> x.canSendPolls.asJson,
-          "can_send_other_messages"   -> x.canSendOtherMessages.asJson,
-          "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson,
           "until_date"                -> x.untilDate.asJson
         ).filter(!_._2.isNull)
       )
@@ -408,30 +413,40 @@ object CirceImplicits {
         _status                <- h.get[String]("status")
         _user                  <- h.get[User]("user")
         _isMember              <- h.get[Boolean]("is_member")
+        _canSendMessages       <- h.get[Boolean]("can_send_messages")
+        _canSendAudios         <- h.get[Boolean]("can_send_audios")
+        _canSendDocuments      <- h.get[Boolean]("can_send_documents")
+        _canSendPhotos         <- h.get[Boolean]("can_send_photos")
+        _canSendVideos         <- h.get[Boolean]("can_send_videos")
+        _canSendVideoNotes     <- h.get[Boolean]("can_send_video_notes")
+        _canSendVoiceNotes     <- h.get[Boolean]("can_send_voice_notes")
+        _canSendPolls          <- h.get[Boolean]("can_send_polls")
+        _canSendOtherMessages  <- h.get[Boolean]("can_send_other_messages")
+        _canAddWebPagePreviews <- h.get[Boolean]("can_add_web_page_previews")
         _canChangeInfo         <- h.get[Boolean]("can_change_info")
         _canInviteUsers        <- h.get[Boolean]("can_invite_users")
         _canPinMessages        <- h.get[Boolean]("can_pin_messages")
         _canManageTopics       <- h.get[Boolean]("can_manage_topics")
-        _canSendMessages       <- h.get[Boolean]("can_send_messages")
-        _canSendMediaMessages  <- h.get[Boolean]("can_send_media_messages")
-        _canSendPolls          <- h.get[Boolean]("can_send_polls")
-        _canSendOtherMessages  <- h.get[Boolean]("can_send_other_messages")
-        _canAddWebPagePreviews <- h.get[Boolean]("can_add_web_page_previews")
         _untilDate             <- h.get[Int]("until_date")
       } yield {
         ChatMemberRestricted(
           status = _status,
           user = _user,
           isMember = _isMember,
+          canSendMessages = _canSendMessages,
+          canSendAudios = _canSendAudios,
+          canSendDocuments = _canSendDocuments,
+          canSendPhotos = _canSendPhotos,
+          canSendVideos = _canSendVideos,
+          canSendVideoNotes = _canSendVideoNotes,
+          canSendVoiceNotes = _canSendVoiceNotes,
+          canSendPolls = _canSendPolls,
+          canSendOtherMessages = _canSendOtherMessages,
+          canAddWebPagePreviews = _canAddWebPagePreviews,
           canChangeInfo = _canChangeInfo,
           canInviteUsers = _canInviteUsers,
           canPinMessages = _canPinMessages,
           canManageTopics = _canManageTopics,
-          canSendMessages = _canSendMessages,
-          canSendMediaMessages = _canSendMediaMessages,
-          canSendPolls = _canSendPolls,
-          canSendOtherMessages = _canSendOtherMessages,
-          canAddWebPagePreviews = _canAddWebPagePreviews,
           untilDate = _untilDate
         )
       }
@@ -2738,11 +2753,12 @@ object CirceImplicits {
     (x: ChatJoinRequest) => {
       Json.fromFields(
         List(
-          "chat"        -> x.chat.asJson,
-          "from"        -> x.from.asJson,
-          "date"        -> x.date.asJson,
-          "bio"         -> x.bio.asJson,
-          "invite_link" -> x.inviteLink.asJson
+          "chat"         -> x.chat.asJson,
+          "from"         -> x.from.asJson,
+          "user_chat_id" -> x.userChatId.asJson,
+          "date"         -> x.date.asJson,
+          "bio"          -> x.bio.asJson,
+          "invite_link"  -> x.inviteLink.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2752,11 +2768,19 @@ object CirceImplicits {
       for {
         _chat       <- h.get[Chat]("chat")
         _from       <- h.get[User]("from")
+        _userChatId <- h.get[Long]("user_chat_id")
         _date       <- h.get[Int]("date")
         _bio        <- h.get[Option[String]]("bio")
         _inviteLink <- h.get[Option[ChatInviteLink]]("invite_link")
       } yield {
-        ChatJoinRequest(chat = _chat, from = _from, date = _date, bio = _bio, inviteLink = _inviteLink)
+        ChatJoinRequest(
+          chat = _chat,
+          from = _from,
+          userChatId = _userChatId,
+          date = _date,
+          bio = _bio,
+          inviteLink = _inviteLink
+        )
       }
     }
 
@@ -2960,7 +2984,12 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "can_send_messages"         -> x.canSendMessages.asJson,
-          "can_send_media_messages"   -> x.canSendMediaMessages.asJson,
+          "can_send_audios"           -> x.canSendAudios.asJson,
+          "can_send_documents"        -> x.canSendDocuments.asJson,
+          "can_send_photos"           -> x.canSendPhotos.asJson,
+          "can_send_videos"           -> x.canSendVideos.asJson,
+          "can_send_video_notes"      -> x.canSendVideoNotes.asJson,
+          "can_send_voice_notes"      -> x.canSendVoiceNotes.asJson,
           "can_send_polls"            -> x.canSendPolls.asJson,
           "can_send_other_messages"   -> x.canSendOtherMessages.asJson,
           "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson,
@@ -2976,7 +3005,12 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _canSendMessages       <- h.get[Option[Boolean]]("can_send_messages")
-        _canSendMediaMessages  <- h.get[Option[Boolean]]("can_send_media_messages")
+        _canSendAudios         <- h.get[Option[Boolean]]("can_send_audios")
+        _canSendDocuments      <- h.get[Option[Boolean]]("can_send_documents")
+        _canSendPhotos         <- h.get[Option[Boolean]]("can_send_photos")
+        _canSendVideos         <- h.get[Option[Boolean]]("can_send_videos")
+        _canSendVideoNotes     <- h.get[Option[Boolean]]("can_send_video_notes")
+        _canSendVoiceNotes     <- h.get[Option[Boolean]]("can_send_voice_notes")
         _canSendPolls          <- h.get[Option[Boolean]]("can_send_polls")
         _canSendOtherMessages  <- h.get[Option[Boolean]]("can_send_other_messages")
         _canAddWebPagePreviews <- h.get[Option[Boolean]]("can_add_web_page_previews")
@@ -2987,7 +3021,12 @@ object CirceImplicits {
       } yield {
         ChatPermissions(
           canSendMessages = _canSendMessages,
-          canSendMediaMessages = _canSendMediaMessages,
+          canSendAudios = _canSendAudios,
+          canSendDocuments = _canSendDocuments,
+          canSendPhotos = _canSendPhotos,
+          canSendVideos = _canSendVideos,
+          canSendVideoNotes = _canSendVideoNotes,
+          canSendVoiceNotes = _canSendVoiceNotes,
           canSendPolls = _canSendPolls,
           canSendOtherMessages = _canSendOtherMessages,
           canAddWebPagePreviews = _canAddWebPagePreviews,
@@ -3016,6 +3055,26 @@ object CirceImplicits {
         _voterCount <- h.get[Int]("voter_count")
       } yield {
         PollOption(text = _text, voterCount = _voterCount)
+      }
+    }
+
+  implicit lazy val usersharedEncoder: Encoder[UserShared] =
+    (x: UserShared) => {
+      Json.fromFields(
+        List(
+          "request_id" -> x.requestId.asJson,
+          "user_id"    -> x.userId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val usersharedDecoder: Decoder[UserShared] =
+    Decoder.instance { h =>
+      for {
+        _requestId <- h.get[Int]("request_id")
+        _userId    <- h.get[Long]("user_id")
+      } yield {
+        UserShared(requestId = _requestId, userId = _userId)
       }
     }
 
@@ -3201,6 +3260,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"             -> x.text.asJson,
+          "request_user"     -> x.requestUser.asJson,
+          "request_chat"     -> x.requestChat.asJson,
           "request_contact"  -> x.requestContact.asJson,
           "request_location" -> x.requestLocation.asJson,
           "request_poll"     -> x.requestPoll.asJson,
@@ -3213,6 +3274,8 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _text            <- h.get[String]("text")
+        _requestUser     <- h.get[Option[KeyboardButtonRequestUser]]("request_user")
+        _requestChat     <- h.get[Option[KeyboardButtonRequestChat]]("request_chat")
         _requestContact  <- h.get[Option[Boolean]]("request_contact")
         _requestLocation <- h.get[Option[Boolean]]("request_location")
         _requestPoll     <- h.get[Option[KeyboardButtonPollType]]("request_poll")
@@ -3220,6 +3283,8 @@ object CirceImplicits {
       } yield {
         KeyboardButton(
           text = _text,
+          requestUser = _requestUser,
+          requestChat = _requestChat,
           requestContact = _requestContact,
           requestLocation = _requestLocation,
           requestPoll = _requestPoll,
@@ -3764,6 +3829,47 @@ object CirceImplicits {
         _credentials <- h.get[EncryptedCredentials]("credentials")
       } yield {
         PassportData(data = _data, credentials = _credentials)
+      }
+    }
+
+  implicit lazy val keyboardbuttonrequestchatEncoder: Encoder[KeyboardButtonRequestChat] =
+    (x: KeyboardButtonRequestChat) => {
+      Json.fromFields(
+        List(
+          "request_id"                -> x.requestId.asJson,
+          "chat_is_channel"           -> x.chatIsChannel.asJson,
+          "chat_is_forum"             -> x.chatIsForum.asJson,
+          "chat_has_username"         -> x.chatHasUsername.asJson,
+          "chat_is_created"           -> x.chatIsCreated.asJson,
+          "user_administrator_rights" -> x.userAdministratorRights.asJson,
+          "bot_administrator_rights"  -> x.botAdministratorRights.asJson,
+          "bot_is_member"             -> x.botIsMember.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val keyboardbuttonrequestchatDecoder: Decoder[KeyboardButtonRequestChat] =
+    Decoder.instance { h =>
+      for {
+        _requestId               <- h.get[Int]("request_id")
+        _chatIsChannel           <- h.get[Boolean]("chat_is_channel")
+        _chatIsForum             <- h.get[Option[Boolean]]("chat_is_forum")
+        _chatHasUsername         <- h.get[Option[Boolean]]("chat_has_username")
+        _chatIsCreated           <- h.get[Option[Boolean]]("chat_is_created")
+        _userAdministratorRights <- h.get[Option[ChatAdministratorRights]]("user_administrator_rights")
+        _botAdministratorRights  <- h.get[Option[ChatAdministratorRights]]("bot_administrator_rights")
+        _botIsMember             <- h.get[Option[Boolean]]("bot_is_member")
+      } yield {
+        KeyboardButtonRequestChat(
+          requestId = _requestId,
+          chatIsChannel = _chatIsChannel,
+          chatIsForum = _chatIsForum,
+          chatHasUsername = _chatHasUsername,
+          chatIsCreated = _chatIsCreated,
+          userAdministratorRights = _userAdministratorRights,
+          botAdministratorRights = _botAdministratorRights,
+          botIsMember = _botIsMember
+        )
       }
     }
 
@@ -4389,6 +4495,8 @@ object CirceImplicits {
           "pinned_message"                    -> x.pinnedMessage.asJson,
           "invoice"                           -> x.invoice.asJson,
           "successful_payment"                -> x.successfulPayment.asJson,
+          "user_shared"                       -> x.userShared.asJson,
+          "chat_shared"                       -> x.chatShared.asJson,
           "connected_website"                 -> x.connectedWebsite.asJson,
           "write_access_allowed"              -> x.writeAccessAllowed.asJson,
           "passport_data"                     -> x.passportData.asJson,
@@ -4467,6 +4575,8 @@ object CirceImplicits {
         _pinnedMessage                <- h.get[Option[Message]]("pinned_message")
         _invoice                      <- h.get[Option[Invoice]]("invoice")
         _successfulPayment            <- h.get[Option[SuccessfulPayment]]("successful_payment")
+        _userShared                   <- h.get[Option[UserShared]]("user_shared")
+        _chatShared                   <- h.get[Option[ChatShared]]("chat_shared")
         _connectedWebsite             <- h.get[Option[String]]("connected_website")
         _writeAccessAllowed           <- h.get[Option[WriteAccessAllowed.type]]("write_access_allowed")
         _passportData                 <- h.get[Option[PassportData]]("passport_data")
@@ -4538,6 +4648,8 @@ object CirceImplicits {
           pinnedMessage = _pinnedMessage,
           invoice = _invoice,
           successfulPayment = _successfulPayment,
+          userShared = _userShared,
+          chatShared = _chatShared,
           connectedWebsite = _connectedWebsite,
           writeAccessAllowed = _writeAccessAllowed,
           passportData = _passportData,
@@ -4876,6 +4988,48 @@ object CirceImplicits {
           data = _data,
           gameShortName = _gameShortName
         )
+      }
+    }
+
+  implicit lazy val keyboardbuttonrequestuserEncoder: Encoder[KeyboardButtonRequestUser] =
+    (x: KeyboardButtonRequestUser) => {
+      Json.fromFields(
+        List(
+          "request_id"      -> x.requestId.asJson,
+          "user_is_bot"     -> x.userIsBot.asJson,
+          "user_is_premium" -> x.userIsPremium.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val keyboardbuttonrequestuserDecoder: Decoder[KeyboardButtonRequestUser] =
+    Decoder.instance { h =>
+      for {
+        _requestId     <- h.get[Int]("request_id")
+        _userIsBot     <- h.get[Option[Boolean]]("user_is_bot")
+        _userIsPremium <- h.get[Option[Boolean]]("user_is_premium")
+      } yield {
+        KeyboardButtonRequestUser(requestId = _requestId, userIsBot = _userIsBot, userIsPremium = _userIsPremium)
+      }
+    }
+
+  implicit lazy val chatsharedEncoder: Encoder[ChatShared] =
+    (x: ChatShared) => {
+      Json.fromFields(
+        List(
+          "request_id" -> x.requestId.asJson,
+          "chat_id"    -> x.chatId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatsharedDecoder: Decoder[ChatShared] =
+    Decoder.instance { h =>
+      for {
+        _requestId <- h.get[Int]("request_id")
+        _chatId    <- h.get[Long]("chat_id")
+      } yield {
+        ChatShared(requestId = _requestId, chatId = _chatId)
       }
     }
 

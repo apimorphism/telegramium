@@ -24,7 +24,7 @@ import telegramium.bots.ChatId
   *   Pass True if the administrator can restrict, ban or unban chat members
   * @param canPromoteMembers
   *   Pass True if the administrator can add new administrators with a subset of their own privileges or demote
-  *   administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by
+  *   administrators that they have promoted, directly or indirectly (promoted by administrators that were appointed by
   *   him)
   * @param canChangeInfo
   *   Pass True if the administrator can change chat title, photo and other settings
