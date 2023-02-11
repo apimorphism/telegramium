@@ -137,3 +137,4 @@ You may also want to have a look at these projects:
 * [benkio/myTelegramBot](https://github.com/benkio/myTelegramBot)
 * [TurtleBots/adjutant](https://github.com/TurtleBots/adjutant): adjutant provides shareplace for sc2 builds through the chatbot
 * [TurtleBots/bender](https://github.com/TurtleBots/bender): undefeatable tic-tac-toe player
+* [a-khakimov/undicator](https://github.com/a-khakimov/undicator): simple bot for viewing unsplash user statistics
