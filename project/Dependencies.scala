@@ -3,12 +3,11 @@ import sbt._
 object Dependencies {
 
   object V {
-    val monix            = "3.4.0"
-    val catsCore         = "2.8.0"
-    val catsEffect       = "3.3.14"
-    val circe            = "0.14.3"
-    val http4s           = "0.23.16"
-    val blazeHttp4s      = "0.23.12"
+    val catsCore         = "2.9.0"
+    val catsEffect       = "3.4.7"
+    val circe            = "0.14.4"
+    val http4s           = "0.23.18"
+    val blazeHttp4s      = "0.23.13"
     val slf4j            = "2.0.6"
     val logback          = "1.2.11"
     val scalatest        = "3.2.15"
