@@ -31,7 +31,7 @@ class WebhookBotISpec
     with BeforeAndAfterAll
     with Matchers
     with OptionValues {
-  lazy val container: MockServerContainer = MockServerContainer("5.11.2")
+  lazy val container: MockServerContainer = MockServerContainer(MockServerContainerVersion)
   private val mockServer                  = container.container
 
   private val (httpClient, finalizer) = BlazeClientBuilder[IO].resource.allocated.unsafeRunSync()

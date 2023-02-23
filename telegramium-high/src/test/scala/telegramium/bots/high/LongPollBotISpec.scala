@@ -18,7 +18,7 @@ class LongPollBotISpec
     with OptionValues
     with ForAllTestContainer
     with BeforeAndAfterAll {
-  lazy val container: MockServerContainer = MockServerContainer("5.11.2")
+  lazy val container: MockServerContainer = MockServerContainer(MockServerContainerVersion)
   private val mockServer                  = container.container
 
   private lazy val mockServerClient   = new MockServerClient("localhost", mockServer.getServerPort)

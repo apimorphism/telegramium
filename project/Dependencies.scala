@@ -12,7 +12,7 @@ object Dependencies {
     val logback          = "1.2.11"
     val scalatest        = "3.2.15"
     val testcontainers   = "0.40.12"
-    val mockServerClient = "5.11.2"
+    val mockServerClient = "5.14.0"
     val log4cats         = "2.5.0"
   }
 
