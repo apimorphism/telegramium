@@ -137,16 +137,18 @@ abstract class WebhookBot[F[_]: Async](
     import dsl.*
 
     HttpRoutes.of[F] { case req @ POST -> BotPath =>
-      handleUpdateReq(req).flatMap {
-        _.fold(Ok()) { m =>
+      handleUpdateReq(req).flatMap { result =>
+        result.fold(Ok()) { m =>
           val inputPartFiles = m.payload.files.collect { case (filename, InputPartFile(file)) =>
             (filename, file)
           }
           val attachments = toFileDataParts(inputPartFiles)
           if (attachments.isEmpty) Ok(m.payload.json)
           else {
-            val parts = toMultipartWithFormData(m.payload.json, inputPartFiles.keys.toList, attachments)
-            Ok(parts).map(_.withHeaders(parts.headers))
+            for {
+              multipart <- toMultipartWithFormData(m.payload.json, inputPartFiles.keys.toList, attachments)
+              response  <- Ok(multipart)
+            } yield response.withHeaders(multipart.headers)
           }
         }
       }

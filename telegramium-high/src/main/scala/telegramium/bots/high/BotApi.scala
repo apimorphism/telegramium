@@ -29,18 +29,18 @@ class BotApi[F[_]](
 
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/${method.payload.name}"))
-      req = mkRequest(uri, method.payload.json, inputPartFiles.keys.toList, attachments)
+      req <- mkRequest(uri, method.payload.json, inputPartFiles.keys.toList, attachments)
       res <- handleResponse[Res](method, req)(method.decoder)
     } yield res
   }
 
   private def mkRequest(uri: Uri, json: Json, fileFieldNames: List[String], attachments: Vector[Part[F]]) = {
     val reqBuilder = Request[F]().withMethod(POST).withUri(uri)
-    if (attachments.isEmpty) reqBuilder.withEntity(json)
-    else {
-      val parts = toMultipartWithFormData(json, fileFieldNames, attachments)
-      reqBuilder.withEntity(parts).withHeaders(parts.headers)
-    }
+    if (attachments.isEmpty) reqBuilder.withEntity(json).pure[F]
+    else
+      toMultipartWithFormData(json, fileFieldNames, attachments).map { parts =>
+        reqBuilder.withEntity(parts).withHeaders(parts.headers)
+      }
   }
 
   private case class Response[A](
