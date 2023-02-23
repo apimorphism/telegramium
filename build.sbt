@@ -43,6 +43,8 @@ ThisBuild / developers := List(
 ThisBuild / publishMavenStyle := true
 ThisBuild / publishTo         := sonatypePublishToBundle.value
 
+ThisBuild / githubWorkflowScalaVersions := Seq(scala3, scala213, scala212)
+
 ThisBuild / githubWorkflowJavaVersions :=
   Seq(JavaSpec.temurin("17"), JavaSpec.temurin("11"), JavaSpec.temurin("8"))
 
