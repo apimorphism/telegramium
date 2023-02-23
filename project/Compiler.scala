@@ -12,15 +12,13 @@ object Compiler {
     "-language:experimental.macros", // Allow macro definition (besides implementation and application)
     "-language:higherKinds",         // Allow higher-kinded types
     "-language:implicitConversions", // Allow definition of implicit functions called views
-    "-unchecked",                    // Enable additional warnings where generated code depends on assumptions.
-    "-Xsource:3"
+    "-unchecked"                     // Enable additional warnings where generated code depends on assumptions.
   )
 
   val settings = Seq(
-    scalacOptions ++=
-      (if (scalaBinaryVersion.value.startsWith("2.12"))
-         options :+ "-Ypartial-unification"
-       else options)
+    scalacOptions ++= options ++
+      (if (scalaBinaryVersion.value.startsWith("2.12")) Seq("-Ypartial-unification") else Seq.empty) ++
+      (if (scalaBinaryVersion.value.startsWith("2")) Seq("-Xsource:3") else Seq.empty)
   )
 
 }
