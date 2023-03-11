@@ -8,7 +8,7 @@ sealed trait InputMedia {}
   *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
   *   for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using
   *   multipart/form-data under <file_attach_name> name.
-  * @param thumb
+  * @param thumbnail
   *   Optional. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported
   *   server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height
   *   should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused
@@ -31,7 +31,7 @@ sealed trait InputMedia {}
   */
 final case class InputMediaAnimation(
   media: String,
-  thumb: Option[IFile] = Option.empty,
+  thumbnail: Option[IFile] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
@@ -70,7 +70,7 @@ final case class InputMediaPhoto(
   *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
   *   for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using
   *   multipart/form-data under <file_attach_name> name.
-  * @param thumb
+  * @param thumbnail
   *   Optional. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported
   *   server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height
   *   should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused
@@ -95,7 +95,7 @@ final case class InputMediaPhoto(
   */
 final case class InputMediaVideo(
   media: String,
-  thumb: Option[IFile] = Option.empty,
+  thumbnail: Option[IFile] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
@@ -112,7 +112,7 @@ final case class InputMediaVideo(
   *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
   *   for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using
   *   multipart/form-data under <file_attach_name> name.
-  * @param thumb
+  * @param thumbnail
   *   Optional. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported
   *   server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height
   *   should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused
@@ -130,7 +130,7 @@ final case class InputMediaVideo(
   */
 final case class InputMediaDocument(
   media: String,
-  thumb: Option[IFile] = Option.empty,
+  thumbnail: Option[IFile] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
@@ -143,7 +143,7 @@ final case class InputMediaDocument(
   *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
   *   for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using
   *   multipart/form-data under <file_attach_name> name.
-  * @param thumb
+  * @param thumbnail
   *   Optional. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported
   *   server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height
   *   should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused
@@ -164,7 +164,7 @@ final case class InputMediaDocument(
   */
 final case class InputMediaAudio(
   media: String,
-  thumb: Option[IFile] = Option.empty,
+  thumbnail: Option[IFile] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,

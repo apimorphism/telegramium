@@ -631,7 +631,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "media"            -> x.media.asJson,
-          "thumb"            -> x.thumb.asJson,
+          "thumbnail"        -> x.thumbnail.asJson,
           "caption"          -> x.caption.asJson,
           "parse_mode"       -> x.parseMode.asJson,
           "caption_entities" -> x.captionEntities.asJson,
@@ -647,7 +647,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _media           <- h.get[String]("media")
-        _thumb           <- h.get[Option[IFile]]("thumb")
+        _thumbnail       <- h.get[Option[IFile]]("thumbnail")
         _caption         <- h.get[Option[String]]("caption")
         _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
@@ -658,7 +658,7 @@ object CirceImplicits {
       } yield {
         InputMediaAnimation(
           media = _media,
-          thumb = _thumb,
+          thumbnail = _thumbnail,
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
@@ -707,7 +707,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "media"              -> x.media.asJson,
-          "thumb"              -> x.thumb.asJson,
+          "thumbnail"          -> x.thumbnail.asJson,
           "caption"            -> x.caption.asJson,
           "parse_mode"         -> x.parseMode.asJson,
           "caption_entities"   -> x.captionEntities.asJson,
@@ -724,7 +724,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _media             <- h.get[String]("media")
-        _thumb             <- h.get[Option[IFile]]("thumb")
+        _thumbnail         <- h.get[Option[IFile]]("thumbnail")
         _caption           <- h.get[Option[String]]("caption")
         _parseMode         <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities   <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
@@ -736,7 +736,7 @@ object CirceImplicits {
       } yield {
         InputMediaVideo(
           media = _media,
-          thumb = _thumb,
+          thumbnail = _thumbnail,
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
@@ -754,7 +754,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "media"                          -> x.media.asJson,
-          "thumb"                          -> x.thumb.asJson,
+          "thumbnail"                      -> x.thumbnail.asJson,
           "caption"                        -> x.caption.asJson,
           "parse_mode"                     -> x.parseMode.asJson,
           "caption_entities"               -> x.captionEntities.asJson,
@@ -767,7 +767,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _media                       <- h.get[String]("media")
-        _thumb                       <- h.get[Option[IFile]]("thumb")
+        _thumbnail                   <- h.get[Option[IFile]]("thumbnail")
         _caption                     <- h.get[Option[String]]("caption")
         _parseMode                   <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities             <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
@@ -775,7 +775,7 @@ object CirceImplicits {
       } yield {
         InputMediaDocument(
           media = _media,
-          thumb = _thumb,
+          thumbnail = _thumbnail,
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
@@ -789,7 +789,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "media"            -> x.media.asJson,
-          "thumb"            -> x.thumb.asJson,
+          "thumbnail"        -> x.thumbnail.asJson,
           "caption"          -> x.caption.asJson,
           "parse_mode"       -> x.parseMode.asJson,
           "caption_entities" -> x.captionEntities.asJson,
@@ -804,7 +804,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _media           <- h.get[String]("media")
-        _thumb           <- h.get[Option[IFile]]("thumb")
+        _thumbnail       <- h.get[Option[IFile]]("thumbnail")
         _caption         <- h.get[Option[String]]("caption")
         _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
@@ -814,7 +814,7 @@ object CirceImplicits {
       } yield {
         InputMediaAudio(
           media = _media,
-          thumb = _thumb,
+          thumbnail = _thumbnail,
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
@@ -905,8 +905,8 @@ object CirceImplicits {
           "gif_width"             -> x.gifWidth.asJson,
           "gif_height"            -> x.gifHeight.asJson,
           "gif_duration"          -> x.gifDuration.asJson,
-          "thumb_url"             -> x.thumbUrl.asJson,
-          "thumb_mime_type"       -> x.thumbMimeType.asJson,
+          "thumbnail_url"         -> x.thumbnailUrl.asJson,
+          "thumbnail_mime_type"   -> x.thumbnailMimeType.asJson,
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
@@ -925,8 +925,8 @@ object CirceImplicits {
         _gifWidth            <- h.get[Option[Int]]("gif_width")
         _gifHeight           <- h.get[Option[Int]]("gif_height")
         _gifDuration         <- h.get[Option[Int]]("gif_duration")
-        _thumbUrl            <- h.get[String]("thumb_url")
-        _thumbMimeType       <- h.get[Option[String]]("thumb_mime_type")
+        _thumbnailUrl        <- h.get[String]("thumbnail_url")
+        _thumbnailMimeType   <- h.get[Option[String]]("thumbnail_mime_type")
         _title               <- h.get[Option[String]]("title")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
@@ -940,8 +940,8 @@ object CirceImplicits {
           gifWidth = _gifWidth,
           gifHeight = _gifHeight,
           gifDuration = _gifDuration,
-          thumbUrl = _thumbUrl,
-          thumbMimeType = _thumbMimeType,
+          thumbnailUrl = _thumbnailUrl,
+          thumbnailMimeType = _thumbnailMimeType,
           title = _title,
           caption = _caption,
           parseMode = _parseMode,
@@ -967,9 +967,9 @@ object CirceImplicits {
           "google_place_type"     -> x.googlePlaceType.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson,
-          "thumb_url"             -> x.thumbUrl.asJson,
-          "thumb_width"           -> x.thumbWidth.asJson,
-          "thumb_height"          -> x.thumbHeight.asJson
+          "thumbnail_url"         -> x.thumbnailUrl.asJson,
+          "thumbnail_width"       -> x.thumbnailWidth.asJson,
+          "thumbnail_height"      -> x.thumbnailHeight.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -988,9 +988,9 @@ object CirceImplicits {
         _googlePlaceType     <- h.get[Option[String]]("google_place_type")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
-        _thumbUrl            <- h.get[Option[String]]("thumb_url")
-        _thumbWidth          <- h.get[Option[Int]]("thumb_width")
-        _thumbHeight         <- h.get[Option[Int]]("thumb_height")
+        _thumbnailUrl        <- h.get[Option[String]]("thumbnail_url")
+        _thumbnailWidth      <- h.get[Option[Int]]("thumbnail_width")
+        _thumbnailHeight     <- h.get[Option[Int]]("thumbnail_height")
       } yield {
         InlineQueryResultVenue(
           id = _id,
@@ -1004,9 +1004,9 @@ object CirceImplicits {
           googlePlaceType = _googlePlaceType,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent,
-          thumbUrl = _thumbUrl,
-          thumbWidth = _thumbWidth,
-          thumbHeight = _thumbHeight
+          thumbnailUrl = _thumbnailUrl,
+          thumbnailWidth = _thumbnailWidth,
+          thumbnailHeight = _thumbnailHeight
         )
       }
     }
@@ -1022,9 +1022,9 @@ object CirceImplicits {
           "vcard"                 -> x.vcard.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson,
-          "thumb_url"             -> x.thumbUrl.asJson,
-          "thumb_width"           -> x.thumbWidth.asJson,
-          "thumb_height"          -> x.thumbHeight.asJson
+          "thumbnail_url"         -> x.thumbnailUrl.asJson,
+          "thumbnail_width"       -> x.thumbnailWidth.asJson,
+          "thumbnail_height"      -> x.thumbnailHeight.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1039,9 +1039,9 @@ object CirceImplicits {
         _vcard               <- h.get[Option[String]]("vcard")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
-        _thumbUrl            <- h.get[Option[String]]("thumb_url")
-        _thumbWidth          <- h.get[Option[Int]]("thumb_width")
-        _thumbHeight         <- h.get[Option[Int]]("thumb_height")
+        _thumbnailUrl        <- h.get[Option[String]]("thumbnail_url")
+        _thumbnailWidth      <- h.get[Option[Int]]("thumbnail_width")
+        _thumbnailHeight     <- h.get[Option[Int]]("thumbnail_height")
       } yield {
         InlineQueryResultContact(
           id = _id,
@@ -1051,9 +1051,9 @@ object CirceImplicits {
           vcard = _vcard,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent,
-          thumbUrl = _thumbUrl,
-          thumbWidth = _thumbWidth,
-          thumbHeight = _thumbHeight
+          thumbnailUrl = _thumbnailUrl,
+          thumbnailWidth = _thumbnailWidth,
+          thumbnailHeight = _thumbnailHeight
         )
       }
     }
@@ -1064,7 +1064,7 @@ object CirceImplicits {
         List(
           "id"                    -> x.id.asJson,
           "photo_url"             -> x.photoUrl.asJson,
-          "thumb_url"             -> x.thumbUrl.asJson,
+          "thumbnail_url"         -> x.thumbnailUrl.asJson,
           "photo_width"           -> x.photoWidth.asJson,
           "photo_height"          -> x.photoHeight.asJson,
           "title"                 -> x.title.asJson,
@@ -1083,7 +1083,7 @@ object CirceImplicits {
       for {
         _id                  <- h.get[String]("id")
         _photoUrl            <- h.get[String]("photo_url")
-        _thumbUrl            <- h.get[String]("thumb_url")
+        _thumbnailUrl        <- h.get[String]("thumbnail_url")
         _photoWidth          <- h.get[Option[Int]]("photo_width")
         _photoHeight         <- h.get[Option[Int]]("photo_height")
         _title               <- h.get[Option[String]]("title")
@@ -1097,7 +1097,7 @@ object CirceImplicits {
         InlineQueryResultPhoto(
           id = _id,
           photoUrl = _photoUrl,
-          thumbUrl = _thumbUrl,
+          thumbnailUrl = _thumbnailUrl,
           photoWidth = _photoWidth,
           photoHeight = _photoHeight,
           title = _title,
@@ -1125,9 +1125,9 @@ object CirceImplicits {
           "description"           -> x.description.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson,
-          "thumb_url"             -> x.thumbUrl.asJson,
-          "thumb_width"           -> x.thumbWidth.asJson,
-          "thumb_height"          -> x.thumbHeight.asJson
+          "thumbnail_url"         -> x.thumbnailUrl.asJson,
+          "thumbnail_width"       -> x.thumbnailWidth.asJson,
+          "thumbnail_height"      -> x.thumbnailHeight.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1145,9 +1145,9 @@ object CirceImplicits {
         _description         <- h.get[Option[String]]("description")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
-        _thumbUrl            <- h.get[Option[String]]("thumb_url")
-        _thumbWidth          <- h.get[Option[Int]]("thumb_width")
-        _thumbHeight         <- h.get[Option[Int]]("thumb_height")
+        _thumbnailUrl        <- h.get[Option[String]]("thumbnail_url")
+        _thumbnailWidth      <- h.get[Option[Int]]("thumbnail_width")
+        _thumbnailHeight     <- h.get[Option[Int]]("thumbnail_height")
       } yield {
         InlineQueryResultDocument(
           id = _id,
@@ -1160,9 +1160,9 @@ object CirceImplicits {
           description = _description,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent,
-          thumbUrl = _thumbUrl,
-          thumbWidth = _thumbWidth,
-          thumbHeight = _thumbHeight
+          thumbnailUrl = _thumbnailUrl,
+          thumbnailWidth = _thumbnailWidth,
+          thumbnailHeight = _thumbnailHeight
         )
       }
     }
@@ -1219,9 +1219,9 @@ object CirceImplicits {
           "url"                   -> x.url.asJson,
           "hide_url"              -> x.hideUrl.asJson,
           "description"           -> x.description.asJson,
-          "thumb_url"             -> x.thumbUrl.asJson,
-          "thumb_width"           -> x.thumbWidth.asJson,
-          "thumb_height"          -> x.thumbHeight.asJson
+          "thumbnail_url"         -> x.thumbnailUrl.asJson,
+          "thumbnail_width"       -> x.thumbnailWidth.asJson,
+          "thumbnail_height"      -> x.thumbnailHeight.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1236,9 +1236,9 @@ object CirceImplicits {
         _url                 <- h.get[Option[String]]("url")
         _hideUrl             <- h.get[Option[Boolean]]("hide_url")
         _description         <- h.get[Option[String]]("description")
-        _thumbUrl            <- h.get[Option[String]]("thumb_url")
-        _thumbWidth          <- h.get[Option[Int]]("thumb_width")
-        _thumbHeight         <- h.get[Option[Int]]("thumb_height")
+        _thumbnailUrl        <- h.get[Option[String]]("thumbnail_url")
+        _thumbnailWidth      <- h.get[Option[Int]]("thumbnail_width")
+        _thumbnailHeight     <- h.get[Option[Int]]("thumbnail_height")
       } yield {
         InlineQueryResultArticle(
           id = _id,
@@ -1248,9 +1248,9 @@ object CirceImplicits {
           url = _url,
           hideUrl = _hideUrl,
           description = _description,
-          thumbUrl = _thumbUrl,
-          thumbWidth = _thumbWidth,
-          thumbHeight = _thumbHeight
+          thumbnailUrl = _thumbnailUrl,
+          thumbnailWidth = _thumbnailWidth,
+          thumbnailHeight = _thumbnailHeight
         )
       }
     }
@@ -1311,8 +1311,8 @@ object CirceImplicits {
           "mpeg4_width"           -> x.mpeg4Width.asJson,
           "mpeg4_height"          -> x.mpeg4Height.asJson,
           "mpeg4_duration"        -> x.mpeg4Duration.asJson,
-          "thumb_url"             -> x.thumbUrl.asJson,
-          "thumb_mime_type"       -> x.thumbMimeType.asJson,
+          "thumbnail_url"         -> x.thumbnailUrl.asJson,
+          "thumbnail_mime_type"   -> x.thumbnailMimeType.asJson,
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
@@ -1331,8 +1331,8 @@ object CirceImplicits {
         _mpeg4Width          <- h.get[Option[Int]]("mpeg4_width")
         _mpeg4Height         <- h.get[Option[Int]]("mpeg4_height")
         _mpeg4Duration       <- h.get[Option[Int]]("mpeg4_duration")
-        _thumbUrl            <- h.get[String]("thumb_url")
-        _thumbMimeType       <- h.get[Option[String]]("thumb_mime_type")
+        _thumbnailUrl        <- h.get[String]("thumbnail_url")
+        _thumbnailMimeType   <- h.get[Option[String]]("thumbnail_mime_type")
         _title               <- h.get[Option[String]]("title")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
@@ -1346,8 +1346,8 @@ object CirceImplicits {
           mpeg4Width = _mpeg4Width,
           mpeg4Height = _mpeg4Height,
           mpeg4Duration = _mpeg4Duration,
-          thumbUrl = _thumbUrl,
-          thumbMimeType = _thumbMimeType,
+          thumbnailUrl = _thumbnailUrl,
+          thumbnailMimeType = _thumbnailMimeType,
           title = _title,
           caption = _caption,
           parseMode = _parseMode,
@@ -1589,7 +1589,7 @@ object CirceImplicits {
           "id"                    -> x.id.asJson,
           "video_url"             -> x.videoUrl.asJson,
           "mime_type"             -> x.mimeType.asJson,
-          "thumb_url"             -> x.thumbUrl.asJson,
+          "thumbnail_url"         -> x.thumbnailUrl.asJson,
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
@@ -1610,7 +1610,7 @@ object CirceImplicits {
         _id                  <- h.get[String]("id")
         _videoUrl            <- h.get[String]("video_url")
         _mimeType            <- h.get[String]("mime_type")
-        _thumbUrl            <- h.get[String]("thumb_url")
+        _thumbnailUrl        <- h.get[String]("thumbnail_url")
         _title               <- h.get[String]("title")
         _caption             <- h.get[Option[String]]("caption")
         _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
@@ -1626,7 +1626,7 @@ object CirceImplicits {
           id = _id,
           videoUrl = _videoUrl,
           mimeType = _mimeType,
-          thumbUrl = _thumbUrl,
+          thumbnailUrl = _thumbnailUrl,
           title = _title,
           caption = _caption,
           parseMode = _parseMode,
@@ -1693,9 +1693,9 @@ object CirceImplicits {
           "proximity_alert_radius" -> x.proximityAlertRadius.asJson,
           "reply_markup"           -> x.replyMarkup.asJson,
           "input_message_content"  -> x.inputMessageContent.asJson,
-          "thumb_url"              -> x.thumbUrl.asJson,
-          "thumb_width"            -> x.thumbWidth.asJson,
-          "thumb_height"           -> x.thumbHeight.asJson
+          "thumbnail_url"          -> x.thumbnailUrl.asJson,
+          "thumbnail_width"        -> x.thumbnailWidth.asJson,
+          "thumbnail_height"       -> x.thumbnailHeight.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1713,9 +1713,9 @@ object CirceImplicits {
         _proximityAlertRadius <- h.get[Option[Int]]("proximity_alert_radius")
         _replyMarkup          <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _inputMessageContent  <- h.get[Option[InputMessageContent]]("input_message_content")
-        _thumbUrl             <- h.get[Option[String]]("thumb_url")
-        _thumbWidth           <- h.get[Option[Int]]("thumb_width")
-        _thumbHeight          <- h.get[Option[Int]]("thumb_height")
+        _thumbnailUrl         <- h.get[Option[String]]("thumbnail_url")
+        _thumbnailWidth       <- h.get[Option[Int]]("thumbnail_width")
+        _thumbnailHeight      <- h.get[Option[Int]]("thumbnail_height")
       } yield {
         InlineQueryResultLocation(
           id = _id,
@@ -1728,9 +1728,9 @@ object CirceImplicits {
           proximityAlertRadius = _proximityAlertRadius,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent,
-          thumbUrl = _thumbUrl,
-          thumbWidth = _thumbWidth,
-          thumbHeight = _thumbHeight
+          thumbnailUrl = _thumbnailUrl,
+          thumbnailWidth = _thumbnailWidth,
+          thumbnailHeight = _thumbnailHeight
         )
       }
     }
@@ -2714,7 +2714,7 @@ object CirceImplicits {
           "width"          -> x.width.asJson,
           "height"         -> x.height.asJson,
           "duration"       -> x.duration.asJson,
-          "thumb"          -> x.thumb.asJson,
+          "thumbnail"      -> x.thumbnail.asJson,
           "file_name"      -> x.fileName.asJson,
           "mime_type"      -> x.mimeType.asJson,
           "file_size"      -> x.fileSize.asJson
@@ -2730,7 +2730,7 @@ object CirceImplicits {
         _width        <- h.get[Int]("width")
         _height       <- h.get[Int]("height")
         _duration     <- h.get[Int]("duration")
-        _thumb        <- h.get[Option[PhotoSize]]("thumb")
+        _thumbnail    <- h.get[Option[PhotoSize]]("thumbnail")
         _fileName     <- h.get[Option[String]]("file_name")
         _mimeType     <- h.get[Option[String]]("mime_type")
         _fileSize     <- h.get[Option[Long]]("file_size")
@@ -2741,7 +2741,7 @@ object CirceImplicits {
           width = _width,
           height = _height,
           duration = _duration,
-          thumb = _thumb,
+          thumbnail = _thumbnail,
           fileName = _fileName,
           mimeType = _mimeType,
           fileSize = _fileSize
@@ -2893,7 +2893,7 @@ object CirceImplicits {
           "file_unique_id" -> x.fileUniqueId.asJson,
           "length"         -> x.length.asJson,
           "duration"       -> x.duration.asJson,
-          "thumb"          -> x.thumb.asJson,
+          "thumbnail"      -> x.thumbnail.asJson,
           "file_size"      -> x.fileSize.asJson
         ).filter(!_._2.isNull)
       )
@@ -2906,7 +2906,7 @@ object CirceImplicits {
         _fileUniqueId <- h.get[String]("file_unique_id")
         _length       <- h.get[Int]("length")
         _duration     <- h.get[Int]("duration")
-        _thumb        <- h.get[Option[PhotoSize]]("thumb")
+        _thumbnail    <- h.get[Option[PhotoSize]]("thumbnail")
         _fileSize     <- h.get[Option[Long]]("file_size")
       } yield {
         VideoNote(
@@ -2914,7 +2914,7 @@ object CirceImplicits {
           fileUniqueId = _fileUniqueId,
           length = _length,
           duration = _duration,
-          thumb = _thumb,
+          thumbnail = _thumbnail,
           fileSize = _fileSize
         )
       }
@@ -3075,6 +3075,24 @@ object CirceImplicits {
         _userId    <- h.get[Long]("user_id")
       } yield {
         UserShared(requestId = _requestId, userId = _userId)
+      }
+    }
+
+  implicit lazy val botshortdescriptionEncoder: Encoder[BotShortDescription] =
+    (x: BotShortDescription) => {
+      Json.fromFields(
+        List(
+          "short_description" -> x.shortDescription.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val botshortdescriptionDecoder: Decoder[BotShortDescription] =
+    Decoder.instance { h =>
+      for {
+        _shortDescription <- h.get[String]("short_description")
+      } yield {
+        BotShortDescription(shortDescription = _shortDescription)
       }
     }
 
@@ -3457,7 +3475,7 @@ object CirceImplicits {
           "is_animated"  -> x.isAnimated.asJson,
           "is_video"     -> x.isVideo.asJson,
           "stickers"     -> x.stickers.asJson,
-          "thumb"        -> x.thumb.asJson
+          "thumbnail"    -> x.thumbnail.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3471,7 +3489,7 @@ object CirceImplicits {
         _isAnimated  <- h.get[Boolean]("is_animated")
         _isVideo     <- h.get[Boolean]("is_video")
         _stickers    <- h.getOrElse[List[Sticker]]("stickers")(List.empty)
-        _thumb       <- h.get[Option[PhotoSize]]("thumb")
+        _thumbnail   <- h.get[Option[PhotoSize]]("thumbnail")
       } yield {
         StickerSet(
           name = _name,
@@ -3480,7 +3498,7 @@ object CirceImplicits {
           isAnimated = _isAnimated,
           isVideo = _isVideo,
           stickers = _stickers,
-          thumb = _thumb
+          thumbnail = _thumbnail
         )
       }
     }
@@ -3770,7 +3788,7 @@ object CirceImplicits {
   implicit lazy val diceDecoder: Decoder[Dice] =
     Decoder.instance { h =>
       for {
-        _emoji <- h.get[Emoji]("emoji")
+        _emoji <- h.get[String]("emoji")
         _value <- h.get[Int]("value")
       } yield {
         Dice(emoji = _emoji, value = _value)
@@ -3870,6 +3888,24 @@ object CirceImplicits {
           botAdministratorRights = _botAdministratorRights,
           botIsMember = _botIsMember
         )
+      }
+    }
+
+  implicit lazy val botdescriptionEncoder: Encoder[BotDescription] =
+    (x: BotDescription) => {
+      Json.fromFields(
+        List(
+          "description" -> x.description.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val botdescriptionDecoder: Decoder[BotDescription] =
+    Decoder.instance { h =>
+      for {
+        _description <- h.get[String]("description")
+      } yield {
+        BotDescription(description = _description)
       }
     }
 
@@ -4017,7 +4053,7 @@ object CirceImplicits {
           "file_name"      -> x.fileName.asJson,
           "mime_type"      -> x.mimeType.asJson,
           "file_size"      -> x.fileSize.asJson,
-          "thumb"          -> x.thumb.asJson
+          "thumbnail"      -> x.thumbnail.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4033,7 +4069,7 @@ object CirceImplicits {
         _fileName     <- h.get[Option[String]]("file_name")
         _mimeType     <- h.get[Option[String]]("mime_type")
         _fileSize     <- h.get[Option[Long]]("file_size")
-        _thumb        <- h.get[Option[PhotoSize]]("thumb")
+        _thumbnail    <- h.get[Option[PhotoSize]]("thumbnail")
       } yield {
         Audio(
           fileId = _fileId,
@@ -4044,7 +4080,7 @@ object CirceImplicits {
           fileName = _fileName,
           mimeType = _mimeType,
           fileSize = _fileSize,
-          thumb = _thumb
+          thumbnail = _thumbnail
         )
       }
     }
@@ -4390,12 +4426,13 @@ object CirceImplicits {
           "height"            -> x.height.asJson,
           "is_animated"       -> x.isAnimated.asJson,
           "is_video"          -> x.isVideo.asJson,
-          "thumb"             -> x.thumb.asJson,
+          "thumbnail"         -> x.thumbnail.asJson,
           "emoji"             -> x.emoji.asJson,
           "set_name"          -> x.setName.asJson,
           "premium_animation" -> x.premiumAnimation.asJson,
           "mask_position"     -> x.maskPosition.asJson,
           "custom_emoji_id"   -> x.customEmojiId.asJson,
+          "needs_repainting"  -> x.needsRepainting.asJson,
           "file_size"         -> x.fileSize.asJson
         ).filter(!_._2.isNull)
       )
@@ -4411,12 +4448,13 @@ object CirceImplicits {
         _height           <- h.get[Int]("height")
         _isAnimated       <- h.get[Boolean]("is_animated")
         _isVideo          <- h.get[Boolean]("is_video")
-        _thumb            <- h.get[Option[PhotoSize]]("thumb")
-        _emoji            <- h.get[Option[Emoji]]("emoji")
+        _thumbnail        <- h.get[Option[PhotoSize]]("thumbnail")
+        _emoji            <- h.get[Option[String]]("emoji")
         _setName          <- h.get[Option[String]]("set_name")
         _premiumAnimation <- h.get[Option[File]]("premium_animation")
         _maskPosition     <- h.get[Option[MaskPosition]]("mask_position")
         _customEmojiId    <- h.get[Option[String]]("custom_emoji_id")
+        _needsRepainting  <- h.get[Option[Boolean]]("needs_repainting")
         _fileSize         <- h.get[Option[Long]]("file_size")
       } yield {
         Sticker(
@@ -4427,12 +4465,13 @@ object CirceImplicits {
           height = _height,
           isAnimated = _isAnimated,
           isVideo = _isVideo,
-          thumb = _thumb,
+          thumbnail = _thumbnail,
           emoji = _emoji,
           setName = _setName,
           premiumAnimation = _premiumAnimation,
           maskPosition = _maskPosition,
           customEmojiId = _customEmojiId,
+          needsRepainting = _needsRepainting,
           fileSize = _fileSize
         )
       }
@@ -5082,7 +5121,7 @@ object CirceImplicits {
           "width"          -> x.width.asJson,
           "height"         -> x.height.asJson,
           "duration"       -> x.duration.asJson,
-          "thumb"          -> x.thumb.asJson,
+          "thumbnail"      -> x.thumbnail.asJson,
           "file_name"      -> x.fileName.asJson,
           "mime_type"      -> x.mimeType.asJson,
           "file_size"      -> x.fileSize.asJson
@@ -5098,7 +5137,7 @@ object CirceImplicits {
         _width        <- h.get[Int]("width")
         _height       <- h.get[Int]("height")
         _duration     <- h.get[Int]("duration")
-        _thumb        <- h.get[Option[PhotoSize]]("thumb")
+        _thumbnail    <- h.get[Option[PhotoSize]]("thumbnail")
         _fileName     <- h.get[Option[String]]("file_name")
         _mimeType     <- h.get[Option[String]]("mime_type")
         _fileSize     <- h.get[Option[Long]]("file_size")
@@ -5109,7 +5148,7 @@ object CirceImplicits {
           width = _width,
           height = _height,
           duration = _duration,
-          thumb = _thumb,
+          thumbnail = _thumbnail,
           fileName = _fileName,
           mimeType = _mimeType,
           fileSize = _fileSize
@@ -5123,7 +5162,7 @@ object CirceImplicits {
         List(
           "file_id"        -> x.fileId.asJson,
           "file_unique_id" -> x.fileUniqueId.asJson,
-          "thumb"          -> x.thumb.asJson,
+          "thumbnail"      -> x.thumbnail.asJson,
           "file_name"      -> x.fileName.asJson,
           "mime_type"      -> x.mimeType.asJson,
           "file_size"      -> x.fileSize.asJson
@@ -5136,7 +5175,7 @@ object CirceImplicits {
       for {
         _fileId       <- h.get[String]("file_id")
         _fileUniqueId <- h.get[String]("file_unique_id")
-        _thumb        <- h.get[Option[PhotoSize]]("thumb")
+        _thumbnail    <- h.get[Option[PhotoSize]]("thumbnail")
         _fileName     <- h.get[Option[String]]("file_name")
         _mimeType     <- h.get[Option[String]]("mime_type")
         _fileSize     <- h.get[Option[Long]]("file_size")
@@ -5144,11 +5183,35 @@ object CirceImplicits {
         Document(
           fileId = _fileId,
           fileUniqueId = _fileUniqueId,
-          thumb = _thumb,
+          thumbnail = _thumbnail,
           fileName = _fileName,
           mimeType = _mimeType,
           fileSize = _fileSize
         )
+      }
+    }
+
+  implicit lazy val inputstickerEncoder: Encoder[InputSticker] =
+    (x: InputSticker) => {
+      Json.fromFields(
+        List(
+          "sticker"       -> x.sticker.asJson,
+          "emoji_list"    -> x.emojiList.asJson,
+          "mask_position" -> x.maskPosition.asJson,
+          "keywords"      -> x.keywords.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputstickerDecoder: Decoder[InputSticker] =
+    Decoder.instance { h =>
+      for {
+        _sticker      <- h.get[IFile]("sticker")
+        _emojiList    <- h.getOrElse[List[String]]("emoji_list")(List.empty)
+        _maskPosition <- h.get[Option[MaskPosition]]("mask_position")
+        _keywords     <- h.getOrElse[List[String]]("keywords")(List.empty)
+      } yield {
+        InputSticker(sticker = _sticker, emojiList = _emojiList, maskPosition = _maskPosition, keywords = _keywords)
       }
     }
 

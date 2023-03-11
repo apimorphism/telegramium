@@ -7,7 +7,7 @@ package telegramium.bots
   * @param fileUniqueId
   *   Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used
   *   to download or reuse the file.
-  * @param thumb
+  * @param thumbnail
   *   Optional. Document thumbnail as defined by sender
   * @param fileName
   *   Optional. Original filename as defined by sender
@@ -21,7 +21,7 @@ package telegramium.bots
 final case class Document(
   fileId: String,
   fileUniqueId: String,
-  thumb: Option[PhotoSize] = Option.empty,
+  thumbnail: Option[PhotoSize] = Option.empty,
   fileName: Option[String] = Option.empty,
   mimeType: Option[String] = Option.empty,
   fileSize: Option[Long] = Option.empty

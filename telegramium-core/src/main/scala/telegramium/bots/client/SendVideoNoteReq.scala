@@ -16,7 +16,7 @@ import telegramium.bots.KeyboardMarkup
   *   Duration of sent video in seconds
   * @param length
   *   Video width and height, i.e. diameter of the video message
-  * @param thumb
+  * @param thumbnail
   *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
   *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed
   *   320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only
@@ -40,7 +40,7 @@ final case class SendVideoNoteReq(
   messageThreadId: Option[Int] = Option.empty,
   duration: Option[Int] = Option.empty,
   length: Option[Int] = Option.empty,
-  thumb: Option[IFile] = Option.empty,
+  thumbnail: Option[IFile] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
   replyToMessageId: Option[Int] = Option.empty,

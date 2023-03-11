@@ -4,8 +4,10 @@ import telegramium.bots.IFile
 
 /** @param userId
   *   User identifier of sticker file owner
-  * @param pngSticker
-  *   PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either
-  *   width or height must be exactly 512px.
+  * @param sticker
+  *   A file with the sticker in .WEBP, .PNG, .TGS, or .WEBM format. See https://core.telegram.org/stickers for
+  *   technical requirements.
+  * @param stickerFormat
+  *   Format of the sticker, must be one of “static”, “animated”, “video”
   */
-final case class UploadStickerFileReq(userId: Long, pngSticker: IFile)
+final case class UploadStickerFileReq(userId: Long, sticker: IFile, stickerFormat: String)

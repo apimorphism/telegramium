@@ -20,7 +20,7 @@ import telegramium.bots.KeyboardMarkup
   *   Animation width
   * @param height
   *   Animation height
-  * @param thumb
+  * @param thumbnail
   *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
   *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed
   *   320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only
@@ -54,7 +54,7 @@ final case class SendAnimationReq(
   duration: Option[Int] = Option.empty,
   width: Option[Int] = Option.empty,
   height: Option[Int] = Option.empty,
-  thumb: Option[IFile] = Option.empty,
+  thumbnail: Option[IFile] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,

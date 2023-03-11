@@ -1,7 +1,6 @@
 package telegramium.bots.client
 
 import telegramium.bots.ChatId
-import telegramium.bots.Emoji
 import telegramium.bots.KeyboardMarkup
 
 /** @param chatId
@@ -9,10 +8,9 @@ import telegramium.bots.KeyboardMarkup
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param emoji
-  *   Emoji on which the dice throw animation is based. Currently, must be one of EmojiDice, EmojiDarts,
-  *   EmojiBasketball, EmojiFootball, EmojiBowling or EmojiSlotMachine. Dice can have values 1-6 for EmojiDice,
-  *   EmojiDarts and EmojiBowling, values 1-5 for EmojiBasketball and EmojiFootball, and values 1-64 for
-  *   EmojiSlotMachine. Defaults to EmojiDice
+  *   Emoji on which the dice throw animation is based. Currently, must be one of “🎲”, “🎯”, “🏀”, “⚽”, “🎳”, or “🎰”.
+  *   Dice can have values 1-6 for “🎲”, “🎯” and “🎳”, values 1-5 for “🏀” and “⚽”, and values 1-64 for “🎰”. Defaults
+  *   to “🎲”
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
@@ -28,7 +26,7 @@ import telegramium.bots.KeyboardMarkup
 final case class SendDiceReq(
   chatId: ChatId,
   messageThreadId: Option[Int] = Option.empty,
-  emoji: Option[Emoji] = Option.empty,
+  emoji: Option[String] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
   replyToMessageId: Option[Int] = Option.empty,

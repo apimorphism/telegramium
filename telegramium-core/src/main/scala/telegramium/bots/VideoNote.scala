@@ -11,7 +11,7 @@ package telegramium.bots
   *   Video width and height (diameter of the video message) as defined by sender
   * @param duration
   *   Duration of the video in seconds as defined by sender
-  * @param thumb
+  * @param thumbnail
   *   Optional. Video thumbnail
   * @param fileSize
   *   Optional. File size in bytes
@@ -21,6 +21,6 @@ final case class VideoNote(
   fileUniqueId: String,
   length: Int,
   duration: Int,
-  thumb: Option[PhotoSize] = Option.empty,
+  thumbnail: Option[PhotoSize] = Option.empty,
   fileSize: Option[Long] = Option.empty
 )

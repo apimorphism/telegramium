@@ -8,10 +8,13 @@ import telegramium.bots.KeyboardMarkup
   *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
   * @param sticker
   *   Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass
-  *   an HTTP URL as a String for Telegram to get a .WEBP file from the Internet, or upload a new one using
-  *   multipart/form-data.
+  *   an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP or .TGS
+  *   sticker using multipart/form-data. Video stickers can only be sent by a file_id. Animated stickers can't be sent
+  *   via an HTTP URL.
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+  * @param emoji
+  *   Emoji associated with the sticker; only for just uploaded stickers
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
@@ -28,6 +31,7 @@ final case class SendStickerReq(
   chatId: ChatId,
   sticker: IFile,
   messageThreadId: Option[Int] = Option.empty,
+  emoji: Option[String] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
   replyToMessageId: Option[Int] = Option.empty,

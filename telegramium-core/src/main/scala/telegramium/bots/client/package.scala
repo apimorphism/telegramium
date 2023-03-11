@@ -15,10 +15,10 @@ object CirceImplicits {
   import telegramium.bots.MessageEntity
   import telegramium.bots.KeyboardMarkup
   import telegramium.bots.InlineQueryResult
-  import telegramium.bots.MaskPosition
+  import telegramium.bots.InputSticker
   import telegramium.bots.ChatPermissions
+  import telegramium.bots.MaskPosition
   import telegramium.bots.InlineKeyboardMarkup
-  import telegramium.bots.Emoji
   import telegramium.bots.LabeledPrice
   import telegramium.bots.InputMedia
   import telegramium.bots.MenuButton
@@ -480,20 +480,39 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val setcustomemojistickersetthumbnailreqEncoder: Encoder[SetCustomEmojiStickerSetThumbnailReq] =
+    (x: SetCustomEmojiStickerSetThumbnailReq) => {
+      Json.fromFields(
+        List(
+          "name"            -> x.name.asJson,
+          "custom_emoji_id" -> x.customEmojiId.asJson,
+          "method"          -> "setCustomEmojiStickerSetThumbnail".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setcustomemojistickersetthumbnailreqDecoder: Decoder[SetCustomEmojiStickerSetThumbnailReq] =
+    Decoder.instance { h =>
+      for {
+        _name          <- h.get[String]("name")
+        _customEmojiId <- h.get[Option[String]]("custom_emoji_id")
+      } yield {
+        SetCustomEmojiStickerSetThumbnailReq(name = _name, customEmojiId = _customEmojiId)
+      }
+    }
+
   implicit lazy val createnewstickersetreqEncoder: Encoder[CreateNewStickerSetReq] =
     (x: CreateNewStickerSetReq) => {
       Json.fromFields(
         List(
-          "user_id"       -> x.userId.asJson,
-          "name"          -> x.name.asJson,
-          "title"         -> x.title.asJson,
-          "png_sticker"   -> x.pngSticker.asJson,
-          "tgs_sticker"   -> x.tgsSticker.asJson,
-          "webm_sticker"  -> x.webmSticker.asJson,
-          "sticker_type"  -> x.stickerType.asJson,
-          "emojis"        -> x.emojis.asJson,
-          "mask_position" -> x.maskPosition.asJson,
-          "method"        -> "createNewStickerSet".asJson
+          "user_id"          -> x.userId.asJson,
+          "name"             -> x.name.asJson,
+          "title"            -> x.title.asJson,
+          "stickers"         -> x.stickers.asJson,
+          "sticker_format"   -> x.stickerFormat.asJson,
+          "sticker_type"     -> x.stickerType.asJson,
+          "needs_repainting" -> x.needsRepainting.asJson,
+          "method"           -> "createNewStickerSet".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -501,26 +520,22 @@ object CirceImplicits {
   implicit lazy val createnewstickersetreqDecoder: Decoder[CreateNewStickerSetReq] =
     Decoder.instance { h =>
       for {
-        _userId       <- h.get[Long]("user_id")
-        _name         <- h.get[String]("name")
-        _title        <- h.get[String]("title")
-        _pngSticker   <- h.get[Option[IFile]]("png_sticker")
-        _tgsSticker   <- h.get[Option[IFile]]("tgs_sticker")
-        _webmSticker  <- h.get[Option[IFile]]("webm_sticker")
-        _stickerType  <- h.get[Option[String]]("sticker_type")
-        _emojis       <- h.get[String]("emojis")
-        _maskPosition <- h.get[Option[MaskPosition]]("mask_position")
+        _userId          <- h.get[Long]("user_id")
+        _name            <- h.get[String]("name")
+        _title           <- h.get[String]("title")
+        _stickers        <- h.getOrElse[List[InputSticker]]("stickers")(List.empty)
+        _stickerFormat   <- h.get[String]("sticker_format")
+        _stickerType     <- h.get[Option[String]]("sticker_type")
+        _needsRepainting <- h.get[Option[Boolean]]("needs_repainting")
       } yield {
         CreateNewStickerSetReq(
           userId = _userId,
           name = _name,
           title = _title,
-          pngSticker = _pngSticker,
-          tgsSticker = _tgsSticker,
-          webmSticker = _webmSticker,
+          stickers = _stickers,
+          stickerFormat = _stickerFormat,
           stickerType = _stickerType,
-          emojis = _emojis,
-          maskPosition = _maskPosition
+          needsRepainting = _needsRepainting
         )
       }
     }
@@ -529,9 +544,10 @@ object CirceImplicits {
     (x: UploadStickerFileReq) => {
       Json.fromFields(
         List(
-          "user_id"     -> x.userId.asJson,
-          "png_sticker" -> x.pngSticker.asJson,
-          "method"      -> "uploadStickerFile".asJson
+          "user_id"        -> x.userId.asJson,
+          "sticker"        -> x.sticker.asJson,
+          "sticker_format" -> x.stickerFormat.asJson,
+          "method"         -> "uploadStickerFile".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -539,10 +555,11 @@ object CirceImplicits {
   implicit lazy val uploadstickerfilereqDecoder: Decoder[UploadStickerFileReq] =
     Decoder.instance { h =>
       for {
-        _userId     <- h.get[Long]("user_id")
-        _pngSticker <- h.get[IFile]("png_sticker")
+        _userId        <- h.get[Long]("user_id")
+        _sticker       <- h.get[IFile]("sticker")
+        _stickerFormat <- h.get[String]("sticker_format")
       } yield {
-        UploadStickerFileReq(userId = _userId, pngSticker = _pngSticker)
+        UploadStickerFileReq(userId = _userId, sticker = _sticker, stickerFormat = _stickerFormat)
       }
     }
 
@@ -591,6 +608,27 @@ object CirceImplicits {
         _senderChatId <- h.get[Int]("sender_chat_id")
       } yield {
         BanChatSenderChatReq(chatId = _chatId, senderChatId = _senderChatId)
+      }
+    }
+
+  implicit lazy val setstickermaskpositionreqEncoder: Encoder[SetStickerMaskPositionReq] =
+    (x: SetStickerMaskPositionReq) => {
+      Json.fromFields(
+        List(
+          "sticker"       -> x.sticker.asJson,
+          "mask_position" -> x.maskPosition.asJson,
+          "method"        -> "setStickerMaskPosition".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setstickermaskpositionreqDecoder: Decoder[SetStickerMaskPositionReq] =
+    Decoder.instance { h =>
+      for {
+        _sticker      <- h.get[String]("sticker")
+        _maskPosition <- h.get[Option[MaskPosition]]("mask_position")
+      } yield {
+        SetStickerMaskPositionReq(sticker = _sticker, maskPosition = _maskPosition)
       }
     }
 
@@ -667,6 +705,25 @@ object CirceImplicits {
         _chatId <- h.get[ChatId]("chat_id")
       } yield {
         DeleteChatStickerSetReq(chatId = _chatId)
+      }
+    }
+
+  implicit lazy val getmyshortdescriptionreqEncoder: Encoder[GetMyShortDescriptionReq] =
+    (x: GetMyShortDescriptionReq) => {
+      Json.fromFields(
+        List(
+          "language_code" -> x.languageCode.asJson,
+          "method"        -> "getMyShortDescription".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getmyshortdescriptionreqDecoder: Decoder[GetMyShortDescriptionReq] =
+    Decoder.instance { h =>
+      for {
+        _languageCode <- h.get[Option[String]]("language_code")
+      } yield {
+        GetMyShortDescriptionReq(languageCode = _languageCode)
       }
     }
 
@@ -762,7 +819,7 @@ object CirceImplicits {
       for {
         _chatId                   <- h.get[ChatId]("chat_id")
         _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
-        _emoji                    <- h.get[Option[Emoji]]("emoji")
+        _emoji                    <- h.get[Option[String]]("emoji")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
         _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
@@ -809,14 +866,10 @@ object CirceImplicits {
     (x: AddStickerToSetReq) => {
       Json.fromFields(
         List(
-          "user_id"       -> x.userId.asJson,
-          "name"          -> x.name.asJson,
-          "png_sticker"   -> x.pngSticker.asJson,
-          "tgs_sticker"   -> x.tgsSticker.asJson,
-          "webm_sticker"  -> x.webmSticker.asJson,
-          "emojis"        -> x.emojis.asJson,
-          "mask_position" -> x.maskPosition.asJson,
-          "method"        -> "addStickerToSet".asJson
+          "user_id" -> x.userId.asJson,
+          "name"    -> x.name.asJson,
+          "sticker" -> x.sticker.asJson,
+          "method"  -> "addStickerToSet".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -824,23 +877,11 @@ object CirceImplicits {
   implicit lazy val addstickertosetreqDecoder: Decoder[AddStickerToSetReq] =
     Decoder.instance { h =>
       for {
-        _userId       <- h.get[Long]("user_id")
-        _name         <- h.get[String]("name")
-        _pngSticker   <- h.get[Option[IFile]]("png_sticker")
-        _tgsSticker   <- h.get[Option[IFile]]("tgs_sticker")
-        _webmSticker  <- h.get[Option[IFile]]("webm_sticker")
-        _emojis       <- h.get[String]("emojis")
-        _maskPosition <- h.get[Option[MaskPosition]]("mask_position")
+        _userId  <- h.get[Long]("user_id")
+        _name    <- h.get[String]("name")
+        _sticker <- h.get[InputSticker]("sticker")
       } yield {
-        AddStickerToSetReq(
-          userId = _userId,
-          name = _name,
-          pngSticker = _pngSticker,
-          tgsSticker = _tgsSticker,
-          webmSticker = _webmSticker,
-          emojis = _emojis,
-          maskPosition = _maskPosition
-        )
+        AddStickerToSetReq(userId = _userId, name = _name, sticker = _sticker)
       }
     }
 
@@ -1325,6 +1366,25 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val getmydescriptionreqEncoder: Encoder[GetMyDescriptionReq] =
+    (x: GetMyDescriptionReq) => {
+      Json.fromFields(
+        List(
+          "language_code" -> x.languageCode.asJson,
+          "method"        -> "getMyDescription".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getmydescriptionreqDecoder: Decoder[GetMyDescriptionReq] =
+    Decoder.instance { h =>
+      for {
+        _languageCode <- h.get[Option[String]]("language_code")
+      } yield {
+        GetMyDescriptionReq(languageCode = _languageCode)
+      }
+    }
+
   implicit lazy val editmessagelivelocationreqEncoder: Encoder[EditMessageLiveLocationReq] =
     (x: EditMessageLiveLocationReq) => {
       Json.fromFields(
@@ -1552,7 +1612,7 @@ object CirceImplicits {
           "video_note"                  -> x.videoNote.asJson,
           "duration"                    -> x.duration.asJson,
           "length"                      -> x.length.asJson,
-          "thumb"                       -> x.thumb.asJson,
+          "thumbnail"                   -> x.thumbnail.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
           "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
@@ -1571,7 +1631,7 @@ object CirceImplicits {
         _videoNote                <- h.get[IFile]("video_note")
         _duration                 <- h.get[Option[Int]]("duration")
         _length                   <- h.get[Option[Int]]("length")
-        _thumb                    <- h.get[Option[IFile]]("thumb")
+        _thumbnail                <- h.get[Option[IFile]]("thumbnail")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
         _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
@@ -1584,7 +1644,7 @@ object CirceImplicits {
           videoNote = _videoNote,
           duration = _duration,
           length = _length,
-          thumb = _thumb,
+          thumbnail = _thumbnail,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
@@ -1793,6 +1853,27 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val setstickersettitlereqEncoder: Encoder[SetStickerSetTitleReq] =
+    (x: SetStickerSetTitleReq) => {
+      Json.fromFields(
+        List(
+          "name"   -> x.name.asJson,
+          "title"  -> x.title.asJson,
+          "method" -> "setStickerSetTitle".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setstickersettitlereqDecoder: Decoder[SetStickerSetTitleReq] =
+    Decoder.instance { h =>
+      for {
+        _name  <- h.get[String]("name")
+        _title <- h.get[String]("title")
+      } yield {
+        SetStickerSetTitleReq(name = _name, title = _title)
+      }
+    }
+
   implicit lazy val senddocumentreqEncoder: Encoder[SendDocumentReq] =
     (x: SendDocumentReq) => {
       Json.fromFields(
@@ -1800,7 +1881,7 @@ object CirceImplicits {
           "chat_id"                        -> x.chatId.asJson,
           "message_thread_id"              -> x.messageThreadId.asJson,
           "document"                       -> x.document.asJson,
-          "thumb"                          -> x.thumb.asJson,
+          "thumbnail"                      -> x.thumbnail.asJson,
           "caption"                        -> x.caption.asJson,
           "parse_mode"                     -> x.parseMode.asJson,
           "caption_entities"               -> x.captionEntities.asJson,
@@ -1821,7 +1902,7 @@ object CirceImplicits {
         _chatId                      <- h.get[ChatId]("chat_id")
         _messageThreadId             <- h.get[Option[Int]]("message_thread_id")
         _document                    <- h.get[IFile]("document")
-        _thumb                       <- h.get[Option[IFile]]("thumb")
+        _thumbnail                   <- h.get[Option[IFile]]("thumbnail")
         _caption                     <- h.get[Option[String]]("caption")
         _parseMode                   <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities             <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
@@ -1836,7 +1917,7 @@ object CirceImplicits {
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           document = _document,
-          thumb = _thumb,
+          thumbnail = _thumbnail,
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
@@ -1963,7 +2044,7 @@ object CirceImplicits {
           "duration"                    -> x.duration.asJson,
           "performer"                   -> x.performer.asJson,
           "title"                       -> x.title.asJson,
-          "thumb"                       -> x.thumb.asJson,
+          "thumbnail"                   -> x.thumbnail.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
           "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
@@ -1986,7 +2067,7 @@ object CirceImplicits {
         _duration                 <- h.get[Option[Int]]("duration")
         _performer                <- h.get[Option[String]]("performer")
         _title                    <- h.get[Option[String]]("title")
-        _thumb                    <- h.get[Option[IFile]]("thumb")
+        _thumbnail                <- h.get[Option[IFile]]("thumbnail")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
         _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
@@ -2003,7 +2084,7 @@ object CirceImplicits {
           duration = _duration,
           performer = _performer,
           title = _title,
-          thumb = _thumb,
+          thumbnail = _thumbnail,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
@@ -2043,6 +2124,27 @@ object CirceImplicits {
           useIndependentChatPermissions = _useIndependentChatPermissions,
           untilDate = _untilDate
         )
+      }
+    }
+
+  implicit lazy val setmyshortdescriptionreqEncoder: Encoder[SetMyShortDescriptionReq] =
+    (x: SetMyShortDescriptionReq) => {
+      Json.fromFields(
+        List(
+          "short_description" -> x.shortDescription.asJson,
+          "language_code"     -> x.languageCode.asJson,
+          "method"            -> "setMyShortDescription".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setmyshortdescriptionreqDecoder: Decoder[SetMyShortDescriptionReq] =
+    Decoder.instance { h =>
+      for {
+        _shortDescription <- h.get[Option[String]]("short_description")
+        _languageCode     <- h.get[Option[String]]("language_code")
+      } yield {
+        SetMyShortDescriptionReq(shortDescription = _shortDescription, languageCode = _languageCode)
       }
     }
 
@@ -2425,26 +2527,22 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val setstickersetthumbreqEncoder: Encoder[SetStickerSetThumbReq] =
-    (x: SetStickerSetThumbReq) => {
+  implicit lazy val deletestickersetreqEncoder: Encoder[DeleteStickerSetReq] =
+    (x: DeleteStickerSetReq) => {
       Json.fromFields(
         List(
-          "name"    -> x.name.asJson,
-          "user_id" -> x.userId.asJson,
-          "thumb"   -> x.thumb.asJson,
-          "method"  -> "setStickerSetThumb".asJson
+          "name"   -> x.name.asJson,
+          "method" -> "deleteStickerSet".asJson
         ).filter(!_._2.isNull)
       )
     }
 
-  implicit lazy val setstickersetthumbreqDecoder: Decoder[SetStickerSetThumbReq] =
+  implicit lazy val deletestickersetreqDecoder: Decoder[DeleteStickerSetReq] =
     Decoder.instance { h =>
       for {
-        _name   <- h.get[String]("name")
-        _userId <- h.get[Long]("user_id")
-        _thumb  <- h.get[Option[IFile]]("thumb")
+        _name <- h.get[String]("name")
       } yield {
-        SetStickerSetThumbReq(name = _name, userId = _userId, thumb = _thumb)
+        DeleteStickerSetReq(name = _name)
       }
     }
 
@@ -2521,7 +2619,7 @@ object CirceImplicits {
           "duration"                    -> x.duration.asJson,
           "width"                       -> x.width.asJson,
           "height"                      -> x.height.asJson,
-          "thumb"                       -> x.thumb.asJson,
+          "thumbnail"                   -> x.thumbnail.asJson,
           "caption"                     -> x.caption.asJson,
           "parse_mode"                  -> x.parseMode.asJson,
           "caption_entities"            -> x.captionEntities.asJson,
@@ -2546,7 +2644,7 @@ object CirceImplicits {
         _duration                 <- h.get[Option[Int]]("duration")
         _width                    <- h.get[Option[Int]]("width")
         _height                   <- h.get[Option[Int]]("height")
-        _thumb                    <- h.get[Option[IFile]]("thumb")
+        _thumbnail                <- h.get[Option[IFile]]("thumbnail")
         _caption                  <- h.get[Option[String]]("caption")
         _parseMode                <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities          <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
@@ -2565,7 +2663,7 @@ object CirceImplicits {
           duration = _duration,
           width = _width,
           height = _height,
-          thumb = _thumb,
+          thumbnail = _thumbnail,
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
@@ -2776,7 +2874,7 @@ object CirceImplicits {
           "duration"                    -> x.duration.asJson,
           "width"                       -> x.width.asJson,
           "height"                      -> x.height.asJson,
-          "thumb"                       -> x.thumb.asJson,
+          "thumbnail"                   -> x.thumbnail.asJson,
           "caption"                     -> x.caption.asJson,
           "parse_mode"                  -> x.parseMode.asJson,
           "caption_entities"            -> x.captionEntities.asJson,
@@ -2800,7 +2898,7 @@ object CirceImplicits {
         _duration                 <- h.get[Option[Int]]("duration")
         _width                    <- h.get[Option[Int]]("width")
         _height                   <- h.get[Option[Int]]("height")
-        _thumb                    <- h.get[Option[IFile]]("thumb")
+        _thumbnail                <- h.get[Option[IFile]]("thumbnail")
         _caption                  <- h.get[Option[String]]("caption")
         _parseMode                <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities          <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
@@ -2818,7 +2916,7 @@ object CirceImplicits {
           duration = _duration,
           width = _width,
           height = _height,
-          thumb = _thumb,
+          thumbnail = _thumbnail,
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
@@ -2829,6 +2927,27 @@ object CirceImplicits {
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
         )
+      }
+    }
+
+  implicit lazy val setmydescriptionreqEncoder: Encoder[SetMyDescriptionReq] =
+    (x: SetMyDescriptionReq) => {
+      Json.fromFields(
+        List(
+          "description"   -> x.description.asJson,
+          "language_code" -> x.languageCode.asJson,
+          "method"        -> "setMyDescription".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setmydescriptionreqDecoder: Decoder[SetMyDescriptionReq] =
+    Decoder.instance { h =>
+      for {
+        _description  <- h.get[Option[String]]("description")
+        _languageCode <- h.get[Option[String]]("language_code")
+      } yield {
+        SetMyDescriptionReq(description = _description, languageCode = _languageCode)
       }
     }
 
@@ -2859,6 +2978,29 @@ object CirceImplicits {
           shippingOptions = _shippingOptions,
           errorMessage = _errorMessage
         )
+      }
+    }
+
+  implicit lazy val setstickersetthumbnailreqEncoder: Encoder[SetStickerSetThumbnailReq] =
+    (x: SetStickerSetThumbnailReq) => {
+      Json.fromFields(
+        List(
+          "name"      -> x.name.asJson,
+          "user_id"   -> x.userId.asJson,
+          "thumbnail" -> x.thumbnail.asJson,
+          "method"    -> "setStickerSetThumbnail".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setstickersetthumbnailreqDecoder: Decoder[SetStickerSetThumbnailReq] =
+    Decoder.instance { h =>
+      for {
+        _name      <- h.get[String]("name")
+        _userId    <- h.get[Long]("user_id")
+        _thumbnail <- h.get[Option[IFile]]("thumbnail")
+      } yield {
+        SetStickerSetThumbnailReq(name = _name, userId = _userId, thumbnail = _thumbnail)
       }
     }
 
@@ -2913,6 +3055,7 @@ object CirceImplicits {
           "chat_id"                     -> x.chatId.asJson,
           "message_thread_id"           -> x.messageThreadId.asJson,
           "sticker"                     -> x.sticker.asJson,
+          "emoji"                       -> x.emoji.asJson,
           "disable_notification"        -> x.disableNotification.asJson,
           "protect_content"             -> x.protectContent.asJson,
           "reply_to_message_id"         -> x.replyToMessageId.asJson,
@@ -2929,6 +3072,7 @@ object CirceImplicits {
         _chatId                   <- h.get[ChatId]("chat_id")
         _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _sticker                  <- h.get[IFile]("sticker")
+        _emoji                    <- h.get[Option[String]]("emoji")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
         _protectContent           <- h.get[Option[Boolean]]("protect_content")
         _replyToMessageId         <- h.get[Option[Int]]("reply_to_message_id")
@@ -2939,12 +3083,34 @@ object CirceImplicits {
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           sticker = _sticker,
+          emoji = _emoji,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
           replyToMessageId = _replyToMessageId,
           allowSendingWithoutReply = _allowSendingWithoutReply,
           replyMarkup = _replyMarkup
         )
+      }
+    }
+
+  implicit lazy val setstickeremojilistreqEncoder: Encoder[SetStickerEmojiListReq] =
+    (x: SetStickerEmojiListReq) => {
+      Json.fromFields(
+        List(
+          "sticker"    -> x.sticker.asJson,
+          "emoji_list" -> x.emojiList.asJson,
+          "method"     -> "setStickerEmojiList".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setstickeremojilistreqDecoder: Decoder[SetStickerEmojiListReq] =
+    Decoder.instance { h =>
+      for {
+        _sticker   <- h.get[String]("sticker")
+        _emojiList <- h.getOrElse[List[String]]("emoji_list")(List.empty)
+      } yield {
+        SetStickerEmojiListReq(sticker = _sticker, emojiList = _emojiList)
       }
     }
 
@@ -3112,6 +3278,27 @@ object CirceImplicits {
           dropPendingUpdates = _dropPendingUpdates,
           secretToken = _secretToken
         )
+      }
+    }
+
+  implicit lazy val setstickerkeywordsreqEncoder: Encoder[SetStickerKeywordsReq] =
+    (x: SetStickerKeywordsReq) => {
+      Json.fromFields(
+        List(
+          "sticker"  -> x.sticker.asJson,
+          "keywords" -> x.keywords.asJson,
+          "method"   -> "setStickerKeywords".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setstickerkeywordsreqDecoder: Decoder[SetStickerKeywordsReq] =
+    Decoder.instance { h =>
+      for {
+        _sticker  <- h.get[String]("sticker")
+        _keywords <- h.getOrElse[List[String]]("keywords")(List.empty)
+      } yield {
+        SetStickerKeywordsReq(sticker = _sticker, keywords = _keywords)
       }
     }
 

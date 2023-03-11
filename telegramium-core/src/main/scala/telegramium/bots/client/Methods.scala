@@ -12,8 +12,10 @@ import telegramium.bots.Message
 import telegramium.bots.UserProfilePhotos
 import telegramium.bots.SentWebAppMessage
 import telegramium.bots.File
+import telegramium.bots.BotShortDescription
 import telegramium.bots.Poll
 import telegramium.bots.ForumTopic
+import telegramium.bots.BotDescription
 import telegramium.bots.MessageId
 import telegramium.bots.ChatInviteLink
 import telegramium.bots.User
@@ -437,9 +439,21 @@ trait Methods {
     MethodReq[Message]("sendContact", req.asJson)
   }
 
+  /** Use this method to set the thumbnail of a custom emoji sticker set. Returns True on success.
+    *
+    * @param name
+    *   Sticker set name
+    * @param customEmojiId
+    *   Custom emoji identifier of a sticker from the sticker set; pass an empty string to drop the thumbnail and use
+    *   the first sticker as the thumbnail.
+    */
+  def setCustomEmojiStickerSetThumbnail(name: String, customEmojiId: Option[String] = Option.empty): Method[Boolean] = {
+    val req = SetCustomEmojiStickerSetThumbnailReq(name, customEmojiId)
+    MethodReq[Boolean]("setCustomEmojiStickerSetThumbnail", req.asJson)
+  }
+
   /** Use this method to create a new sticker set owned by a user. The bot will be able to edit the sticker set thus
-    * created. You must use exactly one of the fields png_sticker, tgs_sticker, or webm_sticker. Returns True on
-    * success.
+    * created. Returns True on success.
     *
     * @param userId
     *   User identifier of created sticker set owner
@@ -449,71 +463,48 @@ trait Methods {
     *   "_by_<bot_username>". <bot_username> is case insensitive. 1-64 characters.
     * @param title
     *   Sticker set title, 1-64 characters
-    * @param emojis
-    *   One or more emoji corresponding to the sticker
-    * @param pngSticker
-    *   PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either
-    *   width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the
-    *   Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one
-    *   using multipart/form-data.
-    * @param tgsSticker
-    *   TGS animation with the sticker, uploaded using multipart/form-data. See
-    *   https://core.telegram.org/stickers#animated-sticker-requirements for technical requirements
-    * @param webmSticker
-    *   WEBM video with the sticker, uploaded using multipart/form-data. See
-    *   https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
+    * @param stickerFormat
+    *   Format of stickers in the set, must be one of “static”, “animated”, “video”
+    * @param stickers
+    *   A JSON-serialized list of 1-50 initial stickers to be added to the sticker set
     * @param stickerType
-    *   Type of stickers in the set, pass “regular” or “mask”. Custom emoji sticker sets can't be created via the Bot
-    *   API at the moment. By default, a regular sticker set is created.
-    * @param maskPosition
-    *   A JSON-serialized object for position where the mask should be placed on faces
+    *   Type of stickers in the set, pass “regular”, “mask”, or “custom_emoji”. By default, a regular sticker set is
+    *   created.
+    * @param needsRepainting
+    *   Pass True if stickers in the sticker set must be repainted to the color of text when used in messages, the
+    *   accent color if used as emoji status, white on chat photos, or another appropriate color based on context; for
+    *   custom emoji sticker sets only
     */
   def createNewStickerSet(
     userId: Long,
     name: String,
     title: String,
-    emojis: String,
-    pngSticker: Option[IFile] = Option.empty,
-    tgsSticker: Option[IFile] = Option.empty,
-    webmSticker: Option[IFile] = Option.empty,
+    stickerFormat: String,
+    stickers: List[InputSticker] = List.empty,
     stickerType: Option[String] = Option.empty,
-    maskPosition: Option[MaskPosition] = Option.empty
+    needsRepainting: Option[Boolean] = Option.empty
   ): Method[Boolean] = {
-    val req = CreateNewStickerSetReq(
-      userId,
-      name,
-      title,
-      emojis,
-      pngSticker,
-      tgsSticker,
-      webmSticker,
-      stickerType,
-      maskPosition
-    )
-    MethodReq[Boolean](
-      "createNewStickerSet",
-      req.asJson,
-      Map("png_sticker" -> pngSticker, "tgs_sticker" -> tgsSticker, "webm_sticker" -> webmSticker).collect {
-        case (k, Some(v)) => k -> v
-      }
-    )
+    val req = CreateNewStickerSetReq(userId, name, title, stickerFormat, stickers, stickerType, needsRepainting)
+    MethodReq[Boolean]("createNewStickerSet", req.asJson)
   }
 
-  /** Use this method to upload a .PNG file with a sticker for later use in createNewStickerSet and addStickerToSet
-    * methods (can be used multiple times). Returns the uploaded File on success.
+  /** Use this method to upload a file with a sticker for later use in the createNewStickerSet and addStickerToSet
+    * methods (the file can be used multiple times). Returns the uploaded File on success.
     *
     * @param userId
     *   User identifier of sticker file owner
-    * @param pngSticker
-    *   PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either
-    *   width or height must be exactly 512px.
+    * @param sticker
+    *   A file with the sticker in .WEBP, .PNG, .TGS, or .WEBM format. See https://core.telegram.org/stickers for
+    *   technical requirements.
+    * @param stickerFormat
+    *   Format of the sticker, must be one of “static”, “animated”, “video”
     */
-  def uploadStickerFile(userId: Long, pngSticker: IFile): Method[File] = {
-    val req = UploadStickerFileReq(userId, pngSticker)
+  def uploadStickerFile(userId: Long, sticker: IFile, stickerFormat: String): Method[File] = {
+    val req = UploadStickerFileReq(userId, sticker, stickerFormat)
     MethodReq[File](
       "uploadStickerFile",
       req.asJson,
-      Map("png_sticker" -> Option(pngSticker)).collect { case (k, Some(v)) => k -> v }
+      Map("sticker" -> Option(sticker)).collect { case (k, Some(v)) => k -> v }
     )
   }
 
@@ -554,6 +545,20 @@ trait Methods {
   def banChatSenderChat(chatId: ChatId, senderChatId: Int): Method[Boolean] = {
     val req = BanChatSenderChatReq(chatId, senderChatId)
     MethodReq[Boolean]("banChatSenderChat", req.asJson)
+  }
+
+  /** Use this method to change the mask position of a mask sticker. The sticker must belong to a sticker set that was
+    * created by the bot. Returns True on success.
+    *
+    * @param sticker
+    *   File identifier of the sticker
+    * @param maskPosition
+    *   A JSON-serialized object with the position where the mask should be placed on faces. Omit the parameter to
+    *   remove the mask position.
+    */
+  def setStickerMaskPosition(sticker: String, maskPosition: Option[MaskPosition] = Option.empty): Method[Boolean] = {
+    val req = SetStickerMaskPositionReq(sticker, maskPosition)
+    MethodReq[Boolean]("setStickerMaskPosition", req.asJson)
   }
 
   /** Use this method to send point on the map. On success, the sent Message is returned.
@@ -633,6 +638,17 @@ trait Methods {
     MethodReq[Boolean]("deleteChatStickerSet", req.asJson)
   }
 
+  /** Use this method to get the current bot short description for the given user language. Returns BotShortDescription
+    * on success.
+    *
+    * @param languageCode
+    *   A two-letter ISO 639-1 language code or an empty string
+    */
+  def getMyShortDescription(languageCode: Option[String] = Option.empty): Method[BotShortDescription] = {
+    val req = GetMyShortDescriptionReq(languageCode)
+    MethodReq[BotShortDescription]("getMyShortDescription", req.asJson)
+  }
+
   /** Use this method to stop updating a live location message before live_period expires. On success, if the message is
     * not an inline message, the edited Message is returned, otherwise True is returned.
     *
@@ -689,10 +705,9 @@ trait Methods {
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param emoji
-    *   Emoji on which the dice throw animation is based. Currently, must be one of EmojiDice, EmojiDarts,
-    *   EmojiBasketball, EmojiFootball, EmojiBowling or EmojiSlotMachine. Dice can have values 1-6 for EmojiDice,
-    *   EmojiDarts and EmojiBowling, values 1-5 for EmojiBasketball and EmojiFootball, and values 1-64 for
-    *   EmojiSlotMachine. Defaults to EmojiDice
+    *   Emoji on which the dice throw animation is based. Currently, must be one of “🎲”, “🎯”, “🏀”, “⚽”, “🎳”, or
+    *   “🎰”. Dice can have values 1-6 for “🎲”, “🎯” and “🎳”, values 1-5 for “🏀” and “⚽”, and values 1-64 for “🎰”.
+    *   Defaults to “🎲”
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -708,7 +723,7 @@ trait Methods {
   def sendDice(
     chatId: ChatId,
     messageThreadId: Option[Int] = Option.empty,
-    emoji: Option[Emoji] = Option.empty,
+    emoji: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
@@ -748,48 +763,21 @@ trait Methods {
     MethodReq[Boolean]("sendChatAction", req.asJson)
   }
 
-  /** Use this method to add a new sticker to a set created by the bot. You must use exactly one of the fields
-    * png_sticker, tgs_sticker, or webm_sticker. Animated stickers can be added to animated sticker sets and only to
-    * them. Animated sticker sets can have up to 50 stickers. Static sticker sets can have up to 120 stickers. Returns
-    * True on success.
+  /** Use this method to add a new sticker to a set created by the bot. The format of the added sticker must match the
+    * format of the other stickers in the set. Emoji sticker sets can have up to 200 stickers. Animated and video
+    * sticker sets can have up to 50 stickers. Static sticker sets can have up to 120 stickers. Returns True on success.
     *
     * @param userId
     *   User identifier of sticker set owner
     * @param name
     *   Sticker set name
-    * @param emojis
-    *   One or more emoji corresponding to the sticker
-    * @param pngSticker
-    *   PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either
-    *   width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the
-    *   Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one
-    *   using multipart/form-data.
-    * @param tgsSticker
-    *   TGS animation with the sticker, uploaded using multipart/form-data. See
-    *   https://core.telegram.org/stickers#animated-sticker-requirements for technical requirements
-    * @param webmSticker
-    *   WEBM video with the sticker, uploaded using multipart/form-data. See
-    *   https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
-    * @param maskPosition
-    *   A JSON-serialized object for position where the mask should be placed on faces
+    * @param sticker
+    *   A JSON-serialized object with information about the added sticker. If exactly the same sticker had already been
+    *   added to the set, then the set isn't changed.
     */
-  def addStickerToSet(
-    userId: Long,
-    name: String,
-    emojis: String,
-    pngSticker: Option[IFile] = Option.empty,
-    tgsSticker: Option[IFile] = Option.empty,
-    webmSticker: Option[IFile] = Option.empty,
-    maskPosition: Option[MaskPosition] = Option.empty
-  ): Method[Boolean] = {
-    val req = AddStickerToSetReq(userId, name, emojis, pngSticker, tgsSticker, webmSticker, maskPosition)
-    MethodReq[Boolean](
-      "addStickerToSet",
-      req.asJson,
-      Map("png_sticker" -> pngSticker, "tgs_sticker" -> tgsSticker, "webm_sticker" -> webmSticker).collect {
-        case (k, Some(v)) => k -> v
-      }
-    )
+  def addStickerToSet(userId: Long, name: String, sticker: InputSticker): Method[Boolean] = {
+    val req = AddStickerToSetReq(userId, name, sticker)
+    MethodReq[Boolean]("addStickerToSet", req.asJson)
   }
 
   /** Use this method to create a link for an invoice. Returns the created invoice link as String on success.
@@ -1243,6 +1231,16 @@ trait Methods {
     MethodReq[Either[Boolean, Message]]("editMessageText", req.asJson)
   }
 
+  /** Use this method to get the current bot description for the given user language. Returns BotDescription on success.
+    *
+    * @param languageCode
+    *   A two-letter ISO 639-1 language code or an empty string
+    */
+  def getMyDescription(languageCode: Option[String] = Option.empty): Method[BotDescription] = {
+    val req = GetMyDescriptionReq(languageCode)
+    MethodReq[BotDescription]("getMyDescription", req.asJson)
+  }
+
   /** Use this method to edit live location messages. A location can be edited until its live_period expires or editing
     * is explicitly disabled by a call to stopMessageLiveLocation. On success, if the edited message is not an inline
     * message, the edited Message is returned, otherwise True is returned.
@@ -1458,7 +1456,7 @@ trait Methods {
     *   Duration of sent video in seconds
     * @param length
     *   Video width and height, i.e. diameter of the video message
-    * @param thumb
+    * @param thumbnail
     *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
     *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not
     *   exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be
@@ -1482,7 +1480,7 @@ trait Methods {
     messageThreadId: Option[Int] = Option.empty,
     duration: Option[Int] = Option.empty,
     length: Option[Int] = Option.empty,
-    thumb: Option[IFile] = Option.empty,
+    thumbnail: Option[IFile] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
@@ -1495,7 +1493,7 @@ trait Methods {
       messageThreadId,
       duration,
       length,
-      thumb,
+      thumbnail,
       disableNotification,
       protectContent,
       replyToMessageId,
@@ -1505,7 +1503,7 @@ trait Methods {
     MethodReq[Message](
       "sendVideoNote",
       req.asJson,
-      Map("video_note" -> Option(videoNote), "thumb" -> thumb).collect { case (k, Some(v)) => k -> v }
+      Map("video_note" -> Option(videoNote), "thumbnail" -> thumbnail).collect { case (k, Some(v)) => k -> v }
     )
   }
 
@@ -1720,6 +1718,18 @@ trait Methods {
     MethodReq[Message]("sendInvoice", req.asJson)
   }
 
+  /** Use this method to set the title of a created sticker set. Returns True on success.
+    *
+    * @param name
+    *   Sticker set name
+    * @param title
+    *   Sticker set title, 1-64 characters
+    */
+  def setStickerSetTitle(name: String, title: String): Method[Boolean] = {
+    val req = SetStickerSetTitleReq(name, title)
+    MethodReq[Boolean]("setStickerSetTitle", req.asJson)
+  }
+
   /** Use this method to send general files. On success, the sent Message is returned. Bots can currently send files of
     * any type of up to 50 MB in size, this limit may be changed in the future.
     *
@@ -1731,7 +1741,7 @@ trait Methods {
     *   multipart/form-data.
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
-    * @param thumb
+    * @param thumbnail
     *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
     *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not
     *   exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be
@@ -1763,7 +1773,7 @@ trait Methods {
     chatId: ChatId,
     document: IFile,
     messageThreadId: Option[Int] = Option.empty,
-    thumb: Option[IFile] = Option.empty,
+    thumbnail: Option[IFile] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -1778,7 +1788,7 @@ trait Methods {
       chatId,
       document,
       messageThreadId,
-      thumb,
+      thumbnail,
       caption,
       parseMode,
       captionEntities,
@@ -1792,7 +1802,7 @@ trait Methods {
     MethodReq[Message](
       "sendDocument",
       req.asJson,
-      Map("document" -> Option(document), "thumb" -> thumb).collect { case (k, Some(v)) => k -> v }
+      Map("document" -> Option(document), "thumbnail" -> thumbnail).collect { case (k, Some(v)) => k -> v }
     )
   }
 
@@ -1909,7 +1919,7 @@ trait Methods {
     *   Performer
     * @param title
     *   Track name
-    * @param thumb
+    * @param thumbnail
     *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
     *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not
     *   exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be
@@ -1937,7 +1947,7 @@ trait Methods {
     duration: Option[Int] = Option.empty,
     performer: Option[String] = Option.empty,
     title: Option[String] = Option.empty,
-    thumb: Option[IFile] = Option.empty,
+    thumbnail: Option[IFile] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
@@ -1954,7 +1964,7 @@ trait Methods {
       duration,
       performer,
       title,
-      thumb,
+      thumbnail,
       disableNotification,
       protectContent,
       replyToMessageId,
@@ -1964,7 +1974,7 @@ trait Methods {
     MethodReq[Message](
       "sendAudio",
       req.asJson,
-      Map("audio" -> Option(audio), "thumb" -> thumb).collect { case (k, Some(v)) => k -> v }
+      Map("audio" -> Option(audio), "thumbnail" -> thumbnail).collect { case (k, Some(v)) => k -> v }
     )
   }
 
@@ -1997,6 +2007,24 @@ trait Methods {
   ): Method[Boolean] = {
     val req = RestrictChatMemberReq(chatId, userId, permissions, useIndependentChatPermissions, untilDate)
     MethodReq[Boolean]("restrictChatMember", req.asJson)
+  }
+
+  /** Use this method to change the bot's short description, which is shown on the bot's profile page and is sent
+    * together with the link when users share the bot. Returns True on success.
+    *
+    * @param shortDescription
+    *   New short description for the bot; 0-120 characters. Pass an empty string to remove the dedicated short
+    *   description for the given language.
+    * @param languageCode
+    *   A two-letter ISO 639-1 language code. If empty, the short description will be applied to all users for whose
+    *   language there is no dedicated short description.
+    */
+  def setMyShortDescription(
+    shortDescription: Option[String] = Option.empty,
+    languageCode: Option[String] = Option.empty
+  ): Method[Boolean] = {
+    val req = SetMyShortDescriptionReq(shortDescription, languageCode)
+    MethodReq[Boolean]("setMyShortDescription", req.asJson)
   }
 
   /** A simple method for testing your bot's authentication token. Requires no parameters. Returns basic information
@@ -2317,8 +2345,8 @@ trait Methods {
   }
 
   /** Use this method to change the default administrator rights requested by the bot when it's added as an
-    * administrator to groups or channels. These rights will be suggested to users, but they are are free to modify the
-    * list before adding the bot. Returns True on success.
+    * administrator to groups or channels. These rights will be suggested to users, but they are free to modify the list
+    * before adding the bot. Returns True on success.
     *
     * @param rights
     *   A JSON-serialized object describing new default administrator rights. If not specified, the default
@@ -2374,26 +2402,14 @@ trait Methods {
     MethodReq[Boolean]("pinChatMessage", req.asJson)
   }
 
-  /** Use this method to set the thumbnail of a sticker set. Animated thumbnails can be set for animated sticker sets
-    * only. Video thumbnails can be set only for video sticker sets only. Returns True on success.
+  /** Use this method to delete a sticker set that was created by the bot. Returns True on success.
     *
     * @param name
     *   Sticker set name
-    * @param userId
-    *   User identifier of the sticker set owner
-    * @param thumb
-    *   A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height exactly 100px, or
-    *   a TGS animation with the thumbnail up to 32 kilobytes in size; see
-    *   https://core.telegram.org/stickers#animated-sticker-requirements for animated sticker technical requirements, or
-    *   a WEBM video with the thumbnail up to 32 kilobytes in size; see
-    *   https://core.telegram.org/stickers#video-sticker-requirements for video sticker technical requirements. Pass a
-    *   file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for
-    *   Telegram to get a file from the Internet, or upload a new one using multipart/form-data. Animated sticker set
-    *   thumbnails can't be uploaded via HTTP URL.
     */
-  def setStickerSetThumb(name: String, userId: Long, thumb: Option[IFile] = Option.empty): Method[Boolean] = {
-    val req = SetStickerSetThumbReq(name, userId, thumb)
-    MethodReq[Boolean]("setStickerSetThumb", req.asJson, Map("thumb" -> thumb).collect { case (k, Some(v)) => k -> v })
+  def deleteStickerSet(name: String): Method[Boolean] = {
+    val req = DeleteStickerSetReq(name)
+    MethodReq[Boolean]("deleteStickerSet", req.asJson)
   }
 
   /** Use this method to edit only the reply markup of messages. On success, if the edited message is not an inline
@@ -2465,7 +2481,7 @@ trait Methods {
     *   Video width
     * @param height
     *   Video height
-    * @param thumb
+    * @param thumbnail
     *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
     *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not
     *   exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be
@@ -2501,7 +2517,7 @@ trait Methods {
     duration: Option[Int] = Option.empty,
     width: Option[Int] = Option.empty,
     height: Option[Int] = Option.empty,
-    thumb: Option[IFile] = Option.empty,
+    thumbnail: Option[IFile] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -2520,7 +2536,7 @@ trait Methods {
       duration,
       width,
       height,
-      thumb,
+      thumbnail,
       caption,
       parseMode,
       captionEntities,
@@ -2535,7 +2551,7 @@ trait Methods {
     MethodReq[Message](
       "sendVideo",
       req.asJson,
-      Map("video" -> Option(video), "thumb" -> thumb).collect { case (k, Some(v)) => k -> v }
+      Map("video" -> Option(video), "thumbnail" -> thumbnail).collect { case (k, Some(v)) => k -> v }
     )
   }
 
@@ -2685,7 +2701,7 @@ trait Methods {
     *   Animation width
     * @param height
     *   Animation height
-    * @param thumb
+    * @param thumbnail
     *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
     *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not
     *   exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be
@@ -2720,7 +2736,7 @@ trait Methods {
     duration: Option[Int] = Option.empty,
     width: Option[Int] = Option.empty,
     height: Option[Int] = Option.empty,
-    thumb: Option[IFile] = Option.empty,
+    thumbnail: Option[IFile] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -2738,7 +2754,7 @@ trait Methods {
       duration,
       width,
       height,
-      thumb,
+      thumbnail,
       caption,
       parseMode,
       captionEntities,
@@ -2752,8 +2768,26 @@ trait Methods {
     MethodReq[Message](
       "sendAnimation",
       req.asJson,
-      Map("animation" -> Option(animation), "thumb" -> thumb).collect { case (k, Some(v)) => k -> v }
+      Map("animation" -> Option(animation), "thumbnail" -> thumbnail).collect { case (k, Some(v)) => k -> v }
     )
+  }
+
+  /** Use this method to change the bot's description, which is shown in the chat with the bot if the chat is empty.
+    * Returns True on success.
+    *
+    * @param description
+    *   New bot description; 0-512 characters. Pass an empty string to remove the dedicated description for the given
+    *   language.
+    * @param languageCode
+    *   A two-letter ISO 639-1 language code. If empty, the description will be applied to all users for whose language
+    *   there is no dedicated description.
+    */
+  def setMyDescription(
+    description: Option[String] = Option.empty,
+    languageCode: Option[String] = Option.empty
+  ): Method[Boolean] = {
+    val req = SetMyDescriptionReq(description, languageCode)
+    MethodReq[Boolean]("setMyDescription", req.asJson)
   }
 
   /** If you sent an invoice requesting a shipping address and the parameter is_flexible was specified, the Bot API will
@@ -2780,6 +2814,33 @@ trait Methods {
   ): Method[Boolean] = {
     val req = AnswerShippingQueryReq(shippingQueryId, ok, shippingOptions, errorMessage)
     MethodReq[Boolean]("answerShippingQuery", req.asJson)
+  }
+
+  /** Use this method to set the thumbnail of a regular or mask sticker set. The format of the thumbnail file must match
+    * the format of the stickers in the set. Returns True on success.
+    *
+    * @param name
+    *   Sticker set name
+    * @param userId
+    *   User identifier of the sticker set owner
+    * @param thumbnail
+    *   A .WEBP or .PNG image with the thumbnail, must be up to 128 kilobytes in size and have a width and height of
+    *   exactly 100px, or a .TGS animation with a thumbnail up to 32 kilobytes in size (see
+    *   https://core.telegram.org/stickers#animated-sticker-requirements for animated sticker technical requirements),
+    *   or a WEBM video with the thumbnail up to 32 kilobytes in size; see
+    *   https://core.telegram.org/stickers#video-sticker-requirements for video sticker technical requirements. Pass a
+    *   file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for
+    *   Telegram to get a file from the Internet, or upload a new one using multipart/form-data. Animated and video
+    *   sticker set thumbnails can't be uploaded via HTTP URL. If omitted, then the thumbnail is dropped and the first
+    *   sticker is used as the thumbnail.
+    */
+  def setStickerSetThumbnail(name: String, userId: Long, thumbnail: Option[IFile] = Option.empty): Method[Boolean] = {
+    val req = SetStickerSetThumbnailReq(name, userId, thumbnail)
+    MethodReq[Boolean](
+      "setStickerSetThumbnail",
+      req.asJson,
+      Map("thumbnail" -> thumbnail).collect { case (k, Some(v)) => k -> v }
+    )
   }
 
   /** Use this method to approve a chat join request. The bot must be an administrator in the chat for this to work and
@@ -2827,10 +2888,13 @@ trait Methods {
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
     * @param sticker
     *   Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass
-    *   an HTTP URL as a String for Telegram to get a .WEBP file from the Internet, or upload a new one using
-    *   multipart/form-data.
+    *   an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP or .TGS
+    *   sticker using multipart/form-data. Video stickers can only be sent by a file_id. Animated stickers can't be sent
+    *   via an HTTP URL.
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param emoji
+    *   Emoji associated with the sticker; only for just uploaded stickers
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -2847,6 +2911,7 @@ trait Methods {
     chatId: ChatId,
     sticker: IFile,
     messageThreadId: Option[Int] = Option.empty,
+    emoji: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     replyToMessageId: Option[Int] = Option.empty,
@@ -2857,6 +2922,7 @@ trait Methods {
       chatId,
       sticker,
       messageThreadId,
+      emoji,
       disableNotification,
       protectContent,
       replyToMessageId,
@@ -2868,6 +2934,19 @@ trait Methods {
       req.asJson,
       Map("sticker" -> Option(sticker)).collect { case (k, Some(v)) => k -> v }
     )
+  }
+
+  /** Use this method to change the list of emoji assigned to a regular or custom emoji sticker. The sticker must belong
+    * to a sticker set created by the bot. Returns True on success.
+    *
+    * @param sticker
+    *   File identifier of the sticker
+    * @param emojiList
+    *   A JSON-serialized list of 1-20 emoji associated with the sticker
+    */
+  def setStickerEmojiList(sticker: String, emojiList: List[String] = List.empty): Method[Boolean] = {
+    val req = SetStickerEmojiListReq(sticker, emojiList)
+    MethodReq[Boolean]("setStickerEmojiList", req.asJson)
   }
 
   /** Use this method to edit name and icon of a topic in a forum supergroup chat. The bot must be an administrator in
@@ -3046,6 +3125,19 @@ trait Methods {
       req.asJson,
       Map("certificate" -> certificate).collect { case (k, Some(v)) => k -> v }
     )
+  }
+
+  /** Use this method to change search keywords assigned to a regular or custom emoji sticker. The sticker must belong
+    * to a sticker set created by the bot. Returns True on success.
+    *
+    * @param sticker
+    *   File identifier of the sticker
+    * @param keywords
+    *   A JSON-serialized list of 0-20 search keywords for the sticker with total length of up to 64 characters
+    */
+  def setStickerKeywords(sticker: String, keywords: List[String] = List.empty): Method[Boolean] = {
+    val req = SetStickerKeywordsReq(sticker, keywords)
+    MethodReq[Boolean]("setStickerKeywords", req.asJson)
   }
 
 }

@@ -18,7 +18,7 @@ package telegramium.bots
   *   True, if the sticker is animated
   * @param isVideo
   *   True, if the sticker is a video sticker
-  * @param thumb
+  * @param thumbnail
   *   Optional. Sticker thumbnail in the .WEBP or .JPG format
   * @param emoji
   *   Optional. Emoji associated with the sticker
@@ -30,6 +30,9 @@ package telegramium.bots
   *   Optional. For mask stickers, the position where the mask should be placed
   * @param customEmojiId
   *   Optional. For custom emoji stickers, unique identifier of the custom emoji
+  * @param needsRepainting
+  *   Optional. True, if the sticker must be repainted to a text color in messages, the color of the Telegram Premium
+  *   badge in emoji status, white color on chat photos, or another appropriate color in other places
   * @param fileSize
   *   Optional. File size in bytes
   */
@@ -41,11 +44,12 @@ final case class Sticker(
   height: Int,
   isAnimated: Boolean,
   isVideo: Boolean,
-  thumb: Option[PhotoSize] = Option.empty,
-  emoji: Option[Emoji] = Option.empty,
+  thumbnail: Option[PhotoSize] = Option.empty,
+  emoji: Option[String] = Option.empty,
   setName: Option[String] = Option.empty,
   premiumAnimation: Option[File] = Option.empty,
   maskPosition: Option[MaskPosition] = Option.empty,
   customEmojiId: Option[String] = Option.empty,
+  needsRepainting: Option[Boolean] = Option.empty,
   fileSize: Option[Long] = Option.empty
 )

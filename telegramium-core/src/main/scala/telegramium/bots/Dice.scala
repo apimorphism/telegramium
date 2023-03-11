@@ -5,7 +5,7 @@ package telegramium.bots
   * @param emoji
   *   Emoji on which the dice throw animation is based
   * @param value
-  *   Value of the dice, 1-6 for EmojiDice, EmojiDarts and EmojiBowling base emoji, 1-5 for EmojiBasketball and
-  *   EmojiFootball base emoji, 1-64 for EmojiSlotMachine base emoji
+  *   Value of the dice, 1-6 for “🎲”, “🎯” and “🎳” base emoji, 1-5 for “🏀” and “⚽” base emoji, 1-64 for “🎰” base
+  *   emoji
   */
-final case class Dice(emoji: Emoji, value: Int)
+final case class Dice(emoji: String, value: Int)

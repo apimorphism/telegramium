@@ -21,7 +21,7 @@ package telegramium.bots
   *   Optional. File size in bytes. It can be bigger than 2&#94;31 and some programming languages may have
   *   difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer
   *   or double-precision float type are safe for storing this value.
-  * @param thumb
+  * @param thumbnail
   *   Optional. Thumbnail of the album cover to which the music file belongs
   */
 final case class Audio(
@@ -33,5 +33,5 @@ final case class Audio(
   fileName: Option[String] = Option.empty,
   mimeType: Option[String] = Option.empty,
   fileSize: Option[Long] = Option.empty,
-  thumb: Option[PhotoSize] = Option.empty
+  thumbnail: Option[PhotoSize] = Option.empty
 )

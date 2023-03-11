@@ -14,7 +14,7 @@ package telegramium.bots
   *   True, if the sticker set contains video stickers
   * @param stickers
   *   List of all set stickers
-  * @param thumb
+  * @param thumbnail
   *   Optional. Sticker set thumbnail in the .WEBP, .TGS, or .WEBM format
   */
 final case class StickerSet(
@@ -24,5 +24,5 @@ final case class StickerSet(
   isAnimated: Boolean,
   isVideo: Boolean,
   stickers: List[Sticker] = List.empty,
-  thumb: Option[PhotoSize] = Option.empty
+  thumbnail: Option[PhotoSize] = Option.empty
 )

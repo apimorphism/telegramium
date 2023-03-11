@@ -13,7 +13,7 @@ package telegramium.bots
   *   Video height as defined by sender
   * @param duration
   *   Duration of the video in seconds as defined by sender
-  * @param thumb
+  * @param thumbnail
   *   Optional. Video thumbnail
   * @param fileName
   *   Optional. Original filename as defined by sender
@@ -30,7 +30,7 @@ final case class Video(
   width: Int,
   height: Int,
   duration: Int,
-  thumb: Option[PhotoSize] = Option.empty,
+  thumbnail: Option[PhotoSize] = Option.empty,
   fileName: Option[String] = Option.empty,
   mimeType: Option[String] = Option.empty,
   fileSize: Option[Long] = Option.empty

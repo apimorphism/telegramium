@@ -10,7 +10,7 @@ sealed trait InlineQueryResult {}
   *   Unique identifier for this result, 1-64 bytes
   * @param gifUrl
   *   A valid URL for the GIF file. File size must not exceed 1MB
-  * @param thumbUrl
+  * @param thumbnailUrl
   *   URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
   * @param gifWidth
   *   Optional. Width of the GIF
@@ -18,7 +18,7 @@ sealed trait InlineQueryResult {}
   *   Optional. Height of the GIF
   * @param gifDuration
   *   Optional. Duration of the GIF in seconds
-  * @param thumbMimeType
+  * @param thumbnailMimeType
   *   Optional. MIME type of the thumbnail, must be one of “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to
   *   “image/jpeg”
   * @param title
@@ -37,11 +37,11 @@ sealed trait InlineQueryResult {}
 final case class InlineQueryResultGif(
   id: String,
   gifUrl: String,
-  thumbUrl: String,
+  thumbnailUrl: String,
   gifWidth: Option[Int] = Option.empty,
   gifHeight: Option[Int] = Option.empty,
   gifDuration: Option[Int] = Option.empty,
-  thumbMimeType: Option[String] = Option.empty,
+  thumbnailMimeType: Option[String] = Option.empty,
   title: Option[String] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
@@ -76,11 +76,11 @@ final case class InlineQueryResultGif(
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
   *   Optional. Content of the message to be sent instead of the venue
-  * @param thumbUrl
+  * @param thumbnailUrl
   *   Optional. Url of the thumbnail for the result
-  * @param thumbWidth
+  * @param thumbnailWidth
   *   Optional. Thumbnail width
-  * @param thumbHeight
+  * @param thumbnailHeight
   *   Optional. Thumbnail height
   */
 final case class InlineQueryResultVenue(
@@ -95,9 +95,9 @@ final case class InlineQueryResultVenue(
   googlePlaceType: Option[String] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty,
-  thumbUrl: Option[String] = Option.empty,
-  thumbWidth: Option[Int] = Option.empty,
-  thumbHeight: Option[Int] = Option.empty
+  thumbnailUrl: Option[String] = Option.empty,
+  thumbnailWidth: Option[Int] = Option.empty,
+  thumbnailHeight: Option[Int] = Option.empty
 ) extends InlineQueryResult
 
 /** Represents a contact with a phone number. By default, this contact will be sent by the user. Alternatively, you can
@@ -117,11 +117,11 @@ final case class InlineQueryResultVenue(
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
   *   Optional. Content of the message to be sent instead of the contact
-  * @param thumbUrl
+  * @param thumbnailUrl
   *   Optional. Url of the thumbnail for the result
-  * @param thumbWidth
+  * @param thumbnailWidth
   *   Optional. Thumbnail width
-  * @param thumbHeight
+  * @param thumbnailHeight
   *   Optional. Thumbnail height
   */
 final case class InlineQueryResultContact(
@@ -132,9 +132,9 @@ final case class InlineQueryResultContact(
   vcard: Option[String] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty,
-  thumbUrl: Option[String] = Option.empty,
-  thumbWidth: Option[Int] = Option.empty,
-  thumbHeight: Option[Int] = Option.empty
+  thumbnailUrl: Option[String] = Option.empty,
+  thumbnailWidth: Option[Int] = Option.empty,
+  thumbnailHeight: Option[Int] = Option.empty
 ) extends InlineQueryResult
 
 /** Represents a link to a photo. By default, this photo will be sent by the user with optional caption. Alternatively,
@@ -144,7 +144,7 @@ final case class InlineQueryResultContact(
   *   Unique identifier for this result, 1-64 bytes
   * @param photoUrl
   *   A valid URL of the photo. Photo must be in JPEG format. Photo size must not exceed 5MB
-  * @param thumbUrl
+  * @param thumbnailUrl
   *   URL of the thumbnail for the photo
   * @param photoWidth
   *   Optional. Width of the photo
@@ -168,7 +168,7 @@ final case class InlineQueryResultContact(
 final case class InlineQueryResultPhoto(
   id: String,
   photoUrl: String,
-  thumbUrl: String,
+  thumbnailUrl: String,
   photoWidth: Option[Int] = Option.empty,
   photoHeight: Option[Int] = Option.empty,
   title: Option[String] = Option.empty,
@@ -204,11 +204,11 @@ final case class InlineQueryResultPhoto(
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
   *   Optional. Content of the message to be sent instead of the file
-  * @param thumbUrl
+  * @param thumbnailUrl
   *   Optional. URL of the thumbnail (JPEG only) for the file
-  * @param thumbWidth
+  * @param thumbnailWidth
   *   Optional. Thumbnail width
-  * @param thumbHeight
+  * @param thumbnailHeight
   *   Optional. Thumbnail height
   */
 final case class InlineQueryResultDocument(
@@ -222,9 +222,9 @@ final case class InlineQueryResultDocument(
   description: Option[String] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty,
-  thumbUrl: Option[String] = Option.empty,
-  thumbWidth: Option[Int] = Option.empty,
-  thumbHeight: Option[Int] = Option.empty
+  thumbnailUrl: Option[String] = Option.empty,
+  thumbnailWidth: Option[Int] = Option.empty,
+  thumbnailHeight: Option[Int] = Option.empty
 ) extends InlineQueryResult
 
 /** Represents a link to a voice message stored on the Telegram servers. By default, this voice message will be sent by
@@ -275,11 +275,11 @@ final case class InlineQueryResultCachedVoice(
   *   Optional. Pass True if you don't want the URL to be shown in the message
   * @param description
   *   Optional. Short description of the result
-  * @param thumbUrl
+  * @param thumbnailUrl
   *   Optional. Url of the thumbnail for the result
-  * @param thumbWidth
+  * @param thumbnailWidth
   *   Optional. Thumbnail width
-  * @param thumbHeight
+  * @param thumbnailHeight
   *   Optional. Thumbnail height
   */
 final case class InlineQueryResultArticle(
@@ -290,9 +290,9 @@ final case class InlineQueryResultArticle(
   url: Option[String] = Option.empty,
   hideUrl: Option[Boolean] = Option.empty,
   description: Option[String] = Option.empty,
-  thumbUrl: Option[String] = Option.empty,
-  thumbWidth: Option[Int] = Option.empty,
-  thumbHeight: Option[Int] = Option.empty
+  thumbnailUrl: Option[String] = Option.empty,
+  thumbnailWidth: Option[Int] = Option.empty,
+  thumbnailHeight: Option[Int] = Option.empty
 ) extends InlineQueryResult
 
 /** Represents a link to an MP3 audio file. By default, this audio file will be sent by the user. Alternatively, you can
@@ -340,7 +340,7 @@ final case class InlineQueryResultAudio(
   *   Unique identifier for this result, 1-64 bytes
   * @param mpeg4Url
   *   A valid URL for the MPEG4 file. File size must not exceed 1MB
-  * @param thumbUrl
+  * @param thumbnailUrl
   *   URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
   * @param mpeg4Width
   *   Optional. Video width
@@ -348,7 +348,7 @@ final case class InlineQueryResultAudio(
   *   Optional. Video height
   * @param mpeg4Duration
   *   Optional. Video duration in seconds
-  * @param thumbMimeType
+  * @param thumbnailMimeType
   *   Optional. MIME type of the thumbnail, must be one of “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to
   *   “image/jpeg”
   * @param title
@@ -367,11 +367,11 @@ final case class InlineQueryResultAudio(
 final case class InlineQueryResultMpeg4Gif(
   id: String,
   mpeg4Url: String,
-  thumbUrl: String,
+  thumbnailUrl: String,
   mpeg4Width: Option[Int] = Option.empty,
   mpeg4Height: Option[Int] = Option.empty,
   mpeg4Duration: Option[Int] = Option.empty,
-  thumbMimeType: Option[String] = Option.empty,
+  thumbnailMimeType: Option[String] = Option.empty,
   title: Option[String] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
@@ -562,7 +562,7 @@ final case class InlineQueryResultCachedSticker(
   *   A valid URL for the embedded video player or video file
   * @param mimeType
   *   MIME type of the content of the video URL, “text/html” or “video/mp4”
-  * @param thumbUrl
+  * @param thumbnailUrl
   *   URL of the thumbnail (JPEG only) for the video
   * @param title
   *   Title for the result
@@ -590,7 +590,7 @@ final case class InlineQueryResultVideo(
   id: String,
   videoUrl: String,
   mimeType: String,
-  thumbUrl: String,
+  thumbnailUrl: String,
   title: String,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
@@ -657,11 +657,11 @@ final case class InlineQueryResultCachedAudio(
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
   *   Optional. Content of the message to be sent instead of the location
-  * @param thumbUrl
+  * @param thumbnailUrl
   *   Optional. Url of the thumbnail for the result
-  * @param thumbWidth
+  * @param thumbnailWidth
   *   Optional. Thumbnail width
-  * @param thumbHeight
+  * @param thumbnailHeight
   *   Optional. Thumbnail height
   */
 final case class InlineQueryResultLocation(
@@ -675,9 +675,9 @@ final case class InlineQueryResultLocation(
   proximityAlertRadius: Option[Int] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty,
-  thumbUrl: Option[String] = Option.empty,
-  thumbWidth: Option[Int] = Option.empty,
-  thumbHeight: Option[Int] = Option.empty
+  thumbnailUrl: Option[String] = Option.empty,
+  thumbnailWidth: Option[Int] = Option.empty,
+  thumbnailHeight: Option[Int] = Option.empty
 ) extends InlineQueryResult
 
 /** Represents a link to an animated GIF file stored on the Telegram servers. By default, this animated GIF file will be
