@@ -1,6 +1,6 @@
 package telegramium.bots.high.keyboards
 
-import telegramium.bots.{KeyboardButton, KeyboardButtonPollType, KeyboardButtonRequestChat, KeyboardButtonRequestUser}
+import telegramium.bots.{KeyboardButton, KeyboardButtonPollType, KeyboardButtonRequestChat, KeyboardButtonRequestUser, WebAppInfo}
 
 object KeyboardButtons {
 
@@ -32,5 +32,10 @@ object KeyboardButtons {
     */
   def requestChat(text: String, requestChat: KeyboardButtonRequestChat) =
     KeyboardButton(text, requestChat = Some(requestChat))
+
+  /** The described Web App will be launched when the button is pressed.
+    */
+  def webApp(text: String, webApp: WebAppInfo) =
+    KeyboardButton(text, webApp = Some(webApp))
 
 }
