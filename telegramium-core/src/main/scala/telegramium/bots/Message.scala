@@ -228,7 +228,7 @@ final case class Message(
   userShared: Option[UserShared] = Option.empty,
   chatShared: Option[ChatShared] = Option.empty,
   connectedWebsite: Option[String] = Option.empty,
-  writeAccessAllowed: Option[WriteAccessAllowed.type] = Option.empty,
+  writeAccessAllowed: Option[WriteAccessAllowed] = Option.empty,
   passportData: Option[PassportData] = Option.empty,
   proximityAlertTriggered: Option[ProximityAlertTriggered] = Option.empty,
   forumTopicCreated: Option[ForumTopicCreated] = Option.empty,

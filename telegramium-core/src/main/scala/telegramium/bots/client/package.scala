@@ -23,6 +23,7 @@ object CirceImplicits {
   import telegramium.bots.InputMedia
   import telegramium.bots.MenuButton
   import telegramium.bots.PassportElementError
+  import telegramium.bots.InlineQueryResultsButton
   import telegramium.bots.ChatAdministratorRights
   import telegramium.bots.ShippingOption
 
@@ -239,6 +240,25 @@ object CirceImplicits {
 
   implicit lazy val getforumtopiciconstickersreqDecoder: Decoder[GetForumTopicIconStickersReq.type] = (_: HCursor) =>
     Right(GetForumTopicIconStickersReq)
+
+  implicit lazy val getmynamereqEncoder: Encoder[GetMyNameReq] =
+    (x: GetMyNameReq) => {
+      Json.fromFields(
+        List(
+          "language_code" -> x.languageCode.asJson,
+          "method"        -> "getMyName".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getmynamereqDecoder: Decoder[GetMyNameReq] =
+    Decoder.instance { h =>
+      for {
+        _languageCode <- h.get[Option[String]]("language_code")
+      } yield {
+        GetMyNameReq(languageCode = _languageCode)
+      }
+    }
 
   implicit lazy val getmydefaultadministratorrightsreqEncoder: Encoder[GetMyDefaultAdministratorRightsReq] =
     (x: GetMyDefaultAdministratorRightsReq) => {
@@ -1956,14 +1976,13 @@ object CirceImplicits {
     (x: AnswerInlineQueryReq) => {
       Json.fromFields(
         List(
-          "inline_query_id"     -> x.inlineQueryId.asJson,
-          "results"             -> x.results.asJson,
-          "cache_time"          -> x.cacheTime.asJson,
-          "is_personal"         -> x.isPersonal.asJson,
-          "next_offset"         -> x.nextOffset.asJson,
-          "switch_pm_text"      -> x.switchPmText.asJson,
-          "switch_pm_parameter" -> x.switchPmParameter.asJson,
-          "method"              -> "answerInlineQuery".asJson
+          "inline_query_id" -> x.inlineQueryId.asJson,
+          "results"         -> x.results.asJson,
+          "cache_time"      -> x.cacheTime.asJson,
+          "is_personal"     -> x.isPersonal.asJson,
+          "next_offset"     -> x.nextOffset.asJson,
+          "button"          -> x.button.asJson,
+          "method"          -> "answerInlineQuery".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1971,13 +1990,12 @@ object CirceImplicits {
   implicit lazy val answerinlinequeryreqDecoder: Decoder[AnswerInlineQueryReq] =
     Decoder.instance { h =>
       for {
-        _inlineQueryId     <- h.get[String]("inline_query_id")
-        _results           <- h.getOrElse[List[InlineQueryResult]]("results")(List.empty)
-        _cacheTime         <- h.get[Option[Int]]("cache_time")
-        _isPersonal        <- h.get[Option[Boolean]]("is_personal")
-        _nextOffset        <- h.get[Option[String]]("next_offset")
-        _switchPmText      <- h.get[Option[String]]("switch_pm_text")
-        _switchPmParameter <- h.get[Option[String]]("switch_pm_parameter")
+        _inlineQueryId <- h.get[String]("inline_query_id")
+        _results       <- h.getOrElse[List[InlineQueryResult]]("results")(List.empty)
+        _cacheTime     <- h.get[Option[Int]]("cache_time")
+        _isPersonal    <- h.get[Option[Boolean]]("is_personal")
+        _nextOffset    <- h.get[Option[String]]("next_offset")
+        _button        <- h.get[Option[InlineQueryResultsButton]]("button")
       } yield {
         AnswerInlineQueryReq(
           inlineQueryId = _inlineQueryId,
@@ -1985,8 +2003,7 @@ object CirceImplicits {
           cacheTime = _cacheTime,
           isPersonal = _isPersonal,
           nextOffset = _nextOffset,
-          switchPmText = _switchPmText,
-          switchPmParameter = _switchPmParameter
+          button = _button
         )
       }
     }
@@ -3141,6 +3158,27 @@ object CirceImplicits {
           name = _name,
           iconCustomEmojiId = _iconCustomEmojiId
         )
+      }
+    }
+
+  implicit lazy val setmynamereqEncoder: Encoder[SetMyNameReq] =
+    (x: SetMyNameReq) => {
+      Json.fromFields(
+        List(
+          "name"          -> x.name.asJson,
+          "language_code" -> x.languageCode.asJson,
+          "method"        -> "setMyName".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setmynamereqDecoder: Decoder[SetMyNameReq] =
+    Decoder.instance { h =>
+      for {
+        _name         <- h.get[Option[String]]("name")
+        _languageCode <- h.get[Option[String]]("language_code")
+      } yield {
+        SetMyNameReq(name = _name, languageCode = _languageCode)
       }
     }
 

@@ -2685,6 +2685,24 @@ object CirceImplicits {
   implicit lazy val forumtopicreopenedDecoder: Decoder[ForumTopicReopened.type] = (_: HCursor) =>
     Right(ForumTopicReopened)
 
+  implicit lazy val botnameEncoder: Encoder[BotName] =
+    (x: BotName) => {
+      Json.fromFields(
+        List(
+          "name" -> x.name.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val botnameDecoder: Decoder[BotName] =
+    Decoder.instance { h =>
+      for {
+        _name <- h.get[String]("name")
+      } yield {
+        BotName(name = _name)
+      }
+    }
+
   implicit lazy val responseparametersEncoder: Encoder[ResponseParameters] =
     (x: ResponseParameters) => {
       Json.fromFields(
@@ -3175,11 +3193,23 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val writeaccessallowedEncoder: Encoder[WriteAccessAllowed.type] = (_: WriteAccessAllowed.type) =>
-    ().asJson
+  implicit lazy val writeaccessallowedEncoder: Encoder[WriteAccessAllowed] =
+    (x: WriteAccessAllowed) => {
+      Json.fromFields(
+        List(
+          "web_app_name" -> x.webAppName.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
 
-  implicit lazy val writeaccessallowedDecoder: Decoder[WriteAccessAllowed.type] = (_: HCursor) =>
-    Right(WriteAccessAllowed)
+  implicit lazy val writeaccessallowedDecoder: Decoder[WriteAccessAllowed] =
+    Decoder.instance { h =>
+      for {
+        _webAppName <- h.get[Option[String]]("web_app_name")
+      } yield {
+        WriteAccessAllowed(webAppName = _webAppName)
+      }
+    }
 
   implicit lazy val inputfileEncoder: Encoder[InputFile.type] = (_: InputFile.type) => ().asJson
   implicit lazy val inputfileDecoder: Decoder[InputFile.type] = (_: HCursor) => Right(InputFile)
@@ -3615,6 +3645,38 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val switchinlinequerychosenchatEncoder: Encoder[SwitchInlineQueryChosenChat] =
+    (x: SwitchInlineQueryChosenChat) => {
+      Json.fromFields(
+        List(
+          "query"               -> x.query.asJson,
+          "allow_user_chats"    -> x.allowUserChats.asJson,
+          "allow_bot_chats"     -> x.allowBotChats.asJson,
+          "allow_group_chats"   -> x.allowGroupChats.asJson,
+          "allow_channel_chats" -> x.allowChannelChats.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val switchinlinequerychosenchatDecoder: Decoder[SwitchInlineQueryChosenChat] =
+    Decoder.instance { h =>
+      for {
+        _query             <- h.get[Option[String]]("query")
+        _allowUserChats    <- h.get[Option[Boolean]]("allow_user_chats")
+        _allowBotChats     <- h.get[Option[Boolean]]("allow_bot_chats")
+        _allowGroupChats   <- h.get[Option[Boolean]]("allow_group_chats")
+        _allowChannelChats <- h.get[Option[Boolean]]("allow_channel_chats")
+      } yield {
+        SwitchInlineQueryChosenChat(
+          query = _query,
+          allowUserChats = _allowUserChats,
+          allowBotChats = _allowBotChats,
+          allowGroupChats = _allowGroupChats,
+          allowChannelChats = _allowChannelChats
+        )
+      }
+    }
+
   implicit lazy val labeledpriceEncoder: Encoder[LabeledPrice] =
     (x: LabeledPrice) => {
       Json.fromFields(
@@ -3799,12 +3861,13 @@ object CirceImplicits {
     (x: ChatMemberUpdated) => {
       Json.fromFields(
         List(
-          "chat"            -> x.chat.asJson,
-          "from"            -> x.from.asJson,
-          "date"            -> x.date.asJson,
-          "old_chat_member" -> x.oldChatMember.asJson,
-          "new_chat_member" -> x.newChatMember.asJson,
-          "invite_link"     -> x.inviteLink.asJson
+          "chat"                        -> x.chat.asJson,
+          "from"                        -> x.from.asJson,
+          "date"                        -> x.date.asJson,
+          "old_chat_member"             -> x.oldChatMember.asJson,
+          "new_chat_member"             -> x.newChatMember.asJson,
+          "invite_link"                 -> x.inviteLink.asJson,
+          "via_chat_folder_invite_link" -> x.viaChatFolderInviteLink.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3812,12 +3875,13 @@ object CirceImplicits {
   implicit lazy val chatmemberupdatedDecoder: Decoder[ChatMemberUpdated] =
     Decoder.instance { h =>
       for {
-        _chat          <- h.get[Chat]("chat")
-        _from          <- h.get[User]("from")
-        _date          <- h.get[Int]("date")
-        _oldChatMember <- h.get[ChatMember]("old_chat_member")
-        _newChatMember <- h.get[ChatMember]("new_chat_member")
-        _inviteLink    <- h.get[Option[ChatInviteLink]]("invite_link")
+        _chat                    <- h.get[Chat]("chat")
+        _from                    <- h.get[User]("from")
+        _date                    <- h.get[Int]("date")
+        _oldChatMember           <- h.get[ChatMember]("old_chat_member")
+        _newChatMember           <- h.get[ChatMember]("new_chat_member")
+        _inviteLink              <- h.get[Option[ChatInviteLink]]("invite_link")
+        _viaChatFolderInviteLink <- h.get[Option[Boolean]]("via_chat_folder_invite_link")
       } yield {
         ChatMemberUpdated(
           chat = _chat,
@@ -3825,7 +3889,8 @@ object CirceImplicits {
           date = _date,
           oldChatMember = _oldChatMember,
           newChatMember = _newChatMember,
-          inviteLink = _inviteLink
+          inviteLink = _inviteLink,
+          viaChatFolderInviteLink = _viaChatFolderInviteLink
         )
       }
     }
@@ -4617,7 +4682,7 @@ object CirceImplicits {
         _userShared                   <- h.get[Option[UserShared]]("user_shared")
         _chatShared                   <- h.get[Option[ChatShared]]("chat_shared")
         _connectedWebsite             <- h.get[Option[String]]("connected_website")
-        _writeAccessAllowed           <- h.get[Option[WriteAccessAllowed.type]]("write_access_allowed")
+        _writeAccessAllowed           <- h.get[Option[WriteAccessAllowed]]("write_access_allowed")
         _passportData                 <- h.get[Option[PassportData]]("passport_data")
         _proximityAlertTriggered      <- h.get[Option[ProximityAlertTriggered]]("proximity_alert_triggered")
         _forumTopicCreated            <- h.get[Option[ForumTopicCreated]]("forum_topic_created")
@@ -4842,6 +4907,28 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val inlinequeryresultsbuttonEncoder: Encoder[InlineQueryResultsButton] =
+    (x: InlineQueryResultsButton) => {
+      Json.fromFields(
+        List(
+          "text"            -> x.text.asJson,
+          "web_app"         -> x.webApp.asJson,
+          "start_parameter" -> x.startParameter.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inlinequeryresultsbuttonDecoder: Decoder[InlineQueryResultsButton] =
+    Decoder.instance { h =>
+      for {
+        _text           <- h.get[String]("text")
+        _webApp         <- h.get[Option[WebAppInfo]]("web_app")
+        _startParameter <- h.get[Option[String]]("start_parameter")
+      } yield {
+        InlineQueryResultsButton(text = _text, webApp = _webApp, startParameter = _startParameter)
+      }
+    }
+
   implicit lazy val encryptedcredentialsEncoder: Encoder[EncryptedCredentials] =
     (x: EncryptedCredentials) => {
       Json.fromFields(
@@ -4875,6 +4962,7 @@ object CirceImplicits {
           "login_url"                        -> x.loginUrl.asJson,
           "switch_inline_query"              -> x.switchInlineQuery.asJson,
           "switch_inline_query_current_chat" -> x.switchInlineQueryCurrentChat.asJson,
+          "switch_inline_query_chosen_chat"  -> x.switchInlineQueryChosenChat.asJson,
           "callback_game"                    -> x.callbackGame.asJson,
           "pay"                              -> x.pay.asJson
         ).filter(!_._2.isNull)
@@ -4891,6 +4979,7 @@ object CirceImplicits {
         _loginUrl                     <- h.get[Option[LoginUrl]]("login_url")
         _switchInlineQuery            <- h.get[Option[String]]("switch_inline_query")
         _switchInlineQueryCurrentChat <- h.get[Option[String]]("switch_inline_query_current_chat")
+        _switchInlineQueryChosenChat  <- h.get[Option[SwitchInlineQueryChosenChat]]("switch_inline_query_chosen_chat")
         _callbackGame                 <- h.get[Option[CallbackGame.type]]("callback_game")
         _pay                          <- h.get[Option[Boolean]]("pay")
       } yield {
@@ -4902,6 +4991,7 @@ object CirceImplicits {
           loginUrl = _loginUrl,
           switchInlineQuery = _switchInlineQuery,
           switchInlineQueryCurrentChat = _switchInlineQueryCurrentChat,
+          switchInlineQueryChosenChat = _switchInlineQueryChosenChat,
           callbackGame = _callbackGame,
           pay = _pay
         )

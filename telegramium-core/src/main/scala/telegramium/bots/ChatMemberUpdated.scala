@@ -14,6 +14,8 @@ package telegramium.bots
   *   New information about the chat member
   * @param inviteLink
   *   Optional. Chat invite link, which was used by the user to join the chat; for joining by invite link events only.
+  * @param viaChatFolderInviteLink
+  *   Optional. True, if the user joined the chat via a chat folder invite link
   */
 final case class ChatMemberUpdated(
   chat: Chat,
@@ -21,5 +23,6 @@ final case class ChatMemberUpdated(
   date: Int,
   oldChatMember: ChatMember,
   newChatMember: ChatMember,
-  inviteLink: Option[ChatInviteLink] = Option.empty
+  inviteLink: Option[ChatInviteLink] = Option.empty,
+  viaChatFolderInviteLink: Option[Boolean] = Option.empty
 )

@@ -1,6 +1,6 @@
 package telegramium.bots.high.keyboards
 
-import telegramium.bots.{CallbackGame, InlineKeyboardButton, LoginUrl}
+import telegramium.bots.{CallbackGame, InlineKeyboardButton, LoginUrl, SwitchInlineQueryChosenChat}
 
 object InlineKeyboardButtons {
 
@@ -30,6 +30,15 @@ object InlineKeyboardButtons {
     */
   def switchInlineQueryCurrentChat(text: String, query: String): InlineKeyboardButton =
     InlineKeyboardButton(text, switchInlineQueryCurrentChat = Some(query))
+
+  /** Creates an inline keyboard button. Pressing the button will prompt the user to select one of their chats of the
+    * specified type, open that chat and insert the bot's username and the specified inline query in the input field.
+    */
+  def switchInlineQueryChosenChat(
+    text: String,
+    switchInlineQueryChosenChat: SwitchInlineQueryChosenChat
+  ): InlineKeyboardButton =
+    InlineKeyboardButton(text, switchInlineQueryChosenChat = Some(switchInlineQueryChosenChat))
 
   /** Creates an inline keyboard button. Pressing the button will launch the game.
     */
