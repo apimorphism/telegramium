@@ -13,7 +13,6 @@ object Dependencies {
     val scalatest        = "3.2.15"
     val testcontainers   = "0.40.15"
     val mockServerClient = "5.14.0"
-    val log4cats         = "2.5.0"
   }
 
   val catsCore   = "org.typelevel" %% "cats-core"   % V.catsCore
@@ -35,13 +34,6 @@ object Dependencies {
     "org.http4s" %% "http4s-blaze-server" % V.blazeHttp4s
   )
 
-  val logger = Seq(
-    "org.slf4j"      % "slf4j-api"       % V.slf4j,
-    "org.slf4j"      % "slf4j-simple"    % V.slf4j,
-    "ch.qos.logback" % "logback-classic" % V.logback,
-    "org.typelevel" %% "log4cats-slf4j"  % V.log4cats
-  )
-
   val testcontainers = Seq(
     "com.dimafeng"   %% "testcontainers-scala-scalatest"  % V.testcontainers   % Test,
     "com.dimafeng"   %% "testcontainers-scala-mockserver" % V.testcontainers   % Test,
@@ -53,7 +45,7 @@ object Dependencies {
   val telegramiumCore: Seq[ModuleID] = common
 
   val telegramiumHigh: Seq[ModuleID] = common ++ Seq(catsEffect, scalatest) ++ http4sServer ++
-    http4sClient ++ testcontainers ++ logger
+    http4sClient ++ testcontainers
 
-  val telegramiumExam: Seq[ModuleID] = common ++ logger ++ Seq(catsEffect) ++ http4sClient
+  val telegramiumExam: Seq[ModuleID] = common ++ Seq(catsEffect) ++ http4sClient
 }

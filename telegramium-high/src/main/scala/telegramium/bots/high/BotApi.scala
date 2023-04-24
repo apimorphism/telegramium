@@ -9,8 +9,6 @@ import org.http4s.client.*
 import org.http4s.dsl.io.*
 import org.http4s.multipart.Part
 import org.http4s.{Request, Uri}
-import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.slf4j.Slf4jLogger
 import telegramium.bots.InputPartFile
 import telegramium.bots.client.Method
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
@@ -18,7 +16,7 @@ import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormDa
 class BotApi[F[_]](
   http: Client[F],
   baseUrl: String
-)(implicit F: Async[F], logger: Logger[F])
+)(implicit F: Async[F])
     extends Api[F] {
 
   override def execute[Res](method: Method[Res]): F[Res] = {
@@ -76,9 +74,7 @@ class BotApi[F[_]](
           val desc       = description.getOrElse("")
           val methodName = method.payload.name
           val json       = method.payload.json
-          logger.error(
-            s"""Telegram Bot API request failed: code=$code description="$desc" method=$methodName, JSON: \n$json"""
-          ) *> FailedRequest(method, errorCode, description).raiseError[F, A]
+          FailedRequest(method, errorCode, description).raiseError[F, A]
       }
     } yield result
 
@@ -88,8 +84,5 @@ object BotApi {
 
   def apply[F[_]: Async](http: Client[F], baseUrl: String): BotApi[F] =
     new BotApi[F](http, baseUrl)
-
-  private implicit def defaultLogger[F[_]: Sync]: Logger[F] =
-    Slf4jLogger.getLoggerFromName("telegramium.bots.high.BotApi")
 
 }
