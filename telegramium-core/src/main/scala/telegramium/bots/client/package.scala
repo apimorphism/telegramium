@@ -149,7 +149,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _userId          <- h.get[Long]("user_id")
-        _chatId          <- h.get[Option[Int]]("chat_id")
+        _chatId          <- h.get[Option[Long]]("chat_id")
         _messageId       <- h.get[Option[Int]]("message_id")
         _inlineMessageId <- h.get[Option[String]]("inline_message_id")
       } yield {
@@ -625,7 +625,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId       <- h.get[ChatId]("chat_id")
-        _senderChatId <- h.get[Int]("sender_chat_id")
+        _senderChatId <- h.get[Long]("sender_chat_id")
       } yield {
         BanChatSenderChatReq(chatId = _chatId, senderChatId = _senderChatId)
       }
@@ -1124,7 +1124,7 @@ object CirceImplicits {
   implicit lazy val sendgamereqDecoder: Decoder[SendGameReq] =
     Decoder.instance { h =>
       for {
-        _chatId                   <- h.get[Int]("chat_id")
+        _chatId                   <- h.get[Long]("chat_id")
         _messageThreadId          <- h.get[Option[Int]]("message_thread_id")
         _gameShortName            <- h.get[String]("game_short_name")
         _disableNotification      <- h.get[Option[Boolean]]("disable_notification")
@@ -1513,7 +1513,7 @@ object CirceImplicits {
         _score              <- h.get[Int]("score")
         _force              <- h.get[Option[Boolean]]("force")
         _disableEditMessage <- h.get[Option[Boolean]]("disable_edit_message")
-        _chatId             <- h.get[Option[Int]]("chat_id")
+        _chatId             <- h.get[Option[Long]]("chat_id")
         _messageId          <- h.get[Option[Int]]("message_id")
         _inlineMessageId    <- h.get[Option[String]]("inline_message_id")
       } yield {
@@ -1688,7 +1688,7 @@ object CirceImplicits {
   implicit lazy val setchatmenubuttonreqDecoder: Decoder[SetChatMenuButtonReq] =
     Decoder.instance { h =>
       for {
-        _chatId     <- h.get[Option[Int]]("chat_id")
+        _chatId     <- h.get[Option[Long]]("chat_id")
         _menuButton <- h.get[Option[MenuButton]]("menu_button")
       } yield {
         SetChatMenuButtonReq(chatId = _chatId, menuButton = _menuButton)
@@ -2023,7 +2023,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chatId       <- h.get[ChatId]("chat_id")
-        _senderChatId <- h.get[Int]("sender_chat_id")
+        _senderChatId <- h.get[Long]("sender_chat_id")
       } yield {
         UnbanChatSenderChatReq(chatId = _chatId, senderChatId = _senderChatId)
       }
@@ -2875,7 +2875,7 @@ object CirceImplicits {
   implicit lazy val getchatmenubuttonreqDecoder: Decoder[GetChatMenuButtonReq] =
     Decoder.instance { h =>
       for {
-        _chatId <- h.get[Option[Int]]("chat_id")
+        _chatId <- h.get[Option[Long]]("chat_id")
       } yield {
         GetChatMenuButtonReq(chatId = _chatId)
       }

@@ -7,4 +7,7 @@ import telegramium.bots.MenuButton
   * @param menuButton
   *   A JSON-serialized object for the bot's new menu button. Defaults to MenuButtonDefault
   */
-final case class SetChatMenuButtonReq(chatId: Option[Int] = Option.empty, menuButton: Option[MenuButton] = Option.empty)
+final case class SetChatMenuButtonReq(
+  chatId: Option[Long] = Option.empty,
+  menuButton: Option[MenuButton] = Option.empty
+)

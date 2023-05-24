@@ -21,7 +21,7 @@ import telegramium.bots.InlineKeyboardMarkup
   *   empty, the first button must launch the game.
   */
 final case class SendGameReq(
-  chatId: Int,
+  chatId: Long,
   gameShortName: String,
   messageThreadId: Option[Int] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,

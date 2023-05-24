@@ -20,7 +20,7 @@ final case class SetGameScoreReq(
   score: Int,
   force: Option[Boolean] = Option.empty,
   disableEditMessage: Option[Boolean] = Option.empty,
-  chatId: Option[Int] = Option.empty,
+  chatId: Option[Long] = Option.empty,
   messageId: Option[Int] = Option.empty,
   inlineMessageId: Option[String] = Option.empty
 )

@@ -123,7 +123,7 @@ trait Methods {
     */
   def getGameHighScores(
     userId: Long,
-    chatId: Option[Int] = Option.empty,
+    chatId: Option[Long] = Option.empty,
     messageId: Option[Int] = Option.empty,
     inlineMessageId: Option[String] = Option.empty
   ): Method[List[GameHighScore]] = {
@@ -553,7 +553,7 @@ trait Methods {
     * @param senderChatId
     *   Unique identifier of the target sender chat
     */
-  def banChatSenderChat(chatId: ChatId, senderChatId: Int): Method[Boolean] = {
+  def banChatSenderChat(chatId: ChatId, senderChatId: Long): Method[Boolean] = {
     val req = BanChatSenderChatReq(chatId, senderChatId)
     MethodReq[Boolean]("banChatSenderChat", req.asJson)
   }
@@ -1004,7 +1004,7 @@ trait Methods {
     *   empty, the first button must launch the game.
     */
   def sendGame(
-    chatId: Int,
+    chatId: Long,
     gameShortName: String,
     messageThreadId: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
@@ -1355,7 +1355,7 @@ trait Methods {
     score: Int,
     force: Option[Boolean] = Option.empty,
     disableEditMessage: Option[Boolean] = Option.empty,
-    chatId: Option[Int] = Option.empty,
+    chatId: Option[Long] = Option.empty,
     messageId: Option[Int] = Option.empty,
     inlineMessageId: Option[String] = Option.empty
   ): Method[Either[Boolean, Message]] = {
@@ -1527,7 +1527,7 @@ trait Methods {
     *   A JSON-serialized object for the bot's new menu button. Defaults to MenuButtonDefault
     */
   def setChatMenuButton(
-    chatId: Option[Int] = Option.empty,
+    chatId: Option[Long] = Option.empty,
     menuButton: Option[MenuButton] = Option.empty
   ): Method[Boolean] = {
     val req = SetChatMenuButtonReq(chatId, menuButton)
@@ -1876,7 +1876,7 @@ trait Methods {
     * @param senderChatId
     *   Unique identifier of the target sender chat
     */
-  def unbanChatSenderChat(chatId: ChatId, senderChatId: Int): Method[Boolean] = {
+  def unbanChatSenderChat(chatId: ChatId, senderChatId: Long): Method[Boolean] = {
     val req = UnbanChatSenderChatReq(chatId, senderChatId)
     MethodReq[Boolean]("unbanChatSenderChat", req.asJson)
   }
@@ -2678,7 +2678,7 @@ trait Methods {
     * @param chatId
     *   Unique identifier for the target private chat. If not specified, default bot's menu button will be returned
     */
-  def getChatMenuButton(chatId: Option[Int] = Option.empty): Method[MenuButton] = {
+  def getChatMenuButton(chatId: Option[Long] = Option.empty): Method[MenuButton] = {
     val req = GetChatMenuButtonReq(chatId)
     MethodReq[MenuButton]("getChatMenuButton", req.asJson)
   }

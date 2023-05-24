@@ -7,4 +7,4 @@ import telegramium.bots.ChatId
   * @param senderChatId
   *   Unique identifier of the target sender chat
   */
-final case class BanChatSenderChatReq(chatId: ChatId, senderChatId: Int)
+final case class BanChatSenderChatReq(chatId: ChatId, senderChatId: Long)

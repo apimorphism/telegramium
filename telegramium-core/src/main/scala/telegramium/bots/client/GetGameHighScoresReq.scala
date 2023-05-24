@@ -11,7 +11,7 @@ package telegramium.bots.client
   */
 final case class GetGameHighScoresReq(
   userId: Long,
-  chatId: Option[Int] = Option.empty,
+  chatId: Option[Long] = Option.empty,
   messageId: Option[Int] = Option.empty,
   inlineMessageId: Option[String] = Option.empty
 )

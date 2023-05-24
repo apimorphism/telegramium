@@ -7,7 +7,7 @@ package telegramium.bots
   *   Label text on the button
   * @param webApp
   *   Optional. Description of the Web App that will be launched when the user presses the button. The Web App will be
-  *   able to switch back to the inline mode using the method web_app_switch_inline_query inside the Web App.
+  *   able to switch back to the inline mode using the method switchInlineQuery inside the Web App.
   * @param startParameter
   *   Optional. Deep-linking parameter for the /start message sent to the bot when a user presses the button. 1-64
   *   characters, only A-Z, a-z, 0-9, _ and - are allowed. Example: An inline bot that sends YouTube videos can ask the
