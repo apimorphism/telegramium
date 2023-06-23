@@ -16,6 +16,10 @@ import telegramium.bots.client.{Method, Methods as ApiMethods}
 import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
 import telegramium.bots.{CallbackQuery, ChatJoinRequest, ChatMemberUpdated, ChosenInlineResult, InlineQuery, InputPartFile, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery, Update}
 
+import java.io.FileInputStream
+import java.security.{KeyStore, Security}
+import javax.net.ssl.{KeyManagerFactory, SSLContext, TrustManagerFactory}
+
 /** @param url
   *   HTTPS url to send updates to. Use an empty string to remove webhook integration
   * @param path
@@ -113,12 +117,25 @@ abstract class WebhookBot[F[_]: Async](
     *   port used to bind the resulting Server
     * @param host
     *   host used to bind the resulting Server
+    * @param keystorePath
+    *  path to the keystore file (if you want to use a self-signed SSL certificate)
+    * @param keystorePassword
+    *  password of the keystore file (if you want to use a self-signed SSL certificate)
     */
   def start(
     port: Int,
-    host: String = org.http4s.server.defaults.IPv4Host
+    host: String = "0.0.0.0",
+    keystorePath: Option[String] = None,
+    keystorePassword: Option[String] = None
   ): Resource[F, Server] =
-    createServer(port, host) <* setWebhookResource()
+    (keystorePath, keystorePassword) match {
+      case (Some(path), Some(password)) =>
+        createSSLContext(path, password).flatMap { sslContext =>
+          createServer(port, host, Some(sslContext)) <* setWebhookResource()
+        }
+      case _ =>
+        createServer(port, host) <* setWebhookResource()
+    }
 
   private def setWebhookResource(): Resource[F, Unit] =
     Resource.eval(setWebhook(url, certificate, ipAddress, maxConnections, allowedUpdates))
@@ -155,8 +172,8 @@ abstract class WebhookBot[F[_]: Async](
     }
   }
 
-  private def createServer(port: Int, host: String): Resource[F, Server] =
-    BlazeServerBuilder[F]
+  private def createServer(port: Int, host: String, sslContext: Option[SSLContext] = None): Resource[F, Server] = {
+    val builder = BlazeServerBuilder[F]
       .bindHttp(port, host)
       .withHttpApp(routes().orNotFound)
       .withServiceErrorHandler { req =>
@@ -166,7 +183,25 @@ abstract class WebhookBot[F[_]: Async](
           case throwable => inDefaultServiceErrorHandler(Monad[F])(req)(throwable)
         }
       }
-      .resource
+    sslContext.map(builder.withSslContext).getOrElse(builder.withoutSsl).resource
+  }
+
+  private def createSSLContext(keyStorePath: String, keyStorePassword: String): Resource[F, SSLContext] =
+    Resource.eval(Async[F].blocking {
+      val ks: KeyStore          = KeyStore.getInstance("JKS")
+      val password: Array[Char] = keyStorePassword.toCharArray
+      ks.load(new FileInputStream(keyStorePath), password)
+
+      val kmf: KeyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm)
+      kmf.init(ks, password)
+
+      val tmf: TrustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm)
+      tmf.init(ks)
+
+      val context: SSLContext = SSLContext.getInstance("TLS")
+      context.init(kmf.getKeyManagers, tmf.getTrustManagers, null)
+      context
+    })
 
 }
 
@@ -197,6 +232,13 @@ object WebhookBot {
       BlazeServerBuilder[F]
         .bindHttp(port, host)
         .withHttpApp(httpRoutes.orNotFound)
+        .withServiceErrorHandler { req =>
+          {
+            case e @ DecodingError(message) =>
+              inDefaultServiceErrorHandler(Monad[F])(req)(ResponseDecodingError.default(message, e.some))
+            case throwable => inDefaultServiceErrorHandler(Monad[F])(req)(throwable)
+          }
+        }
         .resource
 
     serverResource <* setWebhooksResource
