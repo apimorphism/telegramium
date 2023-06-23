@@ -118,9 +118,9 @@ abstract class WebhookBot[F[_]: Async](
     * @param host
     *   host used to bind the resulting Server
     * @param keystorePath
-    *  path to the keystore file (if you want to use a self-signed SSL certificate)
+    *   path to the keystore file (if you want to use a self-signed SSL certificate)
     * @param keystorePassword
-    *  password of the keystore file (if you want to use a self-signed SSL certificate)
+    *   password of the keystore file (if you want to use a self-signed SSL certificate)
     */
   def start(
     port: Int,
