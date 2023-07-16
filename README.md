@@ -102,6 +102,31 @@ val inlineKeyboard: InlineKeyboardMarkup =
   InlineKeyboardMarkups.singleButton(inlineButton)
 ```
 
+#### Message entities
+
+`telegramium.bots.high.messageentities.MessageEntities` is a utility class to work with styled messages using [message entities](https://core.telegram.org/bots/api#messageentity). Compose your message's text using different formatting options like plain text, bold, italics, links, mentions, hashtags and more. 
+This class automatically takes care of calculating text offsets and lengths required by the Telegram API.
+
+```scala
+import telegramium.bots.high.messageentities.*
+
+val msgEntities = MessageEntities()
+  .bold("Hello, ")
+  .mention("@user")
+  .plain("! Welcome to our ")
+  .textLink("website", "https://example.com")
+  .lineBreak()
+  .plain("Enjoy your stay.")
+
+Methods.sendMessage(
+  chatId,
+  // Hello, @user! Welcome to our website\nEnjoy your stay.
+  text = msgEntities.toPlainText(),
+  // List(BoldMessageEntity(0, 7), MentionMessageEntity(7, 5), TextLinkMessageEntity(29, 7, "https://example.com"))
+  entities = msgEntities.toTelegramEntities()
+)
+```
+
 ### Versioning
 
 X.Y.Z where
