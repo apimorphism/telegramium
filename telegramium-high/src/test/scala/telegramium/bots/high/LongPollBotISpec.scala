@@ -3,14 +3,33 @@ package telegramium.bots.high
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 import cats.syntax.option.*
-import com.dimafeng.testcontainers.{ForAllTestContainer, MockServerContainer}
+
+import com.dimafeng.testcontainers.ForAllTestContainer
+import com.dimafeng.testcontainers.MockServerContainer
 import org.http4s.blaze.client.BlazeClientBuilder
 import org.mockserver.client.MockServerClient
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.{BeforeAndAfterAll, OptionValues}
-import telegramium.bots.high.HttpMocks.{sendMessageResponse, sendMessageRequest}
-import telegramium.bots.{CallbackQuery, Chat, ChatJoinRequest, ChatMemberMember, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingAddress, ShippingQuery, Update, User}
+
+import telegramium.bots.CallbackQuery
+import telegramium.bots.Chat
+import telegramium.bots.ChatJoinRequest
+import telegramium.bots.ChatMemberMember
+import telegramium.bots.ChatMemberUpdated
+import telegramium.bots.ChosenInlineResult
+import telegramium.bots.InlineQuery
+import telegramium.bots.Message
+import telegramium.bots.Poll
+import telegramium.bots.PollAnswer
+import telegramium.bots.PreCheckoutQuery
+import telegramium.bots.ShippingAddress
+import telegramium.bots.ShippingQuery
+import telegramium.bots.Update
+import telegramium.bots.User
+import telegramium.bots.high.HttpMocks.sendMessageRequest
+import telegramium.bots.high.HttpMocks.sendMessageResponse
 
 class LongPollBotISpec
     extends AnyFreeSpec

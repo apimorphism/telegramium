@@ -1,14 +1,19 @@
 package telegramium.bots.examples
 
+import scala.util.Random
+
 import cats.Parallel
 import cats.effect.Async
 import cats.syntax.all.*
-import org.http4s.client.Client
-import telegramium.bots.{ChatIntId, Message, UrlMessageEntity}
-import telegramium.bots.high.{Api, LongPollBot}
-import telegramium.bots.high.implicits.*
 
-import scala.util.Random
+import org.http4s.client.Client
+
+import telegramium.bots.ChatIntId
+import telegramium.bots.Message
+import telegramium.bots.UrlMessageEntity
+import telegramium.bots.high.Api
+import telegramium.bots.high.LongPollBot
+import telegramium.bots.high.implicits.*
 
 /** Scala 3 example
   */

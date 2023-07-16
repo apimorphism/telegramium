@@ -2,8 +2,19 @@ package telegramium.bots.high
 
 import cats.effect.IO
 import cats.syntax.option.*
+
+import telegramium.bots.CallbackQuery
+import telegramium.bots.ChatIntId
+import telegramium.bots.ChatJoinRequest
+import telegramium.bots.ChatMemberUpdated
+import telegramium.bots.ChosenInlineResult
+import telegramium.bots.InlineQuery
+import telegramium.bots.Message
+import telegramium.bots.Poll
+import telegramium.bots.PollAnswer
+import telegramium.bots.PreCheckoutQuery
+import telegramium.bots.ShippingQuery
 import telegramium.bots.client.Method
-import telegramium.bots.{CallbackQuery, ChatIntId, ChatJoinRequest, ChatMemberUpdated, ChosenInlineResult, InlineQuery, Message, Poll, PollAnswer, PreCheckoutQuery, ShippingQuery}
 
 class TestWebhookBot(api: Api[IO], path: String = "/")
     extends WebhookBot[IO](

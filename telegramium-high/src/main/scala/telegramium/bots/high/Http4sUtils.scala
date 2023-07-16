@@ -1,12 +1,16 @@
 package telegramium.bots.high
 
-import cats.effect.{Async, Sync}
+import java.io.File
+
+import cats.effect.Async
+import cats.effect.Sync
 import cats.syntax.flatMap.*
+
 import fs2.io.file.Path
 import io.circe.Json
-import org.http4s.multipart.{Multipart, Multiparts, Part}
-
-import java.io.File
+import org.http4s.multipart.Multipart
+import org.http4s.multipart.Multiparts
+import org.http4s.multipart.Part
 
 private[high] object Http4sUtils {
 

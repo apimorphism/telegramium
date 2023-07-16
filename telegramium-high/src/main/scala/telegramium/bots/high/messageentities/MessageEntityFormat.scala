@@ -1,8 +1,24 @@
 package telegramium.bots.high.messageentities
 
-import telegramium.bots.{BoldMessageEntity, BotCommandMessageEntity, CashtagMessageEntity, CodeMessageEntity, EmailMessageEntity, HashtagMessageEntity, ItalicMessageEntity, MentionMessageEntity, MessageEntity, PhoneNumberMessageEntity, PreMessageEntity, StrikethroughMessageEntity, TextLinkMessageEntity, TextMentionMessageEntity, UnderlineMessageEntity, UrlMessageEntity, User}
+import telegramium.bots.BoldMessageEntity
+import telegramium.bots.BotCommandMessageEntity
+import telegramium.bots.CashtagMessageEntity
+import telegramium.bots.CodeMessageEntity
 import telegramium.bots.CustomEmojiMessageEntity
+import telegramium.bots.EmailMessageEntity
+import telegramium.bots.HashtagMessageEntity
+import telegramium.bots.ItalicMessageEntity
+import telegramium.bots.MentionMessageEntity
+import telegramium.bots.MessageEntity
+import telegramium.bots.PhoneNumberMessageEntity
+import telegramium.bots.PreMessageEntity
 import telegramium.bots.SpoilerMessageEntity
+import telegramium.bots.StrikethroughMessageEntity
+import telegramium.bots.TextLinkMessageEntity
+import telegramium.bots.TextMentionMessageEntity
+import telegramium.bots.UnderlineMessageEntity
+import telegramium.bots.UrlMessageEntity
+import telegramium.bots.User
 
 /** Base class for different types of message entity formats that mirror the ones used by Telegram. Each format
   * corresponds to a specific type of content in a message, such as mentions, hashtags, URLs, and more.

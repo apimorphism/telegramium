@@ -1,13 +1,16 @@
 package telegramium.bots.high
 
-import cats.effect.{Async, Ref}
+import scala.concurrent.duration.*
+import scala.util.control.NonFatal
+
+import cats.Monad
+import cats.Parallel
+import cats.effect.Async
+import cats.effect.Ref
 import cats.syntax.all.*
-import cats.{Monad, Parallel}
+
 import telegramium.bots.*
 import telegramium.bots.client.*
-
-import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
-import scala.util.control.NonFatal
 
 abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
 

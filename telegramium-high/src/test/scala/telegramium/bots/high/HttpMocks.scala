@@ -1,8 +1,10 @@
 package telegramium.bots.high
 
+import org.mockserver.model.HttpRequest
 import org.mockserver.model.HttpRequest.request
+import org.mockserver.model.HttpResponse
 import org.mockserver.model.HttpResponse.response
-import org.mockserver.model.{HttpRequest, HttpResponse, JsonBody}
+import org.mockserver.model.JsonBody
 
 object HttpMocks {
 

@@ -2,8 +2,10 @@ package telegramium.bots.examples
 
 import cats.Parallel
 import cats.effect.Async
+
+import telegramium.bots.high.Api
+import telegramium.bots.high.LongPollBot
 import telegramium.bots.high.implicits.*
-import telegramium.bots.high.{Api, LongPollBot}
 
 class EchoBot[F[_]]()(implicit
   bot: Api[F],

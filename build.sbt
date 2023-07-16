@@ -52,15 +52,19 @@ ThisBuild / githubWorkflowPublishTargetBranches := Seq.empty
 
 ThisBuild / githubWorkflowBuildPreamble ++=
   Seq(
+    WorkflowStep.Sbt(List("scalafixAll --check")),
     WorkflowStep.Sbt(List("scalafmtCheckAll")),
     WorkflowStep.Sbt(List("scalafmtSbtCheck"))
   )
+
+Global / onChangedBuildSource := ReloadOnSourceChanges
 
 val settings = Compiler.settings ++ Seq()
 
 lazy val `telegramium-core` = (projectMatrix in file("telegramium-core"))
   .jvmPlatform(scalaVersions = Seq(scala3, scala213, scala212))
   .enablePlugins(BuildInfoPlugin)
+  .disablePlugins(ScalafixPlugin)
   .settings(settings: _*)
   .settings(libraryDependencies ++= Dependencies.telegramiumCore)
   .settings(
@@ -75,6 +79,10 @@ lazy val `telegramium-high` = (projectMatrix in file("telegramium-high"))
   .jvmPlatform(scalaVersions = Seq(scala3, scala213, scala212))
   .dependsOn(`telegramium-core`)
   .settings(settings: _*)
+  .settings(
+    semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision
+  )
   .settings(libraryDependencies ++= Dependencies.telegramiumHigh)
 
 lazy val `telegramium-examples` = (projectMatrix in file("telegramium-examples"))
@@ -85,7 +93,9 @@ lazy val `telegramium-examples` = (projectMatrix in file("telegramium-examples")
   )
   .settings(settings: _*)
   .settings(
-    publish / skip := true
+    publish / skip    := true,
+    semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision
   )
   .settings(libraryDependencies ++= Dependencies.telegramiumExam)
 
@@ -99,3 +109,5 @@ lazy val telegramium = (project in file("."))
       `telegramium-high`.projectRefs ++
       `telegramium-examples`.projectRefs: _*
   )
+
+addCommandAlias("fmtAll", "scalafixAll; scalafmtAll; scalafmtSbt")

@@ -2,7 +2,9 @@ package telegramium.bots.high.messageentities
 
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
-import telegramium.bots.{BoldMessageEntity, ItalicMessageEntity}
+
+import telegramium.bots.BoldMessageEntity
+import telegramium.bots.ItalicMessageEntity
 import telegramium.bots.high.messageentities.MessageEntityFormat.*
 
 class MessageEntityFormatSpec extends AnyFunSpec with Matchers {

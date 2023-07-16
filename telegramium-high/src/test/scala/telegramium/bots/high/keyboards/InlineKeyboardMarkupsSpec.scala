@@ -1,7 +1,9 @@
 package telegramium.bots.high.keyboards
 
 import org.scalatest.funsuite.AnyFunSuite
-import telegramium.bots.{InlineKeyboardButton, InlineKeyboardMarkup}
+
+import telegramium.bots.InlineKeyboardButton
+import telegramium.bots.InlineKeyboardMarkup
 
 class InlineKeyboardMarkupsSpec extends AnyFunSuite {
 

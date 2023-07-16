@@ -146,6 +146,8 @@ If you want to change something in telegramium-core or found a bug in it, please
 Do not create pull requests with changes on telegramium-core as we use semi-automatic way to work with it.
 Except that any PR-s are welcome.
 
+Before you submit the PR, ensure that you've formatted your code by running the `sbt fmtAll` command.
+
 ### Alternatives
 
 You may also want to have a look at these projects:

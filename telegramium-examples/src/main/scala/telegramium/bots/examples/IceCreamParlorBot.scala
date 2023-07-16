@@ -3,10 +3,15 @@ package telegramium.bots.examples
 import cats.Parallel
 import cats.effect.Async
 import cats.syntax.all.*
-import telegramium.bots.high.{Api, LongPollBot}
+
+import telegramium.bots.CallbackQuery
+import telegramium.bots.ChatIntId
+import telegramium.bots.Message
+import telegramium.bots.high.Api
+import telegramium.bots.high.LongPollBot
 import telegramium.bots.high.implicits.*
-import telegramium.bots.high.keyboards.{InlineKeyboardButtons, InlineKeyboardMarkups}
-import telegramium.bots.{CallbackQuery, ChatIntId, Message}
+import telegramium.bots.high.keyboards.InlineKeyboardButtons
+import telegramium.bots.high.keyboards.InlineKeyboardMarkups
 
 /** Show how to use inline keyboards
   */

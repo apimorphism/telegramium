@@ -1,17 +1,23 @@
 package telegramium.bots.high
 
-import cats.effect.{Async, Sync}
+import cats.effect.Async
+import cats.effect.Sync
 import cats.syntax.all.*
-import io.circe.{Decoder, Json}
+
+import io.circe.Decoder
+import io.circe.Json
 import iozhik.DecodingError
+import org.http4s.Request
+import org.http4s.Uri
 import org.http4s.circe.*
 import org.http4s.client.*
 import org.http4s.dsl.io.*
 import org.http4s.multipart.Part
-import org.http4s.{Request, Uri}
+
 import telegramium.bots.InputPartFile
 import telegramium.bots.client.Method
-import telegramium.bots.high.Http4sUtils.{toFileDataParts, toMultipartWithFormData}
+import telegramium.bots.high.Http4sUtils.toFileDataParts
+import telegramium.bots.high.Http4sUtils.toMultipartWithFormData
 
 class BotApi[F[_]](
   http: Client[F],

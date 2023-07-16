@@ -1,6 +1,7 @@
 package telegramium.bots.high.keyboards
 
-import telegramium.bots.{KeyboardButton, ReplyKeyboardMarkup}
+import telegramium.bots.KeyboardButton
+import telegramium.bots.ReplyKeyboardMarkup
 
 object ReplyKeyboardMarkups {
 

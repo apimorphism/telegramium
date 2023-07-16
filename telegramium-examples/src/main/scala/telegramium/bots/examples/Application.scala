@@ -3,9 +3,11 @@ package telegramium.bots.examples
 import cats.effect.ExitCode
 import cats.effect.IO
 import cats.effect.IOApp
+
 import org.http4s.blaze.client.BlazeClientBuilder
 import org.http4s.client.Client
 import org.http4s.client.middleware.Logger
+
 import telegramium.bots.high.Api
 import telegramium.bots.high.BotApi
 

@@ -1,6 +1,9 @@
 package telegramium.bots.high.keyboards
 
-import telegramium.bots.{CallbackGame, InlineKeyboardButton, LoginUrl, SwitchInlineQueryChosenChat}
+import telegramium.bots.CallbackGame
+import telegramium.bots.InlineKeyboardButton
+import telegramium.bots.LoginUrl
+import telegramium.bots.SwitchInlineQueryChosenChat
 
 object InlineKeyboardButtons {
 

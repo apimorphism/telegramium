@@ -1,10 +1,12 @@
 package telegramium.bots.high
 
+import java.io.File
+
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 
-import java.io.File
-import com.dimafeng.testcontainers.{ForAllTestContainer, MockServerContainer}
+import com.dimafeng.testcontainers.ForAllTestContainer
+import com.dimafeng.testcontainers.MockServerContainer
 import org.http4s.blaze.client.BlazeClientBuilder
 import org.mockserver.client.MockServerClient
 import org.mockserver.model.HttpRequest.request
@@ -13,7 +15,11 @@ import org.mockserver.model.JsonBody
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
-import telegramium.bots.{ChatIntId, InputLinkFile, InputPartFile, Message}
+
+import telegramium.bots.ChatIntId
+import telegramium.bots.InputLinkFile
+import telegramium.bots.InputPartFile
+import telegramium.bots.Message
 
 class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfterAll with Matchers {
   lazy val container: MockServerContainer = MockServerContainer(MockServerContainerVersion)

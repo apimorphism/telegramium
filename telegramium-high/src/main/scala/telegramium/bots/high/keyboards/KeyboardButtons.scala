@@ -1,6 +1,10 @@
 package telegramium.bots.high.keyboards
 
-import telegramium.bots.{KeyboardButton, KeyboardButtonPollType, KeyboardButtonRequestChat, KeyboardButtonRequestUser, WebAppInfo}
+import telegramium.bots.KeyboardButton
+import telegramium.bots.KeyboardButtonPollType
+import telegramium.bots.KeyboardButtonRequestChat
+import telegramium.bots.KeyboardButtonRequestUser
+import telegramium.bots.WebAppInfo
 
 object KeyboardButtons {
 
