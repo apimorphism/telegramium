@@ -154,10 +154,11 @@ You may also want to have a look at these projects:
 
 ### Known usages
 
+* [johnspade/taskobot-scala](https://github.com/johnspade/taskobot-scala): Taskobot is a task collaboration inline Telegram bot. 
+Perhaps the most up-to-date bot from a Telegramium mantainer, built with ZIO.
+* [johnspade/s10ns_bot](https://github.com/johnspade/s10ns_bot): Subscription Management Telegram Bot
 * [TurtleBots/playcs](https://github.com/TurtleBots/playcs): create dedicated servers for CS 1.6 client
 * [TurtleBots/gdetram](https://github.com/TurtleBots/gdetram): public transport arrival tabloid with chat bot interface
-* [johnspade/s10ns_bot](https://github.com/johnspade/s10ns_bot): Subscription Management Telegram Bot
-* [johnspade/taskobot-scala](https://github.com/johnspade/taskobot-scala): Taskobot is a task collaboration inline Telegram bot
 * [b1nd/stonks](https://github.com/b1nd/stonks): Investment Portfolio Calculation Bot
 * [benkio/myTelegramBot](https://github.com/benkio/myTelegramBot)
 * [TurtleBots/adjutant](https://github.com/TurtleBots/adjutant): adjutant provides shareplace for sc2 builds through the chatbot
