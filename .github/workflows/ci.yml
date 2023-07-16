@@ -55,6 +55,8 @@ jobs:
           java-version: 8
           cache: sbt
 
+      - run: sbt '++ ${{ matrix.scala }}' 'scalafixAll --check'
+
       - run: sbt '++ ${{ matrix.scala }}' scalafmtCheckAll
 
       - run: sbt '++ ${{ matrix.scala }}' scalafmtSbtCheck
