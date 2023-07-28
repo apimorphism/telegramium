@@ -152,7 +152,7 @@ abstract class WebhookBot[F[_]: Async](
   ): Resource[F, Server] =
     (keystorePath, keystorePassword) match {
       case (Some(path), Some(password)) =>
-        createSSLContext(path, password).flatMap { sslContext =>
+        WebhookBot.createSSLContext(path, password).flatMap { sslContext =>
           createServer(port, host, Some(sslContext)) <* setWebhookResource()
         }
       case _ =>
@@ -208,23 +208,6 @@ abstract class WebhookBot[F[_]: Async](
     sslContext.map(builder.withSslContext).getOrElse(builder.withoutSsl).resource
   }
 
-  private def createSSLContext(keyStorePath: String, keyStorePassword: String): Resource[F, SSLContext] =
-    Resource.eval(Async[F].blocking {
-      val ks: KeyStore          = KeyStore.getInstance("JKS")
-      val password: Array[Char] = keyStorePassword.toCharArray
-      ks.load(new FileInputStream(keyStorePath), password)
-
-      val kmf: KeyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm)
-      kmf.init(ks, password)
-
-      val tmf: TrustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm)
-      tmf.init(ks)
-
-      val context: SSLContext = SSLContext.getInstance("TLS")
-      context.init(kmf.getKeyManagers, tmf.getTrustManagers, null)
-      context
-    })
-
 }
 
 object WebhookBot {
@@ -244,26 +227,51 @@ object WebhookBot {
   def compose[F[_]: Async](
     bots: List[WebhookBot[F]],
     port: Int,
-    host: String = org.http4s.server.defaults.IPv4Host
+    host: String = "0.0.0.0",
+    keystorePath: Option[String] = None,
+    keystorePassword: Option[String] = None
   ): Resource[F, Server] = {
 
-    val setWebhooksResource: Resource[F, Unit] = bots.foldMapM(_.setWebhookResource())
-    val httpRoutes: HttpRoutes[F]              = bots.foldMapK(_.routes())
+    val sslContext: Option[Resource[F, SSLContext]] = for {
+      path     <- keystorePath
+      password <- keystorePassword
+    } yield createSSLContext(path, password)
 
-    val serverResource: Resource[F, Server] =
-      BlazeServerBuilder[F]
-        .bindHttp(port, host)
-        .withHttpApp(httpRoutes.orNotFound)
-        .withServiceErrorHandler { req =>
-          {
-            case e @ DecodingError(message) =>
-              inDefaultServiceErrorHandler(Monad[F])(req)(ResponseDecodingError.default(message, e.some))
-            case throwable => inDefaultServiceErrorHandler(Monad[F])(req)(throwable)
+    for {
+      _ <- bots.foldMapM(_.setWebhookResource())
+      httpRoutes = bots.foldMapK(_.routes())
+
+      serverBuilder =
+        BlazeServerBuilder[F]
+          .bindHttp(port, host)
+          .withHttpApp(httpRoutes.orNotFound)
+          .withServiceErrorHandler { req =>
+            {
+              case e @ DecodingError(message) =>
+                inDefaultServiceErrorHandler(Monad[F])(req)(ResponseDecodingError.default(message, e.some))
+              case throwable => inDefaultServiceErrorHandler(Monad[F])(req)(throwable)
+            }
           }
-        }
-        .resource
-
-    serverResource <* setWebhooksResource
+      serverResource <- sslContext
+        .fold(serverBuilder.withoutSsl.resource)(_.flatMap(context => serverBuilder.withSslContext(context).resource))
+    } yield serverResource
   }
+
+  def createSSLContext[F[_]: Async](keyStorePath: String, keyStorePassword: String): Resource[F, SSLContext] =
+    Resource.eval(Async[F].blocking {
+      val ks: KeyStore          = KeyStore.getInstance("JKS")
+      val password: Array[Char] = keyStorePassword.toCharArray
+      ks.load(new FileInputStream(keyStorePath), password)
+
+      val kmf: KeyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm)
+      kmf.init(ks, password)
+
+      val tmf: TrustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm)
+      tmf.init(ks)
+
+      val context: SSLContext = SSLContext.getInstance("TLS")
+      context.init(kmf.getKeyManagers, tmf.getTrustManagers, null)
+      context
+    })
 
 }
