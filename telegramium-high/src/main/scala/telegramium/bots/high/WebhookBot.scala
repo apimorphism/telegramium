@@ -152,7 +152,7 @@ abstract class WebhookBot[F[_]: Async](
   ): Resource[F, Server] =
     (keystorePath, keystorePassword) match {
       case (Some(path), Some(password)) =>
-        createSSLContext(path, password).flatMap { sslContext =>
+        WebhookBot.createSSLContext(path, password).flatMap { sslContext =>
           createServer(port, host, Some(sslContext)) <* setWebhookResource()
         }
       case _ =>
@@ -208,7 +208,60 @@ abstract class WebhookBot[F[_]: Async](
     sslContext.map(builder.withSslContext).getOrElse(builder.withoutSsl).resource
   }
 
-  private def createSSLContext(keyStorePath: String, keyStorePassword: String): Resource[F, SSLContext] =
+}
+
+object WebhookBot {
+
+  /** Use this method to compose multiple Webhook bots as a single Http Server that will register the webhooks and
+    * handle the requests.
+    *
+    * @param bots
+    *   List of bots to compose
+    * @param port
+    *   Port to bind to
+    * @param host
+    *   Host to bind to. Default localhost
+    * @param keystorePath
+    *   path to the keystore file (if you want to use a self-signed SSL certificate)
+    * @param keystorePassword
+    *   password of the keystore file (if you want to use a self-signed SSL certificate)
+    * @return
+    *   `Resource[F, Server[F]]` Result Http server wrapped into a Resource data type
+    */
+  def compose[F[_]: Async](
+    bots: List[WebhookBot[F]],
+    port: Int,
+    host: String = "0.0.0.0",
+    keystorePath: Option[String] = None,
+    keystorePassword: Option[String] = None
+  ): Resource[F, Server] = {
+
+    val sslContext: Option[Resource[F, SSLContext]] = for {
+      path     <- keystorePath
+      password <- keystorePassword
+    } yield createSSLContext(path, password)
+
+    val httpRoutes: HttpRoutes[F] = bots.foldMapK(_.routes())
+    val serverBuilder: BlazeServerBuilder[F] =
+      BlazeServerBuilder[F]
+        .bindHttp(port, host)
+        .withHttpApp(httpRoutes.orNotFound)
+        .withServiceErrorHandler { req =>
+          {
+            case e @ DecodingError(message) =>
+              inDefaultServiceErrorHandler(Monad[F])(req)(ResponseDecodingError.default(message, e.some))
+            case throwable => inDefaultServiceErrorHandler(Monad[F])(req)(throwable)
+          }
+        }
+
+    for {
+      serverResource <- sslContext
+        .fold(serverBuilder.withoutSsl.resource)(_.flatMap(context => serverBuilder.withSslContext(context).resource))
+      _ <- bots.foldMapM(_.setWebhookResource())
+    } yield serverResource
+  }
+
+  private def createSSLContext[F[_]: Async](keyStorePath: String, keyStorePassword: String): Resource[F, SSLContext] =
     Resource.eval(Async[F].blocking {
       val ks: KeyStore          = KeyStore.getInstance("JKS")
       val password: Array[Char] = keyStorePassword.toCharArray
@@ -224,46 +277,5 @@ abstract class WebhookBot[F[_]: Async](
       context.init(kmf.getKeyManagers, tmf.getTrustManagers, null)
       context
     })
-
-}
-
-object WebhookBot {
-
-  /** Use this method to compose multiple Webhook bots as a single Http Server that will register the webhooks and
-    * handle the requests.
-    *
-    * @param bots
-    *   List of bots to compose
-    * @param port
-    *   Port to bind to
-    * @param host
-    *   Host to bind to. Default localhost
-    * @return
-    *   `Resource[F, Server[F]]` Result Http server wrapped into a Resource data type
-    */
-  def compose[F[_]: Async](
-    bots: List[WebhookBot[F]],
-    port: Int,
-    host: String = org.http4s.server.defaults.IPv4Host
-  ): Resource[F, Server] = {
-
-    val setWebhooksResource: Resource[F, Unit] = bots.foldMapM(_.setWebhookResource())
-    val httpRoutes: HttpRoutes[F]              = bots.foldMapK(_.routes())
-
-    val serverResource: Resource[F, Server] =
-      BlazeServerBuilder[F]
-        .bindHttp(port, host)
-        .withHttpApp(httpRoutes.orNotFound)
-        .withServiceErrorHandler { req =>
-          {
-            case e @ DecodingError(message) =>
-              inDefaultServiceErrorHandler(Monad[F])(req)(ResponseDecodingError.default(message, e.some))
-            case throwable => inDefaultServiceErrorHandler(Monad[F])(req)(throwable)
-          }
-        }
-        .resource
-
-    serverResource <* setWebhooksResource
-  }
 
 }
