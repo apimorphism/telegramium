@@ -2281,6 +2281,19 @@ trait Methods {
     MethodReq[Boolean]("promoteChatMember", req.asJson)
   }
 
+  /** Use this method to clear the list of pinned messages in a General forum topic. The bot must be an administrator in
+    * the chat for this to work and must have the can_pin_messages administrator right in the supergroup. Returns True
+    * on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup (in the format
+    *   &#064;supergroupusername)
+    */
+  def unpinAllGeneralForumTopicMessages(chatId: ChatId): Method[Boolean] = {
+    val req = UnpinAllGeneralForumTopicMessagesReq(chatId)
+    MethodReq[Boolean]("unpinAllGeneralForumTopicMessages", req.asJson)
+  }
+
   /** Use this method to edit captions of messages. On success, if the edited message is not an inline message, the
     * edited Message is returned, otherwise True is returned.
     *

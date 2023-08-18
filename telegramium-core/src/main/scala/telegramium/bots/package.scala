@@ -2816,6 +2816,7 @@ object CirceImplicits {
           "photo"                                   -> x.photo.asJson,
           "active_usernames"                        -> x.activeUsernames.asJson,
           "emoji_status_custom_emoji_id"            -> x.emojiStatusCustomEmojiId.asJson,
+          "emoji_status_expiration_date"            -> x.emojiStatusExpirationDate.asJson,
           "bio"                                     -> x.bio.asJson,
           "has_private_forwards"                    -> x.hasPrivateForwards.asJson,
           "has_restricted_voice_and_video_messages" -> x.hasRestrictedVoiceAndVideoMessages.asJson,
@@ -2851,6 +2852,7 @@ object CirceImplicits {
         _photo                              <- h.get[Option[ChatPhoto]]("photo")
         _activeUsernames                    <- h.getOrElse[List[String]]("active_usernames")(List.empty)
         _emojiStatusCustomEmojiId           <- h.get[Option[String]]("emoji_status_custom_emoji_id")
+        _emojiStatusExpirationDate          <- h.get[Option[Int]]("emoji_status_expiration_date")
         _bio                                <- h.get[Option[String]]("bio")
         _hasPrivateForwards                 <- h.get[Option[Boolean]]("has_private_forwards")
         _hasRestrictedVoiceAndVideoMessages <- h.get[Option[Boolean]]("has_restricted_voice_and_video_messages")
@@ -2881,6 +2883,7 @@ object CirceImplicits {
           photo = _photo,
           activeUsernames = _activeUsernames,
           emojiStatusCustomEmojiId = _emojiStatusCustomEmojiId,
+          emojiStatusExpirationDate = _emojiStatusExpirationDate,
           bio = _bio,
           hasPrivateForwards = _hasPrivateForwards,
           hasRestrictedVoiceAndVideoMessages = _hasRestrictedVoiceAndVideoMessages,
@@ -3538,6 +3541,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "poll_id"    -> x.pollId.asJson,
+          "voter_chat" -> x.voterChat.asJson,
           "user"       -> x.user.asJson,
           "option_ids" -> x.optionIds.asJson
         ).filter(!_._2.isNull)
@@ -3548,10 +3552,11 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _pollId    <- h.get[String]("poll_id")
-        _user      <- h.get[User]("user")
+        _voterChat <- h.get[Option[Chat]]("voter_chat")
+        _user      <- h.get[Option[User]]("user")
         _optionIds <- h.getOrElse[List[Int]]("option_ids")(List.empty)
       } yield {
-        PollAnswer(pollId = _pollId, user = _user, optionIds = _optionIds)
+        PollAnswer(pollId = _pollId, voterChat = _voterChat, user = _user, optionIds = _optionIds)
       }
     }
 
@@ -3894,6 +3899,9 @@ object CirceImplicits {
         )
       }
     }
+
+  implicit lazy val storyEncoder: Encoder[Story.type] = (_: Story.type) => ().asJson
+  implicit lazy val storyDecoder: Decoder[Story.type] = (_: HCursor) => Right(Story)
 
   implicit lazy val passportdataEncoder: Encoder[PassportData] =
     (x: PassportData) => {
@@ -4573,6 +4581,7 @@ object CirceImplicits {
           "document"                          -> x.document.asJson,
           "photo"                             -> x.photo.asJson,
           "sticker"                           -> x.sticker.asJson,
+          "story"                             -> x.story.asJson,
           "video"                             -> x.video.asJson,
           "video_note"                        -> x.videoNote.asJson,
           "voice"                             -> x.voice.asJson,
@@ -4651,6 +4660,7 @@ object CirceImplicits {
         _document              <- h.get[Option[Document]]("document")
         _photo                 <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
         _sticker               <- h.get[Option[Sticker]]("sticker")
+        _story                 <- h.get[Option[Story.type]]("story")
         _video                 <- h.get[Option[Video]]("video")
         _videoNote             <- h.get[Option[VideoNote]]("video_note")
         _voice                 <- h.get[Option[Voice]]("voice")
@@ -4726,6 +4736,7 @@ object CirceImplicits {
           document = _document,
           photo = _photo,
           sticker = _sticker,
+          story = _story,
           video = _video,
           videoNote = _videoNote,
           voice = _voice,

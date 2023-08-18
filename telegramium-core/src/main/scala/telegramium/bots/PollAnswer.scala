@@ -4,9 +4,16 @@ package telegramium.bots
   *
   * @param pollId
   *   Unique poll identifier
+  * @param voterChat
+  *   Optional. The chat that changed the answer to the poll, if the voter is anonymous
   * @param user
-  *   The user, who changed the answer to the poll
+  *   Optional. The user that changed the answer to the poll, if the voter isn't anonymous
   * @param optionIds
-  *   0-based identifiers of answer options, chosen by the user. May be empty if the user retracted their vote.
+  *   0-based identifiers of chosen answer options. May be empty if the vote was retracted.
   */
-final case class PollAnswer(pollId: String, user: User, optionIds: List[Int] = List.empty)
+final case class PollAnswer(
+  pollId: String,
+  voterChat: Option[Chat] = Option.empty,
+  user: Option[User] = Option.empty,
+  optionIds: List[Int] = List.empty
+)

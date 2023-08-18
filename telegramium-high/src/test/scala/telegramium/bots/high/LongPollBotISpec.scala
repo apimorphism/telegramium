@@ -166,7 +166,7 @@ class LongPollBotISpec
       mockServerClient
         .when(sendMessageRequest("onPollAnswer"))
         .respond(sendMessageResponse)
-      bot.onUpdate(testUpdate.copy(pollAnswer = PollAnswer("0", testUser).some)).unsafeRunSync()
+      bot.onUpdate(testUpdate.copy(pollAnswer = PollAnswer("0", user = testUser.some).some)).unsafeRunSync()
     }
 
     "The bot's chat member status was updated in a chat" in {

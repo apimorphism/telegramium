@@ -297,7 +297,7 @@ class WebhookBotISpec
       mockServerClient
         .when(sendMessageRequest("onPollAnswer"))
         .respond(sendMessageResponse)
-      verifyResult(testUpdate.copy(pollAnswer = PollAnswer("0", testUser).some), "onPollAnswerReply")
+      verifyResult(testUpdate.copy(pollAnswer = PollAnswer("0", user = testUser.some).some), "onPollAnswerReply")
     }
 
     "The bot's chat member status was updated in a chat" in {

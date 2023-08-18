@@ -2407,6 +2407,25 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val unpinallgeneralforumtopicmessagesreqEncoder: Encoder[UnpinAllGeneralForumTopicMessagesReq] =
+    (x: UnpinAllGeneralForumTopicMessagesReq) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "unpinAllGeneralForumTopicMessages".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val unpinallgeneralforumtopicmessagesreqDecoder: Decoder[UnpinAllGeneralForumTopicMessagesReq] =
+    Decoder.instance { h =>
+      for {
+        _chatId <- h.get[ChatId]("chat_id")
+      } yield {
+        UnpinAllGeneralForumTopicMessagesReq(chatId = _chatId)
+      }
+    }
+
   implicit lazy val editmessagecaptionreqEncoder: Encoder[EditMessageCaptionReq] =
     (x: EditMessageCaptionReq) => {
       Json.fromFields(

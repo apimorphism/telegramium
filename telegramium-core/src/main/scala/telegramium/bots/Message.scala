@@ -67,6 +67,8 @@ package telegramium.bots
   *   Optional. Message is a photo, available sizes of the photo
   * @param sticker
   *   Optional. Message is a sticker, information about the sticker
+  * @param story
+  *   Optional. Message is a forwarded story
   * @param video
   *   Optional. Message is a video, information about the video
   * @param videoNote
@@ -199,6 +201,7 @@ final case class Message(
   document: Option[Document] = Option.empty,
   photo: List[PhotoSize] = List.empty,
   sticker: Option[Sticker] = Option.empty,
+  story: Option[Story.type] = Option.empty,
   video: Option[Video] = Option.empty,
   videoNote: Option[VideoNote] = Option.empty,
   voice: Option[Voice] = Option.empty,

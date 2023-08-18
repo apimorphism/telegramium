@@ -25,6 +25,9 @@ package telegramium.bots
   *   Returned only in getChat.
   * @param emojiStatusCustomEmojiId
   *   Optional. Custom emoji identifier of emoji status of the other party in a private chat. Returned only in getChat.
+  * @param emojiStatusExpirationDate
+  *   Optional. Expiration date of the emoji status of the other party in a private chat, if any. Returned only in
+  *   getChat.
   * @param bio
   *   Optional. Bio of the other party in a private chat. Returned only in getChat.
   * @param hasPrivateForwards
@@ -83,6 +86,7 @@ final case class Chat(
   photo: Option[ChatPhoto] = Option.empty,
   activeUsernames: List[String] = List.empty,
   emojiStatusCustomEmojiId: Option[String] = Option.empty,
+  emojiStatusExpirationDate: Option[Int] = Option.empty,
   bio: Option[String] = Option.empty,
   hasPrivateForwards: Option[Boolean] = Option.empty,
   hasRestrictedVoiceAndVideoMessages: Option[Boolean] = Option.empty,
