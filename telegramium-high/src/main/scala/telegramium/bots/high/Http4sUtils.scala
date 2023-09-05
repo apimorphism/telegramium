@@ -6,6 +6,7 @@ import cats.effect.Async
 import cats.effect.Sync
 import cats.syntax.flatMap.*
 
+import fs2.io.file.Files.forAsync
 import fs2.io.file.Path
 import io.circe.Json
 import org.http4s.multipart.Multipart
@@ -16,7 +17,7 @@ private[high] object Http4sUtils {
 
   def toFileDataParts[F[_]: Async](files: Map[String, File]): Vector[Part[F]] =
     files.map { case (filename, file) =>
-      Part.fileData[F](filename, Path.fromNioPath(file.toPath))
+      Part.fileData[F](filename, Path.fromNioPath(file.toPath))(forAsync)
     }.toVector
 
   def toMultipartWithFormData[F[_]: Sync](
