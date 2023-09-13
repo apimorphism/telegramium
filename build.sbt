@@ -8,7 +8,7 @@ ThisBuild / version := Version.mkVersion(
 )
 
 lazy val scala3   = "3.3.1"
-lazy val scala213 = "2.13.11"
+lazy val scala213 = "2.13.12"
 lazy val scala212 = "2.12.18"
 
 ThisBuild / scalaVersion := scala3
