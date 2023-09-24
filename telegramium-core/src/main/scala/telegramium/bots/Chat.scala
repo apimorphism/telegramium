@@ -26,8 +26,8 @@ package telegramium.bots
   * @param emojiStatusCustomEmojiId
   *   Optional. Custom emoji identifier of emoji status of the other party in a private chat. Returned only in getChat.
   * @param emojiStatusExpirationDate
-  *   Optional. Expiration date of the emoji status of the other party in a private chat, if any. Returned only in
-  *   getChat.
+  *   Optional. Expiration date of the emoji status of the other party in a private chat in Unix time, if any. Returned
+  *   only in getChat.
   * @param bio
   *   Optional. Bio of the other party in a private chat. Returned only in getChat.
   * @param hasPrivateForwards

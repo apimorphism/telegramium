@@ -1995,7 +1995,7 @@ trait Methods {
     *   can_send_photos, can_send_videos, can_send_video_notes, and can_send_voice_notes permissions; the can_send_polls
     *   permission will imply the can_send_messages permission.
     * @param untilDate
-    *   Date when restrictions will be lifted for the user, unix time. If user is restricted for more than 366 days or
+    *   Date when restrictions will be lifted for the user; Unix time. If user is restricted for more than 366 days or
     *   less than 30 seconds from the current time, they are considered to be restricted forever
     */
   def restrictChatMember(
@@ -2105,7 +2105,7 @@ trait Methods {
     * @param userId
     *   Unique identifier of the target user
     * @param untilDate
-    *   Date when the user will be unbanned, unix time. If user is banned for more than 366 days or less than 30 seconds
+    *   Date when the user will be unbanned; Unix time. If user is banned for more than 366 days or less than 30 seconds
     *   from the current time they are considered to be banned forever. Applied for supergroups and channels only.
     * @param revokeMessages
     *   Pass True to delete all messages from the chat for the user that is being removed. If False, the user will be
@@ -2220,15 +2220,21 @@ trait Methods {
     * @param isAnonymous
     *   Pass True if the administrator's presence in the chat is hidden
     * @param canManageChat
-    *   Pass True if the administrator can access the chat event log, chat statistics, message statistics in channels,
-    *   see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other
-    *   administrator privilege
+    *   Pass True if the administrator can access the chat event log, chat statistics, boost list in channels, message
+    *   statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode.
+    *   Implied by any other administrator privilege
     * @param canPostMessages
-    *   Pass True if the administrator can create channel posts, channels only
+    *   Pass True if the administrator can post messages in the channel; channels only
     * @param canEditMessages
-    *   Pass True if the administrator can edit messages of other users and can pin messages, channels only
+    *   Pass True if the administrator can edit messages of other users and can pin messages; channels only
     * @param canDeleteMessages
     *   Pass True if the administrator can delete messages of other users
+    * @param canPostStories
+    *   Pass True if the administrator can post stories in the channel; channels only
+    * @param canEditStories
+    *   Pass True if the administrator can edit stories posted by other users; channels only
+    * @param canDeleteStories
+    *   Pass True if the administrator can delete stories posted by other users; channels only
     * @param canManageVideoChats
     *   Pass True if the administrator can manage video chats
     * @param canRestrictMembers
@@ -2254,6 +2260,9 @@ trait Methods {
     canPostMessages: Option[Boolean] = Option.empty,
     canEditMessages: Option[Boolean] = Option.empty,
     canDeleteMessages: Option[Boolean] = Option.empty,
+    canPostStories: Option[Boolean] = Option.empty,
+    canEditStories: Option[Boolean] = Option.empty,
+    canDeleteStories: Option[Boolean] = Option.empty,
     canManageVideoChats: Option[Boolean] = Option.empty,
     canRestrictMembers: Option[Boolean] = Option.empty,
     canPromoteMembers: Option[Boolean] = Option.empty,
@@ -2270,6 +2279,9 @@ trait Methods {
       canPostMessages,
       canEditMessages,
       canDeleteMessages,
+      canPostStories,
+      canEditStories,
+      canDeleteStories,
       canManageVideoChats,
       canRestrictMembers,
       canPromoteMembers,

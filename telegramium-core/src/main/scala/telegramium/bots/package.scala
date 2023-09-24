@@ -272,6 +272,9 @@ object CirceImplicits {
           "can_post_messages"      -> x.canPostMessages.asJson,
           "can_edit_messages"      -> x.canEditMessages.asJson,
           "can_pin_messages"       -> x.canPinMessages.asJson,
+          "can_post_stories"       -> x.canPostStories.asJson,
+          "can_edit_stories"       -> x.canEditStories.asJson,
+          "can_delete_stories"     -> x.canDeleteStories.asJson,
           "can_manage_topics"      -> x.canManageTopics.asJson,
           "custom_title"           -> x.customTitle.asJson
         ).filter(!_._2.isNull)
@@ -295,6 +298,9 @@ object CirceImplicits {
         _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
         _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
         _canPinMessages      <- h.get[Option[Boolean]]("can_pin_messages")
+        _canPostStories      <- h.get[Option[Boolean]]("can_post_stories")
+        _canEditStories      <- h.get[Option[Boolean]]("can_edit_stories")
+        _canDeleteStories    <- h.get[Option[Boolean]]("can_delete_stories")
         _canManageTopics     <- h.get[Option[Boolean]]("can_manage_topics")
         _customTitle         <- h.get[Option[String]]("custom_title")
       } yield {
@@ -313,6 +319,9 @@ object CirceImplicits {
           canPostMessages = _canPostMessages,
           canEditMessages = _canEditMessages,
           canPinMessages = _canPinMessages,
+          canPostStories = _canPostStories,
+          canEditStories = _canEditStories,
+          canDeleteStories = _canDeleteStories,
           canManageTopics = _canManageTopics,
           customTitle = _customTitle
         )
@@ -3200,7 +3209,9 @@ object CirceImplicits {
     (x: WriteAccessAllowed) => {
       Json.fromFields(
         List(
-          "web_app_name" -> x.webAppName.asJson
+          "from_request"         -> x.fromRequest.asJson,
+          "web_app_name"         -> x.webAppName.asJson,
+          "from_attachment_menu" -> x.fromAttachmentMenu.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3208,9 +3219,15 @@ object CirceImplicits {
   implicit lazy val writeaccessallowedDecoder: Decoder[WriteAccessAllowed] =
     Decoder.instance { h =>
       for {
-        _webAppName <- h.get[Option[String]]("web_app_name")
+        _fromRequest        <- h.get[Option[Boolean]]("from_request")
+        _webAppName         <- h.get[Option[String]]("web_app_name")
+        _fromAttachmentMenu <- h.get[Option[Boolean]]("from_attachment_menu")
       } yield {
-        WriteAccessAllowed(webAppName = _webAppName)
+        WriteAccessAllowed(
+          fromRequest = _fromRequest,
+          webAppName = _webAppName,
+          fromAttachmentMenu = _fromAttachmentMenu
+        )
       }
     }
 
@@ -4822,6 +4839,9 @@ object CirceImplicits {
           "can_post_messages"      -> x.canPostMessages.asJson,
           "can_edit_messages"      -> x.canEditMessages.asJson,
           "can_pin_messages"       -> x.canPinMessages.asJson,
+          "can_post_stories"       -> x.canPostStories.asJson,
+          "can_edit_stories"       -> x.canEditStories.asJson,
+          "can_delete_stories"     -> x.canDeleteStories.asJson,
           "can_manage_topics"      -> x.canManageTopics.asJson
         ).filter(!_._2.isNull)
       )
@@ -4841,6 +4861,9 @@ object CirceImplicits {
         _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
         _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
         _canPinMessages      <- h.get[Option[Boolean]]("can_pin_messages")
+        _canPostStories      <- h.get[Option[Boolean]]("can_post_stories")
+        _canEditStories      <- h.get[Option[Boolean]]("can_edit_stories")
+        _canDeleteStories    <- h.get[Option[Boolean]]("can_delete_stories")
         _canManageTopics     <- h.get[Option[Boolean]]("can_manage_topics")
       } yield {
         ChatAdministratorRights(
@@ -4855,6 +4878,9 @@ object CirceImplicits {
           canPostMessages = _canPostMessages,
           canEditMessages = _canEditMessages,
           canPinMessages = _canPinMessages,
+          canPostStories = _canPostStories,
+          canEditStories = _canEditStories,
+          canDeleteStories = _canDeleteStories,
           canManageTopics = _canManageTopics
         )
       }

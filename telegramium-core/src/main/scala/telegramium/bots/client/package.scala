@@ -2358,6 +2358,9 @@ object CirceImplicits {
           "can_post_messages"      -> x.canPostMessages.asJson,
           "can_edit_messages"      -> x.canEditMessages.asJson,
           "can_delete_messages"    -> x.canDeleteMessages.asJson,
+          "can_post_stories"       -> x.canPostStories.asJson,
+          "can_edit_stories"       -> x.canEditStories.asJson,
+          "can_delete_stories"     -> x.canDeleteStories.asJson,
           "can_manage_video_chats" -> x.canManageVideoChats.asJson,
           "can_restrict_members"   -> x.canRestrictMembers.asJson,
           "can_promote_members"    -> x.canPromoteMembers.asJson,
@@ -2380,6 +2383,9 @@ object CirceImplicits {
         _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
         _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
         _canDeleteMessages   <- h.get[Option[Boolean]]("can_delete_messages")
+        _canPostStories      <- h.get[Option[Boolean]]("can_post_stories")
+        _canEditStories      <- h.get[Option[Boolean]]("can_edit_stories")
+        _canDeleteStories    <- h.get[Option[Boolean]]("can_delete_stories")
         _canManageVideoChats <- h.get[Option[Boolean]]("can_manage_video_chats")
         _canRestrictMembers  <- h.get[Option[Boolean]]("can_restrict_members")
         _canPromoteMembers   <- h.get[Option[Boolean]]("can_promote_members")
@@ -2396,6 +2402,9 @@ object CirceImplicits {
           canPostMessages = _canPostMessages,
           canEditMessages = _canEditMessages,
           canDeleteMessages = _canDeleteMessages,
+          canPostStories = _canPostStories,
+          canEditStories = _canEditStories,
+          canDeleteStories = _canDeleteStories,
           canManageVideoChats = _canManageVideoChats,
           canRestrictMembers = _canRestrictMembers,
           canPromoteMembers = _canPromoteMembers,

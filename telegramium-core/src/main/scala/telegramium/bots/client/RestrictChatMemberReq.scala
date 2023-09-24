@@ -16,7 +16,7 @@ import telegramium.bots.ChatPermissions
   *   can_send_photos, can_send_videos, can_send_video_notes, and can_send_voice_notes permissions; the can_send_polls
   *   permission will imply the can_send_messages permission.
   * @param untilDate
-  *   Date when restrictions will be lifted for the user, unix time. If user is restricted for more than 366 days or
+  *   Date when restrictions will be lifted for the user; Unix time. If user is restricted for more than 366 days or
   *   less than 30 seconds from the current time, they are considered to be restricted forever
   */
 final case class RestrictChatMemberReq(
