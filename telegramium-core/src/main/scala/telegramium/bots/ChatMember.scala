@@ -31,15 +31,15 @@ final case class ChatMemberOwner(
   * @param isAnonymous
   *   True, if the user's presence in the chat is hidden
   * @param canManageChat
-  *   True, if the administrator can access the chat event log, chat statistics, boost list in channels, message
-  *   statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode.
-  *   Implied by any other administrator privilege
+  *   True, if the administrator can access the chat event log, boost list in channels, see channel members, report spam
+  *   messages, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator
+  *   privilege
   * @param canDeleteMessages
   *   True, if the administrator can delete messages of other users
   * @param canManageVideoChats
   *   True, if the administrator can manage video chats
   * @param canRestrictMembers
-  *   True, if the administrator can restrict, ban or unban chat members
+  *   True, if the administrator can restrict, ban or unban chat members, or access supergroup statistics
   * @param canPromoteMembers
   *   True, if the administrator can add new administrators with a subset of their own privileges or demote
   *   administrators that they have promoted, directly or indirectly (promoted by administrators that were appointed by
@@ -49,7 +49,7 @@ final case class ChatMemberOwner(
   * @param canInviteUsers
   *   True, if the user is allowed to invite new users to the chat
   * @param canPostMessages
-  *   Optional. True, if the administrator can post messages in the channel; channels only
+  *   Optional. True, if the administrator can post messages in the channel, or access channel statistics; channels only
   * @param canEditMessages
   *   Optional. True, if the administrator can edit messages of other users and can pin messages; channels only
   * @param canPinMessages
@@ -125,7 +125,8 @@ final case class ChatMemberBanned(status: String, user: User, untilDate: Int) ex
   * @param isMember
   *   True, if the user is a member of the chat at the moment of the request
   * @param canSendMessages
-  *   True, if the user is allowed to send text messages, contacts, invoices, locations and venues
+  *   True, if the user is allowed to send text messages, contacts, giveaways, giveaway winners, invoices, locations and
+  *   venues
   * @param canSendAudios
   *   True, if the user is allowed to send audios
   * @param canSendDocuments

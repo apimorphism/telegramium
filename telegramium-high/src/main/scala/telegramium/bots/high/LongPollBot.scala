@@ -18,20 +18,24 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
 
   private def noop[A](a: A) = Monad[F].pure(a).void
 
-  def onMessage(msg: Message): F[Unit]                                = noop(msg)
-  def onEditedMessage(msg: Message): F[Unit]                          = noop(msg)
-  def onChannelPost(msg: Message): F[Unit]                            = noop(msg)
-  def onEditedChannelPost(msg: Message): F[Unit]                      = noop(msg)
-  def onInlineQuery(query: InlineQuery): F[Unit]                      = noop(query)
-  def onCallbackQuery(query: CallbackQuery): F[Unit]                  = noop(query)
-  def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit] = noop(inlineResult)
-  def onShippingQuery(query: ShippingQuery): F[Unit]                  = noop(query)
-  def onPreCheckoutQuery(query: PreCheckoutQuery): F[Unit]            = noop(query)
-  def onPoll(poll: Poll): F[Unit]                                     = noop(poll)
-  def onPollAnswer(pollAnswer: PollAnswer): F[Unit]                   = noop(pollAnswer)
-  def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit]        = noop(myChatMember)
-  def onChatMember(chatMember: ChatMemberUpdated): F[Unit]            = noop(chatMember)
-  def onChatJoinRequest(request: ChatJoinRequest): F[Unit]            = noop(request)
+  def onMessage(msg: Message): F[Unit]                                    = noop(msg)
+  def onEditedMessage(msg: Message): F[Unit]                              = noop(msg)
+  def onChannelPost(msg: Message): F[Unit]                                = noop(msg)
+  def onEditedChannelPost(msg: Message): F[Unit]                          = noop(msg)
+  def onMessageReaction(reaction: MessageReactionUpdated): F[Unit]        = noop(reaction)
+  def onMessageReactionCount(count: MessageReactionCountUpdated): F[Unit] = noop(count)
+  def onInlineQuery(query: InlineQuery): F[Unit]                          = noop(query)
+  def onCallbackQuery(query: CallbackQuery): F[Unit]                      = noop(query)
+  def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit]     = noop(inlineResult)
+  def onShippingQuery(query: ShippingQuery): F[Unit]                      = noop(query)
+  def onPreCheckoutQuery(query: PreCheckoutQuery): F[Unit]                = noop(query)
+  def onPoll(poll: Poll): F[Unit]                                         = noop(poll)
+  def onPollAnswer(pollAnswer: PollAnswer): F[Unit]                       = noop(pollAnswer)
+  def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit]            = noop(myChatMember)
+  def onChatMember(chatMember: ChatMemberUpdated): F[Unit]                = noop(chatMember)
+  def onChatJoinRequest(request: ChatJoinRequest): F[Unit]                = noop(request)
+  def onChatBoost(boost: ChatBoostUpdated): F[Unit]                       = noop(boost)
+  def onRemovedChatBoost(boostRemoved: ChatBoostRemoved): F[Unit]         = noop(boostRemoved)
 
   def onUpdate(update: Update): F[Unit] =
     for {
@@ -39,6 +43,8 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
       _ <- update.editedMessage.fold(Monad[F].unit)(onEditedMessage)
       _ <- update.channelPost.fold(Monad[F].unit)(onChannelPost)
       _ <- update.editedChannelPost.fold(Monad[F].unit)(onEditedChannelPost)
+      _ <- update.messageReaction.fold(Monad[F].unit)(onMessageReaction)
+      _ <- update.messageReactionCount.fold(Monad[F].unit)(onMessageReactionCount)
       _ <- update.inlineQuery.fold(Monad[F].unit)(onInlineQuery)
       _ <- update.callbackQuery.fold(Monad[F].unit)(onCallbackQuery)
       _ <- update.chosenInlineResult.fold(Monad[F].unit)(onChosenInlineResult)
@@ -49,6 +55,8 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
       _ <- update.myChatMember.fold(Monad[F].unit)(onMyChatMember)
       _ <- update.chatMember.fold(Monad[F].unit)(onChatMember)
       _ <- update.chatJoinRequest.fold(Monad[F].unit)(onChatJoinRequest)
+      _ <- update.chatBoost.fold(Monad[F].unit)(onChatBoost)
+      _ <- update.removedChatBoost.fold(Monad[F].unit)(onRemovedChatBoost)
     } yield ()
 
   def onError(e: Throwable): F[Unit] = {

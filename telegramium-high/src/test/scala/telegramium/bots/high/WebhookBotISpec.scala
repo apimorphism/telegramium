@@ -25,6 +25,10 @@ import org.scalatest.matchers.should.Matchers
 
 import telegramium.bots.CallbackQuery
 import telegramium.bots.Chat
+import telegramium.bots.ChatBoost
+import telegramium.bots.ChatBoostRemoved
+import telegramium.bots.ChatBoostSourcePremium
+import telegramium.bots.ChatBoostUpdated
 import telegramium.bots.ChatIntId
 import telegramium.bots.ChatJoinRequest
 import telegramium.bots.ChatMemberMember
@@ -33,6 +37,8 @@ import telegramium.bots.ChosenInlineResult
 import telegramium.bots.CirceImplicits.*
 import telegramium.bots.InlineQuery
 import telegramium.bots.Message
+import telegramium.bots.MessageReactionCountUpdated
+import telegramium.bots.MessageReactionUpdated
 import telegramium.bots.Poll
 import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
@@ -61,12 +67,13 @@ class WebhookBotISpec
   private lazy val bot2               = new TestWebhookBot(api, "/bot2")
 
   private val testUpdate  = Update(updateId = 0)
-  private val testMessage = Message(0, date = 0, chat = Chat(0, `type` = ""))
+  private val testChat    = Chat(0, `type` = "")
+  private val testMessage = Message(0, date = 0, chat = testChat)
   private val testUser    = User(0, isBot = false, "")
 
   private val testChatMemberUpdated =
     ChatMemberUpdated(
-      Chat(0, `type` = ""),
+      testChat,
       testUser,
       0,
       ChatMemberMember("", testUser),
@@ -75,7 +82,7 @@ class WebhookBotISpec
 
   private val testChatJoinRequest =
     ChatJoinRequest(
-      Chat(0, `type` = ""),
+      testChat,
       testUser,
       0L,
       0
@@ -223,6 +230,26 @@ class WebhookBotISpec
       verifyResult(testUpdate.copy(editedChannelPost = testMessage.some), "onEditedChannelPostReply")
     }
 
+    "message reaction" in {
+      mockServerClient
+        .when(sendMessageRequest("onMessageReaction"))
+        .respond(sendMessageResponse)
+      verifyResult(
+        testUpdate.copy(messageReaction = MessageReactionUpdated(testChat, 0, 0).some),
+        "onMessageReactionReply"
+      )
+    }
+
+    "message reaction count" in {
+      mockServerClient
+        .when(sendMessageRequest("onMessageReactionCount"))
+        .respond(sendMessageResponse)
+      verifyResult(
+        testUpdate.copy(messageReactionCount = MessageReactionCountUpdated(testChat, 0, 0).some),
+        "onMessageReactionCountReply"
+      )
+    }
+
     "inline query" in {
       mockServerClient
         .when(sendMessageRequest("onInlineQuery"))
@@ -319,6 +346,30 @@ class WebhookBotISpec
         .when(sendMessageRequest("onChatJoinRequest"))
         .respond(sendMessageResponse)
       verifyResult(testUpdate.copy(chatJoinRequest = testChatJoinRequest.some), "onChatJoinRequestReply")
+    }
+
+    "chat boost" in {
+      mockServerClient
+        .when(sendMessageRequest("onChatBoost"))
+        .respond(sendMessageResponse)
+      verifyResult(
+        testUpdate.copy(chatBoost =
+          ChatBoostUpdated(testChat, ChatBoost("", 0, 0, ChatBoostSourcePremium("", testUser))).some
+        ),
+        "onChatBoostReply"
+      )
+    }
+
+    "removed chat boost" in {
+      mockServerClient
+        .when(sendMessageRequest("onRemovedChatBoost"))
+        .respond(sendMessageResponse)
+      verifyResult(
+        testUpdate.copy(removedChatBoost =
+          ChatBoostRemoved(testChat, "", 0, ChatBoostSourcePremium("", testUser)).some
+        ),
+        "onRemovedChatBoostReply"
+      )
     }
   }
 

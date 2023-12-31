@@ -15,12 +15,18 @@ import org.scalatest.matchers.should.Matchers
 
 import telegramium.bots.CallbackQuery
 import telegramium.bots.Chat
+import telegramium.bots.ChatBoost
+import telegramium.bots.ChatBoostRemoved
+import telegramium.bots.ChatBoostSourcePremium
+import telegramium.bots.ChatBoostUpdated
 import telegramium.bots.ChatJoinRequest
 import telegramium.bots.ChatMemberMember
 import telegramium.bots.ChatMemberUpdated
 import telegramium.bots.ChosenInlineResult
 import telegramium.bots.InlineQuery
 import telegramium.bots.Message
+import telegramium.bots.MessageReactionCountUpdated
+import telegramium.bots.MessageReactionUpdated
 import telegramium.bots.Poll
 import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
@@ -46,12 +52,13 @@ class LongPollBotISpec
   private lazy val bot                = new TestLongPollBot(api)
 
   private val testUpdate  = Update(updateId = 0)
-  private val testMessage = Message(0, date = 0, chat = Chat(0, `type` = ""))
+  private val testChat    = Chat(0, `type` = "")
+  private val testMessage = Message(0, date = 0, chat = testChat)
   private val testUser    = User(0, isBot = false, "")
 
   private val testChatMemberUpdated =
     ChatMemberUpdated(
-      Chat(0, `type` = ""),
+      testChat,
       testUser,
       0,
       ChatMemberMember("", testUser),
@@ -60,7 +67,7 @@ class LongPollBotISpec
 
   private val testChatJoinRequest =
     ChatJoinRequest(
-      Chat(0, `type` = ""),
+      testChat,
       testUser,
       0L,
       0
@@ -93,6 +100,28 @@ class LongPollBotISpec
         .when(sendMessageRequest("onEditedChannelPost"))
         .respond(sendMessageResponse)
       bot.onUpdate(testUpdate.copy(editedChannelPost = testMessage.some)).unsafeRunSync()
+    }
+
+    "message reaction" in {
+      mockServerClient
+        .when(sendMessageRequest("onMessageReaction"))
+        .respond(sendMessageResponse)
+      bot
+        .onUpdate(
+          testUpdate.copy(messageReaction = MessageReactionUpdated(testChat, 0, 0).some)
+        )
+        .unsafeRunSync()
+    }
+
+    "message reaction count" in {
+      mockServerClient
+        .when(sendMessageRequest("onMessageReactionCount"))
+        .respond(sendMessageResponse)
+      bot
+        .onUpdate(
+          testUpdate.copy(messageReactionCount = MessageReactionCountUpdated(testChat, 0, 0).some)
+        )
+        .unsafeRunSync()
     }
 
     "inline query" in {
@@ -188,6 +217,31 @@ class LongPollBotISpec
         .when(sendMessageRequest("onChatJoinRequest"))
         .respond(sendMessageResponse)
       bot.onUpdate(testUpdate.copy(chatJoinRequest = testChatJoinRequest.some)).unsafeRunSync()
+    }
+
+    "chat boost" in {
+      mockServerClient
+        .when(sendMessageRequest("onChatBoost"))
+        .respond(sendMessageResponse)
+      bot
+        .onUpdate(
+          testUpdate.copy(chatBoost =
+            ChatBoostUpdated(testChat, ChatBoost("", 0, 0, ChatBoostSourcePremium("", testUser))).some
+          )
+        )
+        .unsafeRunSync()
+    }
+
+    "removed chat boost" in {
+      mockServerClient
+        .when(sendMessageRequest("onRemovedChatBoost"))
+        .respond(sendMessageResponse)
+      bot
+        .onUpdate(
+          testUpdate
+            .copy(removedChatBoost = ChatBoostRemoved(testChat, "", 0, ChatBoostSourcePremium("", testUser)).some)
+        )
+        .unsafeRunSync()
     }
   }
 

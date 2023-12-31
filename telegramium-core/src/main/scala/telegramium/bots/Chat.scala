@@ -23,11 +23,27 @@ package telegramium.bots
   * @param activeUsernames
   *   Optional. If non-empty, the list of all active chat usernames; for private chats, supergroups and channels.
   *   Returned only in getChat.
+  * @param availableReactions
+  *   Optional. List of available reactions allowed in the chat. If omitted, then all emoji reactions are allowed.
+  *   Returned only in getChat.
+  * @param accentColorId
+  *   Optional. Identifier of the accent color for the chat name and backgrounds of the chat photo, reply header, and
+  *   link preview. See accent colors for more details. Returned only in getChat. Always returned in getChat.
+  * @param backgroundCustomEmojiId
+  *   Optional. Custom emoji identifier of emoji chosen by the chat for the reply header and link preview background.
+  *   Returned only in getChat.
+  * @param profileAccentColorId
+  *   Optional. Identifier of the accent color for the chat's profile background. See profile accent colors for more
+  *   details. Returned only in getChat.
+  * @param profileBackgroundCustomEmojiId
+  *   Optional. Custom emoji identifier of the emoji chosen by the chat for its profile background. Returned only in
+  *   getChat.
   * @param emojiStatusCustomEmojiId
-  *   Optional. Custom emoji identifier of emoji status of the other party in a private chat. Returned only in getChat.
-  * @param emojiStatusExpirationDate
-  *   Optional. Expiration date of the emoji status of the other party in a private chat in Unix time, if any. Returned
+  *   Optional. Custom emoji identifier of the emoji status of the chat or the other party in a private chat. Returned
   *   only in getChat.
+  * @param emojiStatusExpirationDate
+  *   Optional. Expiration date of the emoji status of the chat or the other party in a private chat, in Unix time, if
+  *   any. Returned only in getChat.
   * @param bio
   *   Optional. Bio of the other party in a private chat. Returned only in getChat.
   * @param hasPrivateForwards
@@ -63,6 +79,9 @@ package telegramium.bots
   *   in getChat.
   * @param hasProtectedContent
   *   Optional. True, if messages from the chat can't be forwarded to other chats. Returned only in getChat.
+  * @param hasVisibleHistory
+  *   Optional. True, if new chat members will have access to old messages; available only to chat administrators.
+  *   Returned only in getChat.
   * @param stickerSetName
   *   Optional. For supergroups, name of group sticker set. Returned only in getChat.
   * @param canSetStickerSet
@@ -85,6 +104,11 @@ final case class Chat(
   isForum: Option[Boolean] = Option.empty,
   photo: Option[ChatPhoto] = Option.empty,
   activeUsernames: List[String] = List.empty,
+  availableReactions: List[ReactionType] = List.empty,
+  accentColorId: Option[Int] = Option.empty,
+  backgroundCustomEmojiId: Option[String] = Option.empty,
+  profileAccentColorId: Option[Int] = Option.empty,
+  profileBackgroundCustomEmojiId: Option[String] = Option.empty,
   emojiStatusCustomEmojiId: Option[String] = Option.empty,
   emojiStatusExpirationDate: Option[Int] = Option.empty,
   bio: Option[String] = Option.empty,
@@ -101,6 +125,7 @@ final case class Chat(
   hasAggressiveAntiSpamEnabled: Option[Boolean] = Option.empty,
   hasHiddenMembers: Option[Boolean] = Option.empty,
   hasProtectedContent: Option[Boolean] = Option.empty,
+  hasVisibleHistory: Option[Boolean] = Option.empty,
   stickerSetName: Option[String] = Option.empty,
   canSetStickerSet: Option[Boolean] = Option.empty,
   linkedChatId: Option[Long] = Option.empty,

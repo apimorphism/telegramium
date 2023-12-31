@@ -2,6 +2,7 @@ package telegramium.bots.client
 
 import telegramium.bots.ChatId
 import telegramium.bots.IFile
+import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
 
 /** @param chatId
@@ -19,10 +20,8 @@ import telegramium.bots.KeyboardMarkup
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
   *   Protects the contents of the sent message from forwarding and saving
-  * @param replyToMessageId
-  *   If the message is a reply, ID of the original message
-  * @param allowSendingWithoutReply
-  *   Pass True if the message should be sent even if the specified replied-to message is not found
+  * @param replyParameters
+  *   Description of the message to reply to
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
   *   to remove reply keyboard or to force a reply from the user.
@@ -34,7 +33,6 @@ final case class SendStickerReq(
   emoji: Option[String] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
-  replyToMessageId: Option[Int] = Option.empty,
-  allowSendingWithoutReply: Option[Boolean] = Option.empty,
+  replyParameters: Option[ReplyParameters] = Option.empty,
   replyMarkup: Option[KeyboardMarkup] = Option.empty
 )

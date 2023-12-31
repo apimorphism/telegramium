@@ -3,6 +3,7 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 import telegramium.bots.ParseMode
 import telegramium.bots.MessageEntity
+import telegramium.bots.LinkPreviewOptions
 import telegramium.bots.InlineKeyboardMarkup
 
 /** @param text
@@ -19,8 +20,8 @@ import telegramium.bots.InlineKeyboardMarkup
   * @param entities
   *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
   *   parse_mode
-  * @param disableWebPagePreview
-  *   Disables link previews for links in this message
+  * @param linkPreviewOptions
+  *   Link preview generation options for the message
   * @param replyMarkup
   *   A JSON-serialized object for an inline keyboard.
   */
@@ -31,6 +32,6 @@ final case class EditMessageTextReq(
   inlineMessageId: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   entities: List[MessageEntity] = List.empty,
-  disableWebPagePreview: Option[Boolean] = Option.empty,
+  linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
 )

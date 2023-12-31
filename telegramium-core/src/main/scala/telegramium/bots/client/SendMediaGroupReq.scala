@@ -2,6 +2,7 @@ package telegramium.bots.client
 
 import telegramium.bots.ChatId
 import telegramium.bots.InputMedia
+import telegramium.bots.ReplyParameters
 
 /** @param chatId
   *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -13,10 +14,8 @@ import telegramium.bots.InputMedia
   *   Sends messages silently. Users will receive a notification with no sound.
   * @param protectContent
   *   Protects the contents of the sent messages from forwarding and saving
-  * @param replyToMessageId
-  *   If the messages are a reply, ID of the original message
-  * @param allowSendingWithoutReply
-  *   Pass True if the message should be sent even if the specified replied-to message is not found
+  * @param replyParameters
+  *   Description of the message to reply to
   */
 final case class SendMediaGroupReq(
   chatId: ChatId,
@@ -24,6 +23,5 @@ final case class SendMediaGroupReq(
   media: List[InputMedia] = List.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
-  replyToMessageId: Option[Int] = Option.empty,
-  allowSendingWithoutReply: Option[Boolean] = Option.empty
+  replyParameters: Option[ReplyParameters] = Option.empty
 )

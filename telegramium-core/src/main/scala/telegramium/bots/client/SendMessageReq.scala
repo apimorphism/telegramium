@@ -3,6 +3,8 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 import telegramium.bots.ParseMode
 import telegramium.bots.MessageEntity
+import telegramium.bots.LinkPreviewOptions
+import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
 
 /** @param chatId
@@ -16,16 +18,14 @@ import telegramium.bots.KeyboardMarkup
   * @param entities
   *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
   *   parse_mode
-  * @param disableWebPagePreview
-  *   Disables link previews for links in this message
+  * @param linkPreviewOptions
+  *   Link preview generation options for the message
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
   *   Protects the contents of the sent message from forwarding and saving
-  * @param replyToMessageId
-  *   If the message is a reply, ID of the original message
-  * @param allowSendingWithoutReply
-  *   Pass True if the message should be sent even if the specified replied-to message is not found
+  * @param replyParameters
+  *   Description of the message to reply to
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
   *   to remove reply keyboard or to force a reply from the user.
@@ -36,10 +36,9 @@ final case class SendMessageReq(
   messageThreadId: Option[Int] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   entities: List[MessageEntity] = List.empty,
-  disableWebPagePreview: Option[Boolean] = Option.empty,
+  linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
-  replyToMessageId: Option[Int] = Option.empty,
-  allowSendingWithoutReply: Option[Boolean] = Option.empty,
+  replyParameters: Option[ReplyParameters] = Option.empty,
   replyMarkup: Option[KeyboardMarkup] = Option.empty
 )

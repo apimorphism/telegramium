@@ -3,7 +3,7 @@ package telegramium.bots.high.keyboards
 import telegramium.bots.KeyboardButton
 import telegramium.bots.KeyboardButtonPollType
 import telegramium.bots.KeyboardButtonRequestChat
-import telegramium.bots.KeyboardButtonRequestUser
+import telegramium.bots.KeyboardButtonRequestUsers
 import telegramium.bots.WebAppInfo
 
 object KeyboardButtons {
@@ -28,8 +28,8 @@ object KeyboardButtons {
   /** Pressing the button will open a list of suitable users. Tapping on any user will send their identifier to the bot
     * in a “user_shared” service message.
     */
-  def requestUser(text: String, requestUser: KeyboardButtonRequestUser) =
-    KeyboardButton(text, requestUser = Some(requestUser))
+  def requestUsers(text: String, requestUsers: KeyboardButtonRequestUsers) =
+    KeyboardButton(text, requestUsers = Some(requestUsers))
 
   /** Pressing the button will open a list of suitable chats. Tapping on a chat will send its identifier to the bot in a
     * “chat_shared” service message.

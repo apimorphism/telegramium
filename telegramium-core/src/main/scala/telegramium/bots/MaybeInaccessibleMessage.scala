@@ -1,13 +1,15 @@
 package telegramium.bots
 
+sealed trait MaybeInaccessibleMessage {}
+
 /** This object represents a message.
   *
   * @param messageId
   *   Unique message identifier inside this chat
   * @param date
-  *   Date the message was sent in Unix time
+  *   Date the message was sent in Unix time. It is always a positive number, representing a valid date.
   * @param chat
-  *   Conversation the message belongs to
+  *   Chat the message belongs to
   * @param messageThreadId
   *   Optional. Unique identifier of a message thread to which the message belongs; for supergroups only
   * @param from
@@ -18,29 +20,20 @@ package telegramium.bots
   *   supergroup itself for messages from anonymous group administrators, the linked channel for messages automatically
   *   forwarded to the discussion group. For backward compatibility, the field from contains a fake sender user in
   *   non-channel chats, if the message was sent on behalf of a chat.
-  * @param forwardFrom
-  *   Optional. For forwarded messages, sender of the original message
-  * @param forwardFromChat
-  *   Optional. For messages forwarded from channels or from anonymous administrators, information about the original
-  *   sender chat
-  * @param forwardFromMessageId
-  *   Optional. For messages forwarded from channels, identifier of the original message in the channel
-  * @param forwardSignature
-  *   Optional. For forwarded messages that were originally sent in channels or by an anonymous chat administrator,
-  *   signature of the message sender if present
-  * @param forwardSenderName
-  *   Optional. Sender's name for messages forwarded from users who disallow adding a link to their account in forwarded
-  *   messages
-  * @param forwardDate
-  *   Optional. For forwarded messages, date the original message was sent in Unix time
+  * @param forwardOrigin
+  *   Optional. Information about the original message for forwarded messages
   * @param isTopicMessage
   *   Optional. True, if the message is sent to a forum topic
   * @param isAutomaticForward
   *   Optional. True, if the message is a channel post that was automatically forwarded to the connected discussion
   *   group
   * @param replyToMessage
-  *   Optional. For replies, the original message. Note that the Message object in this field will not contain further
-  *   reply_to_message fields even if it itself is a reply.
+  *   Optional. For replies in the same chat and message thread, the original message. Note that the Message object in
+  *   this field will not contain further reply_to_message fields even if it itself is a reply.
+  * @param externalReply
+  *   Optional. Information about the message that is being replied to, which may come from another chat or forum topic
+  * @param quote
+  *   Optional. For replies that quote part of the original message, the quoted part of the message
   * @param viaBot
   *   Optional. Bot through which the message was sent
   * @param editDate
@@ -56,6 +49,9 @@ package telegramium.bots
   *   Optional. For text messages, the actual UTF-8 text of the message
   * @param entities
   *   Optional. For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text
+  * @param linkPreviewOptions
+  *   Optional. Options used for link preview generation for the message, if it is a text message and link preview
+  *   options were changed
   * @param animation
   *   Optional. Message is an animation, information about the animation. For backward compatibility, when this field is
   *   set, the document field will also be set
@@ -130,13 +126,13 @@ package telegramium.bots
   *   this identifier.
   * @param pinnedMessage
   *   Optional. Specified message was pinned. Note that the Message object in this field will not contain further
-  *   reply_to_message fields even if it is itself a reply.
+  *   reply_to_message fields even if it itself is a reply.
   * @param invoice
   *   Optional. Message is an invoice for a payment, information about the invoice.
   * @param successfulPayment
   *   Optional. Message is a service message about a successful payment, information about the payment.
-  * @param userShared
-  *   Optional. Service message: a user was shared with the bot
+  * @param usersShared
+  *   Optional. Service message: users were shared with the bot
   * @param chatShared
   *   Optional. Service message: a chat was shared with the bot
   * @param connectedWebsite
@@ -162,6 +158,14 @@ package telegramium.bots
   *   Optional. Service message: the 'General' forum topic hidden
   * @param generalForumTopicUnhidden
   *   Optional. Service message: the 'General' forum topic unhidden
+  * @param giveawayCreated
+  *   Optional. Service message: a scheduled giveaway was created
+  * @param giveaway
+  *   Optional. The message is a scheduled giveaway message
+  * @param giveawayWinners
+  *   Optional. A giveaway with public winners was completed
+  * @param giveawayCompleted
+  *   Optional. Service message: a giveaway without public winners was completed
   * @param videoChatScheduled
   *   Optional. Service message: video chat scheduled
   * @param videoChatStarted
@@ -182,15 +186,12 @@ final case class Message(
   messageThreadId: Option[Int] = Option.empty,
   from: Option[User] = Option.empty,
   senderChat: Option[Chat] = Option.empty,
-  forwardFrom: Option[User] = Option.empty,
-  forwardFromChat: Option[Chat] = Option.empty,
-  forwardFromMessageId: Option[Int] = Option.empty,
-  forwardSignature: Option[String] = Option.empty,
-  forwardSenderName: Option[String] = Option.empty,
-  forwardDate: Option[Int] = Option.empty,
+  forwardOrigin: Option[MessageOrigin] = Option.empty,
   isTopicMessage: Option[Boolean] = Option.empty,
   isAutomaticForward: Option[Boolean] = Option.empty,
   replyToMessage: Option[Message] = Option.empty,
+  externalReply: Option[ExternalReplyInfo] = Option.empty,
+  quote: Option[TextQuote] = Option.empty,
   viaBot: Option[User] = Option.empty,
   editDate: Option[Int] = Option.empty,
   hasProtectedContent: Option[Boolean] = Option.empty,
@@ -198,6 +199,7 @@ final case class Message(
   authorSignature: Option[String] = Option.empty,
   text: Option[String] = Option.empty,
   entities: List[MessageEntity] = List.empty,
+  linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
   animation: Option[Animation] = Option.empty,
   audio: Option[Audio] = Option.empty,
   document: Option[Document] = Option.empty,
@@ -227,10 +229,10 @@ final case class Message(
   messageAutoDeleteTimerChanged: Option[MessageAutoDeleteTimerChanged] = Option.empty,
   migrateToChatId: Option[Long] = Option.empty,
   migrateFromChatId: Option[Long] = Option.empty,
-  pinnedMessage: Option[Message] = Option.empty,
+  pinnedMessage: Option[MaybeInaccessibleMessage] = Option.empty,
   invoice: Option[Invoice] = Option.empty,
   successfulPayment: Option[SuccessfulPayment] = Option.empty,
-  userShared: Option[UserShared] = Option.empty,
+  usersShared: Option[UsersShared] = Option.empty,
   chatShared: Option[ChatShared] = Option.empty,
   connectedWebsite: Option[String] = Option.empty,
   writeAccessAllowed: Option[WriteAccessAllowed] = Option.empty,
@@ -242,10 +244,25 @@ final case class Message(
   forumTopicReopened: Option[ForumTopicReopened.type] = Option.empty,
   generalForumTopicHidden: Option[GeneralForumTopicHidden.type] = Option.empty,
   generalForumTopicUnhidden: Option[GeneralForumTopicUnhidden.type] = Option.empty,
+  giveawayCreated: Option[GiveawayCreated.type] = Option.empty,
+  giveaway: Option[Giveaway] = Option.empty,
+  giveawayWinners: Option[GiveawayWinners] = Option.empty,
+  giveawayCompleted: Option[GiveawayCompleted] = Option.empty,
   videoChatScheduled: Option[VideoChatScheduled] = Option.empty,
   videoChatStarted: Option[VideoChatStarted.type] = Option.empty,
   videoChatEnded: Option[VideoChatEnded] = Option.empty,
   videoChatParticipantsInvited: Option[VideoChatParticipantsInvited] = Option.empty,
   webAppData: Option[WebAppData] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
-)
+) extends MaybeInaccessibleMessage
+
+/** This object describes a message that was deleted or is otherwise inaccessible to the bot.
+  *
+  * @param chat
+  *   Chat the message belonged to
+  * @param messageId
+  *   Unique message identifier inside the chat
+  * @param date
+  *   Always 0. The field can be used to differentiate regular and inaccessible messages.
+  */
+final case class InaccessibleMessage(chat: Chat, messageId: Int, date: Int) extends MaybeInaccessibleMessage

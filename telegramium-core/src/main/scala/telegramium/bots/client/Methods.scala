@@ -5,6 +5,7 @@ import CirceImplicits._
 import telegramium.bots.WebhookInfo
 import telegramium.bots._
 import telegramium.bots.CirceImplicits._
+import telegramium.bots.UserChatBoosts
 import telegramium.bots.GameHighScore
 import telegramium.bots.Sticker
 import telegramium.bots.BotName
@@ -13,11 +14,11 @@ import telegramium.bots.Message
 import telegramium.bots.UserProfilePhotos
 import telegramium.bots.SentWebAppMessage
 import telegramium.bots.File
+import telegramium.bots.MessageId
 import telegramium.bots.BotShortDescription
 import telegramium.bots.Poll
 import telegramium.bots.ForumTopic
 import telegramium.bots.BotDescription
-import telegramium.bots.MessageId
 import telegramium.bots.ChatInviteLink
 import telegramium.bots.User
 import telegramium.bots.ChatMember
@@ -89,6 +90,19 @@ trait Methods {
   ): Method[Boolean] = {
     val req = SetMyCommandsReq(commands, scope, languageCode)
     MethodReq[Boolean]("setMyCommands", req.asJson)
+  }
+
+  /** Use this method to get the list of boosts added to a chat by a user. Requires administrator rights in the chat.
+    * Returns a UserChatBoosts object.
+    *
+    * @param chatId
+    *   Unique identifier for the chat or username of the channel (in the format &#064;channelusername)
+    * @param userId
+    *   Unique identifier of the target user
+    */
+  def getUserChatBoosts(chatId: ChatId, userId: Long): Method[UserChatBoosts] = {
+    val req = GetUserChatBoostsReq(chatId, userId)
+    MethodReq[UserChatBoosts]("getUserChatBoosts", req.asJson)
   }
 
   /** Use this method to set a new profile photo for the chat. Photos can't be changed for private chats. The bot must
@@ -231,16 +245,14 @@ trait Methods {
     * @param entities
     *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
     *   parse_mode
-    * @param disableWebPagePreview
-    *   Disables link previews for links in this message
+    * @param linkPreviewOptions
+    *   Link preview generation options for the message
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -251,11 +263,10 @@ trait Methods {
     messageThreadId: Option[Int] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     entities: List[MessageEntity] = List.empty,
-    disableWebPagePreview: Option[Boolean] = Option.empty,
+    linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendMessageReq(
@@ -264,11 +275,10 @@ trait Methods {
       messageThreadId,
       parseMode,
       entities,
-      disableWebPagePreview,
+      linkPreviewOptions,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message]("sendMessage", req.asJson)
@@ -329,10 +339,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -347,15 +355,14 @@ trait Methods {
     allowsMultipleAnswers: Option[Boolean] = Option.empty,
     correctOptionId: Option[Int] = Option.empty,
     explanation: Option[String] = Option.empty,
-    explanationParseMode: Option[String] = Option.empty,
+    explanationParseMode: Option[ParseMode] = Option.empty,
     explanationEntities: List[MessageEntity] = List.empty,
     openPeriod: Option[Int] = Option.empty,
     closeDate: Option[Int] = Option.empty,
     isClosed: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendPollReq(
@@ -375,8 +382,7 @@ trait Methods {
       isClosed,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message]("sendPoll", req.asJson)
@@ -413,10 +419,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -430,8 +434,7 @@ trait Methods {
     vcard: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendContactReq(
@@ -443,8 +446,7 @@ trait Methods {
       vcard,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message]("sendContact", req.asJson)
@@ -517,6 +519,19 @@ trait Methods {
       req.asJson,
       Map("sticker" -> Option(sticker)).collect { case (k, Some(v)) => k -> v }
     )
+  }
+
+  /** Use this method to delete multiple messages simultaneously. If some of the specified messages can't be found, they
+    * are skipped. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param messageIds
+    *   Identifiers of 1-100 messages to delete. See deleteMessage for limitations on which messages can be deleted
+    */
+  def deleteMessages(chatId: ChatId, messageIds: List[Int] = List.empty): Method[Boolean] = {
+    val req = DeleteMessagesReq(chatId, messageIds)
+    MethodReq[Boolean]("deleteMessages", req.asJson)
   }
 
   /** Use this method to set default chat permissions for all members. The bot must be an administrator in the group or
@@ -595,10 +610,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -614,8 +627,7 @@ trait Methods {
     proximityAlertRadius: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendLocationReq(
@@ -629,8 +641,7 @@ trait Methods {
       proximityAlertRadius,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message]("sendLocation", req.asJson)
@@ -647,6 +658,50 @@ trait Methods {
   def deleteChatStickerSet(chatId: ChatId): Method[Boolean] = {
     val req = DeleteChatStickerSetReq(chatId)
     MethodReq[Boolean]("deleteChatStickerSet", req.asJson)
+  }
+
+  /** Use this method to copy messages of any kind. If some of the specified messages can't be found or copied, they are
+    * skipped. Service messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied. A
+    * quiz poll can be copied only if the value of the field correct_option_id is known to the bot. The method is
+    * analogous to the method forwardMessages, but the copied messages don't have a link to the original message. Album
+    * grouping is kept for copied messages. On success, an array of MessageId of the sent messages is returned.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param fromChatId
+    *   Unique identifier for the chat where the original messages were sent (or channel username in the format
+    *   &#064;channelusername)
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param messageIds
+    *   Identifiers of 1-100 messages in the chat from_chat_id to copy. The identifiers must be specified in a strictly
+    *   increasing order.
+    * @param disableNotification
+    *   Sends the messages silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent messages from forwarding and saving
+    * @param removeCaption
+    *   Pass True to copy the messages without their captions
+    */
+  def copyMessages(
+    chatId: ChatId,
+    fromChatId: ChatId,
+    messageThreadId: Option[Int] = Option.empty,
+    messageIds: List[Int] = List.empty,
+    disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
+    removeCaption: Option[Boolean] = Option.empty
+  ): Method[List[MessageId]] = {
+    val req = CopyMessagesReq(
+      chatId,
+      fromChatId,
+      messageThreadId,
+      messageIds,
+      disableNotification,
+      protectContent,
+      removeCaption
+    )
+    MethodReq[List[MessageId]]("copyMessages", req.asJson)
   }
 
   /** Use this method to get the current bot short description for the given user language. Returns BotShortDescription
@@ -723,10 +778,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -737,20 +790,11 @@ trait Methods {
     emoji: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
-    val req = SendDiceReq(
-      chatId,
-      messageThreadId,
-      emoji,
-      disableNotification,
-      protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
-      replyMarkup
-    )
+    val req =
+      SendDiceReq(chatId, messageThreadId, emoji, disableNotification, protectContent, replyParameters, replyMarkup)
     MethodReq[Message]("sendDice", req.asJson)
   }
 
@@ -957,10 +1001,8 @@ trait Methods {
     *   Sends messages silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent messages from forwarding and saving
-    * @param replyToMessageId
-    *   If the messages are a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     */
   def sendMediaGroup(
     chatId: ChatId,
@@ -968,18 +1010,9 @@ trait Methods {
     media: List[InputMedia] = List.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty
+    replyParameters: Option[ReplyParameters] = Option.empty
   ): Method[List[Message]] = {
-    val req = SendMediaGroupReq(
-      chatId,
-      messageThreadId,
-      media,
-      disableNotification,
-      protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply
-    )
+    val req = SendMediaGroupReq(chatId, messageThreadId, media, disableNotification, protectContent, replyParameters)
     MethodReq[List[Message]]("sendMediaGroup", req.asJson)
   }
 
@@ -995,10 +1028,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   A JSON-serialized object for an inline keyboard. If empty, one 'Play game_title' button will be shown. If not
     *   empty, the first button must launch the game.
@@ -1009,8 +1040,7 @@ trait Methods {
     messageThreadId: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendGameReq(
@@ -1019,8 +1049,7 @@ trait Methods {
       messageThreadId,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message]("sendGame", req.asJson)
@@ -1053,10 +1082,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -1074,8 +1101,7 @@ trait Methods {
     googlePlaceType: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendVenueReq(
@@ -1091,8 +1117,7 @@ trait Methods {
       googlePlaceType,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message]("sendVenue", req.asJson)
@@ -1214,8 +1239,8 @@ trait Methods {
     * @param entities
     *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
     *   parse_mode
-    * @param disableWebPagePreview
-    *   Disables link previews for links in this message
+    * @param linkPreviewOptions
+    *   Link preview generation options for the message
     * @param replyMarkup
     *   A JSON-serialized object for an inline keyboard.
     */
@@ -1226,19 +1251,11 @@ trait Methods {
     inlineMessageId: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     entities: List[MessageEntity] = List.empty,
-    disableWebPagePreview: Option[Boolean] = Option.empty,
+    linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Either[Boolean, Message]] = {
-    val req = EditMessageTextReq(
-      text,
-      chatId,
-      messageId,
-      inlineMessageId,
-      parseMode,
-      entities,
-      disableWebPagePreview,
-      replyMarkup
-    )
+    val req =
+      EditMessageTextReq(text, chatId, messageId, inlineMessageId, parseMode, entities, linkPreviewOptions, replyMarkup)
     MethodReq[Either[Boolean, Message]]("editMessageText", req.asJson)
   }
 
@@ -1388,10 +1405,10 @@ trait Methods {
     MethodReq[Boolean]("setChatTitle", req.asJson)
   }
 
-  /** Use this method to copy messages of any kind. Service messages and invoice messages can't be copied. A quiz poll
-    * can be copied only if the value of the field correct_option_id is known to the bot. The method is analogous to the
-    * method forwardMessage, but the copied message doesn't have a link to the original message. Returns the MessageId
-    * of the sent message on success.
+  /** Use this method to copy messages of any kind. Service messages, giveaway messages, giveaway winners messages, and
+    * invoice messages can't be copied. A quiz poll can be copied only if the value of the field correct_option_id is
+    * known to the bot. The method is analogous to the method forwardMessage, but the copied message doesn't have a link
+    * to the original message. Returns the MessageId of the sent message on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -1413,10 +1430,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -1431,8 +1446,7 @@ trait Methods {
     captionEntities: List[MessageEntity] = List.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[MessageId] = {
     val req = CopyMessageReq(
@@ -1445,8 +1459,7 @@ trait Methods {
       captionEntities,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[MessageId]("copyMessage", req.asJson)
@@ -1477,10 +1490,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -1494,8 +1505,7 @@ trait Methods {
     thumbnail: Option[IFile] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendVideoNoteReq(
@@ -1507,8 +1517,7 @@ trait Methods {
       thumbnail,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message](
@@ -1658,10 +1667,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   A JSON-serialized object for an inline keyboard. If empty, one 'Pay total price' button will be shown. If not
     *   empty, the first button must be a Pay button.
@@ -1692,8 +1699,7 @@ trait Methods {
     isFlexible: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendInvoiceReq(
@@ -1722,8 +1728,7 @@ trait Methods {
       isFlexible,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message]("sendInvoice", req.asJson)
@@ -1772,10 +1777,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -1791,8 +1794,7 @@ trait Methods {
     disableContentTypeDetection: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendDocumentReq(
@@ -1806,8 +1808,7 @@ trait Methods {
       disableContentTypeDetection,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message](
@@ -1929,10 +1930,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -1950,8 +1949,7 @@ trait Methods {
     thumbnail: Option[IFile] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendAudioReq(
@@ -1967,8 +1965,7 @@ trait Methods {
       thumbnail,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message](
@@ -2035,8 +2032,8 @@ trait Methods {
     MethodReq[User]("getMe", req.asJson)
   }
 
-  /** Use this method to forward messages of any kind. Service messages can't be forwarded. On success, the sent Message
-    * is returned.
+  /** Use this method to forward messages of any kind. Service messages and messages with protected content can't be
+    * forwarded. On success, the sent Message is returned.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -2160,10 +2157,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -2178,8 +2173,7 @@ trait Methods {
     duration: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendVoiceReq(
@@ -2192,8 +2186,7 @@ trait Methods {
       duration,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message]("sendVoice", req.asJson, Map("voice" -> Option(voice)).collect { case (k, Some(v)) => k -> v })
@@ -2220,25 +2213,15 @@ trait Methods {
     * @param isAnonymous
     *   Pass True if the administrator's presence in the chat is hidden
     * @param canManageChat
-    *   Pass True if the administrator can access the chat event log, chat statistics, boost list in channels, message
-    *   statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode.
-    *   Implied by any other administrator privilege
-    * @param canPostMessages
-    *   Pass True if the administrator can post messages in the channel; channels only
-    * @param canEditMessages
-    *   Pass True if the administrator can edit messages of other users and can pin messages; channels only
+    *   Pass True if the administrator can access the chat event log, boost list in channels, see channel members,
+    *   report spam messages, see anonymous administrators in supergroups and ignore slow mode. Implied by any other
+    *   administrator privilege
     * @param canDeleteMessages
     *   Pass True if the administrator can delete messages of other users
-    * @param canPostStories
-    *   Pass True if the administrator can post stories in the channel; channels only
-    * @param canEditStories
-    *   Pass True if the administrator can edit stories posted by other users; channels only
-    * @param canDeleteStories
-    *   Pass True if the administrator can delete stories posted by other users; channels only
     * @param canManageVideoChats
     *   Pass True if the administrator can manage video chats
     * @param canRestrictMembers
-    *   Pass True if the administrator can restrict, ban or unban chat members
+    *   Pass True if the administrator can restrict, ban or unban chat members, or access supergroup statistics
     * @param canPromoteMembers
     *   Pass True if the administrator can add new administrators with a subset of their own privileges or demote
     *   administrators that they have promoted, directly or indirectly (promoted by administrators that were appointed
@@ -2247,8 +2230,18 @@ trait Methods {
     *   Pass True if the administrator can change chat title, photo and other settings
     * @param canInviteUsers
     *   Pass True if the administrator can invite new users to the chat
+    * @param canPostMessages
+    *   Pass True if the administrator can post messages in the channel, or access channel statistics; channels only
+    * @param canEditMessages
+    *   Pass True if the administrator can edit messages of other users and can pin messages; channels only
     * @param canPinMessages
     *   Pass True if the administrator can pin messages, supergroups only
+    * @param canPostStories
+    *   Pass True if the administrator can post stories in the channel; channels only
+    * @param canEditStories
+    *   Pass True if the administrator can edit stories posted by other users; channels only
+    * @param canDeleteStories
+    *   Pass True if the administrator can delete stories posted by other users; channels only
     * @param canManageTopics
     *   Pass True if the user is allowed to create, rename, close, and reopen forum topics, supergroups only
     */
@@ -2257,18 +2250,18 @@ trait Methods {
     userId: Long,
     isAnonymous: Option[Boolean] = Option.empty,
     canManageChat: Option[Boolean] = Option.empty,
-    canPostMessages: Option[Boolean] = Option.empty,
-    canEditMessages: Option[Boolean] = Option.empty,
     canDeleteMessages: Option[Boolean] = Option.empty,
-    canPostStories: Option[Boolean] = Option.empty,
-    canEditStories: Option[Boolean] = Option.empty,
-    canDeleteStories: Option[Boolean] = Option.empty,
     canManageVideoChats: Option[Boolean] = Option.empty,
     canRestrictMembers: Option[Boolean] = Option.empty,
     canPromoteMembers: Option[Boolean] = Option.empty,
     canChangeInfo: Option[Boolean] = Option.empty,
     canInviteUsers: Option[Boolean] = Option.empty,
+    canPostMessages: Option[Boolean] = Option.empty,
+    canEditMessages: Option[Boolean] = Option.empty,
     canPinMessages: Option[Boolean] = Option.empty,
+    canPostStories: Option[Boolean] = Option.empty,
+    canEditStories: Option[Boolean] = Option.empty,
+    canDeleteStories: Option[Boolean] = Option.empty,
     canManageTopics: Option[Boolean] = Option.empty
   ): Method[Boolean] = {
     val req = PromoteChatMemberReq(
@@ -2276,18 +2269,18 @@ trait Methods {
       userId,
       isAnonymous,
       canManageChat,
-      canPostMessages,
-      canEditMessages,
       canDeleteMessages,
-      canPostStories,
-      canEditStories,
-      canDeleteStories,
       canManageVideoChats,
       canRestrictMembers,
       canPromoteMembers,
       canChangeInfo,
       canInviteUsers,
+      canPostMessages,
+      canEditMessages,
       canPinMessages,
+      canPostStories,
+      canEditStories,
+      canDeleteStories,
       canManageTopics
     )
     MethodReq[Boolean]("promoteChatMember", req.asJson)
@@ -2527,10 +2520,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -2550,8 +2541,7 @@ trait Methods {
     supportsStreaming: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendVideoReq(
@@ -2569,8 +2559,7 @@ trait Methods {
       supportsStreaming,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message](
@@ -2595,8 +2584,7 @@ trait Methods {
     MethodReq[Boolean]("setChatStickerSet", req.asJson)
   }
 
-  /** Use this method to get up to date information about the chat (current name of the user for one-on-one
-    * conversations, current username of a user, group or channel, etc.). Returns a Chat object on success.
+  /** Use this method to get up to date information about the chat. Returns a Chat object on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup or channel (in the format
@@ -2746,10 +2734,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -2768,8 +2754,7 @@ trait Methods {
     hasSpoiler: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendAnimationReq(
@@ -2786,8 +2771,7 @@ trait Methods {
       hasSpoiler,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message](
@@ -2924,10 +2908,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -2939,8 +2921,7 @@ trait Methods {
     emoji: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendStickerReq(
@@ -2950,8 +2931,7 @@ trait Methods {
       emoji,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message](
@@ -3013,6 +2993,37 @@ trait Methods {
     MethodReq[Boolean]("setMyName", req.asJson)
   }
 
+  /** Use this method to forward multiple messages of any kind. If some of the specified messages can't be found or
+    * forwarded, they are skipped. Service messages and messages with protected content can't be forwarded. Album
+    * grouping is kept for forwarded messages. On success, an array of MessageId of the sent messages is returned.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param fromChatId
+    *   Unique identifier for the chat where the original messages were sent (or channel username in the format
+    *   &#064;channelusername)
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param messageIds
+    *   Identifiers of 1-100 messages in the chat from_chat_id to forward. The identifiers must be specified in a
+    *   strictly increasing order.
+    * @param disableNotification
+    *   Sends the messages silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the forwarded messages from forwarding and saving
+    */
+  def forwardMessages(
+    chatId: ChatId,
+    fromChatId: ChatId,
+    messageThreadId: Option[Int] = Option.empty,
+    messageIds: List[Int] = List.empty,
+    disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty
+  ): Method[List[MessageId]] = {
+    val req = ForwardMessagesReq(chatId, fromChatId, messageThreadId, messageIds, disableNotification, protectContent)
+    MethodReq[List[MessageId]]("forwardMessages", req.asJson)
+  }
+
   /** Use this method to send photos. On success, the sent Message is returned.
     *
     * @param chatId
@@ -3037,10 +3048,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
-    * @param replyToMessageId
-    *   If the message is a reply, ID of the original message
-    * @param allowSendingWithoutReply
-    *   Pass True if the message should be sent even if the specified replied-to message is not found
+    * @param replyParameters
+    *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
     *   instructions to remove reply keyboard or to force a reply from the user.
@@ -3055,8 +3064,7 @@ trait Methods {
     hasSpoiler: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
-    replyToMessageId: Option[Int] = Option.empty,
-    allowSendingWithoutReply: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendPhotoReq(
@@ -3069,8 +3077,7 @@ trait Methods {
       hasSpoiler,
       disableNotification,
       protectContent,
-      replyToMessageId,
-      allowSendingWithoutReply,
+      replyParameters,
       replyMarkup
     )
     MethodReq[Message]("sendPhoto", req.asJson, Map("photo" -> Option(photo)).collect { case (k, Some(v)) => k -> v })
@@ -3090,11 +3097,12 @@ trait Methods {
     *   Timeout in seconds for long polling. Defaults to 0, i.e. usual short polling. Should be positive, short polling
     *   should be used for testing purposes only.
     * @param allowedUpdates
-    *   A JSON-serialized list of the update types you want your bot to receive. For example, specify [“message”,
-    *   “edited_channel_post”, “callback_query”] to only receive updates of these types. See Update for a complete list
-    *   of available update types. Specify an empty list to receive all update types except chat_member (default). If
-    *   not specified, the previous setting will be used. Please note that this parameter doesn't affect updates created
-    *   before the call to the getUpdates, so unwanted updates may be received for a short period of time.
+    *   A JSON-serialized list of the update types you want your bot to receive. For example, specify ["message",
+    *   "edited_channel_post", "callback_query"] to only receive updates of these types. See Update for a complete list
+    *   of available update types. Specify an empty list to receive all update types except chat_member,
+    *   message_reaction, and message_reaction_count (default). If not specified, the previous setting will be used.
+    *   Please note that this parameter doesn't affect updates created before the call to the getUpdates, so unwanted
+    *   updates may be received for a short period of time.
     */
   def getUpdates(
     offset: Option[Int] = Option.empty,
@@ -3135,11 +3143,12 @@ trait Methods {
     *   to 40. Use lower values to limit the load on your bot's server, and higher values to increase your bot's
     *   throughput.
     * @param allowedUpdates
-    *   A JSON-serialized list of the update types you want your bot to receive. For example, specify [“message”,
-    *   “edited_channel_post”, “callback_query”] to only receive updates of these types. See Update for a complete list
-    *   of available update types. Specify an empty list to receive all update types except chat_member (default). If
-    *   not specified, the previous setting will be used. Please note that this parameter doesn't affect updates created
-    *   before the call to the setWebhook, so unwanted updates may be received for a short period of time.
+    *   A JSON-serialized list of the update types you want your bot to receive. For example, specify ["message",
+    *   "edited_channel_post", "callback_query"] to only receive updates of these types. See Update for a complete list
+    *   of available update types. Specify an empty list to receive all update types except chat_member,
+    *   message_reaction, and message_reaction_count (default). If not specified, the previous setting will be used.
+    *   Please note that this parameter doesn't affect updates created before the call to the setWebhook, so unwanted
+    *   updates may be received for a short period of time.
     * @param dropPendingUpdates
     *   Pass True to drop all pending updates
     * @param secretToken
@@ -3176,6 +3185,31 @@ trait Methods {
   def setStickerKeywords(sticker: String, keywords: List[String] = List.empty): Method[Boolean] = {
     val req = SetStickerKeywordsReq(sticker, keywords)
     MethodReq[Boolean]("setStickerKeywords", req.asJson)
+  }
+
+  /** Use this method to change the chosen reactions on a message. Service messages can't be reacted to. Automatically
+    * forwarded messages from a channel to its discussion group have the same available reactions as messages in the
+    * channel. In albums, bots must react to the first message. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param messageId
+    *   Identifier of the target message
+    * @param reaction
+    *   New list of reaction types to set on the message. Currently, as non-premium users, bots can set up to one
+    *   reaction per message. A custom emoji reaction can be used if it is either already present on the message or
+    *   explicitly allowed by chat administrators.
+    * @param isBig
+    *   Pass True to set the reaction with a big animation
+    */
+  def setMessageReaction(
+    chatId: ChatId,
+    messageId: Int,
+    reaction: List[ReactionType] = List.empty,
+    isBig: Option[Boolean] = Option.empty
+  ): Method[Boolean] = {
+    val req = SetMessageReactionReq(chatId, messageId, reaction, isBig)
+    MethodReq[Boolean]("setMessageReaction", req.asJson)
   }
 
 }

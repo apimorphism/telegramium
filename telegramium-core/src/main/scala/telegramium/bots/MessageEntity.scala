@@ -74,6 +74,15 @@ final case class SpoilerMessageEntity(offset: Int, length: Int) extends MessageE
   */
 final case class EmailMessageEntity(offset: Int, length: Int) extends MessageEntity
 
+/** blockquote
+  *
+  * @param offset
+  *   Offset in UTF-16 code units to the start of the entity
+  * @param length
+  *   Length of the entity in UTF-16 code units
+  */
+final case class BlockquoteMessageEntity(offset: Int, length: Int) extends MessageEntity
+
 /** bold
   *
   * @param offset

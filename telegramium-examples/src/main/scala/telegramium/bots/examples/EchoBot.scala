@@ -48,6 +48,9 @@ class EchoBot[F[_]]()(implicit
   }
 
   override def onCallbackQuery(query: CallbackQuery): F[Unit] = {
+    def onMsg(message: Option[MaybeInaccessibleMessage])(f: Message => F[Unit]): F[Unit] =
+      message.collect { case m: Message => m }.fold(asyncF.unit)(f)
+
     def rollTheDice(chatId: Long, emoji: Emoji = EmojiDice): F[Unit] = {
       sendDice(ChatIntId(chatId), emoji = Some(emoji.toString)).exec.void >>
         answerCallbackQuery(callbackQueryId = query.id).exec.void
@@ -81,13 +84,14 @@ class EchoBot[F[_]]()(implicit
 
     query.data
       .map {
-        case "HTML"       => query.message.fold(asyncF.unit)(m => sendMsg(m.chat.id, htmlText, Html))
-        case "Markdown"   => query.message.fold(asyncF.unit)(m => sendMsg(m.chat.id, markdownText, Markdown))
-        case "Markdown2"  => query.message.fold(asyncF.unit)(m => sendMsg(m.chat.id, markdown2Text, Markdown2))
-        case "dice"       => query.message.fold(asyncF.unit)(m => rollTheDice(m.chat.id))
-        case "darts"      => query.message.fold(asyncF.unit)(m => rollTheDice(m.chat.id, EmojiDarts))
-        case "basketball" => query.message.fold(asyncF.unit)(m => rollTheDice(m.chat.id, EmojiBasketball))
-        case "quiz"       => query.message.fold(asyncF.unit)(m => quiz(m.chat.id))
+        case ""           => onMsg(query.message)(m => sendMsg(m.chat.id, htmlText, Html))
+        case "HTML"       => onMsg(query.message)(m => sendMsg(m.chat.id, htmlText, Html))
+        case "Markdown"   => onMsg(query.message)(m => sendMsg(m.chat.id, markdownText, Markdown))
+        case "Markdown2"  => onMsg(query.message)(m => sendMsg(m.chat.id, markdown2Text, Markdown2))
+        case "dice"       => onMsg(query.message)(m => rollTheDice(m.chat.id))
+        case "darts"      => onMsg(query.message)(m => rollTheDice(m.chat.id, EmojiDarts))
+        case "basketball" => onMsg(query.message)(m => rollTheDice(m.chat.id, EmojiBasketball))
+        case "quiz"       => onMsg(query.message)(m => quiz(m.chat.id))
         case x =>
           answerCallbackQuery(
             callbackQueryId = query.id,

@@ -4,12 +4,16 @@ import cats.effect.IO
 import cats.syntax.option.*
 
 import telegramium.bots.CallbackQuery
+import telegramium.bots.ChatBoostRemoved
+import telegramium.bots.ChatBoostUpdated
 import telegramium.bots.ChatIntId
 import telegramium.bots.ChatJoinRequest
 import telegramium.bots.ChatMemberUpdated
 import telegramium.bots.ChosenInlineResult
 import telegramium.bots.InlineQuery
 import telegramium.bots.Message
+import telegramium.bots.MessageReactionCountUpdated
+import telegramium.bots.MessageReactionUpdated
 import telegramium.bots.Poll
 import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
@@ -35,6 +39,12 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
 
   override def onEditedChannelPost(msg: Message): IO[Unit] =
     api.execute(sendMessageMethod("onEditedChannelPost")).void
+
+  override def onMessageReaction(reaction: MessageReactionUpdated): IO[Unit] =
+    api.execute(sendMessageMethod("onMessageReaction")).void
+
+  override def onMessageReactionCount(count: MessageReactionCountUpdated): IO[Unit] =
+    api.execute(sendMessageMethod("onMessageReactionCount")).void
 
   override def onInlineQuery(query: InlineQuery): IO[Unit] =
     api.execute(sendMessageMethod("onInlineQuery")).void
@@ -66,6 +76,12 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
   override def onChatJoinRequest(request: ChatJoinRequest): IO[Unit] =
     api.execute(sendMessageMethod("onChatJoinRequest")).void
 
+  override def onChatBoost(boost: ChatBoostUpdated): IO[Unit] =
+    api.execute(sendMessageMethod("onChatBoost")).void
+
+  override def onRemovedChatBoost(boostRemoved: ChatBoostRemoved): IO[Unit] =
+    api.execute(sendMessageMethod("onRemovedChatBoost")).void
+
   override def onMessageReply(msg: Message): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onMessageReply").some)
 
@@ -77,6 +93,12 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
 
   override def onEditedChannelPostReply(msg: Message): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onEditedChannelPostReply").some)
+
+  override def onMessageReactionReply(reaction: MessageReactionUpdated): IO[Option[Method[?]]] =
+    IO.pure(sendMessageMethod("onMessageReactionReply").some)
+
+  override def onMessageReactionCountReply(count: MessageReactionCountUpdated): IO[Option[Method[?]]] =
+    IO.pure(sendMessageMethod("onMessageReactionCountReply").some)
 
   override def onInlineQueryReply(query: InlineQuery): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onInlineQueryReply").some)
@@ -107,5 +129,11 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
 
   override def onChatJoinRequestReply(request: ChatJoinRequest): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onChatJoinRequestReply").some)
+
+  override def onChatBoostReply(boost: ChatBoostUpdated): IO[Option[Method[_]]] =
+    IO.pure(sendMessageMethod("onChatBoostReply").some)
+
+  override def onRemovedChatBoostReply(boostRemoved: ChatBoostRemoved): IO[Option[Method[_]]] =
+    IO.pure(sendMessageMethod("onRemovedChatBoostReply").some)
 
 }

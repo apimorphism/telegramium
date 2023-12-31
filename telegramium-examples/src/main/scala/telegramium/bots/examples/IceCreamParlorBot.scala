@@ -44,19 +44,20 @@ class IceCreamParlorBot[F[_]]()(implicit
   override def onCallbackQuery(query: CallbackQuery): F[Unit] =
     query.data
       .flatMap { flavor =>
-        query.message.map { msg =>
-          answerCallbackQuery(callbackQueryId = query.id).exec >>
-            editMessageReplyMarkup(
-              chatId = Some(ChatIntId(msg.chat.id)),
-              messageId = Some(msg.messageId),
-              replyMarkup = None
-            ).exec >>
-            editMessageText(
-              chatId = Some(ChatIntId(msg.chat.id)),
-              messageId = Some(msg.messageId),
-              text = s"You have chosen: $flavor"
-            ).exec.void
-        }
+        query.message
+          .collect { case msg: Message =>
+            answerCallbackQuery(callbackQueryId = query.id).exec >>
+              editMessageReplyMarkup(
+                chatId = Some(ChatIntId(msg.chat.id)),
+                messageId = Some(msg.messageId),
+                replyMarkup = None
+              ).exec >>
+              editMessageText(
+                chatId = Some(ChatIntId(msg.chat.id)),
+                messageId = Some(msg.messageId),
+                text = s"You have chosen: $flavor"
+              ).exec.void
+          }
       }
       .getOrElse(asyncF.unit)
 

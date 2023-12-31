@@ -58,6 +58,7 @@ class MessageEntities(val underlying: Vector[MessageEntityFormat] = Vector.empty
   def customEmoji(text: String, customEmojiId: String)             = add(CustomEmoji(text, customEmojiId))
   def spoiler(text: String)                                        = add(Spoiler(text))
   def email(text: String): MessageEntities                         = add(Email(text))
+  def blockquote(text: String): MessageEntities                    = add(Blockquote(text))
   def pre(text: String, language: Option[String]): MessageEntities = add(Pre(text, language))
   def italic(text: String): MessageEntities                        = add(Italic(text))
   def strikethrough(text: String): MessageEntities                 = add(Strikethrough(text))

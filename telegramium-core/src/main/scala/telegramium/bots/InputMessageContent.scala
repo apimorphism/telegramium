@@ -159,12 +159,12 @@ final case class InputLocationMessageContent(
   *   Optional. Mode for parsing entities in the message text. See formatting options for more details.
   * @param entities
   *   Optional. List of special entities that appear in message text, which can be specified instead of parse_mode
-  * @param disableWebPagePreview
-  *   Optional. Disables link previews for links in the sent message
+  * @param linkPreviewOptions
+  *   Optional. Link preview generation options for the message
   */
 final case class InputTextMessageContent(
   messageText: String,
   parseMode: Option[ParseMode] = Option.empty,
   entities: List[MessageEntity] = List.empty,
-  disableWebPagePreview: Option[Boolean] = Option.empty
+  linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty
 ) extends InputMessageContent

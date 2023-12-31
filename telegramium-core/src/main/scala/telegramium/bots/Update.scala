@@ -16,6 +16,13 @@ package telegramium.bots
   *   Optional. New incoming channel post of any kind - text, photo, sticker, etc.
   * @param editedChannelPost
   *   Optional. New version of a channel post that is known to the bot and was edited
+  * @param messageReaction
+  *   Optional. A reaction to a message was changed by a user. The bot must be an administrator in the chat and must
+  *   explicitly specify "message_reaction" in the list of allowed_updates to receive these updates. The update isn't
+  *   received for reactions set by bots.
+  * @param messageReactionCount
+  *   Optional. Reactions to a message with anonymous reactions were changed. The bot must be an administrator in the
+  *   chat and must explicitly specify "message_reaction_count" in the list of allowed_updates to receive these updates.
   * @param inlineQuery
   *   Optional. New incoming inline query
   * @param chosenInlineResult
@@ -37,10 +44,15 @@ package telegramium.bots
   *   the bot is blocked or unblocked by the user.
   * @param chatMember
   *   Optional. A chat member's status was updated in a chat. The bot must be an administrator in the chat and must
-  *   explicitly specify “chat_member” in the list of allowed_updates to receive these updates.
+  *   explicitly specify "chat_member" in the list of allowed_updates to receive these updates.
   * @param chatJoinRequest
   *   Optional. A request to join the chat has been sent. The bot must have the can_invite_users administrator right in
   *   the chat to receive these updates.
+  * @param chatBoost
+  *   Optional. A chat boost was added or changed. The bot must be an administrator in the chat to receive these
+  *   updates.
+  * @param removedChatBoost
+  *   Optional. A boost was removed from a chat. The bot must be an administrator in the chat to receive these updates.
   */
 final case class Update(
   updateId: Int,
@@ -48,6 +60,8 @@ final case class Update(
   editedMessage: Option[Message] = Option.empty,
   channelPost: Option[Message] = Option.empty,
   editedChannelPost: Option[Message] = Option.empty,
+  messageReaction: Option[MessageReactionUpdated] = Option.empty,
+  messageReactionCount: Option[MessageReactionCountUpdated] = Option.empty,
   inlineQuery: Option[InlineQuery] = Option.empty,
   chosenInlineResult: Option[ChosenInlineResult] = Option.empty,
   callbackQuery: Option[CallbackQuery] = Option.empty,
@@ -57,5 +71,7 @@ final case class Update(
   pollAnswer: Option[PollAnswer] = Option.empty,
   myChatMember: Option[ChatMemberUpdated] = Option.empty,
   chatMember: Option[ChatMemberUpdated] = Option.empty,
-  chatJoinRequest: Option[ChatJoinRequest] = Option.empty
+  chatJoinRequest: Option[ChatJoinRequest] = Option.empty,
+  chatBoost: Option[ChatBoostUpdated] = Option.empty,
+  removedChatBoost: Option[ChatBoostRemoved] = Option.empty
 )

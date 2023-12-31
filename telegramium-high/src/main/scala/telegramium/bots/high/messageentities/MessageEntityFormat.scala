@@ -1,5 +1,6 @@
 package telegramium.bots.high.messageentities
 
+import telegramium.bots.BlockquoteMessageEntity
 import telegramium.bots.BoldMessageEntity
 import telegramium.bots.BotCommandMessageEntity
 import telegramium.bots.CashtagMessageEntity
@@ -58,6 +59,7 @@ object MessageEntityFormat {
             accumulate(CustomEmojiMessageEntity(offset, text.length, customEmojiId))
           case Spoiler(text)           => accumulate(SpoilerMessageEntity(offset, text.length))
           case Email(text)             => accumulate(EmailMessageEntity(offset, text.length))
+          case Blockquote(text)        => accumulate(BlockquoteMessageEntity(offset, text.length))
           case Bold(text)              => accumulate(BoldMessageEntity(offset, text.length))
           case Pre(text, language)     => accumulate(PreMessageEntity(offset, text.length, language))
           case Italic(text)            => accumulate(ItalicMessageEntity(offset, text.length))
@@ -93,6 +95,8 @@ object MessageEntityFormat {
 
   final case class Email(text: String) extends MessageEntityFormat
 
+  final case class Blockquote(text: String) extends MessageEntityFormat
+
   final case class Bold(text: String) extends MessageEntityFormat
 
   final case class Pre(text: String, language: Option[String]) extends MessageEntityFormat
@@ -125,6 +129,8 @@ object MessageEntityFormat {
     def spoiler(args: Any*): Spoiler = Spoiler(build(args: _*))
 
     def email(args: Any*): Email = Email(build(args: _*))
+
+    def blockquote(args: Any*): Blockquote = Blockquote(build(args: _*))
 
     def bold(args: Any*): Bold = Bold(build(args: _*))
 

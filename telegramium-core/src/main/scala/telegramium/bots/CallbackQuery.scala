@@ -13,8 +13,7 @@ package telegramium.bots
   *   Global identifier, uniquely corresponding to the chat to which the message with the callback button was sent.
   *   Useful for high scores in games.
   * @param message
-  *   Optional. Message with the callback button that originated the query. Note that message content and message date
-  *   will not be available if the message is too old
+  *   Optional. Message sent by the bot with the callback button that originated the query
   * @param inlineMessageId
   *   Optional. Identifier of the message sent via the bot in inline mode, that originated the query.
   * @param data
@@ -27,7 +26,7 @@ final case class CallbackQuery(
   id: String,
   from: User,
   chatInstance: String,
-  message: Option[Message] = Option.empty,
+  message: Option[MaybeInaccessibleMessage] = Option.empty,
   inlineMessageId: Option[String] = Option.empty,
   data: Option[String] = Option.empty,
   gameShortName: Option[String] = Option.empty

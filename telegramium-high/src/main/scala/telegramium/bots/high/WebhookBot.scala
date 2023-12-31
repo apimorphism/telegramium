@@ -25,6 +25,8 @@ import org.http4s.server.Server
 import org.http4s.server.inDefaultServiceErrorHandler
 
 import telegramium.bots.CallbackQuery
+import telegramium.bots.ChatBoostRemoved
+import telegramium.bots.ChatBoostUpdated
 import telegramium.bots.ChatJoinRequest
 import telegramium.bots.ChatMemberUpdated
 import telegramium.bots.ChosenInlineResult
@@ -32,6 +34,8 @@ import telegramium.bots.CirceImplicits.*
 import telegramium.bots.InlineQuery
 import telegramium.bots.InputPartFile
 import telegramium.bots.Message
+import telegramium.bots.MessageReactionCountUpdated
+import telegramium.bots.MessageReactionUpdated
 import telegramium.bots.Poll
 import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
@@ -76,40 +80,46 @@ abstract class WebhookBot[F[_]: Async](
 
   private def noop[A](a: A) = Monad[F].pure(a).void
 
-  def onMessage(msg: Message): F[Unit]                                = noop(msg)
-  def onEditedMessage(msg: Message): F[Unit]                          = noop(msg)
-  def onChannelPost(msg: Message): F[Unit]                            = noop(msg)
-  def onEditedChannelPost(msg: Message): F[Unit]                      = noop(msg)
-  def onInlineQuery(query: InlineQuery): F[Unit]                      = noop(query)
-  def onCallbackQuery(query: CallbackQuery): F[Unit]                  = noop(query)
-  def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit] = noop(inlineResult)
-  def onShippingQuery(query: ShippingQuery): F[Unit]                  = noop(query)
-  def onPreCheckoutQuery(query: PreCheckoutQuery): F[Unit]            = noop(query)
-  def onPoll(poll: Poll): F[Unit]                                     = noop(poll)
-  def onPollAnswer(pollAnswer: PollAnswer): F[Unit]                   = noop(pollAnswer)
-  def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit]        = noop(myChatMember)
-  def onChatMember(chatMember: ChatMemberUpdated): F[Unit]            = noop(chatMember)
-  def onChatJoinRequest(request: ChatJoinRequest): F[Unit]            = noop(request)
+  def onMessage(msg: Message): F[Unit]                                    = noop(msg)
+  def onEditedMessage(msg: Message): F[Unit]                              = noop(msg)
+  def onChannelPost(msg: Message): F[Unit]                                = noop(msg)
+  def onEditedChannelPost(msg: Message): F[Unit]                          = noop(msg)
+  def onMessageReaction(reaction: MessageReactionUpdated): F[Unit]        = noop(reaction)
+  def onMessageReactionCount(count: MessageReactionCountUpdated): F[Unit] = noop(count)
+  def onInlineQuery(query: InlineQuery): F[Unit]                          = noop(query)
+  def onCallbackQuery(query: CallbackQuery): F[Unit]                      = noop(query)
+  def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit]     = noop(inlineResult)
+  def onShippingQuery(query: ShippingQuery): F[Unit]                      = noop(query)
+  def onPreCheckoutQuery(query: PreCheckoutQuery): F[Unit]                = noop(query)
+  def onPoll(poll: Poll): F[Unit]                                         = noop(poll)
+  def onPollAnswer(pollAnswer: PollAnswer): F[Unit]                       = noop(pollAnswer)
+  def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit]            = noop(myChatMember)
+  def onChatMember(chatMember: ChatMemberUpdated): F[Unit]                = noop(chatMember)
+  def onChatJoinRequest(request: ChatJoinRequest): F[Unit]                = noop(request)
+  def onChatBoost(boost: ChatBoostUpdated): F[Unit]                       = noop(boost)
+  def onRemovedChatBoost(boostRemoved: ChatBoostRemoved): F[Unit]         = noop(boostRemoved)
 
   private def noopReply[A](a: A) = Monad[F].pure(a).map(_ => Option.empty[Method[?]])
 
-  def onMessageReply(msg: Message): F[Option[Method[?]]]               = noopReply(msg)
-  def onEditedMessageReply(msg: Message): F[Option[Method[?]]]         = noopReply(msg)
-  def onChannelPostReply(msg: Message): F[Option[Method[?]]]           = noopReply(msg)
-  def onEditedChannelPostReply(msg: Message): F[Option[Method[?]]]     = noopReply(msg)
-  def onInlineQueryReply(query: InlineQuery): F[Option[Method[?]]]     = noopReply(query)
-  def onCallbackQueryReply(query: CallbackQuery): F[Option[Method[?]]] = noopReply(query)
-
+  def onMessageReply(msg: Message): F[Option[Method[?]]]                                    = noopReply(msg)
+  def onEditedMessageReply(msg: Message): F[Option[Method[?]]]                              = noopReply(msg)
+  def onChannelPostReply(msg: Message): F[Option[Method[?]]]                                = noopReply(msg)
+  def onEditedChannelPostReply(msg: Message): F[Option[Method[?]]]                          = noopReply(msg)
+  def onMessageReactionReply(reaction: MessageReactionUpdated): F[Option[Method[?]]]        = noopReply(reaction)
+  def onMessageReactionCountReply(count: MessageReactionCountUpdated): F[Option[Method[?]]] = noopReply(count)
+  def onInlineQueryReply(query: InlineQuery): F[Option[Method[?]]]                          = noopReply(query)
+  def onCallbackQueryReply(query: CallbackQuery): F[Option[Method[?]]]                      = noopReply(query)
   def onChosenInlineResultReply(inlineResult: ChosenInlineResult): F[Option[Method[?]]] =
     Monad[F].pure(inlineResult).map(_ => Option.empty[Method[?]])
-
-  def onShippingQueryReply(query: ShippingQuery): F[Option[Method[?]]]           = noopReply(query)
-  def onPreCheckoutQueryReply(query: PreCheckoutQuery): F[Option[Method[?]]]     = noopReply(query)
-  def onPollReply(poll: Poll): F[Option[Method[?]]]                              = noopReply(poll)
-  def onPollAnswerReply(pollAnswer: PollAnswer): F[Option[Method[?]]]            = noopReply(pollAnswer)
-  def onMyChatMemberReply(myChatMember: ChatMemberUpdated): F[Option[Method[?]]] = noopReply(myChatMember)
-  def onChatMemberReply(chatMember: ChatMemberUpdated): F[Option[Method[?]]]     = noopReply(chatMember)
-  def onChatJoinRequestReply(request: ChatJoinRequest): F[Option[Method[?]]]     = noopReply(request)
+  def onShippingQueryReply(query: ShippingQuery): F[Option[Method[?]]]              = noopReply(query)
+  def onPreCheckoutQueryReply(query: PreCheckoutQuery): F[Option[Method[?]]]        = noopReply(query)
+  def onPollReply(poll: Poll): F[Option[Method[?]]]                                 = noopReply(poll)
+  def onPollAnswerReply(pollAnswer: PollAnswer): F[Option[Method[?]]]               = noopReply(pollAnswer)
+  def onMyChatMemberReply(myChatMember: ChatMemberUpdated): F[Option[Method[?]]]    = noopReply(myChatMember)
+  def onChatMemberReply(chatMember: ChatMemberUpdated): F[Option[Method[?]]]        = noopReply(chatMember)
+  def onChatJoinRequestReply(request: ChatJoinRequest): F[Option[Method[?]]]        = noopReply(request)
+  def onChatBoostReply(boost: ChatBoostUpdated): F[Option[Method[?]]]               = noopReply(boost)
+  def onRemovedChatBoostReply(boostRemoved: ChatBoostRemoved): F[Option[Method[?]]] = noopReply(boostRemoved)
 
   def onUpdate(update: Update): F[Option[Method[?]]] =
     List(
@@ -117,6 +127,8 @@ abstract class WebhookBot[F[_]: Async](
       update.editedMessage.map(msg => onEditedMessageReply(msg) <* onEditedMessage(msg)),
       update.channelPost.map(msg => onChannelPostReply(msg) <* onChannelPost(msg)),
       update.editedChannelPost.map(msg => onEditedChannelPostReply(msg) <* onEditedChannelPost(msg)),
+      update.messageReaction.map(reaction => onMessageReactionReply(reaction) <* onMessageReaction(reaction)),
+      update.messageReactionCount.map(count => onMessageReactionCountReply(count) <* onMessageReactionCount(count)),
       update.inlineQuery.map(query => onInlineQueryReply(query) <* onInlineQuery(query)),
       update.callbackQuery.map(query => onCallbackQueryReply(query) <* onCallbackQuery(query)),
       update.chosenInlineResult.map(inlineResult =>
@@ -128,7 +140,11 @@ abstract class WebhookBot[F[_]: Async](
       update.pollAnswer.map(pollAnswer => onPollAnswerReply(pollAnswer) <* onPollAnswer(pollAnswer)),
       update.myChatMember.map(myChatMember => onMyChatMemberReply(myChatMember) <* onMyChatMember(myChatMember)),
       update.chatMember.map(chatMember => onChatMemberReply(chatMember) <* onChatMember(chatMember)),
-      update.chatJoinRequest.map(request => onChatJoinRequestReply(request) <* onChatJoinRequest(request))
+      update.chatJoinRequest.map(request => onChatJoinRequestReply(request) <* onChatJoinRequest(request)),
+      update.chatBoost.map(boost => onChatBoostReply(boost) <* onChatBoost(boost)),
+      update.removedChatBoost.map(boostRemoved =>
+        onRemovedChatBoostReply(boostRemoved) <* onRemovedChatBoost(boostRemoved)
+      )
     ).flatten.head
 
   private implicit val HandleUpdateReqEntityDecoder: EntityDecoder[F, Update] = jsonOf[F, Update]
