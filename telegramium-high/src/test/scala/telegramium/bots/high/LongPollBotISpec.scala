@@ -79,6 +79,7 @@ class LongPollBotISpec
         .when(sendMessageRequest("onMessage"))
         .respond(sendMessageResponse)
       bot.onUpdate(testUpdate.copy(message = testMessage.some)).unsafeRunSync()
+      verifyMessageSent("onMessage")
     }
 
     "edited message" in {
@@ -86,6 +87,7 @@ class LongPollBotISpec
         .when(sendMessageRequest("onEditedMessage"))
         .respond(sendMessageResponse)
       bot.onUpdate(testUpdate.copy(editedMessage = testMessage.some)).unsafeRunSync()
+      verifyMessageSent("onEditedMessage")
     }
 
     "channel post" in {
@@ -93,6 +95,7 @@ class LongPollBotISpec
         .when(sendMessageRequest("onChannelPost"))
         .respond(sendMessageResponse)
       bot.onUpdate(testUpdate.copy(channelPost = testMessage.some)).unsafeRunSync()
+      verifyMessageSent("onChannelPost")
     }
 
     "edited channel post" in {
@@ -100,6 +103,7 @@ class LongPollBotISpec
         .when(sendMessageRequest("onEditedChannelPost"))
         .respond(sendMessageResponse)
       bot.onUpdate(testUpdate.copy(editedChannelPost = testMessage.some)).unsafeRunSync()
+      verifyMessageSent("onEditedChannelPost")
     }
 
     "message reaction" in {
@@ -111,6 +115,7 @@ class LongPollBotISpec
           testUpdate.copy(messageReaction = MessageReactionUpdated(testChat, 0, 0).some)
         )
         .unsafeRunSync()
+      verifyMessageSent("onMessageReaction")
     }
 
     "message reaction count" in {
@@ -122,6 +127,7 @@ class LongPollBotISpec
           testUpdate.copy(messageReactionCount = MessageReactionCountUpdated(testChat, 0, 0).some)
         )
         .unsafeRunSync()
+      verifyMessageSent("onMessageReactionCount")
     }
 
     "inline query" in {
@@ -131,6 +137,7 @@ class LongPollBotISpec
       bot
         .onUpdate(testUpdate.copy(inlineQuery = InlineQuery("0", testUser, query = "", offset = "0").some))
         .unsafeRunSync()
+      verifyMessageSent("onInlineQuery")
     }
 
     "chosen inline result" in {
@@ -140,6 +147,7 @@ class LongPollBotISpec
       bot
         .onUpdate(testUpdate.copy(chosenInlineResult = ChosenInlineResult("0", testUser, query = "").some))
         .unsafeRunSync()
+      verifyMessageSent("onChosenInlineResult")
     }
 
     "callback query" in {
@@ -149,6 +157,7 @@ class LongPollBotISpec
       bot
         .onUpdate(testUpdate.copy(callbackQuery = CallbackQuery("0", testUser, chatInstance = "").some))
         .unsafeRunSync()
+      verifyMessageSent("onCallbackQuery")
     }
 
     "shipping query" in {
@@ -161,6 +170,7 @@ class LongPollBotISpec
             .copy(shippingQuery = ShippingQuery("0", testUser, "", ShippingAddress("", "", "", "", "", "")).some)
         )
         .unsafeRunSync()
+      verifyMessageSent("onShippingQuery")
     }
 
     "pre-checkout query" in {
@@ -168,6 +178,7 @@ class LongPollBotISpec
         .when(sendMessageRequest("onPreCheckoutQuery"))
         .respond(sendMessageResponse)
       bot.onUpdate(testUpdate.copy(preCheckoutQuery = PreCheckoutQuery("0", testUser, "", 0, "").some)).unsafeRunSync()
+      verifyMessageSent("onPreCheckoutQuery")
     }
 
     "poll" in {
@@ -189,6 +200,7 @@ class LongPollBotISpec
           )
         )
         .unsafeRunSync()
+      verifyMessageSent("onPoll")
     }
 
     "poll answer" in {
@@ -196,6 +208,7 @@ class LongPollBotISpec
         .when(sendMessageRequest("onPollAnswer"))
         .respond(sendMessageResponse)
       bot.onUpdate(testUpdate.copy(pollAnswer = PollAnswer("0", user = testUser.some).some)).unsafeRunSync()
+      verifyMessageSent("onPollAnswer")
     }
 
     "The bot's chat member status was updated in a chat" in {
@@ -203,6 +216,7 @@ class LongPollBotISpec
         .when(sendMessageRequest("onMyChatMember"))
         .respond(sendMessageResponse)
       bot.onUpdate(testUpdate.copy(myChatMember = testChatMemberUpdated.some)).unsafeRunSync()
+      verifyMessageSent("onMyChatMember")
     }
 
     "A chat member's status was updated in a chat" in {
@@ -210,6 +224,7 @@ class LongPollBotISpec
         .when(sendMessageRequest("onChatMember"))
         .respond(sendMessageResponse)
       bot.onUpdate(testUpdate.copy(chatMember = testChatMemberUpdated.some)).unsafeRunSync()
+      verifyMessageSent("onChatMember")
     }
 
     "chat join request" in {
@@ -217,6 +232,7 @@ class LongPollBotISpec
         .when(sendMessageRequest("onChatJoinRequest"))
         .respond(sendMessageResponse)
       bot.onUpdate(testUpdate.copy(chatJoinRequest = testChatJoinRequest.some)).unsafeRunSync()
+      verifyMessageSent("onChatJoinRequest")
     }
 
     "chat boost" in {
@@ -229,6 +245,7 @@ class LongPollBotISpec
             .copy(chatBoost = ChatBoostUpdated(testChat, ChatBoost("", 0, 0, ChatBoostSourcePremium(testUser))).some)
         )
         .unsafeRunSync()
+      mockServerClient.verify(sendMessageRequest("onChatBoost"))
     }
 
     "removed chat boost" in {
@@ -241,7 +258,12 @@ class LongPollBotISpec
             .copy(removedChatBoost = ChatBoostRemoved(testChat, "", 0, ChatBoostSourcePremium(testUser)).some)
         )
         .unsafeRunSync()
+      verifyMessageSent("onRemovedChatBoost")
     }
+  }
+
+  private def verifyMessageSent(text: String): Unit = {
+    mockServerClient.verify(sendMessageRequest(text))
   }
 
   override protected def afterAll(): Unit = {
