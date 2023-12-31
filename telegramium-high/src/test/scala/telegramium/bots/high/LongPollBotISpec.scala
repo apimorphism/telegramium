@@ -61,8 +61,8 @@ class LongPollBotISpec
       testChat,
       testUser,
       0,
-      ChatMemberMember("", testUser),
-      ChatMemberMember("", testUser)
+      ChatMemberMember(testUser),
+      ChatMemberMember(testUser)
     )
 
   private val testChatJoinRequest =
@@ -225,9 +225,8 @@ class LongPollBotISpec
         .respond(sendMessageResponse)
       bot
         .onUpdate(
-          testUpdate.copy(chatBoost =
-            ChatBoostUpdated(testChat, ChatBoost("", 0, 0, ChatBoostSourcePremium("", testUser))).some
-          )
+          testUpdate
+            .copy(chatBoost = ChatBoostUpdated(testChat, ChatBoost("", 0, 0, ChatBoostSourcePremium(testUser))).some)
         )
         .unsafeRunSync()
     }
@@ -239,7 +238,7 @@ class LongPollBotISpec
       bot
         .onUpdate(
           testUpdate
-            .copy(removedChatBoost = ChatBoostRemoved(testChat, "", 0, ChatBoostSourcePremium("", testUser)).some)
+            .copy(removedChatBoost = ChatBoostRemoved(testChat, "", 0, ChatBoostSourcePremium(testUser)).some)
         )
         .unsafeRunSync()
     }

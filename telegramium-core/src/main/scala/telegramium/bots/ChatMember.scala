@@ -4,8 +4,6 @@ sealed trait ChatMember {}
 
 /** Represents a chat member that owns the chat and has all administrator privileges.
   *
-  * @param status
-  *   The member's status in the chat, always “creator”
   * @param user
   *   Information about the user
   * @param isAnonymous
@@ -13,17 +11,11 @@ sealed trait ChatMember {}
   * @param customTitle
   *   Optional. Custom title for this user
   */
-final case class ChatMemberOwner(
-  status: String,
-  user: User,
-  isAnonymous: Boolean,
-  customTitle: Option[String] = Option.empty
-) extends ChatMember
+final case class ChatMemberOwner(user: User, isAnonymous: Boolean, customTitle: Option[String] = Option.empty)
+    extends ChatMember
 
 /** Represents a chat member that has some additional privileges.
   *
-  * @param status
-  *   The member's status in the chat, always “administrator”
   * @param user
   *   Information about the user
   * @param canBeEdited
@@ -66,7 +58,6 @@ final case class ChatMemberOwner(
   *   Optional. Custom title for this user
   */
 final case class ChatMemberAdministrator(
-  status: String,
   user: User,
   canBeEdited: Boolean,
   isAnonymous: Boolean,
@@ -89,37 +80,29 @@ final case class ChatMemberAdministrator(
 
 /** Represents a chat member that isn't currently a member of the chat, but may join it themselves.
   *
-  * @param status
-  *   The member's status in the chat, always “left”
   * @param user
   *   Information about the user
   */
-final case class ChatMemberLeft(status: String, user: User) extends ChatMember
+final case class ChatMemberLeft(user: User) extends ChatMember
 
 /** Represents a chat member that has no additional privileges or restrictions.
   *
-  * @param status
-  *   The member's status in the chat, always “member”
   * @param user
   *   Information about the user
   */
-final case class ChatMemberMember(status: String, user: User) extends ChatMember
+final case class ChatMemberMember(user: User) extends ChatMember
 
 /** Represents a chat member that was banned in the chat and can't return to the chat or view chat messages.
   *
-  * @param status
-  *   The member's status in the chat, always “kicked”
   * @param user
   *   Information about the user
   * @param untilDate
   *   Date when restrictions will be lifted for this user; Unix time. If 0, then the user is banned forever
   */
-final case class ChatMemberBanned(status: String, user: User, untilDate: Int) extends ChatMember
+final case class ChatMemberBanned(user: User, untilDate: Int) extends ChatMember
 
 /** Represents a chat member that is under certain restrictions in the chat. Supergroups only.
   *
-  * @param status
-  *   The member's status in the chat, always “restricted”
   * @param user
   *   Information about the user
   * @param isMember
@@ -157,7 +140,6 @@ final case class ChatMemberBanned(status: String, user: User, untilDate: Int) ex
   *   Date when restrictions will be lifted for this user; Unix time. If 0, then the user is restricted forever
   */
 final case class ChatMemberRestricted(
-  status: String,
   user: User,
   isMember: Boolean,
   canSendMessages: Boolean,

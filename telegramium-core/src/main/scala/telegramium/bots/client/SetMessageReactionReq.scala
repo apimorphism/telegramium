@@ -6,7 +6,8 @@ import telegramium.bots.ReactionType
 /** @param chatId
   *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
   * @param messageId
-  *   Identifier of the target message
+  *   Identifier of the target message. If the message belongs to a media group, the reaction is set to the first
+  *   non-deleted message in the group instead.
   * @param reaction
   *   New list of reaction types to set on the message. Currently, as non-premium users, bots can set up to one reaction
   *   per message. A custom emoji reaction can be used if it is either already present on the message or explicitly

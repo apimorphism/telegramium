@@ -486,26 +486,28 @@ object CirceImplicits {
     }
 
   implicit lazy val messageoriginEncoder: Encoder[MessageOrigin] = {
-    case x: MessageOriginUser       => x.asJson
-    case x: MessageOriginChannel    => x.asJson
-    case x: MessageOriginHiddenUser => x.asJson
-    case x: MessageOriginChat       => x.asJson
+    case chat: MessageOriginChat => chat.asJson.mapObject(_.add("type", Json.fromString("chat")))
+    case hidden_user: MessageOriginHiddenUser =>
+      hidden_user.asJson.mapObject(_.add("type", Json.fromString("hidden_user")))
+    case user: MessageOriginUser       => user.asJson.mapObject(_.add("type", Json.fromString("user")))
+    case channel: MessageOriginChannel => channel.asJson.mapObject(_.add("type", Json.fromString("channel")))
   }
 
-  implicit lazy val messageoriginDecoder: Decoder[MessageOrigin] = {
-    List[Decoder[MessageOrigin]](
-      messageoriginuserDecoder.widen,
-      messageoriginchannelDecoder.widen,
-      messageoriginhiddenuserDecoder.widen,
-      messageoriginchatDecoder.widen
-    ).reduceLeft(_ or _)
-  }
+  implicit lazy val messageoriginDecoder: Decoder[MessageOrigin] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "chat"        => Decoder[MessageOriginChat]
+      case "hidden_user" => Decoder[MessageOriginHiddenUser]
+      case "user"        => Decoder[MessageOriginUser]
+      case "channel"     => Decoder[MessageOriginChannel]
+      case unknown       => throw DecodingError(s"Unknown type for MessageOrigin: $unknown")
+    }
+  } yield value
 
   implicit lazy val messageoriginuserEncoder: Encoder[MessageOriginUser] =
     (x: MessageOriginUser) => {
       Json.fromFields(
         List(
-          "type"        -> x.`type`.asJson,
           "date"        -> x.date.asJson,
           "sender_user" -> x.senderUser.asJson
         ).filter(!_._2.isNull)
@@ -515,11 +517,10 @@ object CirceImplicits {
   implicit lazy val messageoriginuserDecoder: Decoder[MessageOriginUser] =
     Decoder.instance { h =>
       for {
-        _type       <- h.get[String]("type")
         _date       <- h.get[Int]("date")
         _senderUser <- h.get[User]("sender_user")
       } yield {
-        MessageOriginUser(`type` = _type, date = _date, senderUser = _senderUser)
+        MessageOriginUser(date = _date, senderUser = _senderUser)
       }
     }
 
@@ -527,7 +528,6 @@ object CirceImplicits {
     (x: MessageOriginChannel) => {
       Json.fromFields(
         List(
-          "type"             -> x.`type`.asJson,
           "date"             -> x.date.asJson,
           "chat"             -> x.chat.asJson,
           "message_id"       -> x.messageId.asJson,
@@ -539,19 +539,12 @@ object CirceImplicits {
   implicit lazy val messageoriginchannelDecoder: Decoder[MessageOriginChannel] =
     Decoder.instance { h =>
       for {
-        _type            <- h.get[String]("type")
         _date            <- h.get[Int]("date")
         _chat            <- h.get[Chat]("chat")
         _messageId       <- h.get[Int]("message_id")
         _authorSignature <- h.get[Option[String]]("author_signature")
       } yield {
-        MessageOriginChannel(
-          `type` = _type,
-          date = _date,
-          chat = _chat,
-          messageId = _messageId,
-          authorSignature = _authorSignature
-        )
+        MessageOriginChannel(date = _date, chat = _chat, messageId = _messageId, authorSignature = _authorSignature)
       }
     }
 
@@ -559,7 +552,6 @@ object CirceImplicits {
     (x: MessageOriginHiddenUser) => {
       Json.fromFields(
         List(
-          "type"             -> x.`type`.asJson,
           "date"             -> x.date.asJson,
           "sender_user_name" -> x.senderUserName.asJson
         ).filter(!_._2.isNull)
@@ -569,11 +561,10 @@ object CirceImplicits {
   implicit lazy val messageoriginhiddenuserDecoder: Decoder[MessageOriginHiddenUser] =
     Decoder.instance { h =>
       for {
-        _type           <- h.get[String]("type")
         _date           <- h.get[Int]("date")
         _senderUserName <- h.get[String]("sender_user_name")
       } yield {
-        MessageOriginHiddenUser(`type` = _type, date = _date, senderUserName = _senderUserName)
+        MessageOriginHiddenUser(date = _date, senderUserName = _senderUserName)
       }
     }
 
@@ -581,7 +572,6 @@ object CirceImplicits {
     (x: MessageOriginChat) => {
       Json.fromFields(
         List(
-          "type"             -> x.`type`.asJson,
           "date"             -> x.date.asJson,
           "sender_chat"      -> x.senderChat.asJson,
           "author_signature" -> x.authorSignature.asJson
@@ -592,40 +582,41 @@ object CirceImplicits {
   implicit lazy val messageoriginchatDecoder: Decoder[MessageOriginChat] =
     Decoder.instance { h =>
       for {
-        _type            <- h.get[String]("type")
         _date            <- h.get[Int]("date")
         _senderChat      <- h.get[Chat]("sender_chat")
         _authorSignature <- h.get[Option[String]]("author_signature")
       } yield {
-        MessageOriginChat(`type` = _type, date = _date, senderChat = _senderChat, authorSignature = _authorSignature)
+        MessageOriginChat(date = _date, senderChat = _senderChat, authorSignature = _authorSignature)
       }
     }
 
   implicit lazy val chatmemberEncoder: Encoder[ChatMember] = {
-    case x: ChatMemberOwner         => x.asJson
-    case x: ChatMemberAdministrator => x.asJson
-    case x: ChatMemberLeft          => x.asJson
-    case x: ChatMemberMember        => x.asJson
-    case x: ChatMemberBanned        => x.asJson
-    case x: ChatMemberRestricted    => x.asJson
+    case kicked: ChatMemberBanned => kicked.asJson.mapObject(_.add("status", Json.fromString("kicked")))
+    case left: ChatMemberLeft     => left.asJson.mapObject(_.add("status", Json.fromString("left")))
+    case administrator: ChatMemberAdministrator =>
+      administrator.asJson.mapObject(_.add("status", Json.fromString("administrator")))
+    case creator: ChatMemberOwner         => creator.asJson.mapObject(_.add("status", Json.fromString("creator")))
+    case member: ChatMemberMember         => member.asJson.mapObject(_.add("status", Json.fromString("member")))
+    case restricted: ChatMemberRestricted => restricted.asJson.mapObject(_.add("status", Json.fromString("restricted")))
   }
 
-  implicit lazy val chatmemberDecoder: Decoder[ChatMember] = {
-    List[Decoder[ChatMember]](
-      chatmemberownerDecoder.widen,
-      chatmemberadministratorDecoder.widen,
-      chatmemberleftDecoder.widen,
-      chatmembermemberDecoder.widen,
-      chatmemberbannedDecoder.widen,
-      chatmemberrestrictedDecoder.widen
-    ).reduceLeft(_ or _)
-  }
+  implicit lazy val chatmemberDecoder: Decoder[ChatMember] = for {
+    fType <- Decoder[String].prepare(_.downField("status"))
+    value <- fType match {
+      case "kicked"        => Decoder[ChatMemberBanned]
+      case "left"          => Decoder[ChatMemberLeft]
+      case "administrator" => Decoder[ChatMemberAdministrator]
+      case "creator"       => Decoder[ChatMemberOwner]
+      case "member"        => Decoder[ChatMemberMember]
+      case "restricted"    => Decoder[ChatMemberRestricted]
+      case unknown         => throw DecodingError(s"Unknown type for ChatMember: $unknown")
+    }
+  } yield value
 
   implicit lazy val chatmemberownerEncoder: Encoder[ChatMemberOwner] =
     (x: ChatMemberOwner) => {
       Json.fromFields(
         List(
-          "status"       -> x.status.asJson,
           "user"         -> x.user.asJson,
           "is_anonymous" -> x.isAnonymous.asJson,
           "custom_title" -> x.customTitle.asJson
@@ -636,12 +627,11 @@ object CirceImplicits {
   implicit lazy val chatmemberownerDecoder: Decoder[ChatMemberOwner] =
     Decoder.instance { h =>
       for {
-        _status      <- h.get[String]("status")
         _user        <- h.get[User]("user")
         _isAnonymous <- h.get[Boolean]("is_anonymous")
         _customTitle <- h.get[Option[String]]("custom_title")
       } yield {
-        ChatMemberOwner(status = _status, user = _user, isAnonymous = _isAnonymous, customTitle = _customTitle)
+        ChatMemberOwner(user = _user, isAnonymous = _isAnonymous, customTitle = _customTitle)
       }
     }
 
@@ -649,7 +639,6 @@ object CirceImplicits {
     (x: ChatMemberAdministrator) => {
       Json.fromFields(
         List(
-          "status"                 -> x.status.asJson,
           "user"                   -> x.user.asJson,
           "can_be_edited"          -> x.canBeEdited.asJson,
           "is_anonymous"           -> x.isAnonymous.asJson,
@@ -675,7 +664,6 @@ object CirceImplicits {
   implicit lazy val chatmemberadministratorDecoder: Decoder[ChatMemberAdministrator] =
     Decoder.instance { h =>
       for {
-        _status              <- h.get[String]("status")
         _user                <- h.get[User]("user")
         _canBeEdited         <- h.get[Boolean]("can_be_edited")
         _isAnonymous         <- h.get[Boolean]("is_anonymous")
@@ -696,7 +684,6 @@ object CirceImplicits {
         _customTitle         <- h.get[Option[String]]("custom_title")
       } yield {
         ChatMemberAdministrator(
-          status = _status,
           user = _user,
           canBeEdited = _canBeEdited,
           isAnonymous = _isAnonymous,
@@ -723,8 +710,7 @@ object CirceImplicits {
     (x: ChatMemberLeft) => {
       Json.fromFields(
         List(
-          "status" -> x.status.asJson,
-          "user"   -> x.user.asJson
+          "user" -> x.user.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -732,10 +718,9 @@ object CirceImplicits {
   implicit lazy val chatmemberleftDecoder: Decoder[ChatMemberLeft] =
     Decoder.instance { h =>
       for {
-        _status <- h.get[String]("status")
-        _user   <- h.get[User]("user")
+        _user <- h.get[User]("user")
       } yield {
-        ChatMemberLeft(status = _status, user = _user)
+        ChatMemberLeft(user = _user)
       }
     }
 
@@ -743,8 +728,7 @@ object CirceImplicits {
     (x: ChatMemberMember) => {
       Json.fromFields(
         List(
-          "status" -> x.status.asJson,
-          "user"   -> x.user.asJson
+          "user" -> x.user.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -752,10 +736,9 @@ object CirceImplicits {
   implicit lazy val chatmembermemberDecoder: Decoder[ChatMemberMember] =
     Decoder.instance { h =>
       for {
-        _status <- h.get[String]("status")
-        _user   <- h.get[User]("user")
+        _user <- h.get[User]("user")
       } yield {
-        ChatMemberMember(status = _status, user = _user)
+        ChatMemberMember(user = _user)
       }
     }
 
@@ -763,7 +746,6 @@ object CirceImplicits {
     (x: ChatMemberBanned) => {
       Json.fromFields(
         List(
-          "status"     -> x.status.asJson,
           "user"       -> x.user.asJson,
           "until_date" -> x.untilDate.asJson
         ).filter(!_._2.isNull)
@@ -773,11 +755,10 @@ object CirceImplicits {
   implicit lazy val chatmemberbannedDecoder: Decoder[ChatMemberBanned] =
     Decoder.instance { h =>
       for {
-        _status    <- h.get[String]("status")
         _user      <- h.get[User]("user")
         _untilDate <- h.get[Int]("until_date")
       } yield {
-        ChatMemberBanned(status = _status, user = _user, untilDate = _untilDate)
+        ChatMemberBanned(user = _user, untilDate = _untilDate)
       }
     }
 
@@ -785,7 +766,6 @@ object CirceImplicits {
     (x: ChatMemberRestricted) => {
       Json.fromFields(
         List(
-          "status"                    -> x.status.asJson,
           "user"                      -> x.user.asJson,
           "is_member"                 -> x.isMember.asJson,
           "can_send_messages"         -> x.canSendMessages.asJson,
@@ -810,7 +790,6 @@ object CirceImplicits {
   implicit lazy val chatmemberrestrictedDecoder: Decoder[ChatMemberRestricted] =
     Decoder.instance { h =>
       for {
-        _status                <- h.get[String]("status")
         _user                  <- h.get[User]("user")
         _isMember              <- h.get[Boolean]("is_member")
         _canSendMessages       <- h.get[Boolean]("can_send_messages")
@@ -830,7 +809,6 @@ object CirceImplicits {
         _untilDate             <- h.get[Int]("until_date")
       } yield {
         ChatMemberRestricted(
-          status = _status,
           user = _user,
           isMember = _isMember,
           canSendMessages = _canSendMessages,
@@ -853,22 +831,24 @@ object CirceImplicits {
     }
 
   implicit lazy val reactiontypeEncoder: Encoder[ReactionType] = {
-    case x: ReactionTypeEmoji       => x.asJson
-    case x: ReactionTypeCustomEmoji => x.asJson
+    case custom_emoji: ReactionTypeCustomEmoji =>
+      custom_emoji.asJson.mapObject(_.add("type", Json.fromString("custom_emoji")))
+    case emoji: ReactionTypeEmoji => emoji.asJson.mapObject(_.add("type", Json.fromString("emoji")))
   }
 
-  implicit lazy val reactiontypeDecoder: Decoder[ReactionType] = {
-    List[Decoder[ReactionType]](
-      reactiontypeemojiDecoder.widen,
-      reactiontypecustomemojiDecoder.widen
-    ).reduceLeft(_ or _)
-  }
+  implicit lazy val reactiontypeDecoder: Decoder[ReactionType] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "custom_emoji" => Decoder[ReactionTypeCustomEmoji]
+      case "emoji"        => Decoder[ReactionTypeEmoji]
+      case unknown        => throw DecodingError(s"Unknown type for ReactionType: $unknown")
+    }
+  } yield value
 
   implicit lazy val reactiontypeemojiEncoder: Encoder[ReactionTypeEmoji] =
     (x: ReactionTypeEmoji) => {
       Json.fromFields(
         List(
-          "type"  -> x.`type`.asJson,
           "emoji" -> x.emoji.asJson
         ).filter(!_._2.isNull)
       )
@@ -877,10 +857,9 @@ object CirceImplicits {
   implicit lazy val reactiontypeemojiDecoder: Decoder[ReactionTypeEmoji] =
     Decoder.instance { h =>
       for {
-        _type  <- h.get[String]("type")
         _emoji <- h.get[String]("emoji")
       } yield {
-        ReactionTypeEmoji(`type` = _type, emoji = _emoji)
+        ReactionTypeEmoji(emoji = _emoji)
       }
     }
 
@@ -888,7 +867,6 @@ object CirceImplicits {
     (x: ReactionTypeCustomEmoji) => {
       Json.fromFields(
         List(
-          "type"            -> x.`type`.asJson,
           "custom_emoji_id" -> x.customEmojiId.asJson
         ).filter(!_._2.isNull)
       )
@@ -897,10 +875,9 @@ object CirceImplicits {
   implicit lazy val reactiontypecustomemojiDecoder: Decoder[ReactionTypeCustomEmoji] =
     Decoder.instance { h =>
       for {
-        _type          <- h.get[String]("type")
         _customEmojiId <- h.get[String]("custom_emoji_id")
       } yield {
-        ReactionTypeCustomEmoji(`type` = _type, customEmojiId = _customEmojiId)
+        ReactionTypeCustomEmoji(customEmojiId = _customEmojiId)
       }
     }
 
@@ -1059,25 +1036,26 @@ object CirceImplicits {
     Right(MenuButtonCommands)
 
   implicit lazy val chatboostsourceEncoder: Encoder[ChatBoostSource] = {
-    case x: ChatBoostSourceGiftCode => x.asJson
-    case x: ChatBoostSourceGiveaway => x.asJson
-    case x: ChatBoostSourcePremium  => x.asJson
+    case gift_code: ChatBoostSourceGiftCode => gift_code.asJson.mapObject(_.add("source", Json.fromString("gift_code")))
+    case premium: ChatBoostSourcePremium    => premium.asJson.mapObject(_.add("source", Json.fromString("premium")))
+    case giveaway: ChatBoostSourceGiveaway  => giveaway.asJson.mapObject(_.add("source", Json.fromString("giveaway")))
   }
 
-  implicit lazy val chatboostsourceDecoder: Decoder[ChatBoostSource] = {
-    List[Decoder[ChatBoostSource]](
-      chatboostsourcegiftcodeDecoder.widen,
-      chatboostsourcegiveawayDecoder.widen,
-      chatboostsourcepremiumDecoder.widen
-    ).reduceLeft(_ or _)
-  }
+  implicit lazy val chatboostsourceDecoder: Decoder[ChatBoostSource] = for {
+    fType <- Decoder[String].prepare(_.downField("source"))
+    value <- fType match {
+      case "gift_code" => Decoder[ChatBoostSourceGiftCode]
+      case "premium"   => Decoder[ChatBoostSourcePremium]
+      case "giveaway"  => Decoder[ChatBoostSourceGiveaway]
+      case unknown     => throw DecodingError(s"Unknown type for ChatBoostSource: $unknown")
+    }
+  } yield value
 
   implicit lazy val chatboostsourcegiftcodeEncoder: Encoder[ChatBoostSourceGiftCode] =
     (x: ChatBoostSourceGiftCode) => {
       Json.fromFields(
         List(
-          "source" -> x.source.asJson,
-          "user"   -> x.user.asJson
+          "user" -> x.user.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1085,10 +1063,9 @@ object CirceImplicits {
   implicit lazy val chatboostsourcegiftcodeDecoder: Decoder[ChatBoostSourceGiftCode] =
     Decoder.instance { h =>
       for {
-        _source <- h.get[String]("source")
-        _user   <- h.get[User]("user")
+        _user <- h.get[User]("user")
       } yield {
-        ChatBoostSourceGiftCode(source = _source, user = _user)
+        ChatBoostSourceGiftCode(user = _user)
       }
     }
 
@@ -1096,7 +1073,6 @@ object CirceImplicits {
     (x: ChatBoostSourceGiveaway) => {
       Json.fromFields(
         List(
-          "source"              -> x.source.asJson,
           "giveaway_message_id" -> x.giveawayMessageId.asJson,
           "user"                -> x.user.asJson,
           "is_unclaimed"        -> x.isUnclaimed.asJson
@@ -1107,17 +1083,11 @@ object CirceImplicits {
   implicit lazy val chatboostsourcegiveawayDecoder: Decoder[ChatBoostSourceGiveaway] =
     Decoder.instance { h =>
       for {
-        _source            <- h.get[String]("source")
         _giveawayMessageId <- h.get[Int]("giveaway_message_id")
         _user              <- h.get[Option[User]]("user")
         _isUnclaimed       <- h.get[Option[Boolean]]("is_unclaimed")
       } yield {
-        ChatBoostSourceGiveaway(
-          source = _source,
-          giveawayMessageId = _giveawayMessageId,
-          user = _user,
-          isUnclaimed = _isUnclaimed
-        )
+        ChatBoostSourceGiveaway(giveawayMessageId = _giveawayMessageId, user = _user, isUnclaimed = _isUnclaimed)
       }
     }
 
@@ -1125,8 +1095,7 @@ object CirceImplicits {
     (x: ChatBoostSourcePremium) => {
       Json.fromFields(
         List(
-          "source" -> x.source.asJson,
-          "user"   -> x.user.asJson
+          "user" -> x.user.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1134,10 +1103,9 @@ object CirceImplicits {
   implicit lazy val chatboostsourcepremiumDecoder: Decoder[ChatBoostSourcePremium] =
     Decoder.instance { h =>
       for {
-        _source <- h.get[String]("source")
-        _user   <- h.get[User]("user")
+        _user <- h.get[User]("user")
       } yield {
-        ChatBoostSourcePremium(source = _source, user = _user)
+        ChatBoostSourcePremium(user = _user)
       }
     }
 
@@ -2586,23 +2554,23 @@ object CirceImplicits {
 
   implicit lazy val passportelementerrorEncoder: Encoder[PassportElementError] = {
     case translation_file: PassportElementErrorTranslationFile =>
-      translation_file.asJson.mapObject(_.add("type", Json.fromString("translation_file")))
+      translation_file.asJson.mapObject(_.add("source", Json.fromString("translation_file")))
     case translation_files: PassportElementErrorTranslationFiles =>
-      translation_files.asJson.mapObject(_.add("type", Json.fromString("translation_files")))
+      translation_files.asJson.mapObject(_.add("source", Json.fromString("translation_files")))
     case reverse_side: PassportElementErrorReverseSide =>
-      reverse_side.asJson.mapObject(_.add("type", Json.fromString("reverse_side")))
-    case data: PassportElementErrorDataField => data.asJson.mapObject(_.add("type", Json.fromString("data")))
+      reverse_side.asJson.mapObject(_.add("source", Json.fromString("reverse_side")))
+    case data: PassportElementErrorDataField => data.asJson.mapObject(_.add("source", Json.fromString("data")))
     case front_side: PassportElementErrorFrontSide =>
-      front_side.asJson.mapObject(_.add("type", Json.fromString("front_side")))
-    case files: PassportElementErrorFiles => files.asJson.mapObject(_.add("type", Json.fromString("files")))
+      front_side.asJson.mapObject(_.add("source", Json.fromString("front_side")))
+    case files: PassportElementErrorFiles => files.asJson.mapObject(_.add("source", Json.fromString("files")))
     case unspecified: PassportElementErrorUnspecified =>
-      unspecified.asJson.mapObject(_.add("type", Json.fromString("unspecified")))
-    case file: PassportElementErrorFile     => file.asJson.mapObject(_.add("type", Json.fromString("file")))
-    case selfie: PassportElementErrorSelfie => selfie.asJson.mapObject(_.add("type", Json.fromString("selfie")))
+      unspecified.asJson.mapObject(_.add("source", Json.fromString("unspecified")))
+    case file: PassportElementErrorFile     => file.asJson.mapObject(_.add("source", Json.fromString("file")))
+    case selfie: PassportElementErrorSelfie => selfie.asJson.mapObject(_.add("source", Json.fromString("selfie")))
   }
 
   implicit lazy val passportelementerrorDecoder: Decoder[PassportElementError] = for {
-    fType <- Decoder[String].prepare(_.downField("type"))
+    fType <- Decoder[String].prepare(_.downField("source"))
     value <- fType match {
       case "translation_file"  => Decoder[PassportElementErrorTranslationFile]
       case "translation_files" => Decoder[PassportElementErrorTranslationFiles]
