@@ -61,7 +61,7 @@ final case class ExternalReplyInfo(
   document: Option[Document] = Option.empty,
   photo: List[PhotoSize] = List.empty,
   sticker: Option[Sticker] = Option.empty,
-  story: Option[Story.type] = Option.empty,
+  story: Option[Story] = Option.empty,
   video: Option[Video] = Option.empty,
   videoNote: Option[VideoNote] = Option.empty,
   voice: Option[Voice] = Option.empty,

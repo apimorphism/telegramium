@@ -1,5 +1,10 @@
 package telegramium.bots
 
-/** This object represents a message about a forwarded story in the chat. Currently holds no information.
+/** This object represents a story.
+  *
+  * @param chat
+  *   Chat that posted the story
+  * @param id
+  *   Unique identifier for the story in the chat
   */
-case object Story
+final case class Story(chat: Chat, id: Int)

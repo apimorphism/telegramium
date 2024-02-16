@@ -5,7 +5,7 @@ package telegramium.bots
   * @param chat
   *   The chat that created the giveaway
   * @param giveawayMessageId
-  *   Identifier of the messsage with the giveaway in the chat
+  *   Identifier of the message with the giveaway in the chat
   * @param winnersSelectionDate
   *   Point in time (Unix timestamp) when winners of the giveaway were selected
   * @param winnerCount

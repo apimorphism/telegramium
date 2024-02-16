@@ -66,8 +66,11 @@ package telegramium.bots
   * @param permissions
   *   Optional. Default chat member permissions, for groups and supergroups. Returned only in getChat.
   * @param slowModeDelay
-  *   Optional. For supergroups, the minimum allowed delay between consecutive messages sent by each unpriviledged user;
+  *   Optional. For supergroups, the minimum allowed delay between consecutive messages sent by each unprivileged user;
   *   in seconds. Returned only in getChat.
+  * @param unrestrictBoostCount
+  *   Optional. For supergroups, the minimum number of boosts that a non-administrator user needs to add in order to
+  *   ignore slow mode and chat permissions. Returned only in getChat.
   * @param messageAutoDeleteTime
   *   Optional. The time after which all messages sent to the chat will be automatically deleted; in seconds. Returned
   *   only in getChat.
@@ -86,6 +89,9 @@ package telegramium.bots
   *   Optional. For supergroups, name of group sticker set. Returned only in getChat.
   * @param canSetStickerSet
   *   Optional. True, if the bot can change the group sticker set. Returned only in getChat.
+  * @param customEmojiStickerSetName
+  *   Optional. For supergroups, the name of the group's custom emoji sticker set. Custom emoji from this set can be
+  *   used by all users and bots in the group. Returned only in getChat.
   * @param linkedChatId
   *   Optional. Unique identifier for the linked chat, i.e. the discussion group identifier for a channel and vice
   *   versa; for supergroups and channel chats. This identifier may be greater than 32 bits and some programming
@@ -121,6 +127,7 @@ final case class Chat(
   pinnedMessage: Option[Message] = Option.empty,
   permissions: Option[ChatPermissions] = Option.empty,
   slowModeDelay: Option[Int] = Option.empty,
+  unrestrictBoostCount: Option[Int] = Option.empty,
   messageAutoDeleteTime: Option[Int] = Option.empty,
   hasAggressiveAntiSpamEnabled: Option[Boolean] = Option.empty,
   hasHiddenMembers: Option[Boolean] = Option.empty,
@@ -128,6 +135,7 @@ final case class Chat(
   hasVisibleHistory: Option[Boolean] = Option.empty,
   stickerSetName: Option[String] = Option.empty,
   canSetStickerSet: Option[Boolean] = Option.empty,
+  customEmojiStickerSetName: Option[String] = Option.empty,
   linkedChatId: Option[Long] = Option.empty,
   location: Option[ChatLocation] = Option.empty
 )

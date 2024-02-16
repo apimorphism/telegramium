@@ -5,9 +5,8 @@ package telegramium.bots
   * @param isAnonymous
   *   True, if the user's presence in the chat is hidden
   * @param canManageChat
-  *   True, if the administrator can access the chat event log, boost list in channels, see channel members, report spam
-  *   messages, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator
-  *   privilege
+  *   True, if the administrator can access the chat event log, get boost list, see hidden supergroup and channel
+  *   members, report spam messages and ignore slow mode. Implied by any other administrator privilege.
   * @param canDeleteMessages
   *   True, if the administrator can delete messages of other users
   * @param canManageVideoChats
@@ -22,18 +21,18 @@ package telegramium.bots
   *   True, if the user is allowed to change the chat title, photo and other settings
   * @param canInviteUsers
   *   True, if the user is allowed to invite new users to the chat
+  * @param canPostStories
+  *   True, if the administrator can post stories to the chat
+  * @param canEditStories
+  *   True, if the administrator can edit stories posted by other users
+  * @param canDeleteStories
+  *   True, if the administrator can delete stories posted by other users
   * @param canPostMessages
   *   Optional. True, if the administrator can post messages in the channel, or access channel statistics; channels only
   * @param canEditMessages
   *   Optional. True, if the administrator can edit messages of other users and can pin messages; channels only
   * @param canPinMessages
   *   Optional. True, if the user is allowed to pin messages; groups and supergroups only
-  * @param canPostStories
-  *   Optional. True, if the administrator can post stories in the channel; channels only
-  * @param canEditStories
-  *   Optional. True, if the administrator can edit stories posted by other users; channels only
-  * @param canDeleteStories
-  *   Optional. True, if the administrator can delete stories posted by other users; channels only
   * @param canManageTopics
   *   Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only
   */
@@ -46,11 +45,11 @@ final case class ChatAdministratorRights(
   canPromoteMembers: Boolean,
   canChangeInfo: Boolean,
   canInviteUsers: Boolean,
+  canPostStories: Boolean,
+  canEditStories: Boolean,
+  canDeleteStories: Boolean,
   canPostMessages: Option[Boolean] = Option.empty,
   canEditMessages: Option[Boolean] = Option.empty,
   canPinMessages: Option[Boolean] = Option.empty,
-  canPostStories: Option[Boolean] = Option.empty,
-  canEditStories: Option[Boolean] = Option.empty,
-  canDeleteStories: Option[Boolean] = Option.empty,
   canManageTopics: Option[Boolean] = Option.empty
 )

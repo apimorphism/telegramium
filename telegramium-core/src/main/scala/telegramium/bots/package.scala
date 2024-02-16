@@ -230,6 +230,7 @@ object CirceImplicits {
           "message_thread_id"                 -> x.messageThreadId.asJson,
           "from"                              -> x.from.asJson,
           "sender_chat"                       -> x.senderChat.asJson,
+          "sender_boost_count"                -> x.senderBoostCount.asJson,
           "date"                              -> x.date.asJson,
           "chat"                              -> x.chat.asJson,
           "forward_origin"                    -> x.forwardOrigin.asJson,
@@ -238,6 +239,7 @@ object CirceImplicits {
           "reply_to_message"                  -> x.replyToMessage.asJson,
           "external_reply"                    -> x.externalReply.asJson,
           "quote"                             -> x.quote.asJson,
+          "reply_to_story"                    -> x.replyToStory.asJson,
           "via_bot"                           -> x.viaBot.asJson,
           "edit_date"                         -> x.editDate.asJson,
           "has_protected_content"             -> x.hasProtectedContent.asJson,
@@ -284,6 +286,7 @@ object CirceImplicits {
           "write_access_allowed"              -> x.writeAccessAllowed.asJson,
           "passport_data"                     -> x.passportData.asJson,
           "proximity_alert_triggered"         -> x.proximityAlertTriggered.asJson,
+          "boost_added"                       -> x.boostAdded.asJson,
           "forum_topic_created"               -> x.forumTopicCreated.asJson,
           "forum_topic_edited"                -> x.forumTopicEdited.asJson,
           "forum_topic_closed"                -> x.forumTopicClosed.asJson,
@@ -311,6 +314,7 @@ object CirceImplicits {
         _messageThreadId       <- h.get[Option[Int]]("message_thread_id")
         _from                  <- h.get[Option[User]]("from")
         _senderChat            <- h.get[Option[Chat]]("sender_chat")
+        _senderBoostCount      <- h.get[Option[Int]]("sender_boost_count")
         _date                  <- h.get[Int]("date")
         _chat                  <- h.get[Chat]("chat")
         _forwardOrigin         <- h.get[Option[MessageOrigin]]("forward_origin")
@@ -319,6 +323,7 @@ object CirceImplicits {
         _replyToMessage        <- h.get[Option[Message]]("reply_to_message")
         _externalReply         <- h.get[Option[ExternalReplyInfo]]("external_reply")
         _quote                 <- h.get[Option[TextQuote]]("quote")
+        _replyToStory          <- h.get[Option[Story]]("reply_to_story")
         _viaBot                <- h.get[Option[User]]("via_bot")
         _editDate              <- h.get[Option[Int]]("edit_date")
         _hasProtectedContent   <- h.get[Option[Boolean]]("has_protected_content")
@@ -332,7 +337,7 @@ object CirceImplicits {
         _document              <- h.get[Option[Document]]("document")
         _photo                 <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
         _sticker               <- h.get[Option[Sticker]]("sticker")
-        _story                 <- h.get[Option[Story.type]]("story")
+        _story                 <- h.get[Option[Story]]("story")
         _video                 <- h.get[Option[Video]]("video")
         _videoNote             <- h.get[Option[VideoNote]]("video_note")
         _voice                 <- h.get[Option[Voice]]("voice")
@@ -367,6 +372,7 @@ object CirceImplicits {
         _writeAccessAllowed           <- h.get[Option[WriteAccessAllowed]]("write_access_allowed")
         _passportData                 <- h.get[Option[PassportData]]("passport_data")
         _proximityAlertTriggered      <- h.get[Option[ProximityAlertTriggered]]("proximity_alert_triggered")
+        _boostAdded                   <- h.get[Option[ChatBoostAdded]]("boost_added")
         _forumTopicCreated            <- h.get[Option[ForumTopicCreated]]("forum_topic_created")
         _forumTopicEdited             <- h.get[Option[ForumTopicEdited]]("forum_topic_edited")
         _forumTopicClosed             <- h.get[Option[ForumTopicClosed.type]]("forum_topic_closed")
@@ -389,6 +395,7 @@ object CirceImplicits {
           messageThreadId = _messageThreadId,
           from = _from,
           senderChat = _senderChat,
+          senderBoostCount = _senderBoostCount,
           date = _date,
           chat = _chat,
           forwardOrigin = _forwardOrigin,
@@ -397,6 +404,7 @@ object CirceImplicits {
           replyToMessage = _replyToMessage,
           externalReply = _externalReply,
           quote = _quote,
+          replyToStory = _replyToStory,
           viaBot = _viaBot,
           editDate = _editDate,
           hasProtectedContent = _hasProtectedContent,
@@ -443,6 +451,7 @@ object CirceImplicits {
           writeAccessAllowed = _writeAccessAllowed,
           passportData = _passportData,
           proximityAlertTriggered = _proximityAlertTriggered,
+          boostAdded = _boostAdded,
           forumTopicCreated = _forumTopicCreated,
           forumTopicEdited = _forumTopicEdited,
           forumTopicClosed = _forumTopicClosed,
@@ -649,12 +658,12 @@ object CirceImplicits {
           "can_promote_members"    -> x.canPromoteMembers.asJson,
           "can_change_info"        -> x.canChangeInfo.asJson,
           "can_invite_users"       -> x.canInviteUsers.asJson,
-          "can_post_messages"      -> x.canPostMessages.asJson,
-          "can_edit_messages"      -> x.canEditMessages.asJson,
-          "can_pin_messages"       -> x.canPinMessages.asJson,
           "can_post_stories"       -> x.canPostStories.asJson,
           "can_edit_stories"       -> x.canEditStories.asJson,
           "can_delete_stories"     -> x.canDeleteStories.asJson,
+          "can_post_messages"      -> x.canPostMessages.asJson,
+          "can_edit_messages"      -> x.canEditMessages.asJson,
+          "can_pin_messages"       -> x.canPinMessages.asJson,
           "can_manage_topics"      -> x.canManageTopics.asJson,
           "custom_title"           -> x.customTitle.asJson
         ).filter(!_._2.isNull)
@@ -674,12 +683,12 @@ object CirceImplicits {
         _canPromoteMembers   <- h.get[Boolean]("can_promote_members")
         _canChangeInfo       <- h.get[Boolean]("can_change_info")
         _canInviteUsers      <- h.get[Boolean]("can_invite_users")
+        _canPostStories      <- h.get[Boolean]("can_post_stories")
+        _canEditStories      <- h.get[Boolean]("can_edit_stories")
+        _canDeleteStories    <- h.get[Boolean]("can_delete_stories")
         _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
         _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
         _canPinMessages      <- h.get[Option[Boolean]]("can_pin_messages")
-        _canPostStories      <- h.get[Option[Boolean]]("can_post_stories")
-        _canEditStories      <- h.get[Option[Boolean]]("can_edit_stories")
-        _canDeleteStories    <- h.get[Option[Boolean]]("can_delete_stories")
         _canManageTopics     <- h.get[Option[Boolean]]("can_manage_topics")
         _customTitle         <- h.get[Option[String]]("custom_title")
       } yield {
@@ -694,12 +703,12 @@ object CirceImplicits {
           canPromoteMembers = _canPromoteMembers,
           canChangeInfo = _canChangeInfo,
           canInviteUsers = _canInviteUsers,
-          canPostMessages = _canPostMessages,
-          canEditMessages = _canEditMessages,
-          canPinMessages = _canPinMessages,
           canPostStories = _canPostStories,
           canEditStories = _canEditStories,
           canDeleteStories = _canDeleteStories,
+          canPostMessages = _canPostMessages,
+          canEditMessages = _canEditMessages,
+          canPinMessages = _canPinMessages,
           canManageTopics = _canManageTopics,
           customTitle = _customTitle
         )
@@ -3378,6 +3387,7 @@ object CirceImplicits {
           "pinned_message"                          -> x.pinnedMessage.asJson,
           "permissions"                             -> x.permissions.asJson,
           "slow_mode_delay"                         -> x.slowModeDelay.asJson,
+          "unrestrict_boost_count"                  -> x.unrestrictBoostCount.asJson,
           "message_auto_delete_time"                -> x.messageAutoDeleteTime.asJson,
           "has_aggressive_anti_spam_enabled"        -> x.hasAggressiveAntiSpamEnabled.asJson,
           "has_hidden_members"                      -> x.hasHiddenMembers.asJson,
@@ -3385,6 +3395,7 @@ object CirceImplicits {
           "has_visible_history"                     -> x.hasVisibleHistory.asJson,
           "sticker_set_name"                        -> x.stickerSetName.asJson,
           "can_set_sticker_set"                     -> x.canSetStickerSet.asJson,
+          "custom_emoji_sticker_set_name"           -> x.customEmojiStickerSetName.asJson,
           "linked_chat_id"                          -> x.linkedChatId.asJson,
           "location"                                -> x.location.asJson
         ).filter(!_._2.isNull)
@@ -3420,6 +3431,7 @@ object CirceImplicits {
         _pinnedMessage                      <- h.get[Option[Message]]("pinned_message")
         _permissions                        <- h.get[Option[ChatPermissions]]("permissions")
         _slowModeDelay                      <- h.get[Option[Int]]("slow_mode_delay")
+        _unrestrictBoostCount               <- h.get[Option[Int]]("unrestrict_boost_count")
         _messageAutoDeleteTime              <- h.get[Option[Int]]("message_auto_delete_time")
         _hasAggressiveAntiSpamEnabled       <- h.get[Option[Boolean]]("has_aggressive_anti_spam_enabled")
         _hasHiddenMembers                   <- h.get[Option[Boolean]]("has_hidden_members")
@@ -3427,6 +3439,7 @@ object CirceImplicits {
         _hasVisibleHistory                  <- h.get[Option[Boolean]]("has_visible_history")
         _stickerSetName                     <- h.get[Option[String]]("sticker_set_name")
         _canSetStickerSet                   <- h.get[Option[Boolean]]("can_set_sticker_set")
+        _customEmojiStickerSetName          <- h.get[Option[String]]("custom_emoji_sticker_set_name")
         _linkedChatId                       <- h.get[Option[Long]]("linked_chat_id")
         _location                           <- h.get[Option[ChatLocation]]("location")
       } yield {
@@ -3457,6 +3470,7 @@ object CirceImplicits {
           pinnedMessage = _pinnedMessage,
           permissions = _permissions,
           slowModeDelay = _slowModeDelay,
+          unrestrictBoostCount = _unrestrictBoostCount,
           messageAutoDeleteTime = _messageAutoDeleteTime,
           hasAggressiveAntiSpamEnabled = _hasAggressiveAntiSpamEnabled,
           hasHiddenMembers = _hasHiddenMembers,
@@ -3464,6 +3478,7 @@ object CirceImplicits {
           hasVisibleHistory = _hasVisibleHistory,
           stickerSetName = _stickerSetName,
           canSetStickerSet = _canSetStickerSet,
+          customEmojiStickerSetName = _customEmojiStickerSetName,
           linkedChatId = _linkedChatId,
           location = _location
         )
@@ -4216,7 +4231,7 @@ object CirceImplicits {
         _document           <- h.get[Option[Document]]("document")
         _photo              <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
         _sticker            <- h.get[Option[Sticker]]("sticker")
-        _story              <- h.get[Option[Story.type]]("story")
+        _story              <- h.get[Option[Story]]("story")
         _video              <- h.get[Option[Video]]("video")
         _videoNote          <- h.get[Option[VideoNote]]("video_note")
         _voice              <- h.get[Option[Voice]]("voice")
@@ -4709,8 +4724,25 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val storyEncoder: Encoder[Story.type] = (_: Story.type) => ().asJson
-  implicit lazy val storyDecoder: Decoder[Story.type] = (_: HCursor) => Right(Story)
+  implicit lazy val storyEncoder: Encoder[Story] =
+    (x: Story) => {
+      Json.fromFields(
+        List(
+          "chat" -> x.chat.asJson,
+          "id"   -> x.id.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val storyDecoder: Decoder[Story] =
+    Decoder.instance { h =>
+      for {
+        _chat <- h.get[Chat]("chat")
+        _id   <- h.get[Int]("id")
+      } yield {
+        Story(chat = _chat, id = _id)
+      }
+    }
 
   implicit lazy val keyboardbuttonrequestusersEncoder: Encoder[KeyboardButtonRequestUsers] =
     (x: KeyboardButtonRequestUsers) => {
@@ -5287,6 +5319,24 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val chatboostaddedEncoder: Encoder[ChatBoostAdded] =
+    (x: ChatBoostAdded) => {
+      Json.fromFields(
+        List(
+          "boost_count" -> x.boostCount.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatboostaddedDecoder: Decoder[ChatBoostAdded] =
+    Decoder.instance { h =>
+      for {
+        _boostCount <- h.get[Int]("boost_count")
+      } yield {
+        ChatBoostAdded(boostCount = _boostCount)
+      }
+    }
+
   implicit lazy val inlinequeryEncoder: Encoder[InlineQuery] =
     (x: InlineQuery) => {
       Json.fromFields(
@@ -5521,12 +5571,12 @@ object CirceImplicits {
           "can_promote_members"    -> x.canPromoteMembers.asJson,
           "can_change_info"        -> x.canChangeInfo.asJson,
           "can_invite_users"       -> x.canInviteUsers.asJson,
-          "can_post_messages"      -> x.canPostMessages.asJson,
-          "can_edit_messages"      -> x.canEditMessages.asJson,
-          "can_pin_messages"       -> x.canPinMessages.asJson,
           "can_post_stories"       -> x.canPostStories.asJson,
           "can_edit_stories"       -> x.canEditStories.asJson,
           "can_delete_stories"     -> x.canDeleteStories.asJson,
+          "can_post_messages"      -> x.canPostMessages.asJson,
+          "can_edit_messages"      -> x.canEditMessages.asJson,
+          "can_pin_messages"       -> x.canPinMessages.asJson,
           "can_manage_topics"      -> x.canManageTopics.asJson
         ).filter(!_._2.isNull)
       )
@@ -5543,12 +5593,12 @@ object CirceImplicits {
         _canPromoteMembers   <- h.get[Boolean]("can_promote_members")
         _canChangeInfo       <- h.get[Boolean]("can_change_info")
         _canInviteUsers      <- h.get[Boolean]("can_invite_users")
+        _canPostStories      <- h.get[Boolean]("can_post_stories")
+        _canEditStories      <- h.get[Boolean]("can_edit_stories")
+        _canDeleteStories    <- h.get[Boolean]("can_delete_stories")
         _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
         _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
         _canPinMessages      <- h.get[Option[Boolean]]("can_pin_messages")
-        _canPostStories      <- h.get[Option[Boolean]]("can_post_stories")
-        _canEditStories      <- h.get[Option[Boolean]]("can_edit_stories")
-        _canDeleteStories    <- h.get[Option[Boolean]]("can_delete_stories")
         _canManageTopics     <- h.get[Option[Boolean]]("can_manage_topics")
       } yield {
         ChatAdministratorRights(
@@ -5560,12 +5610,12 @@ object CirceImplicits {
           canPromoteMembers = _canPromoteMembers,
           canChangeInfo = _canChangeInfo,
           canInviteUsers = _canInviteUsers,
-          canPostMessages = _canPostMessages,
-          canEditMessages = _canEditMessages,
-          canPinMessages = _canPinMessages,
           canPostStories = _canPostStories,
           canEditStories = _canEditStories,
           canDeleteStories = _canDeleteStories,
+          canPostMessages = _canPostMessages,
+          canEditMessages = _canEditMessages,
+          canPinMessages = _canPinMessages,
           canManageTopics = _canManageTopics
         )
       }

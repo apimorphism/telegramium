@@ -5,6 +5,6 @@ package telegramium.bots
   * @param chat
   *   Chat which was boosted
   * @param boost
-  *   Infomation about the chat boost
+  *   Information about the chat boost
   */
 final case class ChatBoostUpdated(chat: Chat, boost: ChatBoost)

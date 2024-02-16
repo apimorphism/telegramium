@@ -20,6 +20,8 @@ sealed trait MaybeInaccessibleMessage {}
   *   supergroup itself for messages from anonymous group administrators, the linked channel for messages automatically
   *   forwarded to the discussion group. For backward compatibility, the field from contains a fake sender user in
   *   non-channel chats, if the message was sent on behalf of a chat.
+  * @param senderBoostCount
+  *   Optional. If the sender of the message boosted the chat, the number of boosts added by the user
   * @param forwardOrigin
   *   Optional. Information about the original message for forwarded messages
   * @param isTopicMessage
@@ -34,6 +36,8 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. Information about the message that is being replied to, which may come from another chat or forum topic
   * @param quote
   *   Optional. For replies that quote part of the original message, the quoted part of the message
+  * @param replyToStory
+  *   Optional. For replies to a story, the original story
   * @param viaBot
   *   Optional. Bot through which the message was sent
   * @param editDate
@@ -146,6 +150,8 @@ sealed trait MaybeInaccessibleMessage {}
   * @param proximityAlertTriggered
   *   Optional. Service message. A user in the chat triggered another user's proximity alert while sharing Live
   *   Location.
+  * @param boostAdded
+  *   Optional. Service message: user boosted the chat
   * @param forumTopicCreated
   *   Optional. Service message: forum topic created
   * @param forumTopicEdited
@@ -186,12 +192,14 @@ final case class Message(
   messageThreadId: Option[Int] = Option.empty,
   from: Option[User] = Option.empty,
   senderChat: Option[Chat] = Option.empty,
+  senderBoostCount: Option[Int] = Option.empty,
   forwardOrigin: Option[MessageOrigin] = Option.empty,
   isTopicMessage: Option[Boolean] = Option.empty,
   isAutomaticForward: Option[Boolean] = Option.empty,
   replyToMessage: Option[Message] = Option.empty,
   externalReply: Option[ExternalReplyInfo] = Option.empty,
   quote: Option[TextQuote] = Option.empty,
+  replyToStory: Option[Story] = Option.empty,
   viaBot: Option[User] = Option.empty,
   editDate: Option[Int] = Option.empty,
   hasProtectedContent: Option[Boolean] = Option.empty,
@@ -205,7 +213,7 @@ final case class Message(
   document: Option[Document] = Option.empty,
   photo: List[PhotoSize] = List.empty,
   sticker: Option[Sticker] = Option.empty,
-  story: Option[Story.type] = Option.empty,
+  story: Option[Story] = Option.empty,
   video: Option[Video] = Option.empty,
   videoNote: Option[VideoNote] = Option.empty,
   voice: Option[Voice] = Option.empty,
@@ -238,6 +246,7 @@ final case class Message(
   writeAccessAllowed: Option[WriteAccessAllowed] = Option.empty,
   passportData: Option[PassportData] = Option.empty,
   proximityAlertTriggered: Option[ProximityAlertTriggered] = Option.empty,
+  boostAdded: Option[ChatBoostAdded] = Option.empty,
   forumTopicCreated: Option[ForumTopicCreated] = Option.empty,
   forumTopicEdited: Option[ForumTopicEdited] = Option.empty,
   forumTopicClosed: Option[ForumTopicClosed.type] = Option.empty,

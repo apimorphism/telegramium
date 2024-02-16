@@ -2403,12 +2403,12 @@ object CirceImplicits {
           "can_promote_members"    -> x.canPromoteMembers.asJson,
           "can_change_info"        -> x.canChangeInfo.asJson,
           "can_invite_users"       -> x.canInviteUsers.asJson,
-          "can_post_messages"      -> x.canPostMessages.asJson,
-          "can_edit_messages"      -> x.canEditMessages.asJson,
-          "can_pin_messages"       -> x.canPinMessages.asJson,
           "can_post_stories"       -> x.canPostStories.asJson,
           "can_edit_stories"       -> x.canEditStories.asJson,
           "can_delete_stories"     -> x.canDeleteStories.asJson,
+          "can_post_messages"      -> x.canPostMessages.asJson,
+          "can_edit_messages"      -> x.canEditMessages.asJson,
+          "can_pin_messages"       -> x.canPinMessages.asJson,
           "can_manage_topics"      -> x.canManageTopics.asJson,
           "method"                 -> "promoteChatMember".asJson
         ).filter(!_._2.isNull)
@@ -2428,12 +2428,12 @@ object CirceImplicits {
         _canPromoteMembers   <- h.get[Option[Boolean]]("can_promote_members")
         _canChangeInfo       <- h.get[Option[Boolean]]("can_change_info")
         _canInviteUsers      <- h.get[Option[Boolean]]("can_invite_users")
-        _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
-        _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
-        _canPinMessages      <- h.get[Option[Boolean]]("can_pin_messages")
         _canPostStories      <- h.get[Option[Boolean]]("can_post_stories")
         _canEditStories      <- h.get[Option[Boolean]]("can_edit_stories")
         _canDeleteStories    <- h.get[Option[Boolean]]("can_delete_stories")
+        _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
+        _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
+        _canPinMessages      <- h.get[Option[Boolean]]("can_pin_messages")
         _canManageTopics     <- h.get[Option[Boolean]]("can_manage_topics")
       } yield {
         PromoteChatMemberReq(
@@ -2447,12 +2447,12 @@ object CirceImplicits {
           canPromoteMembers = _canPromoteMembers,
           canChangeInfo = _canChangeInfo,
           canInviteUsers = _canInviteUsers,
-          canPostMessages = _canPostMessages,
-          canEditMessages = _canEditMessages,
-          canPinMessages = _canPinMessages,
           canPostStories = _canPostStories,
           canEditStories = _canEditStories,
           canDeleteStories = _canDeleteStories,
+          canPostMessages = _canPostMessages,
+          canEditMessages = _canEditMessages,
+          canPinMessages = _canPinMessages,
           canManageTopics = _canManageTopics
         )
       }
