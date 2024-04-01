@@ -156,10 +156,10 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
   override def onChatJoinRequestReply(request: ChatJoinRequest): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onChatJoinRequestReply").some)
 
-  override def onChatBoostReply(boost: ChatBoostUpdated): IO[Option[Method[_]]] =
+  override def onChatBoostReply(boost: ChatBoostUpdated): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onChatBoostReply").some)
 
-  override def onRemovedChatBoostReply(boostRemoved: ChatBoostRemoved): IO[Option[Method[_]]] =
+  override def onRemovedChatBoostReply(boostRemoved: ChatBoostRemoved): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onRemovedChatBoostReply").some)
 
 }

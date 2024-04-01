@@ -17,7 +17,7 @@ private[high] object Http4sUtils {
 
   def toFileDataParts[F[_]: Async](files: Map[String, File]): Vector[Part[F]] =
     files.map { case (filename, file) =>
-      Part.fileData[F](filename, Path.fromNioPath(file.toPath))(forAsync)
+      Part.fileData[F](filename, Path.fromNioPath(file.toPath))(using forAsync)
     }.toVector
 
   def toMultipartWithFormData[F[_]: Sync](

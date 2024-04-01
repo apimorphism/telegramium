@@ -118,33 +118,33 @@ object MessageEntityFormat {
   final case class PhoneNumber(text: String) extends MessageEntityFormat
 
   implicit class StringMessageEntityHelper(val sc: StringContext) extends AnyVal {
-    def plain(args: Any*): Plain = Plain(build(args: _*))
+    def plain(args: Any*): Plain = Plain(build(args*))
 
-    def cashtag(args: Any*): Cashtag = Cashtag(build(args: _*))
+    def cashtag(args: Any*): Cashtag = Cashtag(build(args*))
 
-    def code(args: Any*): Code = Code(build(args: _*))
+    def code(args: Any*): Code = Code(build(args*))
 
-    def botCommand(args: Any*): BotCommand = BotCommand(build(args: _*))
+    def botCommand(args: Any*): BotCommand = BotCommand(build(args*))
 
-    def spoiler(args: Any*): Spoiler = Spoiler(build(args: _*))
+    def spoiler(args: Any*): Spoiler = Spoiler(build(args*))
 
-    def email(args: Any*): Email = Email(build(args: _*))
+    def email(args: Any*): Email = Email(build(args*))
 
-    def blockquote(args: Any*): Blockquote = Blockquote(build(args: _*))
+    def blockquote(args: Any*): Blockquote = Blockquote(build(args*))
 
-    def bold(args: Any*): Bold = Bold(build(args: _*))
+    def bold(args: Any*): Bold = Bold(build(args*))
 
-    def italic(args: Any*): Italic = Italic(build(args: _*))
+    def italic(args: Any*): Italic = Italic(build(args*))
 
-    def strikethrough(args: Any*): Strikethrough = Strikethrough(build(args: _*))
+    def strikethrough(args: Any*): Strikethrough = Strikethrough(build(args*))
 
-    def underline(args: Any*): Underline = Underline(build(args: _*))
+    def underline(args: Any*): Underline = Underline(build(args*))
 
-    def hashtag(args: Any*): Hashtag = Hashtag(build(args: _*))
+    def hashtag(args: Any*): Hashtag = Hashtag(build(args*))
 
-    def url(args: Any*): Url = Url(build(args: _*))
+    def url(args: Any*): Url = Url(build(args*))
 
-    def phoneNumber(args: Any*): PhoneNumber = PhoneNumber(build(args: _*))
+    def phoneNumber(args: Any*): PhoneNumber = PhoneNumber(build(args*))
 
     private def build(args: Any*): String = {
       val strings     = sc.parts.iterator

@@ -34,7 +34,7 @@ class BotApi[F[_]](
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/${method.payload.name}"))
       req <- mkRequest(uri, method.payload.json, inputPartFiles.keys.toList, attachments)
-      res <- handleResponse[Res](method, req)(method.decoder)
+      res <- handleResponse[Res](method, req)(using method.decoder)
     } yield res
   }
 
