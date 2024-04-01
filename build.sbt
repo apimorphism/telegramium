@@ -7,7 +7,7 @@ ThisBuild / version := Version.mkVersion(
   git.gitUncommittedChanges.value
 )
 
-lazy val scala3   = "3.4.1"
+lazy val scala3   = "3.3.3"
 lazy val scala213 = "2.13.11"
 lazy val scala212 = "2.12.19"
 
