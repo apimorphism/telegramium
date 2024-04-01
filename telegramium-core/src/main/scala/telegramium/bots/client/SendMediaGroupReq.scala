@@ -6,6 +6,8 @@ import telegramium.bots.ReplyParameters
 
 /** @param chatId
   *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+  * @param businessConnectionId
+  *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param media
@@ -19,6 +21,7 @@ import telegramium.bots.ReplyParameters
   */
 final case class SendMediaGroupReq(
   chatId: ChatId,
+  businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,
   media: List[InputMedia] = List.empty,
   disableNotification: Option[Boolean] = Option.empty,

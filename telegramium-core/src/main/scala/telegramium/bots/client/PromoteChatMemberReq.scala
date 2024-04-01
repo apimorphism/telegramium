@@ -32,13 +32,13 @@ import telegramium.bots.ChatId
   * @param canDeleteStories
   *   Pass True if the administrator can delete stories posted by other users
   * @param canPostMessages
-  *   Pass True if the administrator can post messages in the channel, or access channel statistics; channels only
+  *   Pass True if the administrator can post messages in the channel, or access channel statistics; for channels only
   * @param canEditMessages
-  *   Pass True if the administrator can edit messages of other users and can pin messages; channels only
+  *   Pass True if the administrator can edit messages of other users and can pin messages; for channels only
   * @param canPinMessages
-  *   Pass True if the administrator can pin messages, supergroups only
+  *   Pass True if the administrator can pin messages; for supergroups only
   * @param canManageTopics
-  *   Pass True if the user is allowed to create, rename, close, and reopen forum topics, supergroups only
+  *   Pass True if the user is allowed to create, rename, close, and reopen forum topics; for supergroups only
   */
 final case class PromoteChatMemberReq(
   chatId: ChatId,

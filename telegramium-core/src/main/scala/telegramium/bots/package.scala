@@ -231,7 +231,9 @@ object CirceImplicits {
           "from"                              -> x.from.asJson,
           "sender_chat"                       -> x.senderChat.asJson,
           "sender_boost_count"                -> x.senderBoostCount.asJson,
+          "sender_business_bot"               -> x.senderBusinessBot.asJson,
           "date"                              -> x.date.asJson,
+          "business_connection_id"            -> x.businessConnectionId.asJson,
           "chat"                              -> x.chat.asJson,
           "forward_origin"                    -> x.forwardOrigin.asJson,
           "is_topic_message"                  -> x.isTopicMessage.asJson,
@@ -243,6 +245,7 @@ object CirceImplicits {
           "via_bot"                           -> x.viaBot.asJson,
           "edit_date"                         -> x.editDate.asJson,
           "has_protected_content"             -> x.hasProtectedContent.asJson,
+          "is_from_offline"                   -> x.isFromOffline.asJson,
           "media_group_id"                    -> x.mediaGroupId.asJson,
           "author_signature"                  -> x.authorSignature.asJson,
           "text"                              -> x.text.asJson,
@@ -315,7 +318,9 @@ object CirceImplicits {
         _from                  <- h.get[Option[User]]("from")
         _senderChat            <- h.get[Option[Chat]]("sender_chat")
         _senderBoostCount      <- h.get[Option[Int]]("sender_boost_count")
+        _senderBusinessBot     <- h.get[Option[User]]("sender_business_bot")
         _date                  <- h.get[Int]("date")
+        _businessConnectionId  <- h.get[Option[String]]("business_connection_id")
         _chat                  <- h.get[Chat]("chat")
         _forwardOrigin         <- h.get[Option[MessageOrigin]]("forward_origin")
         _isTopicMessage        <- h.get[Option[Boolean]]("is_topic_message")
@@ -327,6 +332,7 @@ object CirceImplicits {
         _viaBot                <- h.get[Option[User]]("via_bot")
         _editDate              <- h.get[Option[Int]]("edit_date")
         _hasProtectedContent   <- h.get[Option[Boolean]]("has_protected_content")
+        _isFromOffline         <- h.get[Option[Boolean]]("is_from_offline")
         _mediaGroupId          <- h.get[Option[String]]("media_group_id")
         _authorSignature       <- h.get[Option[String]]("author_signature")
         _text                  <- h.get[Option[String]]("text")
@@ -396,7 +402,9 @@ object CirceImplicits {
           from = _from,
           senderChat = _senderChat,
           senderBoostCount = _senderBoostCount,
+          senderBusinessBot = _senderBusinessBot,
           date = _date,
+          businessConnectionId = _businessConnectionId,
           chat = _chat,
           forwardOrigin = _forwardOrigin,
           isTopicMessage = _isTopicMessage,
@@ -408,6 +416,7 @@ object CirceImplicits {
           viaBot = _viaBot,
           editDate = _editDate,
           hasProtectedContent = _hasProtectedContent,
+          isFromOffline = _isFromOffline,
           mediaGroupId = _mediaGroupId,
           authorSignature = _authorSignature,
           text = _text,
@@ -3370,6 +3379,11 @@ object CirceImplicits {
           "is_forum"                                -> x.isForum.asJson,
           "photo"                                   -> x.photo.asJson,
           "active_usernames"                        -> x.activeUsernames.asJson,
+          "birthdate"                               -> x.birthdate.asJson,
+          "business_intro"                          -> x.businessIntro.asJson,
+          "business_location"                       -> x.businessLocation.asJson,
+          "business_opening_hours"                  -> x.businessOpeningHours.asJson,
+          "personal_chat"                           -> x.personalChat.asJson,
           "available_reactions"                     -> x.availableReactions.asJson,
           "accent_color_id"                         -> x.accentColorId.asJson,
           "background_custom_emoji_id"              -> x.backgroundCustomEmojiId.asJson,
@@ -3414,6 +3428,11 @@ object CirceImplicits {
         _isForum                            <- h.get[Option[Boolean]]("is_forum")
         _photo                              <- h.get[Option[ChatPhoto]]("photo")
         _activeUsernames                    <- h.getOrElse[List[String]]("active_usernames")(List.empty)
+        _birthdate                          <- h.get[Option[Birthdate]]("birthdate")
+        _businessIntro                      <- h.get[Option[BusinessIntro]]("business_intro")
+        _businessLocation                   <- h.get[Option[BusinessLocation]]("business_location")
+        _businessOpeningHours               <- h.get[Option[BusinessOpeningHours]]("business_opening_hours")
+        _personalChat                       <- h.get[Option[Chat]]("personal_chat")
         _availableReactions                 <- h.getOrElse[List[ReactionType]]("available_reactions")(List.empty)
         _accentColorId                      <- h.get[Option[Int]]("accent_color_id")
         _backgroundCustomEmojiId            <- h.get[Option[String]]("background_custom_emoji_id")
@@ -3453,6 +3472,11 @@ object CirceImplicits {
           isForum = _isForum,
           photo = _photo,
           activeUsernames = _activeUsernames,
+          birthdate = _birthdate,
+          businessIntro = _businessIntro,
+          businessLocation = _businessLocation,
+          businessOpeningHours = _businessOpeningHours,
+          personalChat = _personalChat,
           availableReactions = _availableReactions,
           accentColorId = _accentColorId,
           backgroundCustomEmojiId = _backgroundCustomEmojiId,
@@ -3524,8 +3548,8 @@ object CirceImplicits {
     (x: Location) => {
       Json.fromFields(
         List(
-          "longitude"              -> x.longitude.asJson,
           "latitude"               -> x.latitude.asJson,
+          "longitude"              -> x.longitude.asJson,
           "horizontal_accuracy"    -> x.horizontalAccuracy.asJson,
           "live_period"            -> x.livePeriod.asJson,
           "heading"                -> x.heading.asJson,
@@ -3537,21 +3561,41 @@ object CirceImplicits {
   implicit lazy val locationDecoder: Decoder[Location] =
     Decoder.instance { h =>
       for {
-        _longitude            <- h.get[Float]("longitude")
         _latitude             <- h.get[Float]("latitude")
+        _longitude            <- h.get[Float]("longitude")
         _horizontalAccuracy   <- h.get[Option[Float]]("horizontal_accuracy")
         _livePeriod           <- h.get[Option[Int]]("live_period")
         _heading              <- h.get[Option[Int]]("heading")
         _proximityAlertRadius <- h.get[Option[Int]]("proximity_alert_radius")
       } yield {
         Location(
-          longitude = _longitude,
           latitude = _latitude,
+          longitude = _longitude,
           horizontalAccuracy = _horizontalAccuracy,
           livePeriod = _livePeriod,
           heading = _heading,
           proximityAlertRadius = _proximityAlertRadius
         )
+      }
+    }
+
+  implicit lazy val businessopeninghoursEncoder: Encoder[BusinessOpeningHours] =
+    (x: BusinessOpeningHours) => {
+      Json.fromFields(
+        List(
+          "time_zone_name" -> x.timeZoneName.asJson,
+          "opening_hours"  -> x.openingHours.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val businessopeninghoursDecoder: Decoder[BusinessOpeningHours] =
+    Decoder.instance { h =>
+      for {
+        _timeZoneName <- h.get[String]("time_zone_name")
+        _openingHours <- h.getOrElse[List[BusinessOpeningHoursInterval]]("opening_hours")(List.empty)
+      } yield {
+        BusinessOpeningHours(timeZoneName = _timeZoneName, openingHours = _openingHours)
       }
     }
 
@@ -3787,6 +3831,28 @@ object CirceImplicits {
   implicit lazy val inputfileEncoder: Encoder[InputFile.type] = (_: InputFile.type) => ().asJson
   implicit lazy val inputfileDecoder: Decoder[InputFile.type] = (_: HCursor) => Right(InputFile)
 
+  implicit lazy val businessintroEncoder: Encoder[BusinessIntro] =
+    (x: BusinessIntro) => {
+      Json.fromFields(
+        List(
+          "title"   -> x.title.asJson,
+          "message" -> x.message.asJson,
+          "sticker" -> x.sticker.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val businessintroDecoder: Decoder[BusinessIntro] =
+    Decoder.instance { h =>
+      for {
+        _title   <- h.get[Option[String]]("title")
+        _message <- h.get[Option[String]]("message")
+        _sticker <- h.get[Option[Sticker]]("sticker")
+      } yield {
+        BusinessIntro(title = _title, message = _message, sticker = _sticker)
+      }
+    }
+
   implicit lazy val giveawaywinnersEncoder: Encoder[GiveawayWinners] =
     (x: GiveawayWinners) => {
       Json.fromFields(
@@ -3841,25 +3907,29 @@ object CirceImplicits {
     (x: Update) => {
       Json.fromFields(
         List(
-          "update_id"              -> x.updateId.asJson,
-          "message"                -> x.message.asJson,
-          "edited_message"         -> x.editedMessage.asJson,
-          "channel_post"           -> x.channelPost.asJson,
-          "edited_channel_post"    -> x.editedChannelPost.asJson,
-          "message_reaction"       -> x.messageReaction.asJson,
-          "message_reaction_count" -> x.messageReactionCount.asJson,
-          "inline_query"           -> x.inlineQuery.asJson,
-          "chosen_inline_result"   -> x.chosenInlineResult.asJson,
-          "callback_query"         -> x.callbackQuery.asJson,
-          "shipping_query"         -> x.shippingQuery.asJson,
-          "pre_checkout_query"     -> x.preCheckoutQuery.asJson,
-          "poll"                   -> x.poll.asJson,
-          "poll_answer"            -> x.pollAnswer.asJson,
-          "my_chat_member"         -> x.myChatMember.asJson,
-          "chat_member"            -> x.chatMember.asJson,
-          "chat_join_request"      -> x.chatJoinRequest.asJson,
-          "chat_boost"             -> x.chatBoost.asJson,
-          "removed_chat_boost"     -> x.removedChatBoost.asJson
+          "update_id"                 -> x.updateId.asJson,
+          "message"                   -> x.message.asJson,
+          "edited_message"            -> x.editedMessage.asJson,
+          "channel_post"              -> x.channelPost.asJson,
+          "edited_channel_post"       -> x.editedChannelPost.asJson,
+          "business_connection"       -> x.businessConnection.asJson,
+          "business_message"          -> x.businessMessage.asJson,
+          "edited_business_message"   -> x.editedBusinessMessage.asJson,
+          "deleted_business_messages" -> x.deletedBusinessMessages.asJson,
+          "message_reaction"          -> x.messageReaction.asJson,
+          "message_reaction_count"    -> x.messageReactionCount.asJson,
+          "inline_query"              -> x.inlineQuery.asJson,
+          "chosen_inline_result"      -> x.chosenInlineResult.asJson,
+          "callback_query"            -> x.callbackQuery.asJson,
+          "shipping_query"            -> x.shippingQuery.asJson,
+          "pre_checkout_query"        -> x.preCheckoutQuery.asJson,
+          "poll"                      -> x.poll.asJson,
+          "poll_answer"               -> x.pollAnswer.asJson,
+          "my_chat_member"            -> x.myChatMember.asJson,
+          "chat_member"               -> x.chatMember.asJson,
+          "chat_join_request"         -> x.chatJoinRequest.asJson,
+          "chat_boost"                -> x.chatBoost.asJson,
+          "removed_chat_boost"        -> x.removedChatBoost.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3867,25 +3937,29 @@ object CirceImplicits {
   implicit lazy val updateDecoder: Decoder[Update] =
     Decoder.instance { h =>
       for {
-        _updateId             <- h.get[Int]("update_id")
-        _message              <- h.get[Option[Message]]("message")
-        _editedMessage        <- h.get[Option[Message]]("edited_message")
-        _channelPost          <- h.get[Option[Message]]("channel_post")
-        _editedChannelPost    <- h.get[Option[Message]]("edited_channel_post")
-        _messageReaction      <- h.get[Option[MessageReactionUpdated]]("message_reaction")
-        _messageReactionCount <- h.get[Option[MessageReactionCountUpdated]]("message_reaction_count")
-        _inlineQuery          <- h.get[Option[InlineQuery]]("inline_query")
-        _chosenInlineResult   <- h.get[Option[ChosenInlineResult]]("chosen_inline_result")
-        _callbackQuery        <- h.get[Option[CallbackQuery]]("callback_query")
-        _shippingQuery        <- h.get[Option[ShippingQuery]]("shipping_query")
-        _preCheckoutQuery     <- h.get[Option[PreCheckoutQuery]]("pre_checkout_query")
-        _poll                 <- h.get[Option[Poll]]("poll")
-        _pollAnswer           <- h.get[Option[PollAnswer]]("poll_answer")
-        _myChatMember         <- h.get[Option[ChatMemberUpdated]]("my_chat_member")
-        _chatMember           <- h.get[Option[ChatMemberUpdated]]("chat_member")
-        _chatJoinRequest      <- h.get[Option[ChatJoinRequest]]("chat_join_request")
-        _chatBoost            <- h.get[Option[ChatBoostUpdated]]("chat_boost")
-        _removedChatBoost     <- h.get[Option[ChatBoostRemoved]]("removed_chat_boost")
+        _updateId                <- h.get[Int]("update_id")
+        _message                 <- h.get[Option[Message]]("message")
+        _editedMessage           <- h.get[Option[Message]]("edited_message")
+        _channelPost             <- h.get[Option[Message]]("channel_post")
+        _editedChannelPost       <- h.get[Option[Message]]("edited_channel_post")
+        _businessConnection      <- h.get[Option[BusinessConnection]]("business_connection")
+        _businessMessage         <- h.get[Option[Message]]("business_message")
+        _editedBusinessMessage   <- h.get[Option[Message]]("edited_business_message")
+        _deletedBusinessMessages <- h.get[Option[BusinessMessagesDeleted]]("deleted_business_messages")
+        _messageReaction         <- h.get[Option[MessageReactionUpdated]]("message_reaction")
+        _messageReactionCount    <- h.get[Option[MessageReactionCountUpdated]]("message_reaction_count")
+        _inlineQuery             <- h.get[Option[InlineQuery]]("inline_query")
+        _chosenInlineResult      <- h.get[Option[ChosenInlineResult]]("chosen_inline_result")
+        _callbackQuery           <- h.get[Option[CallbackQuery]]("callback_query")
+        _shippingQuery           <- h.get[Option[ShippingQuery]]("shipping_query")
+        _preCheckoutQuery        <- h.get[Option[PreCheckoutQuery]]("pre_checkout_query")
+        _poll                    <- h.get[Option[Poll]]("poll")
+        _pollAnswer              <- h.get[Option[PollAnswer]]("poll_answer")
+        _myChatMember            <- h.get[Option[ChatMemberUpdated]]("my_chat_member")
+        _chatMember              <- h.get[Option[ChatMemberUpdated]]("chat_member")
+        _chatJoinRequest         <- h.get[Option[ChatJoinRequest]]("chat_join_request")
+        _chatBoost               <- h.get[Option[ChatBoostUpdated]]("chat_boost")
+        _removedChatBoost        <- h.get[Option[ChatBoostRemoved]]("removed_chat_boost")
       } yield {
         Update(
           updateId = _updateId,
@@ -3893,6 +3967,10 @@ object CirceImplicits {
           editedMessage = _editedMessage,
           channelPost = _channelPost,
           editedChannelPost = _editedChannelPost,
+          businessConnection = _businessConnection,
+          businessMessage = _businessMessage,
+          editedBusinessMessage = _editedBusinessMessage,
+          deletedBusinessMessages = _deletedBusinessMessages,
           messageReaction = _messageReaction,
           messageReactionCount = _messageReactionCount,
           inlineQuery = _inlineQuery,
@@ -3932,6 +4010,26 @@ object CirceImplicits {
         _scale  <- h.get[Float]("scale")
       } yield {
         MaskPosition(point = _point, xShift = _xShift, yShift = _yShift, scale = _scale)
+      }
+    }
+
+  implicit lazy val businessopeninghoursintervalEncoder: Encoder[BusinessOpeningHoursInterval] =
+    (x: BusinessOpeningHoursInterval) => {
+      Json.fromFields(
+        List(
+          "opening_minute" -> x.openingMinute.asJson,
+          "closing_minute" -> x.closingMinute.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val businessopeninghoursintervalDecoder: Decoder[BusinessOpeningHoursInterval] =
+    Decoder.instance { h =>
+      for {
+        _openingMinute <- h.get[Int]("opening_minute")
+        _closingMinute <- h.get[Int]("closing_minute")
+      } yield {
+        BusinessOpeningHoursInterval(openingMinute = _openingMinute, closingMinute = _closingMinute)
       }
     }
 
@@ -4079,7 +4177,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "request_id" -> x.requestId.asJson,
-          "user_ids"   -> x.userIds.asJson
+          "users"      -> x.users.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4088,9 +4186,9 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _requestId <- h.get[Int]("request_id")
-        _userIds   <- h.getOrElse[List[Long]]("user_ids")(List.empty)
+        _users     <- h.getOrElse[List[SharedUser]]("users")(List.empty)
       } yield {
-        UsersShared(requestId = _requestId, userIds = _userIds)
+        UsersShared(requestId = _requestId, users = _users)
       }
     }
 
@@ -4157,8 +4255,6 @@ object CirceImplicits {
           "name"         -> x.name.asJson,
           "title"        -> x.title.asJson,
           "sticker_type" -> x.stickerType.asJson,
-          "is_animated"  -> x.isAnimated.asJson,
-          "is_video"     -> x.isVideo.asJson,
           "stickers"     -> x.stickers.asJson,
           "thumbnail"    -> x.thumbnail.asJson
         ).filter(!_._2.isNull)
@@ -4171,8 +4267,6 @@ object CirceImplicits {
         _name        <- h.get[String]("name")
         _title       <- h.get[String]("title")
         _stickerType <- h.get[String]("sticker_type")
-        _isAnimated  <- h.get[Boolean]("is_animated")
-        _isVideo     <- h.get[Boolean]("is_video")
         _stickers    <- h.getOrElse[List[Sticker]]("stickers")(List.empty)
         _thumbnail   <- h.get[Option[PhotoSize]]("thumbnail")
       } yield {
@@ -4180,8 +4274,6 @@ object CirceImplicits {
           name = _name,
           title = _title,
           stickerType = _stickerType,
-          isAnimated = _isAnimated,
-          isVideo = _isVideo,
           stickers = _stickers,
           thumbnail = _thumbnail
         )
@@ -4748,10 +4840,13 @@ object CirceImplicits {
     (x: KeyboardButtonRequestUsers) => {
       Json.fromFields(
         List(
-          "request_id"      -> x.requestId.asJson,
-          "user_is_bot"     -> x.userIsBot.asJson,
-          "user_is_premium" -> x.userIsPremium.asJson,
-          "max_quantity"    -> x.maxQuantity.asJson
+          "request_id"       -> x.requestId.asJson,
+          "user_is_bot"      -> x.userIsBot.asJson,
+          "user_is_premium"  -> x.userIsPremium.asJson,
+          "max_quantity"     -> x.maxQuantity.asJson,
+          "request_name"     -> x.requestName.asJson,
+          "request_username" -> x.requestUsername.asJson,
+          "request_photo"    -> x.requestPhoto.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4759,16 +4854,22 @@ object CirceImplicits {
   implicit lazy val keyboardbuttonrequestusersDecoder: Decoder[KeyboardButtonRequestUsers] =
     Decoder.instance { h =>
       for {
-        _requestId     <- h.get[Int]("request_id")
-        _userIsBot     <- h.get[Option[Boolean]]("user_is_bot")
-        _userIsPremium <- h.get[Option[Boolean]]("user_is_premium")
-        _maxQuantity   <- h.get[Option[Int]]("max_quantity")
+        _requestId       <- h.get[Int]("request_id")
+        _userIsBot       <- h.get[Option[Boolean]]("user_is_bot")
+        _userIsPremium   <- h.get[Option[Boolean]]("user_is_premium")
+        _maxQuantity     <- h.get[Option[Int]]("max_quantity")
+        _requestName     <- h.get[Option[Boolean]]("request_name")
+        _requestUsername <- h.get[Option[Boolean]]("request_username")
+        _requestPhoto    <- h.get[Option[Boolean]]("request_photo")
       } yield {
         KeyboardButtonRequestUsers(
           requestId = _requestId,
           userIsBot = _userIsBot,
           userIsPremium = _userIsPremium,
-          maxQuantity = _maxQuantity
+          maxQuantity = _maxQuantity,
+          requestName = _requestName,
+          requestUsername = _requestUsername,
+          requestPhoto = _requestPhoto
         )
       }
     }
@@ -4804,7 +4905,10 @@ object CirceImplicits {
           "chat_is_created"           -> x.chatIsCreated.asJson,
           "user_administrator_rights" -> x.userAdministratorRights.asJson,
           "bot_administrator_rights"  -> x.botAdministratorRights.asJson,
-          "bot_is_member"             -> x.botIsMember.asJson
+          "bot_is_member"             -> x.botIsMember.asJson,
+          "request_title"             -> x.requestTitle.asJson,
+          "request_username"          -> x.requestUsername.asJson,
+          "request_photo"             -> x.requestPhoto.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4820,6 +4924,9 @@ object CirceImplicits {
         _userAdministratorRights <- h.get[Option[ChatAdministratorRights]]("user_administrator_rights")
         _botAdministratorRights  <- h.get[Option[ChatAdministratorRights]]("bot_administrator_rights")
         _botIsMember             <- h.get[Option[Boolean]]("bot_is_member")
+        _requestTitle            <- h.get[Option[Boolean]]("request_title")
+        _requestUsername         <- h.get[Option[Boolean]]("request_username")
+        _requestPhoto            <- h.get[Option[Boolean]]("request_photo")
       } yield {
         KeyboardButtonRequestChat(
           requestId = _requestId,
@@ -4829,7 +4936,10 @@ object CirceImplicits {
           chatIsCreated = _chatIsCreated,
           userAdministratorRights = _userAdministratorRights,
           botAdministratorRights = _botAdministratorRights,
-          botIsMember = _botIsMember
+          botIsMember = _botIsMember,
+          requestTitle = _requestTitle,
+          requestUsername = _requestUsername,
+          requestPhoto = _requestPhoto
         )
       }
     }
@@ -4854,6 +4964,28 @@ object CirceImplicits {
 
   implicit lazy val forumtopicclosedEncoder: Encoder[ForumTopicClosed.type] = (_: ForumTopicClosed.type) => ().asJson
   implicit lazy val forumtopicclosedDecoder: Decoder[ForumTopicClosed.type] = (_: HCursor) => Right(ForumTopicClosed)
+
+  implicit lazy val birthdateEncoder: Encoder[Birthdate] =
+    (x: Birthdate) => {
+      Json.fromFields(
+        List(
+          "day"   -> x.day.asJson,
+          "month" -> x.month.asJson,
+          "year"  -> x.year.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val birthdateDecoder: Decoder[Birthdate] =
+    Decoder.instance { h =>
+      for {
+        _day   <- h.get[Int]("day")
+        _month <- h.get[Int]("month")
+        _year  <- h.get[Option[Int]]("year")
+      } yield {
+        Birthdate(day = _day, month = _month, year = _year)
+      }
+    }
 
   implicit lazy val fileEncoder: Encoder[File] =
     (x: File) => {
@@ -5272,6 +5404,41 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val businessconnectionEncoder: Encoder[BusinessConnection] =
+    (x: BusinessConnection) => {
+      Json.fromFields(
+        List(
+          "id"           -> x.id.asJson,
+          "user"         -> x.user.asJson,
+          "user_chat_id" -> x.userChatId.asJson,
+          "date"         -> x.date.asJson,
+          "can_reply"    -> x.canReply.asJson,
+          "is_enabled"   -> x.isEnabled.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val businessconnectionDecoder: Decoder[BusinessConnection] =
+    Decoder.instance { h =>
+      for {
+        _id         <- h.get[String]("id")
+        _user       <- h.get[User]("user")
+        _userChatId <- h.get[Long]("user_chat_id")
+        _date       <- h.get[Int]("date")
+        _canReply   <- h.get[Boolean]("can_reply")
+        _isEnabled  <- h.get[Boolean]("is_enabled")
+      } yield {
+        BusinessConnection(
+          id = _id,
+          user = _user,
+          userChatId = _userChatId,
+          date = _date,
+          canReply = _canReply,
+          isEnabled = _isEnabled
+        )
+      }
+    }
+
   implicit lazy val chatphotoEncoder: Encoder[ChatPhoto] =
     (x: ChatPhoto) => {
       Json.fromFields(
@@ -5372,6 +5539,26 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val businesslocationEncoder: Encoder[BusinessLocation] =
+    (x: BusinessLocation) => {
+      Json.fromFields(
+        List(
+          "address"  -> x.address.asJson,
+          "location" -> x.location.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val businesslocationDecoder: Decoder[BusinessLocation] =
+    Decoder.instance { h =>
+      for {
+        _address  <- h.get[String]("address")
+        _location <- h.get[Option[Location]]("location")
+      } yield {
+        BusinessLocation(address = _address, location = _location)
+      }
+    }
+
   implicit lazy val generalforumtopicunhiddenEncoder: Encoder[GeneralForumTopicUnhidden.type] =
     (_: GeneralForumTopicUnhidden.type) => ().asJson
 
@@ -5392,7 +5579,8 @@ object CirceImplicits {
           "added_to_attachment_menu"    -> x.addedToAttachmentMenu.asJson,
           "can_join_groups"             -> x.canJoinGroups.asJson,
           "can_read_all_group_messages" -> x.canReadAllGroupMessages.asJson,
-          "supports_inline_queries"     -> x.supportsInlineQueries.asJson
+          "supports_inline_queries"     -> x.supportsInlineQueries.asJson,
+          "can_connect_to_business"     -> x.canConnectToBusiness.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5411,6 +5599,7 @@ object CirceImplicits {
         _canJoinGroups           <- h.get[Option[Boolean]]("can_join_groups")
         _canReadAllGroupMessages <- h.get[Option[Boolean]]("can_read_all_group_messages")
         _supportsInlineQueries   <- h.get[Option[Boolean]]("supports_inline_queries")
+        _canConnectToBusiness    <- h.get[Option[Boolean]]("can_connect_to_business")
       } yield {
         User(
           id = _id,
@@ -5423,7 +5612,8 @@ object CirceImplicits {
           addedToAttachmentMenu = _addedToAttachmentMenu,
           canJoinGroups = _canJoinGroups,
           canReadAllGroupMessages = _canReadAllGroupMessages,
-          supportsInlineQueries = _supportsInlineQueries
+          supportsInlineQueries = _supportsInlineQueries,
+          canConnectToBusiness = _canConnectToBusiness
         )
       }
     }
@@ -5832,6 +6022,32 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val shareduserEncoder: Encoder[SharedUser] =
+    (x: SharedUser) => {
+      Json.fromFields(
+        List(
+          "user_id"    -> x.userId.asJson,
+          "first_name" -> x.firstName.asJson,
+          "last_name"  -> x.lastName.asJson,
+          "username"   -> x.username.asJson,
+          "photo"      -> x.photo.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val shareduserDecoder: Decoder[SharedUser] =
+    Decoder.instance { h =>
+      for {
+        _userId    <- h.get[Long]("user_id")
+        _firstName <- h.get[Option[String]]("first_name")
+        _lastName  <- h.get[Option[String]]("last_name")
+        _username  <- h.get[Option[String]]("username")
+        _photo     <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
+      } yield {
+        SharedUser(userId = _userId, firstName = _firstName, lastName = _lastName, username = _username, photo = _photo)
+      }
+    }
+
   implicit lazy val loginurlEncoder: Encoder[LoginUrl] =
     (x: LoginUrl) => {
       Json.fromFields(
@@ -5959,7 +6175,10 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "request_id" -> x.requestId.asJson,
-          "chat_id"    -> x.chatId.asJson
+          "chat_id"    -> x.chatId.asJson,
+          "title"      -> x.title.asJson,
+          "username"   -> x.username.asJson,
+          "photo"      -> x.photo.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5969,8 +6188,11 @@ object CirceImplicits {
       for {
         _requestId <- h.get[Int]("request_id")
         _chatId    <- h.get[Long]("chat_id")
+        _title     <- h.get[Option[String]]("title")
+        _username  <- h.get[Option[String]]("username")
+        _photo     <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
       } yield {
-        ChatShared(requestId = _requestId, chatId = _chatId)
+        ChatShared(requestId = _requestId, chatId = _chatId, title = _title, username = _username, photo = _photo)
       }
     }
 
@@ -6051,6 +6273,28 @@ object CirceImplicits {
           oldReaction = _oldReaction,
           newReaction = _newReaction
         )
+      }
+    }
+
+  implicit lazy val businessmessagesdeletedEncoder: Encoder[BusinessMessagesDeleted] =
+    (x: BusinessMessagesDeleted) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat"                   -> x.chat.asJson,
+          "message_ids"            -> x.messageIds.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val businessmessagesdeletedDecoder: Decoder[BusinessMessagesDeleted] =
+    Decoder.instance { h =>
+      for {
+        _businessConnectionId <- h.get[String]("business_connection_id")
+        _chat                 <- h.get[Chat]("chat")
+        _messageIds           <- h.getOrElse[List[Int]]("message_ids")(List.empty)
+      } yield {
+        BusinessMessagesDeleted(businessConnectionId = _businessConnectionId, chat = _chat, messageIds = _messageIds)
       }
     }
 
@@ -6160,6 +6404,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "sticker"       -> x.sticker.asJson,
+          "format"        -> x.format.asJson,
           "emoji_list"    -> x.emojiList.asJson,
           "mask_position" -> x.maskPosition.asJson,
           "keywords"      -> x.keywords.asJson
@@ -6171,11 +6416,18 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _sticker      <- h.get[IFile]("sticker")
+        _format       <- h.get[String]("format")
         _emojiList    <- h.getOrElse[List[String]]("emoji_list")(List.empty)
         _maskPosition <- h.get[Option[MaskPosition]]("mask_position")
         _keywords     <- h.getOrElse[List[String]]("keywords")(List.empty)
       } yield {
-        InputSticker(sticker = _sticker, emojiList = _emojiList, maskPosition = _maskPosition, keywords = _keywords)
+        InputSticker(
+          sticker = _sticker,
+          format = _format,
+          emojiList = _emojiList,
+          maskPosition = _maskPosition,
+          keywords = _keywords
+        )
       }
     }
 

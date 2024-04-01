@@ -46,13 +46,14 @@ final case class ChatMemberOwner(user: User, isAnonymous: Boolean, customTitle: 
   * @param canDeleteStories
   *   True, if the administrator can delete stories posted by other users
   * @param canPostMessages
-  *   Optional. True, if the administrator can post messages in the channel, or access channel statistics; channels only
+  *   Optional. True, if the administrator can post messages in the channel, or access channel statistics; for channels
+  *   only
   * @param canEditMessages
-  *   Optional. True, if the administrator can edit messages of other users and can pin messages; channels only
+  *   Optional. True, if the administrator can edit messages of other users and can pin messages; for channels only
   * @param canPinMessages
-  *   Optional. True, if the user is allowed to pin messages; groups and supergroups only
+  *   Optional. True, if the user is allowed to pin messages; for groups and supergroups only
   * @param canManageTopics
-  *   Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only
+  *   Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; for supergroups only
   * @param customTitle
   *   Optional. Custom title for this user
   */

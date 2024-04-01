@@ -10,6 +10,8 @@ import telegramium.bots.KeyboardMarkup
   *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
   * @param question
   *   Poll question, 1-300 characters
+  * @param businessConnectionId
+  *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param options
@@ -45,11 +47,13 @@ import telegramium.bots.KeyboardMarkup
   *   Description of the message to reply to
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove reply keyboard or to force a reply from the user.
+  *   to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a
+  *   business account
   */
 final case class SendPollReq(
   chatId: ChatId,
   question: String,
+  businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,
   options: List[String] = List.empty,
   isAnonymous: Option[Boolean] = Option.empty,

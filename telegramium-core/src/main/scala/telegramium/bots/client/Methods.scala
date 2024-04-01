@@ -9,6 +9,7 @@ import telegramium.bots.UserChatBoosts
 import telegramium.bots.GameHighScore
 import telegramium.bots.Sticker
 import telegramium.bots.BotName
+import telegramium.bots.BusinessConnection
 import telegramium.bots.ChatAdministratorRights
 import telegramium.bots.Message
 import telegramium.bots.UserProfilePhotos
@@ -220,6 +221,17 @@ trait Methods {
     MethodReq[BotName]("getMyName", req.asJson)
   }
 
+  /** Use this method to get information about the connection of the bot with a business account. Returns a
+    * BusinessConnection object on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    */
+  def getBusinessConnection(businessConnectionId: String): Method[BusinessConnection] = {
+    val req = GetBusinessConnectionReq(businessConnectionId)
+    MethodReq[BusinessConnection]("getBusinessConnection", req.asJson)
+  }
+
   /** Use this method to get the current default administrator rights of the bot. Returns ChatAdministratorRights on
     * success.
     *
@@ -238,6 +250,8 @@ trait Methods {
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
     * @param text
     *   Text of the message to be sent, 1-4096 characters after entities parsing
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param parseMode
@@ -255,11 +269,13 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
+    *   behalf of a business account
     */
   def sendMessage(
     chatId: ChatId,
     text: String,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     entities: List[MessageEntity] = List.empty,
@@ -272,6 +288,7 @@ trait Methods {
     val req = SendMessageReq(
       chatId,
       text,
+      businessConnectionId,
       messageThreadId,
       parseMode,
       entities,
@@ -308,6 +325,8 @@ trait Methods {
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
     * @param question
     *   Poll question, 1-300 characters
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param options
@@ -343,11 +362,13 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
+    *   behalf of a business account
     */
   def sendPoll(
     chatId: ChatId,
     question: String,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     options: List[String] = List.empty,
     isAnonymous: Option[Boolean] = Option.empty,
@@ -368,6 +389,7 @@ trait Methods {
     val req = SendPollReq(
       chatId,
       question,
+      businessConnectionId,
       messageThreadId,
       options,
       isAnonymous,
@@ -409,6 +431,8 @@ trait Methods {
     *   Contact's phone number
     * @param firstName
     *   Contact's first name
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param lastName
@@ -423,12 +447,14 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
+    *   behalf of a business account
     */
   def sendContact(
     chatId: ChatId,
     phoneNumber: String,
     firstName: String,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     lastName: Option[String] = Option.empty,
     vcard: Option[String] = Option.empty,
@@ -441,6 +467,7 @@ trait Methods {
       chatId,
       phoneNumber,
       firstName,
+      businessConnectionId,
       messageThreadId,
       lastName,
       vcard,
@@ -476,8 +503,6 @@ trait Methods {
     *   "_by_<bot_username>". <bot_username> is case insensitive. 1-64 characters.
     * @param title
     *   Sticker set title, 1-64 characters
-    * @param stickerFormat
-    *   Format of stickers in the set, must be one of “static”, “animated”, “video”
     * @param stickers
     *   A JSON-serialized list of 1-50 initial stickers to be added to the sticker set
     * @param stickerType
@@ -492,17 +517,16 @@ trait Methods {
     userId: Long,
     name: String,
     title: String,
-    stickerFormat: String,
     stickers: List[InputSticker] = List.empty,
     stickerType: Option[String] = Option.empty,
     needsRepainting: Option[Boolean] = Option.empty
   ): Method[Boolean] = {
-    val req = CreateNewStickerSetReq(userId, name, title, stickerFormat, stickers, stickerType, needsRepainting)
+    val req = CreateNewStickerSetReq(userId, name, title, stickers, stickerType, needsRepainting)
     MethodReq[Boolean]("createNewStickerSet", req.asJson)
   }
 
-  /** Use this method to upload a file with a sticker for later use in the createNewStickerSet and addStickerToSet
-    * methods (the file can be used multiple times). Returns the uploaded File on success.
+  /** Use this method to upload a file with a sticker for later use in the createNewStickerSet, addStickerToSet, or
+    * replaceStickerInSet methods (the file can be used multiple times). Returns the uploaded File on success.
     *
     * @param userId
     *   User identifier of sticker file owner
@@ -527,7 +551,8 @@ trait Methods {
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
     * @param messageIds
-    *   Identifiers of 1-100 messages to delete. See deleteMessage for limitations on which messages can be deleted
+    *   A JSON-serialized list of 1-100 identifiers of messages to delete. See deleteMessage for limitations on which
+    *   messages can be deleted
     */
   def deleteMessages(chatId: ChatId, messageIds: List[Int] = List.empty): Method[Boolean] = {
     val req = DeleteMessagesReq(chatId, messageIds)
@@ -556,6 +581,24 @@ trait Methods {
   ): Method[Boolean] = {
     val req = SetChatPermissionsReq(chatId, permissions, useIndependentChatPermissions)
     MethodReq[Boolean]("setChatPermissions", req.asJson)
+  }
+
+  /** Use this method to replace an existing sticker in a sticker set with a new one. The method is equivalent to
+    * calling deleteStickerFromSet, then addStickerToSet, then setStickerPositionInSet. Returns True on success.
+    *
+    * @param userId
+    *   User identifier of the sticker set owner
+    * @param name
+    *   Sticker set name
+    * @param oldSticker
+    *   File identifier of the replaced sticker
+    * @param sticker
+    *   A JSON-serialized object with information about the added sticker. If exactly the same sticker had already been
+    *   added to the set, then the set remains unchanged.
+    */
+  def replaceStickerInSet(userId: Long, name: String, oldSticker: String, sticker: InputSticker): Method[Boolean] = {
+    val req = ReplaceStickerInSetReq(userId, name, oldSticker, sticker)
+    MethodReq[Boolean]("replaceStickerInSet", req.asJson)
   }
 
   /** Use this method to ban a channel chat in a supergroup or a channel. Until the chat is unbanned, the owner of the
@@ -595,6 +638,8 @@ trait Methods {
     *   Latitude of the location
     * @param longitude
     *   Longitude of the location
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param horizontalAccuracy
@@ -614,12 +659,14 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
+    *   behalf of a business account
     */
   def sendLocation(
     chatId: ChatId,
     latitude: Float,
     longitude: Float,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     horizontalAccuracy: Option[Float] = Option.empty,
     livePeriod: Option[Int] = Option.empty,
@@ -634,6 +681,7 @@ trait Methods {
       chatId,
       latitude,
       longitude,
+      businessConnectionId,
       messageThreadId,
       horizontalAccuracy,
       livePeriod,
@@ -674,8 +722,8 @@ trait Methods {
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param messageIds
-    *   Identifiers of 1-100 messages in the chat from_chat_id to copy. The identifiers must be specified in a strictly
-    *   increasing order.
+    *   A JSON-serialized list of 1-100 identifiers of messages in the chat from_chat_id to copy. The identifiers must
+    *   be specified in a strictly increasing order.
     * @param disableNotification
     *   Sends the messages silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -768,6 +816,8 @@ trait Methods {
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param emoji
@@ -782,10 +832,12 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
+    *   behalf of a business account
     */
   def sendDice(
     chatId: ChatId,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     emoji: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
@@ -793,8 +845,16 @@ trait Methods {
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
-    val req =
-      SendDiceReq(chatId, messageThreadId, emoji, disableNotification, protectContent, replyParameters, replyMarkup)
+    val req = SendDiceReq(
+      chatId,
+      businessConnectionId,
+      messageThreadId,
+      emoji,
+      disableNotification,
+      protectContent,
+      replyParameters,
+      replyMarkup
+    )
     MethodReq[Message]("sendDice", req.asJson)
   }
 
@@ -810,17 +870,23 @@ trait Methods {
     *   messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for
     *   voice notes, upload_document for general files, choose_sticker for stickers, find_location for location data,
     *   record_video_note or upload_video_note for video notes.
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the action will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread; supergroups only
+    *   Unique identifier for the target message thread; for supergroups only
     */
-  def sendChatAction(chatId: ChatId, action: String, messageThreadId: Option[Int] = Option.empty): Method[Boolean] = {
-    val req = SendChatActionReq(chatId, action, messageThreadId)
+  def sendChatAction(
+    chatId: ChatId,
+    action: String,
+    businessConnectionId: Option[String] = Option.empty,
+    messageThreadId: Option[Int] = Option.empty
+  ): Method[Boolean] = {
+    val req = SendChatActionReq(chatId, action, businessConnectionId, messageThreadId)
     MethodReq[Boolean]("sendChatAction", req.asJson)
   }
 
-  /** Use this method to add a new sticker to a set created by the bot. The format of the added sticker must match the
-    * format of the other stickers in the set. Emoji sticker sets can have up to 200 stickers. Animated and video
-    * sticker sets can have up to 50 stickers. Static sticker sets can have up to 120 stickers. Returns True on success.
+  /** Use this method to add a new sticker to a set created by the bot. Emoji sticker sets can have up to 200 stickers.
+    * Other sticker sets can have up to 120 stickers. Returns True on success.
     *
     * @param userId
     *   User identifier of sticker set owner
@@ -993,6 +1059,8 @@ trait Methods {
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param media
@@ -1006,13 +1074,22 @@ trait Methods {
     */
   def sendMediaGroup(
     chatId: ChatId,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     media: List[InputMedia] = List.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty
   ): Method[List[Message]] = {
-    val req = SendMediaGroupReq(chatId, messageThreadId, media, disableNotification, protectContent, replyParameters)
+    val req = SendMediaGroupReq(
+      chatId,
+      businessConnectionId,
+      messageThreadId,
+      media,
+      disableNotification,
+      protectContent,
+      replyParameters
+    )
     MethodReq[List[Message]]("sendMediaGroup", req.asJson)
   }
 
@@ -1022,6 +1099,8 @@ trait Methods {
     *   Unique identifier for the target chat
     * @param gameShortName
     *   Short name of the game, serves as the unique identifier for the game. Set up your games via &#064;BotFather.
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param disableNotification
@@ -1032,11 +1111,12 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   A JSON-serialized object for an inline keyboard. If empty, one 'Play game_title' button will be shown. If not
-    *   empty, the first button must launch the game.
+    *   empty, the first button must launch the game. Not supported for messages sent on behalf of a business account.
     */
   def sendGame(
     chatId: Long,
     gameShortName: String,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
@@ -1046,6 +1126,7 @@ trait Methods {
     val req = SendGameReq(
       chatId,
       gameShortName,
+      businessConnectionId,
       messageThreadId,
       disableNotification,
       protectContent,
@@ -1067,6 +1148,8 @@ trait Methods {
     *   Name of the venue
     * @param address
     *   Address of the venue
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param foursquareId
@@ -1086,7 +1169,8 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
+    *   behalf of a business account
     */
   def sendVenue(
     chatId: ChatId,
@@ -1094,6 +1178,7 @@ trait Methods {
     longitude: Float,
     title: String,
     address: String,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     foursquareId: Option[String] = Option.empty,
     foursquareType: Option[String] = Option.empty,
@@ -1110,6 +1195,7 @@ trait Methods {
       longitude,
       title,
       address,
+      businessConnectionId,
       messageThreadId,
       foursquareId,
       foursquareType,
@@ -1187,7 +1273,7 @@ trait Methods {
     * objects.
     *
     * @param customEmojiIds
-    *   List of custom emoji identifiers. At most 200 custom emoji identifiers can be specified.
+    *   A JSON-serialized list of custom emoji identifiers. At most 200 custom emoji identifiers can be specified.
     */
   def getCustomEmojiStickers(customEmojiIds: List[String] = List.empty): Method[List[Sticker]] = {
     val req = GetCustomEmojiStickersReq(customEmojiIds)
@@ -1474,6 +1560,8 @@ trait Methods {
     *   Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers
     *   (recommended) or upload a new video using multipart/form-data. Sending video notes by a URL is currently
     *   unsupported
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param duration
@@ -1494,11 +1582,13 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
+    *   behalf of a business account
     */
   def sendVideoNote(
     chatId: ChatId,
     videoNote: IFile,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     duration: Option[Int] = Option.empty,
     length: Option[Int] = Option.empty,
@@ -1511,6 +1601,7 @@ trait Methods {
     val req = SendVideoNoteReq(
       chatId,
       videoNote,
+      businessConnectionId,
       messageThreadId,
       duration,
       length,
@@ -1755,6 +1846,8 @@ trait Methods {
     *   File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an
     *   HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using
     *   multipart/form-data.
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param thumbnail
@@ -1781,11 +1874,13 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
+    *   behalf of a business account
     */
   def sendDocument(
     chatId: ChatId,
     document: IFile,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     thumbnail: Option[IFile] = Option.empty,
     caption: Option[String] = Option.empty,
@@ -1800,6 +1895,7 @@ trait Methods {
     val req = SendDocumentReq(
       chatId,
       document,
+      businessConnectionId,
       messageThreadId,
       thumbnail,
       caption,
@@ -1905,6 +2001,8 @@ trait Methods {
     *   Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers
     *   (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new
     *   one using multipart/form-data.
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param caption
@@ -1934,11 +2032,13 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
+    *   behalf of a business account
     */
   def sendAudio(
     chatId: ChatId,
     audio: IFile,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
@@ -1955,6 +2055,7 @@ trait Methods {
     val req = SendAudioReq(
       chatId,
       audio,
+      businessConnectionId,
       messageThreadId,
       caption,
       parseMode,
@@ -2142,6 +2243,8 @@ trait Methods {
     *   Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended),
     *   pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using
     *   multipart/form-data.
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param caption
@@ -2161,11 +2264,13 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
+    *   behalf of a business account
     */
   def sendVoice(
     chatId: ChatId,
     voice: IFile,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
@@ -2179,6 +2284,7 @@ trait Methods {
     val req = SendVoiceReq(
       chatId,
       voice,
+      businessConnectionId,
       messageThreadId,
       caption,
       parseMode,
@@ -2236,13 +2342,13 @@ trait Methods {
     * @param canDeleteStories
     *   Pass True if the administrator can delete stories posted by other users
     * @param canPostMessages
-    *   Pass True if the administrator can post messages in the channel, or access channel statistics; channels only
+    *   Pass True if the administrator can post messages in the channel, or access channel statistics; for channels only
     * @param canEditMessages
-    *   Pass True if the administrator can edit messages of other users and can pin messages; channels only
+    *   Pass True if the administrator can edit messages of other users and can pin messages; for channels only
     * @param canPinMessages
-    *   Pass True if the administrator can pin messages, supergroups only
+    *   Pass True if the administrator can pin messages; for supergroups only
     * @param canManageTopics
-    *   Pass True if the user is allowed to create, rename, close, and reopen forum topics, supergroups only
+    *   Pass True if the user is allowed to create, rename, close, and reopen forum topics; for supergroups only
     */
   def promoteChatMember(
     chatId: ChatId,
@@ -2490,6 +2596,8 @@ trait Methods {
     *   Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass
     *   an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using
     *   multipart/form-data.
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param duration
@@ -2523,11 +2631,13 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
+    *   behalf of a business account
     */
   def sendVideo(
     chatId: ChatId,
     video: IFile,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     duration: Option[Int] = Option.empty,
     width: Option[Int] = Option.empty,
@@ -2546,6 +2656,7 @@ trait Methods {
     val req = SendVideoReq(
       chatId,
       video,
+      businessConnectionId,
       messageThreadId,
       duration,
       width,
@@ -2705,6 +2816,8 @@ trait Methods {
     *   Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers
     *   (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new
     *   animation using multipart/form-data.
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param duration
@@ -2737,11 +2850,13 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
+    *   behalf of a business account
     */
   def sendAnimation(
     chatId: ChatId,
     animation: IFile,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     duration: Option[Int] = Option.empty,
     width: Option[Int] = Option.empty,
@@ -2759,6 +2874,7 @@ trait Methods {
     val req = SendAnimationReq(
       chatId,
       animation,
+      businessConnectionId,
       messageThreadId,
       duration,
       width,
@@ -2831,6 +2947,9 @@ trait Methods {
     *   Sticker set name
     * @param userId
     *   User identifier of the sticker set owner
+    * @param format
+    *   Format of the thumbnail, must be one of “static” for a .WEBP or .PNG image, “animated” for a .TGS animation, or
+    *   “video” for a WEBM video
     * @param thumbnail
     *   A .WEBP or .PNG image with the thumbnail, must be up to 128 kilobytes in size and have a width and height of
     *   exactly 100px, or a .TGS animation with a thumbnail up to 32 kilobytes in size (see
@@ -2842,8 +2961,13 @@ trait Methods {
     *   sticker set thumbnails can't be uploaded via HTTP URL. If omitted, then the thumbnail is dropped and the first
     *   sticker is used as the thumbnail.
     */
-  def setStickerSetThumbnail(name: String, userId: Long, thumbnail: Option[IFile] = Option.empty): Method[Boolean] = {
-    val req = SetStickerSetThumbnailReq(name, userId, thumbnail)
+  def setStickerSetThumbnail(
+    name: String,
+    userId: Long,
+    format: String,
+    thumbnail: Option[IFile] = Option.empty
+  ): Method[Boolean] = {
+    val req = SetStickerSetThumbnailReq(name, userId, format, thumbnail)
     MethodReq[Boolean](
       "setStickerSetThumbnail",
       req.asJson,
@@ -2896,9 +3020,10 @@ trait Methods {
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
     * @param sticker
     *   Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass
-    *   an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP or .TGS
-    *   sticker using multipart/form-data. Video stickers can only be sent by a file_id. Animated stickers can't be sent
-    *   via an HTTP URL.
+    *   an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP, .TGS, or
+    *   .WEBM sticker using multipart/form-data. Video and animated stickers can't be sent via an HTTP URL.
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param emoji
@@ -2911,11 +3036,13 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove reply keyboard or to force a reply from the user. Not supported for messages sent on
+    *   behalf of a business account.
     */
   def sendSticker(
     chatId: ChatId,
     sticker: IFile,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     emoji: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
@@ -2926,6 +3053,7 @@ trait Methods {
     val req = SendStickerReq(
       chatId,
       sticker,
+      businessConnectionId,
       messageThreadId,
       emoji,
       disableNotification,
@@ -3004,8 +3132,8 @@ trait Methods {
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param messageIds
-    *   Identifiers of 1-100 messages in the chat from_chat_id to forward. The identifiers must be specified in a
-    *   strictly increasing order.
+    *   A JSON-serialized list of 1-100 identifiers of messages in the chat from_chat_id to forward. The identifiers
+    *   must be specified in a strictly increasing order.
     * @param disableNotification
     *   Sends the messages silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -3032,6 +3160,8 @@ trait Methods {
     *   an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using
     *   multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000
     *   in total. Width and height ratio must be at most 20.
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
     * @param caption
@@ -3051,11 +3181,13 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
+    *   behalf of a business account
     */
   def sendPhoto(
     chatId: ChatId,
     photo: IFile,
+    businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
@@ -3069,6 +3201,7 @@ trait Methods {
     val req = SendPhotoReq(
       chatId,
       photo,
+      businessConnectionId,
       messageThreadId,
       caption,
       parseMode,
@@ -3196,9 +3329,9 @@ trait Methods {
     *   Identifier of the target message. If the message belongs to a media group, the reaction is set to the first
     *   non-deleted message in the group instead.
     * @param reaction
-    *   New list of reaction types to set on the message. Currently, as non-premium users, bots can set up to one
-    *   reaction per message. A custom emoji reaction can be used if it is either already present on the message or
-    *   explicitly allowed by chat administrators.
+    *   A JSON-serialized list of reaction types to set on the message. Currently, as non-premium users, bots can set up
+    *   to one reaction per message. A custom emoji reaction can be used if it is either already present on the message
+    *   or explicitly allowed by chat administrators.
     * @param isBig
     *   Pass True to set the reaction with a big animation
     */

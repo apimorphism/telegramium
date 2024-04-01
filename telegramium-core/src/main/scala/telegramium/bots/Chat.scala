@@ -23,6 +23,16 @@ package telegramium.bots
   * @param activeUsernames
   *   Optional. If non-empty, the list of all active chat usernames; for private chats, supergroups and channels.
   *   Returned only in getChat.
+  * @param birthdate
+  *   Optional. For private chats, the date of birth of the user. Returned only in getChat.
+  * @param businessIntro
+  *   Optional. For private chats with business accounts, the intro of the business. Returned only in getChat.
+  * @param businessLocation
+  *   Optional. For private chats with business accounts, the location of the business. Returned only in getChat.
+  * @param businessOpeningHours
+  *   Optional. For private chats with business accounts, the opening hours of the business. Returned only in getChat.
+  * @param personalChat
+  *   Optional. For private chats, the personal channel of the user. Returned only in getChat.
   * @param availableReactions
   *   Optional. List of available reactions allowed in the chat. If omitted, then all emoji reactions are allowed.
   *   Returned only in getChat.
@@ -110,6 +120,11 @@ final case class Chat(
   isForum: Option[Boolean] = Option.empty,
   photo: Option[ChatPhoto] = Option.empty,
   activeUsernames: List[String] = List.empty,
+  birthdate: Option[Birthdate] = Option.empty,
+  businessIntro: Option[BusinessIntro] = Option.empty,
+  businessLocation: Option[BusinessLocation] = Option.empty,
+  businessOpeningHours: Option[BusinessOpeningHours] = Option.empty,
+  personalChat: Option[Chat] = Option.empty,
   availableReactions: List[ReactionType] = List.empty,
   accentColorId: Option[Int] = Option.empty,
   backgroundCustomEmojiId: Option[String] = Option.empty,

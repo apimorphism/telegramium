@@ -10,8 +10,8 @@ import telegramium.bots.ChatId
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param messageIds
-  *   Identifiers of 1-100 messages in the chat from_chat_id to copy. The identifiers must be specified in a strictly
-  *   increasing order.
+  *   A JSON-serialized list of 1-100 identifiers of messages in the chat from_chat_id to copy. The identifiers must be
+  *   specified in a strictly increasing order.
   * @param disableNotification
   *   Sends the messages silently. Users will receive a notification with no sound.
   * @param protectContent

@@ -13,6 +13,8 @@ import telegramium.bots.KeyboardMarkup
   *   Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers
   *   (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new
   *   animation using multipart/form-data.
+  * @param businessConnectionId
+  *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param duration
@@ -44,11 +46,13 @@ import telegramium.bots.KeyboardMarkup
   *   Description of the message to reply to
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove reply keyboard or to force a reply from the user.
+  *   to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a
+  *   business account
   */
 final case class SendAnimationReq(
   chatId: ChatId,
   animation: IFile,
+  businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,
   duration: Option[Int] = Option.empty,
   width: Option[Int] = Option.empty,

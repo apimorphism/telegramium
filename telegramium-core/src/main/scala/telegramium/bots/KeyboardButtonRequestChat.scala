@@ -1,7 +1,8 @@
 package telegramium.bots
 
-/** This object defines the criteria used to request a suitable chat. The identifier of the selected chat will be shared
-  * with the bot when the corresponding button is pressed.
+/** This object defines the criteria used to request a suitable chat. Information about the selected chat will be shared
+  * with the bot when the corresponding button is pressed. The bot will be granted requested rights in the сhat if
+  * appropriate
   *
   * @param requestId
   *   Signed 32-bit identifier of the request, which will be received back in the ChatShared object. Must be unique
@@ -24,6 +25,12 @@ package telegramium.bots
   *   must be a subset of user_administrator_rights. If not specified, no additional restrictions are applied.
   * @param botIsMember
   *   Optional. Pass True to request a chat with the bot as a member. Otherwise, no additional restrictions are applied.
+  * @param requestTitle
+  *   Optional. Pass True to request the chat's title
+  * @param requestUsername
+  *   Optional. Pass True to request the chat's username
+  * @param requestPhoto
+  *   Optional. Pass True to request the chat's photo
   */
 final case class KeyboardButtonRequestChat(
   requestId: Int,
@@ -33,5 +40,8 @@ final case class KeyboardButtonRequestChat(
   chatIsCreated: Option[Boolean] = Option.empty,
   userAdministratorRights: Option[ChatAdministratorRights] = Option.empty,
   botAdministratorRights: Option[ChatAdministratorRights] = Option.empty,
-  botIsMember: Option[Boolean] = Option.empty
+  botIsMember: Option[Boolean] = Option.empty,
+  requestTitle: Option[Boolean] = Option.empty,
+  requestUsername: Option[Boolean] = Option.empty,
+  requestPhoto: Option[Boolean] = Option.empty
 )

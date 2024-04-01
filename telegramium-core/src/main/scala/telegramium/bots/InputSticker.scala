@@ -7,6 +7,9 @@ package telegramium.bots
   *   HTTP URL as a String for Telegram to get a file from the Internet, upload a new one using multipart/form-data, or
   *   pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name.
   *   Animated and video stickers can't be uploaded via HTTP URL.
+  * @param format
+  *   Format of the added sticker, must be one of “static” for a .WEBP or .PNG image, “animated” for a .TGS animation,
+  *   “video” for a WEBM video
   * @param emojiList
   *   List of 1-20 emoji associated with the sticker
   * @param maskPosition
@@ -17,6 +20,7 @@ package telegramium.bots
   */
 final case class InputSticker(
   sticker: IFile,
+  format: String,
   emojiList: List[String] = List.empty,
   maskPosition: Option[MaskPosition] = Option.empty,
   keywords: List[String] = List.empty

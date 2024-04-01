@@ -11,6 +11,8 @@ import telegramium.bots.KeyboardMarkup
   *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
   * @param text
   *   Text of the message to be sent, 1-4096 characters after entities parsing
+  * @param businessConnectionId
+  *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param parseMode
@@ -28,11 +30,13 @@ import telegramium.bots.KeyboardMarkup
   *   Description of the message to reply to
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove reply keyboard or to force a reply from the user.
+  *   to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a
+  *   business account
   */
 final case class SendMessageReq(
   chatId: ChatId,
   text: String,
+  businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   entities: List[MessageEntity] = List.empty,

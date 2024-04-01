@@ -10,6 +10,8 @@ import telegramium.bots.KeyboardMarkup
   *   Latitude of the location
   * @param longitude
   *   Longitude of the location
+  * @param businessConnectionId
+  *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param horizontalAccuracy
@@ -29,12 +31,14 @@ import telegramium.bots.KeyboardMarkup
   *   Description of the message to reply to
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove reply keyboard or to force a reply from the user.
+  *   to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a
+  *   business account
   */
 final case class SendLocationReq(
   chatId: ChatId,
   latitude: Float,
   longitude: Float,
+  businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,
   horizontalAccuracy: Option[Float] = Option.empty,
   livePeriod: Option[Int] = Option.empty,

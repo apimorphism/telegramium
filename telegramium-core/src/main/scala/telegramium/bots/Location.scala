@@ -2,10 +2,10 @@ package telegramium.bots
 
 /** This object represents a point on the map.
   *
-  * @param longitude
-  *   Longitude as defined by sender
   * @param latitude
   *   Latitude as defined by sender
+  * @param longitude
+  *   Longitude as defined by sender
   * @param horizontalAccuracy
   *   Optional. The radius of uncertainty for the location, measured in meters; 0-1500
   * @param livePeriod
@@ -18,8 +18,8 @@ package telegramium.bots
   *   live locations only.
   */
 final case class Location(
-  longitude: Float,
   latitude: Float,
+  longitude: Float,
   horizontalAccuracy: Option[Float] = Option.empty,
   livePeriod: Option[Int] = Option.empty,
   heading: Option[Int] = Option.empty,

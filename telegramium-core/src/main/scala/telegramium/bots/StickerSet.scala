@@ -8,10 +8,6 @@ package telegramium.bots
   *   Sticker set title
   * @param stickerType
   *   Type of stickers in the set, currently one of “regular”, “mask”, “custom_emoji”
-  * @param isAnimated
-  *   True, if the sticker set contains animated stickers
-  * @param isVideo
-  *   True, if the sticker set contains video stickers
   * @param stickers
   *   List of all set stickers
   * @param thumbnail
@@ -21,8 +17,6 @@ final case class StickerSet(
   name: String,
   title: String,
   stickerType: String,
-  isAnimated: Boolean,
-  isVideo: Boolean,
   stickers: List[Sticker] = List.empty,
   thumbnail: Option[PhotoSize] = Option.empty
 )

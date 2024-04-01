@@ -10,8 +10,6 @@ import telegramium.bots.InputSticker
   *   "_by_<bot_username>". <bot_username> is case insensitive. 1-64 characters.
   * @param title
   *   Sticker set title, 1-64 characters
-  * @param stickerFormat
-  *   Format of stickers in the set, must be one of “static”, “animated”, “video”
   * @param stickers
   *   A JSON-serialized list of 1-50 initial stickers to be added to the sticker set
   * @param stickerType
@@ -26,7 +24,6 @@ final case class CreateNewStickerSetReq(
   userId: Long,
   name: String,
   title: String,
-  stickerFormat: String,
   stickers: List[InputSticker] = List.empty,
   stickerType: Option[String] = Option.empty,
   needsRepainting: Option[Boolean] = Option.empty

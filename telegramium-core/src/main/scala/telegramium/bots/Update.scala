@@ -18,6 +18,15 @@ package telegramium.bots
   * @param editedChannelPost
   *   Optional. New version of a channel post that is known to the bot and was edited. This update may at times be
   *   triggered by changes to message fields that are either unavailable or not actively used by your bot.
+  * @param businessConnection
+  *   Optional. The bot was connected to or disconnected from a business account, or a user edited an existing
+  *   connection with the bot
+  * @param businessMessage
+  *   Optional. New non-service message from a connected business account
+  * @param editedBusinessMessage
+  *   Optional. New version of a message from a connected business account
+  * @param deletedBusinessMessages
+  *   Optional. Messages were deleted from a connected business account
   * @param messageReaction
   *   Optional. A reaction to a message was changed by a user. The bot must be an administrator in the chat and must
   *   explicitly specify "message_reaction" in the list of allowed_updates to receive these updates. The update isn't
@@ -64,6 +73,10 @@ final case class Update(
   editedMessage: Option[Message] = Option.empty,
   channelPost: Option[Message] = Option.empty,
   editedChannelPost: Option[Message] = Option.empty,
+  businessConnection: Option[BusinessConnection] = Option.empty,
+  businessMessage: Option[Message] = Option.empty,
+  editedBusinessMessage: Option[Message] = Option.empty,
+  deletedBusinessMessages: Option[BusinessMessagesDeleted] = Option.empty,
   messageReaction: Option[MessageReactionUpdated] = Option.empty,
   messageReactionCount: Option[MessageReactionCountUpdated] = Option.empty,
   inlineQuery: Option[InlineQuery] = Option.empty,

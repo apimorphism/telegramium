@@ -7,6 +7,8 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Unique identifier for the target chat
   * @param gameShortName
   *   Short name of the game, serves as the unique identifier for the game. Set up your games via &#064;BotFather.
+  * @param businessConnectionId
+  *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param disableNotification
@@ -17,11 +19,12 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Description of the message to reply to
   * @param replyMarkup
   *   A JSON-serialized object for an inline keyboard. If empty, one 'Play game_title' button will be shown. If not
-  *   empty, the first button must launch the game.
+  *   empty, the first button must launch the game. Not supported for messages sent on behalf of a business account.
   */
 final case class SendGameReq(
   chatId: Long,
   gameShortName: String,
+  businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,

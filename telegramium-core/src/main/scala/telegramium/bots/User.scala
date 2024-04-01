@@ -26,6 +26,9 @@ package telegramium.bots
   *   Optional. True, if privacy mode is disabled for the bot. Returned only in getMe.
   * @param supportsInlineQueries
   *   Optional. True, if the bot supports inline queries. Returned only in getMe.
+  * @param canConnectToBusiness
+  *   Optional. True, if the bot can be connected to a Telegram Business account to receive its messages. Returned only
+  *   in getMe.
   */
 final case class User(
   id: Long,
@@ -38,5 +41,6 @@ final case class User(
   addedToAttachmentMenu: Option[Boolean] = Option.empty,
   canJoinGroups: Option[Boolean] = Option.empty,
   canReadAllGroupMessages: Option[Boolean] = Option.empty,
-  supportsInlineQueries: Option[Boolean] = Option.empty
+  supportsInlineQueries: Option[Boolean] = Option.empty,
+  canConnectToBusiness: Option[Boolean] = Option.empty
 )

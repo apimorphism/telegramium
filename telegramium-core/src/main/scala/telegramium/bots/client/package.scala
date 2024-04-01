@@ -284,6 +284,25 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val getbusinessconnectionreqEncoder: Encoder[GetBusinessConnectionReq] =
+    (x: GetBusinessConnectionReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "method"                 -> "getBusinessConnection".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getbusinessconnectionreqDecoder: Decoder[GetBusinessConnectionReq] =
+    Decoder.instance { h =>
+      for {
+        _businessConnectionId <- h.get[String]("business_connection_id")
+      } yield {
+        GetBusinessConnectionReq(businessConnectionId = _businessConnectionId)
+      }
+    }
+
   implicit lazy val getmydefaultadministratorrightsreqEncoder: Encoder[GetMyDefaultAdministratorRightsReq] =
     (x: GetMyDefaultAdministratorRightsReq) => {
       Json.fromFields(
@@ -307,17 +326,18 @@ object CirceImplicits {
     (x: SendMessageReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "text"                 -> x.text.asJson,
-          "parse_mode"           -> x.parseMode.asJson,
-          "entities"             -> x.entities.asJson,
-          "link_preview_options" -> x.linkPreviewOptions.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "reply_parameters"     -> x.replyParameters.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "sendMessage".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_thread_id"      -> x.messageThreadId.asJson,
+          "text"                   -> x.text.asJson,
+          "parse_mode"             -> x.parseMode.asJson,
+          "entities"               -> x.entities.asJson,
+          "link_preview_options"   -> x.linkPreviewOptions.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "reply_parameters"       -> x.replyParameters.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "sendMessage".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -325,18 +345,20 @@ object CirceImplicits {
   implicit lazy val sendmessagereqDecoder: Decoder[SendMessageReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[ChatId]("chat_id")
-        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
-        _text                <- h.get[String]("text")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _entities            <- h.getOrElse[List[MessageEntity]]("entities")(List.empty)
-        _linkPreviewOptions  <- h.get[Option[LinkPreviewOptions]]("link_preview_options")
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent      <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters     <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
+        _chatId               <- h.get[ChatId]("chat_id")
+        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
+        _text                 <- h.get[String]("text")
+        _parseMode            <- h.get[Option[ParseMode]]("parse_mode")
+        _entities             <- h.getOrElse[List[MessageEntity]]("entities")(List.empty)
+        _linkPreviewOptions   <- h.get[Option[LinkPreviewOptions]]("link_preview_options")
+        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendMessageReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           text = _text,
@@ -378,6 +400,7 @@ object CirceImplicits {
     (x: SendPollReq) => {
       Json.fromFields(
         List(
+          "business_connection_id"  -> x.businessConnectionId.asJson,
           "chat_id"                 -> x.chatId.asJson,
           "message_thread_id"       -> x.messageThreadId.asJson,
           "question"                -> x.question.asJson,
@@ -404,6 +427,7 @@ object CirceImplicits {
   implicit lazy val sendpollreqDecoder: Decoder[SendPollReq] =
     Decoder.instance { h =>
       for {
+        _businessConnectionId  <- h.get[Option[String]]("business_connection_id")
         _chatId                <- h.get[ChatId]("chat_id")
         _messageThreadId       <- h.get[Option[Int]]("message_thread_id")
         _question              <- h.get[String]("question")
@@ -424,6 +448,7 @@ object CirceImplicits {
         _replyMarkup           <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendPollReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           question = _question,
@@ -471,17 +496,18 @@ object CirceImplicits {
     (x: SendContactReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "phone_number"         -> x.phoneNumber.asJson,
-          "first_name"           -> x.firstName.asJson,
-          "last_name"            -> x.lastName.asJson,
-          "vcard"                -> x.vcard.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "reply_parameters"     -> x.replyParameters.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "sendContact".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_thread_id"      -> x.messageThreadId.asJson,
+          "phone_number"           -> x.phoneNumber.asJson,
+          "first_name"             -> x.firstName.asJson,
+          "last_name"              -> x.lastName.asJson,
+          "vcard"                  -> x.vcard.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "reply_parameters"       -> x.replyParameters.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "sendContact".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -489,18 +515,20 @@ object CirceImplicits {
   implicit lazy val sendcontactreqDecoder: Decoder[SendContactReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[ChatId]("chat_id")
-        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
-        _phoneNumber         <- h.get[String]("phone_number")
-        _firstName           <- h.get[String]("first_name")
-        _lastName            <- h.get[Option[String]]("last_name")
-        _vcard               <- h.get[Option[String]]("vcard")
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent      <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters     <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
+        _chatId               <- h.get[ChatId]("chat_id")
+        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
+        _phoneNumber          <- h.get[String]("phone_number")
+        _firstName            <- h.get[String]("first_name")
+        _lastName             <- h.get[Option[String]]("last_name")
+        _vcard                <- h.get[Option[String]]("vcard")
+        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendContactReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           phoneNumber = _phoneNumber,
@@ -544,7 +572,6 @@ object CirceImplicits {
           "name"             -> x.name.asJson,
           "title"            -> x.title.asJson,
           "stickers"         -> x.stickers.asJson,
-          "sticker_format"   -> x.stickerFormat.asJson,
           "sticker_type"     -> x.stickerType.asJson,
           "needs_repainting" -> x.needsRepainting.asJson,
           "method"           -> "createNewStickerSet".asJson
@@ -559,7 +586,6 @@ object CirceImplicits {
         _name            <- h.get[String]("name")
         _title           <- h.get[String]("title")
         _stickers        <- h.getOrElse[List[InputSticker]]("stickers")(List.empty)
-        _stickerFormat   <- h.get[String]("sticker_format")
         _stickerType     <- h.get[Option[String]]("sticker_type")
         _needsRepainting <- h.get[Option[Boolean]]("needs_repainting")
       } yield {
@@ -568,7 +594,6 @@ object CirceImplicits {
           name = _name,
           title = _title,
           stickers = _stickers,
-          stickerFormat = _stickerFormat,
           stickerType = _stickerType,
           needsRepainting = _needsRepainting
         )
@@ -646,6 +671,31 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val replacestickerinsetreqEncoder: Encoder[ReplaceStickerInSetReq] =
+    (x: ReplaceStickerInSetReq) => {
+      Json.fromFields(
+        List(
+          "user_id"     -> x.userId.asJson,
+          "name"        -> x.name.asJson,
+          "old_sticker" -> x.oldSticker.asJson,
+          "sticker"     -> x.sticker.asJson,
+          "method"      -> "replaceStickerInSet".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val replacestickerinsetreqDecoder: Decoder[ReplaceStickerInSetReq] =
+    Decoder.instance { h =>
+      for {
+        _userId     <- h.get[Long]("user_id")
+        _name       <- h.get[String]("name")
+        _oldSticker <- h.get[String]("old_sticker")
+        _sticker    <- h.get[InputSticker]("sticker")
+      } yield {
+        ReplaceStickerInSetReq(userId = _userId, name = _name, oldSticker = _oldSticker, sticker = _sticker)
+      }
+    }
+
   implicit lazy val banchatsenderchatreqEncoder: Encoder[BanChatSenderChatReq] =
     (x: BanChatSenderChatReq) => {
       Json.fromFields(
@@ -692,6 +742,7 @@ object CirceImplicits {
     (x: SendLocationReq) => {
       Json.fromFields(
         List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
           "chat_id"                -> x.chatId.asJson,
           "message_thread_id"      -> x.messageThreadId.asJson,
           "latitude"               -> x.latitude.asJson,
@@ -712,6 +763,7 @@ object CirceImplicits {
   implicit lazy val sendlocationreqDecoder: Decoder[SendLocationReq] =
     Decoder.instance { h =>
       for {
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
         _chatId               <- h.get[ChatId]("chat_id")
         _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
         _latitude             <- h.get[Float]("latitude")
@@ -726,6 +778,7 @@ object CirceImplicits {
         _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendLocationReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           latitude = _latitude,
@@ -893,14 +946,15 @@ object CirceImplicits {
     (x: SendDiceReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "emoji"                -> x.emoji.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "reply_parameters"     -> x.replyParameters.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "sendDice".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_thread_id"      -> x.messageThreadId.asJson,
+          "emoji"                  -> x.emoji.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "reply_parameters"       -> x.replyParameters.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "sendDice".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -908,15 +962,17 @@ object CirceImplicits {
   implicit lazy val senddicereqDecoder: Decoder[SendDiceReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[ChatId]("chat_id")
-        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
-        _emoji               <- h.get[Option[String]]("emoji")
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent      <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters     <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
+        _chatId               <- h.get[ChatId]("chat_id")
+        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
+        _emoji                <- h.get[Option[String]]("emoji")
+        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendDiceReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           emoji = _emoji,
@@ -932,10 +988,11 @@ object CirceImplicits {
     (x: SendChatActionReq) => {
       Json.fromFields(
         List(
-          "chat_id"           -> x.chatId.asJson,
-          "message_thread_id" -> x.messageThreadId.asJson,
-          "action"            -> x.action.asJson,
-          "method"            -> "sendChatAction".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_thread_id"      -> x.messageThreadId.asJson,
+          "action"                 -> x.action.asJson,
+          "method"                 -> "sendChatAction".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -943,11 +1000,17 @@ object CirceImplicits {
   implicit lazy val sendchatactionreqDecoder: Decoder[SendChatActionReq] =
     Decoder.instance { h =>
       for {
-        _chatId          <- h.get[ChatId]("chat_id")
-        _messageThreadId <- h.get[Option[Int]]("message_thread_id")
-        _action          <- h.get[String]("action")
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
+        _chatId               <- h.get[ChatId]("chat_id")
+        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
+        _action               <- h.get[String]("action")
       } yield {
-        SendChatActionReq(chatId = _chatId, messageThreadId = _messageThreadId, action = _action)
+        SendChatActionReq(
+          businessConnectionId = _businessConnectionId,
+          chatId = _chatId,
+          messageThreadId = _messageThreadId,
+          action = _action
+        )
       }
     }
 
@@ -1138,13 +1201,14 @@ object CirceImplicits {
     (x: SendMediaGroupReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "media"                -> x.media.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "reply_parameters"     -> x.replyParameters.asJson,
-          "method"               -> "sendMediaGroup".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_thread_id"      -> x.messageThreadId.asJson,
+          "media"                  -> x.media.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "reply_parameters"       -> x.replyParameters.asJson,
+          "method"                 -> "sendMediaGroup".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1152,14 +1216,16 @@ object CirceImplicits {
   implicit lazy val sendmediagroupreqDecoder: Decoder[SendMediaGroupReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[ChatId]("chat_id")
-        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
-        _media               <- h.getOrElse[List[InputMedia]]("media")(List.empty)
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent      <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters     <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
+        _chatId               <- h.get[ChatId]("chat_id")
+        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
+        _media                <- h.getOrElse[List[InputMedia]]("media")(List.empty)
+        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
       } yield {
         SendMediaGroupReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           media = _media,
@@ -1174,14 +1240,15 @@ object CirceImplicits {
     (x: SendGameReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "game_short_name"      -> x.gameShortName.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "reply_parameters"     -> x.replyParameters.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "sendGame".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_thread_id"      -> x.messageThreadId.asJson,
+          "game_short_name"        -> x.gameShortName.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "reply_parameters"       -> x.replyParameters.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "sendGame".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1189,15 +1256,17 @@ object CirceImplicits {
   implicit lazy val sendgamereqDecoder: Decoder[SendGameReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[Long]("chat_id")
-        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
-        _gameShortName       <- h.get[String]("game_short_name")
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent      <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters     <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
+        _chatId               <- h.get[Long]("chat_id")
+        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
+        _gameShortName        <- h.get[String]("game_short_name")
+        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup          <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
       } yield {
         SendGameReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           gameShortName = _gameShortName,
@@ -1213,21 +1282,22 @@ object CirceImplicits {
     (x: SendVenueReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "latitude"             -> x.latitude.asJson,
-          "longitude"            -> x.longitude.asJson,
-          "title"                -> x.title.asJson,
-          "address"              -> x.address.asJson,
-          "foursquare_id"        -> x.foursquareId.asJson,
-          "foursquare_type"      -> x.foursquareType.asJson,
-          "google_place_id"      -> x.googlePlaceId.asJson,
-          "google_place_type"    -> x.googlePlaceType.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "reply_parameters"     -> x.replyParameters.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "sendVenue".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_thread_id"      -> x.messageThreadId.asJson,
+          "latitude"               -> x.latitude.asJson,
+          "longitude"              -> x.longitude.asJson,
+          "title"                  -> x.title.asJson,
+          "address"                -> x.address.asJson,
+          "foursquare_id"          -> x.foursquareId.asJson,
+          "foursquare_type"        -> x.foursquareType.asJson,
+          "google_place_id"        -> x.googlePlaceId.asJson,
+          "google_place_type"      -> x.googlePlaceType.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "reply_parameters"       -> x.replyParameters.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "sendVenue".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1235,22 +1305,24 @@ object CirceImplicits {
   implicit lazy val sendvenuereqDecoder: Decoder[SendVenueReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[ChatId]("chat_id")
-        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
-        _latitude            <- h.get[Float]("latitude")
-        _longitude           <- h.get[Float]("longitude")
-        _title               <- h.get[String]("title")
-        _address             <- h.get[String]("address")
-        _foursquareId        <- h.get[Option[String]]("foursquare_id")
-        _foursquareType      <- h.get[Option[String]]("foursquare_type")
-        _googlePlaceId       <- h.get[Option[String]]("google_place_id")
-        _googlePlaceType     <- h.get[Option[String]]("google_place_type")
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent      <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters     <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
+        _chatId               <- h.get[ChatId]("chat_id")
+        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
+        _latitude             <- h.get[Float]("latitude")
+        _longitude            <- h.get[Float]("longitude")
+        _title                <- h.get[String]("title")
+        _address              <- h.get[String]("address")
+        _foursquareId         <- h.get[Option[String]]("foursquare_id")
+        _foursquareType       <- h.get[Option[String]]("foursquare_type")
+        _googlePlaceId        <- h.get[Option[String]]("google_place_id")
+        _googlePlaceType      <- h.get[Option[String]]("google_place_type")
+        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendVenueReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           latitude = _latitude,
@@ -1684,17 +1756,18 @@ object CirceImplicits {
     (x: SendVideoNoteReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "video_note"           -> x.videoNote.asJson,
-          "duration"             -> x.duration.asJson,
-          "length"               -> x.length.asJson,
-          "thumbnail"            -> x.thumbnail.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "reply_parameters"     -> x.replyParameters.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "sendVideoNote".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_thread_id"      -> x.messageThreadId.asJson,
+          "video_note"             -> x.videoNote.asJson,
+          "duration"               -> x.duration.asJson,
+          "length"                 -> x.length.asJson,
+          "thumbnail"              -> x.thumbnail.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "reply_parameters"       -> x.replyParameters.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "sendVideoNote".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1702,18 +1775,20 @@ object CirceImplicits {
   implicit lazy val sendvideonotereqDecoder: Decoder[SendVideoNoteReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[ChatId]("chat_id")
-        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
-        _videoNote           <- h.get[IFile]("video_note")
-        _duration            <- h.get[Option[Int]]("duration")
-        _length              <- h.get[Option[Int]]("length")
-        _thumbnail           <- h.get[Option[IFile]]("thumbnail")
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent      <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters     <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
+        _chatId               <- h.get[ChatId]("chat_id")
+        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
+        _videoNote            <- h.get[IFile]("video_note")
+        _duration             <- h.get[Option[Int]]("duration")
+        _length               <- h.get[Option[Int]]("length")
+        _thumbnail            <- h.get[Option[IFile]]("thumbnail")
+        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendVideoNoteReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           videoNote = _videoNote,
@@ -1949,6 +2024,7 @@ object CirceImplicits {
     (x: SendDocumentReq) => {
       Json.fromFields(
         List(
+          "business_connection_id"         -> x.businessConnectionId.asJson,
           "chat_id"                        -> x.chatId.asJson,
           "message_thread_id"              -> x.messageThreadId.asJson,
           "document"                       -> x.document.asJson,
@@ -1969,6 +2045,7 @@ object CirceImplicits {
   implicit lazy val senddocumentreqDecoder: Decoder[SendDocumentReq] =
     Decoder.instance { h =>
       for {
+        _businessConnectionId        <- h.get[Option[String]]("business_connection_id")
         _chatId                      <- h.get[ChatId]("chat_id")
         _messageThreadId             <- h.get[Option[Int]]("message_thread_id")
         _document                    <- h.get[IFile]("document")
@@ -1983,6 +2060,7 @@ object CirceImplicits {
         _replyMarkup                 <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendDocumentReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           document = _document,
@@ -2100,21 +2178,22 @@ object CirceImplicits {
     (x: SendAudioReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "audio"                -> x.audio.asJson,
-          "caption"              -> x.caption.asJson,
-          "parse_mode"           -> x.parseMode.asJson,
-          "caption_entities"     -> x.captionEntities.asJson,
-          "duration"             -> x.duration.asJson,
-          "performer"            -> x.performer.asJson,
-          "title"                -> x.title.asJson,
-          "thumbnail"            -> x.thumbnail.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "reply_parameters"     -> x.replyParameters.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "sendAudio".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_thread_id"      -> x.messageThreadId.asJson,
+          "audio"                  -> x.audio.asJson,
+          "caption"                -> x.caption.asJson,
+          "parse_mode"             -> x.parseMode.asJson,
+          "caption_entities"       -> x.captionEntities.asJson,
+          "duration"               -> x.duration.asJson,
+          "performer"              -> x.performer.asJson,
+          "title"                  -> x.title.asJson,
+          "thumbnail"              -> x.thumbnail.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "reply_parameters"       -> x.replyParameters.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "sendAudio".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2122,22 +2201,24 @@ object CirceImplicits {
   implicit lazy val sendaudioreqDecoder: Decoder[SendAudioReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[ChatId]("chat_id")
-        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
-        _audio               <- h.get[IFile]("audio")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _duration            <- h.get[Option[Int]]("duration")
-        _performer           <- h.get[Option[String]]("performer")
-        _title               <- h.get[Option[String]]("title")
-        _thumbnail           <- h.get[Option[IFile]]("thumbnail")
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent      <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters     <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
+        _chatId               <- h.get[ChatId]("chat_id")
+        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
+        _audio                <- h.get[IFile]("audio")
+        _caption              <- h.get[Option[String]]("caption")
+        _parseMode            <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities      <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _duration             <- h.get[Option[Int]]("duration")
+        _performer            <- h.get[Option[String]]("performer")
+        _title                <- h.get[Option[String]]("title")
+        _thumbnail            <- h.get[Option[IFile]]("thumbnail")
+        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendAudioReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           audio = _audio,
@@ -2339,18 +2420,19 @@ object CirceImplicits {
     (x: SendVoiceReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "voice"                -> x.voice.asJson,
-          "caption"              -> x.caption.asJson,
-          "parse_mode"           -> x.parseMode.asJson,
-          "caption_entities"     -> x.captionEntities.asJson,
-          "duration"             -> x.duration.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "reply_parameters"     -> x.replyParameters.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "sendVoice".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_thread_id"      -> x.messageThreadId.asJson,
+          "voice"                  -> x.voice.asJson,
+          "caption"                -> x.caption.asJson,
+          "parse_mode"             -> x.parseMode.asJson,
+          "caption_entities"       -> x.captionEntities.asJson,
+          "duration"               -> x.duration.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "reply_parameters"       -> x.replyParameters.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "sendVoice".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2358,19 +2440,21 @@ object CirceImplicits {
   implicit lazy val sendvoicereqDecoder: Decoder[SendVoiceReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[ChatId]("chat_id")
-        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
-        _voice               <- h.get[IFile]("voice")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _duration            <- h.get[Option[Int]]("duration")
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent      <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters     <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
+        _chatId               <- h.get[ChatId]("chat_id")
+        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
+        _voice                <- h.get[IFile]("voice")
+        _caption              <- h.get[Option[String]]("caption")
+        _parseMode            <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities      <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _duration             <- h.get[Option[Int]]("duration")
+        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendVoiceReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           voice = _voice,
@@ -2700,23 +2784,24 @@ object CirceImplicits {
     (x: SendVideoReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "video"                -> x.video.asJson,
-          "duration"             -> x.duration.asJson,
-          "width"                -> x.width.asJson,
-          "height"               -> x.height.asJson,
-          "thumbnail"            -> x.thumbnail.asJson,
-          "caption"              -> x.caption.asJson,
-          "parse_mode"           -> x.parseMode.asJson,
-          "caption_entities"     -> x.captionEntities.asJson,
-          "has_spoiler"          -> x.hasSpoiler.asJson,
-          "supports_streaming"   -> x.supportsStreaming.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "reply_parameters"     -> x.replyParameters.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "sendVideo".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_thread_id"      -> x.messageThreadId.asJson,
+          "video"                  -> x.video.asJson,
+          "duration"               -> x.duration.asJson,
+          "width"                  -> x.width.asJson,
+          "height"                 -> x.height.asJson,
+          "thumbnail"              -> x.thumbnail.asJson,
+          "caption"                -> x.caption.asJson,
+          "parse_mode"             -> x.parseMode.asJson,
+          "caption_entities"       -> x.captionEntities.asJson,
+          "has_spoiler"            -> x.hasSpoiler.asJson,
+          "supports_streaming"     -> x.supportsStreaming.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "reply_parameters"       -> x.replyParameters.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "sendVideo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2724,24 +2809,26 @@ object CirceImplicits {
   implicit lazy val sendvideoreqDecoder: Decoder[SendVideoReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[ChatId]("chat_id")
-        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
-        _video               <- h.get[IFile]("video")
-        _duration            <- h.get[Option[Int]]("duration")
-        _width               <- h.get[Option[Int]]("width")
-        _height              <- h.get[Option[Int]]("height")
-        _thumbnail           <- h.get[Option[IFile]]("thumbnail")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _hasSpoiler          <- h.get[Option[Boolean]]("has_spoiler")
-        _supportsStreaming   <- h.get[Option[Boolean]]("supports_streaming")
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent      <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters     <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
+        _chatId               <- h.get[ChatId]("chat_id")
+        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
+        _video                <- h.get[IFile]("video")
+        _duration             <- h.get[Option[Int]]("duration")
+        _width                <- h.get[Option[Int]]("width")
+        _height               <- h.get[Option[Int]]("height")
+        _thumbnail            <- h.get[Option[IFile]]("thumbnail")
+        _caption              <- h.get[Option[String]]("caption")
+        _parseMode            <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities      <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _hasSpoiler           <- h.get[Option[Boolean]]("has_spoiler")
+        _supportsStreaming    <- h.get[Option[Boolean]]("supports_streaming")
+        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendVideoReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           video = _video,
@@ -2952,22 +3039,23 @@ object CirceImplicits {
     (x: SendAnimationReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "animation"            -> x.animation.asJson,
-          "duration"             -> x.duration.asJson,
-          "width"                -> x.width.asJson,
-          "height"               -> x.height.asJson,
-          "thumbnail"            -> x.thumbnail.asJson,
-          "caption"              -> x.caption.asJson,
-          "parse_mode"           -> x.parseMode.asJson,
-          "caption_entities"     -> x.captionEntities.asJson,
-          "has_spoiler"          -> x.hasSpoiler.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "reply_parameters"     -> x.replyParameters.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "sendAnimation".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_thread_id"      -> x.messageThreadId.asJson,
+          "animation"              -> x.animation.asJson,
+          "duration"               -> x.duration.asJson,
+          "width"                  -> x.width.asJson,
+          "height"                 -> x.height.asJson,
+          "thumbnail"              -> x.thumbnail.asJson,
+          "caption"                -> x.caption.asJson,
+          "parse_mode"             -> x.parseMode.asJson,
+          "caption_entities"       -> x.captionEntities.asJson,
+          "has_spoiler"            -> x.hasSpoiler.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "reply_parameters"       -> x.replyParameters.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "sendAnimation".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2975,23 +3063,25 @@ object CirceImplicits {
   implicit lazy val sendanimationreqDecoder: Decoder[SendAnimationReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[ChatId]("chat_id")
-        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
-        _animation           <- h.get[IFile]("animation")
-        _duration            <- h.get[Option[Int]]("duration")
-        _width               <- h.get[Option[Int]]("width")
-        _height              <- h.get[Option[Int]]("height")
-        _thumbnail           <- h.get[Option[IFile]]("thumbnail")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _hasSpoiler          <- h.get[Option[Boolean]]("has_spoiler")
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent      <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters     <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
+        _chatId               <- h.get[ChatId]("chat_id")
+        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
+        _animation            <- h.get[IFile]("animation")
+        _duration             <- h.get[Option[Int]]("duration")
+        _width                <- h.get[Option[Int]]("width")
+        _height               <- h.get[Option[Int]]("height")
+        _thumbnail            <- h.get[Option[IFile]]("thumbnail")
+        _caption              <- h.get[Option[String]]("caption")
+        _parseMode            <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities      <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _hasSpoiler           <- h.get[Option[Boolean]]("has_spoiler")
+        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendAnimationReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           animation = _animation,
@@ -3069,6 +3159,7 @@ object CirceImplicits {
           "name"      -> x.name.asJson,
           "user_id"   -> x.userId.asJson,
           "thumbnail" -> x.thumbnail.asJson,
+          "format"    -> x.format.asJson,
           "method"    -> "setStickerSetThumbnail".asJson
         ).filter(!_._2.isNull)
       )
@@ -3080,8 +3171,9 @@ object CirceImplicits {
         _name      <- h.get[String]("name")
         _userId    <- h.get[Long]("user_id")
         _thumbnail <- h.get[Option[IFile]]("thumbnail")
+        _format    <- h.get[String]("format")
       } yield {
-        SetStickerSetThumbnailReq(name = _name, userId = _userId, thumbnail = _thumbnail)
+        SetStickerSetThumbnailReq(name = _name, userId = _userId, thumbnail = _thumbnail, format = _format)
       }
     }
 
@@ -3133,15 +3225,16 @@ object CirceImplicits {
     (x: SendStickerReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "sticker"              -> x.sticker.asJson,
-          "emoji"                -> x.emoji.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "reply_parameters"     -> x.replyParameters.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "sendSticker".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_thread_id"      -> x.messageThreadId.asJson,
+          "sticker"                -> x.sticker.asJson,
+          "emoji"                  -> x.emoji.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "reply_parameters"       -> x.replyParameters.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "sendSticker".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3149,16 +3242,18 @@ object CirceImplicits {
   implicit lazy val sendstickerreqDecoder: Decoder[SendStickerReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[ChatId]("chat_id")
-        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
-        _sticker             <- h.get[IFile]("sticker")
-        _emoji               <- h.get[Option[String]]("emoji")
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent      <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters     <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
+        _chatId               <- h.get[ChatId]("chat_id")
+        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
+        _sticker              <- h.get[IFile]("sticker")
+        _emoji                <- h.get[Option[String]]("emoji")
+        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendStickerReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           sticker = _sticker,
@@ -3283,18 +3378,19 @@ object CirceImplicits {
     (x: SendPhotoReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "photo"                -> x.photo.asJson,
-          "caption"              -> x.caption.asJson,
-          "parse_mode"           -> x.parseMode.asJson,
-          "caption_entities"     -> x.captionEntities.asJson,
-          "has_spoiler"          -> x.hasSpoiler.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "reply_parameters"     -> x.replyParameters.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "sendPhoto".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_thread_id"      -> x.messageThreadId.asJson,
+          "photo"                  -> x.photo.asJson,
+          "caption"                -> x.caption.asJson,
+          "parse_mode"             -> x.parseMode.asJson,
+          "caption_entities"       -> x.captionEntities.asJson,
+          "has_spoiler"            -> x.hasSpoiler.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "reply_parameters"       -> x.replyParameters.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "sendPhoto".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3302,19 +3398,21 @@ object CirceImplicits {
   implicit lazy val sendphotoreqDecoder: Decoder[SendPhotoReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[ChatId]("chat_id")
-        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
-        _photo               <- h.get[IFile]("photo")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _hasSpoiler          <- h.get[Option[Boolean]]("has_spoiler")
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent      <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters     <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
+        _chatId               <- h.get[ChatId]("chat_id")
+        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
+        _photo                <- h.get[IFile]("photo")
+        _caption              <- h.get[Option[String]]("caption")
+        _parseMode            <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities      <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _hasSpoiler           <- h.get[Option[Boolean]]("has_spoiler")
+        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendPhotoReq(
+          businessConnectionId = _businessConnectionId,
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           photo = _photo,

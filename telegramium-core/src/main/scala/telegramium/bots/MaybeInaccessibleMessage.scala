@@ -22,6 +22,13 @@ sealed trait MaybeInaccessibleMessage {}
   *   non-channel chats, if the message was sent on behalf of a chat.
   * @param senderBoostCount
   *   Optional. If the sender of the message boosted the chat, the number of boosts added by the user
+  * @param senderBusinessBot
+  *   Optional. The bot that actually sent the message on behalf of the business account. Available only for outgoing
+  *   messages sent on behalf of the connected business account.
+  * @param businessConnectionId
+  *   Optional. Unique identifier of the business connection from which the message was received. If non-empty, the
+  *   message belongs to a chat of the corresponding business account that is independent from any potential bot chat
+  *   which might share the same identifier.
   * @param forwardOrigin
   *   Optional. Information about the original message for forwarded messages
   * @param isTopicMessage
@@ -44,6 +51,9 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. Date the message was last edited in Unix time
   * @param hasProtectedContent
   *   Optional. True, if the message can't be forwarded
+  * @param isFromOffline
+  *   Optional. True, if the message was sent by an implicit action, for example, as an away or a greeting business
+  *   message, or as a scheduled message
   * @param mediaGroupId
   *   Optional. The unique identifier of a media message group this message belongs to
   * @param authorSignature
@@ -193,6 +203,8 @@ final case class Message(
   from: Option[User] = Option.empty,
   senderChat: Option[Chat] = Option.empty,
   senderBoostCount: Option[Int] = Option.empty,
+  senderBusinessBot: Option[User] = Option.empty,
+  businessConnectionId: Option[String] = Option.empty,
   forwardOrigin: Option[MessageOrigin] = Option.empty,
   isTopicMessage: Option[Boolean] = Option.empty,
   isAutomaticForward: Option[Boolean] = Option.empty,
@@ -203,6 +215,7 @@ final case class Message(
   viaBot: Option[User] = Option.empty,
   editDate: Option[Int] = Option.empty,
   hasProtectedContent: Option[Boolean] = Option.empty,
+  isFromOffline: Option[Boolean] = Option.empty,
   mediaGroupId: Option[String] = Option.empty,
   authorSignature: Option[String] = Option.empty,
   text: Option[String] = Option.empty,

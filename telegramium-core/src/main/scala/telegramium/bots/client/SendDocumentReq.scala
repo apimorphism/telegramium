@@ -12,6 +12,8 @@ import telegramium.bots.KeyboardMarkup
   * @param document
   *   File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an
   *   HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data.
+  * @param businessConnectionId
+  *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
   * @param thumbnail
@@ -37,11 +39,13 @@ import telegramium.bots.KeyboardMarkup
   *   Description of the message to reply to
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove reply keyboard or to force a reply from the user.
+  *   to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a
+  *   business account
   */
 final case class SendDocumentReq(
   chatId: ChatId,
   document: IFile,
+  businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,
   thumbnail: Option[IFile] = Option.empty,
   caption: Option[String] = Option.empty,
