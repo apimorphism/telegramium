@@ -2,6 +2,8 @@ package telegramium.bots.high
 
 import cats.effect.IO
 
+import telegramium.bots.BusinessConnection
+import telegramium.bots.BusinessMessagesDeleted
 import telegramium.bots.CallbackQuery
 import telegramium.bots.ChatBoostRemoved
 import telegramium.bots.ChatBoostUpdated
@@ -21,10 +23,15 @@ import telegramium.bots.ShippingQuery
 class TestLongPollBot(api: Api[IO]) extends LongPollBot[IO](api) {
   private def sendMessageTask(text: String) = api.execute(sendMessage(ChatIntId(0), text)).void
 
-  override def onMessage(msg: Message): IO[Unit]                             = sendMessageTask("onMessage")
-  override def onEditedMessage(msg: Message): IO[Unit]                       = sendMessageTask("onEditedMessage")
-  override def onChannelPost(msg: Message): IO[Unit]                         = sendMessageTask("onChannelPost")
-  override def onEditedChannelPost(msg: Message): IO[Unit]                   = sendMessageTask("onEditedChannelPost")
+  override def onMessage(msg: Message): IO[Unit]                              = sendMessageTask("onMessage")
+  override def onEditedMessage(msg: Message): IO[Unit]                        = sendMessageTask("onEditedMessage")
+  override def onChannelPost(msg: Message): IO[Unit]                          = sendMessageTask("onChannelPost")
+  override def onEditedChannelPost(msg: Message): IO[Unit]                    = sendMessageTask("onEditedChannelPost")
+  override def onBusinessConnection(connection: BusinessConnection): IO[Unit] = sendMessageTask("onBusinessConnection")
+  override def onBusinessMessage(msg: Message): IO[Unit]                      = sendMessageTask("onBusinessMessage")
+  override def onEditedBusinessMessage(msg: Message): IO[Unit] = sendMessageTask("onEditedBusinessMessage")
+  override def onDeletedBusinessMessages(messages: BusinessMessagesDeleted): IO[Unit] =
+    sendMessageTask("onDeletedBusinessMessages")
   override def onMessageReaction(reaction: MessageReactionUpdated): IO[Unit] = sendMessageTask("onMessageReaction")
   override def onMessageReactionCount(count: MessageReactionCountUpdated): IO[Unit] = sendMessageTask(
     "onMessageReactionCount"

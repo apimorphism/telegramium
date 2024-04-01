@@ -3,6 +3,8 @@ package telegramium.bots.high
 import cats.effect.IO
 import cats.syntax.option.*
 
+import telegramium.bots.BusinessConnection
+import telegramium.bots.BusinessMessagesDeleted
 import telegramium.bots.CallbackQuery
 import telegramium.bots.ChatBoostRemoved
 import telegramium.bots.ChatBoostUpdated
@@ -39,6 +41,18 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
 
   override def onEditedChannelPost(msg: Message): IO[Unit] =
     api.execute(sendMessageMethod("onEditedChannelPost")).void
+
+  override def onBusinessConnection(connection: BusinessConnection): IO[Unit] =
+    api.execute(sendMessageMethod("onBusinessConnection")).void
+
+  override def onBusinessMessage(msg: Message): IO[Unit] =
+    api.execute(sendMessageMethod("onBusinessMessage")).void
+
+  override def onEditedBusinessMessage(msg: Message): IO[Unit] =
+    api.execute(sendMessageMethod("onEditedBusinessMessage")).void
+
+  override def onDeletedBusinessMessages(messages: BusinessMessagesDeleted): IO[Unit] =
+    api.execute(sendMessageMethod("onDeletedBusinessMessages")).void
 
   override def onMessageReaction(reaction: MessageReactionUpdated): IO[Unit] =
     api.execute(sendMessageMethod("onMessageReaction")).void
@@ -93,6 +107,18 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
 
   override def onEditedChannelPostReply(msg: Message): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onEditedChannelPostReply").some)
+
+  override def onBusinessConnectionReply(connection: BusinessConnection): IO[Option[Method[?]]] =
+    IO.pure(sendMessageMethod("onBusinessConnectionReply").some)
+
+  override def onBusinessMessageReply(msg: Message): IO[Option[Method[?]]] =
+    IO.pure(sendMessageMethod("onBusinessMessageReply").some)
+
+  override def onEditedBusinessMessageReply(msg: Message): IO[Option[Method[?]]] =
+    IO.pure(sendMessageMethod("onEditedBusinessMessageReply").some)
+
+  override def onDeletedBusinessMessagesReply(messages: BusinessMessagesDeleted): IO[Option[Method[?]]] =
+    IO.pure(sendMessageMethod("onDeletedBusinessMessagesReply").some)
 
   override def onMessageReactionReply(reaction: MessageReactionUpdated): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onMessageReactionReply").some)

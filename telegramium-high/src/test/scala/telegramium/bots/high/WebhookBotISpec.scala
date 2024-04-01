@@ -23,6 +23,8 @@ import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
+import telegramium.bots.BusinessConnection
+import telegramium.bots.BusinessMessagesDeleted
 import telegramium.bots.CallbackQuery
 import telegramium.bots.Chat
 import telegramium.bots.ChatBoost
@@ -228,6 +230,42 @@ class WebhookBotISpec
         .when(sendMessageRequest("onEditedChannelPost"))
         .respond(sendMessageResponse)
       verifyResult(testUpdate.copy(editedChannelPost = testMessage.some), "onEditedChannelPostReply")
+    }
+
+    "business connection" in {
+      mockServerClient
+        .when(sendMessageRequest("onBusinessConnection"))
+        .respond(sendMessageResponse)
+      verifyResult(
+        testUpdate.copy(businessConnection =
+          BusinessConnection("1", testUser, testChat.id, 0, canReply = false, isEnabled = false).some
+        ),
+        "onBusinessConnectionReply"
+      )
+    }
+
+    "business message" in {
+      mockServerClient
+        .when(sendMessageRequest("onBusinessMessage"))
+        .respond(sendMessageResponse)
+      verifyResult(testUpdate.copy(businessMessage = testMessage.some), "onBusinessMessageReply")
+    }
+
+    "edited business message" in {
+      mockServerClient
+        .when(sendMessageRequest("onEditedBusinessMessage"))
+        .respond(sendMessageResponse)
+      verifyResult(testUpdate.copy(editedBusinessMessage = testMessage.some), "onEditedBusinessMessageReply")
+    }
+
+    "deleted business messages" in {
+      mockServerClient
+        .when(sendMessageRequest("onDeletedBusinessMessages"))
+        .respond(sendMessageResponse)
+      verifyResult(
+        testUpdate.copy(deletedBusinessMessages = BusinessMessagesDeleted("1", testChat, List.empty).some),
+        "onDeletedBusinessMessagesReply"
+      )
     }
 
     "message reaction" in {
