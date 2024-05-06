@@ -19,7 +19,7 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Description of the message to reply to
   * @param replyMarkup
   *   A JSON-serialized object for an inline keyboard. If empty, one 'Play game_title' button will be shown. If not
-  *   empty, the first button must launch the game. Not supported for messages sent on behalf of a business account.
+  *   empty, the first button must launch the game.
   */
 final case class SendGameReq(
   chatId: Long,

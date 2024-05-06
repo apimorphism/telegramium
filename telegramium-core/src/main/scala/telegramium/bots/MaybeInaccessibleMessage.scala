@@ -162,6 +162,8 @@ sealed trait MaybeInaccessibleMessage {}
   *   Location.
   * @param boostAdded
   *   Optional. Service message: user boosted the chat
+  * @param chatBackgroundSet
+  *   Optional. Service message: chat background set
   * @param forumTopicCreated
   *   Optional. Service message: forum topic created
   * @param forumTopicEdited
@@ -260,6 +262,7 @@ final case class Message(
   passportData: Option[PassportData] = Option.empty,
   proximityAlertTriggered: Option[ProximityAlertTriggered] = Option.empty,
   boostAdded: Option[ChatBoostAdded] = Option.empty,
+  chatBackgroundSet: Option[ChatBackground] = Option.empty,
   forumTopicCreated: Option[ForumTopicCreated] = Option.empty,
   forumTopicEdited: Option[ForumTopicEdited] = Option.empty,
   forumTopicClosed: Option[ForumTopicClosed.type] = Option.empty,

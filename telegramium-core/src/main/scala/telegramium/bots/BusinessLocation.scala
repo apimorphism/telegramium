@@ -1,6 +1,8 @@
 package telegramium.bots
 
-/** @param address
+/** Contains information about the location of a Telegram Business account.
+  *
+  * @param address
   *   Address of the business
   * @param location
   *   Optional. Location of the business

@@ -1,8 +1,9 @@
 package telegramium.bots.client
 
 import telegramium.bots.ChatId
-import telegramium.bots.ParseMode
 import telegramium.bots.MessageEntity
+import telegramium.bots.InputPollOption
+import telegramium.bots.ParseMode
 import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
 
@@ -14,8 +15,14 @@ import telegramium.bots.KeyboardMarkup
   *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+  * @param questionParseMode
+  *   Mode for parsing entities in the question. See formatting options for more details. Currently, only custom emoji
+  *   entities are allowed
+  * @param questionEntities
+  *   A JSON-serialized list of special entities that appear in the poll question. It can be specified instead of
+  *   question_parse_mode
   * @param options
-  *   A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
+  *   A JSON-serialized list of 2-10 answer options
   * @param isAnonymous
   *   True, if the poll needs to be anonymous, defaults to True
   * @param type
@@ -30,8 +37,8 @@ import telegramium.bots.KeyboardMarkup
   * @param explanationParseMode
   *   Mode for parsing entities in the explanation. See formatting options for more details.
   * @param explanationEntities
-  *   A JSON-serialized list of special entities that appear in the poll explanation, which can be specified instead of
-  *   parse_mode
+  *   A JSON-serialized list of special entities that appear in the poll explanation. It can be specified instead of
+  *   explanation_parse_mode
   * @param openPeriod
   *   Amount of time in seconds the poll will be active after creation, 5-600. Can't be used together with close_date.
   * @param closeDate
@@ -47,15 +54,16 @@ import telegramium.bots.KeyboardMarkup
   *   Description of the message to reply to
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a
-  *   business account
+  *   to remove a reply keyboard or to force a reply from the user
   */
 final case class SendPollReq(
   chatId: ChatId,
   question: String,
   businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,
-  options: List[String] = List.empty,
+  questionParseMode: Option[String] = Option.empty,
+  questionEntities: List[MessageEntity] = List.empty,
+  options: List[InputPollOption] = List.empty,
   isAnonymous: Option[Boolean] = Option.empty,
   `type`: Option[String] = Option.empty,
   allowsMultipleAnswers: Option[Boolean] = Option.empty,

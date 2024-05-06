@@ -12,7 +12,8 @@ final case class InlineKeyboardMarkup(inlineKeyboard: List[List[InlineKeyboardBu
 
 /** Upon receiving a message with this object, Telegram clients will display a reply interface to the user (act as if
   * the user has selected the bot's message and tapped 'Reply'). This can be extremely useful if you want to create
-  * user-friendly step-by-step interfaces without having to sacrifice privacy mode.
+  * user-friendly step-by-step interfaces without having to sacrifice privacy mode. Not supported in channels and for
+  * messages sent on behalf of a Telegram Business account.
   *
   * @param forceReply
   *   Shows reply interface to the user, as if they manually selected the bot's message and tapped 'Reply'
@@ -32,7 +33,7 @@ final case class ForceReply(
 /** Upon receiving a message with this object, Telegram clients will remove the current custom keyboard and display the
   * default letter-keyboard. By default, custom keyboards are displayed until a new keyboard is sent by a bot. An
   * exception is made for one-time keyboards that are hidden immediately after the user presses a button (see
-  * ReplyKeyboardMarkup).
+  * ReplyKeyboardMarkup). Not supported in channels and for messages sent on behalf of a Telegram Business account.
   *
   * @param removeKeyboard
   *   Requests clients to remove the custom keyboard (user will not be able to summon this keyboard; if you want to hide
@@ -47,7 +48,8 @@ final case class ForceReply(
 final case class ReplyKeyboardRemove(removeKeyboard: Boolean, selective: Option[Boolean] = Option.empty)
     extends KeyboardMarkup
 
-/** This object represents a custom keyboard with reply options (see Introduction to bots for details and examples).
+/** This object represents a custom keyboard with reply options (see Introduction to bots for details and examples). Not
+  * supported in channels and for messages sent on behalf of a Telegram Business account.
   *
   * @param keyboard
   *   Array of button rows, each represented by an Array of KeyboardButton objects

@@ -15,11 +15,11 @@ package telegramium.bots
   * @param maxQuantity
   *   Optional. The maximum number of users to be selected; 1-10. Defaults to 1.
   * @param requestName
-  *   Optional. Pass True to request the users' first and last name
+  *   Optional. Pass True to request the users' first and last names
   * @param requestUsername
-  *   Optional. Pass True to request the users' username
+  *   Optional. Pass True to request the users' usernames
   * @param requestPhoto
-  *   Optional. Pass True to request the users' photo
+  *   Optional. Pass True to request the users' photos
   */
 final case class KeyboardButtonRequestUsers(
   requestId: Int,

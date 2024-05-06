@@ -16,6 +16,9 @@ package telegramium.bots
   *   Poll type, currently can be “regular” or “quiz”
   * @param allowsMultipleAnswers
   *   True, if the poll allows multiple answers
+  * @param questionEntities
+  *   Optional. Special entities that appear in the question. Currently, only custom emoji entities are allowed in poll
+  *   questions
   * @param options
   *   List of poll options
   * @param correctOptionId
@@ -39,6 +42,7 @@ final case class Poll(
   isAnonymous: Boolean,
   `type`: String,
   allowsMultipleAnswers: Boolean,
+  questionEntities: List[MessageEntity] = List.empty,
   options: List[PollOption] = List.empty,
   correctOptionId: Option[Int] = Option.empty,
   explanation: Option[String] = Option.empty,

@@ -62,10 +62,10 @@ class EchoBot[F[_]]()(implicit
         question = "How much is the fish?",
         `type` = Some("quiz"),
         options = List(
-          "3.14",
-          "2.72",
-          "1.62",
-          "Sunshine in the air!"
+          InputPollOption("3.14"),
+          InputPollOption("2.72"),
+          InputPollOption("1.62"),
+          InputPollOption("Sunshine in the air!")
         ),
         correctOptionId = Some(2),
         isAnonymous = Some(false),

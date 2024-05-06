@@ -17,7 +17,8 @@ import telegramium.bots.KeyboardMarkup
   * @param horizontalAccuracy
   *   The radius of uncertainty for the location, measured in meters; 0-1500
   * @param livePeriod
-  *   Period in seconds for which the location will be updated (see Live Locations, should be between 60 and 86400.
+  *   Period in seconds during which the location will be updated (see Live Locations, should be between 60 and 86400,
+  *   or 0x7FFFFFFF for live locations that can be edited indefinitely.
   * @param heading
   *   For live locations, a direction in which the user is moving, in degrees. Must be between 1 and 360 if specified.
   * @param proximityAlertRadius
@@ -31,8 +32,7 @@ import telegramium.bots.KeyboardMarkup
   *   Description of the message to reply to
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a
-  *   business account
+  *   to remove a reply keyboard or to force a reply from the user
   */
 final case class SendLocationReq(
   chatId: ChatId,

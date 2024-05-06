@@ -14,6 +14,11 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Required if inline_message_id is not specified. Identifier of the message to edit
   * @param inlineMessageId
   *   Required if chat_id and message_id are not specified. Identifier of the inline message
+  * @param livePeriod
+  *   New period in seconds during which the location can be updated, starting from the message send date. If 0x7FFFFFFF
+  *   is specified, then the location can be updated forever. Otherwise, the new value must not exceed the current
+  *   live_period by more than a day, and the live location expiration date must remain within the next 90 days. If not
+  *   specified, then live_period remains unchanged
   * @param horizontalAccuracy
   *   The radius of uncertainty for the location, measured in meters; 0-1500
   * @param heading
@@ -30,6 +35,7 @@ final case class EditMessageLiveLocationReq(
   chatId: Option[ChatId] = Option.empty,
   messageId: Option[Int] = Option.empty,
   inlineMessageId: Option[String] = Option.empty,
+  livePeriod: Option[Int] = Option.empty,
   horizontalAccuracy: Option[Float] = Option.empty,
   heading: Option[Int] = Option.empty,
   proximityAlertRadius: Option[Int] = Option.empty,

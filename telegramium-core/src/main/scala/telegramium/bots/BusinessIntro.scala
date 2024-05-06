@@ -1,6 +1,8 @@
 package telegramium.bots
 
-/** @param title
+/** Contains information about the start page settings of a Telegram Business account.
+  *
+  * @param title
   *   Optional. Title text of the business intro
   * @param message
   *   Optional. Message text of the business intro

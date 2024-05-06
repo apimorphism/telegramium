@@ -290,6 +290,7 @@ object CirceImplicits {
           "passport_data"                     -> x.passportData.asJson,
           "proximity_alert_triggered"         -> x.proximityAlertTriggered.asJson,
           "boost_added"                       -> x.boostAdded.asJson,
+          "chat_background_set"               -> x.chatBackgroundSet.asJson,
           "forum_topic_created"               -> x.forumTopicCreated.asJson,
           "forum_topic_edited"                -> x.forumTopicEdited.asJson,
           "forum_topic_closed"                -> x.forumTopicClosed.asJson,
@@ -379,6 +380,7 @@ object CirceImplicits {
         _passportData                 <- h.get[Option[PassportData]]("passport_data")
         _proximityAlertTriggered      <- h.get[Option[ProximityAlertTriggered]]("proximity_alert_triggered")
         _boostAdded                   <- h.get[Option[ChatBoostAdded]]("boost_added")
+        _chatBackgroundSet            <- h.get[Option[ChatBackground]]("chat_background_set")
         _forumTopicCreated            <- h.get[Option[ForumTopicCreated]]("forum_topic_created")
         _forumTopicEdited             <- h.get[Option[ForumTopicEdited]]("forum_topic_edited")
         _forumTopicClosed             <- h.get[Option[ForumTopicClosed.type]]("forum_topic_closed")
@@ -461,6 +463,7 @@ object CirceImplicits {
           passportData = _passportData,
           proximityAlertTriggered = _proximityAlertTriggered,
           boostAdded = _boostAdded,
+          chatBackgroundSet = _chatBackgroundSet,
           forumTopicCreated = _forumTopicCreated,
           forumTopicEdited = _forumTopicEdited,
           forumTopicClosed = _forumTopicClosed,
@@ -605,6 +608,199 @@ object CirceImplicits {
         _authorSignature <- h.get[Option[String]]("author_signature")
       } yield {
         MessageOriginChat(date = _date, senderChat = _senderChat, authorSignature = _authorSignature)
+      }
+    }
+
+  implicit lazy val backgroundfillEncoder: Encoder[BackgroundFill] = {
+    case gradient: BackgroundFillGradient => gradient.asJson.mapObject(_.add("type", Json.fromString("gradient")))
+    case solid: BackgroundFillSolid       => solid.asJson.mapObject(_.add("type", Json.fromString("solid")))
+    case freeform_gradient: BackgroundFillFreeformGradient =>
+      freeform_gradient.asJson.mapObject(_.add("type", Json.fromString("freeform_gradient")))
+  }
+
+  implicit lazy val backgroundfillDecoder: Decoder[BackgroundFill] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "gradient"          => Decoder[BackgroundFillGradient]
+      case "solid"             => Decoder[BackgroundFillSolid]
+      case "freeform_gradient" => Decoder[BackgroundFillFreeformGradient]
+      case unknown             => throw DecodingError(s"Unknown type for BackgroundFill: $unknown")
+    }
+  } yield value
+
+  implicit lazy val backgroundfillgradientEncoder: Encoder[BackgroundFillGradient] =
+    (x: BackgroundFillGradient) => {
+      Json.fromFields(
+        List(
+          "top_color"      -> x.topColor.asJson,
+          "bottom_color"   -> x.bottomColor.asJson,
+          "rotation_angle" -> x.rotationAngle.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val backgroundfillgradientDecoder: Decoder[BackgroundFillGradient] =
+    Decoder.instance { h =>
+      for {
+        _topColor      <- h.get[Int]("top_color")
+        _bottomColor   <- h.get[Int]("bottom_color")
+        _rotationAngle <- h.get[Int]("rotation_angle")
+      } yield {
+        BackgroundFillGradient(topColor = _topColor, bottomColor = _bottomColor, rotationAngle = _rotationAngle)
+      }
+    }
+
+  implicit lazy val backgroundfillfreeformgradientEncoder: Encoder[BackgroundFillFreeformGradient] =
+    (x: BackgroundFillFreeformGradient) => {
+      Json.fromFields(
+        List(
+          "colors" -> x.colors.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val backgroundfillfreeformgradientDecoder: Decoder[BackgroundFillFreeformGradient] =
+    Decoder.instance { h =>
+      for {
+        _colors <- h.getOrElse[List[Int]]("colors")(List.empty)
+      } yield {
+        BackgroundFillFreeformGradient(colors = _colors)
+      }
+    }
+
+  implicit lazy val backgroundfillsolidEncoder: Encoder[BackgroundFillSolid] =
+    (x: BackgroundFillSolid) => {
+      Json.fromFields(
+        List(
+          "color" -> x.color.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val backgroundfillsolidDecoder: Decoder[BackgroundFillSolid] =
+    Decoder.instance { h =>
+      for {
+        _color <- h.get[Int]("color")
+      } yield {
+        BackgroundFillSolid(color = _color)
+      }
+    }
+
+  implicit lazy val backgroundtypeEncoder: Encoder[BackgroundType] = {
+    case wallpaper: BackgroundTypeWallpaper => wallpaper.asJson.mapObject(_.add("type", Json.fromString("wallpaper")))
+    case pattern: BackgroundTypePattern     => pattern.asJson.mapObject(_.add("type", Json.fromString("pattern")))
+    case fill: BackgroundTypeFill           => fill.asJson.mapObject(_.add("type", Json.fromString("fill")))
+    case chat_theme: BackgroundTypeChatTheme =>
+      chat_theme.asJson.mapObject(_.add("type", Json.fromString("chat_theme")))
+  }
+
+  implicit lazy val backgroundtypeDecoder: Decoder[BackgroundType] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "wallpaper"  => Decoder[BackgroundTypeWallpaper]
+      case "pattern"    => Decoder[BackgroundTypePattern]
+      case "fill"       => Decoder[BackgroundTypeFill]
+      case "chat_theme" => Decoder[BackgroundTypeChatTheme]
+      case unknown      => throw DecodingError(s"Unknown type for BackgroundType: $unknown")
+    }
+  } yield value
+
+  implicit lazy val backgroundtypewallpaperEncoder: Encoder[BackgroundTypeWallpaper] =
+    (x: BackgroundTypeWallpaper) => {
+      Json.fromFields(
+        List(
+          "document"           -> x.document.asJson,
+          "dark_theme_dimming" -> x.darkThemeDimming.asJson,
+          "is_blurred"         -> x.isBlurred.asJson,
+          "is_moving"          -> x.isMoving.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val backgroundtypewallpaperDecoder: Decoder[BackgroundTypeWallpaper] =
+    Decoder.instance { h =>
+      for {
+        _document         <- h.get[Document]("document")
+        _darkThemeDimming <- h.get[Int]("dark_theme_dimming")
+        _isBlurred        <- h.get[Option[Boolean]]("is_blurred")
+        _isMoving         <- h.get[Option[Boolean]]("is_moving")
+      } yield {
+        BackgroundTypeWallpaper(
+          document = _document,
+          darkThemeDimming = _darkThemeDimming,
+          isBlurred = _isBlurred,
+          isMoving = _isMoving
+        )
+      }
+    }
+
+  implicit lazy val backgroundtypepatternEncoder: Encoder[BackgroundTypePattern] =
+    (x: BackgroundTypePattern) => {
+      Json.fromFields(
+        List(
+          "document"    -> x.document.asJson,
+          "fill"        -> x.fill.asJson,
+          "intensity"   -> x.intensity.asJson,
+          "is_inverted" -> x.isInverted.asJson,
+          "is_moving"   -> x.isMoving.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val backgroundtypepatternDecoder: Decoder[BackgroundTypePattern] =
+    Decoder.instance { h =>
+      for {
+        _document   <- h.get[Document]("document")
+        _fill       <- h.get[BackgroundFill]("fill")
+        _intensity  <- h.get[Int]("intensity")
+        _isInverted <- h.get[Option[Boolean]]("is_inverted")
+        _isMoving   <- h.get[Option[Boolean]]("is_moving")
+      } yield {
+        BackgroundTypePattern(
+          document = _document,
+          fill = _fill,
+          intensity = _intensity,
+          isInverted = _isInverted,
+          isMoving = _isMoving
+        )
+      }
+    }
+
+  implicit lazy val backgroundtypechatthemeEncoder: Encoder[BackgroundTypeChatTheme] =
+    (x: BackgroundTypeChatTheme) => {
+      Json.fromFields(
+        List(
+          "theme_name" -> x.themeName.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val backgroundtypechatthemeDecoder: Decoder[BackgroundTypeChatTheme] =
+    Decoder.instance { h =>
+      for {
+        _themeName <- h.get[String]("theme_name")
+      } yield {
+        BackgroundTypeChatTheme(themeName = _themeName)
+      }
+    }
+
+  implicit lazy val backgroundtypefillEncoder: Encoder[BackgroundTypeFill] =
+    (x: BackgroundTypeFill) => {
+      Json.fromFields(
+        List(
+          "fill"               -> x.fill.asJson,
+          "dark_theme_dimming" -> x.darkThemeDimming.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val backgroundtypefillDecoder: Decoder[BackgroundTypeFill] =
+    Decoder.instance { h =>
+      for {
+        _fill             <- h.get[BackgroundFill]("fill")
+        _darkThemeDimming <- h.get[Int]("dark_theme_dimming")
+      } yield {
+        BackgroundTypeFill(fill = _fill, darkThemeDimming = _darkThemeDimming)
       }
     }
 
@@ -3370,48 +3566,13 @@ object CirceImplicits {
     (x: Chat) => {
       Json.fromFields(
         List(
-          "id"                                      -> x.id.asJson,
-          "type"                                    -> x.`type`.asJson,
-          "title"                                   -> x.title.asJson,
-          "username"                                -> x.username.asJson,
-          "first_name"                              -> x.firstName.asJson,
-          "last_name"                               -> x.lastName.asJson,
-          "is_forum"                                -> x.isForum.asJson,
-          "photo"                                   -> x.photo.asJson,
-          "active_usernames"                        -> x.activeUsernames.asJson,
-          "birthdate"                               -> x.birthdate.asJson,
-          "business_intro"                          -> x.businessIntro.asJson,
-          "business_location"                       -> x.businessLocation.asJson,
-          "business_opening_hours"                  -> x.businessOpeningHours.asJson,
-          "personal_chat"                           -> x.personalChat.asJson,
-          "available_reactions"                     -> x.availableReactions.asJson,
-          "accent_color_id"                         -> x.accentColorId.asJson,
-          "background_custom_emoji_id"              -> x.backgroundCustomEmojiId.asJson,
-          "profile_accent_color_id"                 -> x.profileAccentColorId.asJson,
-          "profile_background_custom_emoji_id"      -> x.profileBackgroundCustomEmojiId.asJson,
-          "emoji_status_custom_emoji_id"            -> x.emojiStatusCustomEmojiId.asJson,
-          "emoji_status_expiration_date"            -> x.emojiStatusExpirationDate.asJson,
-          "bio"                                     -> x.bio.asJson,
-          "has_private_forwards"                    -> x.hasPrivateForwards.asJson,
-          "has_restricted_voice_and_video_messages" -> x.hasRestrictedVoiceAndVideoMessages.asJson,
-          "join_to_send_messages"                   -> x.joinToSendMessages.asJson,
-          "join_by_request"                         -> x.joinByRequest.asJson,
-          "description"                             -> x.description.asJson,
-          "invite_link"                             -> x.inviteLink.asJson,
-          "pinned_message"                          -> x.pinnedMessage.asJson,
-          "permissions"                             -> x.permissions.asJson,
-          "slow_mode_delay"                         -> x.slowModeDelay.asJson,
-          "unrestrict_boost_count"                  -> x.unrestrictBoostCount.asJson,
-          "message_auto_delete_time"                -> x.messageAutoDeleteTime.asJson,
-          "has_aggressive_anti_spam_enabled"        -> x.hasAggressiveAntiSpamEnabled.asJson,
-          "has_hidden_members"                      -> x.hasHiddenMembers.asJson,
-          "has_protected_content"                   -> x.hasProtectedContent.asJson,
-          "has_visible_history"                     -> x.hasVisibleHistory.asJson,
-          "sticker_set_name"                        -> x.stickerSetName.asJson,
-          "can_set_sticker_set"                     -> x.canSetStickerSet.asJson,
-          "custom_emoji_sticker_set_name"           -> x.customEmojiStickerSetName.asJson,
-          "linked_chat_id"                          -> x.linkedChatId.asJson,
-          "location"                                -> x.location.asJson
+          "id"         -> x.id.asJson,
+          "type"       -> x.`type`.asJson,
+          "title"      -> x.title.asJson,
+          "username"   -> x.username.asJson,
+          "first_name" -> x.firstName.asJson,
+          "last_name"  -> x.lastName.asJson,
+          "is_forum"   -> x.isForum.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3419,48 +3580,13 @@ object CirceImplicits {
   implicit lazy val chatDecoder: Decoder[Chat] =
     Decoder.instance { h =>
       for {
-        _id                                 <- h.get[Long]("id")
-        _type                               <- h.get[String]("type")
-        _title                              <- h.get[Option[String]]("title")
-        _username                           <- h.get[Option[String]]("username")
-        _firstName                          <- h.get[Option[String]]("first_name")
-        _lastName                           <- h.get[Option[String]]("last_name")
-        _isForum                            <- h.get[Option[Boolean]]("is_forum")
-        _photo                              <- h.get[Option[ChatPhoto]]("photo")
-        _activeUsernames                    <- h.getOrElse[List[String]]("active_usernames")(List.empty)
-        _birthdate                          <- h.get[Option[Birthdate]]("birthdate")
-        _businessIntro                      <- h.get[Option[BusinessIntro]]("business_intro")
-        _businessLocation                   <- h.get[Option[BusinessLocation]]("business_location")
-        _businessOpeningHours               <- h.get[Option[BusinessOpeningHours]]("business_opening_hours")
-        _personalChat                       <- h.get[Option[Chat]]("personal_chat")
-        _availableReactions                 <- h.getOrElse[List[ReactionType]]("available_reactions")(List.empty)
-        _accentColorId                      <- h.get[Option[Int]]("accent_color_id")
-        _backgroundCustomEmojiId            <- h.get[Option[String]]("background_custom_emoji_id")
-        _profileAccentColorId               <- h.get[Option[Int]]("profile_accent_color_id")
-        _profileBackgroundCustomEmojiId     <- h.get[Option[String]]("profile_background_custom_emoji_id")
-        _emojiStatusCustomEmojiId           <- h.get[Option[String]]("emoji_status_custom_emoji_id")
-        _emojiStatusExpirationDate          <- h.get[Option[Int]]("emoji_status_expiration_date")
-        _bio                                <- h.get[Option[String]]("bio")
-        _hasPrivateForwards                 <- h.get[Option[Boolean]]("has_private_forwards")
-        _hasRestrictedVoiceAndVideoMessages <- h.get[Option[Boolean]]("has_restricted_voice_and_video_messages")
-        _joinToSendMessages                 <- h.get[Option[Boolean]]("join_to_send_messages")
-        _joinByRequest                      <- h.get[Option[Boolean]]("join_by_request")
-        _description                        <- h.get[Option[String]]("description")
-        _inviteLink                         <- h.get[Option[String]]("invite_link")
-        _pinnedMessage                      <- h.get[Option[Message]]("pinned_message")
-        _permissions                        <- h.get[Option[ChatPermissions]]("permissions")
-        _slowModeDelay                      <- h.get[Option[Int]]("slow_mode_delay")
-        _unrestrictBoostCount               <- h.get[Option[Int]]("unrestrict_boost_count")
-        _messageAutoDeleteTime              <- h.get[Option[Int]]("message_auto_delete_time")
-        _hasAggressiveAntiSpamEnabled       <- h.get[Option[Boolean]]("has_aggressive_anti_spam_enabled")
-        _hasHiddenMembers                   <- h.get[Option[Boolean]]("has_hidden_members")
-        _hasProtectedContent                <- h.get[Option[Boolean]]("has_protected_content")
-        _hasVisibleHistory                  <- h.get[Option[Boolean]]("has_visible_history")
-        _stickerSetName                     <- h.get[Option[String]]("sticker_set_name")
-        _canSetStickerSet                   <- h.get[Option[Boolean]]("can_set_sticker_set")
-        _customEmojiStickerSetName          <- h.get[Option[String]]("custom_emoji_sticker_set_name")
-        _linkedChatId                       <- h.get[Option[Long]]("linked_chat_id")
-        _location                           <- h.get[Option[ChatLocation]]("location")
+        _id        <- h.get[Long]("id")
+        _type      <- h.get[String]("type")
+        _title     <- h.get[Option[String]]("title")
+        _username  <- h.get[Option[String]]("username")
+        _firstName <- h.get[Option[String]]("first_name")
+        _lastName  <- h.get[Option[String]]("last_name")
+        _isForum   <- h.get[Option[Boolean]]("is_forum")
       } yield {
         Chat(
           id = _id,
@@ -3469,42 +3595,7 @@ object CirceImplicits {
           username = _username,
           firstName = _firstName,
           lastName = _lastName,
-          isForum = _isForum,
-          photo = _photo,
-          activeUsernames = _activeUsernames,
-          birthdate = _birthdate,
-          businessIntro = _businessIntro,
-          businessLocation = _businessLocation,
-          businessOpeningHours = _businessOpeningHours,
-          personalChat = _personalChat,
-          availableReactions = _availableReactions,
-          accentColorId = _accentColorId,
-          backgroundCustomEmojiId = _backgroundCustomEmojiId,
-          profileAccentColorId = _profileAccentColorId,
-          profileBackgroundCustomEmojiId = _profileBackgroundCustomEmojiId,
-          emojiStatusCustomEmojiId = _emojiStatusCustomEmojiId,
-          emojiStatusExpirationDate = _emojiStatusExpirationDate,
-          bio = _bio,
-          hasPrivateForwards = _hasPrivateForwards,
-          hasRestrictedVoiceAndVideoMessages = _hasRestrictedVoiceAndVideoMessages,
-          joinToSendMessages = _joinToSendMessages,
-          joinByRequest = _joinByRequest,
-          description = _description,
-          inviteLink = _inviteLink,
-          pinnedMessage = _pinnedMessage,
-          permissions = _permissions,
-          slowModeDelay = _slowModeDelay,
-          unrestrictBoostCount = _unrestrictBoostCount,
-          messageAutoDeleteTime = _messageAutoDeleteTime,
-          hasAggressiveAntiSpamEnabled = _hasAggressiveAntiSpamEnabled,
-          hasHiddenMembers = _hasHiddenMembers,
-          hasProtectedContent = _hasProtectedContent,
-          hasVisibleHistory = _hasVisibleHistory,
-          stickerSetName = _stickerSetName,
-          canSetStickerSet = _canSetStickerSet,
-          customEmojiStickerSetName = _customEmojiStickerSetName,
-          linkedChatId = _linkedChatId,
-          location = _location
+          isForum = _isForum
         )
       }
     }
@@ -3686,8 +3777,9 @@ object CirceImplicits {
     (x: PollOption) => {
       Json.fromFields(
         List(
-          "text"        -> x.text.asJson,
-          "voter_count" -> x.voterCount.asJson
+          "text"          -> x.text.asJson,
+          "text_entities" -> x.textEntities.asJson,
+          "voter_count"   -> x.voterCount.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3695,10 +3787,11 @@ object CirceImplicits {
   implicit lazy val polloptionDecoder: Decoder[PollOption] =
     Decoder.instance { h =>
       for {
-        _text       <- h.get[String]("text")
-        _voterCount <- h.get[Int]("voter_count")
+        _text         <- h.get[String]("text")
+        _textEntities <- h.getOrElse[List[MessageEntity]]("text_entities")(List.empty)
+        _voterCount   <- h.get[Int]("voter_count")
       } yield {
-        PollOption(text = _text, voterCount = _voterCount)
+        PollOption(text = _text, textEntities = _textEntities, voterCount = _voterCount)
       }
     }
 
@@ -3775,6 +3868,28 @@ object CirceImplicits {
         _address  <- h.get[String]("address")
       } yield {
         ChatLocation(location = _location, address = _address)
+      }
+    }
+
+  implicit lazy val inputpolloptionEncoder: Encoder[InputPollOption] =
+    (x: InputPollOption) => {
+      Json.fromFields(
+        List(
+          "text"            -> x.text.asJson,
+          "text_parse_mode" -> x.textParseMode.asJson,
+          "text_entities"   -> x.textEntities.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputpolloptionDecoder: Decoder[InputPollOption] =
+    Decoder.instance { h =>
+      for {
+        _text          <- h.get[String]("text")
+        _textParseMode <- h.get[Option[String]]("text_parse_mode")
+        _textEntities  <- h.getOrElse[List[MessageEntity]]("text_entities")(List.empty)
+      } yield {
+        InputPollOption(text = _text, textParseMode = _textParseMode, textEntities = _textEntities)
       }
     }
 
@@ -4198,6 +4313,7 @@ object CirceImplicits {
         List(
           "id"                      -> x.id.asJson,
           "question"                -> x.question.asJson,
+          "question_entities"       -> x.questionEntities.asJson,
           "options"                 -> x.options.asJson,
           "total_voter_count"       -> x.totalVoterCount.asJson,
           "is_closed"               -> x.isClosed.asJson,
@@ -4218,6 +4334,7 @@ object CirceImplicits {
       for {
         _id                    <- h.get[String]("id")
         _question              <- h.get[String]("question")
+        _questionEntities      <- h.getOrElse[List[MessageEntity]]("question_entities")(List.empty)
         _options               <- h.getOrElse[List[PollOption]]("options")(List.empty)
         _totalVoterCount       <- h.get[Int]("total_voter_count")
         _isClosed              <- h.get[Boolean]("is_closed")
@@ -4233,6 +4350,7 @@ object CirceImplicits {
         Poll(
           id = _id,
           question = _question,
+          questionEntities = _questionEntities,
           options = _options,
           totalVoterCount = _totalVoterCount,
           isClosed = _isClosed,
@@ -4788,6 +4906,7 @@ object CirceImplicits {
           "old_chat_member"             -> x.oldChatMember.asJson,
           "new_chat_member"             -> x.newChatMember.asJson,
           "invite_link"                 -> x.inviteLink.asJson,
+          "via_join_request"            -> x.viaJoinRequest.asJson,
           "via_chat_folder_invite_link" -> x.viaChatFolderInviteLink.asJson
         ).filter(!_._2.isNull)
       )
@@ -4802,6 +4921,7 @@ object CirceImplicits {
         _oldChatMember           <- h.get[ChatMember]("old_chat_member")
         _newChatMember           <- h.get[ChatMember]("new_chat_member")
         _inviteLink              <- h.get[Option[ChatInviteLink]]("invite_link")
+        _viaJoinRequest          <- h.get[Option[Boolean]]("via_join_request")
         _viaChatFolderInviteLink <- h.get[Option[Boolean]]("via_chat_folder_invite_link")
       } yield {
         ChatMemberUpdated(
@@ -4811,6 +4931,7 @@ object CirceImplicits {
           oldChatMember = _oldChatMember,
           newChatMember = _newChatMember,
           inviteLink = _inviteLink,
+          viaJoinRequest = _viaJoinRequest,
           viaChatFolderInviteLink = _viaChatFolderInviteLink
         )
       }
@@ -5342,6 +5463,24 @@ object CirceImplicits {
           currency = _currency,
           totalAmount = _totalAmount
         )
+      }
+    }
+
+  implicit lazy val chatbackgroundEncoder: Encoder[ChatBackground] =
+    (x: ChatBackground) => {
+      Json.fromFields(
+        List(
+          "type" -> x.`type`.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatbackgroundDecoder: Decoder[ChatBackground] =
+    Decoder.instance { h =>
+      for {
+        _type <- h.get[BackgroundType]("type")
+      } yield {
+        ChatBackground(`type` = _type)
       }
     }
 
@@ -5948,6 +6087,152 @@ object CirceImplicits {
         _secret <- h.get[String]("secret")
       } yield {
         EncryptedCredentials(data = _data, hash = _hash, secret = _secret)
+      }
+    }
+
+  implicit lazy val chatfullinfoEncoder: Encoder[ChatFullInfo] =
+    (x: ChatFullInfo) => {
+      Json.fromFields(
+        List(
+          "id"                                      -> x.id.asJson,
+          "type"                                    -> x.`type`.asJson,
+          "title"                                   -> x.title.asJson,
+          "username"                                -> x.username.asJson,
+          "first_name"                              -> x.firstName.asJson,
+          "last_name"                               -> x.lastName.asJson,
+          "is_forum"                                -> x.isForum.asJson,
+          "accent_color_id"                         -> x.accentColorId.asJson,
+          "max_reaction_count"                      -> x.maxReactionCount.asJson,
+          "photo"                                   -> x.photo.asJson,
+          "active_usernames"                        -> x.activeUsernames.asJson,
+          "birthdate"                               -> x.birthdate.asJson,
+          "business_intro"                          -> x.businessIntro.asJson,
+          "business_location"                       -> x.businessLocation.asJson,
+          "business_opening_hours"                  -> x.businessOpeningHours.asJson,
+          "personal_chat"                           -> x.personalChat.asJson,
+          "available_reactions"                     -> x.availableReactions.asJson,
+          "background_custom_emoji_id"              -> x.backgroundCustomEmojiId.asJson,
+          "profile_accent_color_id"                 -> x.profileAccentColorId.asJson,
+          "profile_background_custom_emoji_id"      -> x.profileBackgroundCustomEmojiId.asJson,
+          "emoji_status_custom_emoji_id"            -> x.emojiStatusCustomEmojiId.asJson,
+          "emoji_status_expiration_date"            -> x.emojiStatusExpirationDate.asJson,
+          "bio"                                     -> x.bio.asJson,
+          "has_private_forwards"                    -> x.hasPrivateForwards.asJson,
+          "has_restricted_voice_and_video_messages" -> x.hasRestrictedVoiceAndVideoMessages.asJson,
+          "join_to_send_messages"                   -> x.joinToSendMessages.asJson,
+          "join_by_request"                         -> x.joinByRequest.asJson,
+          "description"                             -> x.description.asJson,
+          "invite_link"                             -> x.inviteLink.asJson,
+          "pinned_message"                          -> x.pinnedMessage.asJson,
+          "permissions"                             -> x.permissions.asJson,
+          "slow_mode_delay"                         -> x.slowModeDelay.asJson,
+          "unrestrict_boost_count"                  -> x.unrestrictBoostCount.asJson,
+          "message_auto_delete_time"                -> x.messageAutoDeleteTime.asJson,
+          "has_aggressive_anti_spam_enabled"        -> x.hasAggressiveAntiSpamEnabled.asJson,
+          "has_hidden_members"                      -> x.hasHiddenMembers.asJson,
+          "has_protected_content"                   -> x.hasProtectedContent.asJson,
+          "has_visible_history"                     -> x.hasVisibleHistory.asJson,
+          "sticker_set_name"                        -> x.stickerSetName.asJson,
+          "can_set_sticker_set"                     -> x.canSetStickerSet.asJson,
+          "custom_emoji_sticker_set_name"           -> x.customEmojiStickerSetName.asJson,
+          "linked_chat_id"                          -> x.linkedChatId.asJson,
+          "location"                                -> x.location.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatfullinfoDecoder: Decoder[ChatFullInfo] =
+    Decoder.instance { h =>
+      for {
+        _id                                 <- h.get[Long]("id")
+        _type                               <- h.get[String]("type")
+        _title                              <- h.get[Option[String]]("title")
+        _username                           <- h.get[Option[String]]("username")
+        _firstName                          <- h.get[Option[String]]("first_name")
+        _lastName                           <- h.get[Option[String]]("last_name")
+        _isForum                            <- h.get[Option[Boolean]]("is_forum")
+        _accentColorId                      <- h.get[Int]("accent_color_id")
+        _maxReactionCount                   <- h.get[Int]("max_reaction_count")
+        _photo                              <- h.get[Option[ChatPhoto]]("photo")
+        _activeUsernames                    <- h.getOrElse[List[String]]("active_usernames")(List.empty)
+        _birthdate                          <- h.get[Option[Birthdate]]("birthdate")
+        _businessIntro                      <- h.get[Option[BusinessIntro]]("business_intro")
+        _businessLocation                   <- h.get[Option[BusinessLocation]]("business_location")
+        _businessOpeningHours               <- h.get[Option[BusinessOpeningHours]]("business_opening_hours")
+        _personalChat                       <- h.get[Option[Chat]]("personal_chat")
+        _availableReactions                 <- h.getOrElse[List[ReactionType]]("available_reactions")(List.empty)
+        _backgroundCustomEmojiId            <- h.get[Option[String]]("background_custom_emoji_id")
+        _profileAccentColorId               <- h.get[Option[Int]]("profile_accent_color_id")
+        _profileBackgroundCustomEmojiId     <- h.get[Option[String]]("profile_background_custom_emoji_id")
+        _emojiStatusCustomEmojiId           <- h.get[Option[String]]("emoji_status_custom_emoji_id")
+        _emojiStatusExpirationDate          <- h.get[Option[Int]]("emoji_status_expiration_date")
+        _bio                                <- h.get[Option[String]]("bio")
+        _hasPrivateForwards                 <- h.get[Option[Boolean]]("has_private_forwards")
+        _hasRestrictedVoiceAndVideoMessages <- h.get[Option[Boolean]]("has_restricted_voice_and_video_messages")
+        _joinToSendMessages                 <- h.get[Option[Boolean]]("join_to_send_messages")
+        _joinByRequest                      <- h.get[Option[Boolean]]("join_by_request")
+        _description                        <- h.get[Option[String]]("description")
+        _inviteLink                         <- h.get[Option[String]]("invite_link")
+        _pinnedMessage                      <- h.get[Option[Message]]("pinned_message")
+        _permissions                        <- h.get[Option[ChatPermissions]]("permissions")
+        _slowModeDelay                      <- h.get[Option[Int]]("slow_mode_delay")
+        _unrestrictBoostCount               <- h.get[Option[Int]]("unrestrict_boost_count")
+        _messageAutoDeleteTime              <- h.get[Option[Int]]("message_auto_delete_time")
+        _hasAggressiveAntiSpamEnabled       <- h.get[Option[Boolean]]("has_aggressive_anti_spam_enabled")
+        _hasHiddenMembers                   <- h.get[Option[Boolean]]("has_hidden_members")
+        _hasProtectedContent                <- h.get[Option[Boolean]]("has_protected_content")
+        _hasVisibleHistory                  <- h.get[Option[Boolean]]("has_visible_history")
+        _stickerSetName                     <- h.get[Option[String]]("sticker_set_name")
+        _canSetStickerSet                   <- h.get[Option[Boolean]]("can_set_sticker_set")
+        _customEmojiStickerSetName          <- h.get[Option[String]]("custom_emoji_sticker_set_name")
+        _linkedChatId                       <- h.get[Option[Long]]("linked_chat_id")
+        _location                           <- h.get[Option[ChatLocation]]("location")
+      } yield {
+        ChatFullInfo(
+          id = _id,
+          `type` = _type,
+          title = _title,
+          username = _username,
+          firstName = _firstName,
+          lastName = _lastName,
+          isForum = _isForum,
+          accentColorId = _accentColorId,
+          maxReactionCount = _maxReactionCount,
+          photo = _photo,
+          activeUsernames = _activeUsernames,
+          birthdate = _birthdate,
+          businessIntro = _businessIntro,
+          businessLocation = _businessLocation,
+          businessOpeningHours = _businessOpeningHours,
+          personalChat = _personalChat,
+          availableReactions = _availableReactions,
+          backgroundCustomEmojiId = _backgroundCustomEmojiId,
+          profileAccentColorId = _profileAccentColorId,
+          profileBackgroundCustomEmojiId = _profileBackgroundCustomEmojiId,
+          emojiStatusCustomEmojiId = _emojiStatusCustomEmojiId,
+          emojiStatusExpirationDate = _emojiStatusExpirationDate,
+          bio = _bio,
+          hasPrivateForwards = _hasPrivateForwards,
+          hasRestrictedVoiceAndVideoMessages = _hasRestrictedVoiceAndVideoMessages,
+          joinToSendMessages = _joinToSendMessages,
+          joinByRequest = _joinByRequest,
+          description = _description,
+          inviteLink = _inviteLink,
+          pinnedMessage = _pinnedMessage,
+          permissions = _permissions,
+          slowModeDelay = _slowModeDelay,
+          unrestrictBoostCount = _unrestrictBoostCount,
+          messageAutoDeleteTime = _messageAutoDeleteTime,
+          hasAggressiveAntiSpamEnabled = _hasAggressiveAntiSpamEnabled,
+          hasHiddenMembers = _hasHiddenMembers,
+          hasProtectedContent = _hasProtectedContent,
+          hasVisibleHistory = _hasVisibleHistory,
+          stickerSetName = _stickerSetName,
+          canSetStickerSet = _canSetStickerSet,
+          customEmojiStickerSetName = _customEmojiStickerSetName,
+          linkedChatId = _linkedChatId,
+          location = _location
+        )
       }
     }
 

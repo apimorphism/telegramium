@@ -42,7 +42,8 @@ final case class ChatMemberOwner(user: User, isAnonymous: Boolean, customTitle: 
   * @param canPostStories
   *   True, if the administrator can post stories to the chat
   * @param canEditStories
-  *   True, if the administrator can edit stories posted by other users
+  *   True, if the administrator can edit stories posted by other users, post stories to the chat page, pin chat
+  *   stories, and access the chat's story archive
   * @param canDeleteStories
   *   True, if the administrator can delete stories posted by other users
   * @param canPostMessages

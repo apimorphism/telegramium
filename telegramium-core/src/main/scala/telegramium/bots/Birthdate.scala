@@ -1,6 +1,8 @@
 package telegramium.bots
 
-/** @param day
+/** Describes the birthdate of a user.
+  *
+  * @param day
   *   Day of the user's birth; 1-31
   * @param month
   *   Month of the user's birth; 1-12

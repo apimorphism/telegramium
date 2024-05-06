@@ -16,6 +16,7 @@ object CirceImplicits {
   import telegramium.bots.LinkPreviewOptions
   import telegramium.bots.ReplyParameters
   import telegramium.bots.KeyboardMarkup
+  import telegramium.bots.InputPollOption
   import telegramium.bots.InlineQueryResult
   import telegramium.bots.InputSticker
   import telegramium.bots.ChatPermissions
@@ -404,6 +405,8 @@ object CirceImplicits {
           "chat_id"                 -> x.chatId.asJson,
           "message_thread_id"       -> x.messageThreadId.asJson,
           "question"                -> x.question.asJson,
+          "question_parse_mode"     -> x.questionParseMode.asJson,
+          "question_entities"       -> x.questionEntities.asJson,
           "options"                 -> x.options.asJson,
           "is_anonymous"            -> x.isAnonymous.asJson,
           "type"                    -> x.`type`.asJson,
@@ -431,7 +434,9 @@ object CirceImplicits {
         _chatId                <- h.get[ChatId]("chat_id")
         _messageThreadId       <- h.get[Option[Int]]("message_thread_id")
         _question              <- h.get[String]("question")
-        _options               <- h.getOrElse[List[String]]("options")(List.empty)
+        _questionParseMode     <- h.get[Option[String]]("question_parse_mode")
+        _questionEntities      <- h.getOrElse[List[MessageEntity]]("question_entities")(List.empty)
+        _options               <- h.getOrElse[List[InputPollOption]]("options")(List.empty)
         _isAnonymous           <- h.get[Option[Boolean]]("is_anonymous")
         _type                  <- h.get[Option[String]]("type")
         _allowsMultipleAnswers <- h.get[Option[Boolean]]("allows_multiple_answers")
@@ -452,6 +457,8 @@ object CirceImplicits {
           chatId = _chatId,
           messageThreadId = _messageThreadId,
           question = _question,
+          questionParseMode = _questionParseMode,
+          questionEntities = _questionEntities,
           options = _options,
           isAnonymous = _isAnonymous,
           `type` = _type,
@@ -1546,6 +1553,7 @@ object CirceImplicits {
           "inline_message_id"      -> x.inlineMessageId.asJson,
           "latitude"               -> x.latitude.asJson,
           "longitude"              -> x.longitude.asJson,
+          "live_period"            -> x.livePeriod.asJson,
           "horizontal_accuracy"    -> x.horizontalAccuracy.asJson,
           "heading"                -> x.heading.asJson,
           "proximity_alert_radius" -> x.proximityAlertRadius.asJson,
@@ -1563,6 +1571,7 @@ object CirceImplicits {
         _inlineMessageId      <- h.get[Option[String]]("inline_message_id")
         _latitude             <- h.get[Float]("latitude")
         _longitude            <- h.get[Float]("longitude")
+        _livePeriod           <- h.get[Option[Int]]("live_period")
         _horizontalAccuracy   <- h.get[Option[Float]]("horizontal_accuracy")
         _heading              <- h.get[Option[Int]]("heading")
         _proximityAlertRadius <- h.get[Option[Int]]("proximity_alert_radius")
@@ -1574,6 +1583,7 @@ object CirceImplicits {
           inlineMessageId = _inlineMessageId,
           latitude = _latitude,
           longitude = _longitude,
+          livePeriod = _livePeriod,
           horizontalAccuracy = _horizontalAccuracy,
           heading = _heading,
           proximityAlertRadius = _proximityAlertRadius,

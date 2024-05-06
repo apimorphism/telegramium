@@ -1,6 +1,7 @@
 package telegramium.bots
 
-/** This object contains information about a user that was shared with the bot using a KeyboardButtonRequestUser button.
+/** This object contains information about a user that was shared with the bot using a KeyboardButtonRequestUsers
+  * button.
   *
   * @param userId
   *   Identifier of the shared user. This number may have more than 32 significant bits and some programming languages

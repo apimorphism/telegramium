@@ -30,8 +30,7 @@ import telegramium.bots.KeyboardMarkup
   *   Description of the message to reply to
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a
-  *   business account
+  *   to remove a reply keyboard or to force a reply from the user
   */
 final case class SendMessageReq(
   chatId: ChatId,

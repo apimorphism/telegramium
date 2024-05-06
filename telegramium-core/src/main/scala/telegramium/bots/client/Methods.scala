@@ -24,7 +24,7 @@ import telegramium.bots.ChatInviteLink
 import telegramium.bots.User
 import telegramium.bots.ChatMember
 import telegramium.bots.BotCommand
-import telegramium.bots.Chat
+import telegramium.bots.ChatFullInfo
 import telegramium.bots.MenuButton
 import telegramium.bots.Update
 import telegramium.bots.StickerSet
@@ -269,8 +269,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
-    *   behalf of a business account
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def sendMessage(
     chatId: ChatId,
@@ -329,8 +328,14 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param questionParseMode
+    *   Mode for parsing entities in the question. See formatting options for more details. Currently, only custom emoji
+    *   entities are allowed
+    * @param questionEntities
+    *   A JSON-serialized list of special entities that appear in the poll question. It can be specified instead of
+    *   question_parse_mode
     * @param options
-    *   A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
+    *   A JSON-serialized list of 2-10 answer options
     * @param isAnonymous
     *   True, if the poll needs to be anonymous, defaults to True
     * @param type
@@ -345,8 +350,8 @@ trait Methods {
     * @param explanationParseMode
     *   Mode for parsing entities in the explanation. See formatting options for more details.
     * @param explanationEntities
-    *   A JSON-serialized list of special entities that appear in the poll explanation, which can be specified instead
-    *   of parse_mode
+    *   A JSON-serialized list of special entities that appear in the poll explanation. It can be specified instead of
+    *   explanation_parse_mode
     * @param openPeriod
     *   Amount of time in seconds the poll will be active after creation, 5-600. Can't be used together with close_date.
     * @param closeDate
@@ -362,15 +367,16 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
-    *   behalf of a business account
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def sendPoll(
     chatId: ChatId,
     question: String,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
-    options: List[String] = List.empty,
+    questionParseMode: Option[String] = Option.empty,
+    questionEntities: List[MessageEntity] = List.empty,
+    options: List[InputPollOption] = List.empty,
     isAnonymous: Option[Boolean] = Option.empty,
     `type`: Option[String] = Option.empty,
     allowsMultipleAnswers: Option[Boolean] = Option.empty,
@@ -391,6 +397,8 @@ trait Methods {
       question,
       businessConnectionId,
       messageThreadId,
+      questionParseMode,
+      questionEntities,
       options,
       isAnonymous,
       `type`,
@@ -447,8 +455,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
-    *   behalf of a business account
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def sendContact(
     chatId: ChatId,
@@ -645,7 +652,8 @@ trait Methods {
     * @param horizontalAccuracy
     *   The radius of uncertainty for the location, measured in meters; 0-1500
     * @param livePeriod
-    *   Period in seconds for which the location will be updated (see Live Locations, should be between 60 and 86400.
+    *   Period in seconds during which the location will be updated (see Live Locations, should be between 60 and 86400,
+    *   or 0x7FFFFFFF for live locations that can be edited indefinitely.
     * @param heading
     *   For live locations, a direction in which the user is moving, in degrees. Must be between 1 and 360 if specified.
     * @param proximityAlertRadius
@@ -659,8 +667,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
-    *   behalf of a business account
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def sendLocation(
     chatId: ChatId,
@@ -832,8 +839,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
-    *   behalf of a business account
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def sendDice(
     chatId: ChatId,
@@ -1111,7 +1117,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   A JSON-serialized object for an inline keyboard. If empty, one 'Play game_title' button will be shown. If not
-    *   empty, the first button must launch the game. Not supported for messages sent on behalf of a business account.
+    *   empty, the first button must launch the game.
     */
   def sendGame(
     chatId: Long,
@@ -1169,8 +1175,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
-    *   behalf of a business account
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def sendVenue(
     chatId: ChatId,
@@ -1370,6 +1375,11 @@ trait Methods {
     *   Required if inline_message_id is not specified. Identifier of the message to edit
     * @param inlineMessageId
     *   Required if chat_id and message_id are not specified. Identifier of the inline message
+    * @param livePeriod
+    *   New period in seconds during which the location can be updated, starting from the message send date. If
+    *   0x7FFFFFFF is specified, then the location can be updated forever. Otherwise, the new value must not exceed the
+    *   current live_period by more than a day, and the live location expiration date must remain within the next 90
+    *   days. If not specified, then live_period remains unchanged
     * @param horizontalAccuracy
     *   The radius of uncertainty for the location, measured in meters; 0-1500
     * @param heading
@@ -1386,6 +1396,7 @@ trait Methods {
     chatId: Option[ChatId] = Option.empty,
     messageId: Option[Int] = Option.empty,
     inlineMessageId: Option[String] = Option.empty,
+    livePeriod: Option[Int] = Option.empty,
     horizontalAccuracy: Option[Float] = Option.empty,
     heading: Option[Int] = Option.empty,
     proximityAlertRadius: Option[Int] = Option.empty,
@@ -1397,6 +1408,7 @@ trait Methods {
       chatId,
       messageId,
       inlineMessageId,
+      livePeriod,
       horizontalAccuracy,
       heading,
       proximityAlertRadius,
@@ -1520,7 +1532,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user.
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def copyMessage(
     chatId: ChatId,
@@ -1582,8 +1594,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
-    *   behalf of a business account
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def sendVideoNote(
     chatId: ChatId,
@@ -1874,8 +1885,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
-    *   behalf of a business account
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def sendDocument(
     chatId: ChatId,
@@ -2032,8 +2042,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
-    *   behalf of a business account
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def sendAudio(
     chatId: ChatId,
@@ -2233,9 +2242,9 @@ trait Methods {
   }
 
   /** Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message.
-    * For this to work, your audio must be in an .OGG file encoded with OPUS (other formats may be sent as Audio or
-    * Document). On success, the sent Message is returned. Bots can currently send voice messages of up to 50 MB in
-    * size, this limit may be changed in the future.
+    * For this to work, your audio must be in an .OGG file encoded with OPUS, or in .MP3 format, or in .M4A format
+    * (other formats may be sent as Audio or Document). On success, the sent Message is returned. Bots can currently
+    * send voice messages of up to 50 MB in size, this limit may be changed in the future.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -2264,8 +2273,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
-    *   behalf of a business account
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def sendVoice(
     chatId: ChatId,
@@ -2338,7 +2346,8 @@ trait Methods {
     * @param canPostStories
     *   Pass True if the administrator can post stories to the chat
     * @param canEditStories
-    *   Pass True if the administrator can edit stories posted by other users
+    *   Pass True if the administrator can edit stories posted by other users, post stories to the chat page, pin chat
+    *   stories, and access the chat's story archive
     * @param canDeleteStories
     *   Pass True if the administrator can delete stories posted by other users
     * @param canPostMessages
@@ -2631,8 +2640,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
-    *   behalf of a business account
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def sendVideo(
     chatId: ChatId,
@@ -2694,15 +2702,15 @@ trait Methods {
     MethodReq[Boolean]("setChatStickerSet", req.asJson)
   }
 
-  /** Use this method to get up to date information about the chat. Returns a Chat object on success.
+  /** Use this method to get up-to-date information about the chat. Returns a ChatFullInfo object on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup or channel (in the format
     *   &#064;channelusername)
     */
-  def getChat(chatId: ChatId): Method[Chat] = {
+  def getChat(chatId: ChatId): Method[ChatFullInfo] = {
     val req = GetChatReq(chatId)
-    MethodReq[Chat]("getChat", req.asJson)
+    MethodReq[ChatFullInfo]("getChat", req.asJson)
   }
 
   /** Use this method to remove webhook integration if you decide to switch back to getUpdates. Returns True on success.
@@ -2850,8 +2858,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
-    *   behalf of a business account
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def sendAnimation(
     chatId: ChatId,
@@ -3036,8 +3043,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove reply keyboard or to force a reply from the user. Not supported for messages sent on
-    *   behalf of a business account.
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def sendSticker(
     chatId: ChatId,
@@ -3181,8 +3187,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on
-    *   behalf of a business account
+    *   instructions to remove a reply keyboard or to force a reply from the user
     */
   def sendPhoto(
     chatId: ChatId,
