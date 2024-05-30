@@ -7,6 +7,7 @@ import telegramium.bots.CashtagMessageEntity
 import telegramium.bots.CodeMessageEntity
 import telegramium.bots.CustomEmojiMessageEntity
 import telegramium.bots.EmailMessageEntity
+import telegramium.bots.ExpandableBlockquoteMessageEntity
 import telegramium.bots.HashtagMessageEntity
 import telegramium.bots.ItalicMessageEntity
 import telegramium.bots.MentionMessageEntity
@@ -57,19 +58,20 @@ object MessageEntityFormat {
           case BotCommand(text) => accumulate(BotCommandMessageEntity(offset, text.length))
           case CustomEmoji(text, customEmojiId) =>
             accumulate(CustomEmojiMessageEntity(offset, text.length, customEmojiId))
-          case Spoiler(text)           => accumulate(SpoilerMessageEntity(offset, text.length))
-          case Email(text)             => accumulate(EmailMessageEntity(offset, text.length))
-          case Blockquote(text)        => accumulate(BlockquoteMessageEntity(offset, text.length))
-          case Bold(text)              => accumulate(BoldMessageEntity(offset, text.length))
-          case Pre(text, language)     => accumulate(PreMessageEntity(offset, text.length, language))
-          case Italic(text)            => accumulate(ItalicMessageEntity(offset, text.length))
-          case Strikethrough(text)     => accumulate(StrikethroughMessageEntity(offset, text.length))
-          case Underline(text)         => accumulate(UnderlineMessageEntity(offset, text.length))
-          case Hashtag(text)           => accumulate(HashtagMessageEntity(offset, text.length))
-          case TextMention(text, user) => accumulate(TextMentionMessageEntity(offset, text.length, user))
-          case TextLink(text, url)     => accumulate(TextLinkMessageEntity(offset, text.length, url))
-          case Url(text)               => accumulate(UrlMessageEntity(offset, text.length))
-          case PhoneNumber(text)       => accumulate(PhoneNumberMessageEntity(offset, text.length))
+          case Spoiler(text)              => accumulate(SpoilerMessageEntity(offset, text.length))
+          case Email(text)                => accumulate(EmailMessageEntity(offset, text.length))
+          case Blockquote(text)           => accumulate(BlockquoteMessageEntity(offset, text.length))
+          case ExpandableBlockquote(text) => accumulate(ExpandableBlockquoteMessageEntity(offset, text.length))
+          case Bold(text)                 => accumulate(BoldMessageEntity(offset, text.length))
+          case Pre(text, language)        => accumulate(PreMessageEntity(offset, text.length, language))
+          case Italic(text)               => accumulate(ItalicMessageEntity(offset, text.length))
+          case Strikethrough(text)        => accumulate(StrikethroughMessageEntity(offset, text.length))
+          case Underline(text)            => accumulate(UnderlineMessageEntity(offset, text.length))
+          case Hashtag(text)              => accumulate(HashtagMessageEntity(offset, text.length))
+          case TextMention(text, user)    => accumulate(TextMentionMessageEntity(offset, text.length, user))
+          case TextLink(text, url)        => accumulate(TextLinkMessageEntity(offset, text.length, url))
+          case Url(text)                  => accumulate(UrlMessageEntity(offset, text.length))
+          case PhoneNumber(text)          => accumulate(PhoneNumberMessageEntity(offset, text.length))
         }
       }
       ._1
@@ -96,6 +98,8 @@ object MessageEntityFormat {
   final case class Email(text: String) extends MessageEntityFormat
 
   final case class Blockquote(text: String) extends MessageEntityFormat
+
+  final case class ExpandableBlockquote(text: String) extends MessageEntityFormat
 
   final case class Bold(text: String) extends MessageEntityFormat
 
@@ -131,6 +135,8 @@ object MessageEntityFormat {
     def email(args: Any*): Email = Email(build(args*))
 
     def blockquote(args: Any*): Blockquote = Blockquote(build(args*))
+
+    def expandableBlockquote(args: Any*): ExpandableBlockquote = ExpandableBlockquote(build(args*))
 
     def bold(args: Any*): Bold = Bold(build(args*))
 

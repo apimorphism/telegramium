@@ -77,6 +77,12 @@ class MessageEntitiesSpec extends AnyFlatSpec with Matchers {
     entities.toTelegramEntities() shouldBe List(BlockquoteMessageEntity(0, 4))
   }
 
+  it should "add expandable blockquote correctly" in {
+    val entities = MessageEntities().expandableBlockquote("test")
+    entities.toPlainText() shouldBe "test"
+    entities.toTelegramEntities() shouldBe List(ExpandableBlockquoteMessageEntity(0, 4))
+  }
+
   it should "add pre correctly" in {
     val entities = MessageEntities().pre("test", Some("scala"))
     entities.toPlainText() shouldBe "test"
