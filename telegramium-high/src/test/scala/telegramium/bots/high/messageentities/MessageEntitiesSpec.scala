@@ -153,6 +153,8 @@ class MessageEntitiesSpec extends AnyFlatSpec with Matchers {
       .plain(" ")
       .blockquote("blockquote")
       .plain(" ")
+      .expandableBlockquote("expandableBlockquote")
+      .plain(" ")
       .pre("pre", Some("scala"))
       .plain(" ")
       .italic("italic")
@@ -173,10 +175,10 @@ class MessageEntitiesSpec extends AnyFlatSpec with Matchers {
       .lineBreak()
 
     entities
-      .toPlainText() shouldBe "bold @mention $USD code /command example@example.com blockquote pre italic strikethrough underline #hashtag textMention textLink https://example.com +12065550100\n"
+      .toPlainText() shouldBe "bold @mention $USD code /command example@example.com blockquote expandableBlockquote pre italic strikethrough underline #hashtag textMention textLink https://example.com +12065550100\n"
 
     val messageEntities = entities.toTelegramEntities()
-    messageEntities.size should be(16)
+    messageEntities.size should be(17)
     messageEntities.head should be(BoldMessageEntity(0, 4))
     messageEntities(1) should be(MentionMessageEntity(5, 8))
     messageEntities(2) should be(CashtagMessageEntity(14, 4))
@@ -184,15 +186,16 @@ class MessageEntitiesSpec extends AnyFlatSpec with Matchers {
     messageEntities(4) should be(BotCommandMessageEntity(24, 8))
     messageEntities(5) should be(EmailMessageEntity(33, 19))
     messageEntities(6) should be(BlockquoteMessageEntity(53, 10))
-    messageEntities(7) should be(PreMessageEntity(64, 3, Some("scala")))
-    messageEntities(8) should be(ItalicMessageEntity(68, 6))
-    messageEntities(9) should be(StrikethroughMessageEntity(75, 13))
-    messageEntities(10) should be(UnderlineMessageEntity(89, 9))
-    messageEntities(11) should be(HashtagMessageEntity(99, 8))
-    messageEntities(12) should be(TextMentionMessageEntity(108, 11, user))
-    messageEntities(13) should be(TextLinkMessageEntity(120, 8, "https://example.com"))
-    messageEntities(14) should be(UrlMessageEntity(129, 19))
-    messageEntities.last should be(PhoneNumberMessageEntity(149, 12))
+    messageEntities(7) should be(ExpandableBlockquoteMessageEntity(64, 20))
+    messageEntities(8) should be(PreMessageEntity(85, 3, Some("scala")))
+    messageEntities(9) should be(ItalicMessageEntity(89, 6))
+    messageEntities(10) should be(StrikethroughMessageEntity(96, 13))
+    messageEntities(11) should be(UnderlineMessageEntity(110, 9))
+    messageEntities(12) should be(HashtagMessageEntity(120, 8))
+    messageEntities(13) should be(TextMentionMessageEntity(129, 11, user))
+    messageEntities(14) should be(TextLinkMessageEntity(141, 8, "https://example.com"))
+    messageEntities(15) should be(UrlMessageEntity(150, 19))
+    messageEntities(16) should be(PhoneNumberMessageEntity(170, 12))
   }
 
 }
