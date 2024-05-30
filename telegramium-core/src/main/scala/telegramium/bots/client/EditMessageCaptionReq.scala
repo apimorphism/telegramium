@@ -19,6 +19,9 @@ import telegramium.bots.InlineKeyboardMarkup
   * @param captionEntities
   *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
   *   parse_mode
+  * @param showCaptionAboveMedia
+  *   Pass True, if the caption must be shown above the message media. Supported only for animation, photo and video
+  *   messages.
   * @param replyMarkup
   *   A JSON-serialized object for an inline keyboard.
   */
@@ -29,5 +32,6 @@ final case class EditMessageCaptionReq(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
 )

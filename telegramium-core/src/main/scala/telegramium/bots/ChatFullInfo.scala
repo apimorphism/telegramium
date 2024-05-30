@@ -62,7 +62,8 @@ package telegramium.bots
   * @param joinToSendMessages
   *   Optional. True, if users need to join the supergroup before they can send messages
   * @param joinByRequest
-  *   Optional. True, if all users directly joining the supergroup need to be approved by supergroup administrators
+  *   Optional. True, if all users directly joining the supergroup without using an invite link need to be approved by
+  *   supergroup administrators
   * @param description
   *   Optional. Description, for groups, supergroups and channel chats
   * @param inviteLink

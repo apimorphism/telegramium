@@ -66,6 +66,8 @@ sealed trait MaybeInaccessibleMessage {}
   * @param linkPreviewOptions
   *   Optional. Options used for link preview generation for the message, if it is a text message and link preview
   *   options were changed
+  * @param effectId
+  *   Optional. Unique identifier of the message effect added to the message
   * @param animation
   *   Optional. Message is an animation, information about the animation. For backward compatibility, when this field is
   *   set, the document field will also be set
@@ -90,6 +92,8 @@ sealed trait MaybeInaccessibleMessage {}
   * @param captionEntities
   *   Optional. For messages with a caption, special entities like usernames, URLs, bot commands, etc. that appear in
   *   the caption
+  * @param showCaptionAboveMedia
+  *   Optional. True, if the caption must be shown above the message media
   * @param hasMediaSpoiler
   *   Optional. True, if the message media is covered by a spoiler animation
   * @param contact
@@ -223,6 +227,7 @@ final case class Message(
   text: Option[String] = Option.empty,
   entities: List[MessageEntity] = List.empty,
   linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
+  effectId: Option[String] = Option.empty,
   animation: Option[Animation] = Option.empty,
   audio: Option[Audio] = Option.empty,
   document: Option[Document] = Option.empty,
@@ -234,6 +239,7 @@ final case class Message(
   voice: Option[Voice] = Option.empty,
   caption: Option[String] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
   hasMediaSpoiler: Option[Boolean] = Option.empty,
   contact: Option[Contact] = Option.empty,
   dice: Option[Dice] = Option.empty,

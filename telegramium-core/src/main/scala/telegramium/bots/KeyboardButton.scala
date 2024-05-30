@@ -1,8 +1,7 @@
 package telegramium.bots
 
-/** This object represents one button of the reply keyboard. For simple text buttons, String can be used instead of this
-  * object to specify the button text. The optional fields web_app, request_users, request_chat, request_contact,
-  * request_location, and request_poll are mutually exclusive.
+/** This object represents one button of the reply keyboard. At most one of the optional fields must be used to specify
+  * type of the button. For simple text buttons, String can be used instead of this object to specify the button text.
   *
   * @param text
   *   Text of the button. If none of the optional fields are used, it will be sent as a message when the button is

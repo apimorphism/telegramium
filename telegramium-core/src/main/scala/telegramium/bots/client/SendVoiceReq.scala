@@ -30,6 +30,8 @@ import telegramium.bots.KeyboardMarkup
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
   *   Protects the contents of the sent message from forwarding and saving
+  * @param messageEffectId
+  *   Unique identifier of the message effect to be added to the message; for private chats only
   * @param replyParameters
   *   Description of the message to reply to
   * @param replyMarkup
@@ -47,6 +49,7 @@ final case class SendVoiceReq(
   duration: Option[Int] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
+  messageEffectId: Option[String] = Option.empty,
   replyParameters: Option[ReplyParameters] = Option.empty,
   replyMarkup: Option[KeyboardMarkup] = Option.empty
 )

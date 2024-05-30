@@ -265,6 +265,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -281,6 +283,7 @@ trait Methods {
     linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -294,6 +297,7 @@ trait Methods {
       linkPreviewOptions,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -363,6 +367,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -389,6 +395,7 @@ trait Methods {
     isClosed: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -412,6 +419,7 @@ trait Methods {
       isClosed,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -451,6 +459,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -467,6 +477,7 @@ trait Methods {
     vcard: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -480,6 +491,7 @@ trait Methods {
       vcard,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -663,6 +675,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -681,6 +695,7 @@ trait Methods {
     proximityAlertRadius: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -696,6 +711,7 @@ trait Methods {
       proximityAlertRadius,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -835,6 +851,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -848,6 +866,7 @@ trait Methods {
     emoji: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -858,6 +877,7 @@ trait Methods {
       emoji,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -916,18 +936,18 @@ trait Methods {
     * @param payload
     *   Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal
     *   processes.
-    * @param providerToken
-    *   Payment provider token, obtained via BotFather
     * @param currency
-    *   Three-letter ISO 4217 currency code, see more on currencies
+    *   Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
+    * @param providerToken
+    *   Payment provider token, obtained via &#064;BotFather. Pass an empty string for payments in Telegram Stars.
     * @param prices
     *   Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost,
-    *   delivery tax, bonus, etc.)
+    *   delivery tax, bonus, etc.). Must contain exactly one item for payments in Telegram Stars.
     * @param maxTipAmount
     *   The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For
     *   example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it
     *   shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults
-    *   to 0
+    *   to 0. Not supported for payments in Telegram Stars.
     * @param suggestedTipAmounts
     *   A JSON-serialized array of suggested amounts of tips in the smallest units of the currency (integer, not
     *   float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts must be positive,
@@ -944,26 +964,27 @@ trait Methods {
     * @param photoHeight
     *   Photo height
     * @param needName
-    *   Pass True if you require the user's full name to complete the order
+    *   Pass True if you require the user's full name to complete the order. Ignored for payments in Telegram Stars.
     * @param needPhoneNumber
-    *   Pass True if you require the user's phone number to complete the order
+    *   Pass True if you require the user's phone number to complete the order. Ignored for payments in Telegram Stars.
     * @param needEmail
-    *   Pass True if you require the user's email address to complete the order
+    *   Pass True if you require the user's email address to complete the order. Ignored for payments in Telegram Stars.
     * @param needShippingAddress
-    *   Pass True if you require the user's shipping address to complete the order
+    *   Pass True if you require the user's shipping address to complete the order. Ignored for payments in Telegram
+    *   Stars.
     * @param sendPhoneNumberToProvider
-    *   Pass True if the user's phone number should be sent to the provider
+    *   Pass True if the user's phone number should be sent to the provider. Ignored for payments in Telegram Stars.
     * @param sendEmailToProvider
-    *   Pass True if the user's email address should be sent to the provider
+    *   Pass True if the user's email address should be sent to the provider. Ignored for payments in Telegram Stars.
     * @param isFlexible
-    *   Pass True if the final price depends on the shipping method
+    *   Pass True if the final price depends on the shipping method. Ignored for payments in Telegram Stars.
     */
   def createInvoiceLink(
     title: String,
     description: String,
     payload: String,
-    providerToken: String,
     currency: String,
+    providerToken: Option[String] = Option.empty,
     prices: List[LabeledPrice] = List.empty,
     maxTipAmount: Option[Int] = Option.empty,
     suggestedTipAmounts: List[Int] = List.empty,
@@ -984,8 +1005,8 @@ trait Methods {
       title,
       description,
       payload,
-      providerToken,
       currency,
+      providerToken,
       prices,
       maxTipAmount,
       suggestedTipAmounts,
@@ -1075,6 +1096,8 @@ trait Methods {
     *   Sends messages silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent messages from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     */
@@ -1085,6 +1108,7 @@ trait Methods {
     media: List[InputMedia] = List.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty
   ): Method[List[Message]] = {
     val req = SendMediaGroupReq(
@@ -1094,6 +1118,7 @@ trait Methods {
       media,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters
     )
     MethodReq[List[Message]]("sendMediaGroup", req.asJson)
@@ -1113,6 +1138,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -1126,6 +1153,7 @@ trait Methods {
     messageThreadId: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -1136,6 +1164,7 @@ trait Methods {
       messageThreadId,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -1171,6 +1200,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -1191,6 +1222,7 @@ trait Methods {
     googlePlaceType: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -1208,6 +1240,7 @@ trait Methods {
       googlePlaceType,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -1524,6 +1557,8 @@ trait Methods {
     * @param captionEntities
     *   A JSON-serialized list of special entities that appear in the new caption, which can be specified instead of
     *   parse_mode
+    * @param showCaptionAboveMedia
+    *   Pass True, if the caption must be shown above the message media. Ignored if a new caption isn't specified.
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -1542,6 +1577,7 @@ trait Methods {
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
+    showCaptionAboveMedia: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
@@ -1555,6 +1591,7 @@ trait Methods {
       caption,
       parseMode,
       captionEntities,
+      showCaptionAboveMedia,
       disableNotification,
       protectContent,
       replyParameters,
@@ -1590,6 +1627,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -1606,6 +1645,7 @@ trait Methods {
     thumbnail: Option[IFile] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -1619,6 +1659,7 @@ trait Methods {
       thumbnail,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -1716,20 +1757,20 @@ trait Methods {
     * @param payload
     *   Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal
     *   processes.
-    * @param providerToken
-    *   Payment provider token, obtained via &#064;BotFather
     * @param currency
-    *   Three-letter ISO 4217 currency code, see more on currencies
+    *   Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param providerToken
+    *   Payment provider token, obtained via &#064;BotFather. Pass an empty string for payments in Telegram Stars.
     * @param prices
     *   Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost,
-    *   delivery tax, bonus, etc.)
+    *   delivery tax, bonus, etc.). Must contain exactly one item for payments in Telegram Stars.
     * @param maxTipAmount
     *   The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For
     *   example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it
     *   shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults
-    *   to 0
+    *   to 0. Not supported for payments in Telegram Stars.
     * @param suggestedTipAmounts
     *   A JSON-serialized array of suggested amounts of tips in the smallest units of the currency (integer, not
     *   float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts must be positive,
@@ -1752,23 +1793,26 @@ trait Methods {
     * @param photoHeight
     *   Photo height
     * @param needName
-    *   Pass True if you require the user's full name to complete the order
+    *   Pass True if you require the user's full name to complete the order. Ignored for payments in Telegram Stars.
     * @param needPhoneNumber
-    *   Pass True if you require the user's phone number to complete the order
+    *   Pass True if you require the user's phone number to complete the order. Ignored for payments in Telegram Stars.
     * @param needEmail
-    *   Pass True if you require the user's email address to complete the order
+    *   Pass True if you require the user's email address to complete the order. Ignored for payments in Telegram Stars.
     * @param needShippingAddress
-    *   Pass True if you require the user's shipping address to complete the order
+    *   Pass True if you require the user's shipping address to complete the order. Ignored for payments in Telegram
+    *   Stars.
     * @param sendPhoneNumberToProvider
-    *   Pass True if the user's phone number should be sent to provider
+    *   Pass True if the user's phone number should be sent to the provider. Ignored for payments in Telegram Stars.
     * @param sendEmailToProvider
-    *   Pass True if the user's email address should be sent to provider
+    *   Pass True if the user's email address should be sent to the provider. Ignored for payments in Telegram Stars.
     * @param isFlexible
-    *   Pass True if the final price depends on the shipping method
+    *   Pass True if the final price depends on the shipping method. Ignored for payments in Telegram Stars.
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -1780,9 +1824,9 @@ trait Methods {
     title: String,
     description: String,
     payload: String,
-    providerToken: String,
     currency: String,
     messageThreadId: Option[Int] = Option.empty,
+    providerToken: Option[String] = Option.empty,
     prices: List[LabeledPrice] = List.empty,
     maxTipAmount: Option[Int] = Option.empty,
     suggestedTipAmounts: List[Int] = List.empty,
@@ -1801,6 +1845,7 @@ trait Methods {
     isFlexible: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -1809,9 +1854,9 @@ trait Methods {
       title,
       description,
       payload,
-      providerToken,
       currency,
       messageThreadId,
+      providerToken,
       prices,
       maxTipAmount,
       suggestedTipAmounts,
@@ -1830,6 +1875,7 @@ trait Methods {
       isFlexible,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -1881,6 +1927,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -1899,6 +1947,7 @@ trait Methods {
     disableContentTypeDetection: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -1914,6 +1963,7 @@ trait Methods {
       disableContentTypeDetection,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -2038,6 +2088,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -2058,6 +2110,7 @@ trait Methods {
     thumbnail: Option[IFile] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -2075,6 +2128,7 @@ trait Methods {
       thumbnail,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -2269,6 +2323,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -2286,6 +2342,7 @@ trait Methods {
     duration: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -2300,6 +2357,7 @@ trait Methods {
       duration,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -2430,6 +2488,9 @@ trait Methods {
     * @param captionEntities
     *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
     *   parse_mode
+    * @param showCaptionAboveMedia
+    *   Pass True, if the caption must be shown above the message media. Supported only for animation, photo and video
+    *   messages.
     * @param replyMarkup
     *   A JSON-serialized object for an inline keyboard.
     */
@@ -2440,10 +2501,19 @@ trait Methods {
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
+    showCaptionAboveMedia: Option[Boolean] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Either[Boolean, Message]] = {
-    val req =
-      EditMessageCaptionReq(chatId, messageId, inlineMessageId, caption, parseMode, captionEntities, replyMarkup)
+    val req = EditMessageCaptionReq(
+      chatId,
+      messageId,
+      inlineMessageId,
+      caption,
+      parseMode,
+      captionEntities,
+      showCaptionAboveMedia,
+      replyMarkup
+    )
     MethodReq[Either[Boolean, Message]]("editMessageCaption", req.asJson)
   }
 
@@ -2628,6 +2698,8 @@ trait Methods {
     * @param captionEntities
     *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
     *   parse_mode
+    * @param showCaptionAboveMedia
+    *   Pass True, if the caption must be shown above the message media
     * @param hasSpoiler
     *   Pass True if the video needs to be covered with a spoiler animation
     * @param supportsStreaming
@@ -2636,6 +2708,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -2654,10 +2728,12 @@ trait Methods {
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
+    showCaptionAboveMedia: Option[Boolean] = Option.empty,
     hasSpoiler: Option[Boolean] = Option.empty,
     supportsStreaming: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -2673,10 +2749,12 @@ trait Methods {
       caption,
       parseMode,
       captionEntities,
+      showCaptionAboveMedia,
       hasSpoiler,
       supportsStreaming,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -2814,6 +2892,18 @@ trait Methods {
     MethodReq[MenuButton]("getChatMenuButton", req.asJson)
   }
 
+  /** Refunds a successful payment in Telegram Stars. Returns True on success.
+    *
+    * @param userId
+    *   Identifier of the user whose payment will be refunded
+    * @param telegramPaymentChargeId
+    *   Telegram payment identifier
+    */
+  def refundStarPayment(userId: Long, telegramPaymentChargeId: String): Method[Boolean] = {
+    val req = RefundStarPaymentReq(userId, telegramPaymentChargeId)
+    MethodReq[Boolean]("refundStarPayment", req.asJson)
+  }
+
   /** Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On success, the sent
     * Message is returned. Bots can currently send animation files of up to 50 MB in size, this limit may be changed in
     * the future.
@@ -2848,12 +2938,16 @@ trait Methods {
     * @param captionEntities
     *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
     *   parse_mode
+    * @param showCaptionAboveMedia
+    *   Pass True, if the caption must be shown above the message media
     * @param hasSpoiler
     *   Pass True if the animation needs to be covered with a spoiler animation
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -2872,9 +2966,11 @@ trait Methods {
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
+    showCaptionAboveMedia: Option[Boolean] = Option.empty,
     hasSpoiler: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -2890,9 +2986,11 @@ trait Methods {
       caption,
       parseMode,
       captionEntities,
+      showCaptionAboveMedia,
       hasSpoiler,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -3039,6 +3137,8 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -3053,6 +3153,7 @@ trait Methods {
     emoji: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -3064,6 +3165,7 @@ trait Methods {
       emoji,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )
@@ -3177,12 +3279,16 @@ trait Methods {
     * @param captionEntities
     *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
     *   parse_mode
+    * @param showCaptionAboveMedia
+    *   Pass True, if the caption must be shown above the message media
     * @param hasSpoiler
     *   Pass True if the photo needs to be covered with a spoiler animation
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -3197,9 +3303,11 @@ trait Methods {
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
+    showCaptionAboveMedia: Option[Boolean] = Option.empty,
     hasSpoiler: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -3211,9 +3319,11 @@ trait Methods {
       caption,
       parseMode,
       captionEntities,
+      showCaptionAboveMedia,
       hasSpoiler,
       disableNotification,
       protectContent,
+      messageEffectId,
       replyParameters,
       replyMarkup
     )

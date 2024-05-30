@@ -29,6 +29,8 @@ sealed trait InlineQueryResult {}
   *   Optional. Mode for parsing entities in the caption. See formatting options for more details.
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param showCaptionAboveMedia
+  *   Optional. Pass True, if the caption must be shown above the message media
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
@@ -46,6 +48,7 @@ final case class InlineQueryResultGif(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
 ) extends InlineQueryResult
@@ -160,6 +163,8 @@ final case class InlineQueryResultContact(
   *   Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param showCaptionAboveMedia
+  *   Optional. Pass True, if the caption must be shown above the message media
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
@@ -176,6 +181,7 @@ final case class InlineQueryResultPhoto(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
 ) extends InlineQueryResult
@@ -359,6 +365,8 @@ final case class InlineQueryResultAudio(
   *   Optional. Mode for parsing entities in the caption. See formatting options for more details.
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param showCaptionAboveMedia
+  *   Optional. Pass True, if the caption must be shown above the message media
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
@@ -376,6 +384,7 @@ final case class InlineQueryResultMpeg4Gif(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
 ) extends InlineQueryResult
@@ -396,6 +405,8 @@ final case class InlineQueryResultMpeg4Gif(
   *   Optional. Mode for parsing entities in the caption. See formatting options for more details.
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param showCaptionAboveMedia
+  *   Optional. Pass True, if the caption must be shown above the message media
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
@@ -408,6 +419,7 @@ final case class InlineQueryResultCachedMpeg4Gif(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
 ) extends InlineQueryResult
@@ -465,6 +477,8 @@ final case class InlineQueryResultCachedDocument(
   *   Optional. Mode for parsing entities in the video caption. See formatting options for more details.
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param showCaptionAboveMedia
+  *   Optional. Pass True, if the caption must be shown above the message media
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
@@ -478,6 +492,7 @@ final case class InlineQueryResultCachedVideo(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
 ) extends InlineQueryResult
@@ -515,6 +530,8 @@ final case class InlineQueryResultGame(
   *   Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param showCaptionAboveMedia
+  *   Optional. Pass True, if the caption must be shown above the message media
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
@@ -528,6 +545,7 @@ final case class InlineQueryResultCachedPhoto(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
 ) extends InlineQueryResult
@@ -572,6 +590,8 @@ final case class InlineQueryResultCachedSticker(
   *   Optional. Mode for parsing entities in the video caption. See formatting options for more details.
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param showCaptionAboveMedia
+  *   Optional. Pass True, if the caption must be shown above the message media
   * @param videoWidth
   *   Optional. Video width
   * @param videoHeight
@@ -595,6 +615,7 @@ final case class InlineQueryResultVideo(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
   videoWidth: Option[Int] = Option.empty,
   videoHeight: Option[Int] = Option.empty,
   videoDuration: Option[Int] = Option.empty,
@@ -697,6 +718,8 @@ final case class InlineQueryResultLocation(
   *   Optional. Mode for parsing entities in the caption. See formatting options for more details.
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param showCaptionAboveMedia
+  *   Optional. Pass True, if the caption must be shown above the message media
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
@@ -709,6 +732,7 @@ final case class InlineQueryResultCachedGif(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
 ) extends InlineQueryResult

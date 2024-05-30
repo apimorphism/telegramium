@@ -1,6 +1,7 @@
 package telegramium.bots
 
-/** This object represents one button of an inline keyboard. You must use exactly one of the optional fields.
+/** This object represents one button of an inline keyboard. Exactly one of the optional fields must be used to specify
+  * type of the button.
   *
   * @param text
   *   Label text on the button
@@ -35,8 +36,9 @@ package telegramium.bots
   *   Optional. Description of the game that will be launched when the user presses the button. NOTE: This type of
   *   button must always be the first button in the first row.
   * @param pay
-  *   Optional. Specify True, to send a Pay button. NOTE: This type of button must always be the first button in the
-  *   first row and can only be used in invoice messages.
+  *   Optional. Specify True, to send a Pay button. Substrings “⭐” and “XTR” in the buttons's text will be replaced with
+  *   a Telegram Star icon. NOTE: This type of button must always be the first button in the first row and can only be
+  *   used in invoice messages.
   */
 final case class InlineKeyboardButton(
   text: String,

@@ -251,6 +251,7 @@ object CirceImplicits {
           "text"                              -> x.text.asJson,
           "entities"                          -> x.entities.asJson,
           "link_preview_options"              -> x.linkPreviewOptions.asJson,
+          "effect_id"                         -> x.effectId.asJson,
           "animation"                         -> x.animation.asJson,
           "audio"                             -> x.audio.asJson,
           "document"                          -> x.document.asJson,
@@ -262,6 +263,7 @@ object CirceImplicits {
           "voice"                             -> x.voice.asJson,
           "caption"                           -> x.caption.asJson,
           "caption_entities"                  -> x.captionEntities.asJson,
+          "show_caption_above_media"          -> x.showCaptionAboveMedia.asJson,
           "has_media_spoiler"                 -> x.hasMediaSpoiler.asJson,
           "contact"                           -> x.contact.asJson,
           "dice"                              -> x.dice.asJson,
@@ -339,6 +341,7 @@ object CirceImplicits {
         _text                  <- h.get[Option[String]]("text")
         _entities              <- h.getOrElse[List[MessageEntity]]("entities")(List.empty)
         _linkPreviewOptions    <- h.get[Option[LinkPreviewOptions]]("link_preview_options")
+        _effectId              <- h.get[Option[String]]("effect_id")
         _animation             <- h.get[Option[Animation]]("animation")
         _audio                 <- h.get[Option[Audio]]("audio")
         _document              <- h.get[Option[Document]]("document")
@@ -350,6 +353,7 @@ object CirceImplicits {
         _voice                 <- h.get[Option[Voice]]("voice")
         _caption               <- h.get[Option[String]]("caption")
         _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
         _hasMediaSpoiler       <- h.get[Option[Boolean]]("has_media_spoiler")
         _contact               <- h.get[Option[Contact]]("contact")
         _dice                  <- h.get[Option[Dice]]("dice")
@@ -424,6 +428,7 @@ object CirceImplicits {
           text = _text,
           entities = _entities,
           linkPreviewOptions = _linkPreviewOptions,
+          effectId = _effectId,
           animation = _animation,
           audio = _audio,
           document = _document,
@@ -435,6 +440,7 @@ object CirceImplicits {
           voice = _voice,
           caption = _caption,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           hasMediaSpoiler = _hasMediaSpoiler,
           contact = _contact,
           dice = _dice,
@@ -1347,15 +1353,16 @@ object CirceImplicits {
     (x: InputMediaAnimation) => {
       Json.fromFields(
         List(
-          "media"            -> x.media.asJson,
-          "thumbnail"        -> x.thumbnail.asJson,
-          "caption"          -> x.caption.asJson,
-          "parse_mode"       -> x.parseMode.asJson,
-          "caption_entities" -> x.captionEntities.asJson,
-          "width"            -> x.width.asJson,
-          "height"           -> x.height.asJson,
-          "duration"         -> x.duration.asJson,
-          "has_spoiler"      -> x.hasSpoiler.asJson
+          "media"                    -> x.media.asJson,
+          "thumbnail"                -> x.thumbnail.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "width"                    -> x.width.asJson,
+          "height"                   -> x.height.asJson,
+          "duration"                 -> x.duration.asJson,
+          "has_spoiler"              -> x.hasSpoiler.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1363,15 +1370,16 @@ object CirceImplicits {
   implicit lazy val inputmediaanimationDecoder: Decoder[InputMediaAnimation] =
     Decoder.instance { h =>
       for {
-        _media           <- h.get[String]("media")
-        _thumbnail       <- h.get[Option[IFile]]("thumbnail")
-        _caption         <- h.get[Option[String]]("caption")
-        _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _width           <- h.get[Option[Int]]("width")
-        _height          <- h.get[Option[Int]]("height")
-        _duration        <- h.get[Option[Int]]("duration")
-        _hasSpoiler      <- h.get[Option[Boolean]]("has_spoiler")
+        _media                 <- h.get[String]("media")
+        _thumbnail             <- h.get[Option[IFile]]("thumbnail")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _width                 <- h.get[Option[Int]]("width")
+        _height                <- h.get[Option[Int]]("height")
+        _duration              <- h.get[Option[Int]]("duration")
+        _hasSpoiler            <- h.get[Option[Boolean]]("has_spoiler")
       } yield {
         InputMediaAnimation(
           media = _media,
@@ -1379,6 +1387,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           width = _width,
           height = _height,
           duration = _duration,
@@ -1391,11 +1400,12 @@ object CirceImplicits {
     (x: InputMediaPhoto) => {
       Json.fromFields(
         List(
-          "media"            -> x.media.asJson,
-          "caption"          -> x.caption.asJson,
-          "parse_mode"       -> x.parseMode.asJson,
-          "caption_entities" -> x.captionEntities.asJson,
-          "has_spoiler"      -> x.hasSpoiler.asJson
+          "media"                    -> x.media.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "has_spoiler"              -> x.hasSpoiler.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1403,17 +1413,19 @@ object CirceImplicits {
   implicit lazy val inputmediaphotoDecoder: Decoder[InputMediaPhoto] =
     Decoder.instance { h =>
       for {
-        _media           <- h.get[String]("media")
-        _caption         <- h.get[Option[String]]("caption")
-        _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _hasSpoiler      <- h.get[Option[Boolean]]("has_spoiler")
+        _media                 <- h.get[String]("media")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _hasSpoiler            <- h.get[Option[Boolean]]("has_spoiler")
       } yield {
         InputMediaPhoto(
           media = _media,
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           hasSpoiler = _hasSpoiler
         )
       }
@@ -1423,16 +1435,17 @@ object CirceImplicits {
     (x: InputMediaVideo) => {
       Json.fromFields(
         List(
-          "media"              -> x.media.asJson,
-          "thumbnail"          -> x.thumbnail.asJson,
-          "caption"            -> x.caption.asJson,
-          "parse_mode"         -> x.parseMode.asJson,
-          "caption_entities"   -> x.captionEntities.asJson,
-          "width"              -> x.width.asJson,
-          "height"             -> x.height.asJson,
-          "duration"           -> x.duration.asJson,
-          "supports_streaming" -> x.supportsStreaming.asJson,
-          "has_spoiler"        -> x.hasSpoiler.asJson
+          "media"                    -> x.media.asJson,
+          "thumbnail"                -> x.thumbnail.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "width"                    -> x.width.asJson,
+          "height"                   -> x.height.asJson,
+          "duration"                 -> x.duration.asJson,
+          "supports_streaming"       -> x.supportsStreaming.asJson,
+          "has_spoiler"              -> x.hasSpoiler.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1440,16 +1453,17 @@ object CirceImplicits {
   implicit lazy val inputmediavideoDecoder: Decoder[InputMediaVideo] =
     Decoder.instance { h =>
       for {
-        _media             <- h.get[String]("media")
-        _thumbnail         <- h.get[Option[IFile]]("thumbnail")
-        _caption           <- h.get[Option[String]]("caption")
-        _parseMode         <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities   <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _width             <- h.get[Option[Int]]("width")
-        _height            <- h.get[Option[Int]]("height")
-        _duration          <- h.get[Option[Int]]("duration")
-        _supportsStreaming <- h.get[Option[Boolean]]("supports_streaming")
-        _hasSpoiler        <- h.get[Option[Boolean]]("has_spoiler")
+        _media                 <- h.get[String]("media")
+        _thumbnail             <- h.get[Option[IFile]]("thumbnail")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _width                 <- h.get[Option[Int]]("width")
+        _height                <- h.get[Option[Int]]("height")
+        _duration              <- h.get[Option[Int]]("duration")
+        _supportsStreaming     <- h.get[Option[Boolean]]("supports_streaming")
+        _hasSpoiler            <- h.get[Option[Boolean]]("has_spoiler")
       } yield {
         InputMediaVideo(
           media = _media,
@@ -1457,6 +1471,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           width = _width,
           height = _height,
           duration = _duration,
@@ -1617,19 +1632,20 @@ object CirceImplicits {
     (x: InlineQueryResultGif) => {
       Json.fromFields(
         List(
-          "id"                    -> x.id.asJson,
-          "gif_url"               -> x.gifUrl.asJson,
-          "gif_width"             -> x.gifWidth.asJson,
-          "gif_height"            -> x.gifHeight.asJson,
-          "gif_duration"          -> x.gifDuration.asJson,
-          "thumbnail_url"         -> x.thumbnailUrl.asJson,
-          "thumbnail_mime_type"   -> x.thumbnailMimeType.asJson,
-          "title"                 -> x.title.asJson,
-          "caption"               -> x.caption.asJson,
-          "parse_mode"            -> x.parseMode.asJson,
-          "caption_entities"      -> x.captionEntities.asJson,
-          "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson
+          "id"                       -> x.id.asJson,
+          "gif_url"                  -> x.gifUrl.asJson,
+          "gif_width"                -> x.gifWidth.asJson,
+          "gif_height"               -> x.gifHeight.asJson,
+          "gif_duration"             -> x.gifDuration.asJson,
+          "thumbnail_url"            -> x.thumbnailUrl.asJson,
+          "thumbnail_mime_type"      -> x.thumbnailMimeType.asJson,
+          "title"                    -> x.title.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "input_message_content"    -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1637,19 +1653,20 @@ object CirceImplicits {
   implicit lazy val inlinequeryresultgifDecoder: Decoder[InlineQueryResultGif] =
     Decoder.instance { h =>
       for {
-        _id                  <- h.get[String]("id")
-        _gifUrl              <- h.get[String]("gif_url")
-        _gifWidth            <- h.get[Option[Int]]("gif_width")
-        _gifHeight           <- h.get[Option[Int]]("gif_height")
-        _gifDuration         <- h.get[Option[Int]]("gif_duration")
-        _thumbnailUrl        <- h.get[String]("thumbnail_url")
-        _thumbnailMimeType   <- h.get[Option[String]]("thumbnail_mime_type")
-        _title               <- h.get[Option[String]]("title")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
+        _id                    <- h.get[String]("id")
+        _gifUrl                <- h.get[String]("gif_url")
+        _gifWidth              <- h.get[Option[Int]]("gif_width")
+        _gifHeight             <- h.get[Option[Int]]("gif_height")
+        _gifDuration           <- h.get[Option[Int]]("gif_duration")
+        _thumbnailUrl          <- h.get[String]("thumbnail_url")
+        _thumbnailMimeType     <- h.get[Option[String]]("thumbnail_mime_type")
+        _title                 <- h.get[Option[String]]("title")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
+        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
         InlineQueryResultGif(
           id = _id,
@@ -1663,6 +1680,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent
         )
@@ -1779,18 +1797,19 @@ object CirceImplicits {
     (x: InlineQueryResultPhoto) => {
       Json.fromFields(
         List(
-          "id"                    -> x.id.asJson,
-          "photo_url"             -> x.photoUrl.asJson,
-          "thumbnail_url"         -> x.thumbnailUrl.asJson,
-          "photo_width"           -> x.photoWidth.asJson,
-          "photo_height"          -> x.photoHeight.asJson,
-          "title"                 -> x.title.asJson,
-          "description"           -> x.description.asJson,
-          "caption"               -> x.caption.asJson,
-          "parse_mode"            -> x.parseMode.asJson,
-          "caption_entities"      -> x.captionEntities.asJson,
-          "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson
+          "id"                       -> x.id.asJson,
+          "photo_url"                -> x.photoUrl.asJson,
+          "thumbnail_url"            -> x.thumbnailUrl.asJson,
+          "photo_width"              -> x.photoWidth.asJson,
+          "photo_height"             -> x.photoHeight.asJson,
+          "title"                    -> x.title.asJson,
+          "description"              -> x.description.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "input_message_content"    -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1798,18 +1817,19 @@ object CirceImplicits {
   implicit lazy val inlinequeryresultphotoDecoder: Decoder[InlineQueryResultPhoto] =
     Decoder.instance { h =>
       for {
-        _id                  <- h.get[String]("id")
-        _photoUrl            <- h.get[String]("photo_url")
-        _thumbnailUrl        <- h.get[String]("thumbnail_url")
-        _photoWidth          <- h.get[Option[Int]]("photo_width")
-        _photoHeight         <- h.get[Option[Int]]("photo_height")
-        _title               <- h.get[Option[String]]("title")
-        _description         <- h.get[Option[String]]("description")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
+        _id                    <- h.get[String]("id")
+        _photoUrl              <- h.get[String]("photo_url")
+        _thumbnailUrl          <- h.get[String]("thumbnail_url")
+        _photoWidth            <- h.get[Option[Int]]("photo_width")
+        _photoHeight           <- h.get[Option[Int]]("photo_height")
+        _title                 <- h.get[Option[String]]("title")
+        _description           <- h.get[Option[String]]("description")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
+        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
         InlineQueryResultPhoto(
           id = _id,
@@ -1822,6 +1842,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent
         )
@@ -2023,19 +2044,20 @@ object CirceImplicits {
     (x: InlineQueryResultMpeg4Gif) => {
       Json.fromFields(
         List(
-          "id"                    -> x.id.asJson,
-          "mpeg4_url"             -> x.mpeg4Url.asJson,
-          "mpeg4_width"           -> x.mpeg4Width.asJson,
-          "mpeg4_height"          -> x.mpeg4Height.asJson,
-          "mpeg4_duration"        -> x.mpeg4Duration.asJson,
-          "thumbnail_url"         -> x.thumbnailUrl.asJson,
-          "thumbnail_mime_type"   -> x.thumbnailMimeType.asJson,
-          "title"                 -> x.title.asJson,
-          "caption"               -> x.caption.asJson,
-          "parse_mode"            -> x.parseMode.asJson,
-          "caption_entities"      -> x.captionEntities.asJson,
-          "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson
+          "id"                       -> x.id.asJson,
+          "mpeg4_url"                -> x.mpeg4Url.asJson,
+          "mpeg4_width"              -> x.mpeg4Width.asJson,
+          "mpeg4_height"             -> x.mpeg4Height.asJson,
+          "mpeg4_duration"           -> x.mpeg4Duration.asJson,
+          "thumbnail_url"            -> x.thumbnailUrl.asJson,
+          "thumbnail_mime_type"      -> x.thumbnailMimeType.asJson,
+          "title"                    -> x.title.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "input_message_content"    -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2043,19 +2065,20 @@ object CirceImplicits {
   implicit lazy val inlinequeryresultmpeg4gifDecoder: Decoder[InlineQueryResultMpeg4Gif] =
     Decoder.instance { h =>
       for {
-        _id                  <- h.get[String]("id")
-        _mpeg4Url            <- h.get[String]("mpeg4_url")
-        _mpeg4Width          <- h.get[Option[Int]]("mpeg4_width")
-        _mpeg4Height         <- h.get[Option[Int]]("mpeg4_height")
-        _mpeg4Duration       <- h.get[Option[Int]]("mpeg4_duration")
-        _thumbnailUrl        <- h.get[String]("thumbnail_url")
-        _thumbnailMimeType   <- h.get[Option[String]]("thumbnail_mime_type")
-        _title               <- h.get[Option[String]]("title")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
+        _id                    <- h.get[String]("id")
+        _mpeg4Url              <- h.get[String]("mpeg4_url")
+        _mpeg4Width            <- h.get[Option[Int]]("mpeg4_width")
+        _mpeg4Height           <- h.get[Option[Int]]("mpeg4_height")
+        _mpeg4Duration         <- h.get[Option[Int]]("mpeg4_duration")
+        _thumbnailUrl          <- h.get[String]("thumbnail_url")
+        _thumbnailMimeType     <- h.get[Option[String]]("thumbnail_mime_type")
+        _title                 <- h.get[Option[String]]("title")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
+        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
         InlineQueryResultMpeg4Gif(
           id = _id,
@@ -2069,6 +2092,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent
         )
@@ -2079,14 +2103,15 @@ object CirceImplicits {
     (x: InlineQueryResultCachedMpeg4Gif) => {
       Json.fromFields(
         List(
-          "id"                    -> x.id.asJson,
-          "mpeg4_file_id"         -> x.mpeg4FileId.asJson,
-          "title"                 -> x.title.asJson,
-          "caption"               -> x.caption.asJson,
-          "parse_mode"            -> x.parseMode.asJson,
-          "caption_entities"      -> x.captionEntities.asJson,
-          "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson
+          "id"                       -> x.id.asJson,
+          "mpeg4_file_id"            -> x.mpeg4FileId.asJson,
+          "title"                    -> x.title.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "input_message_content"    -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2094,14 +2119,15 @@ object CirceImplicits {
   implicit lazy val inlinequeryresultcachedmpeg4gifDecoder: Decoder[InlineQueryResultCachedMpeg4Gif] =
     Decoder.instance { h =>
       for {
-        _id                  <- h.get[String]("id")
-        _mpeg4FileId         <- h.get[String]("mpeg4_file_id")
-        _title               <- h.get[Option[String]]("title")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
+        _id                    <- h.get[String]("id")
+        _mpeg4FileId           <- h.get[String]("mpeg4_file_id")
+        _title                 <- h.get[Option[String]]("title")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
+        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
         InlineQueryResultCachedMpeg4Gif(
           id = _id,
@@ -2110,6 +2136,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent
         )
@@ -2164,15 +2191,16 @@ object CirceImplicits {
     (x: InlineQueryResultCachedVideo) => {
       Json.fromFields(
         List(
-          "id"                    -> x.id.asJson,
-          "video_file_id"         -> x.videoFileId.asJson,
-          "title"                 -> x.title.asJson,
-          "description"           -> x.description.asJson,
-          "caption"               -> x.caption.asJson,
-          "parse_mode"            -> x.parseMode.asJson,
-          "caption_entities"      -> x.captionEntities.asJson,
-          "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson
+          "id"                       -> x.id.asJson,
+          "video_file_id"            -> x.videoFileId.asJson,
+          "title"                    -> x.title.asJson,
+          "description"              -> x.description.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "input_message_content"    -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2180,15 +2208,16 @@ object CirceImplicits {
   implicit lazy val inlinequeryresultcachedvideoDecoder: Decoder[InlineQueryResultCachedVideo] =
     Decoder.instance { h =>
       for {
-        _id                  <- h.get[String]("id")
-        _videoFileId         <- h.get[String]("video_file_id")
-        _title               <- h.get[String]("title")
-        _description         <- h.get[Option[String]]("description")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
+        _id                    <- h.get[String]("id")
+        _videoFileId           <- h.get[String]("video_file_id")
+        _title                 <- h.get[String]("title")
+        _description           <- h.get[Option[String]]("description")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
+        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
         InlineQueryResultCachedVideo(
           id = _id,
@@ -2198,6 +2227,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent
         )
@@ -2230,15 +2260,16 @@ object CirceImplicits {
     (x: InlineQueryResultCachedPhoto) => {
       Json.fromFields(
         List(
-          "id"                    -> x.id.asJson,
-          "photo_file_id"         -> x.photoFileId.asJson,
-          "title"                 -> x.title.asJson,
-          "description"           -> x.description.asJson,
-          "caption"               -> x.caption.asJson,
-          "parse_mode"            -> x.parseMode.asJson,
-          "caption_entities"      -> x.captionEntities.asJson,
-          "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson
+          "id"                       -> x.id.asJson,
+          "photo_file_id"            -> x.photoFileId.asJson,
+          "title"                    -> x.title.asJson,
+          "description"              -> x.description.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "input_message_content"    -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2246,15 +2277,16 @@ object CirceImplicits {
   implicit lazy val inlinequeryresultcachedphotoDecoder: Decoder[InlineQueryResultCachedPhoto] =
     Decoder.instance { h =>
       for {
-        _id                  <- h.get[String]("id")
-        _photoFileId         <- h.get[String]("photo_file_id")
-        _title               <- h.get[Option[String]]("title")
-        _description         <- h.get[Option[String]]("description")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
+        _id                    <- h.get[String]("id")
+        _photoFileId           <- h.get[String]("photo_file_id")
+        _title                 <- h.get[Option[String]]("title")
+        _description           <- h.get[Option[String]]("description")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
+        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
         InlineQueryResultCachedPhoto(
           id = _id,
@@ -2264,6 +2296,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent
         )
@@ -2303,20 +2336,21 @@ object CirceImplicits {
     (x: InlineQueryResultVideo) => {
       Json.fromFields(
         List(
-          "id"                    -> x.id.asJson,
-          "video_url"             -> x.videoUrl.asJson,
-          "mime_type"             -> x.mimeType.asJson,
-          "thumbnail_url"         -> x.thumbnailUrl.asJson,
-          "title"                 -> x.title.asJson,
-          "caption"               -> x.caption.asJson,
-          "parse_mode"            -> x.parseMode.asJson,
-          "caption_entities"      -> x.captionEntities.asJson,
-          "video_width"           -> x.videoWidth.asJson,
-          "video_height"          -> x.videoHeight.asJson,
-          "video_duration"        -> x.videoDuration.asJson,
-          "description"           -> x.description.asJson,
-          "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson
+          "id"                       -> x.id.asJson,
+          "video_url"                -> x.videoUrl.asJson,
+          "mime_type"                -> x.mimeType.asJson,
+          "thumbnail_url"            -> x.thumbnailUrl.asJson,
+          "title"                    -> x.title.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "video_width"              -> x.videoWidth.asJson,
+          "video_height"             -> x.videoHeight.asJson,
+          "video_duration"           -> x.videoDuration.asJson,
+          "description"              -> x.description.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "input_message_content"    -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2324,20 +2358,21 @@ object CirceImplicits {
   implicit lazy val inlinequeryresultvideoDecoder: Decoder[InlineQueryResultVideo] =
     Decoder.instance { h =>
       for {
-        _id                  <- h.get[String]("id")
-        _videoUrl            <- h.get[String]("video_url")
-        _mimeType            <- h.get[String]("mime_type")
-        _thumbnailUrl        <- h.get[String]("thumbnail_url")
-        _title               <- h.get[String]("title")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _videoWidth          <- h.get[Option[Int]]("video_width")
-        _videoHeight         <- h.get[Option[Int]]("video_height")
-        _videoDuration       <- h.get[Option[Int]]("video_duration")
-        _description         <- h.get[Option[String]]("description")
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
+        _id                    <- h.get[String]("id")
+        _videoUrl              <- h.get[String]("video_url")
+        _mimeType              <- h.get[String]("mime_type")
+        _thumbnailUrl          <- h.get[String]("thumbnail_url")
+        _title                 <- h.get[String]("title")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _videoWidth            <- h.get[Option[Int]]("video_width")
+        _videoHeight           <- h.get[Option[Int]]("video_height")
+        _videoDuration         <- h.get[Option[Int]]("video_duration")
+        _description           <- h.get[Option[String]]("description")
+        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
+        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
         InlineQueryResultVideo(
           id = _id,
@@ -2348,6 +2383,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           videoWidth = _videoWidth,
           videoHeight = _videoHeight,
           videoDuration = _videoDuration,
@@ -2456,14 +2492,15 @@ object CirceImplicits {
     (x: InlineQueryResultCachedGif) => {
       Json.fromFields(
         List(
-          "id"                    -> x.id.asJson,
-          "gif_file_id"           -> x.gifFileId.asJson,
-          "title"                 -> x.title.asJson,
-          "caption"               -> x.caption.asJson,
-          "parse_mode"            -> x.parseMode.asJson,
-          "caption_entities"      -> x.captionEntities.asJson,
-          "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson
+          "id"                       -> x.id.asJson,
+          "gif_file_id"              -> x.gifFileId.asJson,
+          "title"                    -> x.title.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "input_message_content"    -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2471,14 +2508,15 @@ object CirceImplicits {
   implicit lazy val inlinequeryresultcachedgifDecoder: Decoder[InlineQueryResultCachedGif] =
     Decoder.instance { h =>
       for {
-        _id                  <- h.get[String]("id")
-        _gifFileId           <- h.get[String]("gif_file_id")
-        _title               <- h.get[Option[String]]("title")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
+        _id                    <- h.get[String]("id")
+        _gifFileId             <- h.get[String]("gif_file_id")
+        _title                 <- h.get[Option[String]]("title")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
+        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
       } yield {
         InlineQueryResultCachedGif(
           id = _id,
@@ -2487,6 +2525,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           replyMarkup = _replyMarkup,
           inputMessageContent = _inputMessageContent
         )
@@ -2630,7 +2669,7 @@ object CirceImplicits {
         _title                     <- h.get[String]("title")
         _description               <- h.get[String]("description")
         _payload                   <- h.get[String]("payload")
-        _providerToken             <- h.get[String]("provider_token")
+        _providerToken             <- h.get[Option[String]]("provider_token")
         _currency                  <- h.get[String]("currency")
         _prices                    <- h.getOrElse[List[LabeledPrice]]("prices")(List.empty)
         _maxTipAmount              <- h.get[Option[Int]]("max_tip_amount")
@@ -3014,11 +3053,13 @@ object CirceImplicits {
     case underline: UnderlineMessageEntity => underline.asJson.mapObject(_.add("type", Json.fromString("underline")))
     case italic: ItalicMessageEntity       => italic.asJson.mapObject(_.add("type", Json.fromString("italic")))
     case bold: BoldMessageEntity           => bold.asJson.mapObject(_.add("type", Json.fromString("bold")))
-    case cashtag: CashtagMessageEntity     => cashtag.asJson.mapObject(_.add("type", Json.fromString("cashtag")))
-    case code: CodeMessageEntity           => code.asJson.mapObject(_.add("type", Json.fromString("code")))
-    case spoiler: SpoilerMessageEntity     => spoiler.asJson.mapObject(_.add("type", Json.fromString("spoiler")))
-    case mention: MentionMessageEntity     => mention.asJson.mapObject(_.add("type", Json.fromString("mention")))
-    case hashtag: HashtagMessageEntity     => hashtag.asJson.mapObject(_.add("type", Json.fromString("hashtag")))
+    case expandable_blockquote: ExpandableBlockquoteMessageEntity =>
+      expandable_blockquote.asJson.mapObject(_.add("type", Json.fromString("expandable_blockquote")))
+    case cashtag: CashtagMessageEntity => cashtag.asJson.mapObject(_.add("type", Json.fromString("cashtag")))
+    case code: CodeMessageEntity       => code.asJson.mapObject(_.add("type", Json.fromString("code")))
+    case spoiler: SpoilerMessageEntity => spoiler.asJson.mapObject(_.add("type", Json.fromString("spoiler")))
+    case mention: MentionMessageEntity => mention.asJson.mapObject(_.add("type", Json.fromString("mention")))
+    case hashtag: HashtagMessageEntity => hashtag.asJson.mapObject(_.add("type", Json.fromString("hashtag")))
     case blockquote: BlockquoteMessageEntity =>
       blockquote.asJson.mapObject(_.add("type", Json.fromString("blockquote")))
     case text_link: TextLinkMessageEntity => text_link.asJson.mapObject(_.add("type", Json.fromString("text_link")))
@@ -3029,25 +3070,26 @@ object CirceImplicits {
   implicit lazy val messageentityDecoder: Decoder[MessageEntity] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "pre"           => Decoder[PreMessageEntity]
-      case "text_mention"  => Decoder[TextMentionMessageEntity]
-      case "bot_command"   => Decoder[BotCommandMessageEntity]
-      case "phone_number"  => Decoder[PhoneNumberMessageEntity]
-      case "email"         => Decoder[EmailMessageEntity]
-      case "custom_emoji"  => Decoder[CustomEmojiMessageEntity]
-      case "url"           => Decoder[UrlMessageEntity]
-      case "underline"     => Decoder[UnderlineMessageEntity]
-      case "italic"        => Decoder[ItalicMessageEntity]
-      case "bold"          => Decoder[BoldMessageEntity]
-      case "cashtag"       => Decoder[CashtagMessageEntity]
-      case "code"          => Decoder[CodeMessageEntity]
-      case "spoiler"       => Decoder[SpoilerMessageEntity]
-      case "mention"       => Decoder[MentionMessageEntity]
-      case "hashtag"       => Decoder[HashtagMessageEntity]
-      case "blockquote"    => Decoder[BlockquoteMessageEntity]
-      case "text_link"     => Decoder[TextLinkMessageEntity]
-      case "strikethrough" => Decoder[StrikethroughMessageEntity]
-      case unknown         => throw DecodingError(s"Unknown type for MessageEntity: $unknown")
+      case "pre"                   => Decoder[PreMessageEntity]
+      case "text_mention"          => Decoder[TextMentionMessageEntity]
+      case "bot_command"           => Decoder[BotCommandMessageEntity]
+      case "phone_number"          => Decoder[PhoneNumberMessageEntity]
+      case "email"                 => Decoder[EmailMessageEntity]
+      case "custom_emoji"          => Decoder[CustomEmojiMessageEntity]
+      case "url"                   => Decoder[UrlMessageEntity]
+      case "underline"             => Decoder[UnderlineMessageEntity]
+      case "italic"                => Decoder[ItalicMessageEntity]
+      case "bold"                  => Decoder[BoldMessageEntity]
+      case "expandable_blockquote" => Decoder[ExpandableBlockquoteMessageEntity]
+      case "cashtag"               => Decoder[CashtagMessageEntity]
+      case "code"                  => Decoder[CodeMessageEntity]
+      case "spoiler"               => Decoder[SpoilerMessageEntity]
+      case "mention"               => Decoder[MentionMessageEntity]
+      case "hashtag"               => Decoder[HashtagMessageEntity]
+      case "blockquote"            => Decoder[BlockquoteMessageEntity]
+      case "text_link"             => Decoder[TextLinkMessageEntity]
+      case "strikethrough"         => Decoder[StrikethroughMessageEntity]
+      case unknown                 => throw DecodingError(s"Unknown type for MessageEntity: $unknown")
     }
   } yield value
 
@@ -3150,6 +3192,26 @@ object CirceImplicits {
         _customEmojiId <- h.get[String]("custom_emoji_id")
       } yield {
         CustomEmojiMessageEntity(offset = _offset, length = _length, customEmojiId = _customEmojiId)
+      }
+    }
+
+  implicit lazy val expandableblockquotemessageentityEncoder: Encoder[ExpandableBlockquoteMessageEntity] =
+    (x: ExpandableBlockquoteMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val expandableblockquotemessageentityDecoder: Decoder[ExpandableBlockquoteMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        ExpandableBlockquoteMessageEntity(offset = _offset, length = _length)
       }
     }
 

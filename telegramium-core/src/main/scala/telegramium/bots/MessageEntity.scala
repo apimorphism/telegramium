@@ -56,6 +56,15 @@ final case class BotCommandMessageEntity(offset: Int, length: Int) extends Messa
   */
 final case class CustomEmojiMessageEntity(offset: Int, length: Int, customEmojiId: String) extends MessageEntity
 
+/** expandable_blockquote
+  *
+  * @param offset
+  *   Offset in UTF-16 code units to the start of the entity
+  * @param length
+  *   Length of the entity in UTF-16 code units
+  */
+final case class ExpandableBlockquoteMessageEntity(offset: Int, length: Int) extends MessageEntity
+
 /** spoiler
   *
   * @param offset

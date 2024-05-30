@@ -20,6 +20,8 @@ sealed trait InputMedia {}
   *   Optional. Mode for parsing entities in the animation caption. See formatting options for more details.
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param showCaptionAboveMedia
+  *   Optional. Pass True, if the caption must be shown above the message media
   * @param width
   *   Optional. Animation width
   * @param height
@@ -35,6 +37,7 @@ final case class InputMediaAnimation(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
   width: Option[Int] = Option.empty,
   height: Option[Int] = Option.empty,
   duration: Option[Int] = Option.empty,
@@ -53,6 +56,8 @@ final case class InputMediaAnimation(
   *   Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param showCaptionAboveMedia
+  *   Optional. Pass True, if the caption must be shown above the message media
   * @param hasSpoiler
   *   Optional. Pass True if the photo needs to be covered with a spoiler animation
   */
@@ -61,6 +66,7 @@ final case class InputMediaPhoto(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
   hasSpoiler: Option[Boolean] = Option.empty
 ) extends InputMedia
 
@@ -82,6 +88,8 @@ final case class InputMediaPhoto(
   *   Optional. Mode for parsing entities in the video caption. See formatting options for more details.
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param showCaptionAboveMedia
+  *   Optional. Pass True, if the caption must be shown above the message media
   * @param width
   *   Optional. Video width
   * @param height
@@ -99,6 +107,7 @@ final case class InputMediaVideo(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
   width: Option[Int] = Option.empty,
   height: Option[Int] = Option.empty,
   duration: Option[Int] = Option.empty,

@@ -13,20 +13,20 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Product description, 1-255 characters
   * @param payload
   *   Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
-  * @param providerToken
-  *   Payment provider token, obtained via &#064;BotFather
   * @param currency
-  *   Three-letter ISO 4217 currency code, see more on currencies
+  *   Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+  * @param providerToken
+  *   Payment provider token, obtained via &#064;BotFather. Pass an empty string for payments in Telegram Stars.
   * @param prices
   *   Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery
-  *   tax, bonus, etc.)
+  *   tax, bonus, etc.). Must contain exactly one item for payments in Telegram Stars.
   * @param maxTipAmount
   *   The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For
   *   example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it
   *   shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults
-  *   to 0
+  *   to 0. Not supported for payments in Telegram Stars.
   * @param suggestedTipAmounts
   *   A JSON-serialized array of suggested amounts of tips in the smallest units of the currency (integer, not
   *   float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts must be positive,
@@ -49,23 +49,26 @@ import telegramium.bots.InlineKeyboardMarkup
   * @param photoHeight
   *   Photo height
   * @param needName
-  *   Pass True if you require the user's full name to complete the order
+  *   Pass True if you require the user's full name to complete the order. Ignored for payments in Telegram Stars.
   * @param needPhoneNumber
-  *   Pass True if you require the user's phone number to complete the order
+  *   Pass True if you require the user's phone number to complete the order. Ignored for payments in Telegram Stars.
   * @param needEmail
-  *   Pass True if you require the user's email address to complete the order
+  *   Pass True if you require the user's email address to complete the order. Ignored for payments in Telegram Stars.
   * @param needShippingAddress
-  *   Pass True if you require the user's shipping address to complete the order
+  *   Pass True if you require the user's shipping address to complete the order. Ignored for payments in Telegram
+  *   Stars.
   * @param sendPhoneNumberToProvider
-  *   Pass True if the user's phone number should be sent to provider
+  *   Pass True if the user's phone number should be sent to the provider. Ignored for payments in Telegram Stars.
   * @param sendEmailToProvider
-  *   Pass True if the user's email address should be sent to provider
+  *   Pass True if the user's email address should be sent to the provider. Ignored for payments in Telegram Stars.
   * @param isFlexible
-  *   Pass True if the final price depends on the shipping method
+  *   Pass True if the final price depends on the shipping method. Ignored for payments in Telegram Stars.
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
   *   Protects the contents of the sent message from forwarding and saving
+  * @param messageEffectId
+  *   Unique identifier of the message effect to be added to the message; for private chats only
   * @param replyParameters
   *   Description of the message to reply to
   * @param replyMarkup
@@ -77,9 +80,9 @@ final case class SendInvoiceReq(
   title: String,
   description: String,
   payload: String,
-  providerToken: String,
   currency: String,
   messageThreadId: Option[Int] = Option.empty,
+  providerToken: Option[String] = Option.empty,
   prices: List[LabeledPrice] = List.empty,
   maxTipAmount: Option[Int] = Option.empty,
   suggestedTipAmounts: List[Int] = List.empty,
@@ -98,6 +101,7 @@ final case class SendInvoiceReq(
   isFlexible: Option[Boolean] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
+  messageEffectId: Option[String] = Option.empty,
   replyParameters: Option[ReplyParameters] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
 )

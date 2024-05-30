@@ -22,7 +22,7 @@ package telegramium.bots
   *   Optional. The bot was connected to or disconnected from a business account, or a user edited an existing
   *   connection with the bot
   * @param businessMessage
-  *   Optional. New non-service message from a connected business account
+  *   Optional. New message from a connected business account
   * @param editedBusinessMessage
   *   Optional. New version of a message from a connected business account
   * @param deletedBusinessMessages

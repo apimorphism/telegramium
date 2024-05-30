@@ -336,6 +336,7 @@ object CirceImplicits {
           "link_preview_options"   -> x.linkPreviewOptions.asJson,
           "disable_notification"   -> x.disableNotification.asJson,
           "protect_content"        -> x.protectContent.asJson,
+          "message_effect_id"      -> x.messageEffectId.asJson,
           "reply_parameters"       -> x.replyParameters.asJson,
           "reply_markup"           -> x.replyMarkup.asJson,
           "method"                 -> "sendMessage".asJson
@@ -355,6 +356,7 @@ object CirceImplicits {
         _linkPreviewOptions   <- h.get[Option[LinkPreviewOptions]]("link_preview_options")
         _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
         _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId      <- h.get[Option[String]]("message_effect_id")
         _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
         _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
@@ -368,6 +370,7 @@ object CirceImplicits {
           linkPreviewOptions = _linkPreviewOptions,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -420,6 +423,7 @@ object CirceImplicits {
           "is_closed"               -> x.isClosed.asJson,
           "disable_notification"    -> x.disableNotification.asJson,
           "protect_content"         -> x.protectContent.asJson,
+          "message_effect_id"       -> x.messageEffectId.asJson,
           "reply_parameters"        -> x.replyParameters.asJson,
           "reply_markup"            -> x.replyMarkup.asJson,
           "method"                  -> "sendPoll".asJson
@@ -449,6 +453,7 @@ object CirceImplicits {
         _isClosed              <- h.get[Option[Boolean]]("is_closed")
         _disableNotification   <- h.get[Option[Boolean]]("disable_notification")
         _protectContent        <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId       <- h.get[Option[String]]("message_effect_id")
         _replyParameters       <- h.get[Option[ReplyParameters]]("reply_parameters")
         _replyMarkup           <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
@@ -472,6 +477,7 @@ object CirceImplicits {
           isClosed = _isClosed,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -512,6 +518,7 @@ object CirceImplicits {
           "vcard"                  -> x.vcard.asJson,
           "disable_notification"   -> x.disableNotification.asJson,
           "protect_content"        -> x.protectContent.asJson,
+          "message_effect_id"      -> x.messageEffectId.asJson,
           "reply_parameters"       -> x.replyParameters.asJson,
           "reply_markup"           -> x.replyMarkup.asJson,
           "method"                 -> "sendContact".asJson
@@ -531,6 +538,7 @@ object CirceImplicits {
         _vcard                <- h.get[Option[String]]("vcard")
         _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
         _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId      <- h.get[Option[String]]("message_effect_id")
         _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
         _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
@@ -544,6 +552,7 @@ object CirceImplicits {
           vcard = _vcard,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -760,6 +769,7 @@ object CirceImplicits {
           "proximity_alert_radius" -> x.proximityAlertRadius.asJson,
           "disable_notification"   -> x.disableNotification.asJson,
           "protect_content"        -> x.protectContent.asJson,
+          "message_effect_id"      -> x.messageEffectId.asJson,
           "reply_parameters"       -> x.replyParameters.asJson,
           "reply_markup"           -> x.replyMarkup.asJson,
           "method"                 -> "sendLocation".asJson
@@ -781,6 +791,7 @@ object CirceImplicits {
         _proximityAlertRadius <- h.get[Option[Int]]("proximity_alert_radius")
         _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
         _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId      <- h.get[Option[String]]("message_effect_id")
         _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
         _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
@@ -796,6 +807,7 @@ object CirceImplicits {
           proximityAlertRadius = _proximityAlertRadius,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -959,6 +971,7 @@ object CirceImplicits {
           "emoji"                  -> x.emoji.asJson,
           "disable_notification"   -> x.disableNotification.asJson,
           "protect_content"        -> x.protectContent.asJson,
+          "message_effect_id"      -> x.messageEffectId.asJson,
           "reply_parameters"       -> x.replyParameters.asJson,
           "reply_markup"           -> x.replyMarkup.asJson,
           "method"                 -> "sendDice".asJson
@@ -975,6 +988,7 @@ object CirceImplicits {
         _emoji                <- h.get[Option[String]]("emoji")
         _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
         _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId      <- h.get[Option[String]]("message_effect_id")
         _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
         _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
@@ -985,6 +999,7 @@ object CirceImplicits {
           emoji = _emoji,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -1079,7 +1094,7 @@ object CirceImplicits {
         _title                     <- h.get[String]("title")
         _description               <- h.get[String]("description")
         _payload                   <- h.get[String]("payload")
-        _providerToken             <- h.get[String]("provider_token")
+        _providerToken             <- h.get[Option[String]]("provider_token")
         _currency                  <- h.get[String]("currency")
         _prices                    <- h.getOrElse[List[LabeledPrice]]("prices")(List.empty)
         _maxTipAmount              <- h.get[Option[Int]]("max_tip_amount")
@@ -1214,6 +1229,7 @@ object CirceImplicits {
           "media"                  -> x.media.asJson,
           "disable_notification"   -> x.disableNotification.asJson,
           "protect_content"        -> x.protectContent.asJson,
+          "message_effect_id"      -> x.messageEffectId.asJson,
           "reply_parameters"       -> x.replyParameters.asJson,
           "method"                 -> "sendMediaGroup".asJson
         ).filter(!_._2.isNull)
@@ -1229,6 +1245,7 @@ object CirceImplicits {
         _media                <- h.getOrElse[List[InputMedia]]("media")(List.empty)
         _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
         _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId      <- h.get[Option[String]]("message_effect_id")
         _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
       } yield {
         SendMediaGroupReq(
@@ -1238,6 +1255,7 @@ object CirceImplicits {
           media = _media,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters
         )
       }
@@ -1253,6 +1271,7 @@ object CirceImplicits {
           "game_short_name"        -> x.gameShortName.asJson,
           "disable_notification"   -> x.disableNotification.asJson,
           "protect_content"        -> x.protectContent.asJson,
+          "message_effect_id"      -> x.messageEffectId.asJson,
           "reply_parameters"       -> x.replyParameters.asJson,
           "reply_markup"           -> x.replyMarkup.asJson,
           "method"                 -> "sendGame".asJson
@@ -1269,6 +1288,7 @@ object CirceImplicits {
         _gameShortName        <- h.get[String]("game_short_name")
         _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
         _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId      <- h.get[Option[String]]("message_effect_id")
         _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
         _replyMarkup          <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
       } yield {
@@ -1279,6 +1299,7 @@ object CirceImplicits {
           gameShortName = _gameShortName,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -1302,6 +1323,7 @@ object CirceImplicits {
           "google_place_type"      -> x.googlePlaceType.asJson,
           "disable_notification"   -> x.disableNotification.asJson,
           "protect_content"        -> x.protectContent.asJson,
+          "message_effect_id"      -> x.messageEffectId.asJson,
           "reply_parameters"       -> x.replyParameters.asJson,
           "reply_markup"           -> x.replyMarkup.asJson,
           "method"                 -> "sendVenue".asJson
@@ -1325,6 +1347,7 @@ object CirceImplicits {
         _googlePlaceType      <- h.get[Option[String]]("google_place_type")
         _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
         _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId      <- h.get[Option[String]]("message_effect_id")
         _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
         _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
@@ -1342,6 +1365,7 @@ object CirceImplicits {
           googlePlaceType = _googlePlaceType,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -1715,18 +1739,19 @@ object CirceImplicits {
     (x: CopyMessageReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "from_chat_id"         -> x.fromChatId.asJson,
-          "message_id"           -> x.messageId.asJson,
-          "caption"              -> x.caption.asJson,
-          "parse_mode"           -> x.parseMode.asJson,
-          "caption_entities"     -> x.captionEntities.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "reply_parameters"     -> x.replyParameters.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "copyMessage".asJson
+          "chat_id"                  -> x.chatId.asJson,
+          "message_thread_id"        -> x.messageThreadId.asJson,
+          "from_chat_id"             -> x.fromChatId.asJson,
+          "message_id"               -> x.messageId.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "disable_notification"     -> x.disableNotification.asJson,
+          "protect_content"          -> x.protectContent.asJson,
+          "reply_parameters"         -> x.replyParameters.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "method"                   -> "copyMessage".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1734,17 +1759,18 @@ object CirceImplicits {
   implicit lazy val copymessagereqDecoder: Decoder[CopyMessageReq] =
     Decoder.instance { h =>
       for {
-        _chatId              <- h.get[ChatId]("chat_id")
-        _messageThreadId     <- h.get[Option[Int]]("message_thread_id")
-        _fromChatId          <- h.get[ChatId]("from_chat_id")
-        _messageId           <- h.get[Int]("message_id")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _disableNotification <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent      <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters     <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup         <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _chatId                <- h.get[ChatId]("chat_id")
+        _messageThreadId       <- h.get[Option[Int]]("message_thread_id")
+        _fromChatId            <- h.get[ChatId]("from_chat_id")
+        _messageId             <- h.get[Int]("message_id")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _disableNotification   <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent        <- h.get[Option[Boolean]]("protect_content")
+        _replyParameters       <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup           <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         CopyMessageReq(
           chatId = _chatId,
@@ -1754,6 +1780,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
           replyParameters = _replyParameters,
@@ -1775,6 +1802,7 @@ object CirceImplicits {
           "thumbnail"              -> x.thumbnail.asJson,
           "disable_notification"   -> x.disableNotification.asJson,
           "protect_content"        -> x.protectContent.asJson,
+          "message_effect_id"      -> x.messageEffectId.asJson,
           "reply_parameters"       -> x.replyParameters.asJson,
           "reply_markup"           -> x.replyMarkup.asJson,
           "method"                 -> "sendVideoNote".asJson
@@ -1794,6 +1822,7 @@ object CirceImplicits {
         _thumbnail            <- h.get[Option[IFile]]("thumbnail")
         _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
         _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId      <- h.get[Option[String]]("message_effect_id")
         _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
         _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
@@ -1807,6 +1836,7 @@ object CirceImplicits {
           thumbnail = _thumbnail,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -1939,6 +1969,7 @@ object CirceImplicits {
           "is_flexible"                   -> x.isFlexible.asJson,
           "disable_notification"          -> x.disableNotification.asJson,
           "protect_content"               -> x.protectContent.asJson,
+          "message_effect_id"             -> x.messageEffectId.asJson,
           "reply_parameters"              -> x.replyParameters.asJson,
           "reply_markup"                  -> x.replyMarkup.asJson,
           "method"                        -> "sendInvoice".asJson
@@ -1954,7 +1985,7 @@ object CirceImplicits {
         _title                     <- h.get[String]("title")
         _description               <- h.get[String]("description")
         _payload                   <- h.get[String]("payload")
-        _providerToken             <- h.get[String]("provider_token")
+        _providerToken             <- h.get[Option[String]]("provider_token")
         _currency                  <- h.get[String]("currency")
         _prices                    <- h.getOrElse[List[LabeledPrice]]("prices")(List.empty)
         _maxTipAmount              <- h.get[Option[Int]]("max_tip_amount")
@@ -1974,6 +2005,7 @@ object CirceImplicits {
         _isFlexible                <- h.get[Option[Boolean]]("is_flexible")
         _disableNotification       <- h.get[Option[Boolean]]("disable_notification")
         _protectContent            <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId           <- h.get[Option[String]]("message_effect_id")
         _replyParameters           <- h.get[Option[ReplyParameters]]("reply_parameters")
         _replyMarkup               <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
       } yield {
@@ -2003,6 +2035,7 @@ object CirceImplicits {
           isFlexible = _isFlexible,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -2045,6 +2078,7 @@ object CirceImplicits {
           "disable_content_type_detection" -> x.disableContentTypeDetection.asJson,
           "disable_notification"           -> x.disableNotification.asJson,
           "protect_content"                -> x.protectContent.asJson,
+          "message_effect_id"              -> x.messageEffectId.asJson,
           "reply_parameters"               -> x.replyParameters.asJson,
           "reply_markup"                   -> x.replyMarkup.asJson,
           "method"                         -> "sendDocument".asJson
@@ -2066,6 +2100,7 @@ object CirceImplicits {
         _disableContentTypeDetection <- h.get[Option[Boolean]]("disable_content_type_detection")
         _disableNotification         <- h.get[Option[Boolean]]("disable_notification")
         _protectContent              <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId             <- h.get[Option[String]]("message_effect_id")
         _replyParameters             <- h.get[Option[ReplyParameters]]("reply_parameters")
         _replyMarkup                 <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
@@ -2081,6 +2116,7 @@ object CirceImplicits {
           disableContentTypeDetection = _disableContentTypeDetection,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -2201,6 +2237,7 @@ object CirceImplicits {
           "thumbnail"              -> x.thumbnail.asJson,
           "disable_notification"   -> x.disableNotification.asJson,
           "protect_content"        -> x.protectContent.asJson,
+          "message_effect_id"      -> x.messageEffectId.asJson,
           "reply_parameters"       -> x.replyParameters.asJson,
           "reply_markup"           -> x.replyMarkup.asJson,
           "method"                 -> "sendAudio".asJson
@@ -2224,6 +2261,7 @@ object CirceImplicits {
         _thumbnail            <- h.get[Option[IFile]]("thumbnail")
         _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
         _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId      <- h.get[Option[String]]("message_effect_id")
         _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
         _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
@@ -2241,6 +2279,7 @@ object CirceImplicits {
           thumbnail = _thumbnail,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -2440,6 +2479,7 @@ object CirceImplicits {
           "duration"               -> x.duration.asJson,
           "disable_notification"   -> x.disableNotification.asJson,
           "protect_content"        -> x.protectContent.asJson,
+          "message_effect_id"      -> x.messageEffectId.asJson,
           "reply_parameters"       -> x.replyParameters.asJson,
           "reply_markup"           -> x.replyMarkup.asJson,
           "method"                 -> "sendVoice".asJson
@@ -2460,6 +2500,7 @@ object CirceImplicits {
         _duration             <- h.get[Option[Int]]("duration")
         _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
         _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId      <- h.get[Option[String]]("message_effect_id")
         _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
         _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
@@ -2474,6 +2515,7 @@ object CirceImplicits {
           duration = _duration,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -2575,14 +2617,15 @@ object CirceImplicits {
     (x: EditMessageCaptionReq) => {
       Json.fromFields(
         List(
-          "chat_id"           -> x.chatId.asJson,
-          "message_id"        -> x.messageId.asJson,
-          "inline_message_id" -> x.inlineMessageId.asJson,
-          "caption"           -> x.caption.asJson,
-          "parse_mode"        -> x.parseMode.asJson,
-          "caption_entities"  -> x.captionEntities.asJson,
-          "reply_markup"      -> x.replyMarkup.asJson,
-          "method"            -> "editMessageCaption".asJson
+          "chat_id"                  -> x.chatId.asJson,
+          "message_id"               -> x.messageId.asJson,
+          "inline_message_id"        -> x.inlineMessageId.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "method"                   -> "editMessageCaption".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2590,13 +2633,14 @@ object CirceImplicits {
   implicit lazy val editmessagecaptionreqDecoder: Decoder[EditMessageCaptionReq] =
     Decoder.instance { h =>
       for {
-        _chatId          <- h.get[Option[ChatId]]("chat_id")
-        _messageId       <- h.get[Option[Int]]("message_id")
-        _inlineMessageId <- h.get[Option[String]]("inline_message_id")
-        _caption         <- h.get[Option[String]]("caption")
-        _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _replyMarkup     <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
+        _chatId                <- h.get[Option[ChatId]]("chat_id")
+        _messageId             <- h.get[Option[Int]]("message_id")
+        _inlineMessageId       <- h.get[Option[String]]("inline_message_id")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
       } yield {
         EditMessageCaptionReq(
           chatId = _chatId,
@@ -2605,6 +2649,7 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           replyMarkup = _replyMarkup
         )
       }
@@ -2794,24 +2839,26 @@ object CirceImplicits {
     (x: SendVideoReq) => {
       Json.fromFields(
         List(
-          "business_connection_id" -> x.businessConnectionId.asJson,
-          "chat_id"                -> x.chatId.asJson,
-          "message_thread_id"      -> x.messageThreadId.asJson,
-          "video"                  -> x.video.asJson,
-          "duration"               -> x.duration.asJson,
-          "width"                  -> x.width.asJson,
-          "height"                 -> x.height.asJson,
-          "thumbnail"              -> x.thumbnail.asJson,
-          "caption"                -> x.caption.asJson,
-          "parse_mode"             -> x.parseMode.asJson,
-          "caption_entities"       -> x.captionEntities.asJson,
-          "has_spoiler"            -> x.hasSpoiler.asJson,
-          "supports_streaming"     -> x.supportsStreaming.asJson,
-          "disable_notification"   -> x.disableNotification.asJson,
-          "protect_content"        -> x.protectContent.asJson,
-          "reply_parameters"       -> x.replyParameters.asJson,
-          "reply_markup"           -> x.replyMarkup.asJson,
-          "method"                 -> "sendVideo".asJson
+          "business_connection_id"   -> x.businessConnectionId.asJson,
+          "chat_id"                  -> x.chatId.asJson,
+          "message_thread_id"        -> x.messageThreadId.asJson,
+          "video"                    -> x.video.asJson,
+          "duration"                 -> x.duration.asJson,
+          "width"                    -> x.width.asJson,
+          "height"                   -> x.height.asJson,
+          "thumbnail"                -> x.thumbnail.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "has_spoiler"              -> x.hasSpoiler.asJson,
+          "supports_streaming"       -> x.supportsStreaming.asJson,
+          "disable_notification"     -> x.disableNotification.asJson,
+          "protect_content"          -> x.protectContent.asJson,
+          "message_effect_id"        -> x.messageEffectId.asJson,
+          "reply_parameters"         -> x.replyParameters.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "method"                   -> "sendVideo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2819,23 +2866,25 @@ object CirceImplicits {
   implicit lazy val sendvideoreqDecoder: Decoder[SendVideoReq] =
     Decoder.instance { h =>
       for {
-        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
-        _chatId               <- h.get[ChatId]("chat_id")
-        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
-        _video                <- h.get[IFile]("video")
-        _duration             <- h.get[Option[Int]]("duration")
-        _width                <- h.get[Option[Int]]("width")
-        _height               <- h.get[Option[Int]]("height")
-        _thumbnail            <- h.get[Option[IFile]]("thumbnail")
-        _caption              <- h.get[Option[String]]("caption")
-        _parseMode            <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities      <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _hasSpoiler           <- h.get[Option[Boolean]]("has_spoiler")
-        _supportsStreaming    <- h.get[Option[Boolean]]("supports_streaming")
-        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent       <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _businessConnectionId  <- h.get[Option[String]]("business_connection_id")
+        _chatId                <- h.get[ChatId]("chat_id")
+        _messageThreadId       <- h.get[Option[Int]]("message_thread_id")
+        _video                 <- h.get[IFile]("video")
+        _duration              <- h.get[Option[Int]]("duration")
+        _width                 <- h.get[Option[Int]]("width")
+        _height                <- h.get[Option[Int]]("height")
+        _thumbnail             <- h.get[Option[IFile]]("thumbnail")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _hasSpoiler            <- h.get[Option[Boolean]]("has_spoiler")
+        _supportsStreaming     <- h.get[Option[Boolean]]("supports_streaming")
+        _disableNotification   <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent        <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId       <- h.get[Option[String]]("message_effect_id")
+        _replyParameters       <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup           <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendVideoReq(
           businessConnectionId = _businessConnectionId,
@@ -2849,10 +2898,12 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           hasSpoiler = _hasSpoiler,
           supportsStreaming = _supportsStreaming,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -3045,27 +3096,50 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val refundstarpaymentreqEncoder: Encoder[RefundStarPaymentReq] =
+    (x: RefundStarPaymentReq) => {
+      Json.fromFields(
+        List(
+          "user_id"                    -> x.userId.asJson,
+          "telegram_payment_charge_id" -> x.telegramPaymentChargeId.asJson,
+          "method"                     -> "refundStarPayment".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val refundstarpaymentreqDecoder: Decoder[RefundStarPaymentReq] =
+    Decoder.instance { h =>
+      for {
+        _userId                  <- h.get[Long]("user_id")
+        _telegramPaymentChargeId <- h.get[String]("telegram_payment_charge_id")
+      } yield {
+        RefundStarPaymentReq(userId = _userId, telegramPaymentChargeId = _telegramPaymentChargeId)
+      }
+    }
+
   implicit lazy val sendanimationreqEncoder: Encoder[SendAnimationReq] =
     (x: SendAnimationReq) => {
       Json.fromFields(
         List(
-          "business_connection_id" -> x.businessConnectionId.asJson,
-          "chat_id"                -> x.chatId.asJson,
-          "message_thread_id"      -> x.messageThreadId.asJson,
-          "animation"              -> x.animation.asJson,
-          "duration"               -> x.duration.asJson,
-          "width"                  -> x.width.asJson,
-          "height"                 -> x.height.asJson,
-          "thumbnail"              -> x.thumbnail.asJson,
-          "caption"                -> x.caption.asJson,
-          "parse_mode"             -> x.parseMode.asJson,
-          "caption_entities"       -> x.captionEntities.asJson,
-          "has_spoiler"            -> x.hasSpoiler.asJson,
-          "disable_notification"   -> x.disableNotification.asJson,
-          "protect_content"        -> x.protectContent.asJson,
-          "reply_parameters"       -> x.replyParameters.asJson,
-          "reply_markup"           -> x.replyMarkup.asJson,
-          "method"                 -> "sendAnimation".asJson
+          "business_connection_id"   -> x.businessConnectionId.asJson,
+          "chat_id"                  -> x.chatId.asJson,
+          "message_thread_id"        -> x.messageThreadId.asJson,
+          "animation"                -> x.animation.asJson,
+          "duration"                 -> x.duration.asJson,
+          "width"                    -> x.width.asJson,
+          "height"                   -> x.height.asJson,
+          "thumbnail"                -> x.thumbnail.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "has_spoiler"              -> x.hasSpoiler.asJson,
+          "disable_notification"     -> x.disableNotification.asJson,
+          "protect_content"          -> x.protectContent.asJson,
+          "message_effect_id"        -> x.messageEffectId.asJson,
+          "reply_parameters"         -> x.replyParameters.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "method"                   -> "sendAnimation".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3073,22 +3147,24 @@ object CirceImplicits {
   implicit lazy val sendanimationreqDecoder: Decoder[SendAnimationReq] =
     Decoder.instance { h =>
       for {
-        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
-        _chatId               <- h.get[ChatId]("chat_id")
-        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
-        _animation            <- h.get[IFile]("animation")
-        _duration             <- h.get[Option[Int]]("duration")
-        _width                <- h.get[Option[Int]]("width")
-        _height               <- h.get[Option[Int]]("height")
-        _thumbnail            <- h.get[Option[IFile]]("thumbnail")
-        _caption              <- h.get[Option[String]]("caption")
-        _parseMode            <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities      <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _hasSpoiler           <- h.get[Option[Boolean]]("has_spoiler")
-        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent       <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _businessConnectionId  <- h.get[Option[String]]("business_connection_id")
+        _chatId                <- h.get[ChatId]("chat_id")
+        _messageThreadId       <- h.get[Option[Int]]("message_thread_id")
+        _animation             <- h.get[IFile]("animation")
+        _duration              <- h.get[Option[Int]]("duration")
+        _width                 <- h.get[Option[Int]]("width")
+        _height                <- h.get[Option[Int]]("height")
+        _thumbnail             <- h.get[Option[IFile]]("thumbnail")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _hasSpoiler            <- h.get[Option[Boolean]]("has_spoiler")
+        _disableNotification   <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent        <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId       <- h.get[Option[String]]("message_effect_id")
+        _replyParameters       <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup           <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendAnimationReq(
           businessConnectionId = _businessConnectionId,
@@ -3102,9 +3178,11 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           hasSpoiler = _hasSpoiler,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -3242,6 +3320,7 @@ object CirceImplicits {
           "emoji"                  -> x.emoji.asJson,
           "disable_notification"   -> x.disableNotification.asJson,
           "protect_content"        -> x.protectContent.asJson,
+          "message_effect_id"      -> x.messageEffectId.asJson,
           "reply_parameters"       -> x.replyParameters.asJson,
           "reply_markup"           -> x.replyMarkup.asJson,
           "method"                 -> "sendSticker".asJson
@@ -3259,6 +3338,7 @@ object CirceImplicits {
         _emoji                <- h.get[Option[String]]("emoji")
         _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
         _protectContent       <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId      <- h.get[Option[String]]("message_effect_id")
         _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
         _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
@@ -3270,6 +3350,7 @@ object CirceImplicits {
           emoji = _emoji,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )
@@ -3388,19 +3469,21 @@ object CirceImplicits {
     (x: SendPhotoReq) => {
       Json.fromFields(
         List(
-          "business_connection_id" -> x.businessConnectionId.asJson,
-          "chat_id"                -> x.chatId.asJson,
-          "message_thread_id"      -> x.messageThreadId.asJson,
-          "photo"                  -> x.photo.asJson,
-          "caption"                -> x.caption.asJson,
-          "parse_mode"             -> x.parseMode.asJson,
-          "caption_entities"       -> x.captionEntities.asJson,
-          "has_spoiler"            -> x.hasSpoiler.asJson,
-          "disable_notification"   -> x.disableNotification.asJson,
-          "protect_content"        -> x.protectContent.asJson,
-          "reply_parameters"       -> x.replyParameters.asJson,
-          "reply_markup"           -> x.replyMarkup.asJson,
-          "method"                 -> "sendPhoto".asJson
+          "business_connection_id"   -> x.businessConnectionId.asJson,
+          "chat_id"                  -> x.chatId.asJson,
+          "message_thread_id"        -> x.messageThreadId.asJson,
+          "photo"                    -> x.photo.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "has_spoiler"              -> x.hasSpoiler.asJson,
+          "disable_notification"     -> x.disableNotification.asJson,
+          "protect_content"          -> x.protectContent.asJson,
+          "message_effect_id"        -> x.messageEffectId.asJson,
+          "reply_parameters"         -> x.replyParameters.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "method"                   -> "sendPhoto".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3408,18 +3491,20 @@ object CirceImplicits {
   implicit lazy val sendphotoreqDecoder: Decoder[SendPhotoReq] =
     Decoder.instance { h =>
       for {
-        _businessConnectionId <- h.get[Option[String]]("business_connection_id")
-        _chatId               <- h.get[ChatId]("chat_id")
-        _messageThreadId      <- h.get[Option[Int]]("message_thread_id")
-        _photo                <- h.get[IFile]("photo")
-        _caption              <- h.get[Option[String]]("caption")
-        _parseMode            <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities      <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
-        _hasSpoiler           <- h.get[Option[Boolean]]("has_spoiler")
-        _disableNotification  <- h.get[Option[Boolean]]("disable_notification")
-        _protectContent       <- h.get[Option[Boolean]]("protect_content")
-        _replyParameters      <- h.get[Option[ReplyParameters]]("reply_parameters")
-        _replyMarkup          <- h.get[Option[KeyboardMarkup]]("reply_markup")
+        _businessConnectionId  <- h.get[Option[String]]("business_connection_id")
+        _chatId                <- h.get[ChatId]("chat_id")
+        _messageThreadId       <- h.get[Option[Int]]("message_thread_id")
+        _photo                 <- h.get[IFile]("photo")
+        _caption               <- h.get[Option[String]]("caption")
+        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
+        _captionEntities       <- h.getOrElse[List[MessageEntity]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
+        _hasSpoiler            <- h.get[Option[Boolean]]("has_spoiler")
+        _disableNotification   <- h.get[Option[Boolean]]("disable_notification")
+        _protectContent        <- h.get[Option[Boolean]]("protect_content")
+        _messageEffectId       <- h.get[Option[String]]("message_effect_id")
+        _replyParameters       <- h.get[Option[ReplyParameters]]("reply_parameters")
+        _replyMarkup           <- h.get[Option[KeyboardMarkup]]("reply_markup")
       } yield {
         SendPhotoReq(
           businessConnectionId = _businessConnectionId,
@@ -3429,9 +3514,11 @@ object CirceImplicits {
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
+          showCaptionAboveMedia = _showCaptionAboveMedia,
           hasSpoiler = _hasSpoiler,
           disableNotification = _disableNotification,
           protectContent = _protectContent,
+          messageEffectId = _messageEffectId,
           replyParameters = _replyParameters,
           replyMarkup = _replyMarkup
         )

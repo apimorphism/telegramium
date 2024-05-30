@@ -36,6 +36,8 @@ import telegramium.bots.KeyboardMarkup
   * @param captionEntities
   *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
   *   parse_mode
+  * @param showCaptionAboveMedia
+  *   Pass True, if the caption must be shown above the message media
   * @param hasSpoiler
   *   Pass True if the video needs to be covered with a spoiler animation
   * @param supportsStreaming
@@ -44,6 +46,8 @@ import telegramium.bots.KeyboardMarkup
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
   *   Protects the contents of the sent message from forwarding and saving
+  * @param messageEffectId
+  *   Unique identifier of the message effect to be added to the message; for private chats only
   * @param replyParameters
   *   Description of the message to reply to
   * @param replyMarkup
@@ -62,10 +66,12 @@ final case class SendVideoReq(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
   hasSpoiler: Option[Boolean] = Option.empty,
   supportsStreaming: Option[Boolean] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
+  messageEffectId: Option[String] = Option.empty,
   replyParameters: Option[ReplyParameters] = Option.empty,
   replyMarkup: Option[KeyboardMarkup] = Option.empty
 )
