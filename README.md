@@ -87,7 +87,13 @@ WebhookBot.compose[IO](
 
 For details, have a look
 at the [Github Issue](https://github.com/apimorphism/telegramium/issues/143) and
-the related [Pull Request](https://github.com/apimorphism/telegramium/pull/145 ).
+the related [Pull Request](https://github.com/apimorphism/telegramium/pull/145).
+
+#### OpenEnum
+
+The Telegram Bot API is not versioned, which means bots and libraries must try to be forward-compatible. Specifically for enumerations, this implies that bots should always anticipate new values being added. Handling these values depends on the bot's business logic. Some apps may simply ignore unknown values, while others might respond with "This message is not supported," save the message for manual processing later, or throw a request handling error.
+
+Telegramium introduces `OpenEnum`, a wrapper for Telegram Bot API enumerations with two cases: `Known` and `Unknown`. This type allows unknown values to be explicitly handled (similar to `Option` or `Either`), enabling bots using Telegramium to be more robust, improve error handling, and degrade gracefully in light of frequent Telegram Bot API updates.
 
 #### Keyboards
 To use smart and safe constructors for keyboard markups, import `telegramium.bots.high.keyboards._`:
