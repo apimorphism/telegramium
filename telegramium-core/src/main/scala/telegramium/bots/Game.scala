@@ -23,6 +23,6 @@ final case class Game(
   description: String,
   photo: List[PhotoSize] = List.empty,
   text: Option[String] = Option.empty,
-  textEntities: List[MessageEntity] = List.empty,
+  textEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   animation: Option[Animation] = Option.empty
 )

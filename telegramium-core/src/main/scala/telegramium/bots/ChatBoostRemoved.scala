@@ -11,4 +11,9 @@ package telegramium.bots
   * @param source
   *   Source of the removed boost
   */
-final case class ChatBoostRemoved(chat: Chat, boostId: String, removeDate: Int, source: ChatBoostSource)
+final case class ChatBoostRemoved(
+  chat: Chat,
+  boostId: String,
+  removeDate: Int,
+  source: iozhik.OpenEnum[ChatBoostSource]
+)

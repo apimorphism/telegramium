@@ -10,4 +10,8 @@ package telegramium.bots
   *   Optional. Special entities that appear in the option text. Currently, only custom emoji entities are allowed in
   *   poll option texts
   */
-final case class PollOption(text: String, voterCount: Int, textEntities: List[MessageEntity] = List.empty)
+final case class PollOption(
+  text: String,
+  voterCount: Int,
+  textEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty
+)

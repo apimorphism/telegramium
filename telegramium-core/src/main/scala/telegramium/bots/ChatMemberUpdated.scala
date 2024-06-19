@@ -24,8 +24,8 @@ final case class ChatMemberUpdated(
   chat: Chat,
   from: User,
   date: Int,
-  oldChatMember: ChatMember,
-  newChatMember: ChatMember,
+  oldChatMember: iozhik.OpenEnum[ChatMember],
+  newChatMember: iozhik.OpenEnum[ChatMember],
   inviteLink: Option[ChatInviteLink] = Option.empty,
   viaJoinRequest: Option[Boolean] = Option.empty,
   viaChatFolderInviteLink: Option[Boolean] = Option.empty

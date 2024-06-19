@@ -14,5 +14,5 @@ package telegramium.bots
 final case class InputPollOption(
   text: String,
   textParseMode: Option[String] = Option.empty,
-  textEntities: List[MessageEntity] = List.empty
+  textEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty
 )

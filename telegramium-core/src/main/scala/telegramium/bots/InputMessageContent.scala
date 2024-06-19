@@ -173,6 +173,6 @@ final case class InputLocationMessageContent(
 final case class InputTextMessageContent(
   messageText: String,
   parseMode: Option[ParseMode] = Option.empty,
-  entities: List[MessageEntity] = List.empty,
+  entities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty
 ) extends InputMessageContent

@@ -121,7 +121,7 @@ final case class ChatFullInfo(
   businessLocation: Option[BusinessLocation] = Option.empty,
   businessOpeningHours: Option[BusinessOpeningHours] = Option.empty,
   personalChat: Option[Chat] = Option.empty,
-  availableReactions: List[ReactionType] = List.empty,
+  availableReactions: List[iozhik.OpenEnum[ReactionType]] = List.empty,
   backgroundCustomEmojiId: Option[String] = Option.empty,
   profileAccentColorId: Option[Int] = Option.empty,
   profileBackgroundCustomEmojiId: Option[String] = Option.empty,

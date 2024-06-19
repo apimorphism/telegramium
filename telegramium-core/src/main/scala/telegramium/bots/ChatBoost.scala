@@ -12,4 +12,4 @@ package telegramium.bots
   * @param source
   *   Source of the added boost
   */
-final case class ChatBoost(boostId: String, addDate: Int, expirationDate: Int, source: ChatBoostSource)
+final case class ChatBoost(boostId: String, addDate: Int, expirationDate: Int, source: iozhik.OpenEnum[ChatBoostSource])

@@ -42,11 +42,11 @@ final case class Poll(
   isAnonymous: Boolean,
   `type`: String,
   allowsMultipleAnswers: Boolean,
-  questionEntities: List[MessageEntity] = List.empty,
+  questionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   options: List[PollOption] = List.empty,
   correctOptionId: Option[Int] = Option.empty,
   explanation: Option[String] = Option.empty,
-  explanationEntities: List[MessageEntity] = List.empty,
+  explanationEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   openPeriod: Option[Int] = Option.empty,
   closeDate: Option[Int] = Option.empty
 )

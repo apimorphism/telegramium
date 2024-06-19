@@ -10,6 +10,7 @@ import com.dimafeng.testcontainers.MockServerContainer
 import io.circe.Json
 import io.circe.parser.parse
 import io.circe.syntax.*
+import iozhik.OpenEnum
 import org.http4s.Request
 import org.http4s.blaze.client.BlazeClientBuilder
 import org.http4s.circe.*
@@ -78,8 +79,8 @@ class WebhookBotISpec
       testChat,
       testUser,
       0,
-      ChatMemberMember(testUser),
-      ChatMemberMember(testUser)
+      OpenEnum(ChatMemberMember(testUser)),
+      OpenEnum(ChatMemberMember(testUser))
     )
 
   private val testChatJoinRequest =
@@ -392,7 +393,7 @@ class WebhookBotISpec
         .respond(sendMessageResponse)
       verifyResult(
         testUpdate.copy(chatBoost =
-          ChatBoostUpdated(testChat, ChatBoost("", 0, 0, ChatBoostSourcePremium(testUser))).some
+          ChatBoostUpdated(testChat, ChatBoost("", 0, 0, OpenEnum(ChatBoostSourcePremium(testUser)))).some
         ),
         "onChatBoostReply"
       )
@@ -403,7 +404,9 @@ class WebhookBotISpec
         .when(sendMessageRequest("onRemovedChatBoost"))
         .respond(sendMessageResponse)
       verifyResult(
-        testUpdate.copy(removedChatBoost = ChatBoostRemoved(testChat, "", 0, ChatBoostSourcePremium(testUser)).some),
+        testUpdate.copy(removedChatBoost =
+          ChatBoostRemoved(testChat, "", 0, OpenEnum(ChatBoostSourcePremium(testUser))).some
+        ),
         "onRemovedChatBoostReply"
       )
     }

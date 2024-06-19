@@ -5,4 +5,4 @@ package telegramium.bots
   * @param type
   *   Type of the background
   */
-final case class ChatBackground(`type`: BackgroundType)
+final case class ChatBackground(`type`: iozhik.OpenEnum[BackgroundType])

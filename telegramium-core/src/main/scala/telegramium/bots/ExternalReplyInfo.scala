@@ -52,7 +52,7 @@ package telegramium.bots
   *   Optional. Message is a venue, information about the venue
   */
 final case class ExternalReplyInfo(
-  origin: MessageOrigin,
+  origin: iozhik.OpenEnum[MessageOrigin],
   chat: Option[Chat] = Option.empty,
   messageId: Option[Int] = Option.empty,
   linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,

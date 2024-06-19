@@ -7,4 +7,4 @@ package telegramium.bots
   * @param totalCount
   *   Number of times the reaction was added
   */
-final case class ReactionCount(`type`: ReactionType, totalCount: Int)
+final case class ReactionCount(`type`: iozhik.OpenEnum[ReactionType], totalCount: Int)

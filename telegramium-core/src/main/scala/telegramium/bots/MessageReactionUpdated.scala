@@ -23,6 +23,6 @@ final case class MessageReactionUpdated(
   date: Int,
   user: Option[User] = Option.empty,
   actorChat: Option[Chat] = Option.empty,
-  oldReaction: List[ReactionType] = List.empty,
-  newReaction: List[ReactionType] = List.empty
+  oldReaction: List[iozhik.OpenEnum[ReactionType]] = List.empty,
+  newReaction: List[iozhik.OpenEnum[ReactionType]] = List.empty
 )
