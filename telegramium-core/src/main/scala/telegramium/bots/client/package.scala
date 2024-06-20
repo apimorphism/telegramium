@@ -442,6 +442,7 @@ object CirceImplicits {
     (x: EditMessageCaptionReq) => {
       Json.fromFields(
         List(
+          "business_connection_id"   -> x.businessConnectionId.asJson,
           "chat_id"                  -> x.chatId.asJson,
           "message_id"               -> x.messageId.asJson,
           "inline_message_id"        -> x.inlineMessageId.asJson,
@@ -459,6 +460,7 @@ object CirceImplicits {
     (x: EditMessageLiveLocationReq) => {
       Json.fromFields(
         List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
           "chat_id"                -> x.chatId.asJson,
           "message_id"             -> x.messageId.asJson,
           "inline_message_id"      -> x.inlineMessageId.asJson,
@@ -478,12 +480,13 @@ object CirceImplicits {
     (x: EditMessageMediaReq) => {
       Json.fromFields(
         List(
-          "chat_id"           -> x.chatId.asJson,
-          "message_id"        -> x.messageId.asJson,
-          "inline_message_id" -> x.inlineMessageId.asJson,
-          "media"             -> x.media.asJson,
-          "reply_markup"      -> x.replyMarkup.asJson,
-          "method"            -> "editMessageMedia".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_id"             -> x.messageId.asJson,
+          "inline_message_id"      -> x.inlineMessageId.asJson,
+          "media"                  -> x.media.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "editMessageMedia".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -492,11 +495,12 @@ object CirceImplicits {
     (x: EditMessageReplyMarkupReq) => {
       Json.fromFields(
         List(
-          "chat_id"           -> x.chatId.asJson,
-          "message_id"        -> x.messageId.asJson,
-          "inline_message_id" -> x.inlineMessageId.asJson,
-          "reply_markup"      -> x.replyMarkup.asJson,
-          "method"            -> "editMessageReplyMarkup".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_id"             -> x.messageId.asJson,
+          "inline_message_id"      -> x.inlineMessageId.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "editMessageReplyMarkup".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -505,15 +509,16 @@ object CirceImplicits {
     (x: EditMessageTextReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_id"           -> x.messageId.asJson,
-          "inline_message_id"    -> x.inlineMessageId.asJson,
-          "text"                 -> x.text.asJson,
-          "parse_mode"           -> x.parseMode.asJson,
-          "entities"             -> x.entities.asJson,
-          "link_preview_options" -> x.linkPreviewOptions.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "editMessageText".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_id"             -> x.messageId.asJson,
+          "inline_message_id"      -> x.inlineMessageId.asJson,
+          "text"                   -> x.text.asJson,
+          "parse_mode"             -> x.parseMode.asJson,
+          "entities"               -> x.entities.asJson,
+          "link_preview_options"   -> x.linkPreviewOptions.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "editMessageText".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -704,6 +709,17 @@ object CirceImplicits {
         List(
           "language_code" -> x.languageCode.asJson,
           "method"        -> "getMyShortDescription".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getstartransactionsreqEncoder: Encoder[GetStarTransactionsReq] =
+    (x: GetStarTransactionsReq) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "limit"  -> x.limit.asJson,
+          "method" -> "getStarTransactions".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1572,11 +1588,12 @@ object CirceImplicits {
     (x: StopMessageLiveLocationReq) => {
       Json.fromFields(
         List(
-          "chat_id"           -> x.chatId.asJson,
-          "message_id"        -> x.messageId.asJson,
-          "inline_message_id" -> x.inlineMessageId.asJson,
-          "reply_markup"      -> x.replyMarkup.asJson,
-          "method"            -> "stopMessageLiveLocation".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_id"             -> x.messageId.asJson,
+          "inline_message_id"      -> x.inlineMessageId.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "stopMessageLiveLocation".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1585,10 +1602,11 @@ object CirceImplicits {
     (x: StopPollReq) => {
       Json.fromFields(
         List(
-          "chat_id"      -> x.chatId.asJson,
-          "message_id"   -> x.messageId.asJson,
-          "reply_markup" -> x.replyMarkup.asJson,
-          "method"       -> "stopPoll".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_id"             -> x.messageId.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "stopPoll".asJson
         ).filter(!_._2.isNull)
       )
     }

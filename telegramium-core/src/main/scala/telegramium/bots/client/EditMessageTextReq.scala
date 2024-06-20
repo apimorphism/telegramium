@@ -8,6 +8,8 @@ import telegramium.bots.InlineKeyboardMarkup
 
 /** @param text
   *   New text of the message, 1-4096 characters after entities parsing
+  * @param businessConnectionId
+  *   Unique identifier of the business connection on behalf of which the message to be edited was sent
   * @param chatId
   *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
   *   channel (in the format &#064;channelusername)
@@ -27,6 +29,7 @@ import telegramium.bots.InlineKeyboardMarkup
   */
 final case class EditMessageTextReq(
   text: String,
+  businessConnectionId: Option[String] = Option.empty,
   chatId: Option[ChatId] = Option.empty,
   messageId: Option[Int] = Option.empty,
   inlineMessageId: Option[String] = Option.empty,

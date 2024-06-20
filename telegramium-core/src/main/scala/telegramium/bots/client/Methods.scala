@@ -22,6 +22,7 @@ import telegramium.bots.ChatAdministratorRights
 import telegramium.bots.BotDescription
 import telegramium.bots.BotName
 import telegramium.bots.BotShortDescription
+import telegramium.bots.StarTransactions
 import telegramium.bots.StickerSet
 import telegramium.bots.Update
 import telegramium.bots.UserChatBoosts
@@ -774,8 +775,11 @@ trait Methods {
   }
 
   /** Use this method to edit captions of messages. On success, if the edited message is not an inline message, the
-    * edited Message is returned, otherwise True is returned.
+    * edited Message is returned, otherwise True is returned. Note that business messages that were not sent by the bot
+    * and do not contain an inline keyboard can only be edited within 48 hours from the time they were sent.
     *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
     *   channel (in the format &#064;channelusername)
@@ -797,6 +801,7 @@ trait Methods {
     *   A JSON-serialized object for an inline keyboard.
     */
   def editMessageCaption(
+    businessConnectionId: Option[String] = Option.empty,
     chatId: Option[ChatId] = Option.empty,
     messageId: Option[Int] = Option.empty,
     inlineMessageId: Option[String] = Option.empty,
@@ -807,6 +812,7 @@ trait Methods {
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Either[Boolean, Message]] = {
     val req = EditMessageCaptionReq(
+      businessConnectionId,
       chatId,
       messageId,
       inlineMessageId,
@@ -827,6 +833,8 @@ trait Methods {
     *   Latitude of new location
     * @param longitude
     *   Longitude of new location
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
     *   channel (in the format &#064;channelusername)
@@ -852,6 +860,7 @@ trait Methods {
   def editMessageLiveLocation(
     latitude: Float,
     longitude: Float,
+    businessConnectionId: Option[String] = Option.empty,
     chatId: Option[ChatId] = Option.empty,
     messageId: Option[Int] = Option.empty,
     inlineMessageId: Option[String] = Option.empty,
@@ -864,6 +873,7 @@ trait Methods {
     val req = EditMessageLiveLocationReq(
       latitude,
       longitude,
+      businessConnectionId,
       chatId,
       messageId,
       inlineMessageId,
@@ -880,10 +890,13 @@ trait Methods {
     * album, then it can be edited only to an audio for audio albums, only to a document for document albums and to a
     * photo or a video otherwise. When an inline message is edited, a new file can't be uploaded; use a previously
     * uploaded file via its file_id or specify a URL. On success, if the edited message is not an inline message, the
-    * edited Message is returned, otherwise True is returned.
+    * edited Message is returned, otherwise True is returned. Note that business messages that were not sent by the bot
+    * and do not contain an inline keyboard can only be edited within 48 hours from the time they were sent.
     *
     * @param media
     *   A JSON-serialized object for a new media content of the message
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
     *   channel (in the format &#064;channelusername)
@@ -896,18 +909,23 @@ trait Methods {
     */
   def editMessageMedia(
     media: InputMedia,
+    businessConnectionId: Option[String] = Option.empty,
     chatId: Option[ChatId] = Option.empty,
     messageId: Option[Int] = Option.empty,
     inlineMessageId: Option[String] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Either[Boolean, Message]] = {
-    val req = EditMessageMediaReq(media, chatId, messageId, inlineMessageId, replyMarkup)
+    val req = EditMessageMediaReq(media, businessConnectionId, chatId, messageId, inlineMessageId, replyMarkup)
     MethodReq[Either[Boolean, Message]]("editMessageMedia", req.asJson)
   }
 
   /** Use this method to edit only the reply markup of messages. On success, if the edited message is not an inline
-    * message, the edited Message is returned, otherwise True is returned.
+    * message, the edited Message is returned, otherwise True is returned. Note that business messages that were not
+    * sent by the bot and do not contain an inline keyboard can only be edited within 48 hours from the time they were
+    * sent.
     *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
     *   channel (in the format &#064;channelusername)
@@ -919,20 +937,24 @@ trait Methods {
     *   A JSON-serialized object for an inline keyboard.
     */
   def editMessageReplyMarkup(
+    businessConnectionId: Option[String] = Option.empty,
     chatId: Option[ChatId] = Option.empty,
     messageId: Option[Int] = Option.empty,
     inlineMessageId: Option[String] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Either[Boolean, Message]] = {
-    val req = EditMessageReplyMarkupReq(chatId, messageId, inlineMessageId, replyMarkup)
+    val req = EditMessageReplyMarkupReq(businessConnectionId, chatId, messageId, inlineMessageId, replyMarkup)
     MethodReq[Either[Boolean, Message]]("editMessageReplyMarkup", req.asJson)
   }
 
   /** Use this method to edit text and game messages. On success, if the edited message is not an inline message, the
-    * edited Message is returned, otherwise True is returned.
+    * edited Message is returned, otherwise True is returned. Note that business messages that were not sent by the bot
+    * and do not contain an inline keyboard can only be edited within 48 hours from the time they were sent.
     *
     * @param text
     *   New text of the message, 1-4096 characters after entities parsing
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
     *   channel (in the format &#064;channelusername)
@@ -952,6 +974,7 @@ trait Methods {
     */
   def editMessageText(
     text: String,
+    businessConnectionId: Option[String] = Option.empty,
     chatId: Option[ChatId] = Option.empty,
     messageId: Option[Int] = Option.empty,
     inlineMessageId: Option[String] = Option.empty,
@@ -960,8 +983,17 @@ trait Methods {
     linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Either[Boolean, Message]] = {
-    val req =
-      EditMessageTextReq(text, chatId, messageId, inlineMessageId, parseMode, entities, linkPreviewOptions, replyMarkup)
+    val req = EditMessageTextReq(
+      text,
+      businessConnectionId,
+      chatId,
+      messageId,
+      inlineMessageId,
+      parseMode,
+      entities,
+      linkPreviewOptions,
+      replyMarkup
+    )
     MethodReq[Either[Boolean, Message]]("editMessageText", req.asJson)
   }
 
@@ -1227,6 +1259,22 @@ trait Methods {
   def getMyShortDescription(languageCode: Option[String] = Option.empty): Method[BotShortDescription] = {
     val req = GetMyShortDescriptionReq(languageCode)
     MethodReq[BotShortDescription]("getMyShortDescription", req.asJson)
+  }
+
+  /** Returns the bot's Telegram Star transactions in chronological order. On success, returns a StarTransactions
+    * object.
+    *
+    * @param offset
+    *   Number of transactions to skip in the response
+    * @param limit
+    *   The maximum number of transactions to be retrieved. Values between 1-100 are accepted. Defaults to 100.
+    */
+  def getStarTransactions(
+    offset: Option[Int] = Option.empty,
+    limit: Option[Int] = Option.empty
+  ): Method[StarTransactions] = {
+    val req = GetStarTransactionsReq(offset, limit)
+    MethodReq[StarTransactions]("getStarTransactions", req.asJson)
   }
 
   /** Use this method to get a sticker set. On success, a StickerSet object is returned.
@@ -3303,6 +3351,8 @@ trait Methods {
   /** Use this method to stop updating a live location message before live_period expires. On success, if the message is
     * not an inline message, the edited Message is returned, otherwise True is returned.
     *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
     *   channel (in the format &#064;channelusername)
@@ -3314,12 +3364,13 @@ trait Methods {
     *   A JSON-serialized object for a new inline keyboard.
     */
   def stopMessageLiveLocation(
+    businessConnectionId: Option[String] = Option.empty,
     chatId: Option[ChatId] = Option.empty,
     messageId: Option[Int] = Option.empty,
     inlineMessageId: Option[String] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Either[Boolean, Message]] = {
-    val req = StopMessageLiveLocationReq(chatId, messageId, inlineMessageId, replyMarkup)
+    val req = StopMessageLiveLocationReq(businessConnectionId, chatId, messageId, inlineMessageId, replyMarkup)
     MethodReq[Either[Boolean, Message]]("stopMessageLiveLocation", req.asJson)
   }
 
@@ -3329,15 +3380,18 @@ trait Methods {
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
     * @param messageId
     *   Identifier of the original message with the poll
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param replyMarkup
     *   A JSON-serialized object for a new message inline keyboard.
     */
   def stopPoll(
     chatId: ChatId,
     messageId: Int,
+    businessConnectionId: Option[String] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Poll] = {
-    val req = StopPollReq(chatId, messageId, replyMarkup)
+    val req = StopPollReq(chatId, messageId, businessConnectionId, replyMarkup)
     MethodReq[Poll]("stopPoll", req.asJson)
   }
 

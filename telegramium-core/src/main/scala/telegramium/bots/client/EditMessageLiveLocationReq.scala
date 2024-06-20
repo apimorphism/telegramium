@@ -7,6 +7,8 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Latitude of new location
   * @param longitude
   *   Longitude of new location
+  * @param businessConnectionId
+  *   Unique identifier of the business connection on behalf of which the message to be edited was sent
   * @param chatId
   *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
   *   channel (in the format &#064;channelusername)
@@ -32,6 +34,7 @@ import telegramium.bots.InlineKeyboardMarkup
 final case class EditMessageLiveLocationReq(
   latitude: Float,
   longitude: Float,
+  businessConnectionId: Option[String] = Option.empty,
   chatId: Option[ChatId] = Option.empty,
   messageId: Option[Int] = Option.empty,
   inlineMessageId: Option[String] = Option.empty,

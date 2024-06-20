@@ -3,7 +3,9 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 import telegramium.bots.InlineKeyboardMarkup
 
-/** @param chatId
+/** @param businessConnectionId
+  *   Unique identifier of the business connection on behalf of which the message to be edited was sent
+  * @param chatId
   *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
   *   channel (in the format &#064;channelusername)
   * @param messageId
@@ -14,6 +16,7 @@ import telegramium.bots.InlineKeyboardMarkup
   *   A JSON-serialized object for a new inline keyboard.
   */
 final case class StopMessageLiveLocationReq(
+  businessConnectionId: Option[String] = Option.empty,
   chatId: Option[ChatId] = Option.empty,
   messageId: Option[Int] = Option.empty,
   inlineMessageId: Option[String] = Option.empty,

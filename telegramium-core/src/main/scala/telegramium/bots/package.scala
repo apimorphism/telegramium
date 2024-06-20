@@ -3509,6 +3509,114 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val revenuewithdrawalstateEncoder: Encoder[RevenueWithdrawalState] = {
+    case failed: RevenueWithdrawalStateFailed.type => failed.asJson.mapObject(_.add("type", Json.fromString("failed")))
+    case succeeded: RevenueWithdrawalStateSucceeded =>
+      succeeded.asJson.mapObject(_.add("type", Json.fromString("succeeded")))
+    case pending: RevenueWithdrawalStatePending.type =>
+      pending.asJson.mapObject(_.add("type", Json.fromString("pending")))
+  }
+
+  implicit lazy val revenuewithdrawalstateDecoder: Decoder[iozhik.OpenEnum[RevenueWithdrawalState]] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "failed"    => Decoder[RevenueWithdrawalStateFailed.type].map(iozhik.OpenEnum.Known(_))
+      case "succeeded" => Decoder[RevenueWithdrawalStateSucceeded].map(iozhik.OpenEnum.Known(_))
+      case "pending"   => Decoder[RevenueWithdrawalStatePending.type].map(iozhik.OpenEnum.Known(_))
+      case unknown     => Decoder.const(iozhik.OpenEnum.Unknown[RevenueWithdrawalState](unknown))
+    }
+  } yield value
+
+  implicit lazy val revenuewithdrawalstatependingEncoder: Encoder[RevenueWithdrawalStatePending.type] =
+    (_: RevenueWithdrawalStatePending.type) => ().asJson
+
+  implicit lazy val revenuewithdrawalstatependingDecoder: Decoder[RevenueWithdrawalStatePending.type] = (_: HCursor) =>
+    Right(RevenueWithdrawalStatePending)
+
+  implicit lazy val revenuewithdrawalstatesucceededEncoder: Encoder[RevenueWithdrawalStateSucceeded] =
+    (x: RevenueWithdrawalStateSucceeded) => {
+      Json.fromFields(
+        List(
+          "date" -> x.date.asJson,
+          "url"  -> x.url.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val revenuewithdrawalstatesucceededDecoder: Decoder[RevenueWithdrawalStateSucceeded] =
+    Decoder.instance { h =>
+      for {
+        _date <- h.get[Int]("date")
+        _url  <- h.get[String]("url")
+      } yield {
+        RevenueWithdrawalStateSucceeded(date = _date, url = _url)
+      }
+    }
+
+  implicit lazy val revenuewithdrawalstatefailedEncoder: Encoder[RevenueWithdrawalStateFailed.type] =
+    (_: RevenueWithdrawalStateFailed.type) => ().asJson
+
+  implicit lazy val revenuewithdrawalstatefailedDecoder: Decoder[RevenueWithdrawalStateFailed.type] = (_: HCursor) =>
+    Right(RevenueWithdrawalStateFailed)
+
+  implicit lazy val transactionpartnerEncoder: Encoder[TransactionPartner] = {
+    case fragment: TransactionPartnerFragment => fragment.asJson.mapObject(_.add("type", Json.fromString("fragment")))
+    case user: TransactionPartnerUser         => user.asJson.mapObject(_.add("type", Json.fromString("user")))
+    case other: TransactionPartnerOther.type  => other.asJson.mapObject(_.add("type", Json.fromString("other")))
+  }
+
+  implicit lazy val transactionpartnerDecoder: Decoder[iozhik.OpenEnum[TransactionPartner]] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "fragment" => Decoder[TransactionPartnerFragment].map(iozhik.OpenEnum.Known(_))
+      case "user"     => Decoder[TransactionPartnerUser].map(iozhik.OpenEnum.Known(_))
+      case "other"    => Decoder[TransactionPartnerOther.type].map(iozhik.OpenEnum.Known(_))
+      case unknown    => Decoder.const(iozhik.OpenEnum.Unknown[TransactionPartner](unknown))
+    }
+  } yield value
+
+  implicit lazy val transactionpartnerotherEncoder: Encoder[TransactionPartnerOther.type] =
+    (_: TransactionPartnerOther.type) => ().asJson
+
+  implicit lazy val transactionpartnerotherDecoder: Decoder[TransactionPartnerOther.type] = (_: HCursor) =>
+    Right(TransactionPartnerOther)
+
+  implicit lazy val transactionpartneruserEncoder: Encoder[TransactionPartnerUser] =
+    (x: TransactionPartnerUser) => {
+      Json.fromFields(
+        List(
+          "user" -> x.user.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val transactionpartneruserDecoder: Decoder[TransactionPartnerUser] =
+    Decoder.instance { h =>
+      for {
+        _user <- h.get[User]("user")
+      } yield {
+        TransactionPartnerUser(user = _user)
+      }
+    }
+
+  implicit lazy val transactionpartnerfragmentEncoder: Encoder[TransactionPartnerFragment] =
+    (x: TransactionPartnerFragment) => {
+      Json.fromFields(
+        List(
+          "withdrawal_state" -> x.withdrawalState.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val transactionpartnerfragmentDecoder: Decoder[TransactionPartnerFragment] =
+    Decoder.instance { h =>
+      for {
+        _withdrawalState <- h.get[Option[iozhik.OpenEnum[RevenueWithdrawalState]]]("withdrawal_state")
+      } yield {
+        TransactionPartnerFragment(withdrawalState = _withdrawalState)
+      }
+    }
+
   implicit lazy val animationEncoder: Encoder[Animation] =
     (x: Animation) => {
       Json.fromFields(
@@ -6084,6 +6192,50 @@ object CirceImplicits {
         _shippingAddress <- h.get[ShippingAddress]("shipping_address")
       } yield {
         ShippingQuery(id = _id, from = _from, invoicePayload = _invoicePayload, shippingAddress = _shippingAddress)
+      }
+    }
+
+  implicit lazy val startransactionEncoder: Encoder[StarTransaction] =
+    (x: StarTransaction) => {
+      Json.fromFields(
+        List(
+          "id"       -> x.id.asJson,
+          "amount"   -> x.amount.asJson,
+          "date"     -> x.date.asJson,
+          "source"   -> x.source.asJson,
+          "receiver" -> x.receiver.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val startransactionDecoder: Decoder[StarTransaction] =
+    Decoder.instance { h =>
+      for {
+        _id       <- h.get[String]("id")
+        _amount   <- h.get[Int]("amount")
+        _date     <- h.get[Int]("date")
+        _source   <- h.get[Option[iozhik.OpenEnum[TransactionPartner]]]("source")
+        _receiver <- h.get[Option[iozhik.OpenEnum[TransactionPartner]]]("receiver")
+      } yield {
+        StarTransaction(id = _id, amount = _amount, date = _date, source = _source, receiver = _receiver)
+      }
+    }
+
+  implicit lazy val startransactionsEncoder: Encoder[StarTransactions] =
+    (x: StarTransactions) => {
+      Json.fromFields(
+        List(
+          "transactions" -> x.transactions.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val startransactionsDecoder: Decoder[StarTransactions] =
+    Decoder.instance { h =>
+      for {
+        _transactions <- h.getOrElse[List[StarTransaction]]("transactions")(List.empty)
+      } yield {
+        StarTransactions(transactions = _transactions)
       }
     }
 
