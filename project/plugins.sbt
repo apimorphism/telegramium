@@ -1,5 +1,5 @@
 addSbtPlugin("com.eed3si9n"   % "sbt-buildinfo"       % "0.12.0")
-addSbtPlugin("com.github.sbt" % "sbt-github-actions"  % "0.23.0")
+addSbtPlugin("com.github.sbt" % "sbt-github-actions"  % "0.24.0")
 addSbtPlugin("com.github.sbt" % "sbt-git"             % "2.0.1")
 addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.10.0")
 addSbtPlugin("com.github.sbt" % "sbt-pgp"             % "2.2.1")
