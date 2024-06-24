@@ -10,7 +10,7 @@ object Dependencies {
     val blazeHttp4s      = "0.23.16"
     val slf4j            = "2.0.7"
     val logback          = "1.3.7"
-    val scalatest        = "3.2.18"
+    val scalatest        = "3.2.19"
     val testcontainers   = "0.41.4"
     val mockServerClient = "5.14.0"
   }
