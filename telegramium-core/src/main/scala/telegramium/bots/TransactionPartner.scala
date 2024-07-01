@@ -5,12 +5,18 @@ sealed trait TransactionPartner {}
 /** Describes a transaction with an unknown source or recipient. */
 case object TransactionPartnerOther extends TransactionPartner
 
+/** Describes a withdrawal transaction to the Telegram Ads platform. */
+case object TransactionPartnerTelegramAds extends TransactionPartner
+
 /** Describes a transaction with a user.
   *
   * @param user
   *   Information about the user
+  * @param invoicePayload
+  *   Optional. Bot-specified invoice payload
   */
-final case class TransactionPartnerUser(user: User) extends TransactionPartner
+final case class TransactionPartnerUser(user: User, invoicePayload: Option[String] = Option.empty)
+    extends TransactionPartner
 
 /** Describes a withdrawal transaction with Fragment.
   *

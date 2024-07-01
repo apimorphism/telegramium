@@ -3,9 +3,9 @@ package telegramium.bots
 /** This object represents a point on the map.
   *
   * @param latitude
-  *   Latitude as defined by sender
+  *   Latitude as defined by the sender
   * @param longitude
-  *   Longitude as defined by sender
+  *   Longitude as defined by the sender
   * @param horizontalAccuracy
   *   Optional. The radius of uncertainty for the location, measured in meters; 0-1500
   * @param livePeriod

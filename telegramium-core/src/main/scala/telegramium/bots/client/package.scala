@@ -23,6 +23,7 @@ object CirceImplicits {
   import telegramium.bots.LinkPreviewOptions
   import telegramium.bots.ChatPermissions
   import telegramium.bots.IFile
+  import telegramium.bots.InputPaidMedia
   import telegramium.bots.InputPollOption
   import telegramium.bots.MenuButton
   import telegramium.bots.ReactionType
@@ -1141,6 +1142,26 @@ object CirceImplicits {
           "reply_parameters"       -> x.replyParameters.asJson,
           "reply_markup"           -> x.replyMarkup.asJson,
           "method"                 -> "sendMessage".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val sendpaidmediareqEncoder: Encoder[SendPaidMediaReq] =
+    (x: SendPaidMediaReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"                  -> x.chatId.asJson,
+          "star_count"               -> x.starCount.asJson,
+          "media"                    -> x.media.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "disable_notification"     -> x.disableNotification.asJson,
+          "protect_content"          -> x.protectContent.asJson,
+          "reply_parameters"         -> x.replyParameters.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "method"                   -> "sendPaidMedia".asJson
         ).filter(!_._2.isNull)
       )
     }

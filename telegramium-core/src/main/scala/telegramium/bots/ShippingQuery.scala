@@ -7,7 +7,7 @@ package telegramium.bots
   * @param from
   *   User who sent the query
   * @param invoicePayload
-  *   Bot specified invoice payload
+  *   Bot-specified invoice payload
   * @param shippingAddress
   *   User specified shipping address
   */

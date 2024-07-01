@@ -9,7 +9,7 @@ package telegramium.bots
   *   1.45 pass amount = 145. See the exp parameter in currencies.json, it shows the number of digits past the decimal
   *   point for each currency (2 for the majority of currencies).
   * @param invoicePayload
-  *   Bot specified invoice payload
+  *   Bot-specified invoice payload
   * @param telegramPaymentChargeId
   *   Telegram payment identifier
   * @param providerPaymentChargeId

@@ -274,10 +274,10 @@ trait Methods {
     MethodReq[Boolean]("closeGeneralForumTopic", req.asJson)
   }
 
-  /** Use this method to copy messages of any kind. Service messages, giveaway messages, giveaway winners messages, and
-    * invoice messages can't be copied. A quiz poll can be copied only if the value of the field correct_option_id is
-    * known to the bot. The method is analogous to the method forwardMessage, but the copied message doesn't have a link
-    * to the original message. Returns the MessageId of the sent message on success.
+  /** Use this method to copy messages of any kind. Service messages, paid media messages, giveaway messages, giveaway
+    * winners messages, and invoice messages can't be copied. A quiz poll can be copied only if the value of the field
+    * correct_option_id is known to the bot. The method is analogous to the method forwardMessage, but the copied
+    * message doesn't have a link to the original message. Returns the MessageId of the sent message on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -339,10 +339,11 @@ trait Methods {
   }
 
   /** Use this method to copy messages of any kind. If some of the specified messages can't be found or copied, they are
-    * skipped. Service messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied. A
-    * quiz poll can be copied only if the value of the field correct_option_id is known to the bot. The method is
-    * analogous to the method forwardMessages, but the copied messages don't have a link to the original message. Album
-    * grouping is kept for copied messages. On success, an array of MessageId of the sent messages is returned.
+    * skipped. Service messages, paid media messages, giveaway messages, giveaway winners messages, and invoice messages
+    * can't be copied. A quiz poll can be copied only if the value of the field correct_option_id is known to the bot.
+    * The method is analogous to the method forwardMessages, but the copied messages don't have a link to the original
+    * message. Album grouping is kept for copied messages. On success, an array of MessageId of the sent messages is
+    * returned.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -2355,6 +2356,62 @@ trait Methods {
       replyMarkup
     )
     MethodReq[Message]("sendMessage", req.asJson)
+  }
+
+  /** Use this method to send paid media to channel chats. On success, the sent Message is returned.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param starCount
+    *   The number of Telegram Stars that must be paid to buy access to the media
+    * @param media
+    *   A JSON-serialized array describing the media to be sent; up to 10 items
+    * @param caption
+    *   Media caption, 0-1024 characters after entities parsing
+    * @param parseMode
+    *   Mode for parsing entities in the media caption. See formatting options for more details.
+    * @param captionEntities
+    *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+    *   parse_mode
+    * @param showCaptionAboveMedia
+    *   Pass True, if the caption must be shown above the message media
+    * @param disableNotification
+    *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
+    * @param replyParameters
+    *   Description of the message to reply to
+    * @param replyMarkup
+    *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
+    *   instructions to remove a reply keyboard or to force a reply from the user
+    */
+  def sendPaidMedia(
+    chatId: ChatId,
+    starCount: Int,
+    media: List[InputPaidMedia] = List.empty,
+    caption: Option[String] = Option.empty,
+    parseMode: Option[ParseMode] = Option.empty,
+    captionEntities: List[MessageEntity] = List.empty,
+    showCaptionAboveMedia: Option[Boolean] = Option.empty,
+    disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
+    replyMarkup: Option[KeyboardMarkup] = Option.empty
+  ): Method[Message] = {
+    val req = SendPaidMediaReq(
+      chatId,
+      starCount,
+      media,
+      caption,
+      parseMode,
+      captionEntities,
+      showCaptionAboveMedia,
+      disableNotification,
+      protectContent,
+      replyParameters,
+      replyMarkup
+    )
+    MethodReq[Message]("sendPaidMedia", req.asJson)
   }
 
   /** Use this method to send photos. On success, the sent Message is returned.

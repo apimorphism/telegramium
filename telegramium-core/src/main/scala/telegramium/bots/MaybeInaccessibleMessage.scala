@@ -75,6 +75,8 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. Message is an audio file, information about the file
   * @param document
   *   Optional. Message is a general file, information about the file
+  * @param paidMedia
+  *   Optional. Message contains paid media; information about the paid media
   * @param photo
   *   Optional. Message is a photo, available sizes of the photo
   * @param sticker
@@ -88,7 +90,7 @@ sealed trait MaybeInaccessibleMessage {}
   * @param voice
   *   Optional. Message is a voice message, information about the file
   * @param caption
-  *   Optional. Caption for the animation, audio, document, photo, video or voice
+  *   Optional. Caption for the animation, audio, document, paid media, photo, video or voice
   * @param captionEntities
   *   Optional. For messages with a caption, special entities like usernames, URLs, bot commands, etc. that appear in
   *   the caption
@@ -231,6 +233,7 @@ final case class Message(
   animation: Option[Animation] = Option.empty,
   audio: Option[Audio] = Option.empty,
   document: Option[Document] = Option.empty,
+  paidMedia: Option[PaidMediaInfo] = Option.empty,
   photo: List[PhotoSize] = List.empty,
   sticker: Option[Sticker] = Option.empty,
   story: Option[Story] = Option.empty,
