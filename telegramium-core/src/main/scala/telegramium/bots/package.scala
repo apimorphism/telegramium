@@ -2473,6 +2473,7 @@ object CirceImplicits {
           "pinned_message"                    -> x.pinnedMessage.asJson,
           "invoice"                           -> x.invoice.asJson,
           "successful_payment"                -> x.successfulPayment.asJson,
+          "refunded_payment"                  -> x.refundedPayment.asJson,
           "users_shared"                      -> x.usersShared.asJson,
           "chat_shared"                       -> x.chatShared.asJson,
           "connected_website"                 -> x.connectedWebsite.asJson,
@@ -2566,6 +2567,7 @@ object CirceImplicits {
         _pinnedMessage                <- h.get[Option[MaybeInaccessibleMessage]]("pinned_message")
         _invoice                      <- h.get[Option[Invoice]]("invoice")
         _successfulPayment            <- h.get[Option[SuccessfulPayment]]("successful_payment")
+        _refundedPayment              <- h.get[Option[RefundedPayment]]("refunded_payment")
         _usersShared                  <- h.get[Option[UsersShared]]("users_shared")
         _chatShared                   <- h.get[Option[ChatShared]]("chat_shared")
         _connectedWebsite             <- h.get[Option[String]]("connected_website")
@@ -2652,6 +2654,7 @@ object CirceImplicits {
           pinnedMessage = _pinnedMessage,
           invoice = _invoice,
           successfulPayment = _successfulPayment,
+          refundedPayment = _refundedPayment,
           usersShared = _usersShared,
           chatShared = _chatShared,
           connectedWebsite = _connectedWebsite,
@@ -6190,6 +6193,38 @@ object CirceImplicits {
         _totalCount <- h.get[Int]("total_count")
       } yield {
         ReactionCount(`type` = _type, totalCount = _totalCount)
+      }
+    }
+
+  implicit lazy val refundedpaymentEncoder: Encoder[RefundedPayment] =
+    (x: RefundedPayment) => {
+      Json.fromFields(
+        List(
+          "currency"                   -> x.currency.asJson,
+          "total_amount"               -> x.totalAmount.asJson,
+          "invoice_payload"            -> x.invoicePayload.asJson,
+          "telegram_payment_charge_id" -> x.telegramPaymentChargeId.asJson,
+          "provider_payment_charge_id" -> x.providerPaymentChargeId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val refundedpaymentDecoder: Decoder[RefundedPayment] =
+    Decoder.instance { h =>
+      for {
+        _currency                <- h.get[String]("currency")
+        _totalAmount             <- h.get[Int]("total_amount")
+        _invoicePayload          <- h.get[String]("invoice_payload")
+        _telegramPaymentChargeId <- h.get[String]("telegram_payment_charge_id")
+        _providerPaymentChargeId <- h.get[Option[String]]("provider_payment_charge_id")
+      } yield {
+        RefundedPayment(
+          currency = _currency,
+          totalAmount = _totalAmount,
+          invoicePayload = _invoicePayload,
+          telegramPaymentChargeId = _telegramPaymentChargeId,
+          providerPaymentChargeId = _providerPaymentChargeId
+        )
       }
     }
 

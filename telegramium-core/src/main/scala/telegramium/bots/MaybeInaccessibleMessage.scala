@@ -151,6 +151,8 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. Message is an invoice for a payment, information about the invoice.
   * @param successfulPayment
   *   Optional. Message is a service message about a successful payment, information about the payment.
+  * @param refundedPayment
+  *   Optional. Message is a service message about a refunded payment, information about the payment.
   * @param usersShared
   *   Optional. Service message: users were shared with the bot
   * @param chatShared
@@ -264,6 +266,7 @@ final case class Message(
   pinnedMessage: Option[MaybeInaccessibleMessage] = Option.empty,
   invoice: Option[Invoice] = Option.empty,
   successfulPayment: Option[SuccessfulPayment] = Option.empty,
+  refundedPayment: Option[RefundedPayment] = Option.empty,
   usersShared: Option[UsersShared] = Option.empty,
   chatShared: Option[ChatShared] = Option.empty,
   connectedWebsite: Option[String] = Option.empty,
