@@ -5,8 +5,8 @@ import org.scalatest.matchers.should.Matchers
 
 import telegramium.bots.*
 import telegramium.bots.high.Methods
-import telegramium.bots.high.messageentities.MessageEntityFormat.*
 import telegramium.bots.high.messageentities.*
+import telegramium.bots.high.messageentities.MessageEntityFormat.*
 
 class MessageEntitiesSpec extends AnyFlatSpec with Matchers {
 

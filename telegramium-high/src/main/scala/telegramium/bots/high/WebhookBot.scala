@@ -44,7 +44,7 @@ import telegramium.bots.PreCheckoutQuery
 import telegramium.bots.ShippingQuery
 import telegramium.bots.Update
 import telegramium.bots.client.Method
-import telegramium.bots.client.{Methods => ApiMethods}
+import telegramium.bots.client.Methods as ApiMethods
 import telegramium.bots.high.Http4sUtils.toFileDataParts
 import telegramium.bots.high.Http4sUtils.toMultipartWithFormData
 
