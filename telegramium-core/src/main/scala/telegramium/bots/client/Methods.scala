@@ -1400,6 +1400,8 @@ trait Methods {
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
     * @param messageId
     *   Identifier of a message to pin
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be pinned
     * @param disableNotification
     *   Pass True if it is not necessary to send a notification to all chat members about the new pinned message.
     *   Notifications are always disabled in channels and private chats.
@@ -1407,9 +1409,10 @@ trait Methods {
   def pinChatMessage(
     chatId: ChatId,
     messageId: Int,
+    businessConnectionId: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty
   ): Method[Boolean] = {
-    val req = PinChatMessageReq(chatId, messageId, disableNotification)
+    val req = PinChatMessageReq(chatId, messageId, businessConnectionId, disableNotification)
     MethodReq[Boolean]("pinChatMessage", req.asJson)
   }
 
@@ -3321,10 +3324,10 @@ trait Methods {
     * @param thumbnail
     *   A .WEBP or .PNG image with the thumbnail, must be up to 128 kilobytes in size and have a width and height of
     *   exactly 100px, or a .TGS animation with a thumbnail up to 32 kilobytes in size (see
-    *   https://core.telegram.org/stickers#animated-sticker-requirements for animated sticker technical requirements),
-    *   or a WEBM video with the thumbnail up to 32 kilobytes in size; see
-    *   https://core.telegram.org/stickers#video-sticker-requirements for video sticker technical requirements. Pass a
-    *   file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for
+    *   https://core.telegram.org/stickers#animation-requirements for animated sticker technical requirements), or a
+    *   WEBM video with the thumbnail up to 32 kilobytes in size; see
+    *   https://core.telegram.org/stickers#video-requirements for video sticker technical requirements. Pass a file_id
+    *   as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for
     *   Telegram to get a file from the Internet, or upload a new one using multipart/form-data. Animated and video
     *   sticker set thumbnails can't be uploaded via HTTP URL. If omitted, then the thumbnail is dropped and the first
     *   sticker is used as the thumbnail.
@@ -3542,12 +3545,18 @@ trait Methods {
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be unpinned
     * @param messageId
-    *   Identifier of a message to unpin. If not specified, the most recent pinned message (by sending date) will be
-    *   unpinned.
+    *   Identifier of the message to unpin. Required if business_connection_id is specified. If not specified, the most
+    *   recent pinned message (by sending date) will be unpinned.
     */
-  def unpinChatMessage(chatId: ChatId, messageId: Option[Int] = Option.empty): Method[Boolean] = {
-    val req = UnpinChatMessageReq(chatId, messageId)
+  def unpinChatMessage(
+    chatId: ChatId,
+    businessConnectionId: Option[String] = Option.empty,
+    messageId: Option[Int] = Option.empty
+  ): Method[Boolean] = {
+    val req = UnpinChatMessageReq(chatId, businessConnectionId, messageId)
     MethodReq[Boolean]("unpinChatMessage", req.asJson)
   }
 

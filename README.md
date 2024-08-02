@@ -1,6 +1,6 @@
 # F[Tg] - Telegramium
 
-[![Telegram](https://img.shields.io/badge/Telegram%20Bot%20API-7.7%20(July%207%2C%202024)-blue)](https://core.telegram.org/bots/api#recent-changes)
+[![Telegram](https://img.shields.io/badge/Telegram%20Bot%20API-7.8%20(July%2031%2C%202024)-blue)](https://core.telegram.org/bots/api#recent-changes)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.apimorphism/telegramium-core_3/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.apimorphism/telegramium-core_3)
 
 

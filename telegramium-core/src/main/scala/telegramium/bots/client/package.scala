@@ -799,10 +799,11 @@ object CirceImplicits {
     (x: PinChatMessageReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_id"           -> x.messageId.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "method"               -> "pinChatMessage".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_id"             -> x.messageId.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "method"                 -> "pinChatMessage".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1700,9 +1701,10 @@ object CirceImplicits {
     (x: UnpinChatMessageReq) => {
       Json.fromFields(
         List(
-          "chat_id"    -> x.chatId.asJson,
-          "message_id" -> x.messageId.asJson,
-          "method"     -> "unpinChatMessage".asJson
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_id"             -> x.messageId.asJson,
+          "method"                 -> "unpinChatMessage".asJson
         ).filter(!_._2.isNull)
       )
     }

@@ -6764,7 +6764,8 @@ object CirceImplicits {
           "can_join_groups"             -> x.canJoinGroups.asJson,
           "can_read_all_group_messages" -> x.canReadAllGroupMessages.asJson,
           "supports_inline_queries"     -> x.supportsInlineQueries.asJson,
-          "can_connect_to_business"     -> x.canConnectToBusiness.asJson
+          "can_connect_to_business"     -> x.canConnectToBusiness.asJson,
+          "has_main_web_app"            -> x.hasMainWebApp.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6784,6 +6785,7 @@ object CirceImplicits {
         _canReadAllGroupMessages <- h.get[Option[Boolean]]("can_read_all_group_messages")
         _supportsInlineQueries   <- h.get[Option[Boolean]]("supports_inline_queries")
         _canConnectToBusiness    <- h.get[Option[Boolean]]("can_connect_to_business")
+        _hasMainWebApp           <- h.get[Option[Boolean]]("has_main_web_app")
       } yield {
         User(
           id = _id,
@@ -6797,7 +6799,8 @@ object CirceImplicits {
           canJoinGroups = _canJoinGroups,
           canReadAllGroupMessages = _canReadAllGroupMessages,
           supportsInlineQueries = _supportsInlineQueries,
-          canConnectToBusiness = _canConnectToBusiness
+          canConnectToBusiness = _canConnectToBusiness,
+          hasMainWebApp = _hasMainWebApp
         )
       }
     }

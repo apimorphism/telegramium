@@ -29,6 +29,8 @@ package telegramium.bots
   * @param canConnectToBusiness
   *   Optional. True, if the bot can be connected to a Telegram Business account to receive its messages. Returned only
   *   in getMe.
+  * @param hasMainWebApp
+  *   Optional. True, if the bot has a main Web App. Returned only in getMe.
   */
 final case class User(
   id: Long,
@@ -42,5 +44,6 @@ final case class User(
   canJoinGroups: Option[Boolean] = Option.empty,
   canReadAllGroupMessages: Option[Boolean] = Option.empty,
   supportsInlineQueries: Option[Boolean] = Option.empty,
-  canConnectToBusiness: Option[Boolean] = Option.empty
+  canConnectToBusiness: Option[Boolean] = Option.empty,
+  hasMainWebApp: Option[Boolean] = Option.empty
 )
