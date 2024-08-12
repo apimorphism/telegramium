@@ -4,6 +4,7 @@ import telegramium.bots.CallbackGame
 import telegramium.bots.InlineKeyboardButton
 import telegramium.bots.LoginUrl
 import telegramium.bots.SwitchInlineQueryChosenChat
+import telegramium.bots.WebAppInfo
 
 object InlineKeyboardButtons {
 
@@ -52,5 +53,10 @@ object InlineKeyboardButtons {
     */
   def pay(text: String): InlineKeyboardButton =
     InlineKeyboardButton(text, pay = Some(true))
+
+  /** Creates an inline keyboard button. Pressing the button will launch the described Web App.
+    */
+  def webApp(text: String, webApp: WebAppInfo): InlineKeyboardButton =
+    InlineKeyboardButton(text, webApp = Some(webApp))
 
 }
