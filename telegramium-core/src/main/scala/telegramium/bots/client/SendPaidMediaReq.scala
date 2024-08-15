@@ -8,9 +8,13 @@ import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername). If
+  *   the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance.
+  *   Otherwise, they will be credited to the bot's balance.
   * @param starCount
   *   The number of Telegram Stars that must be paid to buy access to the media
+  * @param businessConnectionId
+  *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param media
   *   A JSON-serialized array describing the media to be sent; up to 10 items
   * @param caption
@@ -35,6 +39,7 @@ import telegramium.bots.KeyboardMarkup
 final case class SendPaidMediaReq(
   chatId: ChatId,
   starCount: Int,
+  businessConnectionId: Option[String] = Option.empty,
   media: List[InputPaidMedia] = List.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,

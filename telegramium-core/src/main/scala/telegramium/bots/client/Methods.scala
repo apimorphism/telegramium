@@ -411,6 +411,32 @@ trait Methods {
     MethodReq[ChatInviteLink]("createChatInviteLink", req.asJson)
   }
 
+  /** Use this method to create a subscription invite link for a channel chat. The bot must have the can_invite_users
+    * administrator rights. The link can be edited using the method editChatSubscriptionInviteLink or revoked using the
+    * method revokeChatInviteLink. Returns the new invite link as a ChatInviteLink object.
+    *
+    * @param chatId
+    *   Unique identifier for the target channel chat or username of the target channel (in the format
+    *   &#064;channelusername)
+    * @param subscriptionPeriod
+    *   The number of seconds the subscription will be active for before the next payment. Currently, it must always be
+    *   2592000 (30 days).
+    * @param subscriptionPrice
+    *   The amount of Telegram Stars a user must pay initially and after each subsequent subscription period to be a
+    *   member of the chat; 1-2500
+    * @param name
+    *   Invite link name; 0-32 characters
+    */
+  def createChatSubscriptionInviteLink(
+    chatId: ChatId,
+    subscriptionPeriod: Int,
+    subscriptionPrice: Int,
+    name: Option[String] = Option.empty
+  ): Method[ChatInviteLink] = {
+    val req = CreateChatSubscriptionInviteLinkReq(chatId, subscriptionPeriod, subscriptionPrice, name)
+    MethodReq[ChatInviteLink]("createChatSubscriptionInviteLink", req.asJson)
+  }
+
   /** Use this method to create a topic in a forum supergroup chat. The bot must be an administrator in the chat for
     * this to work and must have the can_manage_topics administrator rights. Returns information about the created topic
     * as a ForumTopic object.
@@ -734,9 +760,28 @@ trait Methods {
     MethodReq[ChatInviteLink]("editChatInviteLink", req.asJson)
   }
 
+  /** Use this method to edit a subscription invite link created by the bot. The bot must have the can_invite_users
+    * administrator rights. Returns the edited invite link as a ChatInviteLink object.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param inviteLink
+    *   The invite link to edit
+    * @param name
+    *   Invite link name; 0-32 characters
+    */
+  def editChatSubscriptionInviteLink(
+    chatId: ChatId,
+    inviteLink: String,
+    name: Option[String] = Option.empty
+  ): Method[ChatInviteLink] = {
+    val req = EditChatSubscriptionInviteLinkReq(chatId, inviteLink, name)
+    MethodReq[ChatInviteLink]("editChatSubscriptionInviteLink", req.asJson)
+  }
+
   /** Use this method to edit name and icon of a topic in a forum supergroup chat. The bot must be an administrator in
-    * the chat for this to work and must have can_manage_topics administrator rights, unless it is the creator of the
-    * topic. Returns True on success.
+    * the chat for this to work and must have the can_manage_topics administrator rights, unless it is the creator of
+    * the topic. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup (in the format
@@ -761,8 +806,8 @@ trait Methods {
   }
 
   /** Use this method to edit the name of the 'General' topic in a forum supergroup chat. The bot must be an
-    * administrator in the chat for this to work and must have can_manage_topics administrator rights. Returns True on
-    * success.
+    * administrator in the chat for this to work and must have the can_manage_topics administrator rights. Returns True
+    * on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup (in the format
@@ -2361,12 +2406,16 @@ trait Methods {
     MethodReq[Message]("sendMessage", req.asJson)
   }
 
-  /** Use this method to send paid media to channel chats. On success, the sent Message is returned.
+  /** Use this method to send paid media. On success, the sent Message is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername).
+    *   If the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance.
+    *   Otherwise, they will be credited to the bot's balance.
     * @param starCount
     *   The number of Telegram Stars that must be paid to buy access to the media
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param media
     *   A JSON-serialized array describing the media to be sent; up to 10 items
     * @param caption
@@ -2391,6 +2440,7 @@ trait Methods {
   def sendPaidMedia(
     chatId: ChatId,
     starCount: Int,
+    businessConnectionId: Option[String] = Option.empty,
     media: List[InputPaidMedia] = List.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
@@ -2404,6 +2454,7 @@ trait Methods {
     val req = SendPaidMediaReq(
       chatId,
       starCount,
+      businessConnectionId,
       media,
       caption,
       parseMode,
@@ -3128,7 +3179,7 @@ trait Methods {
 
   /** Use this method to change the chosen reactions on a message. Service messages can't be reacted to. Automatically
     * forwarded messages from a channel to its discussion group have the same available reactions as messages in the
-    * channel. Returns True on success.
+    * channel. Bots can't use paid reactions. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -3138,7 +3189,7 @@ trait Methods {
     * @param reaction
     *   A JSON-serialized list of reaction types to set on the message. Currently, as non-premium users, bots can set up
     *   to one reaction per message. A custom emoji reaction can be used if it is either already present on the message
-    *   or explicitly allowed by chat administrators.
+    *   or explicitly allowed by chat administrators. Paid reactions can't be used by bots.
     * @param isBig
     *   Pass True to set the reaction with a big animation
     */

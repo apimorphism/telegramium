@@ -4,7 +4,6 @@ object CirceImplicits {
 
   import io.circe.syntax._
   import io.circe.{Encoder, Decoder, Json}
-  import iozhik._
   import telegramium.bots.InputSticker
   import telegramium.bots.CirceImplicits._
   import telegramium.bots.InlineQueryResult
@@ -238,6 +237,19 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val createchatsubscriptioninvitelinkreqEncoder: Encoder[CreateChatSubscriptionInviteLinkReq] =
+    (x: CreateChatSubscriptionInviteLinkReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"             -> x.chatId.asJson,
+          "name"                -> x.name.asJson,
+          "subscription_period" -> x.subscriptionPeriod.asJson,
+          "subscription_price"  -> x.subscriptionPrice.asJson,
+          "method"              -> "createChatSubscriptionInviteLink".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val createforumtopicreqEncoder: Encoder[CreateForumTopicReq] =
     (x: CreateForumTopicReq) => {
       Json.fromFields(
@@ -411,6 +423,18 @@ object CirceImplicits {
           "member_limit"         -> x.memberLimit.asJson,
           "creates_join_request" -> x.createsJoinRequest.asJson,
           "method"               -> "editChatInviteLink".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val editchatsubscriptioninvitelinkreqEncoder: Encoder[EditChatSubscriptionInviteLinkReq] =
+    (x: EditChatSubscriptionInviteLinkReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"     -> x.chatId.asJson,
+          "invite_link" -> x.inviteLink.asJson,
+          "name"        -> x.name.asJson,
+          "method"      -> "editChatSubscriptionInviteLink".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1151,6 +1175,7 @@ object CirceImplicits {
     (x: SendPaidMediaReq) => {
       Json.fromFields(
         List(
+          "business_connection_id"   -> x.businessConnectionId.asJson,
           "chat_id"                  -> x.chatId.asJson,
           "star_count"               -> x.starCount.asJson,
           "media"                    -> x.media.asJson,

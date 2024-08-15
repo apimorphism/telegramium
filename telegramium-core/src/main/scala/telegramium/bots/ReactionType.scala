@@ -2,6 +2,9 @@ package telegramium.bots
 
 sealed trait ReactionType {}
 
+/** The reaction is paid. */
+case object ReactionTypePaid extends ReactionType
+
 /** The reaction is based on an emoji.
   *
   * @param emoji

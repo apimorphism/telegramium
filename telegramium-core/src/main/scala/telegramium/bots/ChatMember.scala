@@ -90,8 +90,10 @@ final case class ChatMemberLeft(user: User) extends ChatMember
   *
   * @param user
   *   Information about the user
+  * @param untilDate
+  *   Optional. Date when the user's subscription will expire; Unix time
   */
-final case class ChatMemberMember(user: User) extends ChatMember
+final case class ChatMemberMember(user: User, untilDate: Option[Int] = Option.empty) extends ChatMember
 
 /** Represents a chat member that was banned in the chat and can't return to the chat or view chat messages.
   *

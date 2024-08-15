@@ -4,7 +4,6 @@ object CirceImplicits {
 
   import io.circe.syntax._
   import io.circe.{Encoder, Decoder, Json}
-  import iozhik._
   import cats.syntax.functor._
   import io.circe.HCursor
 
@@ -749,7 +748,8 @@ object CirceImplicits {
     (x: ChatMemberMember) => {
       Json.fromFields(
         List(
-          "user" -> x.user.asJson
+          "user"       -> x.user.asJson,
+          "until_date" -> x.untilDate.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -757,9 +757,10 @@ object CirceImplicits {
   implicit lazy val chatmembermemberDecoder: Decoder[ChatMemberMember] =
     Decoder.instance { h =>
       for {
-        _user <- h.get[User]("user")
+        _user      <- h.get[User]("user")
+        _untilDate <- h.get[Option[Int]]("until_date")
       } yield {
-        ChatMemberMember(user = _user)
+        ChatMemberMember(user = _user, untilDate = _untilDate)
       }
     }
 
@@ -3608,17 +3609,22 @@ object CirceImplicits {
   implicit lazy val reactiontypeEncoder: Encoder[ReactionType] = {
     case custom_emoji: ReactionTypeCustomEmoji =>
       custom_emoji.asJson.mapObject(_.add("type", Json.fromString("custom_emoji")))
-    case emoji: ReactionTypeEmoji => emoji.asJson.mapObject(_.add("type", Json.fromString("emoji")))
+    case paid: ReactionTypePaid.type => paid.asJson.mapObject(_.add("type", Json.fromString("paid")))
+    case emoji: ReactionTypeEmoji    => emoji.asJson.mapObject(_.add("type", Json.fromString("emoji")))
   }
 
   implicit lazy val reactiontypeDecoder: Decoder[iozhik.OpenEnum[ReactionType]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
       case "custom_emoji" => Decoder[ReactionTypeCustomEmoji].map(iozhik.OpenEnum.Known(_))
+      case "paid"         => Decoder[ReactionTypePaid.type].map(iozhik.OpenEnum.Known(_))
       case "emoji"        => Decoder[ReactionTypeEmoji].map(iozhik.OpenEnum.Known(_))
       case unknown        => Decoder.const(iozhik.OpenEnum.Unknown[ReactionType](unknown))
     }
   } yield value
+
+  implicit lazy val reactiontypepaidEncoder: Encoder[ReactionTypePaid.type] = (_: ReactionTypePaid.type) => ().asJson
+  implicit lazy val reactiontypepaidDecoder: Decoder[ReactionTypePaid.type] = (_: HCursor) => Right(ReactionTypePaid)
 
   implicit lazy val reactiontypeemojiEncoder: Encoder[ReactionTypeEmoji] =
     (x: ReactionTypeEmoji) => {
@@ -3742,7 +3748,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "user"            -> x.user.asJson,
-          "invoice_payload" -> x.invoicePayload.asJson
+          "invoice_payload" -> x.invoicePayload.asJson,
+          "paid_media"      -> x.paidMedia.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3752,8 +3759,9 @@ object CirceImplicits {
       for {
         _user           <- h.get[User]("user")
         _invoicePayload <- h.get[Option[String]]("invoice_payload")
+        _paidMedia      <- h.getOrElse[List[iozhik.OpenEnum[PaidMedia]]]("paid_media")(List.empty)
       } yield {
-        TransactionPartnerUser(user = _user, invoicePayload = _invoicePayload)
+        TransactionPartnerUser(user = _user, invoicePayload = _invoicePayload, paidMedia = _paidMedia)
       }
     }
 
