@@ -470,7 +470,7 @@ trait Methods {
     * @param description
     *   Product description, 1-255 characters
     * @param payload
-    *   Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal
+    *   Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use it for your internal
     *   processes.
     * @param currency
     *   Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
@@ -2106,7 +2106,7 @@ trait Methods {
     * @param description
     *   Product description, 1-255 characters
     * @param payload
-    *   Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal
+    *   Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use it for your internal
     *   processes.
     * @param currency
     *   Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
@@ -2413,11 +2413,14 @@ trait Methods {
     *   If the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance.
     *   Otherwise, they will be credited to the bot's balance.
     * @param starCount
-    *   The number of Telegram Stars that must be paid to buy access to the media
+    *   The number of Telegram Stars that must be paid to buy access to the media; 1-2500
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param media
     *   A JSON-serialized array describing the media to be sent; up to 10 items
+    * @param payload
+    *   Bot-defined paid media payload, 0-128 bytes. This will not be displayed to the user, use it for your internal
+    *   processes.
     * @param caption
     *   Media caption, 0-1024 characters after entities parsing
     * @param parseMode
@@ -2442,6 +2445,7 @@ trait Methods {
     starCount: Int,
     businessConnectionId: Option[String] = Option.empty,
     media: List[InputPaidMedia] = List.empty,
+    payload: Option[String] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -2456,6 +2460,7 @@ trait Methods {
       starCount,
       businessConnectionId,
       media,
+      payload,
       caption,
       parseMode,
       captionEntities,

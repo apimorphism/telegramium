@@ -12,7 +12,8 @@ import telegramium.bots.InlineKeyboardMarkup
   * @param description
   *   Product description, 1-255 characters
   * @param payload
-  *   Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
+  *   Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use it for your internal
+  *   processes.
   * @param currency
   *   Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
   * @param messageThreadId

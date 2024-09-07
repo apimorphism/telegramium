@@ -1179,6 +1179,7 @@ object CirceImplicits {
           "chat_id"                  -> x.chatId.asJson,
           "star_count"               -> x.starCount.asJson,
           "media"                    -> x.media.asJson,
+          "payload"                  -> x.payload.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
           "caption_entities"         -> x.captionEntities.asJson,

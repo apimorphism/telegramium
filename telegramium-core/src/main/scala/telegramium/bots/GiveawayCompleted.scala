@@ -8,9 +8,13 @@ package telegramium.bots
   *   Optional. Number of undistributed prizes
   * @param giveawayMessage
   *   Optional. Message with the giveaway that was completed, if it wasn't deleted
+  * @param isStarGiveaway
+  *   Optional. True, if the giveaway is a Telegram Star giveaway. Otherwise, currently, the giveaway is a Telegram
+  *   Premium giveaway.
   */
 final case class GiveawayCompleted(
   winnerCount: Int,
   unclaimedPrizeCount: Option[Int] = Option.empty,
-  giveawayMessage: Option[Message] = Option.empty
+  giveawayMessage: Option[Message] = Option.empty,
+  isStarGiveaway: Option[Boolean] = Option.empty
 )

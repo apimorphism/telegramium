@@ -14,8 +14,11 @@ package telegramium.bots
   *   List of up to 100 winners of the giveaway
   * @param additionalChatCount
   *   Optional. The number of other chats the user had to join in order to be eligible for the giveaway
+  * @param prizeStarCount
+  *   Optional. The number of Telegram Stars that were split between giveaway winners; for Telegram Star giveaways only
   * @param premiumSubscriptionMonthCount
-  *   Optional. The number of months the Telegram Premium subscription won from the giveaway will be active for
+  *   Optional. The number of months the Telegram Premium subscription won from the giveaway will be active for; for
+  *   Telegram Premium giveaways only
   * @param unclaimedPrizeCount
   *   Optional. Number of undistributed prizes
   * @param onlyNewMembers
@@ -32,6 +35,7 @@ final case class GiveawayWinners(
   winnerCount: Int,
   winners: List[User] = List.empty,
   additionalChatCount: Option[Int] = Option.empty,
+  prizeStarCount: Option[Int] = Option.empty,
   premiumSubscriptionMonthCount: Option[Int] = Option.empty,
   unclaimedPrizeCount: Option[Int] = Option.empty,
   onlyNewMembers: Option[Boolean] = Option.empty,

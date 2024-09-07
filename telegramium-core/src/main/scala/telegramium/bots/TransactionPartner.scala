@@ -16,11 +16,14 @@ case object TransactionPartnerTelegramAds extends TransactionPartner
   *   Optional. Bot-specified invoice payload
   * @param paidMedia
   *   Optional. Information about the paid media bought by the user
+  * @param paidMediaPayload
+  *   Optional. Bot-specified paid media payload
   */
 final case class TransactionPartnerUser(
   user: User,
   invoicePayload: Option[String] = Option.empty,
-  paidMedia: List[iozhik.OpenEnum[PaidMedia]] = List.empty
+  paidMedia: List[iozhik.OpenEnum[PaidMedia]] = List.empty,
+  paidMediaPayload: Option[String] = Option.empty
 ) extends TransactionPartner
 
 /** Describes a withdrawal transaction with Fragment.

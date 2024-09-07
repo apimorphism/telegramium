@@ -22,6 +22,11 @@ package telegramium.bots
   *   this invite link; 1-99999
   * @param pendingJoinRequestCount
   *   Optional. Number of pending join requests created using this link
+  * @param subscriptionPeriod
+  *   Optional. The number of seconds the subscription will be active for before the next payment
+  * @param subscriptionPrice
+  *   Optional. The amount of Telegram Stars a user must pay initially and after each subsequent subscription period to
+  *   be a member of the chat using the link
   */
 final case class ChatInviteLink(
   inviteLink: String,
@@ -32,5 +37,7 @@ final case class ChatInviteLink(
   name: Option[String] = Option.empty,
   expireDate: Option[Int] = Option.empty,
   memberLimit: Option[Int] = Option.empty,
-  pendingJoinRequestCount: Option[Int] = Option.empty
+  pendingJoinRequestCount: Option[Int] = Option.empty,
+  subscriptionPeriod: Option[Int] = Option.empty,
+  subscriptionPrice: Option[Int] = Option.empty
 )

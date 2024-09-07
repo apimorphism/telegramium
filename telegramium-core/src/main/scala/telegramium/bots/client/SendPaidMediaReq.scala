@@ -12,11 +12,14 @@ import telegramium.bots.KeyboardMarkup
   *   the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance.
   *   Otherwise, they will be credited to the bot's balance.
   * @param starCount
-  *   The number of Telegram Stars that must be paid to buy access to the media
+  *   The number of Telegram Stars that must be paid to buy access to the media; 1-2500
   * @param businessConnectionId
   *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param media
   *   A JSON-serialized array describing the media to be sent; up to 10 items
+  * @param payload
+  *   Bot-defined paid media payload, 0-128 bytes. This will not be displayed to the user, use it for your internal
+  *   processes.
   * @param caption
   *   Media caption, 0-1024 characters after entities parsing
   * @param parseMode
@@ -41,6 +44,7 @@ final case class SendPaidMediaReq(
   starCount: Int,
   businessConnectionId: Option[String] = Option.empty,
   media: List[InputPaidMedia] = List.empty,
+  payload: Option[String] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,

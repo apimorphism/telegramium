@@ -46,6 +46,8 @@ package telegramium.bots
   *   Optional. New incoming shipping query. Only for invoices with flexible price
   * @param preCheckoutQuery
   *   Optional. New incoming pre-checkout query. Contains full information about checkout
+  * @param purchasedPaidMedia
+  *   Optional. A user purchased paid media with a non-empty payload sent by the bot in a non-channel chat
   * @param poll
   *   Optional. New poll state. Bots receive only updates about manually stopped polls and polls, which are sent by the
   *   bot
@@ -84,6 +86,7 @@ final case class Update(
   callbackQuery: Option[CallbackQuery] = Option.empty,
   shippingQuery: Option[ShippingQuery] = Option.empty,
   preCheckoutQuery: Option[PreCheckoutQuery] = Option.empty,
+  purchasedPaidMedia: Option[PaidMediaPurchased] = Option.empty,
   poll: Option[Poll] = Option.empty,
   pollAnswer: Option[PollAnswer] = Option.empty,
   myChatMember: Option[ChatMemberUpdated] = Option.empty,

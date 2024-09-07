@@ -281,7 +281,7 @@ final case class Message(
   forumTopicReopened: Option[ForumTopicReopened.type] = Option.empty,
   generalForumTopicHidden: Option[GeneralForumTopicHidden.type] = Option.empty,
   generalForumTopicUnhidden: Option[GeneralForumTopicUnhidden.type] = Option.empty,
-  giveawayCreated: Option[GiveawayCreated.type] = Option.empty,
+  giveawayCreated: Option[GiveawayCreated] = Option.empty,
   giveaway: Option[Giveaway] = Option.empty,
   giveawayWinners: Option[GiveawayWinners] = Option.empty,
   giveawayCompleted: Option[GiveawayCompleted] = Option.empty,

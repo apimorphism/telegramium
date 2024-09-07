@@ -576,6 +576,7 @@ object CirceImplicits {
         List(
           "giveaway_message_id" -> x.giveawayMessageId.asJson,
           "user"                -> x.user.asJson,
+          "prize_star_count"    -> x.prizeStarCount.asJson,
           "is_unclaimed"        -> x.isUnclaimed.asJson
         ).filter(!_._2.isNull)
       )
@@ -586,9 +587,15 @@ object CirceImplicits {
       for {
         _giveawayMessageId <- h.get[Int]("giveaway_message_id")
         _user              <- h.get[Option[User]]("user")
+        _prizeStarCount    <- h.get[Option[Int]]("prize_star_count")
         _isUnclaimed       <- h.get[Option[Boolean]]("is_unclaimed")
       } yield {
-        ChatBoostSourceGiveaway(giveawayMessageId = _giveawayMessageId, user = _user, isUnclaimed = _isUnclaimed)
+        ChatBoostSourceGiveaway(
+          giveawayMessageId = _giveawayMessageId,
+          user = _user,
+          prizeStarCount = _prizeStarCount,
+          isUnclaimed = _isUnclaimed
+        )
       }
     }
 
@@ -2583,7 +2590,7 @@ object CirceImplicits {
         _forumTopicReopened           <- h.get[Option[ForumTopicReopened.type]]("forum_topic_reopened")
         _generalForumTopicHidden      <- h.get[Option[GeneralForumTopicHidden.type]]("general_forum_topic_hidden")
         _generalForumTopicUnhidden    <- h.get[Option[GeneralForumTopicUnhidden.type]]("general_forum_topic_unhidden")
-        _giveawayCreated              <- h.get[Option[GiveawayCreated.type]]("giveaway_created")
+        _giveawayCreated              <- h.get[Option[GiveawayCreated]]("giveaway_created")
         _giveaway                     <- h.get[Option[Giveaway]]("giveaway")
         _giveawayWinners              <- h.get[Option[GiveawayWinners]]("giveaway_winners")
         _giveawayCompleted            <- h.get[Option[GiveawayCompleted]]("giveaway_completed")
@@ -3747,9 +3754,10 @@ object CirceImplicits {
     (x: TransactionPartnerUser) => {
       Json.fromFields(
         List(
-          "user"            -> x.user.asJson,
-          "invoice_payload" -> x.invoicePayload.asJson,
-          "paid_media"      -> x.paidMedia.asJson
+          "user"               -> x.user.asJson,
+          "invoice_payload"    -> x.invoicePayload.asJson,
+          "paid_media"         -> x.paidMedia.asJson,
+          "paid_media_payload" -> x.paidMediaPayload.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3757,11 +3765,17 @@ object CirceImplicits {
   implicit lazy val transactionpartneruserDecoder: Decoder[TransactionPartnerUser] =
     Decoder.instance { h =>
       for {
-        _user           <- h.get[User]("user")
-        _invoicePayload <- h.get[Option[String]]("invoice_payload")
-        _paidMedia      <- h.getOrElse[List[iozhik.OpenEnum[PaidMedia]]]("paid_media")(List.empty)
+        _user             <- h.get[User]("user")
+        _invoicePayload   <- h.get[Option[String]]("invoice_payload")
+        _paidMedia        <- h.getOrElse[List[iozhik.OpenEnum[PaidMedia]]]("paid_media")(List.empty)
+        _paidMediaPayload <- h.get[Option[String]]("paid_media_payload")
       } yield {
-        TransactionPartnerUser(user = _user, invoicePayload = _invoicePayload, paidMedia = _paidMedia)
+        TransactionPartnerUser(
+          user = _user,
+          invoicePayload = _invoicePayload,
+          paidMedia = _paidMedia,
+          paidMediaPayload = _paidMediaPayload
+        )
       }
     }
 
@@ -4512,7 +4526,9 @@ object CirceImplicits {
           "name"                       -> x.name.asJson,
           "expire_date"                -> x.expireDate.asJson,
           "member_limit"               -> x.memberLimit.asJson,
-          "pending_join_request_count" -> x.pendingJoinRequestCount.asJson
+          "pending_join_request_count" -> x.pendingJoinRequestCount.asJson,
+          "subscription_period"        -> x.subscriptionPeriod.asJson,
+          "subscription_price"         -> x.subscriptionPrice.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4529,6 +4545,8 @@ object CirceImplicits {
         _expireDate              <- h.get[Option[Int]]("expire_date")
         _memberLimit             <- h.get[Option[Int]]("member_limit")
         _pendingJoinRequestCount <- h.get[Option[Int]]("pending_join_request_count")
+        _subscriptionPeriod      <- h.get[Option[Int]]("subscription_period")
+        _subscriptionPrice       <- h.get[Option[Int]]("subscription_price")
       } yield {
         ChatInviteLink(
           inviteLink = _inviteLink,
@@ -4539,7 +4557,9 @@ object CirceImplicits {
           name = _name,
           expireDate = _expireDate,
           memberLimit = _memberLimit,
-          pendingJoinRequestCount = _pendingJoinRequestCount
+          pendingJoinRequestCount = _pendingJoinRequestCount,
+          subscriptionPeriod = _subscriptionPeriod,
+          subscriptionPrice = _subscriptionPrice
         )
       }
     }
@@ -5215,6 +5235,7 @@ object CirceImplicits {
           "has_public_winners"               -> x.hasPublicWinners.asJson,
           "prize_description"                -> x.prizeDescription.asJson,
           "country_codes"                    -> x.countryCodes.asJson,
+          "prize_star_count"                 -> x.prizeStarCount.asJson,
           "premium_subscription_month_count" -> x.premiumSubscriptionMonthCount.asJson
         ).filter(!_._2.isNull)
       )
@@ -5230,6 +5251,7 @@ object CirceImplicits {
         _hasPublicWinners              <- h.get[Option[Boolean]]("has_public_winners")
         _prizeDescription              <- h.get[Option[String]]("prize_description")
         _countryCodes                  <- h.getOrElse[List[String]]("country_codes")(List.empty)
+        _prizeStarCount                <- h.get[Option[Int]]("prize_star_count")
         _premiumSubscriptionMonthCount <- h.get[Option[Int]]("premium_subscription_month_count")
       } yield {
         Giveaway(
@@ -5240,6 +5262,7 @@ object CirceImplicits {
           hasPublicWinners = _hasPublicWinners,
           prizeDescription = _prizeDescription,
           countryCodes = _countryCodes,
+          prizeStarCount = _prizeStarCount,
           premiumSubscriptionMonthCount = _premiumSubscriptionMonthCount
         )
       }
@@ -5251,7 +5274,8 @@ object CirceImplicits {
         List(
           "winner_count"          -> x.winnerCount.asJson,
           "unclaimed_prize_count" -> x.unclaimedPrizeCount.asJson,
-          "giveaway_message"      -> x.giveawayMessage.asJson
+          "giveaway_message"      -> x.giveawayMessage.asJson,
+          "is_star_giveaway"      -> x.isStarGiveaway.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5262,17 +5286,34 @@ object CirceImplicits {
         _winnerCount         <- h.get[Int]("winner_count")
         _unclaimedPrizeCount <- h.get[Option[Int]]("unclaimed_prize_count")
         _giveawayMessage     <- h.get[Option[Message]]("giveaway_message")
+        _isStarGiveaway      <- h.get[Option[Boolean]]("is_star_giveaway")
       } yield {
         GiveawayCompleted(
           winnerCount = _winnerCount,
           unclaimedPrizeCount = _unclaimedPrizeCount,
-          giveawayMessage = _giveawayMessage
+          giveawayMessage = _giveawayMessage,
+          isStarGiveaway = _isStarGiveaway
         )
       }
     }
 
-  implicit lazy val giveawaycreatedEncoder: Encoder[GiveawayCreated.type] = (_: GiveawayCreated.type) => ().asJson
-  implicit lazy val giveawaycreatedDecoder: Decoder[GiveawayCreated.type] = (_: HCursor) => Right(GiveawayCreated)
+  implicit lazy val giveawaycreatedEncoder: Encoder[GiveawayCreated] =
+    (x: GiveawayCreated) => {
+      Json.fromFields(
+        List(
+          "prize_star_count" -> x.prizeStarCount.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val giveawaycreatedDecoder: Decoder[GiveawayCreated] =
+    Decoder.instance { h =>
+      for {
+        _prizeStarCount <- h.get[Option[Int]]("prize_star_count")
+      } yield {
+        GiveawayCreated(prizeStarCount = _prizeStarCount)
+      }
+    }
 
   implicit lazy val giveawaywinnersEncoder: Encoder[GiveawayWinners] =
     (x: GiveawayWinners) => {
@@ -5284,6 +5325,7 @@ object CirceImplicits {
           "winner_count"                     -> x.winnerCount.asJson,
           "winners"                          -> x.winners.asJson,
           "additional_chat_count"            -> x.additionalChatCount.asJson,
+          "prize_star_count"                 -> x.prizeStarCount.asJson,
           "premium_subscription_month_count" -> x.premiumSubscriptionMonthCount.asJson,
           "unclaimed_prize_count"            -> x.unclaimedPrizeCount.asJson,
           "only_new_members"                 -> x.onlyNewMembers.asJson,
@@ -5302,6 +5344,7 @@ object CirceImplicits {
         _winnerCount                   <- h.get[Int]("winner_count")
         _winners                       <- h.getOrElse[List[User]]("winners")(List.empty)
         _additionalChatCount           <- h.get[Option[Int]]("additional_chat_count")
+        _prizeStarCount                <- h.get[Option[Int]]("prize_star_count")
         _premiumSubscriptionMonthCount <- h.get[Option[Int]]("premium_subscription_month_count")
         _unclaimedPrizeCount           <- h.get[Option[Int]]("unclaimed_prize_count")
         _onlyNewMembers                <- h.get[Option[Boolean]]("only_new_members")
@@ -5315,6 +5358,7 @@ object CirceImplicits {
           winnerCount = _winnerCount,
           winners = _winners,
           additionalChatCount = _additionalChatCount,
+          prizeStarCount = _prizeStarCount,
           premiumSubscriptionMonthCount = _premiumSubscriptionMonthCount,
           unclaimedPrizeCount = _unclaimedPrizeCount,
           onlyNewMembers = _onlyNewMembers,
@@ -5940,6 +5984,26 @@ object CirceImplicits {
         _paidMedia <- h.getOrElse[List[iozhik.OpenEnum[PaidMedia]]]("paid_media")(List.empty)
       } yield {
         PaidMediaInfo(starCount = _starCount, paidMedia = _paidMedia)
+      }
+    }
+
+  implicit lazy val paidmediapurchasedEncoder: Encoder[PaidMediaPurchased] =
+    (x: PaidMediaPurchased) => {
+      Json.fromFields(
+        List(
+          "from"               -> x.from.asJson,
+          "paid_media_payload" -> x.paidMediaPayload.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val paidmediapurchasedDecoder: Decoder[PaidMediaPurchased] =
+    Decoder.instance { h =>
+      for {
+        _from             <- h.get[User]("from")
+        _paidMediaPayload <- h.get[String]("paid_media_payload")
+      } yield {
+        PaidMediaPurchased(from = _from, paidMediaPayload = _paidMediaPayload)
       }
     }
 
@@ -6691,6 +6755,7 @@ object CirceImplicits {
           "callback_query"            -> x.callbackQuery.asJson,
           "shipping_query"            -> x.shippingQuery.asJson,
           "pre_checkout_query"        -> x.preCheckoutQuery.asJson,
+          "purchased_paid_media"      -> x.purchasedPaidMedia.asJson,
           "poll"                      -> x.poll.asJson,
           "poll_answer"               -> x.pollAnswer.asJson,
           "my_chat_member"            -> x.myChatMember.asJson,
@@ -6721,6 +6786,7 @@ object CirceImplicits {
         _callbackQuery           <- h.get[Option[CallbackQuery]]("callback_query")
         _shippingQuery           <- h.get[Option[ShippingQuery]]("shipping_query")
         _preCheckoutQuery        <- h.get[Option[PreCheckoutQuery]]("pre_checkout_query")
+        _purchasedPaidMedia      <- h.get[Option[PaidMediaPurchased]]("purchased_paid_media")
         _poll                    <- h.get[Option[Poll]]("poll")
         _pollAnswer              <- h.get[Option[PollAnswer]]("poll_answer")
         _myChatMember            <- h.get[Option[ChatMemberUpdated]]("my_chat_member")
@@ -6746,6 +6812,7 @@ object CirceImplicits {
           callbackQuery = _callbackQuery,
           shippingQuery = _shippingQuery,
           preCheckoutQuery = _preCheckoutQuery,
+          purchasedPaidMedia = _purchasedPaidMedia,
           poll = _poll,
           pollAnswer = _pollAnswer,
           myChatMember = _myChatMember,
