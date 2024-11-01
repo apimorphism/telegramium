@@ -68,6 +68,9 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
   *   Protects the contents of the sent message from forwarding and saving
+  * @param allowPaidBroadcast
+  *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+  *   per message. The relevant Stars will be withdrawn from the bot's balance
   * @param messageEffectId
   *   Unique identifier of the message effect to be added to the message; for private chats only
   * @param replyParameters
@@ -102,6 +105,7 @@ final case class SendInvoiceReq(
   isFlexible: Option[Boolean] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
+  allowPaidBroadcast: Option[Boolean] = Option.empty,
   messageEffectId: Option[String] = Option.empty,
   replyParameters: Option[ReplyParameters] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty

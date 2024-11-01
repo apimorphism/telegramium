@@ -31,6 +31,8 @@ package telegramium.bots
   *   Optional. If set, pressing the button will prompt the user to select one of their chats of the specified type,
   *   open that chat and insert the bot's username and the specified inline query in the input field. Not supported for
   *   messages sent on behalf of a Telegram Business account.
+  * @param copyText
+  *   Optional. Description of the button that copies the specified text to the clipboard.
   * @param callbackGame
   *   Optional. Description of the game that will be launched when the user presses the button. NOTE: This type of
   *   button must always be the first button in the first row.
@@ -48,6 +50,7 @@ final case class InlineKeyboardButton(
   switchInlineQuery: Option[String] = Option.empty,
   switchInlineQueryCurrentChat: Option[String] = Option.empty,
   switchInlineQueryChosenChat: Option[SwitchInlineQueryChosenChat] = Option.empty,
+  copyText: Option[CopyTextButton] = Option.empty,
   callbackGame: Option[CallbackGame.type] = Option.empty,
   pay: Option[Boolean] = Option.empty
 )

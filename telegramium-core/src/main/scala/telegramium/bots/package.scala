@@ -3723,6 +3723,8 @@ object CirceImplicits {
     case fragment: TransactionPartnerFragment => fragment.asJson.mapObject(_.add("type", Json.fromString("fragment")))
     case telegram_ads: TransactionPartnerTelegramAds.type =>
       telegram_ads.asJson.mapObject(_.add("type", Json.fromString("telegram_ads")))
+    case telegram_api: TransactionPartnerTelegramApi =>
+      telegram_api.asJson.mapObject(_.add("type", Json.fromString("telegram_api")))
     case user: TransactionPartnerUser        => user.asJson.mapObject(_.add("type", Json.fromString("user")))
     case other: TransactionPartnerOther.type => other.asJson.mapObject(_.add("type", Json.fromString("other")))
   }
@@ -3732,6 +3734,7 @@ object CirceImplicits {
     value <- fType match {
       case "fragment"     => Decoder[TransactionPartnerFragment].map(iozhik.OpenEnum.Known(_))
       case "telegram_ads" => Decoder[TransactionPartnerTelegramAds.type].map(iozhik.OpenEnum.Known(_))
+      case "telegram_api" => Decoder[TransactionPartnerTelegramApi].map(iozhik.OpenEnum.Known(_))
       case "user"         => Decoder[TransactionPartnerUser].map(iozhik.OpenEnum.Known(_))
       case "other"        => Decoder[TransactionPartnerOther.type].map(iozhik.OpenEnum.Known(_))
       case unknown        => Decoder.const(iozhik.OpenEnum.Unknown[TransactionPartner](unknown))
@@ -3776,6 +3779,24 @@ object CirceImplicits {
           paidMedia = _paidMedia,
           paidMediaPayload = _paidMediaPayload
         )
+      }
+    }
+
+  implicit lazy val transactionpartnertelegramapiEncoder: Encoder[TransactionPartnerTelegramApi] =
+    (x: TransactionPartnerTelegramApi) => {
+      Json.fromFields(
+        List(
+          "request_count" -> x.requestCount.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val transactionpartnertelegramapiDecoder: Decoder[TransactionPartnerTelegramApi] =
+    Decoder.instance { h =>
+      for {
+        _requestCount <- h.get[Int]("request_count")
+      } yield {
+        TransactionPartnerTelegramApi(requestCount = _requestCount)
       }
     }
 
@@ -4838,6 +4859,24 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val copytextbuttonEncoder: Encoder[CopyTextButton] =
+    (x: CopyTextButton) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val copytextbuttonDecoder: Decoder[CopyTextButton] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[String]("text")
+      } yield {
+        CopyTextButton(text = _text)
+      }
+    }
+
   implicit lazy val diceEncoder: Encoder[Dice] =
     (x: Dice) => {
       Json.fromFields(
@@ -5380,6 +5419,7 @@ object CirceImplicits {
           "switch_inline_query"              -> x.switchInlineQuery.asJson,
           "switch_inline_query_current_chat" -> x.switchInlineQueryCurrentChat.asJson,
           "switch_inline_query_chosen_chat"  -> x.switchInlineQueryChosenChat.asJson,
+          "copy_text"                        -> x.copyText.asJson,
           "callback_game"                    -> x.callbackGame.asJson,
           "pay"                              -> x.pay.asJson
         ).filter(!_._2.isNull)
@@ -5397,6 +5437,7 @@ object CirceImplicits {
         _switchInlineQuery            <- h.get[Option[String]]("switch_inline_query")
         _switchInlineQueryCurrentChat <- h.get[Option[String]]("switch_inline_query_current_chat")
         _switchInlineQueryChosenChat  <- h.get[Option[SwitchInlineQueryChosenChat]]("switch_inline_query_chosen_chat")
+        _copyText                     <- h.get[Option[CopyTextButton]]("copy_text")
         _callbackGame                 <- h.get[Option[CallbackGame.type]]("callback_game")
         _pay                          <- h.get[Option[Boolean]]("pay")
       } yield {
@@ -5409,6 +5450,7 @@ object CirceImplicits {
           switchInlineQuery = _switchInlineQuery,
           switchInlineQueryCurrentChat = _switchInlineQueryCurrentChat,
           switchInlineQueryChosenChat = _switchInlineQueryChosenChat,
+          copyText = _copyText,
           callbackGame = _callbackGame,
           pay = _pay
         )

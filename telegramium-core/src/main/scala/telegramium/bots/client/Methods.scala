@@ -301,6 +301,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -318,6 +321,7 @@ trait Methods {
     showCaptionAboveMedia: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[MessageId] = {
@@ -332,6 +336,7 @@ trait Methods {
       showCaptionAboveMedia,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       replyParameters,
       replyMarkup
     )
@@ -932,12 +937,13 @@ trait Methods {
     MethodReq[Either[Boolean, Message]]("editMessageLiveLocation", req.asJson)
   }
 
-  /** Use this method to edit animation, audio, document, photo, or video messages. If a message is part of a message
-    * album, then it can be edited only to an audio for audio albums, only to a document for document albums and to a
-    * photo or a video otherwise. When an inline message is edited, a new file can't be uploaded; use a previously
-    * uploaded file via its file_id or specify a URL. On success, if the edited message is not an inline message, the
-    * edited Message is returned, otherwise True is returned. Note that business messages that were not sent by the bot
-    * and do not contain an inline keyboard can only be edited within 48 hours from the time they were sent.
+  /** Use this method to edit animation, audio, document, photo, or video messages, or to add media to text messages. If
+    * a message is part of a message album, then it can be edited only to an audio for audio albums, only to a document
+    * for document albums and to a photo or a video otherwise. When an inline message is edited, a new file can't be
+    * uploaded; use a previously uploaded file via its file_id or specify a URL. On success, if the edited message is
+    * not an inline message, the edited Message is returned, otherwise True is returned. Note that business messages
+    * that were not sent by the bot and do not contain an inline keyboard can only be edited within 48 hours from the
+    * time they were sent.
     *
     * @param media
     *   A JSON-serialized object for a new media content of the message
@@ -1690,6 +1696,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -1714,6 +1723,7 @@ trait Methods {
     hasSpoiler: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -1734,6 +1744,7 @@ trait Methods {
       hasSpoiler,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -1783,6 +1794,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -1805,6 +1819,7 @@ trait Methods {
     thumbnail: Option[IFile] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -1823,6 +1838,7 @@ trait Methods {
       thumbnail,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -1881,6 +1897,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -1899,6 +1918,7 @@ trait Methods {
     vcard: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -1913,6 +1933,7 @@ trait Methods {
       vcard,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -1937,6 +1958,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -1952,6 +1976,7 @@ trait Methods {
     emoji: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -1963,6 +1988,7 @@ trait Methods {
       emoji,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -2003,6 +2029,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -2023,6 +2052,7 @@ trait Methods {
     disableContentTypeDetection: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -2039,6 +2069,7 @@ trait Methods {
       disableContentTypeDetection,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -2064,6 +2095,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -2079,6 +2113,7 @@ trait Methods {
     messageThreadId: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
@@ -2090,6 +2125,7 @@ trait Methods {
       messageThreadId,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -2162,6 +2198,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -2196,6 +2235,7 @@ trait Methods {
     isFlexible: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
@@ -2226,6 +2266,7 @@ trait Methods {
       isFlexible,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -2259,6 +2300,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -2279,6 +2323,7 @@ trait Methods {
     proximityAlertRadius: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -2295,6 +2340,7 @@ trait Methods {
       proximityAlertRadius,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -2318,6 +2364,9 @@ trait Methods {
     *   Sends messages silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent messages from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -2330,6 +2379,7 @@ trait Methods {
     media: List[InputMedia] = List.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty
   ): Method[List[Message]] = {
@@ -2340,6 +2390,7 @@ trait Methods {
       media,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters
     )
@@ -2367,6 +2418,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -2385,6 +2439,7 @@ trait Methods {
     linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -2399,6 +2454,7 @@ trait Methods {
       linkPreviewOptions,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -2434,6 +2490,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -2452,6 +2511,7 @@ trait Methods {
     showCaptionAboveMedia: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -2467,6 +2527,7 @@ trait Methods {
       showCaptionAboveMedia,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       replyParameters,
       replyMarkup
     )
@@ -2501,6 +2562,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -2521,6 +2585,7 @@ trait Methods {
     hasSpoiler: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -2537,6 +2602,7 @@ trait Methods {
       hasSpoiler,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -2589,6 +2655,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -2617,6 +2686,7 @@ trait Methods {
     isClosed: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -2641,6 +2711,7 @@ trait Methods {
       isClosed,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -2667,6 +2738,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -2683,6 +2757,7 @@ trait Methods {
     emoji: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -2695,6 +2770,7 @@ trait Methods {
       emoji,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -2735,6 +2811,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -2757,6 +2836,7 @@ trait Methods {
     googlePlaceType: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -2775,6 +2855,7 @@ trait Methods {
       googlePlaceType,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -2825,6 +2906,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -2850,6 +2934,7 @@ trait Methods {
     supportsStreaming: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -2871,6 +2956,7 @@ trait Methods {
       supportsStreaming,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -2909,6 +2995,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -2927,6 +3016,7 @@ trait Methods {
     thumbnail: Option[IFile] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -2941,6 +3031,7 @@ trait Methods {
       thumbnail,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup
@@ -2980,6 +3071,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -2999,6 +3093,7 @@ trait Methods {
     duration: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -3014,6 +3109,7 @@ trait Methods {
       duration,
       disableNotification,
       protectContent,
+      allowPaidBroadcast,
       messageEffectId,
       replyParameters,
       replyMarkup

@@ -26,6 +26,13 @@ final case class TransactionPartnerUser(
   paidMediaPayload: Option[String] = Option.empty
 ) extends TransactionPartner
 
+/** Describes a transaction with payment for paid broadcasting.
+  *
+  * @param requestCount
+  *   The number of successful requests that exceeded regular limits and were therefore billed
+  */
+final case class TransactionPartnerTelegramApi(requestCount: Int) extends TransactionPartner
+
 /** Describes a withdrawal transaction with Fragment.
   *
   * @param withdrawalState
