@@ -7,7 +7,7 @@ object Dependencies {
     val catsEffect       = "3.5.5"
     val circe            = "0.14.10"
     val http4s           = "0.23.29"
-    val blazeHttp4s      = "0.23.16"
+    val blazeHttp4s      = "0.23.17"
     val slf4j            = "2.0.7"
     val logback          = "1.3.7"
     val scalatest        = "3.2.19"
