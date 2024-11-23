@@ -14,6 +14,12 @@ package telegramium.bots
   *   Telegram payment identifier
   * @param providerPaymentChargeId
   *   Provider payment identifier
+  * @param subscriptionExpirationDate
+  *   Optional. Expiration date of the subscription, in Unix time; for recurring payments only
+  * @param isRecurring
+  *   Optional. True, if the payment is a recurring payment for a subscription
+  * @param isFirstRecurring
+  *   Optional. True, if the payment is the first payment for a subscription
   * @param shippingOptionId
   *   Optional. Identifier of the shipping option chosen by the user
   * @param orderInfo
@@ -25,6 +31,9 @@ final case class SuccessfulPayment(
   invoicePayload: String,
   telegramPaymentChargeId: String,
   providerPaymentChargeId: String,
+  subscriptionExpirationDate: Option[Int] = Option.empty,
+  isRecurring: Option[Boolean] = Option.empty,
+  isFirstRecurring: Option[Boolean] = Option.empty,
   shippingOptionId: Option[String] = Option.empty,
   orderInfo: Option[OrderInfo] = Option.empty
 )

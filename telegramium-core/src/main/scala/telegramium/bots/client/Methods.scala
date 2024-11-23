@@ -9,6 +9,7 @@ import telegramium.bots.MessageId
 import telegramium.bots.ChatInviteLink
 import telegramium.bots.ForumTopic
 import telegramium.bots.Message
+import telegramium.bots.Gifts
 import telegramium.bots.BusinessConnection
 import telegramium.bots.ChatFullInfo
 import telegramium.bots.ChatMember
@@ -28,6 +29,7 @@ import telegramium.bots.Update
 import telegramium.bots.UserChatBoosts
 import telegramium.bots.UserProfilePhotos
 import telegramium.bots.WebhookInfo
+import telegramium.bots.PreparedInlineMessage
 import telegramium.bots.Poll
 
 trait Methods {
@@ -479,11 +481,19 @@ trait Methods {
     *   processes.
     * @param currency
     *   Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the link will be created. For payments in
+    *   Telegram Stars only.
     * @param providerToken
     *   Payment provider token, obtained via &#064;BotFather. Pass an empty string for payments in Telegram Stars.
     * @param prices
     *   Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost,
     *   delivery tax, bonus, etc.). Must contain exactly one item for payments in Telegram Stars.
+    * @param subscriptionPeriod
+    *   The number of seconds the subscription will be active for before the next payment. The currency must be set to
+    *   “XTR” (Telegram Stars) if the parameter is used. Currently, it must always be 2592000 (30 days) if specified.
+    *   Any number of subscriptions can be active for a given bot at the same time, including multiple concurrent
+    *   subscriptions from the same user.
     * @param maxTipAmount
     *   The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For
     *   example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it
@@ -525,8 +535,10 @@ trait Methods {
     description: String,
     payload: String,
     currency: String,
+    businessConnectionId: Option[String] = Option.empty,
     providerToken: Option[String] = Option.empty,
     prices: List[LabeledPrice] = List.empty,
+    subscriptionPeriod: Option[Int] = Option.empty,
     maxTipAmount: Option[Int] = Option.empty,
     suggestedTipAmounts: List[Int] = List.empty,
     providerData: Option[String] = Option.empty,
@@ -547,8 +559,10 @@ trait Methods {
       description,
       payload,
       currency,
+      businessConnectionId,
       providerToken,
       prices,
+      subscriptionPeriod,
       maxTipAmount,
       suggestedTipAmounts,
       providerData,
@@ -1049,6 +1063,22 @@ trait Methods {
     MethodReq[Either[Boolean, Message]]("editMessageText", req.asJson)
   }
 
+  /** Allows the bot to cancel or re-enable extension of a subscription paid in Telegram Stars. Returns True on success.
+    *
+    * @param userId
+    *   Identifier of the user whose subscription will be edited
+    * @param telegramPaymentChargeId
+    *   Telegram payment identifier for the subscription
+    * @param isCanceled
+    *   Pass True to cancel extension of the user subscription; the subscription must be active up to the end of the
+    *   current subscription period. Pass False to allow the user to re-enable a subscription that was previously
+    *   canceled by the bot.
+    */
+  def editUserStarSubscription(userId: Long, telegramPaymentChargeId: String, isCanceled: Boolean): Method[Boolean] = {
+    val req = EditUserStarSubscriptionReq(userId, telegramPaymentChargeId, isCanceled)
+    MethodReq[Boolean]("editUserStarSubscription", req.asJson)
+  }
+
   /** Use this method to generate a new primary invite link for a chat; any previously generated primary link is
     * revoked. The bot must be an administrator in the chat for this to work and must have the appropriate administrator
     * rights. Returns the new invite link as String on success.
@@ -1119,6 +1149,13 @@ trait Methods {
   ): Method[List[MessageId]] = {
     val req = ForwardMessagesReq(chatId, fromChatId, messageThreadId, messageIds, disableNotification, protectContent)
     MethodReq[List[MessageId]]("forwardMessages", req.asJson)
+  }
+
+  /** Returns the list of gifts that can be sent by the bot to users. Requires no parameters. Returns a Gifts object.
+    */
+  def getAvailableGifts(): Method[Gifts] = {
+    val req = GetAvailableGiftsReq
+    MethodReq[Gifts]("getAvailableGifts", req.asJson)
   }
 
   /** Use this method to get information about the connection of the bot with a business account. Returns a
@@ -1654,6 +1691,34 @@ trait Methods {
     MethodReq[ChatInviteLink]("revokeChatInviteLink", req.asJson)
   }
 
+  /** Stores a message that can be sent by a user of a Mini App. Returns a PreparedInlineMessage object.
+    *
+    * @param userId
+    *   Unique identifier of the target user that can use the prepared message
+    * @param result
+    *   A JSON-serialized object describing the message to be sent
+    * @param allowUserChats
+    *   Pass True if the message can be sent to private chats with users
+    * @param allowBotChats
+    *   Pass True if the message can be sent to private chats with bots
+    * @param allowGroupChats
+    *   Pass True if the message can be sent to group and supergroup chats
+    * @param allowChannelChats
+    *   Pass True if the message can be sent to channel chats
+    */
+  def savePreparedInlineMessage(
+    userId: Long,
+    result: InlineQueryResult,
+    allowUserChats: Option[Boolean] = Option.empty,
+    allowBotChats: Option[Boolean] = Option.empty,
+    allowGroupChats: Option[Boolean] = Option.empty,
+    allowChannelChats: Option[Boolean] = Option.empty
+  ): Method[PreparedInlineMessage] = {
+    val req =
+      SavePreparedInlineMessageReq(userId, result, allowUserChats, allowBotChats, allowGroupChats, allowChannelChats)
+    MethodReq[PreparedInlineMessage]("savePreparedInlineMessage", req.asJson)
+  }
+
   /** Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On success, the sent
     * Message is returned. Bots can currently send animation files of up to 50 MB in size, this limit may be changed in
     * the future.
@@ -2131,6 +2196,34 @@ trait Methods {
       replyMarkup
     )
     MethodReq[Message]("sendGame", req.asJson)
+  }
+
+  /** Sends a gift to the given user. The gift can't be converted to Telegram Stars by the user. Returns True on
+    * success.
+    *
+    * @param userId
+    *   Unique identifier of the target user that will receive the gift
+    * @param giftId
+    *   Identifier of the gift
+    * @param text
+    *   Text that will be shown along with the gift; 0-255 characters
+    * @param textParseMode
+    *   Mode for parsing entities in the text. See formatting options for more details. Entities other than “bold”,
+    *   “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
+    * @param textEntities
+    *   A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of
+    *   text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and
+    *   “custom_emoji” are ignored.
+    */
+  def sendGift(
+    userId: Long,
+    giftId: String,
+    text: Option[String] = Option.empty,
+    textParseMode: Option[ParseMode] = Option.empty,
+    textEntities: List[MessageEntity] = List.empty
+  ): Method[Boolean] = {
+    val req = SendGiftReq(userId, giftId, text, textParseMode, textEntities)
+    MethodReq[Boolean]("sendGift", req.asJson)
   }
 
   /** Use this method to send invoices. On success, the sent Message is returned.
@@ -3508,6 +3601,25 @@ trait Methods {
   def setStickerSetTitle(name: String, title: String): Method[Boolean] = {
     val req = SetStickerSetTitleReq(name, title)
     MethodReq[Boolean]("setStickerSetTitle", req.asJson)
+  }
+
+  /** Changes the emoji status for a given user that previously allowed the bot to manage their emoji status via the
+    * Mini App method requestEmojiStatusAccess. Returns True on success.
+    *
+    * @param userId
+    *   Unique identifier of the target user
+    * @param emojiStatusCustomEmojiId
+    *   Custom emoji identifier of the emoji status to set. Pass an empty string to remove the status.
+    * @param emojiStatusExpirationDate
+    *   Expiration date of the emoji status, if any
+    */
+  def setUserEmojiStatus(
+    userId: Long,
+    emojiStatusCustomEmojiId: Option[String] = Option.empty,
+    emojiStatusExpirationDate: Option[Int] = Option.empty
+  ): Method[Boolean] = {
+    val req = SetUserEmojiStatusReq(userId, emojiStatusCustomEmojiId, emojiStatusExpirationDate)
+    MethodReq[Boolean]("setUserEmojiStatus", req.asJson)
   }
 
   /** Use this method to specify a URL and receive incoming updates via an outgoing webhook. Whenever there is an update

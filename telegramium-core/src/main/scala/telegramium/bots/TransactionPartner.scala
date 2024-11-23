@@ -14,16 +14,22 @@ case object TransactionPartnerTelegramAds extends TransactionPartner
   *   Information about the user
   * @param invoicePayload
   *   Optional. Bot-specified invoice payload
+  * @param subscriptionPeriod
+  *   Optional. The duration of the paid subscription
   * @param paidMedia
   *   Optional. Information about the paid media bought by the user
   * @param paidMediaPayload
   *   Optional. Bot-specified paid media payload
+  * @param gift
+  *   Optional. The gift sent to the user by the bot
   */
 final case class TransactionPartnerUser(
   user: User,
   invoicePayload: Option[String] = Option.empty,
+  subscriptionPeriod: Option[Int] = Option.empty,
   paidMedia: List[iozhik.OpenEnum[PaidMedia]] = List.empty,
-  paidMediaPayload: Option[String] = Option.empty
+  paidMediaPayload: Option[String] = Option.empty,
+  gift: Option[Gift] = Option.empty
 ) extends TransactionPartner
 
 /** Describes a transaction with payment for paid broadcasting.

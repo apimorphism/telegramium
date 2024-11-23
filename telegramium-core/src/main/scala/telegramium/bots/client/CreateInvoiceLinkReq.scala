@@ -11,11 +11,19 @@ import telegramium.bots.LabeledPrice
   *   processes.
   * @param currency
   *   Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
+  * @param businessConnectionId
+  *   Unique identifier of the business connection on behalf of which the link will be created. For payments in Telegram
+  *   Stars only.
   * @param providerToken
   *   Payment provider token, obtained via &#064;BotFather. Pass an empty string for payments in Telegram Stars.
   * @param prices
   *   Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery
   *   tax, bonus, etc.). Must contain exactly one item for payments in Telegram Stars.
+  * @param subscriptionPeriod
+  *   The number of seconds the subscription will be active for before the next payment. The currency must be set to
+  *   “XTR” (Telegram Stars) if the parameter is used. Currently, it must always be 2592000 (30 days) if specified. Any
+  *   number of subscriptions can be active for a given bot at the same time, including multiple concurrent
+  *   subscriptions from the same user.
   * @param maxTipAmount
   *   The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For
   *   example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it
@@ -57,8 +65,10 @@ final case class CreateInvoiceLinkReq(
   description: String,
   payload: String,
   currency: String,
+  businessConnectionId: Option[String] = Option.empty,
   providerToken: Option[String] = Option.empty,
   prices: List[LabeledPrice] = List.empty,
+  subscriptionPeriod: Option[Int] = Option.empty,
   maxTipAmount: Option[Int] = Option.empty,
   suggestedTipAmounts: List[Int] = List.empty,
   providerData: Option[String] = Option.empty,

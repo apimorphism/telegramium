@@ -268,12 +268,14 @@ object CirceImplicits {
     (x: CreateInvoiceLinkReq) => {
       Json.fromFields(
         List(
+          "business_connection_id"        -> x.businessConnectionId.asJson,
           "title"                         -> x.title.asJson,
           "description"                   -> x.description.asJson,
           "payload"                       -> x.payload.asJson,
           "provider_token"                -> x.providerToken.asJson,
           "currency"                      -> x.currency.asJson,
           "prices"                        -> x.prices.asJson,
+          "subscription_period"           -> x.subscriptionPeriod.asJson,
           "max_tip_amount"                -> x.maxTipAmount.asJson,
           "suggested_tip_amounts"         -> x.suggestedTipAmounts.asJson,
           "provider_data"                 -> x.providerData.asJson,
@@ -549,6 +551,18 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val edituserstarsubscriptionreqEncoder: Encoder[EditUserStarSubscriptionReq] =
+    (x: EditUserStarSubscriptionReq) => {
+      Json.fromFields(
+        List(
+          "user_id"                    -> x.userId.asJson,
+          "telegram_payment_charge_id" -> x.telegramPaymentChargeId.asJson,
+          "is_canceled"                -> x.isCanceled.asJson,
+          "method"                     -> "editUserStarSubscription".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val exportchatinvitelinkreqEncoder: Encoder[ExportChatInviteLinkReq] =
     (x: ExportChatInviteLinkReq) => {
       Json.fromFields(
@@ -588,6 +602,9 @@ object CirceImplicits {
         ).filter(!_._2.isNull)
       )
     }
+
+  implicit lazy val getavailablegiftsreqEncoder: Encoder[GetAvailableGiftsReq.type] = (_: GetAvailableGiftsReq.type) =>
+    ().asJson
 
   implicit lazy val getbusinessconnectionreqEncoder: Encoder[GetBusinessConnectionReq] =
     (x: GetBusinessConnectionReq) => {
@@ -929,6 +946,21 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val savepreparedinlinemessagereqEncoder: Encoder[SavePreparedInlineMessageReq] =
+    (x: SavePreparedInlineMessageReq) => {
+      Json.fromFields(
+        List(
+          "user_id"             -> x.userId.asJson,
+          "result"              -> x.result.asJson,
+          "allow_user_chats"    -> x.allowUserChats.asJson,
+          "allow_bot_chats"     -> x.allowBotChats.asJson,
+          "allow_group_chats"   -> x.allowGroupChats.asJson,
+          "allow_channel_chats" -> x.allowChannelChats.asJson,
+          "method"              -> "savePreparedInlineMessage".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val sendanimationreqEncoder: Encoder[SendAnimationReq] =
     (x: SendAnimationReq) => {
       Json.fromFields(
@@ -1076,6 +1108,20 @@ object CirceImplicits {
           "reply_parameters"       -> x.replyParameters.asJson,
           "reply_markup"           -> x.replyMarkup.asJson,
           "method"                 -> "sendGame".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val sendgiftreqEncoder: Encoder[SendGiftReq] =
+    (x: SendGiftReq) => {
+      Json.fromFields(
+        List(
+          "user_id"         -> x.userId.asJson,
+          "gift_id"         -> x.giftId.asJson,
+          "text"            -> x.text.asJson,
+          "text_parse_mode" -> x.textParseMode.asJson,
+          "text_entities"   -> x.textEntities.asJson,
+          "method"          -> "sendGift".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1631,6 +1677,18 @@ object CirceImplicits {
           "name"   -> x.name.asJson,
           "title"  -> x.title.asJson,
           "method" -> "setStickerSetTitle".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setuseremojistatusreqEncoder: Encoder[SetUserEmojiStatusReq] =
+    (x: SetUserEmojiStatusReq) => {
+      Json.fromFields(
+        List(
+          "user_id"                      -> x.userId.asJson,
+          "emoji_status_custom_emoji_id" -> x.emojiStatusCustomEmojiId.asJson,
+          "emoji_status_expiration_date" -> x.emojiStatusExpirationDate.asJson,
+          "method"                       -> "setUserEmojiStatus".asJson
         ).filter(!_._2.isNull)
       )
     }

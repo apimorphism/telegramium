@@ -3757,10 +3757,12 @@ object CirceImplicits {
     (x: TransactionPartnerUser) => {
       Json.fromFields(
         List(
-          "user"               -> x.user.asJson,
-          "invoice_payload"    -> x.invoicePayload.asJson,
-          "paid_media"         -> x.paidMedia.asJson,
-          "paid_media_payload" -> x.paidMediaPayload.asJson
+          "user"                -> x.user.asJson,
+          "invoice_payload"     -> x.invoicePayload.asJson,
+          "subscription_period" -> x.subscriptionPeriod.asJson,
+          "paid_media"          -> x.paidMedia.asJson,
+          "paid_media_payload"  -> x.paidMediaPayload.asJson,
+          "gift"                -> x.gift.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3768,16 +3770,20 @@ object CirceImplicits {
   implicit lazy val transactionpartneruserDecoder: Decoder[TransactionPartnerUser] =
     Decoder.instance { h =>
       for {
-        _user             <- h.get[User]("user")
-        _invoicePayload   <- h.get[Option[String]]("invoice_payload")
-        _paidMedia        <- h.getOrElse[List[iozhik.OpenEnum[PaidMedia]]]("paid_media")(List.empty)
-        _paidMediaPayload <- h.get[Option[String]]("paid_media_payload")
+        _user               <- h.get[User]("user")
+        _invoicePayload     <- h.get[Option[String]]("invoice_payload")
+        _subscriptionPeriod <- h.get[Option[Int]]("subscription_period")
+        _paidMedia          <- h.getOrElse[List[iozhik.OpenEnum[PaidMedia]]]("paid_media")(List.empty)
+        _paidMediaPayload   <- h.get[Option[String]]("paid_media_payload")
+        _gift               <- h.get[Option[Gift]]("gift")
       } yield {
         TransactionPartnerUser(
           user = _user,
           invoicePayload = _invoicePayload,
+          subscriptionPeriod = _subscriptionPeriod,
           paidMedia = _paidMedia,
-          paidMediaPayload = _paidMediaPayload
+          paidMediaPayload = _paidMediaPayload,
+          gift = _gift
         )
       }
     }
@@ -5263,6 +5269,56 @@ object CirceImplicits {
   implicit lazy val generalforumtopicunhiddenDecoder: Decoder[GeneralForumTopicUnhidden.type] = (_: HCursor) =>
     Right(GeneralForumTopicUnhidden)
 
+  implicit lazy val giftEncoder: Encoder[Gift] =
+    (x: Gift) => {
+      Json.fromFields(
+        List(
+          "id"              -> x.id.asJson,
+          "sticker"         -> x.sticker.asJson,
+          "star_count"      -> x.starCount.asJson,
+          "total_count"     -> x.totalCount.asJson,
+          "remaining_count" -> x.remainingCount.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val giftDecoder: Decoder[Gift] =
+    Decoder.instance { h =>
+      for {
+        _id             <- h.get[String]("id")
+        _sticker        <- h.get[Sticker]("sticker")
+        _starCount      <- h.get[Int]("star_count")
+        _totalCount     <- h.get[Option[Int]]("total_count")
+        _remainingCount <- h.get[Option[Int]]("remaining_count")
+      } yield {
+        Gift(
+          id = _id,
+          sticker = _sticker,
+          starCount = _starCount,
+          totalCount = _totalCount,
+          remainingCount = _remainingCount
+        )
+      }
+    }
+
+  implicit lazy val giftsEncoder: Encoder[Gifts] =
+    (x: Gifts) => {
+      Json.fromFields(
+        List(
+          "gifts" -> x.gifts.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val giftsDecoder: Decoder[Gifts] =
+    Decoder.instance { h =>
+      for {
+        _gifts <- h.getOrElse[List[Gift]]("gifts")(List.empty)
+      } yield {
+        Gifts(gifts = _gifts)
+      }
+    }
+
   implicit lazy val giveawayEncoder: Encoder[Giveaway] =
     (x: Giveaway) => {
       Json.fromFields(
@@ -5532,7 +5588,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _text          <- h.get[String]("text")
-        _textParseMode <- h.get[Option[String]]("text_parse_mode")
+        _textParseMode <- h.get[Option[ParseMode]]("text_parse_mode")
         _textEntities  <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("text_entities")(List.empty)
       } yield {
         InputPollOption(text = _text, textParseMode = _textParseMode, textEntities = _textEntities)
@@ -6268,6 +6324,26 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val preparedinlinemessageEncoder: Encoder[PreparedInlineMessage] =
+    (x: PreparedInlineMessage) => {
+      Json.fromFields(
+        List(
+          "id"              -> x.id.asJson,
+          "expiration_date" -> x.expirationDate.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val preparedinlinemessageDecoder: Decoder[PreparedInlineMessage] =
+    Decoder.instance { h =>
+      for {
+        _id             <- h.get[String]("id")
+        _expirationDate <- h.get[Int]("expiration_date")
+      } yield {
+        PreparedInlineMessage(id = _id, expirationDate = _expirationDate)
+      }
+    }
+
   implicit lazy val proximityalerttriggeredEncoder: Encoder[ProximityAlertTriggered] =
     (x: ProximityAlertTriggered) => {
       Json.fromFields(
@@ -6687,13 +6763,16 @@ object CirceImplicits {
     (x: SuccessfulPayment) => {
       Json.fromFields(
         List(
-          "currency"                   -> x.currency.asJson,
-          "total_amount"               -> x.totalAmount.asJson,
-          "invoice_payload"            -> x.invoicePayload.asJson,
-          "shipping_option_id"         -> x.shippingOptionId.asJson,
-          "order_info"                 -> x.orderInfo.asJson,
-          "telegram_payment_charge_id" -> x.telegramPaymentChargeId.asJson,
-          "provider_payment_charge_id" -> x.providerPaymentChargeId.asJson
+          "currency"                     -> x.currency.asJson,
+          "total_amount"                 -> x.totalAmount.asJson,
+          "invoice_payload"              -> x.invoicePayload.asJson,
+          "subscription_expiration_date" -> x.subscriptionExpirationDate.asJson,
+          "is_recurring"                 -> x.isRecurring.asJson,
+          "is_first_recurring"           -> x.isFirstRecurring.asJson,
+          "shipping_option_id"           -> x.shippingOptionId.asJson,
+          "order_info"                   -> x.orderInfo.asJson,
+          "telegram_payment_charge_id"   -> x.telegramPaymentChargeId.asJson,
+          "provider_payment_charge_id"   -> x.providerPaymentChargeId.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6701,18 +6780,24 @@ object CirceImplicits {
   implicit lazy val successfulpaymentDecoder: Decoder[SuccessfulPayment] =
     Decoder.instance { h =>
       for {
-        _currency                <- h.get[String]("currency")
-        _totalAmount             <- h.get[Int]("total_amount")
-        _invoicePayload          <- h.get[String]("invoice_payload")
-        _shippingOptionId        <- h.get[Option[String]]("shipping_option_id")
-        _orderInfo               <- h.get[Option[OrderInfo]]("order_info")
-        _telegramPaymentChargeId <- h.get[String]("telegram_payment_charge_id")
-        _providerPaymentChargeId <- h.get[String]("provider_payment_charge_id")
+        _currency                   <- h.get[String]("currency")
+        _totalAmount                <- h.get[Int]("total_amount")
+        _invoicePayload             <- h.get[String]("invoice_payload")
+        _subscriptionExpirationDate <- h.get[Option[Int]]("subscription_expiration_date")
+        _isRecurring                <- h.get[Option[Boolean]]("is_recurring")
+        _isFirstRecurring           <- h.get[Option[Boolean]]("is_first_recurring")
+        _shippingOptionId           <- h.get[Option[String]]("shipping_option_id")
+        _orderInfo                  <- h.get[Option[OrderInfo]]("order_info")
+        _telegramPaymentChargeId    <- h.get[String]("telegram_payment_charge_id")
+        _providerPaymentChargeId    <- h.get[String]("provider_payment_charge_id")
       } yield {
         SuccessfulPayment(
           currency = _currency,
           totalAmount = _totalAmount,
           invoicePayload = _invoicePayload,
+          subscriptionExpirationDate = _subscriptionExpirationDate,
+          isRecurring = _isRecurring,
+          isFirstRecurring = _isFirstRecurring,
           shippingOptionId = _shippingOptionId,
           orderInfo = _orderInfo,
           telegramPaymentChargeId = _telegramPaymentChargeId,
