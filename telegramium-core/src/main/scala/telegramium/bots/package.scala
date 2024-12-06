@@ -3725,6 +3725,8 @@ object CirceImplicits {
       telegram_ads.asJson.mapObject(_.add("type", Json.fromString("telegram_ads")))
     case telegram_api: TransactionPartnerTelegramApi =>
       telegram_api.asJson.mapObject(_.add("type", Json.fromString("telegram_api")))
+    case affiliate_program: TransactionPartnerAffiliateProgram =>
+      affiliate_program.asJson.mapObject(_.add("type", Json.fromString("affiliate_program")))
     case user: TransactionPartnerUser        => user.asJson.mapObject(_.add("type", Json.fromString("user")))
     case other: TransactionPartnerOther.type => other.asJson.mapObject(_.add("type", Json.fromString("other")))
   }
@@ -3732,14 +3734,35 @@ object CirceImplicits {
   implicit lazy val transactionpartnerDecoder: Decoder[iozhik.OpenEnum[TransactionPartner]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "fragment"     => Decoder[TransactionPartnerFragment].map(iozhik.OpenEnum.Known(_))
-      case "telegram_ads" => Decoder[TransactionPartnerTelegramAds.type].map(iozhik.OpenEnum.Known(_))
-      case "telegram_api" => Decoder[TransactionPartnerTelegramApi].map(iozhik.OpenEnum.Known(_))
-      case "user"         => Decoder[TransactionPartnerUser].map(iozhik.OpenEnum.Known(_))
-      case "other"        => Decoder[TransactionPartnerOther.type].map(iozhik.OpenEnum.Known(_))
-      case unknown        => Decoder.const(iozhik.OpenEnum.Unknown[TransactionPartner](unknown))
+      case "fragment"          => Decoder[TransactionPartnerFragment].map(iozhik.OpenEnum.Known(_))
+      case "telegram_ads"      => Decoder[TransactionPartnerTelegramAds.type].map(iozhik.OpenEnum.Known(_))
+      case "telegram_api"      => Decoder[TransactionPartnerTelegramApi].map(iozhik.OpenEnum.Known(_))
+      case "affiliate_program" => Decoder[TransactionPartnerAffiliateProgram].map(iozhik.OpenEnum.Known(_))
+      case "user"              => Decoder[TransactionPartnerUser].map(iozhik.OpenEnum.Known(_))
+      case "other"             => Decoder[TransactionPartnerOther.type].map(iozhik.OpenEnum.Known(_))
+      case unknown             => Decoder.const(iozhik.OpenEnum.Unknown[TransactionPartner](unknown))
     }
   } yield value
+
+  implicit lazy val transactionpartneraffiliateprogramEncoder: Encoder[TransactionPartnerAffiliateProgram] =
+    (x: TransactionPartnerAffiliateProgram) => {
+      Json.fromFields(
+        List(
+          "sponsor_user"         -> x.sponsorUser.asJson,
+          "commission_per_mille" -> x.commissionPerMille.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val transactionpartneraffiliateprogramDecoder: Decoder[TransactionPartnerAffiliateProgram] =
+    Decoder.instance { h =>
+      for {
+        _sponsorUser        <- h.get[Option[User]]("sponsor_user")
+        _commissionPerMille <- h.get[Int]("commission_per_mille")
+      } yield {
+        TransactionPartnerAffiliateProgram(sponsorUser = _sponsorUser, commissionPerMille = _commissionPerMille)
+      }
+    }
 
   implicit lazy val transactionpartnerotherEncoder: Encoder[TransactionPartnerOther.type] =
     (_: TransactionPartnerOther.type) => ().asJson
@@ -3758,6 +3781,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "user"                -> x.user.asJson,
+          "affiliate"           -> x.affiliate.asJson,
           "invoice_payload"     -> x.invoicePayload.asJson,
           "subscription_period" -> x.subscriptionPeriod.asJson,
           "paid_media"          -> x.paidMedia.asJson,
@@ -3771,6 +3795,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _user               <- h.get[User]("user")
+        _affiliate          <- h.get[Option[AffiliateInfo]]("affiliate")
         _invoicePayload     <- h.get[Option[String]]("invoice_payload")
         _subscriptionPeriod <- h.get[Option[Int]]("subscription_period")
         _paidMedia          <- h.getOrElse[List[iozhik.OpenEnum[PaidMedia]]]("paid_media")(List.empty)
@@ -3779,6 +3804,7 @@ object CirceImplicits {
       } yield {
         TransactionPartnerUser(
           user = _user,
+          affiliate = _affiliate,
           invoicePayload = _invoicePayload,
           subscriptionPeriod = _subscriptionPeriod,
           paidMedia = _paidMedia,
@@ -3821,6 +3847,38 @@ object CirceImplicits {
         _withdrawalState <- h.get[Option[iozhik.OpenEnum[RevenueWithdrawalState]]]("withdrawal_state")
       } yield {
         TransactionPartnerFragment(withdrawalState = _withdrawalState)
+      }
+    }
+
+  implicit lazy val affiliateinfoEncoder: Encoder[AffiliateInfo] =
+    (x: AffiliateInfo) => {
+      Json.fromFields(
+        List(
+          "affiliate_user"       -> x.affiliateUser.asJson,
+          "affiliate_chat"       -> x.affiliateChat.asJson,
+          "commission_per_mille" -> x.commissionPerMille.asJson,
+          "amount"               -> x.amount.asJson,
+          "nanostar_amount"      -> x.nanostarAmount.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val affiliateinfoDecoder: Decoder[AffiliateInfo] =
+    Decoder.instance { h =>
+      for {
+        _affiliateUser      <- h.get[Option[User]]("affiliate_user")
+        _affiliateChat      <- h.get[Option[Chat]]("affiliate_chat")
+        _commissionPerMille <- h.get[Int]("commission_per_mille")
+        _amount             <- h.get[Int]("amount")
+        _nanostarAmount     <- h.get[Option[Int]]("nanostar_amount")
+      } yield {
+        AffiliateInfo(
+          affiliateUser = _affiliateUser,
+          affiliateChat = _affiliateChat,
+          commissionPerMille = _commissionPerMille,
+          amount = _amount,
+          nanostarAmount = _nanostarAmount
+        )
       }
     }
 
@@ -6605,11 +6663,12 @@ object CirceImplicits {
     (x: StarTransaction) => {
       Json.fromFields(
         List(
-          "id"       -> x.id.asJson,
-          "amount"   -> x.amount.asJson,
-          "date"     -> x.date.asJson,
-          "source"   -> x.source.asJson,
-          "receiver" -> x.receiver.asJson
+          "id"              -> x.id.asJson,
+          "amount"          -> x.amount.asJson,
+          "nanostar_amount" -> x.nanostarAmount.asJson,
+          "date"            -> x.date.asJson,
+          "source"          -> x.source.asJson,
+          "receiver"        -> x.receiver.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6617,13 +6676,21 @@ object CirceImplicits {
   implicit lazy val startransactionDecoder: Decoder[StarTransaction] =
     Decoder.instance { h =>
       for {
-        _id       <- h.get[String]("id")
-        _amount   <- h.get[Int]("amount")
-        _date     <- h.get[Int]("date")
-        _source   <- h.get[Option[iozhik.OpenEnum[TransactionPartner]]]("source")
-        _receiver <- h.get[Option[iozhik.OpenEnum[TransactionPartner]]]("receiver")
+        _id             <- h.get[String]("id")
+        _amount         <- h.get[Int]("amount")
+        _nanostarAmount <- h.get[Option[Int]]("nanostar_amount")
+        _date           <- h.get[Int]("date")
+        _source         <- h.get[Option[iozhik.OpenEnum[TransactionPartner]]]("source")
+        _receiver       <- h.get[Option[iozhik.OpenEnum[TransactionPartner]]]("receiver")
       } yield {
-        StarTransaction(id = _id, amount = _amount, date = _date, source = _source, receiver = _receiver)
+        StarTransaction(
+          id = _id,
+          amount = _amount,
+          nanostarAmount = _nanostarAmount,
+          date = _date,
+          source = _source,
+          receiver = _receiver
+        )
       }
     }
 

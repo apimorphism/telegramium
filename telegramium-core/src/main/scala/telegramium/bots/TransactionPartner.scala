@@ -2,6 +2,17 @@ package telegramium.bots
 
 sealed trait TransactionPartner {}
 
+/** Describes the affiliate program that issued the affiliate commission received via this transaction.
+  *
+  * @param commissionPerMille
+  *   The number of Telegram Stars received by the bot for each 1000 Telegram Stars received by the affiliate program
+  *   sponsor from referred users
+  * @param sponsorUser
+  *   Optional. Information about the bot that sponsored the affiliate program
+  */
+final case class TransactionPartnerAffiliateProgram(commissionPerMille: Int, sponsorUser: Option[User] = Option.empty)
+    extends TransactionPartner
+
 /** Describes a transaction with an unknown source or recipient. */
 case object TransactionPartnerOther extends TransactionPartner
 
@@ -12,6 +23,8 @@ case object TransactionPartnerTelegramAds extends TransactionPartner
   *
   * @param user
   *   Information about the user
+  * @param affiliate
+  *   Optional. Information about the affiliate that received a commission via this transaction
   * @param invoicePayload
   *   Optional. Bot-specified invoice payload
   * @param subscriptionPeriod
@@ -25,6 +38,7 @@ case object TransactionPartnerTelegramAds extends TransactionPartner
   */
 final case class TransactionPartnerUser(
   user: User,
+  affiliate: Option[AffiliateInfo] = Option.empty,
   invoicePayload: Option[String] = Option.empty,
   subscriptionPeriod: Option[Int] = Option.empty,
   paidMedia: List[iozhik.OpenEnum[PaidMedia]] = List.empty,

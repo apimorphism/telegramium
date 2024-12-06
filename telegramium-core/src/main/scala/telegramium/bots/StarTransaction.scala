@@ -7,9 +7,11 @@ package telegramium.bots
   *   transactions. Coincides with SuccessfulPayment.telegram_payment_charge_id for successful incoming payments from
   *   users.
   * @param amount
-  *   Number of Telegram Stars transferred by the transaction
+  *   Integer amount of Telegram Stars transferred by the transaction
   * @param date
   *   Date the transaction was created in Unix time
+  * @param nanostarAmount
+  *   Optional. The number of 1/1000000000 shares of Telegram Stars transferred by the transaction; from 0 to 999999999
   * @param source
   *   Optional. Source of an incoming transaction (e.g., a user purchasing goods or services, Fragment refunding a
   *   failed withdrawal). Only for incoming transactions
@@ -21,6 +23,7 @@ final case class StarTransaction(
   id: String,
   amount: Int,
   date: Int,
+  nanostarAmount: Option[Int] = Option.empty,
   source: Option[iozhik.OpenEnum[TransactionPartner]] = Option.empty,
   receiver: Option[iozhik.OpenEnum[TransactionPartner]] = Option.empty
 )
