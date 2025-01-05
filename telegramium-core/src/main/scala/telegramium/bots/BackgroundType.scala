@@ -20,7 +20,7 @@ final case class BackgroundTypeWallpaper(
   isMoving: Option[Boolean] = Option.empty
 ) extends BackgroundType
 
-/** The background is a PNG or TGV (gzipped subset of SVG with MIME type “application/x-tgwallpattern”) pattern to be
+/** The background is a .PNG or .TGV (gzipped subset of SVG with MIME type “application/x-tgwallpattern”) pattern to be
   * combined with the background fill chosen by the user.
   *
   * @param document

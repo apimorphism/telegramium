@@ -1257,7 +1257,6 @@ object CirceImplicits {
           "input_message_content" -> x.inputMessageContent.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "url"                   -> x.url.asJson,
-          "hide_url"              -> x.hideUrl.asJson,
           "description"           -> x.description.asJson,
           "thumbnail_url"         -> x.thumbnailUrl.asJson,
           "thumbnail_width"       -> x.thumbnailWidth.asJson,
@@ -1274,7 +1273,6 @@ object CirceImplicits {
         _inputMessageContent <- h.get[InputMessageContent]("input_message_content")
         _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
         _url                 <- h.get[Option[String]]("url")
-        _hideUrl             <- h.get[Option[Boolean]]("hide_url")
         _description         <- h.get[Option[String]]("description")
         _thumbnailUrl        <- h.get[Option[String]]("thumbnail_url")
         _thumbnailWidth      <- h.get[Option[Int]]("thumbnail_width")
@@ -1286,7 +1284,6 @@ object CirceImplicits {
           inputMessageContent = _inputMessageContent,
           replyMarkup = _replyMarkup,
           url = _url,
-          hideUrl = _hideUrl,
           description = _description,
           thumbnailUrl = _thumbnailUrl,
           thumbnailWidth = _thumbnailWidth,
@@ -5331,11 +5328,12 @@ object CirceImplicits {
     (x: Gift) => {
       Json.fromFields(
         List(
-          "id"              -> x.id.asJson,
-          "sticker"         -> x.sticker.asJson,
-          "star_count"      -> x.starCount.asJson,
-          "total_count"     -> x.totalCount.asJson,
-          "remaining_count" -> x.remainingCount.asJson
+          "id"                 -> x.id.asJson,
+          "sticker"            -> x.sticker.asJson,
+          "star_count"         -> x.starCount.asJson,
+          "upgrade_star_count" -> x.upgradeStarCount.asJson,
+          "total_count"        -> x.totalCount.asJson,
+          "remaining_count"    -> x.remainingCount.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5343,16 +5341,18 @@ object CirceImplicits {
   implicit lazy val giftDecoder: Decoder[Gift] =
     Decoder.instance { h =>
       for {
-        _id             <- h.get[String]("id")
-        _sticker        <- h.get[Sticker]("sticker")
-        _starCount      <- h.get[Int]("star_count")
-        _totalCount     <- h.get[Option[Int]]("total_count")
-        _remainingCount <- h.get[Option[Int]]("remaining_count")
+        _id               <- h.get[String]("id")
+        _sticker          <- h.get[Sticker]("sticker")
+        _starCount        <- h.get[Int]("star_count")
+        _upgradeStarCount <- h.get[Option[Int]]("upgrade_star_count")
+        _totalCount       <- h.get[Option[Int]]("total_count")
+        _remainingCount   <- h.get[Option[Int]]("remaining_count")
       } yield {
         Gift(
           id = _id,
           sticker = _sticker,
           starCount = _starCount,
+          upgradeStarCount = _upgradeStarCount,
           totalCount = _totalCount,
           remainingCount = _remainingCount
         )

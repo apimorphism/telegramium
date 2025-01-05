@@ -1394,7 +1394,7 @@ trait Methods {
     *   "edited_channel_post", "callback_query"] to only receive updates of these types. See Update for a complete list
     *   of available update types. Specify an empty list to receive all update types except chat_member,
     *   message_reaction, and message_reaction_count (default). If not specified, the previous setting will be used.
-    *   Please note that this parameter doesn't affect updates created before the call to the getUpdates, so unwanted
+    *   Please note that this parameter doesn't affect updates created before the call to getUpdates, so unwanted
     *   updates may be received for a short period of time.
     */
   def getUpdates(
@@ -1598,6 +1598,28 @@ trait Methods {
   def refundStarPayment(userId: Long, telegramPaymentChargeId: String): Method[Boolean] = {
     val req = RefundStarPaymentReq(userId, telegramPaymentChargeId)
     MethodReq[Boolean]("refundStarPayment", req.asJson)
+  }
+
+  /** Removes verification from a chat that is currently verified on behalf of the organization represented by the bot.
+    * Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    */
+  def removeChatVerification(chatId: ChatId): Method[Boolean] = {
+    val req = RemoveChatVerificationReq(chatId)
+    MethodReq[Boolean]("removeChatVerification", req.asJson)
+  }
+
+  /** Removes verification from a user who is currently verified on behalf of the organization represented by the bot.
+    * Returns True on success.
+    *
+    * @param userId
+    *   Unique identifier of the target user
+    */
+  def removeUserVerification(userId: Long): Method[Boolean] = {
+    val req = RemoveUserVerificationReq(userId)
+    MethodReq[Boolean]("removeUserVerification", req.asJson)
   }
 
   /** Use this method to reopen a closed topic in a forum supergroup chat. The bot must be an administrator in the chat
@@ -2205,6 +2227,8 @@ trait Methods {
     *   Unique identifier of the target user that will receive the gift
     * @param giftId
     *   Identifier of the gift
+    * @param payForUpgrade
+    *   Pass True to pay for the gift upgrade from the bot's balance, thereby making the upgrade free for the receiver
     * @param text
     *   Text that will be shown along with the gift; 0-255 characters
     * @param textParseMode
@@ -2218,11 +2242,12 @@ trait Methods {
   def sendGift(
     userId: Long,
     giftId: String,
+    payForUpgrade: Option[Boolean] = Option.empty,
     text: Option[String] = Option.empty,
     textParseMode: Option[ParseMode] = Option.empty,
     textEntities: List[MessageEntity] = List.empty
   ): Method[Boolean] = {
-    val req = SendGiftReq(userId, giftId, text, textParseMode, textEntities)
+    val req = SendGiftReq(userId, giftId, payForUpgrade, text, textParseMode, textEntities)
     MethodReq[Boolean]("sendGift", req.asJson)
   }
 
@@ -3565,12 +3590,12 @@ trait Methods {
     *   User identifier of the sticker set owner
     * @param format
     *   Format of the thumbnail, must be one of “static” for a .WEBP or .PNG image, “animated” for a .TGS animation, or
-    *   “video” for a WEBM video
+    *   “video” for a .WEBM video
     * @param thumbnail
     *   A .WEBP or .PNG image with the thumbnail, must be up to 128 kilobytes in size and have a width and height of
     *   exactly 100px, or a .TGS animation with a thumbnail up to 32 kilobytes in size (see
     *   https://core.telegram.org/stickers#animation-requirements for animated sticker technical requirements), or a
-    *   WEBM video with the thumbnail up to 32 kilobytes in size; see
+    *   .WEBM video with the thumbnail up to 32 kilobytes in size; see
     *   https://core.telegram.org/stickers#video-requirements for video sticker technical requirements. Pass a file_id
     *   as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for
     *   Telegram to get a file from the Internet, or upload a new one using multipart/form-data. Animated and video
@@ -3624,10 +3649,10 @@ trait Methods {
 
   /** Use this method to specify a URL and receive incoming updates via an outgoing webhook. Whenever there is an update
     * for the bot, we will send an HTTPS POST request to the specified URL, containing a JSON-serialized Update. In case
-    * of an unsuccessful request, we will give up after a reasonable amount of attempts. Returns True on success. If
-    * you'd like to make sure that the webhook was set by you, you can specify secret data in the parameter
-    * secret_token. If specified, the request will contain a header “X-Telegram-Bot-Api-Secret-Token” with the secret
-    * token as content.
+    * of an unsuccessful request (a request with response HTTP status code different from 2XY), we will repeat the
+    * request and give up after a reasonable amount of attempts. Returns True on success. If you'd like to make sure
+    * that the webhook was set by you, you can specify secret data in the parameter secret_token. If specified, the
+    * request will contain a header “X-Telegram-Bot-Api-Secret-Token” with the secret token as content.
     *
     * @param url
     *   HTTPS URL to send updates to. Use an empty string to remove webhook integration
@@ -3842,6 +3867,32 @@ trait Methods {
       req.asJson,
       Map("sticker" -> Option(sticker)).collect { case (k, Some(v)) => k -> v }
     )
+  }
+
+  /** Verifies a chat on behalf of the organization which is represented by the bot. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param customDescription
+    *   Custom description for the verification; 0-70 characters. Must be empty if the organization isn't allowed to
+    *   provide a custom verification description.
+    */
+  def verifyChat(chatId: ChatId, customDescription: Option[String] = Option.empty): Method[Boolean] = {
+    val req = VerifyChatReq(chatId, customDescription)
+    MethodReq[Boolean]("verifyChat", req.asJson)
+  }
+
+  /** Verifies a user on behalf of the organization which is represented by the bot. Returns True on success.
+    *
+    * @param userId
+    *   Unique identifier of the target user
+    * @param customDescription
+    *   Custom description for the verification; 0-70 characters. Must be empty if the organization isn't allowed to
+    *   provide a custom verification description.
+    */
+  def verifyUser(userId: Long, customDescription: Option[String] = Option.empty): Method[Boolean] = {
+    val req = VerifyUserReq(userId, customDescription)
+    MethodReq[Boolean]("verifyUser", req.asJson)
   }
 
 }

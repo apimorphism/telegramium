@@ -887,6 +887,26 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val removechatverificationreqEncoder: Encoder[RemoveChatVerificationReq] =
+    (x: RemoveChatVerificationReq) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson,
+          "method"  -> "removeChatVerification".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val removeuserverificationreqEncoder: Encoder[RemoveUserVerificationReq] =
+    (x: RemoveUserVerificationReq) => {
+      Json.fromFields(
+        List(
+          "user_id" -> x.userId.asJson,
+          "method"  -> "removeUserVerification".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val reopenforumtopicreqEncoder: Encoder[ReopenForumTopicReq] =
     (x: ReopenForumTopicReq) => {
       Json.fromFields(
@@ -1118,6 +1138,7 @@ object CirceImplicits {
         List(
           "user_id"         -> x.userId.asJson,
           "gift_id"         -> x.giftId.asJson,
+          "pay_for_upgrade" -> x.payForUpgrade.asJson,
           "text"            -> x.text.asJson,
           "text_parse_mode" -> x.textParseMode.asJson,
           "text_entities"   -> x.textEntities.asJson,
@@ -1820,6 +1841,28 @@ object CirceImplicits {
           "sticker"        -> x.sticker.asJson,
           "sticker_format" -> x.stickerFormat.asJson,
           "method"         -> "uploadStickerFile".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val verifychatreqEncoder: Encoder[VerifyChatReq] =
+    (x: VerifyChatReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"            -> x.chatId.asJson,
+          "custom_description" -> x.customDescription.asJson,
+          "method"             -> "verifyChat".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val verifyuserreqEncoder: Encoder[VerifyUserReq] =
+    (x: VerifyUserReq) => {
+      Json.fromFields(
+        List(
+          "user_id"            -> x.userId.asJson,
+          "custom_description" -> x.customDescription.asJson,
+          "method"             -> "verifyUser".asJson
         ).filter(!_._2.isNull)
       )
     }

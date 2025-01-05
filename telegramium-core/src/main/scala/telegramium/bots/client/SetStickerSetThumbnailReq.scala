@@ -8,11 +8,11 @@ import telegramium.bots.IFile
   *   User identifier of the sticker set owner
   * @param format
   *   Format of the thumbnail, must be one of “static” for a .WEBP or .PNG image, “animated” for a .TGS animation, or
-  *   “video” for a WEBM video
+  *   “video” for a .WEBM video
   * @param thumbnail
   *   A .WEBP or .PNG image with the thumbnail, must be up to 128 kilobytes in size and have a width and height of
   *   exactly 100px, or a .TGS animation with a thumbnail up to 32 kilobytes in size (see
-  *   https://core.telegram.org/stickers#animation-requirements for animated sticker technical requirements), or a WEBM
+  *   https://core.telegram.org/stickers#animation-requirements for animated sticker technical requirements), or a .WEBM
   *   video with the thumbnail up to 32 kilobytes in size; see https://core.telegram.org/stickers#video-requirements for
   *   video sticker technical requirements. Pass a file_id as a String to send a file that already exists on the
   *   Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one

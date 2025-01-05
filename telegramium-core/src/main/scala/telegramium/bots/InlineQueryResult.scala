@@ -9,7 +9,7 @@ sealed trait InlineQueryResult {}
   * @param id
   *   Unique identifier for this result, 1-64 bytes
   * @param gifUrl
-  *   A valid URL for the GIF file. File size must not exceed 1MB
+  *   A valid URL for the GIF file
   * @param thumbnailUrl
   *   URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
   * @param gifWidth
@@ -277,8 +277,6 @@ final case class InlineQueryResultCachedVoice(
   *   Optional. Inline keyboard attached to the message
   * @param url
   *   Optional. URL of the result
-  * @param hideUrl
-  *   Optional. Pass True if you don't want the URL to be shown in the message
   * @param description
   *   Optional. Short description of the result
   * @param thumbnailUrl
@@ -294,7 +292,6 @@ final case class InlineQueryResultArticle(
   inputMessageContent: InputMessageContent,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   url: Option[String] = Option.empty,
-  hideUrl: Option[Boolean] = Option.empty,
   description: Option[String] = Option.empty,
   thumbnailUrl: Option[String] = Option.empty,
   thumbnailWidth: Option[Int] = Option.empty,
@@ -345,7 +342,7 @@ final case class InlineQueryResultAudio(
   * @param id
   *   Unique identifier for this result, 1-64 bytes
   * @param mpeg4Url
-  *   A valid URL for the MPEG4 file. File size must not exceed 1MB
+  *   A valid URL for the MPEG4 file
   * @param thumbnailUrl
   *   URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
   * @param mpeg4Width
