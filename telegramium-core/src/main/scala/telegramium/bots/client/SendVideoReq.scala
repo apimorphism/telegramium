@@ -29,6 +29,12 @@ import telegramium.bots.KeyboardMarkup
   *   320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only
   *   uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using
   *   multipart/form-data under <file_attach_name>.
+  * @param cover
+  *   Cover for the video in the message. Pass a file_id to send a file that exists on the Telegram servers
+  *   (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass
+  *   “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name.
+  * @param startTimestamp
+  *   Start timestamp for the video in the message
   * @param caption
   *   Video caption (may also be used when resending videos by file_id), 0-1024 characters after entities parsing
   * @param parseMode
@@ -66,6 +72,8 @@ final case class SendVideoReq(
   width: Option[Int] = Option.empty,
   height: Option[Int] = Option.empty,
   thumbnail: Option[IFile] = Option.empty,
+  cover: Option[IFile] = Option.empty,
+  startTimestamp: Option[Int] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,

@@ -32,7 +32,7 @@ sealed trait InputMedia {}
   *   Optional. Pass True if the animation needs to be covered with a spoiler animation
   */
 final case class InputMediaAnimation(
-  media: String,
+  media: IFile,
   thumbnail: Option[IFile] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
@@ -62,7 +62,7 @@ final case class InputMediaAnimation(
   *   Optional. Pass True if the photo needs to be covered with a spoiler animation
   */
 final case class InputMediaPhoto(
-  media: String,
+  media: IFile,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
@@ -82,6 +82,12 @@ final case class InputMediaPhoto(
   *   should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused
   *   and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was
   *   uploaded using multipart/form-data under <file_attach_name>.
+  * @param cover
+  *   Optional. Cover for the video in the message. Pass a file_id to send a file that exists on the Telegram servers
+  *   (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass
+  *   “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name.
+  * @param startTimestamp
+  *   Optional. Start timestamp for the video in the message
   * @param caption
   *   Optional. Caption of the video to be sent, 0-1024 characters after entities parsing
   * @param parseMode
@@ -102,8 +108,10 @@ final case class InputMediaPhoto(
   *   Optional. Pass True if the video needs to be covered with a spoiler animation
   */
 final case class InputMediaVideo(
-  media: String,
+  media: IFile,
   thumbnail: Option[IFile] = Option.empty,
+  cover: Option[IFile] = Option.empty,
+  startTimestamp: Option[Int] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
@@ -138,7 +146,7 @@ final case class InputMediaVideo(
   *   Always True, if the document is sent as part of an album.
   */
 final case class InputMediaDocument(
-  media: String,
+  media: IFile,
   thumbnail: Option[IFile] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
@@ -172,7 +180,7 @@ final case class InputMediaDocument(
   *   Optional. Title of the audio
   */
 final case class InputMediaAudio(
-  media: String,
+  media: IFile,
   thumbnail: Option[IFile] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,

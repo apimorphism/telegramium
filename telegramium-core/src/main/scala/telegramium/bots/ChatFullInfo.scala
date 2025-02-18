@@ -72,6 +72,8 @@ package telegramium.bots
   *   Optional. The most recent pinned message (by sending date)
   * @param permissions
   *   Optional. Default chat member permissions, for groups and supergroups
+  * @param canSendGift
+  *   Optional. True, if gifts can be sent to the chat
   * @param canSendPaidMedia
   *   Optional. True, if paid media messages can be sent or forwarded to the channel chat. The field is available only
   *   for channel chats.
@@ -139,6 +141,7 @@ final case class ChatFullInfo(
   inviteLink: Option[String] = Option.empty,
   pinnedMessage: Option[Message] = Option.empty,
   permissions: Option[ChatPermissions] = Option.empty,
+  canSendGift: Option[Boolean] = Option.empty,
   canSendPaidMedia: Option[Boolean] = Option.empty,
   slowModeDelay: Option[Int] = Option.empty,
   unrestrictBoostCount: Option[Int] = Option.empty,

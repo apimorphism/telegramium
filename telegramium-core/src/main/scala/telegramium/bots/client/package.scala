@@ -194,6 +194,7 @@ object CirceImplicits {
           "message_thread_id"        -> x.messageThreadId.asJson,
           "from_chat_id"             -> x.fromChatId.asJson,
           "message_id"               -> x.messageId.asJson,
+          "video_start_timestamp"    -> x.videoStartTimestamp.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
           "caption_entities"         -> x.captionEntities.asJson,
@@ -577,13 +578,14 @@ object CirceImplicits {
     (x: ForwardMessageReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "message_thread_id"    -> x.messageThreadId.asJson,
-          "from_chat_id"         -> x.fromChatId.asJson,
-          "disable_notification" -> x.disableNotification.asJson,
-          "protect_content"      -> x.protectContent.asJson,
-          "message_id"           -> x.messageId.asJson,
-          "method"               -> "forwardMessage".asJson
+          "chat_id"               -> x.chatId.asJson,
+          "message_thread_id"     -> x.messageThreadId.asJson,
+          "from_chat_id"          -> x.fromChatId.asJson,
+          "video_start_timestamp" -> x.videoStartTimestamp.asJson,
+          "disable_notification"  -> x.disableNotification.asJson,
+          "protect_content"       -> x.protectContent.asJson,
+          "message_id"            -> x.messageId.asJson,
+          "method"                -> "forwardMessage".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1137,6 +1139,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "user_id"         -> x.userId.asJson,
+          "chat_id"         -> x.chatId.asJson,
           "gift_id"         -> x.giftId.asJson,
           "pay_for_upgrade" -> x.payForUpgrade.asJson,
           "text"            -> x.text.asJson,
@@ -1386,6 +1389,8 @@ object CirceImplicits {
           "width"                    -> x.width.asJson,
           "height"                   -> x.height.asJson,
           "thumbnail"                -> x.thumbnail.asJson,
+          "cover"                    -> x.cover.asJson,
+          "start_timestamp"          -> x.startTimestamp.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
           "caption_entities"         -> x.captionEntities.asJson,

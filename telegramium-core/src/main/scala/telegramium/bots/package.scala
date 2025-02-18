@@ -1916,7 +1916,7 @@ object CirceImplicits {
   implicit lazy val inputmediaanimationDecoder: Decoder[InputMediaAnimation] =
     Decoder.instance { h =>
       for {
-        _media                 <- h.get[String]("media")
+        _media                 <- h.get[IFile]("media")
         _thumbnail             <- h.get[Option[IFile]]("thumbnail")
         _caption               <- h.get[Option[String]]("caption")
         _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
@@ -1959,7 +1959,7 @@ object CirceImplicits {
   implicit lazy val inputmediaphotoDecoder: Decoder[InputMediaPhoto] =
     Decoder.instance { h =>
       for {
-        _media                 <- h.get[String]("media")
+        _media                 <- h.get[IFile]("media")
         _caption               <- h.get[Option[String]]("caption")
         _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
@@ -1983,6 +1983,8 @@ object CirceImplicits {
         List(
           "media"                    -> x.media.asJson,
           "thumbnail"                -> x.thumbnail.asJson,
+          "cover"                    -> x.cover.asJson,
+          "start_timestamp"          -> x.startTimestamp.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
           "caption_entities"         -> x.captionEntities.asJson,
@@ -1999,8 +2001,10 @@ object CirceImplicits {
   implicit lazy val inputmediavideoDecoder: Decoder[InputMediaVideo] =
     Decoder.instance { h =>
       for {
-        _media                 <- h.get[String]("media")
+        _media                 <- h.get[IFile]("media")
         _thumbnail             <- h.get[Option[IFile]]("thumbnail")
+        _cover                 <- h.get[Option[IFile]]("cover")
+        _startTimestamp        <- h.get[Option[Int]]("start_timestamp")
         _caption               <- h.get[Option[String]]("caption")
         _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
         _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
@@ -2014,6 +2018,8 @@ object CirceImplicits {
         InputMediaVideo(
           media = _media,
           thumbnail = _thumbnail,
+          cover = _cover,
+          startTimestamp = _startTimestamp,
           caption = _caption,
           parseMode = _parseMode,
           captionEntities = _captionEntities,
@@ -2044,7 +2050,7 @@ object CirceImplicits {
   implicit lazy val inputmediadocumentDecoder: Decoder[InputMediaDocument] =
     Decoder.instance { h =>
       for {
-        _media           <- h.get[String]("media")
+        _media           <- h.get[IFile]("media")
         _thumbnail       <- h.get[Option[IFile]]("thumbnail")
         _caption         <- h.get[Option[String]]("caption")
         _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
@@ -2081,7 +2087,7 @@ object CirceImplicits {
   implicit lazy val inputmediaaudioDecoder: Decoder[InputMediaAudio] =
     Decoder.instance { h =>
       for {
-        _media           <- h.get[String]("media")
+        _media           <- h.get[IFile]("media")
         _thumbnail       <- h.get[Option[IFile]]("thumbnail")
         _caption         <- h.get[Option[String]]("caption")
         _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
@@ -2358,7 +2364,7 @@ object CirceImplicits {
   implicit lazy val inputpaidmediaphotoDecoder: Decoder[InputPaidMediaPhoto] =
     Decoder.instance { h =>
       for {
-        _media <- h.get[String]("media")
+        _media <- h.get[IFile]("media")
       } yield {
         InputPaidMediaPhoto(media = _media)
       }
@@ -2370,6 +2376,8 @@ object CirceImplicits {
         List(
           "media"              -> x.media.asJson,
           "thumbnail"          -> x.thumbnail.asJson,
+          "cover"              -> x.cover.asJson,
+          "start_timestamp"    -> x.startTimestamp.asJson,
           "width"              -> x.width.asJson,
           "height"             -> x.height.asJson,
           "duration"           -> x.duration.asJson,
@@ -2381,8 +2389,10 @@ object CirceImplicits {
   implicit lazy val inputpaidmediavideoDecoder: Decoder[InputPaidMediaVideo] =
     Decoder.instance { h =>
       for {
-        _media             <- h.get[String]("media")
+        _media             <- h.get[IFile]("media")
         _thumbnail         <- h.get[Option[IFile]]("thumbnail")
+        _cover             <- h.get[Option[IFile]]("cover")
+        _startTimestamp    <- h.get[Option[Int]]("start_timestamp")
         _width             <- h.get[Option[Int]]("width")
         _height            <- h.get[Option[Int]]("height")
         _duration          <- h.get[Option[Int]]("duration")
@@ -2391,6 +2401,8 @@ object CirceImplicits {
         InputPaidMediaVideo(
           media = _media,
           thumbnail = _thumbnail,
+          cover = _cover,
+          startTimestamp = _startTimestamp,
           width = _width,
           height = _height,
           duration = _duration,
@@ -3720,6 +3732,7 @@ object CirceImplicits {
     case fragment: TransactionPartnerFragment => fragment.asJson.mapObject(_.add("type", Json.fromString("fragment")))
     case telegram_ads: TransactionPartnerTelegramAds.type =>
       telegram_ads.asJson.mapObject(_.add("type", Json.fromString("telegram_ads")))
+    case chat: TransactionPartnerChat => chat.asJson.mapObject(_.add("type", Json.fromString("chat")))
     case telegram_api: TransactionPartnerTelegramApi =>
       telegram_api.asJson.mapObject(_.add("type", Json.fromString("telegram_api")))
     case affiliate_program: TransactionPartnerAffiliateProgram =>
@@ -3733,6 +3746,7 @@ object CirceImplicits {
     value <- fType match {
       case "fragment"          => Decoder[TransactionPartnerFragment].map(iozhik.OpenEnum.Known(_))
       case "telegram_ads"      => Decoder[TransactionPartnerTelegramAds.type].map(iozhik.OpenEnum.Known(_))
+      case "chat"              => Decoder[TransactionPartnerChat].map(iozhik.OpenEnum.Known(_))
       case "telegram_api"      => Decoder[TransactionPartnerTelegramApi].map(iozhik.OpenEnum.Known(_))
       case "affiliate_program" => Decoder[TransactionPartnerAffiliateProgram].map(iozhik.OpenEnum.Known(_))
       case "user"              => Decoder[TransactionPartnerUser].map(iozhik.OpenEnum.Known(_))
@@ -3740,6 +3754,26 @@ object CirceImplicits {
       case unknown             => Decoder.const(iozhik.OpenEnum.Unknown[TransactionPartner](unknown))
     }
   } yield value
+
+  implicit lazy val transactionpartnerchatEncoder: Encoder[TransactionPartnerChat] =
+    (x: TransactionPartnerChat) => {
+      Json.fromFields(
+        List(
+          "chat" -> x.chat.asJson,
+          "gift" -> x.gift.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val transactionpartnerchatDecoder: Decoder[TransactionPartnerChat] =
+    Decoder.instance { h =>
+      for {
+        _chat <- h.get[Chat]("chat")
+        _gift <- h.get[Option[Gift]]("gift")
+      } yield {
+        TransactionPartnerChat(chat = _chat, gift = _gift)
+      }
+    }
 
   implicit lazy val transactionpartneraffiliateprogramEncoder: Encoder[TransactionPartnerAffiliateProgram] =
     (x: TransactionPartnerAffiliateProgram) => {
@@ -4482,6 +4516,7 @@ object CirceImplicits {
           "invite_link"                             -> x.inviteLink.asJson,
           "pinned_message"                          -> x.pinnedMessage.asJson,
           "permissions"                             -> x.permissions.asJson,
+          "can_send_gift"                           -> x.canSendGift.asJson,
           "can_send_paid_media"                     -> x.canSendPaidMedia.asJson,
           "slow_mode_delay"                         -> x.slowModeDelay.asJson,
           "unrestrict_boost_count"                  -> x.unrestrictBoostCount.asJson,
@@ -4533,6 +4568,7 @@ object CirceImplicits {
         _inviteLink                         <- h.get[Option[String]]("invite_link")
         _pinnedMessage                      <- h.get[Option[Message]]("pinned_message")
         _permissions                        <- h.get[Option[ChatPermissions]]("permissions")
+        _canSendGift                        <- h.get[Option[Boolean]]("can_send_gift")
         _canSendPaidMedia                   <- h.get[Option[Boolean]]("can_send_paid_media")
         _slowModeDelay                      <- h.get[Option[Int]]("slow_mode_delay")
         _unrestrictBoostCount               <- h.get[Option[Int]]("unrestrict_boost_count")
@@ -4579,6 +4615,7 @@ object CirceImplicits {
           inviteLink = _inviteLink,
           pinnedMessage = _pinnedMessage,
           permissions = _permissions,
+          canSendGift = _canSendGift,
           canSendPaidMedia = _canSendPaidMedia,
           slowModeDelay = _slowModeDelay,
           unrestrictBoostCount = _unrestrictBoostCount,
@@ -7174,15 +7211,17 @@ object CirceImplicits {
     (x: Video) => {
       Json.fromFields(
         List(
-          "file_id"        -> x.fileId.asJson,
-          "file_unique_id" -> x.fileUniqueId.asJson,
-          "width"          -> x.width.asJson,
-          "height"         -> x.height.asJson,
-          "duration"       -> x.duration.asJson,
-          "thumbnail"      -> x.thumbnail.asJson,
-          "file_name"      -> x.fileName.asJson,
-          "mime_type"      -> x.mimeType.asJson,
-          "file_size"      -> x.fileSize.asJson
+          "file_id"         -> x.fileId.asJson,
+          "file_unique_id"  -> x.fileUniqueId.asJson,
+          "width"           -> x.width.asJson,
+          "height"          -> x.height.asJson,
+          "duration"        -> x.duration.asJson,
+          "thumbnail"       -> x.thumbnail.asJson,
+          "cover"           -> x.cover.asJson,
+          "start_timestamp" -> x.startTimestamp.asJson,
+          "file_name"       -> x.fileName.asJson,
+          "mime_type"       -> x.mimeType.asJson,
+          "file_size"       -> x.fileSize.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -7190,15 +7229,17 @@ object CirceImplicits {
   implicit lazy val videoDecoder: Decoder[Video] =
     Decoder.instance { h =>
       for {
-        _fileId       <- h.get[String]("file_id")
-        _fileUniqueId <- h.get[String]("file_unique_id")
-        _width        <- h.get[Int]("width")
-        _height       <- h.get[Int]("height")
-        _duration     <- h.get[Int]("duration")
-        _thumbnail    <- h.get[Option[PhotoSize]]("thumbnail")
-        _fileName     <- h.get[Option[String]]("file_name")
-        _mimeType     <- h.get[Option[String]]("mime_type")
-        _fileSize     <- h.get[Option[Long]]("file_size")
+        _fileId         <- h.get[String]("file_id")
+        _fileUniqueId   <- h.get[String]("file_unique_id")
+        _width          <- h.get[Int]("width")
+        _height         <- h.get[Int]("height")
+        _duration       <- h.get[Int]("duration")
+        _thumbnail      <- h.get[Option[PhotoSize]]("thumbnail")
+        _cover          <- h.getOrElse[List[PhotoSize]]("cover")(List.empty)
+        _startTimestamp <- h.get[Option[Int]]("start_timestamp")
+        _fileName       <- h.get[Option[String]]("file_name")
+        _mimeType       <- h.get[Option[String]]("mime_type")
+        _fileSize       <- h.get[Option[Long]]("file_size")
       } yield {
         Video(
           fileId = _fileId,
@@ -7207,6 +7248,8 @@ object CirceImplicits {
           height = _height,
           duration = _duration,
           thumbnail = _thumbnail,
+          cover = _cover,
+          startTimestamp = _startTimestamp,
           fileName = _fileName,
           mimeType = _mimeType,
           fileSize = _fileSize

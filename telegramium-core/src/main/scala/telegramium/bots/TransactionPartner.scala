@@ -2,6 +2,15 @@ package telegramium.bots
 
 sealed trait TransactionPartner {}
 
+/** Describes a transaction with a chat.
+  *
+  * @param chat
+  *   Information about the chat
+  * @param gift
+  *   Optional. The gift sent to the chat by the bot
+  */
+final case class TransactionPartnerChat(chat: Chat, gift: Option[Gift] = Option.empty) extends TransactionPartner
+
 /** Describes the affiliate program that issued the affiliate commission received via this transaction.
   *
   * @param commissionPerMille

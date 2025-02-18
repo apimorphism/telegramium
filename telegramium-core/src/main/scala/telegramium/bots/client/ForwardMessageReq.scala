@@ -11,6 +11,8 @@ import telegramium.bots.ChatId
   *   Message identifier in the chat specified in from_chat_id
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+  * @param videoStartTimestamp
+  *   New start timestamp for the forwarded video in the message
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
@@ -21,6 +23,7 @@ final case class ForwardMessageReq(
   fromChatId: ChatId,
   messageId: Int,
   messageThreadId: Option[Int] = Option.empty,
+  videoStartTimestamp: Option[Int] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty
 )

@@ -15,6 +15,10 @@ package telegramium.bots
   *   Duration of the video in seconds as defined by the sender
   * @param thumbnail
   *   Optional. Video thumbnail
+  * @param cover
+  *   Optional. Available sizes of the cover of the video in the message
+  * @param startTimestamp
+  *   Optional. Timestamp in seconds from which the video will play in the message
   * @param fileName
   *   Optional. Original filename as defined by the sender
   * @param mimeType
@@ -31,6 +35,8 @@ final case class Video(
   height: Int,
   duration: Int,
   thumbnail: Option[PhotoSize] = Option.empty,
+  cover: List[PhotoSize] = List.empty,
+  startTimestamp: Option[Int] = Option.empty,
   fileName: Option[String] = Option.empty,
   mimeType: Option[String] = Option.empty,
   fileSize: Option[Long] = Option.empty

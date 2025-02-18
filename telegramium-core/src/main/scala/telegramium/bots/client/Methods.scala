@@ -157,7 +157,7 @@ trait Methods {
     *   Required if ok is True. A JSON-serialized array of available shipping options.
     * @param errorMessage
     *   Required if ok is False. Error message in human readable form that explains why it is impossible to complete the
-    *   order (e.g. "Sorry, delivery to your desired address is unavailable'). Telegram will display this message to the
+    *   order (e.g. “Sorry, delivery to your desired address is unavailable”). Telegram will display this message to the
     *   user.
     */
   def answerShippingQuery(
@@ -290,6 +290,8 @@ trait Methods {
     *   Message identifier in the chat specified in from_chat_id
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param videoStartTimestamp
+    *   New start timestamp for the copied video in the message
     * @param caption
     *   New caption for media, 0-1024 characters after entities parsing. If not specified, the original caption is kept
     * @param parseMode
@@ -317,6 +319,7 @@ trait Methods {
     fromChatId: ChatId,
     messageId: Int,
     messageThreadId: Option[Int] = Option.empty,
+    videoStartTimestamp: Option[Int] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -332,6 +335,7 @@ trait Methods {
       fromChatId,
       messageId,
       messageThreadId,
+      videoStartTimestamp,
       caption,
       parseMode,
       captionEntities,
@@ -1103,6 +1107,8 @@ trait Methods {
     *   Message identifier in the chat specified in from_chat_id
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param videoStartTimestamp
+    *   New start timestamp for the forwarded video in the message
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -1113,10 +1119,19 @@ trait Methods {
     fromChatId: ChatId,
     messageId: Int,
     messageThreadId: Option[Int] = Option.empty,
+    videoStartTimestamp: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty
   ): Method[Message] = {
-    val req = ForwardMessageReq(chatId, fromChatId, messageId, messageThreadId, disableNotification, protectContent)
+    val req = ForwardMessageReq(
+      chatId,
+      fromChatId,
+      messageId,
+      messageThreadId,
+      videoStartTimestamp,
+      disableNotification,
+      protectContent
+    )
     MethodReq[Message]("forwardMessage", req.asJson)
   }
 
@@ -1151,7 +1166,8 @@ trait Methods {
     MethodReq[List[MessageId]]("forwardMessages", req.asJson)
   }
 
-  /** Returns the list of gifts that can be sent by the bot to users. Requires no parameters. Returns a Gifts object.
+  /** Returns the list of gifts that can be sent by the bot to users and channel chats. Requires no parameters. Returns
+    * a Gifts object.
     */
   def getAvailableGifts(): Method[Gifts] = {
     val req = GetAvailableGiftsReq
@@ -2220,17 +2236,20 @@ trait Methods {
     MethodReq[Message]("sendGame", req.asJson)
   }
 
-  /** Sends a gift to the given user. The gift can't be converted to Telegram Stars by the user. Returns True on
-    * success.
+  /** Sends a gift to the given user or channel chat. The gift can't be converted to Telegram Stars by the receiver.
+    * Returns True on success.
     *
-    * @param userId
-    *   Unique identifier of the target user that will receive the gift
     * @param giftId
     *   Identifier of the gift
+    * @param userId
+    *   Required if chat_id is not specified. Unique identifier of the target user who will receive the gift.
+    * @param chatId
+    *   Required if user_id is not specified. Unique identifier for the chat or username of the channel (in the format
+    *   &#064;channelusername) that will receive the gift.
     * @param payForUpgrade
     *   Pass True to pay for the gift upgrade from the bot's balance, thereby making the upgrade free for the receiver
     * @param text
-    *   Text that will be shown along with the gift; 0-255 characters
+    *   Text that will be shown along with the gift; 0-128 characters
     * @param textParseMode
     *   Mode for parsing entities in the text. See formatting options for more details. Entities other than “bold”,
     *   “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
@@ -2240,14 +2259,15 @@ trait Methods {
     *   “custom_emoji” are ignored.
     */
   def sendGift(
-    userId: Long,
     giftId: String,
+    userId: Option[Long] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     payForUpgrade: Option[Boolean] = Option.empty,
     text: Option[String] = Option.empty,
     textParseMode: Option[ParseMode] = Option.empty,
     textEntities: List[MessageEntity] = List.empty
   ): Method[Boolean] = {
-    val req = SendGiftReq(userId, giftId, payForUpgrade, text, textParseMode, textEntities)
+    val req = SendGiftReq(giftId, userId, chatId, payForUpgrade, text, textParseMode, textEntities)
     MethodReq[Boolean]("sendGift", req.asJson)
   }
 
@@ -3007,6 +3027,12 @@ trait Methods {
     *   exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be
     *   only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using
     *   multipart/form-data under <file_attach_name>.
+    * @param cover
+    *   Cover for the video in the message. Pass a file_id to send a file that exists on the Telegram servers
+    *   (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass
+    *   “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name.
+    * @param startTimestamp
+    *   Start timestamp for the video in the message
     * @param caption
     *   Video caption (may also be used when resending videos by file_id), 0-1024 characters after entities parsing
     * @param parseMode
@@ -3044,6 +3070,8 @@ trait Methods {
     width: Option[Int] = Option.empty,
     height: Option[Int] = Option.empty,
     thumbnail: Option[IFile] = Option.empty,
+    cover: Option[IFile] = Option.empty,
+    startTimestamp: Option[Int] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -3066,6 +3094,8 @@ trait Methods {
       width,
       height,
       thumbnail,
+      cover,
+      startTimestamp,
       caption,
       parseMode,
       captionEntities,
@@ -3082,7 +3112,7 @@ trait Methods {
     MethodReq[Message](
       "sendVideo",
       req.asJson,
-      Map("video" -> Option(video), "thumbnail" -> thumbnail).collect { case (k, Some(v)) => k -> v }
+      Map("video" -> Option(video), "thumbnail" -> thumbnail, "cover" -> cover).collect { case (k, Some(v)) => k -> v }
     )
   }
 
@@ -3396,9 +3426,9 @@ trait Methods {
     MethodReq[Either[Boolean, Message]]("setGameScore", req.asJson)
   }
 
-  /** Use this method to change the chosen reactions on a message. Service messages can't be reacted to. Automatically
-    * forwarded messages from a channel to its discussion group have the same available reactions as messages in the
-    * channel. Bots can't use paid reactions. Returns True on success.
+  /** Use this method to change the chosen reactions on a message. Service messages of some types can't be reacted to.
+    * Automatically forwarded messages from a channel to its discussion group have the same available reactions as
+    * messages in the channel. Bots can't use paid reactions. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
