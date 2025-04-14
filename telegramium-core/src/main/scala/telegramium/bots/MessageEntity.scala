@@ -160,6 +160,15 @@ final case class HashtagMessageEntity(offset: Int, length: Int) extends MessageE
   */
 final case class TextMentionMessageEntity(offset: Int, length: Int, user: User) extends MessageEntity
 
+/** url
+  *
+  * @param offset
+  *   Offset in UTF-16 code units to the start of the entity
+  * @param length
+  *   Length of the entity in UTF-16 code units
+  */
+final case class UrlMessageEntity(offset: Int, length: Int) extends MessageEntity
+
 /** text_link
   *
   * @param offset
@@ -170,15 +179,6 @@ final case class TextMentionMessageEntity(offset: Int, length: Int, user: User) 
   *   URL that will be opened after user taps on the text
   */
 final case class TextLinkMessageEntity(offset: Int, length: Int, url: String) extends MessageEntity
-
-/** url
-  *
-  * @param offset
-  *   Offset in UTF-16 code units to the start of the entity
-  * @param length
-  *   Length of the entity in UTF-16 code units
-  */
-final case class UrlMessageEntity(offset: Int, length: Int) extends MessageEntity
 
 /** phone_number
   *

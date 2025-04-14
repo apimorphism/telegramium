@@ -524,6 +524,24 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val chatmemberleftEncoder: Encoder[ChatMemberLeft] =
+    (x: ChatMemberLeft) => {
+      Json.fromFields(
+        List(
+          "user" -> x.user.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatmemberleftDecoder: Decoder[ChatMemberLeft] =
+    Decoder.instance { h =>
+      for {
+        _user <- h.get[User]("user")
+      } yield {
+        ChatMemberLeft(user = _user)
+      }
+    }
+
   implicit lazy val chatmemberadministratorEncoder: Encoder[ChatMemberAdministrator] =
     (x: ChatMemberAdministrator) => {
       Json.fromFields(
@@ -592,24 +610,6 @@ object CirceImplicits {
           canManageTopics = _canManageTopics,
           customTitle = _customTitle
         )
-      }
-    }
-
-  implicit lazy val chatmemberleftEncoder: Encoder[ChatMemberLeft] =
-    (x: ChatMemberLeft) => {
-      Json.fromFields(
-        List(
-          "user" -> x.user.asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val chatmemberleftDecoder: Decoder[ChatMemberLeft] =
-    Decoder.instance { h =>
-      for {
-        _user <- h.get[User]("user")
-      } yield {
-        ChatMemberLeft(user = _user)
       }
     }
 
@@ -1320,6 +1320,56 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val inputprofilephotoEncoder: Encoder[InputProfilePhoto] = {
+    case static: InputProfilePhotoStatic     => static.asJson.mapObject(_.add("type", Json.fromString("static")))
+    case animated: InputProfilePhotoAnimated => animated.asJson.mapObject(_.add("type", Json.fromString("animated")))
+  }
+
+  implicit lazy val inputprofilephotoanimatedEncoder: Encoder[InputProfilePhotoAnimated] =
+    (x: InputProfilePhotoAnimated) => {
+      Json.fromFields(
+        List(
+          "animation"            -> x.animation.asJson,
+          "main_frame_timestamp" -> x.mainFrameTimestamp.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputprofilephotostaticEncoder: Encoder[InputProfilePhotoStatic] =
+    (x: InputProfilePhotoStatic) => {
+      Json.fromFields(
+        List(
+          "photo" -> x.photo.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputstorycontentEncoder: Encoder[InputStoryContent] = {
+    case photo: InputStoryContentPhoto => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case video: InputStoryContentVideo => video.asJson.mapObject(_.add("type", Json.fromString("video")))
+  }
+
+  implicit lazy val inputstorycontentphotoEncoder: Encoder[InputStoryContentPhoto] =
+    (x: InputStoryContentPhoto) => {
+      Json.fromFields(
+        List(
+          "photo" -> x.photo.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputstorycontentvideoEncoder: Encoder[InputStoryContentVideo] =
+    (x: InputStoryContentVideo) => {
+      Json.fromFields(
+        List(
+          "video"                 -> x.video.asJson,
+          "duration"              -> x.duration.asJson,
+          "cover_frame_timestamp" -> x.coverFrameTimestamp.asJson,
+          "is_animation"          -> x.isAnimation.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val maybeinaccessiblemessageEncoder: Encoder[MaybeInaccessibleMessage] = {
     case x: Message             => x.asJson
     case x: InaccessibleMessage => x.asJson
@@ -1361,6 +1411,7 @@ object CirceImplicits {
           "is_from_offline"                   -> x.isFromOffline.asJson,
           "media_group_id"                    -> x.mediaGroupId.asJson,
           "author_signature"                  -> x.authorSignature.asJson,
+          "paid_star_count"                   -> x.paidStarCount.asJson,
           "text"                              -> x.text.asJson,
           "entities"                          -> x.entities.asJson,
           "link_preview_options"              -> x.linkPreviewOptions.asJson,
@@ -1402,6 +1453,8 @@ object CirceImplicits {
           "refunded_payment"                  -> x.refundedPayment.asJson,
           "users_shared"                      -> x.usersShared.asJson,
           "chat_shared"                       -> x.chatShared.asJson,
+          "gift"                              -> x.gift.asJson,
+          "unique_gift"                       -> x.uniqueGift.asJson,
           "connected_website"                 -> x.connectedWebsite.asJson,
           "write_access_allowed"              -> x.writeAccessAllowed.asJson,
           "passport_data"                     -> x.passportData.asJson,
@@ -1418,6 +1471,7 @@ object CirceImplicits {
           "giveaway"                          -> x.giveaway.asJson,
           "giveaway_winners"                  -> x.giveawayWinners.asJson,
           "giveaway_completed"                -> x.giveawayCompleted.asJson,
+          "paid_message_price_changed"        -> x.paidMessagePriceChanged.asJson,
           "video_chat_scheduled"              -> x.videoChatScheduled.asJson,
           "video_chat_started"                -> x.videoChatStarted.asJson,
           "video_chat_ended"                  -> x.videoChatEnded.asJson,
@@ -1453,6 +1507,7 @@ object CirceImplicits {
         _isFromOffline         <- h.get[Option[Boolean]]("is_from_offline")
         _mediaGroupId          <- h.get[Option[String]]("media_group_id")
         _authorSignature       <- h.get[Option[String]]("author_signature")
+        _paidStarCount         <- h.get[Option[Int]]("paid_star_count")
         _text                  <- h.get[Option[String]]("text")
         _entities              <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
         _linkPreviewOptions    <- h.get[Option[LinkPreviewOptions]]("link_preview_options")
@@ -1496,6 +1551,8 @@ object CirceImplicits {
         _refundedPayment              <- h.get[Option[RefundedPayment]]("refunded_payment")
         _usersShared                  <- h.get[Option[UsersShared]]("users_shared")
         _chatShared                   <- h.get[Option[ChatShared]]("chat_shared")
+        _gift                         <- h.get[Option[GiftInfo]]("gift")
+        _uniqueGift                   <- h.get[Option[UniqueGiftInfo]]("unique_gift")
         _connectedWebsite             <- h.get[Option[String]]("connected_website")
         _writeAccessAllowed           <- h.get[Option[WriteAccessAllowed]]("write_access_allowed")
         _passportData                 <- h.get[Option[PassportData]]("passport_data")
@@ -1512,6 +1569,7 @@ object CirceImplicits {
         _giveaway                     <- h.get[Option[Giveaway]]("giveaway")
         _giveawayWinners              <- h.get[Option[GiveawayWinners]]("giveaway_winners")
         _giveawayCompleted            <- h.get[Option[GiveawayCompleted]]("giveaway_completed")
+        _paidMessagePriceChanged      <- h.get[Option[PaidMessagePriceChanged]]("paid_message_price_changed")
         _videoChatScheduled           <- h.get[Option[VideoChatScheduled]]("video_chat_scheduled")
         _videoChatStarted             <- h.get[Option[VideoChatStarted.type]]("video_chat_started")
         _videoChatEnded               <- h.get[Option[VideoChatEnded]]("video_chat_ended")
@@ -1542,6 +1600,7 @@ object CirceImplicits {
           isFromOffline = _isFromOffline,
           mediaGroupId = _mediaGroupId,
           authorSignature = _authorSignature,
+          paidStarCount = _paidStarCount,
           text = _text,
           entities = _entities,
           linkPreviewOptions = _linkPreviewOptions,
@@ -1583,6 +1642,8 @@ object CirceImplicits {
           refundedPayment = _refundedPayment,
           usersShared = _usersShared,
           chatShared = _chatShared,
+          gift = _gift,
+          uniqueGift = _uniqueGift,
           connectedWebsite = _connectedWebsite,
           writeAccessAllowed = _writeAccessAllowed,
           passportData = _passportData,
@@ -1599,6 +1660,7 @@ object CirceImplicits {
           giveaway = _giveaway,
           giveawayWinners = _giveawayWinners,
           giveawayCompleted = _giveawayCompleted,
+          paidMessagePriceChanged = _paidMessagePriceChanged,
           videoChatScheduled = _videoChatScheduled,
           videoChatStarted = _videoChatStarted,
           videoChatEnded = _videoChatEnded,
@@ -2057,6 +2119,26 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val urlmessageentityEncoder: Encoder[UrlMessageEntity] =
+    (x: UrlMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val urlmessageentityDecoder: Decoder[UrlMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        UrlMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
   implicit lazy val textlinkmessageentityEncoder: Encoder[TextLinkMessageEntity] =
     (x: TextLinkMessageEntity) => {
       Json.fromFields(
@@ -2076,26 +2158,6 @@ object CirceImplicits {
         _url    <- h.get[String]("url")
       } yield {
         TextLinkMessageEntity(offset = _offset, length = _length, url = _url)
-      }
-    }
-
-  implicit lazy val urlmessageentityEncoder: Encoder[UrlMessageEntity] =
-    (x: UrlMessageEntity) => {
-      Json.fromFields(
-        List(
-          "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val urlmessageentityDecoder: Decoder[UrlMessageEntity] =
-    Decoder.instance { h =>
-      for {
-        _offset <- h.get[Int]("offset")
-        _length <- h.get[Int]("length")
-      } yield {
-        UrlMessageEntity(offset = _offset, length = _length)
       }
     }
 
@@ -2221,6 +2283,111 @@ object CirceImplicits {
         _authorSignature <- h.get[Option[String]]("author_signature")
       } yield {
         MessageOriginChat(date = _date, senderChat = _senderChat, authorSignature = _authorSignature)
+      }
+    }
+
+  implicit lazy val ownedgiftEncoder: Encoder[OwnedGift] = {
+    case regular: OwnedGiftRegular => regular.asJson.mapObject(_.add("type", Json.fromString("regular")))
+    case unique: OwnedGiftUnique   => unique.asJson.mapObject(_.add("type", Json.fromString("unique")))
+  }
+
+  implicit lazy val ownedgiftDecoder: Decoder[iozhik.OpenEnum[OwnedGift]] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "regular" => Decoder[OwnedGiftRegular].map(iozhik.OpenEnum.Known(_))
+      case "unique"  => Decoder[OwnedGiftUnique].map(iozhik.OpenEnum.Known(_))
+      case unknown   => Decoder.const(iozhik.OpenEnum.Unknown[OwnedGift](unknown))
+    }
+  } yield value
+
+  implicit lazy val ownedgiftuniqueEncoder: Encoder[OwnedGiftUnique] =
+    (x: OwnedGiftUnique) => {
+      Json.fromFields(
+        List(
+          "gift"                -> x.gift.asJson,
+          "owned_gift_id"       -> x.ownedGiftId.asJson,
+          "sender_user"         -> x.senderUser.asJson,
+          "send_date"           -> x.sendDate.asJson,
+          "is_saved"            -> x.isSaved.asJson,
+          "can_be_transferred"  -> x.canBeTransferred.asJson,
+          "transfer_star_count" -> x.transferStarCount.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val ownedgiftuniqueDecoder: Decoder[OwnedGiftUnique] =
+    Decoder.instance { h =>
+      for {
+        _gift              <- h.get[UniqueGift]("gift")
+        _ownedGiftId       <- h.get[Option[String]]("owned_gift_id")
+        _senderUser        <- h.get[Option[User]]("sender_user")
+        _sendDate          <- h.get[Int]("send_date")
+        _isSaved           <- h.get[Option[Boolean]]("is_saved")
+        _canBeTransferred  <- h.get[Option[Boolean]]("can_be_transferred")
+        _transferStarCount <- h.get[Option[Int]]("transfer_star_count")
+      } yield {
+        OwnedGiftUnique(
+          gift = _gift,
+          ownedGiftId = _ownedGiftId,
+          senderUser = _senderUser,
+          sendDate = _sendDate,
+          isSaved = _isSaved,
+          canBeTransferred = _canBeTransferred,
+          transferStarCount = _transferStarCount
+        )
+      }
+    }
+
+  implicit lazy val ownedgiftregularEncoder: Encoder[OwnedGiftRegular] =
+    (x: OwnedGiftRegular) => {
+      Json.fromFields(
+        List(
+          "gift"                       -> x.gift.asJson,
+          "owned_gift_id"              -> x.ownedGiftId.asJson,
+          "sender_user"                -> x.senderUser.asJson,
+          "send_date"                  -> x.sendDate.asJson,
+          "text"                       -> x.text.asJson,
+          "entities"                   -> x.entities.asJson,
+          "is_private"                 -> x.isPrivate.asJson,
+          "is_saved"                   -> x.isSaved.asJson,
+          "can_be_upgraded"            -> x.canBeUpgraded.asJson,
+          "was_refunded"               -> x.wasRefunded.asJson,
+          "convert_star_count"         -> x.convertStarCount.asJson,
+          "prepaid_upgrade_star_count" -> x.prepaidUpgradeStarCount.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val ownedgiftregularDecoder: Decoder[OwnedGiftRegular] =
+    Decoder.instance { h =>
+      for {
+        _gift                    <- h.get[Gift]("gift")
+        _ownedGiftId             <- h.get[Option[String]]("owned_gift_id")
+        _senderUser              <- h.get[Option[User]]("sender_user")
+        _sendDate                <- h.get[Int]("send_date")
+        _text                    <- h.get[Option[String]]("text")
+        _entities                <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
+        _isPrivate               <- h.get[Option[Boolean]]("is_private")
+        _isSaved                 <- h.get[Option[Boolean]]("is_saved")
+        _canBeUpgraded           <- h.get[Option[Boolean]]("can_be_upgraded")
+        _wasRefunded             <- h.get[Option[Boolean]]("was_refunded")
+        _convertStarCount        <- h.get[Option[Int]]("convert_star_count")
+        _prepaidUpgradeStarCount <- h.get[Option[Int]]("prepaid_upgrade_star_count")
+      } yield {
+        OwnedGiftRegular(
+          gift = _gift,
+          ownedGiftId = _ownedGiftId,
+          senderUser = _senderUser,
+          sendDate = _sendDate,
+          text = _text,
+          entities = _entities,
+          isPrivate = _isPrivate,
+          isSaved = _isSaved,
+          canBeUpgraded = _canBeUpgraded,
+          wasRefunded = _wasRefunded,
+          convertStarCount = _convertStarCount,
+          prepaidUpgradeStarCount = _prepaidUpgradeStarCount
+        )
       }
     }
 
@@ -2521,6 +2688,67 @@ object CirceImplicits {
   implicit lazy val revenuewithdrawalstatefailedDecoder: Decoder[RevenueWithdrawalStateFailed.type] = (_: HCursor) =>
     Right(RevenueWithdrawalStateFailed)
 
+  implicit lazy val storyareatypeEncoder: Encoder[StoryAreaType] = {
+    case unique_gift: StoryAreaTypeUniqueGift =>
+      unique_gift.asJson.mapObject(_.add("type", Json.fromString("unique_gift")))
+    case location: StoryAreaTypeLocation => location.asJson.mapObject(_.add("type", Json.fromString("location")))
+    case suggested_reaction: StoryAreaTypeSuggestedReaction =>
+      suggested_reaction.asJson.mapObject(_.add("type", Json.fromString("suggested_reaction")))
+    case link: StoryAreaTypeLink       => link.asJson.mapObject(_.add("type", Json.fromString("link")))
+    case weather: StoryAreaTypeWeather => weather.asJson.mapObject(_.add("type", Json.fromString("weather")))
+  }
+
+  implicit lazy val storyareatypelinkEncoder: Encoder[StoryAreaTypeLink] =
+    (x: StoryAreaTypeLink) => {
+      Json.fromFields(
+        List(
+          "url" -> x.url.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val storyareatypelocationEncoder: Encoder[StoryAreaTypeLocation] =
+    (x: StoryAreaTypeLocation) => {
+      Json.fromFields(
+        List(
+          "latitude"  -> x.latitude.asJson,
+          "longitude" -> x.longitude.asJson,
+          "address"   -> x.address.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val storyareatypeweatherEncoder: Encoder[StoryAreaTypeWeather] =
+    (x: StoryAreaTypeWeather) => {
+      Json.fromFields(
+        List(
+          "temperature"      -> x.temperature.asJson,
+          "emoji"            -> x.emoji.asJson,
+          "background_color" -> x.backgroundColor.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val storyareatypeuniquegiftEncoder: Encoder[StoryAreaTypeUniqueGift] =
+    (x: StoryAreaTypeUniqueGift) => {
+      Json.fromFields(
+        List(
+          "name" -> x.name.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val storyareatypesuggestedreactionEncoder: Encoder[StoryAreaTypeSuggestedReaction] =
+    (x: StoryAreaTypeSuggestedReaction) => {
+      Json.fromFields(
+        List(
+          "reaction_type" -> x.reactionType.asJson,
+          "is_dark"       -> x.isDark.asJson,
+          "is_flipped"    -> x.isFlipped.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val transactionpartnerEncoder: Encoder[TransactionPartner] = {
     case fragment: TransactionPartnerFragment => fragment.asJson.mapObject(_.add("type", Json.fromString("fragment")))
     case telegram_ads: TransactionPartnerTelegramAds.type =>
@@ -2604,13 +2832,15 @@ object CirceImplicits {
     (x: TransactionPartnerUser) => {
       Json.fromFields(
         List(
-          "user"                -> x.user.asJson,
-          "affiliate"           -> x.affiliate.asJson,
-          "invoice_payload"     -> x.invoicePayload.asJson,
-          "subscription_period" -> x.subscriptionPeriod.asJson,
-          "paid_media"          -> x.paidMedia.asJson,
-          "paid_media_payload"  -> x.paidMediaPayload.asJson,
-          "gift"                -> x.gift.asJson
+          "transaction_type"              -> x.transactionType.asJson,
+          "user"                          -> x.user.asJson,
+          "affiliate"                     -> x.affiliate.asJson,
+          "invoice_payload"               -> x.invoicePayload.asJson,
+          "subscription_period"           -> x.subscriptionPeriod.asJson,
+          "paid_media"                    -> x.paidMedia.asJson,
+          "paid_media_payload"            -> x.paidMediaPayload.asJson,
+          "gift"                          -> x.gift.asJson,
+          "premium_subscription_duration" -> x.premiumSubscriptionDuration.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2618,22 +2848,26 @@ object CirceImplicits {
   implicit lazy val transactionpartneruserDecoder: Decoder[TransactionPartnerUser] =
     Decoder.instance { h =>
       for {
-        _user               <- h.get[User]("user")
-        _affiliate          <- h.get[Option[AffiliateInfo]]("affiliate")
-        _invoicePayload     <- h.get[Option[String]]("invoice_payload")
-        _subscriptionPeriod <- h.get[Option[Int]]("subscription_period")
-        _paidMedia          <- h.getOrElse[List[iozhik.OpenEnum[PaidMedia]]]("paid_media")(List.empty)
-        _paidMediaPayload   <- h.get[Option[String]]("paid_media_payload")
-        _gift               <- h.get[Option[Gift]]("gift")
+        _transactionType             <- h.get[String]("transaction_type")
+        _user                        <- h.get[User]("user")
+        _affiliate                   <- h.get[Option[AffiliateInfo]]("affiliate")
+        _invoicePayload              <- h.get[Option[String]]("invoice_payload")
+        _subscriptionPeriod          <- h.get[Option[Int]]("subscription_period")
+        _paidMedia                   <- h.getOrElse[List[iozhik.OpenEnum[PaidMedia]]]("paid_media")(List.empty)
+        _paidMediaPayload            <- h.get[Option[String]]("paid_media_payload")
+        _gift                        <- h.get[Option[Gift]]("gift")
+        _premiumSubscriptionDuration <- h.get[Option[Int]]("premium_subscription_duration")
       } yield {
         TransactionPartnerUser(
+          transactionType = _transactionType,
           user = _user,
           affiliate = _affiliate,
           invoicePayload = _invoicePayload,
           subscriptionPeriod = _subscriptionPeriod,
           paidMedia = _paidMedia,
           paidMediaPayload = _paidMediaPayload,
-          gift = _gift
+          gift = _gift,
+          premiumSubscriptionDuration = _premiumSubscriptionDuration
         )
       }
     }
@@ -2671,6 +2905,35 @@ object CirceImplicits {
         _withdrawalState <- h.get[Option[iozhik.OpenEnum[RevenueWithdrawalState]]]("withdrawal_state")
       } yield {
         TransactionPartnerFragment(withdrawalState = _withdrawalState)
+      }
+    }
+
+  implicit lazy val acceptedgifttypesEncoder: Encoder[AcceptedGiftTypes] =
+    (x: AcceptedGiftTypes) => {
+      Json.fromFields(
+        List(
+          "unlimited_gifts"      -> x.unlimitedGifts.asJson,
+          "limited_gifts"        -> x.limitedGifts.asJson,
+          "unique_gifts"         -> x.uniqueGifts.asJson,
+          "premium_subscription" -> x.premiumSubscription.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val acceptedgifttypesDecoder: Decoder[AcceptedGiftTypes] =
+    Decoder.instance { h =>
+      for {
+        _unlimitedGifts      <- h.get[Boolean]("unlimited_gifts")
+        _limitedGifts        <- h.get[Boolean]("limited_gifts")
+        _uniqueGifts         <- h.get[Boolean]("unique_gifts")
+        _premiumSubscription <- h.get[Boolean]("premium_subscription")
+      } yield {
+        AcceptedGiftTypes(
+          unlimitedGifts = _unlimitedGifts,
+          limitedGifts = _limitedGifts,
+          uniqueGifts = _uniqueGifts,
+          premiumSubscription = _premiumSubscription
+        )
       }
     }
 
@@ -2890,6 +3153,65 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val businessbotrightsEncoder: Encoder[BusinessBotRights] =
+    (x: BusinessBotRights) => {
+      Json.fromFields(
+        List(
+          "can_reply"                      -> x.canReply.asJson,
+          "can_read_messages"              -> x.canReadMessages.asJson,
+          "can_delete_outgoing_messages"   -> x.canDeleteOutgoingMessages.asJson,
+          "can_delete_all_messages"        -> x.canDeleteAllMessages.asJson,
+          "can_edit_name"                  -> x.canEditName.asJson,
+          "can_edit_bio"                   -> x.canEditBio.asJson,
+          "can_edit_profile_photo"         -> x.canEditProfilePhoto.asJson,
+          "can_edit_username"              -> x.canEditUsername.asJson,
+          "can_change_gift_settings"       -> x.canChangeGiftSettings.asJson,
+          "can_view_gifts_and_stars"       -> x.canViewGiftsAndStars.asJson,
+          "can_convert_gifts_to_stars"     -> x.canConvertGiftsToStars.asJson,
+          "can_transfer_and_upgrade_gifts" -> x.canTransferAndUpgradeGifts.asJson,
+          "can_transfer_stars"             -> x.canTransferStars.asJson,
+          "can_manage_stories"             -> x.canManageStories.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val businessbotrightsDecoder: Decoder[BusinessBotRights] =
+    Decoder.instance { h =>
+      for {
+        _canReply                   <- h.get[Option[Boolean]]("can_reply")
+        _canReadMessages            <- h.get[Option[Boolean]]("can_read_messages")
+        _canDeleteOutgoingMessages  <- h.get[Option[Boolean]]("can_delete_outgoing_messages")
+        _canDeleteAllMessages       <- h.get[Option[Boolean]]("can_delete_all_messages")
+        _canEditName                <- h.get[Option[Boolean]]("can_edit_name")
+        _canEditBio                 <- h.get[Option[Boolean]]("can_edit_bio")
+        _canEditProfilePhoto        <- h.get[Option[Boolean]]("can_edit_profile_photo")
+        _canEditUsername            <- h.get[Option[Boolean]]("can_edit_username")
+        _canChangeGiftSettings      <- h.get[Option[Boolean]]("can_change_gift_settings")
+        _canViewGiftsAndStars       <- h.get[Option[Boolean]]("can_view_gifts_and_stars")
+        _canConvertGiftsToStars     <- h.get[Option[Boolean]]("can_convert_gifts_to_stars")
+        _canTransferAndUpgradeGifts <- h.get[Option[Boolean]]("can_transfer_and_upgrade_gifts")
+        _canTransferStars           <- h.get[Option[Boolean]]("can_transfer_stars")
+        _canManageStories           <- h.get[Option[Boolean]]("can_manage_stories")
+      } yield {
+        BusinessBotRights(
+          canReply = _canReply,
+          canReadMessages = _canReadMessages,
+          canDeleteOutgoingMessages = _canDeleteOutgoingMessages,
+          canDeleteAllMessages = _canDeleteAllMessages,
+          canEditName = _canEditName,
+          canEditBio = _canEditBio,
+          canEditProfilePhoto = _canEditProfilePhoto,
+          canEditUsername = _canEditUsername,
+          canChangeGiftSettings = _canChangeGiftSettings,
+          canViewGiftsAndStars = _canViewGiftsAndStars,
+          canConvertGiftsToStars = _canConvertGiftsToStars,
+          canTransferAndUpgradeGifts = _canTransferAndUpgradeGifts,
+          canTransferStars = _canTransferStars,
+          canManageStories = _canManageStories
+        )
+      }
+    }
+
   implicit lazy val businessconnectionEncoder: Encoder[BusinessConnection] =
     (x: BusinessConnection) => {
       Json.fromFields(
@@ -2898,7 +3220,7 @@ object CirceImplicits {
           "user"         -> x.user.asJson,
           "user_chat_id" -> x.userChatId.asJson,
           "date"         -> x.date.asJson,
-          "can_reply"    -> x.canReply.asJson,
+          "rights"       -> x.rights.asJson,
           "is_enabled"   -> x.isEnabled.asJson
         ).filter(!_._2.isNull)
       )
@@ -2911,7 +3233,7 @@ object CirceImplicits {
         _user       <- h.get[User]("user")
         _userChatId <- h.get[Long]("user_chat_id")
         _date       <- h.get[Int]("date")
-        _canReply   <- h.get[Boolean]("can_reply")
+        _rights     <- h.get[Option[BusinessBotRights]]("rights")
         _isEnabled  <- h.get[Boolean]("is_enabled")
       } yield {
         BusinessConnection(
@@ -2919,7 +3241,7 @@ object CirceImplicits {
           user = _user,
           userChatId = _userChatId,
           date = _date,
-          canReply = _canReply,
+          rights = _rights,
           isEnabled = _isEnabled
         )
       }
@@ -3309,7 +3631,7 @@ object CirceImplicits {
           "invite_link"                             -> x.inviteLink.asJson,
           "pinned_message"                          -> x.pinnedMessage.asJson,
           "permissions"                             -> x.permissions.asJson,
-          "can_send_gift"                           -> x.canSendGift.asJson,
+          "accepted_gift_types"                     -> x.acceptedGiftTypes.asJson,
           "can_send_paid_media"                     -> x.canSendPaidMedia.asJson,
           "slow_mode_delay"                         -> x.slowModeDelay.asJson,
           "unrestrict_boost_count"                  -> x.unrestrictBoostCount.asJson,
@@ -3361,7 +3683,7 @@ object CirceImplicits {
         _inviteLink                         <- h.get[Option[String]]("invite_link")
         _pinnedMessage                      <- h.get[Option[Message]]("pinned_message")
         _permissions                        <- h.get[Option[ChatPermissions]]("permissions")
-        _canSendGift                        <- h.get[Option[Boolean]]("can_send_gift")
+        _acceptedGiftTypes                  <- h.get[AcceptedGiftTypes]("accepted_gift_types")
         _canSendPaidMedia                   <- h.get[Option[Boolean]]("can_send_paid_media")
         _slowModeDelay                      <- h.get[Option[Int]]("slow_mode_delay")
         _unrestrictBoostCount               <- h.get[Option[Int]]("unrestrict_boost_count")
@@ -3408,7 +3730,7 @@ object CirceImplicits {
           inviteLink = _inviteLink,
           pinnedMessage = _pinnedMessage,
           permissions = _permissions,
-          canSendGift = _canSendGift,
+          acceptedGiftTypes = _acceptedGiftTypes,
           canSendPaidMedia = _canSendPaidMedia,
           slowModeDelay = _slowModeDelay,
           unrestrictBoostCount = _unrestrictBoostCount,
@@ -4189,6 +4511,47 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val giftinfoEncoder: Encoder[GiftInfo] =
+    (x: GiftInfo) => {
+      Json.fromFields(
+        List(
+          "gift"                       -> x.gift.asJson,
+          "owned_gift_id"              -> x.ownedGiftId.asJson,
+          "convert_star_count"         -> x.convertStarCount.asJson,
+          "prepaid_upgrade_star_count" -> x.prepaidUpgradeStarCount.asJson,
+          "can_be_upgraded"            -> x.canBeUpgraded.asJson,
+          "text"                       -> x.text.asJson,
+          "entities"                   -> x.entities.asJson,
+          "is_private"                 -> x.isPrivate.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val giftinfoDecoder: Decoder[GiftInfo] =
+    Decoder.instance { h =>
+      for {
+        _gift                    <- h.get[Gift]("gift")
+        _ownedGiftId             <- h.get[Option[String]]("owned_gift_id")
+        _convertStarCount        <- h.get[Option[Int]]("convert_star_count")
+        _prepaidUpgradeStarCount <- h.get[Option[Int]]("prepaid_upgrade_star_count")
+        _canBeUpgraded           <- h.get[Option[Boolean]]("can_be_upgraded")
+        _text                    <- h.get[Option[String]]("text")
+        _entities                <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
+        _isPrivate               <- h.get[Option[Boolean]]("is_private")
+      } yield {
+        GiftInfo(
+          gift = _gift,
+          ownedGiftId = _ownedGiftId,
+          convertStarCount = _convertStarCount,
+          prepaidUpgradeStarCount = _prepaidUpgradeStarCount,
+          canBeUpgraded = _canBeUpgraded,
+          text = _text,
+          entities = _entities,
+          isPrivate = _isPrivate
+        )
+      }
+    }
+
   implicit lazy val giftsEncoder: Encoder[Gifts] =
     (x: Gifts) => {
       Json.fromFields(
@@ -4640,6 +5003,18 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val locationaddressEncoder: Encoder[LocationAddress] =
+    (x: LocationAddress) => {
+      Json.fromFields(
+        List(
+          "country_code" -> x.countryCode.asJson,
+          "state"        -> x.state.asJson,
+          "city"         -> x.city.asJson,
+          "street"       -> x.street.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val loginurlEncoder: Encoder[LoginUrl] =
     (x: LoginUrl) => {
       Json.fromFields(
@@ -4815,6 +5190,28 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val ownedgiftsEncoder: Encoder[OwnedGifts] =
+    (x: OwnedGifts) => {
+      Json.fromFields(
+        List(
+          "total_count" -> x.totalCount.asJson,
+          "gifts"       -> x.gifts.asJson,
+          "next_offset" -> x.nextOffset.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val ownedgiftsDecoder: Decoder[OwnedGifts] =
+    Decoder.instance { h =>
+      for {
+        _totalCount <- h.get[Int]("total_count")
+        _gifts      <- h.getOrElse[List[iozhik.OpenEnum[OwnedGift]]]("gifts")(List.empty)
+        _nextOffset <- h.get[Option[String]]("next_offset")
+      } yield {
+        OwnedGifts(totalCount = _totalCount, gifts = _gifts, nextOffset = _nextOffset)
+      }
+    }
+
   implicit lazy val paidmediainfoEncoder: Encoder[PaidMediaInfo] =
     (x: PaidMediaInfo) => {
       Json.fromFields(
@@ -4852,6 +5249,24 @@ object CirceImplicits {
         _paidMediaPayload <- h.get[String]("paid_media_payload")
       } yield {
         PaidMediaPurchased(from = _from, paidMediaPayload = _paidMediaPayload)
+      }
+    }
+
+  implicit lazy val paidmessagepricechangedEncoder: Encoder[PaidMessagePriceChanged] =
+    (x: PaidMessagePriceChanged) => {
+      Json.fromFields(
+        List(
+          "paid_message_star_count" -> x.paidMessageStarCount.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val paidmessagepricechangedDecoder: Decoder[PaidMessagePriceChanged] =
+    Decoder.instance { h =>
+      for {
+        _paidMessageStarCount <- h.get[Int]("paid_message_star_count")
+      } yield {
+        PaidMessagePriceChanged(paidMessageStarCount = _paidMessageStarCount)
       }
     }
 
@@ -5307,6 +5722,26 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val staramountEncoder: Encoder[StarAmount] =
+    (x: StarAmount) => {
+      Json.fromFields(
+        List(
+          "amount"          -> x.amount.asJson,
+          "nanostar_amount" -> x.nanostarAmount.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val staramountDecoder: Decoder[StarAmount] =
+    Decoder.instance { h =>
+      for {
+        _amount         <- h.get[Int]("amount")
+        _nanostarAmount <- h.get[Option[Int]]("nanostar_amount")
+      } yield {
+        StarAmount(amount = _amount, nanostarAmount = _nanostarAmount)
+      }
+    }
+
   implicit lazy val startransactionEncoder: Encoder[StarTransaction] =
     (x: StarTransaction) => {
       Json.fromFields(
@@ -5474,6 +5909,30 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val storyareaEncoder: Encoder[StoryArea] =
+    (x: StoryArea) => {
+      Json.fromFields(
+        List(
+          "position" -> x.position.asJson,
+          "type"     -> x.`type`.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val storyareapositionEncoder: Encoder[StoryAreaPosition] =
+    (x: StoryAreaPosition) => {
+      Json.fromFields(
+        List(
+          "x_percentage"             -> x.xPercentage.asJson,
+          "y_percentage"             -> x.yPercentage.asJson,
+          "width_percentage"         -> x.widthPercentage.asJson,
+          "height_percentage"        -> x.heightPercentage.asJson,
+          "rotation_angle"           -> x.rotationAngle.asJson,
+          "corner_radius_percentage" -> x.cornerRadiusPercentage.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val successfulpaymentEncoder: Encoder[SuccessfulPayment] =
     (x: SuccessfulPayment) => {
       Json.fromFields(
@@ -5574,6 +6033,165 @@ object CirceImplicits {
         _isManual <- h.get[Option[Boolean]]("is_manual")
       } yield {
         TextQuote(text = _text, entities = _entities, position = _position, isManual = _isManual)
+      }
+    }
+
+  implicit lazy val uniquegiftEncoder: Encoder[UniqueGift] =
+    (x: UniqueGift) => {
+      Json.fromFields(
+        List(
+          "base_name" -> x.baseName.asJson,
+          "name"      -> x.name.asJson,
+          "number"    -> x.number.asJson,
+          "model"     -> x.model.asJson,
+          "symbol"    -> x.symbol.asJson,
+          "backdrop"  -> x.backdrop.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val uniquegiftDecoder: Decoder[UniqueGift] =
+    Decoder.instance { h =>
+      for {
+        _baseName <- h.get[String]("base_name")
+        _name     <- h.get[String]("name")
+        _number   <- h.get[Int]("number")
+        _model    <- h.get[UniqueGiftModel]("model")
+        _symbol   <- h.get[UniqueGiftSymbol]("symbol")
+        _backdrop <- h.get[UniqueGiftBackdrop]("backdrop")
+      } yield {
+        UniqueGift(
+          baseName = _baseName,
+          name = _name,
+          number = _number,
+          model = _model,
+          symbol = _symbol,
+          backdrop = _backdrop
+        )
+      }
+    }
+
+  implicit lazy val uniquegiftbackdropEncoder: Encoder[UniqueGiftBackdrop] =
+    (x: UniqueGiftBackdrop) => {
+      Json.fromFields(
+        List(
+          "name"             -> x.name.asJson,
+          "colors"           -> x.colors.asJson,
+          "rarity_per_mille" -> x.rarityPerMille.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val uniquegiftbackdropDecoder: Decoder[UniqueGiftBackdrop] =
+    Decoder.instance { h =>
+      for {
+        _name           <- h.get[String]("name")
+        _colors         <- h.get[UniqueGiftBackdropColors]("colors")
+        _rarityPerMille <- h.get[Int]("rarity_per_mille")
+      } yield {
+        UniqueGiftBackdrop(name = _name, colors = _colors, rarityPerMille = _rarityPerMille)
+      }
+    }
+
+  implicit lazy val uniquegiftbackdropcolorsEncoder: Encoder[UniqueGiftBackdropColors] =
+    (x: UniqueGiftBackdropColors) => {
+      Json.fromFields(
+        List(
+          "center_color" -> x.centerColor.asJson,
+          "edge_color"   -> x.edgeColor.asJson,
+          "symbol_color" -> x.symbolColor.asJson,
+          "text_color"   -> x.textColor.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val uniquegiftbackdropcolorsDecoder: Decoder[UniqueGiftBackdropColors] =
+    Decoder.instance { h =>
+      for {
+        _centerColor <- h.get[Int]("center_color")
+        _edgeColor   <- h.get[Int]("edge_color")
+        _symbolColor <- h.get[Int]("symbol_color")
+        _textColor   <- h.get[Int]("text_color")
+      } yield {
+        UniqueGiftBackdropColors(
+          centerColor = _centerColor,
+          edgeColor = _edgeColor,
+          symbolColor = _symbolColor,
+          textColor = _textColor
+        )
+      }
+    }
+
+  implicit lazy val uniquegiftinfoEncoder: Encoder[UniqueGiftInfo] =
+    (x: UniqueGiftInfo) => {
+      Json.fromFields(
+        List(
+          "gift"                -> x.gift.asJson,
+          "origin"              -> x.origin.asJson,
+          "owned_gift_id"       -> x.ownedGiftId.asJson,
+          "transfer_star_count" -> x.transferStarCount.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val uniquegiftinfoDecoder: Decoder[UniqueGiftInfo] =
+    Decoder.instance { h =>
+      for {
+        _gift              <- h.get[UniqueGift]("gift")
+        _origin            <- h.get[String]("origin")
+        _ownedGiftId       <- h.get[Option[String]]("owned_gift_id")
+        _transferStarCount <- h.get[Option[Int]]("transfer_star_count")
+      } yield {
+        UniqueGiftInfo(
+          gift = _gift,
+          origin = _origin,
+          ownedGiftId = _ownedGiftId,
+          transferStarCount = _transferStarCount
+        )
+      }
+    }
+
+  implicit lazy val uniquegiftmodelEncoder: Encoder[UniqueGiftModel] =
+    (x: UniqueGiftModel) => {
+      Json.fromFields(
+        List(
+          "name"             -> x.name.asJson,
+          "sticker"          -> x.sticker.asJson,
+          "rarity_per_mille" -> x.rarityPerMille.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val uniquegiftmodelDecoder: Decoder[UniqueGiftModel] =
+    Decoder.instance { h =>
+      for {
+        _name           <- h.get[String]("name")
+        _sticker        <- h.get[Sticker]("sticker")
+        _rarityPerMille <- h.get[Int]("rarity_per_mille")
+      } yield {
+        UniqueGiftModel(name = _name, sticker = _sticker, rarityPerMille = _rarityPerMille)
+      }
+    }
+
+  implicit lazy val uniquegiftsymbolEncoder: Encoder[UniqueGiftSymbol] =
+    (x: UniqueGiftSymbol) => {
+      Json.fromFields(
+        List(
+          "name"             -> x.name.asJson,
+          "sticker"          -> x.sticker.asJson,
+          "rarity_per_mille" -> x.rarityPerMille.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val uniquegiftsymbolDecoder: Decoder[UniqueGiftSymbol] =
+    Decoder.instance { h =>
+      for {
+        _name           <- h.get[String]("name")
+        _sticker        <- h.get[Sticker]("sticker")
+        _rarityPerMille <- h.get[Int]("rarity_per_mille")
+      } yield {
+        UniqueGiftSymbol(name = _name, sticker = _sticker, rarityPerMille = _rarityPerMille)
       }
     }
 

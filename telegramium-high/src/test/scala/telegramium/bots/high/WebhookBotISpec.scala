@@ -238,9 +238,7 @@ class WebhookBotISpec
         .when(sendMessageRequest("onBusinessConnection"))
         .respond(sendMessageResponse)
       verifyResult(
-        testUpdate.copy(businessConnection =
-          BusinessConnection("1", testUser, testChat.id, 0, canReply = false, isEnabled = false).some
-        ),
+        testUpdate.copy(businessConnection = BusinessConnection("1", testUser, testChat.id, 0, isEnabled = false).some),
         "onBusinessConnectionReply"
       )
     }

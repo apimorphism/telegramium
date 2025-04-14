@@ -13,16 +13,16 @@ package telegramium.bots
   *   identifier.
   * @param date
   *   Date the connection was established in Unix time
-  * @param canReply
-  *   True, if the bot can act on behalf of the business account in chats that were active in the last 24 hours
   * @param isEnabled
   *   True, if the connection is active
+  * @param rights
+  *   Optional. Rights of the business bot
   */
 final case class BusinessConnection(
   id: String,
   user: User,
   userChatId: Long,
   date: Int,
-  canReply: Boolean,
-  isEnabled: Boolean
+  isEnabled: Boolean,
+  rights: Option[BusinessBotRights] = Option.empty
 )

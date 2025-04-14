@@ -10,7 +10,7 @@ import telegramium.bots.ChatId
   *   2592000 (30 days).
   * @param subscriptionPrice
   *   The amount of Telegram Stars a user must pay initially and after each subsequent subscription period to be a
-  *   member of the chat; 1-2500
+  *   member of the chat; 1-10000
   * @param name
   *   Invite link name; 0-32 characters
   */
