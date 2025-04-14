@@ -41,16 +41,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val responseDecoder: Decoder[Response] =
-    Decoder.instance { h =>
-      for {
-        _ok          <- h.get[Boolean]("ok")
-        _description <- h.get[Option[String]]("description")
-      } yield {
-        Response(ok = _ok, description = _description)
-      }
-    }
-
   implicit lazy val addstickertosetreqEncoder: Encoder[AddStickerToSetReq] =
     (x: AddStickerToSetReq) => {
       Json.fromFields(

@@ -16,17 +16,6 @@ object CirceImplicits {
     case EmojiBowling     => EmojiBowling.asJson
   }
 
-  implicit lazy val emojiDecoder: Decoder[Emoji] = {
-    List[Decoder[Emoji]](
-      emojidiceDecoder.widen,
-      emojidartsDecoder.widen,
-      emojibasketballDecoder.widen,
-      emojifootballDecoder.widen,
-      emojislotmachineDecoder.widen,
-      emojibowlingDecoder.widen
-    ).reduceLeft(_ or _)
-  }
-
   implicit lazy val emojidiceEncoder: Encoder[EmojiDice.type] = (_: EmojiDice.type) => "🎲".asJson
 
   implicit lazy val emojidiceDecoder: Decoder[EmojiDice.type] =
@@ -63,14 +52,6 @@ object CirceImplicits {
     case Html      => Html.asJson
   }
 
-  implicit lazy val parsemodeDecoder: Decoder[ParseMode] = {
-    List[Decoder[ParseMode]](
-      markdownDecoder.widen,
-      markdown2Decoder.widen,
-      htmlDecoder.widen
-    ).reduceLeft(_ or _)
-  }
-
   implicit lazy val markdownEncoder: Encoder[Markdown.type] = (_: Markdown.type) => "Markdown".asJson
 
   implicit lazy val markdownDecoder: Decoder[Markdown.type] =
@@ -91,13 +72,6 @@ object CirceImplicits {
     case x: ChatStrId => x.asJson
   }
 
-  implicit lazy val chatidDecoder: Decoder[ChatId] = {
-    List[Decoder[ChatId]](
-      chatintidDecoder.widen,
-      chatstridDecoder.widen
-    ).reduceLeft(_ or _)
-  }
-
   implicit lazy val chatintidEncoder: Encoder[ChatIntId] = (x: ChatIntId) => x.id.asJson
   implicit lazy val chatintidDecoder: Decoder[ChatIntId] = Decoder[Long].map(ChatIntId.apply)
   implicit lazy val chatstridEncoder: Encoder[ChatStrId] = (x: ChatStrId) => x.id.asJson
@@ -108,15 +82,6 @@ object CirceImplicits {
     case x: ForceReply           => x.asJson
     case x: ReplyKeyboardRemove  => x.asJson
     case x: ReplyKeyboardMarkup  => x.asJson
-  }
-
-  implicit lazy val keyboardmarkupDecoder: Decoder[KeyboardMarkup] = {
-    List[Decoder[KeyboardMarkup]](
-      inlinekeyboardmarkupDecoder.widen,
-      forcereplyDecoder.widen,
-      replykeyboardremoveDecoder.widen,
-      replykeyboardmarkupDecoder.widen
-    ).reduceLeft(_ or _)
   }
 
   implicit lazy val inlinekeyboardmarkupEncoder: Encoder[InlineKeyboardMarkup] =
@@ -148,17 +113,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val forcereplyDecoder: Decoder[ForceReply] =
-    Decoder.instance { h =>
-      for {
-        _forceReply            <- h.get[Boolean]("force_reply")
-        _inputFieldPlaceholder <- h.get[Option[String]]("input_field_placeholder")
-        _selective             <- h.get[Option[Boolean]]("selective")
-      } yield {
-        ForceReply(forceReply = _forceReply, inputFieldPlaceholder = _inputFieldPlaceholder, selective = _selective)
-      }
-    }
-
   implicit lazy val replykeyboardremoveEncoder: Encoder[ReplyKeyboardRemove] =
     (x: ReplyKeyboardRemove) => {
       Json.fromFields(
@@ -167,16 +121,6 @@ object CirceImplicits {
           "selective"       -> x.selective.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val replykeyboardremoveDecoder: Decoder[ReplyKeyboardRemove] =
-    Decoder.instance { h =>
-      for {
-        _removeKeyboard <- h.get[Boolean]("remove_keyboard")
-        _selective      <- h.get[Option[Boolean]]("selective")
-      } yield {
-        ReplyKeyboardRemove(removeKeyboard = _removeKeyboard, selective = _selective)
-      }
     }
 
   implicit lazy val replykeyboardmarkupEncoder: Encoder[ReplyKeyboardMarkup] =
@@ -193,37 +137,9 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val replykeyboardmarkupDecoder: Decoder[ReplyKeyboardMarkup] =
-    Decoder.instance { h =>
-      for {
-        _keyboard              <- h.getOrElse[List[List[KeyboardButton]]]("keyboard")(List.empty)
-        _isPersistent          <- h.get[Option[Boolean]]("is_persistent")
-        _resizeKeyboard        <- h.get[Option[Boolean]]("resize_keyboard")
-        _oneTimeKeyboard       <- h.get[Option[Boolean]]("one_time_keyboard")
-        _inputFieldPlaceholder <- h.get[Option[String]]("input_field_placeholder")
-        _selective             <- h.get[Option[Boolean]]("selective")
-      } yield {
-        ReplyKeyboardMarkup(
-          keyboard = _keyboard,
-          isPersistent = _isPersistent,
-          resizeKeyboard = _resizeKeyboard,
-          oneTimeKeyboard = _oneTimeKeyboard,
-          inputFieldPlaceholder = _inputFieldPlaceholder,
-          selective = _selective
-        )
-      }
-    }
-
   implicit lazy val ifileEncoder: Encoder[IFile] = {
     case x: InputPartFile => x.asJson
     case x: InputLinkFile => x.asJson
-  }
-
-  implicit lazy val ifileDecoder: Decoder[IFile] = {
-    List[Decoder[IFile]](
-      inputpartfileDecoder.widen,
-      inputlinkfileDecoder.widen
-    ).reduceLeft(_ or _)
   }
 
   implicit lazy val inputpartfileEncoder: Encoder[InputPartFile] = (x: InputPartFile) => x.file.getName.asJson
@@ -442,37 +358,14 @@ object CirceImplicits {
       chat_member.asJson.mapObject(_.add("type", Json.fromString("chat_member")))
   }
 
-  implicit lazy val botcommandscopeDecoder: Decoder[BotCommandScope] = for {
-    fType <- Decoder[String].prepare(_.downField("type"))
-    value <- fType match {
-      case "all_chat_administrators" => Decoder[BotCommandScopeAllChatAdministrators.type]
-      case "all_group_chats"         => Decoder[BotCommandScopeAllGroupChats.type]
-      case "chat"                    => Decoder[BotCommandScopeChat]
-      case "chat_administrators"     => Decoder[BotCommandScopeChatAdministrators]
-      case "default"                 => Decoder[BotCommandScopeDefault.type]
-      case "all_private_chats"       => Decoder[BotCommandScopeAllPrivateChats.type]
-      case "chat_member"             => Decoder[BotCommandScopeChatMember]
-      case unknown                   => throw iozhik.DecodingError(s"Unknown type for BotCommandScope: $unknown")
-    }
-  } yield value
-
   implicit lazy val botcommandscopeallchatadministratorsEncoder: Encoder[BotCommandScopeAllChatAdministrators.type] =
     (_: BotCommandScopeAllChatAdministrators.type) => ().asJson
-
-  implicit lazy val botcommandscopeallchatadministratorsDecoder: Decoder[BotCommandScopeAllChatAdministrators.type] =
-    (_: HCursor) => Right(BotCommandScopeAllChatAdministrators)
 
   implicit lazy val botcommandscopeallgroupchatsEncoder: Encoder[BotCommandScopeAllGroupChats.type] =
     (_: BotCommandScopeAllGroupChats.type) => ().asJson
 
-  implicit lazy val botcommandscopeallgroupchatsDecoder: Decoder[BotCommandScopeAllGroupChats.type] = (_: HCursor) =>
-    Right(BotCommandScopeAllGroupChats)
-
   implicit lazy val botcommandscopedefaultEncoder: Encoder[BotCommandScopeDefault.type] =
     (_: BotCommandScopeDefault.type) => ().asJson
-
-  implicit lazy val botcommandscopedefaultDecoder: Decoder[BotCommandScopeDefault.type] = (_: HCursor) =>
-    Right(BotCommandScopeDefault)
 
   implicit lazy val botcommandscopechatadministratorsEncoder: Encoder[BotCommandScopeChatAdministrators] =
     (x: BotCommandScopeChatAdministrators) => {
@@ -481,15 +374,6 @@ object CirceImplicits {
           "chat_id" -> x.chatId.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val botcommandscopechatadministratorsDecoder: Decoder[BotCommandScopeChatAdministrators] =
-    Decoder.instance { h =>
-      for {
-        _chatId <- h.get[ChatId]("chat_id")
-      } yield {
-        BotCommandScopeChatAdministrators(chatId = _chatId)
-      }
     }
 
   implicit lazy val botcommandscopechatmemberEncoder: Encoder[BotCommandScopeChatMember] =
@@ -502,16 +386,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val botcommandscopechatmemberDecoder: Decoder[BotCommandScopeChatMember] =
-    Decoder.instance { h =>
-      for {
-        _chatId <- h.get[ChatId]("chat_id")
-        _userId <- h.get[Long]("user_id")
-      } yield {
-        BotCommandScopeChatMember(chatId = _chatId, userId = _userId)
-      }
-    }
-
   implicit lazy val botcommandscopechatEncoder: Encoder[BotCommandScopeChat] =
     (x: BotCommandScopeChat) => {
       Json.fromFields(
@@ -521,20 +395,8 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val botcommandscopechatDecoder: Decoder[BotCommandScopeChat] =
-    Decoder.instance { h =>
-      for {
-        _chatId <- h.get[ChatId]("chat_id")
-      } yield {
-        BotCommandScopeChat(chatId = _chatId)
-      }
-    }
-
   implicit lazy val botcommandscopeallprivatechatsEncoder: Encoder[BotCommandScopeAllPrivateChats.type] =
     (_: BotCommandScopeAllPrivateChats.type) => ().asJson
-
-  implicit lazy val botcommandscopeallprivatechatsDecoder: Decoder[BotCommandScopeAllPrivateChats.type] =
-    (_: HCursor) => Right(BotCommandScopeAllPrivateChats)
 
   implicit lazy val chatboostsourceEncoder: Encoder[ChatBoostSource] = {
     case giveaway: ChatBoostSourceGiveaway  => giveaway.asJson.mapObject(_.add("source", Json.fromString("giveaway")))
@@ -884,52 +746,6 @@ object CirceImplicits {
     case venue: InlineQueryResultVenue           => venue.asJson.mapObject(_.add("type", Json.fromString("venue")))
   }
 
-  implicit lazy val inlinequeryresultDecoder: Decoder[InlineQueryResult] = for {
-    fType <- Decoder[String].prepare(_.downField("type"))
-    value <- fType match {
-      case "mpeg4_gif" =>
-        List[Decoder[InlineQueryResult]](
-          Decoder[InlineQueryResultMpeg4Gif].widen,
-          Decoder[InlineQueryResultCachedMpeg4Gif].widen
-        ).reduceLeft(_ or _)
-      case "location" => Decoder[InlineQueryResultLocation]
-      case "photo" =>
-        List[Decoder[InlineQueryResult]](
-          Decoder[InlineQueryResultPhoto].widen,
-          Decoder[InlineQueryResultCachedPhoto].widen
-        ).reduceLeft(_ or _)
-      case "document" =>
-        List[Decoder[InlineQueryResult]](
-          Decoder[InlineQueryResultDocument].widen,
-          Decoder[InlineQueryResultCachedDocument].widen
-        ).reduceLeft(_ or _)
-      case "audio" =>
-        List[Decoder[InlineQueryResult]](
-          Decoder[InlineQueryResultAudio].widen,
-          Decoder[InlineQueryResultCachedAudio].widen
-        ).reduceLeft(_ or _)
-      case "voice" =>
-        List[Decoder[InlineQueryResult]](
-          Decoder[InlineQueryResultCachedVoice].widen,
-          Decoder[InlineQueryResultVoice].widen
-        ).reduceLeft(_ or _)
-      case "article" => Decoder[InlineQueryResultArticle]
-      case "contact" => Decoder[InlineQueryResultContact]
-      case "video" =>
-        List[Decoder[InlineQueryResult]](
-          Decoder[InlineQueryResultCachedVideo].widen,
-          Decoder[InlineQueryResultVideo].widen
-        ).reduceLeft(_ or _)
-      case "gif" =>
-        List[Decoder[InlineQueryResult]](Decoder[InlineQueryResultGif].widen, Decoder[InlineQueryResultCachedGif].widen)
-          .reduceLeft(_ or _)
-      case "sticker" => Decoder[InlineQueryResultCachedSticker]
-      case "game"    => Decoder[InlineQueryResultGame]
-      case "venue"   => Decoder[InlineQueryResultVenue]
-      case unknown   => throw iozhik.DecodingError(s"Unknown type for InlineQueryResult: $unknown")
-    }
-  } yield value
-
   implicit lazy val inlinequeryresultgifEncoder: Encoder[InlineQueryResultGif] =
     (x: InlineQueryResultGif) => {
       Json.fromFields(
@@ -950,43 +766,6 @@ object CirceImplicits {
           "input_message_content"    -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inlinequeryresultgifDecoder: Decoder[InlineQueryResultGif] =
-    Decoder.instance { h =>
-      for {
-        _id                    <- h.get[String]("id")
-        _gifUrl                <- h.get[String]("gif_url")
-        _gifWidth              <- h.get[Option[Int]]("gif_width")
-        _gifHeight             <- h.get[Option[Int]]("gif_height")
-        _gifDuration           <- h.get[Option[Int]]("gif_duration")
-        _thumbnailUrl          <- h.get[String]("thumbnail_url")
-        _thumbnailMimeType     <- h.get[Option[String]]("thumbnail_mime_type")
-        _title                 <- h.get[Option[String]]("title")
-        _caption               <- h.get[Option[String]]("caption")
-        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
-        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
-      } yield {
-        InlineQueryResultGif(
-          id = _id,
-          gifUrl = _gifUrl,
-          gifWidth = _gifWidth,
-          gifHeight = _gifHeight,
-          gifDuration = _gifDuration,
-          thumbnailUrl = _thumbnailUrl,
-          thumbnailMimeType = _thumbnailMimeType,
-          title = _title,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          showCaptionAboveMedia = _showCaptionAboveMedia,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent
-        )
-      }
     }
 
   implicit lazy val inlinequeryresultvenueEncoder: Encoder[InlineQueryResultVenue] =
@@ -1011,43 +790,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inlinequeryresultvenueDecoder: Decoder[InlineQueryResultVenue] =
-    Decoder.instance { h =>
-      for {
-        _id                  <- h.get[String]("id")
-        _latitude            <- h.get[Float]("latitude")
-        _longitude           <- h.get[Float]("longitude")
-        _title               <- h.get[String]("title")
-        _address             <- h.get[String]("address")
-        _foursquareId        <- h.get[Option[String]]("foursquare_id")
-        _foursquareType      <- h.get[Option[String]]("foursquare_type")
-        _googlePlaceId       <- h.get[Option[String]]("google_place_id")
-        _googlePlaceType     <- h.get[Option[String]]("google_place_type")
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
-        _thumbnailUrl        <- h.get[Option[String]]("thumbnail_url")
-        _thumbnailWidth      <- h.get[Option[Int]]("thumbnail_width")
-        _thumbnailHeight     <- h.get[Option[Int]]("thumbnail_height")
-      } yield {
-        InlineQueryResultVenue(
-          id = _id,
-          latitude = _latitude,
-          longitude = _longitude,
-          title = _title,
-          address = _address,
-          foursquareId = _foursquareId,
-          foursquareType = _foursquareType,
-          googlePlaceId = _googlePlaceId,
-          googlePlaceType = _googlePlaceType,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent,
-          thumbnailUrl = _thumbnailUrl,
-          thumbnailWidth = _thumbnailWidth,
-          thumbnailHeight = _thumbnailHeight
-        )
-      }
-    }
-
   implicit lazy val inlinequeryresultcontactEncoder: Encoder[InlineQueryResultContact] =
     (x: InlineQueryResultContact) => {
       Json.fromFields(
@@ -1064,35 +806,6 @@ object CirceImplicits {
           "thumbnail_height"      -> x.thumbnailHeight.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inlinequeryresultcontactDecoder: Decoder[InlineQueryResultContact] =
-    Decoder.instance { h =>
-      for {
-        _id                  <- h.get[String]("id")
-        _phoneNumber         <- h.get[String]("phone_number")
-        _firstName           <- h.get[String]("first_name")
-        _lastName            <- h.get[Option[String]]("last_name")
-        _vcard               <- h.get[Option[String]]("vcard")
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
-        _thumbnailUrl        <- h.get[Option[String]]("thumbnail_url")
-        _thumbnailWidth      <- h.get[Option[Int]]("thumbnail_width")
-        _thumbnailHeight     <- h.get[Option[Int]]("thumbnail_height")
-      } yield {
-        InlineQueryResultContact(
-          id = _id,
-          phoneNumber = _phoneNumber,
-          firstName = _firstName,
-          lastName = _lastName,
-          vcard = _vcard,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent,
-          thumbnailUrl = _thumbnailUrl,
-          thumbnailWidth = _thumbnailWidth,
-          thumbnailHeight = _thumbnailHeight
-        )
-      }
     }
 
   implicit lazy val inlinequeryresultphotoEncoder: Encoder[InlineQueryResultPhoto] =
@@ -1116,41 +829,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inlinequeryresultphotoDecoder: Decoder[InlineQueryResultPhoto] =
-    Decoder.instance { h =>
-      for {
-        _id                    <- h.get[String]("id")
-        _photoUrl              <- h.get[String]("photo_url")
-        _thumbnailUrl          <- h.get[String]("thumbnail_url")
-        _photoWidth            <- h.get[Option[Int]]("photo_width")
-        _photoHeight           <- h.get[Option[Int]]("photo_height")
-        _title                 <- h.get[Option[String]]("title")
-        _description           <- h.get[Option[String]]("description")
-        _caption               <- h.get[Option[String]]("caption")
-        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
-        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
-      } yield {
-        InlineQueryResultPhoto(
-          id = _id,
-          photoUrl = _photoUrl,
-          thumbnailUrl = _thumbnailUrl,
-          photoWidth = _photoWidth,
-          photoHeight = _photoHeight,
-          title = _title,
-          description = _description,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          showCaptionAboveMedia = _showCaptionAboveMedia,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent
-        )
-      }
-    }
-
   implicit lazy val inlinequeryresultdocumentEncoder: Encoder[InlineQueryResultDocument] =
     (x: InlineQueryResultDocument) => {
       Json.fromFields(
@@ -1172,41 +850,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inlinequeryresultdocumentDecoder: Decoder[InlineQueryResultDocument] =
-    Decoder.instance { h =>
-      for {
-        _id                  <- h.get[String]("id")
-        _title               <- h.get[String]("title")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _documentUrl         <- h.get[String]("document_url")
-        _mimeType            <- h.get[String]("mime_type")
-        _description         <- h.get[Option[String]]("description")
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
-        _thumbnailUrl        <- h.get[Option[String]]("thumbnail_url")
-        _thumbnailWidth      <- h.get[Option[Int]]("thumbnail_width")
-        _thumbnailHeight     <- h.get[Option[Int]]("thumbnail_height")
-      } yield {
-        InlineQueryResultDocument(
-          id = _id,
-          title = _title,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          documentUrl = _documentUrl,
-          mimeType = _mimeType,
-          description = _description,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent,
-          thumbnailUrl = _thumbnailUrl,
-          thumbnailWidth = _thumbnailWidth,
-          thumbnailHeight = _thumbnailHeight
-        )
-      }
-    }
-
   implicit lazy val inlinequeryresultcachedvoiceEncoder: Encoder[InlineQueryResultCachedVoice] =
     (x: InlineQueryResultCachedVoice) => {
       Json.fromFields(
@@ -1221,31 +864,6 @@ object CirceImplicits {
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inlinequeryresultcachedvoiceDecoder: Decoder[InlineQueryResultCachedVoice] =
-    Decoder.instance { h =>
-      for {
-        _id                  <- h.get[String]("id")
-        _voiceFileId         <- h.get[String]("voice_file_id")
-        _title               <- h.get[String]("title")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
-      } yield {
-        InlineQueryResultCachedVoice(
-          id = _id,
-          voiceFileId = _voiceFileId,
-          title = _title,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent
-        )
-      }
     }
 
   implicit lazy val inlinequeryresultarticleEncoder: Encoder[InlineQueryResultArticle] =
@@ -1265,33 +883,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inlinequeryresultarticleDecoder: Decoder[InlineQueryResultArticle] =
-    Decoder.instance { h =>
-      for {
-        _id                  <- h.get[String]("id")
-        _title               <- h.get[String]("title")
-        _inputMessageContent <- h.get[InputMessageContent]("input_message_content")
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _url                 <- h.get[Option[String]]("url")
-        _description         <- h.get[Option[String]]("description")
-        _thumbnailUrl        <- h.get[Option[String]]("thumbnail_url")
-        _thumbnailWidth      <- h.get[Option[Int]]("thumbnail_width")
-        _thumbnailHeight     <- h.get[Option[Int]]("thumbnail_height")
-      } yield {
-        InlineQueryResultArticle(
-          id = _id,
-          title = _title,
-          inputMessageContent = _inputMessageContent,
-          replyMarkup = _replyMarkup,
-          url = _url,
-          description = _description,
-          thumbnailUrl = _thumbnailUrl,
-          thumbnailWidth = _thumbnailWidth,
-          thumbnailHeight = _thumbnailHeight
-        )
-      }
-    }
-
   implicit lazy val inlinequeryresultaudioEncoder: Encoder[InlineQueryResultAudio] =
     (x: InlineQueryResultAudio) => {
       Json.fromFields(
@@ -1308,35 +899,6 @@ object CirceImplicits {
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inlinequeryresultaudioDecoder: Decoder[InlineQueryResultAudio] =
-    Decoder.instance { h =>
-      for {
-        _id                  <- h.get[String]("id")
-        _audioUrl            <- h.get[String]("audio_url")
-        _title               <- h.get[String]("title")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _performer           <- h.get[Option[String]]("performer")
-        _audioDuration       <- h.get[Option[Int]]("audio_duration")
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
-      } yield {
-        InlineQueryResultAudio(
-          id = _id,
-          audioUrl = _audioUrl,
-          title = _title,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          performer = _performer,
-          audioDuration = _audioDuration,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent
-        )
-      }
     }
 
   implicit lazy val inlinequeryresultmpeg4gifEncoder: Encoder[InlineQueryResultMpeg4Gif] =
@@ -1361,43 +923,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inlinequeryresultmpeg4gifDecoder: Decoder[InlineQueryResultMpeg4Gif] =
-    Decoder.instance { h =>
-      for {
-        _id                    <- h.get[String]("id")
-        _mpeg4Url              <- h.get[String]("mpeg4_url")
-        _mpeg4Width            <- h.get[Option[Int]]("mpeg4_width")
-        _mpeg4Height           <- h.get[Option[Int]]("mpeg4_height")
-        _mpeg4Duration         <- h.get[Option[Int]]("mpeg4_duration")
-        _thumbnailUrl          <- h.get[String]("thumbnail_url")
-        _thumbnailMimeType     <- h.get[Option[String]]("thumbnail_mime_type")
-        _title                 <- h.get[Option[String]]("title")
-        _caption               <- h.get[Option[String]]("caption")
-        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
-        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
-      } yield {
-        InlineQueryResultMpeg4Gif(
-          id = _id,
-          mpeg4Url = _mpeg4Url,
-          mpeg4Width = _mpeg4Width,
-          mpeg4Height = _mpeg4Height,
-          mpeg4Duration = _mpeg4Duration,
-          thumbnailUrl = _thumbnailUrl,
-          thumbnailMimeType = _thumbnailMimeType,
-          title = _title,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          showCaptionAboveMedia = _showCaptionAboveMedia,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent
-        )
-      }
-    }
-
   implicit lazy val inlinequeryresultcachedmpeg4gifEncoder: Encoder[InlineQueryResultCachedMpeg4Gif] =
     (x: InlineQueryResultCachedMpeg4Gif) => {
       Json.fromFields(
@@ -1415,33 +940,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inlinequeryresultcachedmpeg4gifDecoder: Decoder[InlineQueryResultCachedMpeg4Gif] =
-    Decoder.instance { h =>
-      for {
-        _id                    <- h.get[String]("id")
-        _mpeg4FileId           <- h.get[String]("mpeg4_file_id")
-        _title                 <- h.get[Option[String]]("title")
-        _caption               <- h.get[Option[String]]("caption")
-        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
-        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
-      } yield {
-        InlineQueryResultCachedMpeg4Gif(
-          id = _id,
-          mpeg4FileId = _mpeg4FileId,
-          title = _title,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          showCaptionAboveMedia = _showCaptionAboveMedia,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent
-        )
-      }
-    }
-
   implicit lazy val inlinequeryresultcacheddocumentEncoder: Encoder[InlineQueryResultCachedDocument] =
     (x: InlineQueryResultCachedDocument) => {
       Json.fromFields(
@@ -1457,33 +955,6 @@ object CirceImplicits {
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inlinequeryresultcacheddocumentDecoder: Decoder[InlineQueryResultCachedDocument] =
-    Decoder.instance { h =>
-      for {
-        _id                  <- h.get[String]("id")
-        _title               <- h.get[String]("title")
-        _documentFileId      <- h.get[String]("document_file_id")
-        _description         <- h.get[Option[String]]("description")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
-      } yield {
-        InlineQueryResultCachedDocument(
-          id = _id,
-          title = _title,
-          documentFileId = _documentFileId,
-          description = _description,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent
-        )
-      }
     }
 
   implicit lazy val inlinequeryresultcachedvideoEncoder: Encoder[InlineQueryResultCachedVideo] =
@@ -1504,35 +975,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inlinequeryresultcachedvideoDecoder: Decoder[InlineQueryResultCachedVideo] =
-    Decoder.instance { h =>
-      for {
-        _id                    <- h.get[String]("id")
-        _videoFileId           <- h.get[String]("video_file_id")
-        _title                 <- h.get[String]("title")
-        _description           <- h.get[Option[String]]("description")
-        _caption               <- h.get[Option[String]]("caption")
-        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
-        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
-      } yield {
-        InlineQueryResultCachedVideo(
-          id = _id,
-          videoFileId = _videoFileId,
-          title = _title,
-          description = _description,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          showCaptionAboveMedia = _showCaptionAboveMedia,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent
-        )
-      }
-    }
-
   implicit lazy val inlinequeryresultgameEncoder: Encoder[InlineQueryResultGame] =
     (x: InlineQueryResultGame) => {
       Json.fromFields(
@@ -1542,17 +984,6 @@ object CirceImplicits {
           "reply_markup"    -> x.replyMarkup.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inlinequeryresultgameDecoder: Decoder[InlineQueryResultGame] =
-    Decoder.instance { h =>
-      for {
-        _id            <- h.get[String]("id")
-        _gameShortName <- h.get[String]("game_short_name")
-        _replyMarkup   <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-      } yield {
-        InlineQueryResultGame(id = _id, gameShortName = _gameShortName, replyMarkup = _replyMarkup)
-      }
     }
 
   implicit lazy val inlinequeryresultcachedphotoEncoder: Encoder[InlineQueryResultCachedPhoto] =
@@ -1573,35 +1004,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inlinequeryresultcachedphotoDecoder: Decoder[InlineQueryResultCachedPhoto] =
-    Decoder.instance { h =>
-      for {
-        _id                    <- h.get[String]("id")
-        _photoFileId           <- h.get[String]("photo_file_id")
-        _title                 <- h.get[Option[String]]("title")
-        _description           <- h.get[Option[String]]("description")
-        _caption               <- h.get[Option[String]]("caption")
-        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
-        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
-      } yield {
-        InlineQueryResultCachedPhoto(
-          id = _id,
-          photoFileId = _photoFileId,
-          title = _title,
-          description = _description,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          showCaptionAboveMedia = _showCaptionAboveMedia,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent
-        )
-      }
-    }
-
   implicit lazy val inlinequeryresultcachedstickerEncoder: Encoder[InlineQueryResultCachedSticker] =
     (x: InlineQueryResultCachedSticker) => {
       Json.fromFields(
@@ -1612,23 +1014,6 @@ object CirceImplicits {
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inlinequeryresultcachedstickerDecoder: Decoder[InlineQueryResultCachedSticker] =
-    Decoder.instance { h =>
-      for {
-        _id                  <- h.get[String]("id")
-        _stickerFileId       <- h.get[String]("sticker_file_id")
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
-      } yield {
-        InlineQueryResultCachedSticker(
-          id = _id,
-          stickerFileId = _stickerFileId,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent
-        )
-      }
     }
 
   implicit lazy val inlinequeryresultvideoEncoder: Encoder[InlineQueryResultVideo] =
@@ -1654,45 +1039,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inlinequeryresultvideoDecoder: Decoder[InlineQueryResultVideo] =
-    Decoder.instance { h =>
-      for {
-        _id                    <- h.get[String]("id")
-        _videoUrl              <- h.get[String]("video_url")
-        _mimeType              <- h.get[String]("mime_type")
-        _thumbnailUrl          <- h.get[String]("thumbnail_url")
-        _title                 <- h.get[String]("title")
-        _caption               <- h.get[Option[String]]("caption")
-        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
-        _videoWidth            <- h.get[Option[Int]]("video_width")
-        _videoHeight           <- h.get[Option[Int]]("video_height")
-        _videoDuration         <- h.get[Option[Int]]("video_duration")
-        _description           <- h.get[Option[String]]("description")
-        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
-      } yield {
-        InlineQueryResultVideo(
-          id = _id,
-          videoUrl = _videoUrl,
-          mimeType = _mimeType,
-          thumbnailUrl = _thumbnailUrl,
-          title = _title,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          showCaptionAboveMedia = _showCaptionAboveMedia,
-          videoWidth = _videoWidth,
-          videoHeight = _videoHeight,
-          videoDuration = _videoDuration,
-          description = _description,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent
-        )
-      }
-    }
-
   implicit lazy val inlinequeryresultcachedaudioEncoder: Encoder[InlineQueryResultCachedAudio] =
     (x: InlineQueryResultCachedAudio) => {
       Json.fromFields(
@@ -1706,29 +1052,6 @@ object CirceImplicits {
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inlinequeryresultcachedaudioDecoder: Decoder[InlineQueryResultCachedAudio] =
-    Decoder.instance { h =>
-      for {
-        _id                  <- h.get[String]("id")
-        _audioFileId         <- h.get[String]("audio_file_id")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
-      } yield {
-        InlineQueryResultCachedAudio(
-          id = _id,
-          audioFileId = _audioFileId,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent
-        )
-      }
     }
 
   implicit lazy val inlinequeryresultlocationEncoder: Encoder[InlineQueryResultLocation] =
@@ -1752,41 +1075,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inlinequeryresultlocationDecoder: Decoder[InlineQueryResultLocation] =
-    Decoder.instance { h =>
-      for {
-        _id                   <- h.get[String]("id")
-        _latitude             <- h.get[Float]("latitude")
-        _longitude            <- h.get[Float]("longitude")
-        _title                <- h.get[String]("title")
-        _horizontalAccuracy   <- h.get[Option[Float]]("horizontal_accuracy")
-        _livePeriod           <- h.get[Option[Int]]("live_period")
-        _heading              <- h.get[Option[Int]]("heading")
-        _proximityAlertRadius <- h.get[Option[Int]]("proximity_alert_radius")
-        _replyMarkup          <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent  <- h.get[Option[InputMessageContent]]("input_message_content")
-        _thumbnailUrl         <- h.get[Option[String]]("thumbnail_url")
-        _thumbnailWidth       <- h.get[Option[Int]]("thumbnail_width")
-        _thumbnailHeight      <- h.get[Option[Int]]("thumbnail_height")
-      } yield {
-        InlineQueryResultLocation(
-          id = _id,
-          latitude = _latitude,
-          longitude = _longitude,
-          title = _title,
-          horizontalAccuracy = _horizontalAccuracy,
-          livePeriod = _livePeriod,
-          heading = _heading,
-          proximityAlertRadius = _proximityAlertRadius,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent,
-          thumbnailUrl = _thumbnailUrl,
-          thumbnailWidth = _thumbnailWidth,
-          thumbnailHeight = _thumbnailHeight
-        )
-      }
-    }
-
   implicit lazy val inlinequeryresultcachedgifEncoder: Encoder[InlineQueryResultCachedGif] =
     (x: InlineQueryResultCachedGif) => {
       Json.fromFields(
@@ -1802,33 +1090,6 @@ object CirceImplicits {
           "input_message_content"    -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inlinequeryresultcachedgifDecoder: Decoder[InlineQueryResultCachedGif] =
-    Decoder.instance { h =>
-      for {
-        _id                    <- h.get[String]("id")
-        _gifFileId             <- h.get[String]("gif_file_id")
-        _title                 <- h.get[Option[String]]("title")
-        _caption               <- h.get[Option[String]]("caption")
-        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
-        _replyMarkup           <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent   <- h.get[Option[InputMessageContent]]("input_message_content")
-      } yield {
-        InlineQueryResultCachedGif(
-          id = _id,
-          gifFileId = _gifFileId,
-          title = _title,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          showCaptionAboveMedia = _showCaptionAboveMedia,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent
-        )
-      }
     }
 
   implicit lazy val inlinequeryresultvoiceEncoder: Encoder[InlineQueryResultVoice] =
@@ -1848,33 +1109,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inlinequeryresultvoiceDecoder: Decoder[InlineQueryResultVoice] =
-    Decoder.instance { h =>
-      for {
-        _id                  <- h.get[String]("id")
-        _voiceUrl            <- h.get[String]("voice_url")
-        _title               <- h.get[String]("title")
-        _caption             <- h.get[Option[String]]("caption")
-        _parseMode           <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities     <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _voiceDuration       <- h.get[Option[Int]]("voice_duration")
-        _replyMarkup         <- h.get[Option[InlineKeyboardMarkup]]("reply_markup")
-        _inputMessageContent <- h.get[Option[InputMessageContent]]("input_message_content")
-      } yield {
-        InlineQueryResultVoice(
-          id = _id,
-          voiceUrl = _voiceUrl,
-          title = _title,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          voiceDuration = _voiceDuration,
-          replyMarkup = _replyMarkup,
-          inputMessageContent = _inputMessageContent
-        )
-      }
-    }
-
   implicit lazy val inputmediaEncoder: Encoder[InputMedia] = {
     case photo: InputMediaPhoto         => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
     case document: InputMediaDocument   => document.asJson.mapObject(_.add("type", Json.fromString("document")))
@@ -1882,18 +1116,6 @@ object CirceImplicits {
     case animation: InputMediaAnimation => animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
     case video: InputMediaVideo         => video.asJson.mapObject(_.add("type", Json.fromString("video")))
   }
-
-  implicit lazy val inputmediaDecoder: Decoder[InputMedia] = for {
-    fType <- Decoder[String].prepare(_.downField("type"))
-    value <- fType match {
-      case "photo"     => Decoder[InputMediaPhoto]
-      case "document"  => Decoder[InputMediaDocument]
-      case "audio"     => Decoder[InputMediaAudio]
-      case "animation" => Decoder[InputMediaAnimation]
-      case "video"     => Decoder[InputMediaVideo]
-      case unknown     => throw iozhik.DecodingError(s"Unknown type for InputMedia: $unknown")
-    }
-  } yield value
 
   implicit lazy val inputmediaanimationEncoder: Encoder[InputMediaAnimation] =
     (x: InputMediaAnimation) => {
@@ -1913,35 +1135,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inputmediaanimationDecoder: Decoder[InputMediaAnimation] =
-    Decoder.instance { h =>
-      for {
-        _media                 <- h.get[IFile]("media")
-        _thumbnail             <- h.get[Option[IFile]]("thumbnail")
-        _caption               <- h.get[Option[String]]("caption")
-        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
-        _width                 <- h.get[Option[Int]]("width")
-        _height                <- h.get[Option[Int]]("height")
-        _duration              <- h.get[Option[Int]]("duration")
-        _hasSpoiler            <- h.get[Option[Boolean]]("has_spoiler")
-      } yield {
-        InputMediaAnimation(
-          media = _media,
-          thumbnail = _thumbnail,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          showCaptionAboveMedia = _showCaptionAboveMedia,
-          width = _width,
-          height = _height,
-          duration = _duration,
-          hasSpoiler = _hasSpoiler
-        )
-      }
-    }
-
   implicit lazy val inputmediaphotoEncoder: Encoder[InputMediaPhoto] =
     (x: InputMediaPhoto) => {
       Json.fromFields(
@@ -1954,27 +1147,6 @@ object CirceImplicits {
           "has_spoiler"              -> x.hasSpoiler.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inputmediaphotoDecoder: Decoder[InputMediaPhoto] =
-    Decoder.instance { h =>
-      for {
-        _media                 <- h.get[IFile]("media")
-        _caption               <- h.get[Option[String]]("caption")
-        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
-        _hasSpoiler            <- h.get[Option[Boolean]]("has_spoiler")
-      } yield {
-        InputMediaPhoto(
-          media = _media,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          showCaptionAboveMedia = _showCaptionAboveMedia,
-          hasSpoiler = _hasSpoiler
-        )
-      }
     }
 
   implicit lazy val inputmediavideoEncoder: Encoder[InputMediaVideo] =
@@ -1998,41 +1170,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inputmediavideoDecoder: Decoder[InputMediaVideo] =
-    Decoder.instance { h =>
-      for {
-        _media                 <- h.get[IFile]("media")
-        _thumbnail             <- h.get[Option[IFile]]("thumbnail")
-        _cover                 <- h.get[Option[IFile]]("cover")
-        _startTimestamp        <- h.get[Option[Int]]("start_timestamp")
-        _caption               <- h.get[Option[String]]("caption")
-        _parseMode             <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
-        _width                 <- h.get[Option[Int]]("width")
-        _height                <- h.get[Option[Int]]("height")
-        _duration              <- h.get[Option[Int]]("duration")
-        _supportsStreaming     <- h.get[Option[Boolean]]("supports_streaming")
-        _hasSpoiler            <- h.get[Option[Boolean]]("has_spoiler")
-      } yield {
-        InputMediaVideo(
-          media = _media,
-          thumbnail = _thumbnail,
-          cover = _cover,
-          startTimestamp = _startTimestamp,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          showCaptionAboveMedia = _showCaptionAboveMedia,
-          width = _width,
-          height = _height,
-          duration = _duration,
-          supportsStreaming = _supportsStreaming,
-          hasSpoiler = _hasSpoiler
-        )
-      }
-    }
-
   implicit lazy val inputmediadocumentEncoder: Encoder[InputMediaDocument] =
     (x: InputMediaDocument) => {
       Json.fromFields(
@@ -2045,27 +1182,6 @@ object CirceImplicits {
           "disable_content_type_detection" -> x.disableContentTypeDetection.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inputmediadocumentDecoder: Decoder[InputMediaDocument] =
-    Decoder.instance { h =>
-      for {
-        _media           <- h.get[IFile]("media")
-        _thumbnail       <- h.get[Option[IFile]]("thumbnail")
-        _caption         <- h.get[Option[String]]("caption")
-        _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _disableContentTypeDetection <- h.get[Option[Boolean]]("disable_content_type_detection")
-      } yield {
-        InputMediaDocument(
-          media = _media,
-          thumbnail = _thumbnail,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          disableContentTypeDetection = _disableContentTypeDetection
-        )
-      }
     }
 
   implicit lazy val inputmediaaudioEncoder: Encoder[InputMediaAudio] =
@@ -2084,47 +1200,12 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inputmediaaudioDecoder: Decoder[InputMediaAudio] =
-    Decoder.instance { h =>
-      for {
-        _media           <- h.get[IFile]("media")
-        _thumbnail       <- h.get[Option[IFile]]("thumbnail")
-        _caption         <- h.get[Option[String]]("caption")
-        _parseMode       <- h.get[Option[ParseMode]]("parse_mode")
-        _captionEntities <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _duration        <- h.get[Option[Int]]("duration")
-        _performer       <- h.get[Option[String]]("performer")
-        _title           <- h.get[Option[String]]("title")
-      } yield {
-        InputMediaAudio(
-          media = _media,
-          thumbnail = _thumbnail,
-          caption = _caption,
-          parseMode = _parseMode,
-          captionEntities = _captionEntities,
-          duration = _duration,
-          performer = _performer,
-          title = _title
-        )
-      }
-    }
-
   implicit lazy val inputmessagecontentEncoder: Encoder[InputMessageContent] = {
     case x: InputVenueMessageContent    => x.asJson
     case x: InputInvoiceMessageContent  => x.asJson
     case x: InputContactMessageContent  => x.asJson
     case x: InputLocationMessageContent => x.asJson
     case x: InputTextMessageContent     => x.asJson
-  }
-
-  implicit lazy val inputmessagecontentDecoder: Decoder[InputMessageContent] = {
-    List[Decoder[InputMessageContent]](
-      inputvenuemessagecontentDecoder.widen,
-      inputinvoicemessagecontentDecoder.widen,
-      inputcontactmessagecontentDecoder.widen,
-      inputlocationmessagecontentDecoder.widen,
-      inputtextmessagecontentDecoder.widen
-    ).reduceLeft(_ or _)
   }
 
   implicit lazy val inputvenuemessagecontentEncoder: Encoder[InputVenueMessageContent] =
@@ -2141,31 +1222,6 @@ object CirceImplicits {
           "google_place_type" -> x.googlePlaceType.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inputvenuemessagecontentDecoder: Decoder[InputVenueMessageContent] =
-    Decoder.instance { h =>
-      for {
-        _latitude        <- h.get[Float]("latitude")
-        _longitude       <- h.get[Float]("longitude")
-        _title           <- h.get[String]("title")
-        _address         <- h.get[String]("address")
-        _foursquareId    <- h.get[Option[String]]("foursquare_id")
-        _foursquareType  <- h.get[Option[String]]("foursquare_type")
-        _googlePlaceId   <- h.get[Option[String]]("google_place_id")
-        _googlePlaceType <- h.get[Option[String]]("google_place_type")
-      } yield {
-        InputVenueMessageContent(
-          latitude = _latitude,
-          longitude = _longitude,
-          title = _title,
-          address = _address,
-          foursquareId = _foursquareId,
-          foursquareType = _foursquareType,
-          googlePlaceId = _googlePlaceId,
-          googlePlaceType = _googlePlaceType
-        )
-      }
     }
 
   implicit lazy val inputinvoicemessagecontentEncoder: Encoder[InputInvoiceMessageContent] =
@@ -2196,55 +1252,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inputinvoicemessagecontentDecoder: Decoder[InputInvoiceMessageContent] =
-    Decoder.instance { h =>
-      for {
-        _title                     <- h.get[String]("title")
-        _description               <- h.get[String]("description")
-        _payload                   <- h.get[String]("payload")
-        _providerToken             <- h.get[Option[String]]("provider_token")
-        _currency                  <- h.get[String]("currency")
-        _prices                    <- h.getOrElse[List[LabeledPrice]]("prices")(List.empty)
-        _maxTipAmount              <- h.get[Option[Int]]("max_tip_amount")
-        _suggestedTipAmounts       <- h.getOrElse[List[Int]]("suggested_tip_amounts")(List.empty)
-        _providerData              <- h.get[Option[String]]("provider_data")
-        _photoUrl                  <- h.get[Option[String]]("photo_url")
-        _photoSize                 <- h.get[Option[Long]]("photo_size")
-        _photoWidth                <- h.get[Option[Int]]("photo_width")
-        _photoHeight               <- h.get[Option[Int]]("photo_height")
-        _needName                  <- h.get[Option[Boolean]]("need_name")
-        _needPhoneNumber           <- h.get[Option[Boolean]]("need_phone_number")
-        _needEmail                 <- h.get[Option[Boolean]]("need_email")
-        _needShippingAddress       <- h.get[Option[Boolean]]("need_shipping_address")
-        _sendPhoneNumberToProvider <- h.get[Option[Boolean]]("send_phone_number_to_provider")
-        _sendEmailToProvider       <- h.get[Option[Boolean]]("send_email_to_provider")
-        _isFlexible                <- h.get[Option[Boolean]]("is_flexible")
-      } yield {
-        InputInvoiceMessageContent(
-          title = _title,
-          description = _description,
-          payload = _payload,
-          providerToken = _providerToken,
-          currency = _currency,
-          prices = _prices,
-          maxTipAmount = _maxTipAmount,
-          suggestedTipAmounts = _suggestedTipAmounts,
-          providerData = _providerData,
-          photoUrl = _photoUrl,
-          photoSize = _photoSize,
-          photoWidth = _photoWidth,
-          photoHeight = _photoHeight,
-          needName = _needName,
-          needPhoneNumber = _needPhoneNumber,
-          needEmail = _needEmail,
-          needShippingAddress = _needShippingAddress,
-          sendPhoneNumberToProvider = _sendPhoneNumberToProvider,
-          sendEmailToProvider = _sendEmailToProvider,
-          isFlexible = _isFlexible
-        )
-      }
-    }
-
   implicit lazy val inputcontactmessagecontentEncoder: Encoder[InputContactMessageContent] =
     (x: InputContactMessageContent) => {
       Json.fromFields(
@@ -2255,23 +1262,6 @@ object CirceImplicits {
           "vcard"        -> x.vcard.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inputcontactmessagecontentDecoder: Decoder[InputContactMessageContent] =
-    Decoder.instance { h =>
-      for {
-        _phoneNumber <- h.get[String]("phone_number")
-        _firstName   <- h.get[String]("first_name")
-        _lastName    <- h.get[Option[String]]("last_name")
-        _vcard       <- h.get[Option[String]]("vcard")
-      } yield {
-        InputContactMessageContent(
-          phoneNumber = _phoneNumber,
-          firstName = _firstName,
-          lastName = _lastName,
-          vcard = _vcard
-        )
-      }
     }
 
   implicit lazy val inputlocationmessagecontentEncoder: Encoder[InputLocationMessageContent] =
@@ -2288,27 +1278,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inputlocationmessagecontentDecoder: Decoder[InputLocationMessageContent] =
-    Decoder.instance { h =>
-      for {
-        _latitude             <- h.get[Float]("latitude")
-        _longitude            <- h.get[Float]("longitude")
-        _horizontalAccuracy   <- h.get[Option[Float]]("horizontal_accuracy")
-        _livePeriod           <- h.get[Option[Int]]("live_period")
-        _heading              <- h.get[Option[Int]]("heading")
-        _proximityAlertRadius <- h.get[Option[Int]]("proximity_alert_radius")
-      } yield {
-        InputLocationMessageContent(
-          latitude = _latitude,
-          longitude = _longitude,
-          horizontalAccuracy = _horizontalAccuracy,
-          livePeriod = _livePeriod,
-          heading = _heading,
-          proximityAlertRadius = _proximityAlertRadius
-        )
-      }
-    }
-
   implicit lazy val inputtextmessagecontentEncoder: Encoder[InputTextMessageContent] =
     (x: InputTextMessageContent) => {
       Json.fromFields(
@@ -2321,36 +1290,10 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inputtextmessagecontentDecoder: Decoder[InputTextMessageContent] =
-    Decoder.instance { h =>
-      for {
-        _messageText        <- h.get[String]("message_text")
-        _parseMode          <- h.get[Option[ParseMode]]("parse_mode")
-        _entities           <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
-        _linkPreviewOptions <- h.get[Option[LinkPreviewOptions]]("link_preview_options")
-      } yield {
-        InputTextMessageContent(
-          messageText = _messageText,
-          parseMode = _parseMode,
-          entities = _entities,
-          linkPreviewOptions = _linkPreviewOptions
-        )
-      }
-    }
-
   implicit lazy val inputpaidmediaEncoder: Encoder[InputPaidMedia] = {
     case photo: InputPaidMediaPhoto => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
     case video: InputPaidMediaVideo => video.asJson.mapObject(_.add("type", Json.fromString("video")))
   }
-
-  implicit lazy val inputpaidmediaDecoder: Decoder[InputPaidMedia] = for {
-    fType <- Decoder[String].prepare(_.downField("type"))
-    value <- fType match {
-      case "photo" => Decoder[InputPaidMediaPhoto]
-      case "video" => Decoder[InputPaidMediaVideo]
-      case unknown => throw iozhik.DecodingError(s"Unknown type for InputPaidMedia: $unknown")
-    }
-  } yield value
 
   implicit lazy val inputpaidmediaphotoEncoder: Encoder[InputPaidMediaPhoto] =
     (x: InputPaidMediaPhoto) => {
@@ -2359,15 +1302,6 @@ object CirceImplicits {
           "media" -> x.media.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inputpaidmediaphotoDecoder: Decoder[InputPaidMediaPhoto] =
-    Decoder.instance { h =>
-      for {
-        _media <- h.get[IFile]("media")
-      } yield {
-        InputPaidMediaPhoto(media = _media)
-      }
     }
 
   implicit lazy val inputpaidmediavideoEncoder: Encoder[InputPaidMediaVideo] =
@@ -2384,31 +1318,6 @@ object CirceImplicits {
           "supports_streaming" -> x.supportsStreaming.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inputpaidmediavideoDecoder: Decoder[InputPaidMediaVideo] =
-    Decoder.instance { h =>
-      for {
-        _media             <- h.get[IFile]("media")
-        _thumbnail         <- h.get[Option[IFile]]("thumbnail")
-        _cover             <- h.get[Option[IFile]]("cover")
-        _startTimestamp    <- h.get[Option[Int]]("start_timestamp")
-        _width             <- h.get[Option[Int]]("width")
-        _height            <- h.get[Option[Int]]("height")
-        _duration          <- h.get[Option[Int]]("duration")
-        _supportsStreaming <- h.get[Option[Boolean]]("supports_streaming")
-      } yield {
-        InputPaidMediaVideo(
-          media = _media,
-          thumbnail = _thumbnail,
-          cover = _cover,
-          startTimestamp = _startTimestamp,
-          width = _width,
-          height = _height,
-          duration = _duration,
-          supportsStreaming = _supportsStreaming
-        )
-      }
     }
 
   implicit lazy val maybeinaccessiblemessageEncoder: Encoder[MaybeInaccessibleMessage] = {
@@ -3406,22 +2315,6 @@ object CirceImplicits {
     case data: PassportElementErrorDataField => data.asJson.mapObject(_.add("source", Json.fromString("data")))
   }
 
-  implicit lazy val passportelementerrorDecoder: Decoder[PassportElementError] = for {
-    fType <- Decoder[String].prepare(_.downField("source"))
-    value <- fType match {
-      case "translation_file"  => Decoder[PassportElementErrorTranslationFile]
-      case "translation_files" => Decoder[PassportElementErrorTranslationFiles]
-      case "front_side"        => Decoder[PassportElementErrorFrontSide]
-      case "files"             => Decoder[PassportElementErrorFiles]
-      case "unspecified"       => Decoder[PassportElementErrorUnspecified]
-      case "file"              => Decoder[PassportElementErrorFile]
-      case "selfie"            => Decoder[PassportElementErrorSelfie]
-      case "reverse_side"      => Decoder[PassportElementErrorReverseSide]
-      case "data"              => Decoder[PassportElementErrorDataField]
-      case unknown             => throw iozhik.DecodingError(s"Unknown type for PassportElementError: $unknown")
-    }
-  } yield value
-
   implicit lazy val passportelementerrorfilesEncoder: Encoder[PassportElementErrorFiles] =
     (x: PassportElementErrorFiles) => {
       Json.fromFields(
@@ -3431,17 +2324,6 @@ object CirceImplicits {
           "message"     -> x.message.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val passportelementerrorfilesDecoder: Decoder[PassportElementErrorFiles] =
-    Decoder.instance { h =>
-      for {
-        _type       <- h.get[String]("type")
-        _fileHashes <- h.getOrElse[List[String]]("file_hashes")(List.empty)
-        _message    <- h.get[String]("message")
-      } yield {
-        PassportElementErrorFiles(`type` = _type, fileHashes = _fileHashes, message = _message)
-      }
     }
 
   implicit lazy val passportelementerrordatafieldEncoder: Encoder[PassportElementErrorDataField] =
@@ -3456,18 +2338,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val passportelementerrordatafieldDecoder: Decoder[PassportElementErrorDataField] =
-    Decoder.instance { h =>
-      for {
-        _type      <- h.get[String]("type")
-        _fieldName <- h.get[String]("field_name")
-        _dataHash  <- h.get[String]("data_hash")
-        _message   <- h.get[String]("message")
-      } yield {
-        PassportElementErrorDataField(`type` = _type, fieldName = _fieldName, dataHash = _dataHash, message = _message)
-      }
-    }
-
   implicit lazy val passportelementerrorreversesideEncoder: Encoder[PassportElementErrorReverseSide] =
     (x: PassportElementErrorReverseSide) => {
       Json.fromFields(
@@ -3477,17 +2347,6 @@ object CirceImplicits {
           "message"   -> x.message.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val passportelementerrorreversesideDecoder: Decoder[PassportElementErrorReverseSide] =
-    Decoder.instance { h =>
-      for {
-        _type     <- h.get[String]("type")
-        _fileHash <- h.get[String]("file_hash")
-        _message  <- h.get[String]("message")
-      } yield {
-        PassportElementErrorReverseSide(`type` = _type, fileHash = _fileHash, message = _message)
-      }
     }
 
   implicit lazy val passportelementerrorselfieEncoder: Encoder[PassportElementErrorSelfie] =
@@ -3501,17 +2360,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val passportelementerrorselfieDecoder: Decoder[PassportElementErrorSelfie] =
-    Decoder.instance { h =>
-      for {
-        _type     <- h.get[String]("type")
-        _fileHash <- h.get[String]("file_hash")
-        _message  <- h.get[String]("message")
-      } yield {
-        PassportElementErrorSelfie(`type` = _type, fileHash = _fileHash, message = _message)
-      }
-    }
-
   implicit lazy val passportelementerrorfrontsideEncoder: Encoder[PassportElementErrorFrontSide] =
     (x: PassportElementErrorFrontSide) => {
       Json.fromFields(
@@ -3521,17 +2369,6 @@ object CirceImplicits {
           "message"   -> x.message.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val passportelementerrorfrontsideDecoder: Decoder[PassportElementErrorFrontSide] =
-    Decoder.instance { h =>
-      for {
-        _type     <- h.get[String]("type")
-        _fileHash <- h.get[String]("file_hash")
-        _message  <- h.get[String]("message")
-      } yield {
-        PassportElementErrorFrontSide(`type` = _type, fileHash = _fileHash, message = _message)
-      }
     }
 
   implicit lazy val passportelementerrorfileEncoder: Encoder[PassportElementErrorFile] =
@@ -3545,17 +2382,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val passportelementerrorfileDecoder: Decoder[PassportElementErrorFile] =
-    Decoder.instance { h =>
-      for {
-        _type     <- h.get[String]("type")
-        _fileHash <- h.get[String]("file_hash")
-        _message  <- h.get[String]("message")
-      } yield {
-        PassportElementErrorFile(`type` = _type, fileHash = _fileHash, message = _message)
-      }
-    }
-
   implicit lazy val passportelementerrorunspecifiedEncoder: Encoder[PassportElementErrorUnspecified] =
     (x: PassportElementErrorUnspecified) => {
       Json.fromFields(
@@ -3565,17 +2391,6 @@ object CirceImplicits {
           "message"      -> x.message.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val passportelementerrorunspecifiedDecoder: Decoder[PassportElementErrorUnspecified] =
-    Decoder.instance { h =>
-      for {
-        _type        <- h.get[String]("type")
-        _elementHash <- h.get[String]("element_hash")
-        _message     <- h.get[String]("message")
-      } yield {
-        PassportElementErrorUnspecified(`type` = _type, elementHash = _elementHash, message = _message)
-      }
     }
 
   implicit lazy val passportelementerrortranslationfileEncoder: Encoder[PassportElementErrorTranslationFile] =
@@ -3589,17 +2404,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val passportelementerrortranslationfileDecoder: Decoder[PassportElementErrorTranslationFile] =
-    Decoder.instance { h =>
-      for {
-        _type     <- h.get[String]("type")
-        _fileHash <- h.get[String]("file_hash")
-        _message  <- h.get[String]("message")
-      } yield {
-        PassportElementErrorTranslationFile(`type` = _type, fileHash = _fileHash, message = _message)
-      }
-    }
-
   implicit lazy val passportelementerrortranslationfilesEncoder: Encoder[PassportElementErrorTranslationFiles] =
     (x: PassportElementErrorTranslationFiles) => {
       Json.fromFields(
@@ -3609,17 +2413,6 @@ object CirceImplicits {
           "message"     -> x.message.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val passportelementerrortranslationfilesDecoder: Decoder[PassportElementErrorTranslationFiles] =
-    Decoder.instance { h =>
-      for {
-        _type       <- h.get[String]("type")
-        _fileHashes <- h.getOrElse[List[String]]("file_hashes")(List.empty)
-        _message    <- h.get[String]("message")
-      } yield {
-        PassportElementErrorTranslationFiles(`type` = _type, fileHashes = _fileHashes, message = _message)
-      }
     }
 
   implicit lazy val reactiontypeEncoder: Encoder[ReactionType] = {
@@ -5654,19 +4447,7 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val inlinequeryresultsbuttonDecoder: Decoder[InlineQueryResultsButton] =
-    Decoder.instance { h =>
-      for {
-        _text           <- h.get[String]("text")
-        _webApp         <- h.get[Option[WebAppInfo]]("web_app")
-        _startParameter <- h.get[Option[String]]("start_parameter")
-      } yield {
-        InlineQueryResultsButton(text = _text, webApp = _webApp, startParameter = _startParameter)
-      }
-    }
-
   implicit lazy val inputfileEncoder: Encoder[InputFile.type] = (_: InputFile.type) => ().asJson
-  implicit lazy val inputfileDecoder: Decoder[InputFile.type] = (_: HCursor) => Right(InputFile)
 
   implicit lazy val inputpolloptionEncoder: Encoder[InputPollOption] =
     (x: InputPollOption) => {
@@ -5677,17 +4458,6 @@ object CirceImplicits {
           "text_entities"   -> x.textEntities.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inputpolloptionDecoder: Decoder[InputPollOption] =
-    Decoder.instance { h =>
-      for {
-        _text          <- h.get[String]("text")
-        _textParseMode <- h.get[Option[ParseMode]]("text_parse_mode")
-        _textEntities  <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("text_entities")(List.empty)
-      } yield {
-        InputPollOption(text = _text, textParseMode = _textParseMode, textEntities = _textEntities)
-      }
     }
 
   implicit lazy val inputstickerEncoder: Encoder[InputSticker] =
@@ -5701,25 +4471,6 @@ object CirceImplicits {
           "keywords"      -> x.keywords.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val inputstickerDecoder: Decoder[InputSticker] =
-    Decoder.instance { h =>
-      for {
-        _sticker      <- h.get[IFile]("sticker")
-        _format       <- h.get[String]("format")
-        _emojiList    <- h.getOrElse[List[String]]("emoji_list")(List.empty)
-        _maskPosition <- h.get[Option[MaskPosition]]("mask_position")
-        _keywords     <- h.getOrElse[List[String]]("keywords")(List.empty)
-      } yield {
-        InputSticker(
-          sticker = _sticker,
-          format = _format,
-          emojiList = _emojiList,
-          maskPosition = _maskPosition,
-          keywords = _keywords
-        )
-      }
     }
 
   implicit lazy val invoiceEncoder: Encoder[Invoice] =
@@ -5769,29 +4520,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val keyboardbuttonDecoder: Decoder[KeyboardButton] =
-    Decoder.instance { h =>
-      for {
-        _text            <- h.get[String]("text")
-        _requestUsers    <- h.get[Option[KeyboardButtonRequestUsers]]("request_users")
-        _requestChat     <- h.get[Option[KeyboardButtonRequestChat]]("request_chat")
-        _requestContact  <- h.get[Option[Boolean]]("request_contact")
-        _requestLocation <- h.get[Option[Boolean]]("request_location")
-        _requestPoll     <- h.get[Option[KeyboardButtonPollType]]("request_poll")
-        _webApp          <- h.get[Option[WebAppInfo]]("web_app")
-      } yield {
-        KeyboardButton(
-          text = _text,
-          requestUsers = _requestUsers,
-          requestChat = _requestChat,
-          requestContact = _requestContact,
-          requestLocation = _requestLocation,
-          requestPoll = _requestPoll,
-          webApp = _webApp
-        )
-      }
-    }
-
   implicit lazy val keyboardbuttonpolltypeEncoder: Encoder[KeyboardButtonPollType] =
     (x: KeyboardButtonPollType) => {
       Json.fromFields(
@@ -5799,15 +4527,6 @@ object CirceImplicits {
           "type" -> x.`type`.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val keyboardbuttonpolltypeDecoder: Decoder[KeyboardButtonPollType] =
-    Decoder.instance { h =>
-      for {
-        _type <- h.get[Option[String]]("type")
-      } yield {
-        KeyboardButtonPollType(`type` = _type)
-      }
     }
 
   implicit lazy val keyboardbuttonrequestchatEncoder: Encoder[KeyboardButtonRequestChat] =
@@ -5829,37 +4548,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val keyboardbuttonrequestchatDecoder: Decoder[KeyboardButtonRequestChat] =
-    Decoder.instance { h =>
-      for {
-        _requestId               <- h.get[Int]("request_id")
-        _chatIsChannel           <- h.get[Boolean]("chat_is_channel")
-        _chatIsForum             <- h.get[Option[Boolean]]("chat_is_forum")
-        _chatHasUsername         <- h.get[Option[Boolean]]("chat_has_username")
-        _chatIsCreated           <- h.get[Option[Boolean]]("chat_is_created")
-        _userAdministratorRights <- h.get[Option[ChatAdministratorRights]]("user_administrator_rights")
-        _botAdministratorRights  <- h.get[Option[ChatAdministratorRights]]("bot_administrator_rights")
-        _botIsMember             <- h.get[Option[Boolean]]("bot_is_member")
-        _requestTitle            <- h.get[Option[Boolean]]("request_title")
-        _requestUsername         <- h.get[Option[Boolean]]("request_username")
-        _requestPhoto            <- h.get[Option[Boolean]]("request_photo")
-      } yield {
-        KeyboardButtonRequestChat(
-          requestId = _requestId,
-          chatIsChannel = _chatIsChannel,
-          chatIsForum = _chatIsForum,
-          chatHasUsername = _chatHasUsername,
-          chatIsCreated = _chatIsCreated,
-          userAdministratorRights = _userAdministratorRights,
-          botAdministratorRights = _botAdministratorRights,
-          botIsMember = _botIsMember,
-          requestTitle = _requestTitle,
-          requestUsername = _requestUsername,
-          requestPhoto = _requestPhoto
-        )
-      }
-    }
-
   implicit lazy val keyboardbuttonrequestusersEncoder: Encoder[KeyboardButtonRequestUsers] =
     (x: KeyboardButtonRequestUsers) => {
       Json.fromFields(
@@ -5875,29 +4563,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val keyboardbuttonrequestusersDecoder: Decoder[KeyboardButtonRequestUsers] =
-    Decoder.instance { h =>
-      for {
-        _requestId       <- h.get[Int]("request_id")
-        _userIsBot       <- h.get[Option[Boolean]]("user_is_bot")
-        _userIsPremium   <- h.get[Option[Boolean]]("user_is_premium")
-        _maxQuantity     <- h.get[Option[Int]]("max_quantity")
-        _requestName     <- h.get[Option[Boolean]]("request_name")
-        _requestUsername <- h.get[Option[Boolean]]("request_username")
-        _requestPhoto    <- h.get[Option[Boolean]]("request_photo")
-      } yield {
-        KeyboardButtonRequestUsers(
-          requestId = _requestId,
-          userIsBot = _userIsBot,
-          userIsPremium = _userIsPremium,
-          maxQuantity = _maxQuantity,
-          requestName = _requestName,
-          requestUsername = _requestUsername,
-          requestPhoto = _requestPhoto
-        )
-      }
-    }
-
   implicit lazy val labeledpriceEncoder: Encoder[LabeledPrice] =
     (x: LabeledPrice) => {
       Json.fromFields(
@@ -5906,16 +4571,6 @@ object CirceImplicits {
           "amount" -> x.amount.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val labeledpriceDecoder: Decoder[LabeledPrice] =
-    Decoder.instance { h =>
-      for {
-        _label  <- h.get[String]("label")
-        _amount <- h.get[Int]("amount")
-      } yield {
-        LabeledPrice(label = _label, amount = _amount)
-      }
     }
 
   implicit lazy val linkpreviewoptionsEncoder: Encoder[LinkPreviewOptions] =
@@ -6528,29 +5183,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val replyparametersDecoder: Decoder[ReplyParameters] =
-    Decoder.instance { h =>
-      for {
-        _messageId                <- h.get[Int]("message_id")
-        _chatId                   <- h.get[Option[ChatId]]("chat_id")
-        _allowSendingWithoutReply <- h.get[Option[Boolean]]("allow_sending_without_reply")
-        _quote                    <- h.get[Option[String]]("quote")
-        _quoteParseMode           <- h.get[Option[ParseMode]]("quote_parse_mode")
-        _quoteEntities            <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("quote_entities")(List.empty)
-        _quotePosition            <- h.get[Option[Int]]("quote_position")
-      } yield {
-        ReplyParameters(
-          messageId = _messageId,
-          chatId = _chatId,
-          allowSendingWithoutReply = _allowSendingWithoutReply,
-          quote = _quote,
-          quoteParseMode = _quoteParseMode,
-          quoteEntities = _quoteEntities,
-          quotePosition = _quotePosition
-        )
-      }
-    }
-
   implicit lazy val responseparametersEncoder: Encoder[ResponseParameters] =
     (x: ResponseParameters) => {
       Json.fromFields(
@@ -6559,16 +5191,6 @@ object CirceImplicits {
           "retry_after"        -> x.retryAfter.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val responseparametersDecoder: Decoder[ResponseParameters] =
-    Decoder.instance { h =>
-      for {
-        _migrateToChatId <- h.get[Option[Long]]("migrate_to_chat_id")
-        _retryAfter      <- h.get[Option[Int]]("retry_after")
-      } yield {
-        ResponseParameters(migrateToChatId = _migrateToChatId, retryAfter = _retryAfter)
-      }
     }
 
   implicit lazy val sentwebappmessageEncoder: Encoder[SentWebAppMessage] =
@@ -6659,17 +5281,6 @@ object CirceImplicits {
           "prices" -> x.prices.asJson
         ).filter(!_._2.isNull)
       )
-    }
-
-  implicit lazy val shippingoptionDecoder: Decoder[ShippingOption] =
-    Decoder.instance { h =>
-      for {
-        _id     <- h.get[String]("id")
-        _title  <- h.get[String]("title")
-        _prices <- h.getOrElse[List[LabeledPrice]]("prices")(List.empty)
-      } yield {
-        ShippingOption(id = _id, title = _title, prices = _prices)
-      }
     }
 
   implicit lazy val shippingqueryEncoder: Encoder[ShippingQuery] =
