@@ -3159,7 +3159,7 @@ object CirceImplicits {
         List(
           "can_reply"                      -> x.canReply.asJson,
           "can_read_messages"              -> x.canReadMessages.asJson,
-          "can_delete_outgoing_messages"   -> x.canDeleteOutgoingMessages.asJson,
+          "can_delete_sent_messages"       -> x.canDeleteSentMessages.asJson,
           "can_delete_all_messages"        -> x.canDeleteAllMessages.asJson,
           "can_edit_name"                  -> x.canEditName.asJson,
           "can_edit_bio"                   -> x.canEditBio.asJson,
@@ -3180,7 +3180,7 @@ object CirceImplicits {
       for {
         _canReply                   <- h.get[Option[Boolean]]("can_reply")
         _canReadMessages            <- h.get[Option[Boolean]]("can_read_messages")
-        _canDeleteOutgoingMessages  <- h.get[Option[Boolean]]("can_delete_outgoing_messages")
+        _canDeleteSentMessages      <- h.get[Option[Boolean]]("can_delete_sent_messages")
         _canDeleteAllMessages       <- h.get[Option[Boolean]]("can_delete_all_messages")
         _canEditName                <- h.get[Option[Boolean]]("can_edit_name")
         _canEditBio                 <- h.get[Option[Boolean]]("can_edit_bio")
@@ -3196,7 +3196,7 @@ object CirceImplicits {
         BusinessBotRights(
           canReply = _canReply,
           canReadMessages = _canReadMessages,
-          canDeleteOutgoingMessages = _canDeleteOutgoingMessages,
+          canDeleteSentMessages = _canDeleteSentMessages,
           canDeleteAllMessages = _canDeleteAllMessages,
           canEditName = _canEditName,
           canEditBio = _canEditBio,

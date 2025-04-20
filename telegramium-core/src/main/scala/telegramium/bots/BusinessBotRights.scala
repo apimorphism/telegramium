@@ -7,7 +7,7 @@ package telegramium.bots
   *   24 hours
   * @param canReadMessages
   *   Optional. True, if the bot can mark incoming private messages as read
-  * @param canDeleteOutgoingMessages
+  * @param canDeleteSentMessages
   *   Optional. True, if the bot can delete messages sent by the bot
   * @param canDeleteAllMessages
   *   Optional. True, if the bot can delete all private messages in managed chats
@@ -36,7 +36,7 @@ package telegramium.bots
 final case class BusinessBotRights(
   canReply: Option[Boolean] = Option.empty,
   canReadMessages: Option[Boolean] = Option.empty,
-  canDeleteOutgoingMessages: Option[Boolean] = Option.empty,
+  canDeleteSentMessages: Option[Boolean] = Option.empty,
   canDeleteAllMessages: Option[Boolean] = Option.empty,
   canEditName: Option[Boolean] = Option.empty,
   canEditBio: Option[Boolean] = Option.empty,
