@@ -61,6 +61,8 @@ sealed trait MaybeInaccessibleMessage {}
   * @param authorSignature
   *   Optional. Signature of the post author for messages in channels, or the custom title of an anonymous group
   *   administrator
+  * @param paidStarCount
+  *   Optional. The number of Telegram Stars that were paid by the sender of the message to send it
   * @param text
   *   Optional. For text messages, the actual UTF-8 text of the message
   * @param entities
@@ -159,6 +161,10 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. Service message: users were shared with the bot
   * @param chatShared
   *   Optional. Service message: a chat was shared with the bot
+  * @param gift
+  *   Optional. Service message: a regular gift was sent or received
+  * @param uniqueGift
+  *   Optional. Service message: a unique gift was sent or received
   * @param connectedWebsite
   *   Optional. The domain name of the website on which the user has logged in.
   * @param writeAccessAllowed
@@ -194,6 +200,8 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. A giveaway with public winners was completed
   * @param giveawayCompleted
   *   Optional. Service message: a giveaway without public winners was completed
+  * @param paidMessagePriceChanged
+  *   Optional. Service message: the price for paid messages has changed in the chat
   * @param videoChatScheduled
   *   Optional. Service message: video chat scheduled
   * @param videoChatStarted
@@ -230,6 +238,7 @@ final case class Message(
   isFromOffline: Option[Boolean] = Option.empty,
   mediaGroupId: Option[String] = Option.empty,
   authorSignature: Option[String] = Option.empty,
+  paidStarCount: Option[Int] = Option.empty,
   text: Option[String] = Option.empty,
   entities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
@@ -271,6 +280,8 @@ final case class Message(
   refundedPayment: Option[RefundedPayment] = Option.empty,
   usersShared: Option[UsersShared] = Option.empty,
   chatShared: Option[ChatShared] = Option.empty,
+  gift: Option[GiftInfo] = Option.empty,
+  uniqueGift: Option[UniqueGiftInfo] = Option.empty,
   connectedWebsite: Option[String] = Option.empty,
   writeAccessAllowed: Option[WriteAccessAllowed] = Option.empty,
   passportData: Option[PassportData] = Option.empty,
@@ -287,6 +298,7 @@ final case class Message(
   giveaway: Option[Giveaway] = Option.empty,
   giveawayWinners: Option[GiveawayWinners] = Option.empty,
   giveawayCompleted: Option[GiveawayCompleted] = Option.empty,
+  paidMessagePriceChanged: Option[PaidMessagePriceChanged] = Option.empty,
   videoChatScheduled: Option[VideoChatScheduled] = Option.empty,
   videoChatStarted: Option[VideoChatStarted.type] = Option.empty,
   videoChatEnded: Option[VideoChatEnded] = Option.empty,

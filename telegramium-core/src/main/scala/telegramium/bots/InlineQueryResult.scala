@@ -47,7 +47,7 @@ final case class InlineQueryResultGif(
   title: Option[String] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
@@ -180,7 +180,7 @@ final case class InlineQueryResultPhoto(
   description: Option[String] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
@@ -224,7 +224,7 @@ final case class InlineQueryResultDocument(
   mimeType: String,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   description: Option[String] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty,
@@ -260,7 +260,7 @@ final case class InlineQueryResultCachedVoice(
   title: String,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
 ) extends InlineQueryResult
@@ -328,7 +328,7 @@ final case class InlineQueryResultAudio(
   title: String,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   performer: Option[String] = Option.empty,
   audioDuration: Option[Int] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
@@ -380,7 +380,7 @@ final case class InlineQueryResultMpeg4Gif(
   title: Option[String] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
@@ -415,7 +415,7 @@ final case class InlineQueryResultCachedMpeg4Gif(
   title: Option[String] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
@@ -451,7 +451,7 @@ final case class InlineQueryResultCachedDocument(
   description: Option[String] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
 ) extends InlineQueryResult
@@ -488,7 +488,7 @@ final case class InlineQueryResultCachedVideo(
   description: Option[String] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
@@ -541,7 +541,7 @@ final case class InlineQueryResultCachedPhoto(
   description: Option[String] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
@@ -611,7 +611,7 @@ final case class InlineQueryResultVideo(
   title: String,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   showCaptionAboveMedia: Option[Boolean] = Option.empty,
   videoWidth: Option[Int] = Option.empty,
   videoHeight: Option[Int] = Option.empty,
@@ -645,7 +645,7 @@ final case class InlineQueryResultCachedAudio(
   audioFileId: String,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
 ) extends InlineQueryResult
@@ -728,7 +728,7 @@ final case class InlineQueryResultCachedGif(
   title: Option[String] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   showCaptionAboveMedia: Option[Boolean] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty
@@ -763,7 +763,7 @@ final case class InlineQueryResultVoice(
   title: String,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   voiceDuration: Option[Int] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
   inputMessageContent: Option[InputMessageContent] = Option.empty

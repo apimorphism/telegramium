@@ -4,9 +4,9 @@ package telegramium.bots
   *
   * @param sticker
   *   The added sticker. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an
-  *   HTTP URL as a String for Telegram to get a file from the Internet, upload a new one using multipart/form-data, or
-  *   pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name.
-  *   Animated and video stickers can't be uploaded via HTTP URL.
+  *   HTTP URL as a String for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload
+  *   a new file using multipart/form-data under <file_attach_name> name. Animated and video stickers can't be uploaded
+  *   via HTTP URL.
   * @param format
   *   Format of the added sticker, must be one of “static” for a .WEBP or .PNG image, “animated” for a .TGS animation,
   *   “video” for a .WEBM video

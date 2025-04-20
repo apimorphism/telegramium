@@ -115,9 +115,8 @@ class LongPollBotISpec
         .respond(sendMessageResponse)
       bot
         .onUpdate(
-          testUpdate.copy(businessConnection =
-            BusinessConnection("1", testUser, testChat.id, 0, canReply = false, isEnabled = false).some
-          )
+          testUpdate
+            .copy(businessConnection = BusinessConnection("1", testUser, testChat.id, 0, isEnabled = false).some)
         )
         .unsafeRunSync()
       verifyMessageSent("onBusinessConnection")

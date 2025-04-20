@@ -14,6 +14,13 @@ sealed trait ChatMember {}
 final case class ChatMemberOwner(user: User, isAnonymous: Boolean, customTitle: Option[String] = Option.empty)
     extends ChatMember
 
+/** Represents a chat member that isn't currently a member of the chat, but may join it themselves.
+  *
+  * @param user
+  *   Information about the user
+  */
+final case class ChatMemberLeft(user: User) extends ChatMember
+
 /** Represents a chat member that has some additional privileges.
   *
   * @param user
@@ -78,13 +85,6 @@ final case class ChatMemberAdministrator(
   canManageTopics: Option[Boolean] = Option.empty,
   customTitle: Option[String] = Option.empty
 ) extends ChatMember
-
-/** Represents a chat member that isn't currently a member of the chat, but may join it themselves.
-  *
-  * @param user
-  *   Information about the user
-  */
-final case class ChatMemberLeft(user: User) extends ChatMember
 
 /** Represents a chat member that has no additional privileges or restrictions.
   *

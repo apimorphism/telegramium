@@ -20,36 +20,20 @@ object CirceImplicits {
   import telegramium.bots.InlineKeyboardMarkup
   import telegramium.bots.InputMedia
   import telegramium.bots.LinkPreviewOptions
+  import telegramium.bots.InputStoryContent
+  import telegramium.bots.StoryArea
   import telegramium.bots.ChatPermissions
   import telegramium.bots.IFile
   import telegramium.bots.InputPaidMedia
   import telegramium.bots.InputPollOption
+  import telegramium.bots.AcceptedGiftTypes
+  import telegramium.bots.InputProfilePhoto
   import telegramium.bots.MenuButton
   import telegramium.bots.ReactionType
   import telegramium.bots.BotCommand
   import telegramium.bots.ChatAdministratorRights
   import telegramium.bots.PassportElementError
   import telegramium.bots.MaskPosition
-
-  implicit lazy val responseEncoder: Encoder[Response] =
-    (x: Response) => {
-      Json.fromFields(
-        List(
-          "ok"          -> x.ok.asJson,
-          "description" -> x.description.asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val responseDecoder: Decoder[Response] =
-    Decoder.instance { h =>
-      for {
-        _ok          <- h.get[Boolean]("ok")
-        _description <- h.get[Option[String]]("description")
-      } yield {
-        Response(ok = _ok, description = _description)
-      }
-    }
 
   implicit lazy val addstickertosetreqEncoder: Encoder[AddStickerToSetReq] =
     (x: AddStickerToSetReq) => {
@@ -182,6 +166,17 @@ object CirceImplicits {
         List(
           "chat_id" -> x.chatId.asJson,
           "method"  -> "closeGeneralForumTopic".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val convertgifttostarsreqEncoder: Encoder[ConvertGiftToStarsReq] =
+    (x: ConvertGiftToStarsReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "owned_gift_id"          -> x.ownedGiftId.asJson,
+          "method"                 -> "convertGiftToStars".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -322,6 +317,17 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val deletebusinessmessagesreqEncoder: Encoder[DeleteBusinessMessagesReq] =
+    (x: DeleteBusinessMessagesReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "message_ids"            -> x.messageIds.asJson,
+          "method"                 -> "deleteBusinessMessages".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val deletechatphotoreqEncoder: Encoder[DeleteChatPhotoReq] =
     (x: DeleteChatPhotoReq) => {
       Json.fromFields(
@@ -402,6 +408,17 @@ object CirceImplicits {
         List(
           "name"   -> x.name.asJson,
           "method" -> "deleteStickerSet".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val deletestoryreqEncoder: Encoder[DeleteStoryReq] =
+    (x: DeleteStoryReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "story_id"               -> x.storyId.asJson,
+          "method"                 -> "deleteStory".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -552,6 +569,22 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val editstoryreqEncoder: Encoder[EditStoryReq] =
+    (x: EditStoryReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "story_id"               -> x.storyId.asJson,
+          "content"                -> x.content.asJson,
+          "caption"                -> x.caption.asJson,
+          "parse_mode"             -> x.parseMode.asJson,
+          "caption_entities"       -> x.captionEntities.asJson,
+          "areas"                  -> x.areas.asJson,
+          "method"                 -> "editStory".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val edituserstarsubscriptionreqEncoder: Encoder[EditUserStarSubscriptionReq] =
     (x: EditUserStarSubscriptionReq) => {
       Json.fromFields(
@@ -607,6 +640,34 @@ object CirceImplicits {
 
   implicit lazy val getavailablegiftsreqEncoder: Encoder[GetAvailableGiftsReq.type] = (_: GetAvailableGiftsReq.type) =>
     ().asJson
+
+  implicit lazy val getbusinessaccountgiftsreqEncoder: Encoder[GetBusinessAccountGiftsReq] =
+    (x: GetBusinessAccountGiftsReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "exclude_unsaved"        -> x.excludeUnsaved.asJson,
+          "exclude_saved"          -> x.excludeSaved.asJson,
+          "exclude_unlimited"      -> x.excludeUnlimited.asJson,
+          "exclude_limited"        -> x.excludeLimited.asJson,
+          "exclude_unique"         -> x.excludeUnique.asJson,
+          "sort_by_price"          -> x.sortByPrice.asJson,
+          "offset"                 -> x.offset.asJson,
+          "limit"                  -> x.limit.asJson,
+          "method"                 -> "getBusinessAccountGifts".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getbusinessaccountstarbalancereqEncoder: Encoder[GetBusinessAccountStarBalanceReq] =
+    (x: GetBusinessAccountStarBalanceReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "method"                 -> "getBusinessAccountStarBalance".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
 
   implicit lazy val getbusinessconnectionreqEncoder: Encoder[GetBusinessConnectionReq] =
     (x: GetBusinessConnectionReq) => {
@@ -817,6 +878,21 @@ object CirceImplicits {
 
   implicit lazy val getwebhookinforeqEncoder: Encoder[GetWebhookInfoReq.type] = (_: GetWebhookInfoReq.type) => ().asJson
 
+  implicit lazy val giftpremiumsubscriptionreqEncoder: Encoder[GiftPremiumSubscriptionReq] =
+    (x: GiftPremiumSubscriptionReq) => {
+      Json.fromFields(
+        List(
+          "user_id"         -> x.userId.asJson,
+          "month_count"     -> x.monthCount.asJson,
+          "star_count"      -> x.starCount.asJson,
+          "text"            -> x.text.asJson,
+          "text_parse_mode" -> x.textParseMode.asJson,
+          "text_entities"   -> x.textEntities.asJson,
+          "method"          -> "giftPremiumSubscription".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val hidegeneralforumtopicreqEncoder: Encoder[HideGeneralForumTopicReq] =
     (x: HideGeneralForumTopicReq) => {
       Json.fromFields(
@@ -852,6 +928,24 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val poststoryreqEncoder: Encoder[PostStoryReq] =
+    (x: PostStoryReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "content"                -> x.content.asJson,
+          "active_period"          -> x.activePeriod.asJson,
+          "caption"                -> x.caption.asJson,
+          "parse_mode"             -> x.parseMode.asJson,
+          "caption_entities"       -> x.captionEntities.asJson,
+          "areas"                  -> x.areas.asJson,
+          "post_to_chat_page"      -> x.postToChatPage.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "method"                 -> "postStory".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val promotechatmemberreqEncoder: Encoder[PromoteChatMemberReq] =
     (x: PromoteChatMemberReq) => {
       Json.fromFields(
@@ -878,6 +972,18 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val readbusinessmessagereqEncoder: Encoder[ReadBusinessMessageReq] =
+    (x: ReadBusinessMessageReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_id"             -> x.messageId.asJson,
+          "method"                 -> "readBusinessMessage".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val refundstarpaymentreqEncoder: Encoder[RefundStarPaymentReq] =
     (x: RefundStarPaymentReq) => {
       Json.fromFields(
@@ -885,6 +991,17 @@ object CirceImplicits {
           "user_id"                    -> x.userId.asJson,
           "telegram_payment_charge_id" -> x.telegramPaymentChargeId.asJson,
           "method"                     -> "refundStarPayment".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val removebusinessaccountprofilephotoreqEncoder: Encoder[RemoveBusinessAccountProfilePhotoReq] =
+    (x: RemoveBusinessAccountProfilePhotoReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "is_public"              -> x.isPublic.asJson,
+          "method"                 -> "removeBusinessAccountProfilePhoto".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1453,6 +1570,64 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val setbusinessaccountbioreqEncoder: Encoder[SetBusinessAccountBioReq] =
+    (x: SetBusinessAccountBioReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "bio"                    -> x.bio.asJson,
+          "method"                 -> "setBusinessAccountBio".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setbusinessaccountgiftsettingsreqEncoder: Encoder[SetBusinessAccountGiftSettingsReq] =
+    (x: SetBusinessAccountGiftSettingsReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "show_gift_button"       -> x.showGiftButton.asJson,
+          "accepted_gift_types"    -> x.acceptedGiftTypes.asJson,
+          "method"                 -> "setBusinessAccountGiftSettings".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setbusinessaccountnamereqEncoder: Encoder[SetBusinessAccountNameReq] =
+    (x: SetBusinessAccountNameReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "first_name"             -> x.firstName.asJson,
+          "last_name"              -> x.lastName.asJson,
+          "method"                 -> "setBusinessAccountName".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setbusinessaccountprofilephotoreqEncoder: Encoder[SetBusinessAccountProfilePhotoReq] =
+    (x: SetBusinessAccountProfilePhotoReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "photo"                  -> x.photo.asJson,
+          "is_public"              -> x.isPublic.asJson,
+          "method"                 -> "setBusinessAccountProfilePhoto".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setbusinessaccountusernamereqEncoder: Encoder[SetBusinessAccountUsernameReq] =
+    (x: SetBusinessAccountUsernameReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "username"               -> x.username.asJson,
+          "method"                 -> "setBusinessAccountUsername".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val setchatadministratorcustomtitlereqEncoder: Encoder[SetChatAdministratorCustomTitleReq] =
     (x: SetChatAdministratorCustomTitleReq) => {
       Json.fromFields(
@@ -1762,6 +1937,30 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val transferbusinessaccountstarsreqEncoder: Encoder[TransferBusinessAccountStarsReq] =
+    (x: TransferBusinessAccountStarsReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "star_count"             -> x.starCount.asJson,
+          "method"                 -> "transferBusinessAccountStars".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val transfergiftreqEncoder: Encoder[TransferGiftReq] =
+    (x: TransferGiftReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "owned_gift_id"          -> x.ownedGiftId.asJson,
+          "new_owner_chat_id"      -> x.newOwnerChatId.asJson,
+          "star_count"             -> x.starCount.asJson,
+          "method"                 -> "transferGift".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val unbanchatmemberreqEncoder: Encoder[UnbanChatMemberReq] =
     (x: UnbanChatMemberReq) => {
       Json.fromFields(
@@ -1834,6 +2033,19 @@ object CirceImplicits {
           "chat_id"                -> x.chatId.asJson,
           "message_id"             -> x.messageId.asJson,
           "method"                 -> "unpinChatMessage".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val upgradegiftreqEncoder: Encoder[UpgradeGiftReq] =
+    (x: UpgradeGiftReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "owned_gift_id"          -> x.ownedGiftId.asJson,
+          "keep_original_details"  -> x.keepOriginalDetails.asJson,
+          "star_count"             -> x.starCount.asJson,
+          "method"                 -> "upgradeGift".asJson
         ).filter(!_._2.isNull)
       )
     }

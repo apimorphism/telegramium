@@ -36,7 +36,7 @@ final case class InputMediaAnimation(
   thumbnail: Option[IFile] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   showCaptionAboveMedia: Option[Boolean] = Option.empty,
   width: Option[Int] = Option.empty,
   height: Option[Int] = Option.empty,
@@ -65,7 +65,7 @@ final case class InputMediaPhoto(
   media: IFile,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   showCaptionAboveMedia: Option[Boolean] = Option.empty,
   hasSpoiler: Option[Boolean] = Option.empty
 ) extends InputMedia
@@ -114,7 +114,7 @@ final case class InputMediaVideo(
   startTimestamp: Option[Int] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   showCaptionAboveMedia: Option[Boolean] = Option.empty,
   width: Option[Int] = Option.empty,
   height: Option[Int] = Option.empty,
@@ -150,7 +150,7 @@ final case class InputMediaDocument(
   thumbnail: Option[IFile] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   disableContentTypeDetection: Option[Boolean] = Option.empty
 ) extends InputMedia
 
@@ -184,7 +184,7 @@ final case class InputMediaAudio(
   thumbnail: Option[IFile] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  captionEntities: List[MessageEntity] = List.empty,
   duration: Option[Int] = Option.empty,
   performer: Option[String] = Option.empty,
   title: Option[String] = Option.empty

@@ -12,7 +12,7 @@ import telegramium.bots.KeyboardMarkup
   *   the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance.
   *   Otherwise, they will be credited to the bot's balance.
   * @param starCount
-  *   The number of Telegram Stars that must be paid to buy access to the media; 1-2500
+  *   The number of Telegram Stars that must be paid to buy access to the media; 1-10000
   * @param businessConnectionId
   *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param media

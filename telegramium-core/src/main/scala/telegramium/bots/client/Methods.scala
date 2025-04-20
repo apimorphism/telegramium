@@ -9,7 +9,10 @@ import telegramium.bots.MessageId
 import telegramium.bots.ChatInviteLink
 import telegramium.bots.ForumTopic
 import telegramium.bots.Message
+import telegramium.bots.Story
 import telegramium.bots.Gifts
+import telegramium.bots.OwnedGifts
+import telegramium.bots.StarAmount
 import telegramium.bots.BusinessConnection
 import telegramium.bots.ChatFullInfo
 import telegramium.bots.ChatMember
@@ -276,6 +279,19 @@ trait Methods {
     MethodReq[Boolean]("closeGeneralForumTopic", req.asJson)
   }
 
+  /** Converts a given regular gift to Telegram Stars. Requires the can_convert_gifts_to_stars business bot right.
+    * Returns True on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param ownedGiftId
+    *   Unique identifier of the regular gift that should be converted to Telegram Stars
+    */
+  def convertGiftToStars(businessConnectionId: String, ownedGiftId: String): Method[Boolean] = {
+    val req = ConvertGiftToStarsReq(businessConnectionId, ownedGiftId)
+    MethodReq[Boolean]("convertGiftToStars", req.asJson)
+  }
+
   /** Use this method to copy messages of any kind. Service messages, paid media messages, giveaway messages, giveaway
     * winners messages, and invoice messages can't be copied. A quiz poll can be copied only if the value of the field
     * correct_option_id is known to the bot. The method is analogous to the method forwardMessage, but the copied
@@ -434,7 +450,7 @@ trait Methods {
     *   2592000 (30 days).
     * @param subscriptionPrice
     *   The amount of Telegram Stars a user must pay initially and after each subsequent subscription period to be a
-    *   member of the chat; 1-2500
+    *   member of the chat; 1-10000
     * @param name
     *   Invite link name; 0-32 characters
     */
@@ -497,7 +513,7 @@ trait Methods {
     *   The number of seconds the subscription will be active for before the next payment. The currency must be set to
     *   “XTR” (Telegram Stars) if the parameter is used. Currently, it must always be 2592000 (30 days) if specified.
     *   Any number of subscriptions can be active for a given bot at the same time, including multiple concurrent
-    *   subscriptions from the same user. Subscription price must no exceed 2500 Telegram Stars.
+    *   subscriptions from the same user. Subscription price must no exceed 10000 Telegram Stars.
     * @param maxTipAmount
     *   The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For
     *   example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it
@@ -631,6 +647,21 @@ trait Methods {
     MethodReq[Boolean]("declineChatJoinRequest", req.asJson)
   }
 
+  /** Delete messages on behalf of a business account. Requires the can_delete_sent_messages business bot right to
+    * delete messages sent by the bot itself, or the can_delete_all_messages business bot right to delete any message.
+    * Returns True on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which to delete the messages
+    * @param messageIds
+    *   A JSON-serialized list of 1-100 identifiers of messages to delete. All messages must be from the same chat. See
+    *   deleteMessage for limitations on which messages can be deleted
+    */
+  def deleteBusinessMessages(businessConnectionId: String, messageIds: List[Int] = List.empty): Method[Boolean] = {
+    val req = DeleteBusinessMessagesReq(businessConnectionId, messageIds)
+    MethodReq[Boolean]("deleteBusinessMessages", req.asJson)
+  }
+
   /** Use this method to delete a chat photo. Photos can't be changed for private chats. The bot must be an
     * administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on
     * success.
@@ -740,6 +771,19 @@ trait Methods {
   def deleteStickerSet(name: String): Method[Boolean] = {
     val req = DeleteStickerSetReq(name)
     MethodReq[Boolean]("deleteStickerSet", req.asJson)
+  }
+
+  /** Deletes a story previously posted by the bot on behalf of a managed business account. Requires the
+    * can_manage_stories business bot right. Returns True on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param storyId
+    *   Unique identifier of the story to delete
+    */
+  def deleteStory(businessConnectionId: String, storyId: Int): Method[Boolean] = {
+    val req = DeleteStoryReq(businessConnectionId, storyId)
+    MethodReq[Boolean]("deleteStory", req.asJson)
   }
 
   /** Use this method to remove webhook integration if you decide to switch back to getUpdates. Returns True on success.
@@ -1067,6 +1111,38 @@ trait Methods {
     MethodReq[Either[Boolean, Message]]("editMessageText", req.asJson)
   }
 
+  /** Edits a story previously posted by the bot on behalf of a managed business account. Requires the
+    * can_manage_stories business bot right. Returns Story on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param storyId
+    *   Unique identifier of the story to edit
+    * @param content
+    *   Content of the story
+    * @param caption
+    *   Caption of the story, 0-2048 characters after entities parsing
+    * @param parseMode
+    *   Mode for parsing entities in the story caption. See formatting options for more details.
+    * @param captionEntities
+    *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+    *   parse_mode
+    * @param areas
+    *   A JSON-serialized list of clickable areas to be shown on the story
+    */
+  def editStory(
+    businessConnectionId: String,
+    storyId: Int,
+    content: InputStoryContent,
+    caption: Option[String] = Option.empty,
+    parseMode: Option[ParseMode] = Option.empty,
+    captionEntities: List[MessageEntity] = List.empty,
+    areas: List[StoryArea] = List.empty
+  ): Method[Story] = {
+    val req = EditStoryReq(businessConnectionId, storyId, content, caption, parseMode, captionEntities, areas)
+    MethodReq[Story]("editStory", req.asJson)
+  }
+
   /** Allows the bot to cancel or re-enable extension of a subscription paid in Telegram Stars. Returns True on success.
     *
     * @param userId
@@ -1172,6 +1248,65 @@ trait Methods {
   def getAvailableGifts(): Method[Gifts] = {
     val req = GetAvailableGiftsReq
     MethodReq[Gifts]("getAvailableGifts", req.asJson)
+  }
+
+  /** Returns the gifts received and owned by a managed business account. Requires the can_view_gifts_and_stars business
+    * bot right. Returns OwnedGifts on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param excludeUnsaved
+    *   Pass True to exclude gifts that aren't saved to the account's profile page
+    * @param excludeSaved
+    *   Pass True to exclude gifts that are saved to the account's profile page
+    * @param excludeUnlimited
+    *   Pass True to exclude gifts that can be purchased an unlimited number of times
+    * @param excludeLimited
+    *   Pass True to exclude gifts that can be purchased a limited number of times
+    * @param excludeUnique
+    *   Pass True to exclude unique gifts
+    * @param sortByPrice
+    *   Pass True to sort results by gift price instead of send date. Sorting is applied before pagination.
+    * @param offset
+    *   Offset of the first entry to return as received from the previous request; use empty string to get the first
+    *   chunk of results
+    * @param limit
+    *   The maximum number of gifts to be returned; 1-100. Defaults to 100
+    */
+  def getBusinessAccountGifts(
+    businessConnectionId: String,
+    excludeUnsaved: Option[Boolean] = Option.empty,
+    excludeSaved: Option[Boolean] = Option.empty,
+    excludeUnlimited: Option[Boolean] = Option.empty,
+    excludeLimited: Option[Boolean] = Option.empty,
+    excludeUnique: Option[Boolean] = Option.empty,
+    sortByPrice: Option[Boolean] = Option.empty,
+    offset: Option[String] = Option.empty,
+    limit: Option[Int] = Option.empty
+  ): Method[OwnedGifts] = {
+    val req = GetBusinessAccountGiftsReq(
+      businessConnectionId,
+      excludeUnsaved,
+      excludeSaved,
+      excludeUnlimited,
+      excludeLimited,
+      excludeUnique,
+      sortByPrice,
+      offset,
+      limit
+    )
+    MethodReq[OwnedGifts]("getBusinessAccountGifts", req.asJson)
+  }
+
+  /** Returns the amount of Telegram Stars owned by a managed business account. Requires the can_view_gifts_and_stars
+    * business bot right. Returns StarAmount on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    */
+  def getBusinessAccountStarBalance(businessConnectionId: String): Method[StarAmount] = {
+    val req = GetBusinessAccountStarBalanceReq(businessConnectionId)
+    MethodReq[StarAmount]("getBusinessAccountStarBalance", req.asJson)
   }
 
   /** Use this method to get information about the connection of the bot with a business account. Returns a
@@ -1462,6 +1597,37 @@ trait Methods {
     MethodReq[WebhookInfo]("getWebhookInfo", req.asJson)
   }
 
+  /** Gifts a Telegram Premium subscription to the given user. Returns True on success.
+    *
+    * @param userId
+    *   Unique identifier of the target user who will receive a Telegram Premium subscription
+    * @param monthCount
+    *   Number of months the Telegram Premium subscription will be active for the user; must be one of 3, 6, or 12
+    * @param starCount
+    *   Number of Telegram Stars to pay for the Telegram Premium subscription; must be 1000 for 3 months, 1500 for 6
+    *   months, and 2500 for 12 months
+    * @param text
+    *   Text that will be shown along with the service message about the subscription; 0-128 characters
+    * @param textParseMode
+    *   Mode for parsing entities in the text. See formatting options for more details. Entities other than “bold”,
+    *   “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
+    * @param textEntities
+    *   A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of
+    *   text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and
+    *   “custom_emoji” are ignored.
+    */
+  def giftPremiumSubscription(
+    userId: Long,
+    monthCount: Int,
+    starCount: Int,
+    text: Option[String] = Option.empty,
+    textParseMode: Option[ParseMode] = Option.empty,
+    textEntities: List[MessageEntity] = List.empty
+  ): Method[Boolean] = {
+    val req = GiftPremiumSubscriptionReq(userId, monthCount, starCount, text, textParseMode, textEntities)
+    MethodReq[Boolean]("giftPremiumSubscription", req.asJson)
+  }
+
   /** Use this method to hide the 'General' topic in a forum supergroup chat. The bot must be an administrator in the
     * chat for this to work and must have the can_manage_topics administrator rights. The topic will be automatically
     * closed if it was open. Returns True on success.
@@ -1518,6 +1684,55 @@ trait Methods {
   ): Method[Boolean] = {
     val req = PinChatMessageReq(chatId, messageId, businessConnectionId, disableNotification)
     MethodReq[Boolean]("pinChatMessage", req.asJson)
+  }
+
+  /** Posts a story on behalf of a managed business account. Requires the can_manage_stories business bot right. Returns
+    * Story on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param content
+    *   Content of the story
+    * @param activePeriod
+    *   Period after which the story is moved to the archive, in seconds; must be one of 6 * 3600, 12 * 3600, 86400, or
+    *   2 * 86400
+    * @param caption
+    *   Caption of the story, 0-2048 characters after entities parsing
+    * @param parseMode
+    *   Mode for parsing entities in the story caption. See formatting options for more details.
+    * @param captionEntities
+    *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+    *   parse_mode
+    * @param areas
+    *   A JSON-serialized list of clickable areas to be shown on the story
+    * @param postToChatPage
+    *   Pass True to keep the story accessible after it expires
+    * @param protectContent
+    *   Pass True if the content of the story must be protected from forwarding and screenshotting
+    */
+  def postStory(
+    businessConnectionId: String,
+    content: InputStoryContent,
+    activePeriod: Int,
+    caption: Option[String] = Option.empty,
+    parseMode: Option[ParseMode] = Option.empty,
+    captionEntities: List[MessageEntity] = List.empty,
+    areas: List[StoryArea] = List.empty,
+    postToChatPage: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty
+  ): Method[Story] = {
+    val req = PostStoryReq(
+      businessConnectionId,
+      content,
+      activePeriod,
+      caption,
+      parseMode,
+      captionEntities,
+      areas,
+      postToChatPage,
+      protectContent
+    )
+    MethodReq[Story]("postStory", req.asJson)
   }
 
   /** Use this method to promote or demote a user in a supergroup or a channel. The bot must be an administrator in the
@@ -1604,6 +1819,22 @@ trait Methods {
     MethodReq[Boolean]("promoteChatMember", req.asJson)
   }
 
+  /** Marks incoming message as read on behalf of a business account. Requires the can_read_messages business bot right.
+    * Returns True on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which to read the message
+    * @param chatId
+    *   Unique identifier of the chat in which the message was received. The chat must have been active in the last 24
+    *   hours.
+    * @param messageId
+    *   Unique identifier of the message to mark as read
+    */
+  def readBusinessMessage(businessConnectionId: String, chatId: Long, messageId: Int): Method[Boolean] = {
+    val req = ReadBusinessMessageReq(businessConnectionId, chatId, messageId)
+    MethodReq[Boolean]("readBusinessMessage", req.asJson)
+  }
+
   /** Refunds a successful payment in Telegram Stars. Returns True on success.
     *
     * @param userId
@@ -1614,6 +1845,24 @@ trait Methods {
   def refundStarPayment(userId: Long, telegramPaymentChargeId: String): Method[Boolean] = {
     val req = RefundStarPaymentReq(userId, telegramPaymentChargeId)
     MethodReq[Boolean]("refundStarPayment", req.asJson)
+  }
+
+  /** Removes the current profile photo of a managed business account. Requires the can_edit_profile_photo business bot
+    * right. Returns True on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param isPublic
+    *   Pass True to remove the public photo, which is visible even if the main photo is hidden by the business
+    *   account's privacy settings. After the main photo is removed, the previous profile photo (if present) becomes the
+    *   main photo.
+    */
+  def removeBusinessAccountProfilePhoto(
+    businessConnectionId: String,
+    isPublic: Option[Boolean] = Option.empty
+  ): Method[Boolean] = {
+    val req = RemoveBusinessAccountProfilePhotoReq(businessConnectionId, isPublic)
+    MethodReq[Boolean]("removeBusinessAccountProfilePhoto", req.asJson)
   }
 
   /** Removes verification from a chat that is currently verified on behalf of the organization represented by the bot.
@@ -2607,7 +2856,7 @@ trait Methods {
     *   If the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance.
     *   Otherwise, they will be credited to the bot's balance.
     * @param starCount
-    *   The number of Telegram Stars that must be paid to buy access to the media; 1-2500
+    *   The number of Telegram Stars that must be paid to buy access to the media; 1-10000
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param media
@@ -3265,6 +3514,94 @@ trait Methods {
     MethodReq[Message]("sendVoice", req.asJson, Map("voice" -> Option(voice)).collect { case (k, Some(v)) => k -> v })
   }
 
+  /** Changes the bio of a managed business account. Requires the can_change_bio business bot right. Returns True on
+    * success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param bio
+    *   The new value of the bio for the business account; 0-140 characters
+    */
+  def setBusinessAccountBio(businessConnectionId: String, bio: Option[String] = Option.empty): Method[Boolean] = {
+    val req = SetBusinessAccountBioReq(businessConnectionId, bio)
+    MethodReq[Boolean]("setBusinessAccountBio", req.asJson)
+  }
+
+  /** Changes the privacy settings pertaining to incoming gifts in a managed business account. Requires the
+    * can_change_gift_settings business bot right. Returns True on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param showGiftButton
+    *   Pass True, if a button for sending a gift to the user or by the business account must always be shown in the
+    *   input field
+    * @param acceptedGiftTypes
+    *   Types of gifts accepted by the business account
+    */
+  def setBusinessAccountGiftSettings(
+    businessConnectionId: String,
+    showGiftButton: Boolean,
+    acceptedGiftTypes: AcceptedGiftTypes
+  ): Method[Boolean] = {
+    val req = SetBusinessAccountGiftSettingsReq(businessConnectionId, showGiftButton, acceptedGiftTypes)
+    MethodReq[Boolean]("setBusinessAccountGiftSettings", req.asJson)
+  }
+
+  /** Changes the first and last name of a managed business account. Requires the can_change_name business bot right.
+    * Returns True on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param firstName
+    *   The new value of the first name for the business account; 1-64 characters
+    * @param lastName
+    *   The new value of the last name for the business account; 0-64 characters
+    */
+  def setBusinessAccountName(
+    businessConnectionId: String,
+    firstName: String,
+    lastName: Option[String] = Option.empty
+  ): Method[Boolean] = {
+    val req = SetBusinessAccountNameReq(businessConnectionId, firstName, lastName)
+    MethodReq[Boolean]("setBusinessAccountName", req.asJson)
+  }
+
+  /** Changes the profile photo of a managed business account. Requires the can_edit_profile_photo business bot right.
+    * Returns True on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param photo
+    *   The new profile photo to set
+    * @param isPublic
+    *   Pass True to set the public photo, which will be visible even if the main photo is hidden by the business
+    *   account's privacy settings. An account can have only one public photo.
+    */
+  def setBusinessAccountProfilePhoto(
+    businessConnectionId: String,
+    photo: InputProfilePhoto,
+    isPublic: Option[Boolean] = Option.empty
+  ): Method[Boolean] = {
+    val req = SetBusinessAccountProfilePhotoReq(businessConnectionId, photo, isPublic)
+    MethodReq[Boolean]("setBusinessAccountProfilePhoto", req.asJson)
+  }
+
+  /** Changes the username of a managed business account. Requires the can_change_username business bot right. Returns
+    * True on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param username
+    *   The new value of the username for the business account; 0-32 characters
+    */
+  def setBusinessAccountUsername(
+    businessConnectionId: String,
+    username: Option[String] = Option.empty
+  ): Method[Boolean] = {
+    val req = SetBusinessAccountUsernameReq(businessConnectionId, username)
+    MethodReq[Boolean]("setBusinessAccountUsername", req.asJson)
+  }
+
   /** Use this method to set a custom title for an administrator in a supergroup promoted by the bot. Returns True on
     * success.
     *
@@ -3774,6 +4111,42 @@ trait Methods {
     MethodReq[Poll]("stopPoll", req.asJson)
   }
 
+  /** Transfers Telegram Stars from the business account balance to the bot's balance. Requires the can_transfer_stars
+    * business bot right. Returns True on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param starCount
+    *   Number of Telegram Stars to transfer; 1-10000
+    */
+  def transferBusinessAccountStars(businessConnectionId: String, starCount: Int): Method[Boolean] = {
+    val req = TransferBusinessAccountStarsReq(businessConnectionId, starCount)
+    MethodReq[Boolean]("transferBusinessAccountStars", req.asJson)
+  }
+
+  /** Transfers an owned unique gift to another user. Requires the can_transfer_and_upgrade_gifts business bot right.
+    * Requires can_transfer_stars business bot right if the transfer is paid. Returns True on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param ownedGiftId
+    *   Unique identifier of the regular gift that should be transferred
+    * @param newOwnerChatId
+    *   Unique identifier of the chat which will own the gift. The chat must be active in the last 24 hours.
+    * @param starCount
+    *   The amount of Telegram Stars that will be paid for the transfer from the business account balance. If positive,
+    *   then the can_transfer_stars business bot right is required.
+    */
+  def transferGift(
+    businessConnectionId: String,
+    ownedGiftId: String,
+    newOwnerChatId: Long,
+    starCount: Option[Int] = Option.empty
+  ): Method[Boolean] = {
+    val req = TransferGiftReq(businessConnectionId, ownedGiftId, newOwnerChatId, starCount)
+    MethodReq[Boolean]("transferGift", req.asJson)
+  }
+
   /** Use this method to unban a previously banned user in a supergroup or channel. The user will not return to the
     * group or channel automatically, but will be able to join via link, etc. The bot must be an administrator for this
     * to work. By default, this method guarantees that after the call the user is not a member of the chat, but will be
@@ -3877,6 +4250,30 @@ trait Methods {
   ): Method[Boolean] = {
     val req = UnpinChatMessageReq(chatId, businessConnectionId, messageId)
     MethodReq[Boolean]("unpinChatMessage", req.asJson)
+  }
+
+  /** Upgrades a given regular gift to a unique gift. Requires the can_transfer_and_upgrade_gifts business bot right.
+    * Additionally requires the can_transfer_stars business bot right if the upgrade is paid. Returns True on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param ownedGiftId
+    *   Unique identifier of the regular gift that should be upgraded to a unique one
+    * @param keepOriginalDetails
+    *   Pass True to keep the original gift text, sender and receiver in the upgraded gift
+    * @param starCount
+    *   The amount of Telegram Stars that will be paid for the upgrade from the business account balance. If
+    *   gift.prepaid_upgrade_star_count > 0, then pass 0, otherwise, the can_transfer_stars business bot right is
+    *   required and gift.upgrade_star_count must be passed.
+    */
+  def upgradeGift(
+    businessConnectionId: String,
+    ownedGiftId: String,
+    keepOriginalDetails: Option[Boolean] = Option.empty,
+    starCount: Option[Int] = Option.empty
+  ): Method[Boolean] = {
+    val req = UpgradeGiftReq(businessConnectionId, ownedGiftId, keepOriginalDetails, starCount)
+    MethodReq[Boolean]("upgradeGift", req.asJson)
   }
 
   /** Use this method to upload a file with a sticker for later use in the createNewStickerSet, addStickerToSet, or

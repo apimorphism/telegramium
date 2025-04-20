@@ -30,6 +30,6 @@ final case class ReplyParameters(
   allowSendingWithoutReply: Option[Boolean] = Option.empty,
   quote: Option[String] = Option.empty,
   quoteParseMode: Option[ParseMode] = Option.empty,
-  quoteEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  quoteEntities: List[MessageEntity] = List.empty,
   quotePosition: Option[Int] = Option.empty
 )

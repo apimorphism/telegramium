@@ -13,6 +13,8 @@ package telegramium.bots
   *   preview. See accent colors for more details.
   * @param maxReactionCount
   *   The maximum number of reactions that can be set on a message in the chat
+  * @param acceptedGiftTypes
+  *   Information about types of gifts that are accepted by the chat or by the corresponding user for private chats
   * @param title
   *   Optional. Title, for supergroups, channels and group chats
   * @param username
@@ -72,8 +74,6 @@ package telegramium.bots
   *   Optional. The most recent pinned message (by sending date)
   * @param permissions
   *   Optional. Default chat member permissions, for groups and supergroups
-  * @param canSendGift
-  *   Optional. True, if gifts can be sent to the chat
   * @param canSendPaidMedia
   *   Optional. True, if paid media messages can be sent or forwarded to the channel chat. The field is available only
   *   for channel chats.
@@ -114,6 +114,7 @@ final case class ChatFullInfo(
   `type`: String,
   accentColorId: Int,
   maxReactionCount: Int,
+  acceptedGiftTypes: AcceptedGiftTypes,
   title: Option[String] = Option.empty,
   username: Option[String] = Option.empty,
   firstName: Option[String] = Option.empty,
@@ -141,7 +142,6 @@ final case class ChatFullInfo(
   inviteLink: Option[String] = Option.empty,
   pinnedMessage: Option[Message] = Option.empty,
   permissions: Option[ChatPermissions] = Option.empty,
-  canSendGift: Option[Boolean] = Option.empty,
   canSendPaidMedia: Option[Boolean] = Option.empty,
   slowModeDelay: Option[Int] = Option.empty,
   unrestrictBoostCount: Option[Int] = Option.empty,
