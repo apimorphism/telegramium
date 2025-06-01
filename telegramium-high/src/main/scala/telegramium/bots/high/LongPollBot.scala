@@ -79,7 +79,7 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
         .execute(getUpdates(offset = Some(offset), timeout = Some(seconds)))
         .onError {
           case _: java.util.concurrent.TimeoutException => poll(offsetKeeper)
-          case NonFatal(e) =>
+          case NonFatal(e)                              =>
             for {
               _     <- onError(e)
               delay <- onErrorDelay
