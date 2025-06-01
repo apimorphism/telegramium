@@ -1,2 +1,5 @@
 # Setup Scalafix
 6f8a9ccf392024210691598c1720d691315086de
+
+# Scala Steward: Reformat with scalafmt 3.9.7
+8d2665abf88607683cabe904e4672196b5273589
