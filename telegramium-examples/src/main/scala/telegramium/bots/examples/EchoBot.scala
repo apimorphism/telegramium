@@ -92,7 +92,7 @@ class EchoBot[F[_]]()(implicit
         case "darts"      => onMsg(query.message)(m => rollTheDice(m.chat.id, EmojiDarts))
         case "basketball" => onMsg(query.message)(m => rollTheDice(m.chat.id, EmojiBasketball))
         case "quiz"       => onMsg(query.message)(m => quiz(m.chat.id))
-        case x =>
+        case x            =>
           answerCallbackQuery(
             callbackQueryId = query.id,
             text = Some(s"Your choice is $x")

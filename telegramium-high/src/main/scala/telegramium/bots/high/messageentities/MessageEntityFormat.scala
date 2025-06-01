@@ -52,10 +52,10 @@ object MessageEntityFormat {
         entity match {
           case Plain(text) => (acc, offset + text.length)
 
-          case Mention(text)    => accumulate(MentionMessageEntity(offset, text.length))
-          case Cashtag(text)    => accumulate(CashtagMessageEntity(offset, text.length))
-          case Code(text)       => accumulate(CodeMessageEntity(offset, text.length))
-          case BotCommand(text) => accumulate(BotCommandMessageEntity(offset, text.length))
+          case Mention(text)                    => accumulate(MentionMessageEntity(offset, text.length))
+          case Cashtag(text)                    => accumulate(CashtagMessageEntity(offset, text.length))
+          case Code(text)                       => accumulate(CodeMessageEntity(offset, text.length))
+          case BotCommand(text)                 => accumulate(BotCommandMessageEntity(offset, text.length))
           case CustomEmoji(text, customEmojiId) =>
             accumulate(CustomEmojiMessageEntity(offset, text.length, customEmojiId))
           case Spoiler(text)              => accumulate(SpoilerMessageEntity(offset, text.length))

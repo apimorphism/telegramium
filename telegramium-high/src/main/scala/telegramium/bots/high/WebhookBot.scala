@@ -274,7 +274,7 @@ object WebhookBot {
       password <- keystorePassword
     } yield createSSLContext(path, password)
 
-    val httpRoutes: HttpRoutes[F] = bots.foldMapK(_.routes())
+    val httpRoutes: HttpRoutes[F]            = bots.foldMapK(_.routes())
     val serverBuilder: BlazeServerBuilder[F] =
       BlazeServerBuilder[F]
         .bindHttp(port, host)

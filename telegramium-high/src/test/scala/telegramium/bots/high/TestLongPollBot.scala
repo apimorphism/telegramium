@@ -36,8 +36,8 @@ class TestLongPollBot(api: Api[IO]) extends LongPollBot[IO](api) {
   override def onMessageReactionCount(count: MessageReactionCountUpdated): IO[Unit] = sendMessageTask(
     "onMessageReactionCount"
   )
-  override def onInlineQuery(query: InlineQuery): IO[Unit]     = sendMessageTask("onInlineQuery")
-  override def onCallbackQuery(query: CallbackQuery): IO[Unit] = sendMessageTask("onCallbackQuery")
+  override def onInlineQuery(query: InlineQuery): IO[Unit]                      = sendMessageTask("onInlineQuery")
+  override def onCallbackQuery(query: CallbackQuery): IO[Unit]                  = sendMessageTask("onCallbackQuery")
   override def onChosenInlineResult(inlineResult: ChosenInlineResult): IO[Unit] = sendMessageTask(
     "onChosenInlineResult"
   )

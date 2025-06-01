@@ -74,7 +74,7 @@ class BotApi[F[_]](
           ResponseDecodingError.default(message, e.some)
         }
       result <- response match {
-        case Response(true, Some(result), _, _) => F.pure(result)
+        case Response(true, Some(result), _, _)     => F.pure(result)
         case Response(_, _, description, errorCode) =>
           val code       = errorCode.map(_.toString).getOrElse("")
           val desc       = description.getOrElse("")
