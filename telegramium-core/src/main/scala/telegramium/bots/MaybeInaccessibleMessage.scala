@@ -102,6 +102,8 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. True, if the caption must be shown above the message media
   * @param hasMediaSpoiler
   *   Optional. True, if the message media is covered by a spoiler animation
+  * @param checklist
+  *   Optional. Message is a checklist
   * @param contact
   *   Optional. Message is a shared contact, information about the contact
   * @param dice
@@ -180,6 +182,13 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. Service message: user boosted the chat
   * @param chatBackgroundSet
   *   Optional. Service message: chat background set
+  * @param checklistTasksDone
+  *   Optional. Service message: some tasks in a checklist were marked as done or not done
+  * @param checklistTasksAdded
+  *   Optional. Service message: tasks were added to a checklist
+  * @param directMessagePriceChanged
+  *   Optional. Service message: the price for paid messages in the corresponding direct messages chat of a channel has
+  *   changed
   * @param forumTopicCreated
   *   Optional. Service message: forum topic created
   * @param forumTopicEdited
@@ -257,6 +266,7 @@ final case class Message(
   captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   showCaptionAboveMedia: Option[Boolean] = Option.empty,
   hasMediaSpoiler: Option[Boolean] = Option.empty,
+  checklist: Option[Checklist] = Option.empty,
   contact: Option[Contact] = Option.empty,
   dice: Option[Dice] = Option.empty,
   game: Option[Game] = Option.empty,
@@ -288,6 +298,9 @@ final case class Message(
   proximityAlertTriggered: Option[ProximityAlertTriggered] = Option.empty,
   boostAdded: Option[ChatBoostAdded] = Option.empty,
   chatBackgroundSet: Option[ChatBackground] = Option.empty,
+  checklistTasksDone: Option[ChecklistTasksDone] = Option.empty,
+  checklistTasksAdded: Option[ChecklistTasksAdded] = Option.empty,
+  directMessagePriceChanged: Option[DirectMessagePriceChanged] = Option.empty,
   forumTopicCreated: Option[ForumTopicCreated] = Option.empty,
   forumTopicEdited: Option[ForumTopicEdited] = Option.empty,
   forumTopicClosed: Option[ForumTopicClosed.type] = Option.empty,

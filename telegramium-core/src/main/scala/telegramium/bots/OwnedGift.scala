@@ -22,6 +22,9 @@ sealed trait OwnedGift {}
   * @param transferStarCount
   *   Optional. Number of Telegram Stars that must be paid to transfer the gift; omitted if the bot cannot transfer the
   *   gift
+  * @param nextTransferDate
+  *   Optional. Point in time (Unix timestamp) when the gift can be transferred. If it is in the past, then the gift can
+  *   be transferred now
   */
 final case class OwnedGiftUnique(
   gift: UniqueGift,
@@ -30,7 +33,8 @@ final case class OwnedGiftUnique(
   senderUser: Option[User] = Option.empty,
   isSaved: Option[Boolean] = Option.empty,
   canBeTransferred: Option[Boolean] = Option.empty,
-  transferStarCount: Option[Int] = Option.empty
+  transferStarCount: Option[Int] = Option.empty,
+  nextTransferDate: Option[Int] = Option.empty
 ) extends OwnedGift
 
 /** Describes a regular gift owned by a user or a chat.

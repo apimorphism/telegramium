@@ -18,7 +18,7 @@ package telegramium.bots
   * @param canSendVoiceNotes
   *   Optional. True, if the user is allowed to send voice notes
   * @param canSendPolls
-  *   Optional. True, if the user is allowed to send polls
+  *   Optional. True, if the user is allowed to send polls and checklists
   * @param canSendOtherMessages
   *   Optional. True, if the user is allowed to send animations, games, stickers and use inline bots
   * @param canAddWebPagePreviews

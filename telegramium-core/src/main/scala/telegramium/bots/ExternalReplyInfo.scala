@@ -34,6 +34,8 @@ package telegramium.bots
   *   Optional. Message is a voice message, information about the file
   * @param hasMediaSpoiler
   *   Optional. True, if the message media is covered by a spoiler animation
+  * @param checklist
+  *   Optional. Message is a checklist
   * @param contact
   *   Optional. Message is a shared contact, information about the contact
   * @param dice
@@ -69,6 +71,7 @@ final case class ExternalReplyInfo(
   videoNote: Option[VideoNote] = Option.empty,
   voice: Option[Voice] = Option.empty,
   hasMediaSpoiler: Option[Boolean] = Option.empty,
+  checklist: Option[Checklist] = Option.empty,
   contact: Option[Contact] = Option.empty,
   dice: Option[Dice] = Option.empty,
   game: Option[Game] = Option.empty,

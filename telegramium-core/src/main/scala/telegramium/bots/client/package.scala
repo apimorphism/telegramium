@@ -18,6 +18,7 @@ object CirceImplicits {
   import telegramium.bots.LabeledPrice
   import telegramium.bots.BotCommandScope
   import telegramium.bots.InlineKeyboardMarkup
+  import telegramium.bots.InputChecklist
   import telegramium.bots.InputMedia
   import telegramium.bots.LinkPreviewOptions
   import telegramium.bots.InputStoryContent
@@ -502,6 +503,20 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val editmessagechecklistreqEncoder: Encoder[EditMessageChecklistReq] =
+    (x: EditMessageChecklistReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "message_id"             -> x.messageId.asJson,
+          "checklist"              -> x.checklist.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "editMessageChecklist".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val editmessagelivelocationreqEncoder: Encoder[EditMessageLiveLocationReq] =
     (x: EditMessageLiveLocationReq) => {
       Json.fromFields(
@@ -818,6 +833,9 @@ object CirceImplicits {
         ).filter(!_._2.isNull)
       )
     }
+
+  implicit lazy val getmystarbalancereqEncoder: Encoder[GetMyStarBalanceReq.type] = (_: GetMyStarBalanceReq.type) =>
+    ().asJson
 
   implicit lazy val getstartransactionsreqEncoder: Encoder[GetStarTransactionsReq] =
     (x: GetStarTransactionsReq) => {
@@ -1163,6 +1181,23 @@ object CirceImplicits {
           "message_thread_id"      -> x.messageThreadId.asJson,
           "action"                 -> x.action.asJson,
           "method"                 -> "sendChatAction".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val sendchecklistreqEncoder: Encoder[SendChecklistReq] =
+    (x: SendChecklistReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "chat_id"                -> x.chatId.asJson,
+          "checklist"              -> x.checklist.asJson,
+          "disable_notification"   -> x.disableNotification.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "message_effect_id"      -> x.messageEffectId.asJson,
+          "reply_parameters"       -> x.replyParameters.asJson,
+          "reply_markup"           -> x.replyMarkup.asJson,
+          "method"                 -> "sendChecklist".asJson
         ).filter(!_._2.isNull)
       )
     }

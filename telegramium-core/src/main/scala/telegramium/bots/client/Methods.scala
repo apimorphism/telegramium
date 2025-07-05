@@ -938,6 +938,31 @@ trait Methods {
     MethodReq[Either[Boolean, Message]]("editMessageCaption", req.asJson)
   }
 
+  /** Use this method to edit a checklist on behalf of a connected business account. On success, the edited Message is
+    * returned.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat
+    * @param messageId
+    *   Unique identifier for the target message
+    * @param checklist
+    *   A JSON-serialized object for the new checklist
+    * @param replyMarkup
+    *   A JSON-serialized object for the new inline keyboard for the message
+    */
+  def editMessageChecklist(
+    businessConnectionId: String,
+    chatId: Long,
+    messageId: Int,
+    checklist: InputChecklist,
+    replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
+  ): Method[Message] = {
+    val req = EditMessageChecklistReq(businessConnectionId, chatId, messageId, checklist, replyMarkup)
+    MethodReq[Message]("editMessageChecklist", req.asJson)
+  }
+
   /** Use this method to edit live location messages. A location can be edited until its live_period expires or editing
     * is explicitly disabled by a call to stopMessageLiveLocation. On success, if the edited message is not an inline
     * message, the edited Message is returned, otherwise True is returned.
@@ -1501,6 +1526,14 @@ trait Methods {
     MethodReq[BotShortDescription]("getMyShortDescription", req.asJson)
   }
 
+  /** A method to get the current Telegram Stars balance of the bot. Requires no parameters. On success, returns a
+    * StarAmount object.
+    */
+  def getMyStarBalance(): Method[StarAmount] = {
+    val req = GetMyStarBalanceReq
+    MethodReq[StarAmount]("getMyStarBalance", req.asJson)
+  }
+
   /** Returns the bot's Telegram Star transactions in chronological order. On success, returns a StarTransactions
     * object.
     *
@@ -1747,7 +1780,8 @@ trait Methods {
     *   Pass True if the administrator's presence in the chat is hidden
     * @param canManageChat
     *   Pass True if the administrator can access the chat event log, get boost list, see hidden supergroup and channel
-    *   members, report spam messages and ignore slow mode. Implied by any other administrator privilege.
+    *   members, report spam messages, ignore slow mode, and send messages to the chat without paying Telegram Stars.
+    *   Implied by any other administrator privilege.
     * @param canDeleteMessages
     *   Pass True if the administrator can delete messages of other users
     * @param canManageVideoChats
@@ -1770,7 +1804,8 @@ trait Methods {
     * @param canDeleteStories
     *   Pass True if the administrator can delete stories posted by other users
     * @param canPostMessages
-    *   Pass True if the administrator can post messages in the channel, or access channel statistics; for channels only
+    *   Pass True if the administrator can post messages in the channel, approve suggested posts, or access channel
+    *   statistics; for channels only
     * @param canEditMessages
     *   Pass True if the administrator can edit messages of other users and can pin messages; for channels only
     * @param canPinMessages
@@ -2227,6 +2262,49 @@ trait Methods {
   ): Method[Boolean] = {
     val req = SendChatActionReq(chatId, action, businessConnectionId, messageThreadId)
     MethodReq[Boolean]("sendChatAction", req.asJson)
+  }
+
+  /** Use this method to send a checklist on behalf of a connected business account. On success, the sent Message is
+    * returned.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat
+    * @param checklist
+    *   A JSON-serialized object for the checklist to send
+    * @param disableNotification
+    *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message
+    * @param replyParameters
+    *   A JSON-serialized object for description of the message to reply to
+    * @param replyMarkup
+    *   A JSON-serialized object for an inline keyboard
+    */
+  def sendChecklist(
+    businessConnectionId: String,
+    chatId: Long,
+    checklist: InputChecklist,
+    disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
+    replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
+  ): Method[Message] = {
+    val req = SendChecklistReq(
+      businessConnectionId,
+      chatId,
+      checklist,
+      disableNotification,
+      protectContent,
+      messageEffectId,
+      replyParameters,
+      replyMarkup
+    )
+    MethodReq[Message]("sendChecklist", req.asJson)
   }
 
   /** Use this method to send phone contacts. On success, the sent Message is returned.
@@ -3014,7 +3092,7 @@ trait Methods {
     *   A JSON-serialized list of special entities that appear in the poll question. It can be specified instead of
     *   question_parse_mode
     * @param options
-    *   A JSON-serialized list of 2-10 answer options
+    *   A JSON-serialized list of 2-12 answer options
     * @param isAnonymous
     *   True, if the poll needs to be anonymous, defaults to True
     * @param type

@@ -1430,6 +1430,7 @@ object CirceImplicits {
           "caption_entities"                  -> x.captionEntities.asJson,
           "show_caption_above_media"          -> x.showCaptionAboveMedia.asJson,
           "has_media_spoiler"                 -> x.hasMediaSpoiler.asJson,
+          "checklist"                         -> x.checklist.asJson,
           "contact"                           -> x.contact.asJson,
           "dice"                              -> x.dice.asJson,
           "game"                              -> x.game.asJson,
@@ -1461,6 +1462,9 @@ object CirceImplicits {
           "proximity_alert_triggered"         -> x.proximityAlertTriggered.asJson,
           "boost_added"                       -> x.boostAdded.asJson,
           "chat_background_set"               -> x.chatBackgroundSet.asJson,
+          "checklist_tasks_done"              -> x.checklistTasksDone.asJson,
+          "checklist_tasks_added"             -> x.checklistTasksAdded.asJson,
+          "direct_message_price_changed"      -> x.directMessagePriceChanged.asJson,
           "forum_topic_created"               -> x.forumTopicCreated.asJson,
           "forum_topic_edited"                -> x.forumTopicEdited.asJson,
           "forum_topic_closed"                -> x.forumTopicClosed.asJson,
@@ -1526,6 +1530,7 @@ object CirceImplicits {
         _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
         _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
         _hasMediaSpoiler       <- h.get[Option[Boolean]]("has_media_spoiler")
+        _checklist             <- h.get[Option[Checklist]]("checklist")
         _contact               <- h.get[Option[Contact]]("contact")
         _dice                  <- h.get[Option[Dice]]("dice")
         _game                  <- h.get[Option[Game]]("game")
@@ -1559,6 +1564,9 @@ object CirceImplicits {
         _proximityAlertTriggered      <- h.get[Option[ProximityAlertTriggered]]("proximity_alert_triggered")
         _boostAdded                   <- h.get[Option[ChatBoostAdded]]("boost_added")
         _chatBackgroundSet            <- h.get[Option[ChatBackground]]("chat_background_set")
+        _checklistTasksDone           <- h.get[Option[ChecklistTasksDone]]("checklist_tasks_done")
+        _checklistTasksAdded          <- h.get[Option[ChecklistTasksAdded]]("checklist_tasks_added")
+        _directMessagePriceChanged    <- h.get[Option[DirectMessagePriceChanged]]("direct_message_price_changed")
         _forumTopicCreated            <- h.get[Option[ForumTopicCreated]]("forum_topic_created")
         _forumTopicEdited             <- h.get[Option[ForumTopicEdited]]("forum_topic_edited")
         _forumTopicClosed             <- h.get[Option[ForumTopicClosed.type]]("forum_topic_closed")
@@ -1619,6 +1627,7 @@ object CirceImplicits {
           captionEntities = _captionEntities,
           showCaptionAboveMedia = _showCaptionAboveMedia,
           hasMediaSpoiler = _hasMediaSpoiler,
+          checklist = _checklist,
           contact = _contact,
           dice = _dice,
           game = _game,
@@ -1650,6 +1659,9 @@ object CirceImplicits {
           proximityAlertTriggered = _proximityAlertTriggered,
           boostAdded = _boostAdded,
           chatBackgroundSet = _chatBackgroundSet,
+          checklistTasksDone = _checklistTasksDone,
+          checklistTasksAdded = _checklistTasksAdded,
+          directMessagePriceChanged = _directMessagePriceChanged,
           forumTopicCreated = _forumTopicCreated,
           forumTopicEdited = _forumTopicEdited,
           forumTopicClosed = _forumTopicClosed,
@@ -2310,7 +2322,8 @@ object CirceImplicits {
           "send_date"           -> x.sendDate.asJson,
           "is_saved"            -> x.isSaved.asJson,
           "can_be_transferred"  -> x.canBeTransferred.asJson,
-          "transfer_star_count" -> x.transferStarCount.asJson
+          "transfer_star_count" -> x.transferStarCount.asJson,
+          "next_transfer_date"  -> x.nextTransferDate.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2325,6 +2338,7 @@ object CirceImplicits {
         _isSaved           <- h.get[Option[Boolean]]("is_saved")
         _canBeTransferred  <- h.get[Option[Boolean]]("can_be_transferred")
         _transferStarCount <- h.get[Option[Int]]("transfer_star_count")
+        _nextTransferDate  <- h.get[Option[Int]]("next_transfer_date")
       } yield {
         OwnedGiftUnique(
           gift = _gift,
@@ -2333,7 +2347,8 @@ object CirceImplicits {
           sendDate = _sendDate,
           isSaved = _isSaved,
           canBeTransferred = _canBeTransferred,
-          transferStarCount = _transferStarCount
+          transferStarCount = _transferStarCount,
+          nextTransferDate = _nextTransferDate
         )
       }
     }
@@ -4008,6 +4023,116 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val checklistEncoder: Encoder[Checklist] =
+    (x: Checklist) => {
+      Json.fromFields(
+        List(
+          "title"                         -> x.title.asJson,
+          "title_entities"                -> x.titleEntities.asJson,
+          "tasks"                         -> x.tasks.asJson,
+          "others_can_add_tasks"          -> x.othersCanAddTasks.asJson,
+          "others_can_mark_tasks_as_done" -> x.othersCanMarkTasksAsDone.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val checklistDecoder: Decoder[Checklist] =
+    Decoder.instance { h =>
+      for {
+        _title                    <- h.get[String]("title")
+        _titleEntities            <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("title_entities")(List.empty)
+        _tasks                    <- h.getOrElse[List[ChecklistTask]]("tasks")(List.empty)
+        _othersCanAddTasks        <- h.get[Option[Boolean]]("others_can_add_tasks")
+        _othersCanMarkTasksAsDone <- h.get[Option[Boolean]]("others_can_mark_tasks_as_done")
+      } yield {
+        Checklist(
+          title = _title,
+          titleEntities = _titleEntities,
+          tasks = _tasks,
+          othersCanAddTasks = _othersCanAddTasks,
+          othersCanMarkTasksAsDone = _othersCanMarkTasksAsDone
+        )
+      }
+    }
+
+  implicit lazy val checklisttaskEncoder: Encoder[ChecklistTask] =
+    (x: ChecklistTask) => {
+      Json.fromFields(
+        List(
+          "id"                -> x.id.asJson,
+          "text"              -> x.text.asJson,
+          "text_entities"     -> x.textEntities.asJson,
+          "completed_by_user" -> x.completedByUser.asJson,
+          "completion_date"   -> x.completionDate.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val checklisttaskDecoder: Decoder[ChecklistTask] =
+    Decoder.instance { h =>
+      for {
+        _id              <- h.get[Int]("id")
+        _text            <- h.get[String]("text")
+        _textEntities    <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("text_entities")(List.empty)
+        _completedByUser <- h.get[Option[User]]("completed_by_user")
+        _completionDate  <- h.get[Option[Int]]("completion_date")
+      } yield {
+        ChecklistTask(
+          id = _id,
+          text = _text,
+          textEntities = _textEntities,
+          completedByUser = _completedByUser,
+          completionDate = _completionDate
+        )
+      }
+    }
+
+  implicit lazy val checklisttasksaddedEncoder: Encoder[ChecklistTasksAdded] =
+    (x: ChecklistTasksAdded) => {
+      Json.fromFields(
+        List(
+          "checklist_message" -> x.checklistMessage.asJson,
+          "tasks"             -> x.tasks.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val checklisttasksaddedDecoder: Decoder[ChecklistTasksAdded] =
+    Decoder.instance { h =>
+      for {
+        _checklistMessage <- h.get[Option[Message]]("checklist_message")
+        _tasks            <- h.getOrElse[List[ChecklistTask]]("tasks")(List.empty)
+      } yield {
+        ChecklistTasksAdded(checklistMessage = _checklistMessage, tasks = _tasks)
+      }
+    }
+
+  implicit lazy val checklisttasksdoneEncoder: Encoder[ChecklistTasksDone] =
+    (x: ChecklistTasksDone) => {
+      Json.fromFields(
+        List(
+          "checklist_message"           -> x.checklistMessage.asJson,
+          "marked_as_done_task_ids"     -> x.markedAsDoneTaskIds.asJson,
+          "marked_as_not_done_task_ids" -> x.markedAsNotDoneTaskIds.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val checklisttasksdoneDecoder: Decoder[ChecklistTasksDone] =
+    Decoder.instance { h =>
+      for {
+        _checklistMessage       <- h.get[Option[Message]]("checklist_message")
+        _markedAsDoneTaskIds    <- h.getOrElse[List[Int]]("marked_as_done_task_ids")(List.empty)
+        _markedAsNotDoneTaskIds <- h.getOrElse[List[Int]]("marked_as_not_done_task_ids")(List.empty)
+      } yield {
+        ChecklistTasksDone(
+          checklistMessage = _checklistMessage,
+          markedAsDoneTaskIds = _markedAsDoneTaskIds,
+          markedAsNotDoneTaskIds = _markedAsNotDoneTaskIds
+        )
+      }
+    }
+
   implicit lazy val choseninlineresultEncoder: Encoder[ChosenInlineResult] =
     (x: ChosenInlineResult) => {
       Json.fromFields(
@@ -4107,6 +4232,29 @@ object CirceImplicits {
         _value <- h.get[Int]("value")
       } yield {
         Dice(emoji = _emoji, value = _value)
+      }
+    }
+
+  implicit lazy val directmessagepricechangedEncoder: Encoder[DirectMessagePriceChanged] =
+    (x: DirectMessagePriceChanged) => {
+      Json.fromFields(
+        List(
+          "are_direct_messages_enabled" -> x.areDirectMessagesEnabled.asJson,
+          "direct_message_star_count"   -> x.directMessageStarCount.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val directmessagepricechangedDecoder: Decoder[DirectMessagePriceChanged] =
+    Decoder.instance { h =>
+      for {
+        _areDirectMessagesEnabled <- h.get[Boolean]("are_direct_messages_enabled")
+        _directMessageStarCount   <- h.get[Option[Int]]("direct_message_star_count")
+      } yield {
+        DirectMessagePriceChanged(
+          areDirectMessagesEnabled = _areDirectMessagesEnabled,
+          directMessageStarCount = _directMessageStarCount
+        )
       }
     }
 
@@ -4233,6 +4381,7 @@ object CirceImplicits {
           "video_note"           -> x.videoNote.asJson,
           "voice"                -> x.voice.asJson,
           "has_media_spoiler"    -> x.hasMediaSpoiler.asJson,
+          "checklist"            -> x.checklist.asJson,
           "contact"              -> x.contact.asJson,
           "dice"                 -> x.dice.asJson,
           "game"                 -> x.game.asJson,
@@ -4264,6 +4413,7 @@ object CirceImplicits {
         _videoNote          <- h.get[Option[VideoNote]]("video_note")
         _voice              <- h.get[Option[Voice]]("voice")
         _hasMediaSpoiler    <- h.get[Option[Boolean]]("has_media_spoiler")
+        _checklist          <- h.get[Option[Checklist]]("checklist")
         _contact            <- h.get[Option[Contact]]("contact")
         _dice               <- h.get[Option[Dice]]("dice")
         _game               <- h.get[Option[Game]]("game")
@@ -4290,6 +4440,7 @@ object CirceImplicits {
           videoNote = _videoNote,
           voice = _voice,
           hasMediaSpoiler = _hasMediaSpoiler,
+          checklist = _checklist,
           contact = _contact,
           dice = _dice,
           game = _game,
@@ -4806,6 +4957,32 @@ object CirceImplicits {
           "text"            -> x.text.asJson,
           "web_app"         -> x.webApp.asJson,
           "start_parameter" -> x.startParameter.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputchecklistEncoder: Encoder[InputChecklist] =
+    (x: InputChecklist) => {
+      Json.fromFields(
+        List(
+          "title"                         -> x.title.asJson,
+          "parse_mode"                    -> x.parseMode.asJson,
+          "title_entities"                -> x.titleEntities.asJson,
+          "tasks"                         -> x.tasks.asJson,
+          "others_can_add_tasks"          -> x.othersCanAddTasks.asJson,
+          "others_can_mark_tasks_as_done" -> x.othersCanMarkTasksAsDone.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputchecklisttaskEncoder: Encoder[InputChecklistTask] =
+    (x: InputChecklistTask) => {
+      Json.fromFields(
+        List(
+          "id"            -> x.id.asJson,
+          "text"          -> x.text.asJson,
+          "parse_mode"    -> x.parseMode.asJson,
+          "text_entities" -> x.textEntities.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6126,10 +6303,12 @@ object CirceImplicits {
     (x: UniqueGiftInfo) => {
       Json.fromFields(
         List(
-          "gift"                -> x.gift.asJson,
-          "origin"              -> x.origin.asJson,
-          "owned_gift_id"       -> x.ownedGiftId.asJson,
-          "transfer_star_count" -> x.transferStarCount.asJson
+          "gift"                   -> x.gift.asJson,
+          "origin"                 -> x.origin.asJson,
+          "last_resale_star_count" -> x.lastResaleStarCount.asJson,
+          "owned_gift_id"          -> x.ownedGiftId.asJson,
+          "transfer_star_count"    -> x.transferStarCount.asJson,
+          "next_transfer_date"     -> x.nextTransferDate.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6137,16 +6316,20 @@ object CirceImplicits {
   implicit lazy val uniquegiftinfoDecoder: Decoder[UniqueGiftInfo] =
     Decoder.instance { h =>
       for {
-        _gift              <- h.get[UniqueGift]("gift")
-        _origin            <- h.get[String]("origin")
-        _ownedGiftId       <- h.get[Option[String]]("owned_gift_id")
-        _transferStarCount <- h.get[Option[Int]]("transfer_star_count")
+        _gift                <- h.get[UniqueGift]("gift")
+        _origin              <- h.get[String]("origin")
+        _lastResaleStarCount <- h.get[Option[Int]]("last_resale_star_count")
+        _ownedGiftId         <- h.get[Option[String]]("owned_gift_id")
+        _transferStarCount   <- h.get[Option[Int]]("transfer_star_count")
+        _nextTransferDate    <- h.get[Option[Int]]("next_transfer_date")
       } yield {
         UniqueGiftInfo(
           gift = _gift,
           origin = _origin,
+          lastResaleStarCount = _lastResaleStarCount,
           ownedGiftId = _ownedGiftId,
-          transferStarCount = _transferStarCount
+          transferStarCount = _transferStarCount,
+          nextTransferDate = _nextTransferDate
         )
       }
     }
