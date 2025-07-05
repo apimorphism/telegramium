@@ -41,7 +41,11 @@ ThisBuild / developers := List(
 )
 
 ThisBuild / publishMavenStyle := true
-ThisBuild / publishTo         := sonatypePublishToBundle.value
+ThisBuild / publishTo         := {
+  val centralSnapshots = "https://central.sonatype.com/repository/maven-snapshots/"
+  if (isSnapshot.value) Some("central-snapshots" at centralSnapshots)
+  else localStaging.value
+}
 
 ThisBuild / githubWorkflowScalaVersions := Seq(scala3, scala213, scala212)
 
