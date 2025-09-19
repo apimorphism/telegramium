@@ -35,7 +35,7 @@ final case class ChatInviteLink(
   isPrimary: Boolean,
   isRevoked: Boolean,
   name: Option[String] = Option.empty,
-  expireDate: Option[Int] = Option.empty,
+  expireDate: Option[Long] = Option.empty,
   memberLimit: Option[Int] = Option.empty,
   pendingJoinRequestCount: Option[Int] = Option.empty,
   subscriptionPeriod: Option[Int] = Option.empty,

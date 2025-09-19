@@ -48,5 +48,5 @@ final case class Poll(
   explanation: Option[String] = Option.empty,
   explanationEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   openPeriod: Option[Int] = Option.empty,
-  closeDate: Option[Int] = Option.empty
+  closeDate: Option[Long] = Option.empty
 )

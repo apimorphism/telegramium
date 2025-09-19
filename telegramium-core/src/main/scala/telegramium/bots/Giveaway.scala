@@ -25,7 +25,7 @@ package telegramium.bots
   *   Telegram Premium giveaways only
   */
 final case class Giveaway(
-  winnersSelectionDate: Int,
+  winnersSelectionDate: Long,
   winnerCount: Int,
   chats: List[Chat] = List.empty,
   onlyNewMembers: Option[Boolean] = Option.empty,

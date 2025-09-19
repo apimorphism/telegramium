@@ -3,6 +3,7 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 import telegramium.bots.ParseMode
 import telegramium.bots.MessageEntity
+import telegramium.bots.SuggestedPostParameters
 import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
 
@@ -15,6 +16,9 @@ import telegramium.bots.KeyboardMarkup
   *   Message identifier in the chat specified in from_chat_id
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+  * @param directMessagesTopicId
+  *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+  *   direct messages chat
   * @param videoStartTimestamp
   *   New start timestamp for the copied video in the message
   * @param caption
@@ -33,6 +37,9 @@ import telegramium.bots.KeyboardMarkup
   * @param allowPaidBroadcast
   *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
   *   per message. The relevant Stars will be withdrawn from the bot's balance
+  * @param suggestedPostParameters
+  *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats only.
+  *   If the message is sent as a reply to another suggested post, then that suggested post is automatically declined.
   * @param replyParameters
   *   Description of the message to reply to
   * @param replyMarkup
@@ -44,6 +51,7 @@ final case class CopyMessageReq(
   fromChatId: ChatId,
   messageId: Int,
   messageThreadId: Option[Int] = Option.empty,
+  directMessagesTopicId: Option[Long] = Option.empty,
   videoStartTimestamp: Option[Int] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
@@ -52,6 +60,7 @@ final case class CopyMessageReq(
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
   allowPaidBroadcast: Option[Boolean] = Option.empty,
+  suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
   replyParameters: Option[ReplyParameters] = Option.empty,
   replyMarkup: Option[KeyboardMarkup] = Option.empty
 )

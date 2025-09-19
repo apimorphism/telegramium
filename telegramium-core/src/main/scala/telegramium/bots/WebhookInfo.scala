@@ -28,9 +28,9 @@ final case class WebhookInfo(
   hasCustomCertificate: Boolean,
   pendingUpdateCount: Int,
   ipAddress: Option[String] = Option.empty,
-  lastErrorDate: Option[Int] = Option.empty,
+  lastErrorDate: Option[Long] = Option.empty,
   lastErrorMessage: Option[String] = Option.empty,
-  lastSynchronizationErrorDate: Option[Int] = Option.empty,
+  lastSynchronizationErrorDate: Option[Long] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty
 )

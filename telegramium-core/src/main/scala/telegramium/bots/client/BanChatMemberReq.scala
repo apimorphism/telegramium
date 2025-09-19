@@ -17,6 +17,6 @@ import telegramium.bots.ChatId
 final case class BanChatMemberReq(
   chatId: ChatId,
   userId: Long,
-  untilDate: Option[Int] = Option.empty,
+  untilDate: Option[Long] = Option.empty,
   revokeMessages: Option[Boolean] = Option.empty
 )

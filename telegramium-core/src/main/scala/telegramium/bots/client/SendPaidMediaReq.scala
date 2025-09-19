@@ -4,6 +4,7 @@ import telegramium.bots.ChatId
 import telegramium.bots.InputPaidMedia
 import telegramium.bots.ParseMode
 import telegramium.bots.MessageEntity
+import telegramium.bots.SuggestedPostParameters
 import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
 
@@ -15,6 +16,11 @@ import telegramium.bots.KeyboardMarkup
   *   The number of Telegram Stars that must be paid to buy access to the media; 1-10000
   * @param businessConnectionId
   *   Unique identifier of the business connection on behalf of which the message will be sent
+  * @param messageThreadId
+  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+  * @param directMessagesTopicId
+  *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+  *   direct messages chat
   * @param media
   *   A JSON-serialized array describing the media to be sent; up to 10 items
   * @param payload
@@ -36,6 +42,9 @@ import telegramium.bots.KeyboardMarkup
   * @param allowPaidBroadcast
   *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
   *   per message. The relevant Stars will be withdrawn from the bot's balance
+  * @param suggestedPostParameters
+  *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats only.
+  *   If the message is sent as a reply to another suggested post, then that suggested post is automatically declined.
   * @param replyParameters
   *   Description of the message to reply to
   * @param replyMarkup
@@ -46,6 +55,8 @@ final case class SendPaidMediaReq(
   chatId: ChatId,
   starCount: Int,
   businessConnectionId: Option[String] = Option.empty,
+  messageThreadId: Option[Int] = Option.empty,
+  directMessagesTopicId: Option[Long] = Option.empty,
   media: List[InputPaidMedia] = List.empty,
   payload: Option[String] = Option.empty,
   caption: Option[String] = Option.empty,
@@ -55,6 +66,7 @@ final case class SendPaidMediaReq(
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
   allowPaidBroadcast: Option[Boolean] = Option.empty,
+  suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
   replyParameters: Option[ReplyParameters] = Option.empty,
   replyMarkup: Option[KeyboardMarkup] = Option.empty
 )

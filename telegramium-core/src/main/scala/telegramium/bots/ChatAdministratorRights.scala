@@ -38,6 +38,9 @@ package telegramium.bots
   *   Optional. True, if the user is allowed to pin messages; for groups and supergroups only
   * @param canManageTopics
   *   Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; for supergroups only
+  * @param canManageDirectMessages
+  *   Optional. True, if the administrator can manage direct messages of the channel and decline suggested posts; for
+  *   channels only
   */
 final case class ChatAdministratorRights(
   isAnonymous: Boolean,
@@ -54,5 +57,6 @@ final case class ChatAdministratorRights(
   canPostMessages: Option[Boolean] = Option.empty,
   canEditMessages: Option[Boolean] = Option.empty,
   canPinMessages: Option[Boolean] = Option.empty,
-  canManageTopics: Option[Boolean] = Option.empty
+  canManageTopics: Option[Boolean] = Option.empty,
+  canManageDirectMessages: Option[Boolean] = Option.empty
 )

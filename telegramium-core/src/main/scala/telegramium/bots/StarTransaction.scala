@@ -23,8 +23,8 @@ package telegramium.bots
   */
 final case class StarTransaction(
   id: String,
-  amount: Int,
-  date: Int,
+  amount: Long,
+  date: Long,
   nanostarAmount: Option[Int] = Option.empty,
   source: Option[iozhik.OpenEnum[TransactionPartner]] = Option.empty,
   receiver: Option[iozhik.OpenEnum[TransactionPartner]] = Option.empty

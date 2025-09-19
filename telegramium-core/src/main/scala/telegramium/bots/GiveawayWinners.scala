@@ -31,7 +31,7 @@ package telegramium.bots
 final case class GiveawayWinners(
   chat: Chat,
   giveawayMessageId: Int,
-  winnersSelectionDate: Int,
+  winnersSelectionDate: Long,
   winnerCount: Int,
   winners: List[User] = List.empty,
   additionalChatCount: Option[Int] = Option.empty,

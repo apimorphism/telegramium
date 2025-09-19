@@ -18,7 +18,7 @@ package telegramium.bots
   */
 final case class AffiliateInfo(
   commissionPerMille: Int,
-  amount: Int,
+  amount: Long,
   affiliateUser: Option[User] = Option.empty,
   affiliateChat: Option[Chat] = Option.empty,
   nanostarAmount: Option[Int] = Option.empty

@@ -28,13 +28,13 @@ sealed trait OwnedGift {}
   */
 final case class OwnedGiftUnique(
   gift: UniqueGift,
-  sendDate: Int,
+  sendDate: Long,
   ownedGiftId: Option[String] = Option.empty,
   senderUser: Option[User] = Option.empty,
   isSaved: Option[Boolean] = Option.empty,
   canBeTransferred: Option[Boolean] = Option.empty,
   transferStarCount: Option[Int] = Option.empty,
-  nextTransferDate: Option[Int] = Option.empty
+  nextTransferDate: Option[Long] = Option.empty
 ) extends OwnedGift
 
 /** Describes a regular gift owned by a user or a chat.
@@ -70,7 +70,7 @@ final case class OwnedGiftUnique(
   */
 final case class OwnedGiftRegular(
   gift: Gift,
-  sendDate: Int,
+  sendDate: Long,
   ownedGiftId: Option[String] = Option.empty,
   senderUser: Option[User] = Option.empty,
   text: Option[String] = Option.empty,

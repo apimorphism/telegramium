@@ -25,5 +25,5 @@ final case class UniqueGiftInfo(
   lastResaleStarCount: Option[Int] = Option.empty,
   ownedGiftId: Option[String] = Option.empty,
   transferStarCount: Option[Int] = Option.empty,
-  nextTransferDate: Option[Int] = Option.empty
+  nextTransferDate: Option[Long] = Option.empty
 )

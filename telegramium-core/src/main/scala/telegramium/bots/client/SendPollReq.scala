@@ -8,7 +8,8 @@ import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername).
+  *   Polls can't be sent to channel direct messages chats.
   * @param question
   *   Poll question, 1-300 characters
   * @param businessConnectionId
@@ -77,7 +78,7 @@ final case class SendPollReq(
   explanationParseMode: Option[ParseMode] = Option.empty,
   explanationEntities: List[MessageEntity] = List.empty,
   openPeriod: Option[Int] = Option.empty,
-  closeDate: Option[Int] = Option.empty,
+  closeDate: Option[Long] = Option.empty,
   isClosed: Option[Boolean] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,

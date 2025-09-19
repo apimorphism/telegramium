@@ -33,7 +33,7 @@ final case class SuccessfulPayment(
   invoicePayload: String,
   telegramPaymentChargeId: String,
   providerPaymentChargeId: String,
-  subscriptionExpirationDate: Option[Int] = Option.empty,
+  subscriptionExpirationDate: Option[Long] = Option.empty,
   isRecurring: Option[Boolean] = Option.empty,
   isFirstRecurring: Option[Boolean] = Option.empty,
   shippingOptionId: Option[String] = Option.empty,

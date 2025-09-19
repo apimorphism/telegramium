@@ -23,7 +23,7 @@ final case class ChatJoinRequest(
   chat: Chat,
   from: User,
   userChatId: Long,
-  date: Int,
+  date: Long,
   bio: Option[String] = Option.empty,
   inviteLink: Option[ChatInviteLink] = Option.empty
 )

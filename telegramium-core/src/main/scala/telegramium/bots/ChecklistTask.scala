@@ -18,5 +18,5 @@ final case class ChecklistTask(
   text: String,
   textEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   completedByUser: Option[User] = Option.empty,
-  completionDate: Option[Int] = Option.empty
+  completionDate: Option[Long] = Option.empty
 )

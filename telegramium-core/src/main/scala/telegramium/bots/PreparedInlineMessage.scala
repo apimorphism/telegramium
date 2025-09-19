@@ -7,4 +7,4 @@ package telegramium.bots
   * @param expirationDate
   *   Expiration date of the prepared message, in Unix time. Expired prepared messages can no longer be used
   */
-final case class PreparedInlineMessage(id: String, expirationDate: Int)
+final case class PreparedInlineMessage(id: String, expirationDate: Long)

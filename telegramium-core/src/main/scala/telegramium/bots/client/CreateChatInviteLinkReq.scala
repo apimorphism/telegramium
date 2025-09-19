@@ -18,7 +18,7 @@ import telegramium.bots.ChatId
 final case class CreateChatInviteLinkReq(
   chatId: ChatId,
   name: Option[String] = Option.empty,
-  expireDate: Option[Int] = Option.empty,
+  expireDate: Option[Long] = Option.empty,
   memberLimit: Option[Int] = Option.empty,
   createsJoinRequest: Option[Boolean] = Option.empty
 )

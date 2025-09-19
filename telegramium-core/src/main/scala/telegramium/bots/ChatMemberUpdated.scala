@@ -23,7 +23,7 @@ package telegramium.bots
 final case class ChatMemberUpdated(
   chat: Chat,
   from: User,
-  date: Int,
+  date: Long,
   oldChatMember: iozhik.OpenEnum[ChatMember],
   newChatMember: iozhik.OpenEnum[ChatMember],
   inviteLink: Option[ChatInviteLink] = Option.empty,

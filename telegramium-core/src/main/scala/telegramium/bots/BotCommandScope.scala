@@ -18,7 +18,7 @@ case object BotCommandScopeDefault extends BotCommandScope
   *
   * @param chatId
   *   Unique identifier for the target chat or username of the target supergroup (in the format
-  *   &#064;supergroupusername)
+  *   &#064;supergroupusername). Channel direct messages chats and channel chats aren't supported.
   */
 final case class BotCommandScopeChatAdministrators(chatId: ChatId) extends BotCommandScope
 
@@ -26,7 +26,7 @@ final case class BotCommandScopeChatAdministrators(chatId: ChatId) extends BotCo
   *
   * @param chatId
   *   Unique identifier for the target chat or username of the target supergroup (in the format
-  *   &#064;supergroupusername)
+  *   &#064;supergroupusername). Channel direct messages chats and channel chats aren't supported.
   * @param userId
   *   Unique identifier of the target user
   */
@@ -36,7 +36,7 @@ final case class BotCommandScopeChatMember(chatId: ChatId, userId: Long) extends
   *
   * @param chatId
   *   Unique identifier for the target chat or username of the target supergroup (in the format
-  *   &#064;supergroupusername)
+  *   &#064;supergroupusername). Channel direct messages chats and channel chats aren't supported.
   */
 final case class BotCommandScopeChat(chatId: ChatId) extends BotCommandScope
 

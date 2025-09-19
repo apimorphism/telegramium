@@ -22,7 +22,7 @@ final case class BusinessConnection(
   id: String,
   user: User,
   userChatId: Long,
-  date: Int,
+  date: Long,
   isEnabled: Boolean,
   rights: Option[BusinessBotRights] = Option.empty
 )

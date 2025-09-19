@@ -9,7 +9,7 @@ sealed trait MessageOrigin {}
   * @param senderUser
   *   User that sent the message originally
   */
-final case class MessageOriginUser(date: Int, senderUser: User) extends MessageOrigin
+final case class MessageOriginUser(date: Long, senderUser: User) extends MessageOrigin
 
 /** The message was originally sent to a channel chat.
   *
@@ -23,7 +23,7 @@ final case class MessageOriginUser(date: Int, senderUser: User) extends MessageO
   *   Optional. Signature of the original post author
   */
 final case class MessageOriginChannel(
-  date: Int,
+  date: Long,
   chat: Chat,
   messageId: Int,
   authorSignature: Option[String] = Option.empty
@@ -36,7 +36,7 @@ final case class MessageOriginChannel(
   * @param senderUserName
   *   Name of the user that sent the message originally
   */
-final case class MessageOriginHiddenUser(date: Int, senderUserName: String) extends MessageOrigin
+final case class MessageOriginHiddenUser(date: Long, senderUserName: String) extends MessageOrigin
 
 /** The message was originally sent on behalf of a chat to a group chat.
   *
@@ -47,5 +47,5 @@ final case class MessageOriginHiddenUser(date: Int, senderUserName: String) exte
   * @param authorSignature
   *   Optional. For messages originally sent by an anonymous chat administrator, original message author signature
   */
-final case class MessageOriginChat(date: Int, senderChat: Chat, authorSignature: Option[String] = Option.empty)
+final case class MessageOriginChat(date: Long, senderChat: Chat, authorSignature: Option[String] = Option.empty)
     extends MessageOrigin

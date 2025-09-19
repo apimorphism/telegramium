@@ -5,4 +5,4 @@ package telegramium.bots
   * @param startDate
   *   Point in time (Unix timestamp) when the video chat is supposed to be started by a chat administrator
   */
-final case class VideoChatScheduled(startDate: Int)
+final case class VideoChatScheduled(startDate: Long)

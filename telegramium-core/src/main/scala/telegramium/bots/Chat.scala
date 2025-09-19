@@ -18,6 +18,8 @@ package telegramium.bots
   *   Optional. Last name of the other party in a private chat
   * @param isForum
   *   Optional. True, if the supergroup chat is a forum (has topics enabled)
+  * @param isDirectMessages
+  *   Optional. True, if the chat is the direct messages chat of a channel
   */
 final case class Chat(
   id: Long,
@@ -26,5 +28,6 @@ final case class Chat(
   username: Option[String] = Option.empty,
   firstName: Option[String] = Option.empty,
   lastName: Option[String] = Option.empty,
-  isForum: Option[Boolean] = Option.empty
+  isForum: Option[Boolean] = Option.empty,
+  isDirectMessages: Option[Boolean] = Option.empty
 )

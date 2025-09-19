@@ -546,24 +546,25 @@ object CirceImplicits {
     (x: ChatMemberAdministrator) => {
       Json.fromFields(
         List(
-          "user"                   -> x.user.asJson,
-          "can_be_edited"          -> x.canBeEdited.asJson,
-          "is_anonymous"           -> x.isAnonymous.asJson,
-          "can_manage_chat"        -> x.canManageChat.asJson,
-          "can_delete_messages"    -> x.canDeleteMessages.asJson,
-          "can_manage_video_chats" -> x.canManageVideoChats.asJson,
-          "can_restrict_members"   -> x.canRestrictMembers.asJson,
-          "can_promote_members"    -> x.canPromoteMembers.asJson,
-          "can_change_info"        -> x.canChangeInfo.asJson,
-          "can_invite_users"       -> x.canInviteUsers.asJson,
-          "can_post_stories"       -> x.canPostStories.asJson,
-          "can_edit_stories"       -> x.canEditStories.asJson,
-          "can_delete_stories"     -> x.canDeleteStories.asJson,
-          "can_post_messages"      -> x.canPostMessages.asJson,
-          "can_edit_messages"      -> x.canEditMessages.asJson,
-          "can_pin_messages"       -> x.canPinMessages.asJson,
-          "can_manage_topics"      -> x.canManageTopics.asJson,
-          "custom_title"           -> x.customTitle.asJson
+          "user"                       -> x.user.asJson,
+          "can_be_edited"              -> x.canBeEdited.asJson,
+          "is_anonymous"               -> x.isAnonymous.asJson,
+          "can_manage_chat"            -> x.canManageChat.asJson,
+          "can_delete_messages"        -> x.canDeleteMessages.asJson,
+          "can_manage_video_chats"     -> x.canManageVideoChats.asJson,
+          "can_restrict_members"       -> x.canRestrictMembers.asJson,
+          "can_promote_members"        -> x.canPromoteMembers.asJson,
+          "can_change_info"            -> x.canChangeInfo.asJson,
+          "can_invite_users"           -> x.canInviteUsers.asJson,
+          "can_post_stories"           -> x.canPostStories.asJson,
+          "can_edit_stories"           -> x.canEditStories.asJson,
+          "can_delete_stories"         -> x.canDeleteStories.asJson,
+          "can_post_messages"          -> x.canPostMessages.asJson,
+          "can_edit_messages"          -> x.canEditMessages.asJson,
+          "can_pin_messages"           -> x.canPinMessages.asJson,
+          "can_manage_topics"          -> x.canManageTopics.asJson,
+          "can_manage_direct_messages" -> x.canManageDirectMessages.asJson,
+          "custom_title"               -> x.customTitle.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -571,24 +572,25 @@ object CirceImplicits {
   implicit lazy val chatmemberadministratorDecoder: Decoder[ChatMemberAdministrator] =
     Decoder.instance { h =>
       for {
-        _user                <- h.get[User]("user")
-        _canBeEdited         <- h.get[Boolean]("can_be_edited")
-        _isAnonymous         <- h.get[Boolean]("is_anonymous")
-        _canManageChat       <- h.get[Boolean]("can_manage_chat")
-        _canDeleteMessages   <- h.get[Boolean]("can_delete_messages")
-        _canManageVideoChats <- h.get[Boolean]("can_manage_video_chats")
-        _canRestrictMembers  <- h.get[Boolean]("can_restrict_members")
-        _canPromoteMembers   <- h.get[Boolean]("can_promote_members")
-        _canChangeInfo       <- h.get[Boolean]("can_change_info")
-        _canInviteUsers      <- h.get[Boolean]("can_invite_users")
-        _canPostStories      <- h.get[Boolean]("can_post_stories")
-        _canEditStories      <- h.get[Boolean]("can_edit_stories")
-        _canDeleteStories    <- h.get[Boolean]("can_delete_stories")
-        _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
-        _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
-        _canPinMessages      <- h.get[Option[Boolean]]("can_pin_messages")
-        _canManageTopics     <- h.get[Option[Boolean]]("can_manage_topics")
-        _customTitle         <- h.get[Option[String]]("custom_title")
+        _user                    <- h.get[User]("user")
+        _canBeEdited             <- h.get[Boolean]("can_be_edited")
+        _isAnonymous             <- h.get[Boolean]("is_anonymous")
+        _canManageChat           <- h.get[Boolean]("can_manage_chat")
+        _canDeleteMessages       <- h.get[Boolean]("can_delete_messages")
+        _canManageVideoChats     <- h.get[Boolean]("can_manage_video_chats")
+        _canRestrictMembers      <- h.get[Boolean]("can_restrict_members")
+        _canPromoteMembers       <- h.get[Boolean]("can_promote_members")
+        _canChangeInfo           <- h.get[Boolean]("can_change_info")
+        _canInviteUsers          <- h.get[Boolean]("can_invite_users")
+        _canPostStories          <- h.get[Boolean]("can_post_stories")
+        _canEditStories          <- h.get[Boolean]("can_edit_stories")
+        _canDeleteStories        <- h.get[Boolean]("can_delete_stories")
+        _canPostMessages         <- h.get[Option[Boolean]]("can_post_messages")
+        _canEditMessages         <- h.get[Option[Boolean]]("can_edit_messages")
+        _canPinMessages          <- h.get[Option[Boolean]]("can_pin_messages")
+        _canManageTopics         <- h.get[Option[Boolean]]("can_manage_topics")
+        _canManageDirectMessages <- h.get[Option[Boolean]]("can_manage_direct_messages")
+        _customTitle             <- h.get[Option[String]]("custom_title")
       } yield {
         ChatMemberAdministrator(
           user = _user,
@@ -608,6 +610,7 @@ object CirceImplicits {
           canEditMessages = _canEditMessages,
           canPinMessages = _canPinMessages,
           canManageTopics = _canManageTopics,
+          canManageDirectMessages = _canManageDirectMessages,
           customTitle = _customTitle
         )
       }
@@ -627,7 +630,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _user      <- h.get[User]("user")
-        _untilDate <- h.get[Option[Int]]("until_date")
+        _untilDate <- h.get[Option[Long]]("until_date")
       } yield {
         ChatMemberMember(user = _user, untilDate = _untilDate)
       }
@@ -647,7 +650,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _user      <- h.get[User]("user")
-        _untilDate <- h.get[Int]("until_date")
+        _untilDate <- h.get[Long]("until_date")
       } yield {
         ChatMemberBanned(user = _user, untilDate = _untilDate)
       }
@@ -697,7 +700,7 @@ object CirceImplicits {
         _canInviteUsers        <- h.get[Boolean]("can_invite_users")
         _canPinMessages        <- h.get[Boolean]("can_pin_messages")
         _canManageTopics       <- h.get[Boolean]("can_manage_topics")
-        _untilDate             <- h.get[Int]("until_date")
+        _untilDate             <- h.get[Long]("until_date")
       } yield {
         ChatMemberRestricted(
           user = _user,
@@ -1054,6 +1057,23 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val inlinequeryresultcachedgifEncoder: Encoder[InlineQueryResultCachedGif] =
+    (x: InlineQueryResultCachedGif) => {
+      Json.fromFields(
+        List(
+          "id"                       -> x.id.asJson,
+          "gif_file_id"              -> x.gifFileId.asJson,
+          "title"                    -> x.title.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "input_message_content"    -> x.inputMessageContent.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val inlinequeryresultlocationEncoder: Encoder[InlineQueryResultLocation] =
     (x: InlineQueryResultLocation) => {
       Json.fromFields(
@@ -1071,23 +1091,6 @@ object CirceImplicits {
           "thumbnail_url"          -> x.thumbnailUrl.asJson,
           "thumbnail_width"        -> x.thumbnailWidth.asJson,
           "thumbnail_height"       -> x.thumbnailHeight.asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val inlinequeryresultcachedgifEncoder: Encoder[InlineQueryResultCachedGif] =
-    (x: InlineQueryResultCachedGif) => {
-      Json.fromFields(
-        List(
-          "id"                       -> x.id.asJson,
-          "gif_file_id"              -> x.gifFileId.asJson,
-          "title"                    -> x.title.asJson,
-          "caption"                  -> x.caption.asJson,
-          "parse_mode"               -> x.parseMode.asJson,
-          "caption_entities"         -> x.captionEntities.asJson,
-          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
-          "reply_markup"             -> x.replyMarkup.asJson,
-          "input_message_content"    -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1391,6 +1394,7 @@ object CirceImplicits {
         List(
           "message_id"                        -> x.messageId.asJson,
           "message_thread_id"                 -> x.messageThreadId.asJson,
+          "direct_messages_topic"             -> x.directMessagesTopic.asJson,
           "from"                              -> x.from.asJson,
           "sender_chat"                       -> x.senderChat.asJson,
           "sender_boost_count"                -> x.senderBoostCount.asJson,
@@ -1405,16 +1409,19 @@ object CirceImplicits {
           "external_reply"                    -> x.externalReply.asJson,
           "quote"                             -> x.quote.asJson,
           "reply_to_story"                    -> x.replyToStory.asJson,
+          "reply_to_checklist_task_id"        -> x.replyToChecklistTaskId.asJson,
           "via_bot"                           -> x.viaBot.asJson,
           "edit_date"                         -> x.editDate.asJson,
           "has_protected_content"             -> x.hasProtectedContent.asJson,
           "is_from_offline"                   -> x.isFromOffline.asJson,
+          "is_paid_post"                      -> x.isPaidPost.asJson,
           "media_group_id"                    -> x.mediaGroupId.asJson,
           "author_signature"                  -> x.authorSignature.asJson,
           "paid_star_count"                   -> x.paidStarCount.asJson,
           "text"                              -> x.text.asJson,
           "entities"                          -> x.entities.asJson,
           "link_preview_options"              -> x.linkPreviewOptions.asJson,
+          "suggested_post_info"               -> x.suggestedPostInfo.asJson,
           "effect_id"                         -> x.effectId.asJson,
           "animation"                         -> x.animation.asJson,
           "audio"                             -> x.audio.asJson,
@@ -1476,6 +1483,11 @@ object CirceImplicits {
           "giveaway_winners"                  -> x.giveawayWinners.asJson,
           "giveaway_completed"                -> x.giveawayCompleted.asJson,
           "paid_message_price_changed"        -> x.paidMessagePriceChanged.asJson,
+          "suggested_post_approved"           -> x.suggestedPostApproved.asJson,
+          "suggested_post_approval_failed"    -> x.suggestedPostApprovalFailed.asJson,
+          "suggested_post_declined"           -> x.suggestedPostDeclined.asJson,
+          "suggested_post_paid"               -> x.suggestedPostPaid.asJson,
+          "suggested_post_refunded"           -> x.suggestedPostRefunded.asJson,
           "video_chat_scheduled"              -> x.videoChatScheduled.asJson,
           "video_chat_started"                -> x.videoChatStarted.asJson,
           "video_chat_ended"                  -> x.videoChatEnded.asJson,
@@ -1489,62 +1501,66 @@ object CirceImplicits {
   implicit lazy val messageDecoder: Decoder[Message] =
     Decoder.instance { h =>
       for {
-        _messageId             <- h.get[Int]("message_id")
-        _messageThreadId       <- h.get[Option[Int]]("message_thread_id")
-        _from                  <- h.get[Option[User]]("from")
-        _senderChat            <- h.get[Option[Chat]]("sender_chat")
-        _senderBoostCount      <- h.get[Option[Int]]("sender_boost_count")
-        _senderBusinessBot     <- h.get[Option[User]]("sender_business_bot")
-        _date                  <- h.get[Int]("date")
-        _businessConnectionId  <- h.get[Option[String]]("business_connection_id")
-        _chat                  <- h.get[Chat]("chat")
-        _forwardOrigin         <- h.get[Option[iozhik.OpenEnum[MessageOrigin]]]("forward_origin")
-        _isTopicMessage        <- h.get[Option[Boolean]]("is_topic_message")
-        _isAutomaticForward    <- h.get[Option[Boolean]]("is_automatic_forward")
-        _replyToMessage        <- h.get[Option[Message]]("reply_to_message")
-        _externalReply         <- h.get[Option[ExternalReplyInfo]]("external_reply")
-        _quote                 <- h.get[Option[TextQuote]]("quote")
-        _replyToStory          <- h.get[Option[Story]]("reply_to_story")
-        _viaBot                <- h.get[Option[User]]("via_bot")
-        _editDate              <- h.get[Option[Int]]("edit_date")
-        _hasProtectedContent   <- h.get[Option[Boolean]]("has_protected_content")
-        _isFromOffline         <- h.get[Option[Boolean]]("is_from_offline")
-        _mediaGroupId          <- h.get[Option[String]]("media_group_id")
-        _authorSignature       <- h.get[Option[String]]("author_signature")
-        _paidStarCount         <- h.get[Option[Int]]("paid_star_count")
-        _text                  <- h.get[Option[String]]("text")
-        _entities              <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
-        _linkPreviewOptions    <- h.get[Option[LinkPreviewOptions]]("link_preview_options")
-        _effectId              <- h.get[Option[String]]("effect_id")
-        _animation             <- h.get[Option[Animation]]("animation")
-        _audio                 <- h.get[Option[Audio]]("audio")
-        _document              <- h.get[Option[Document]]("document")
-        _paidMedia             <- h.get[Option[PaidMediaInfo]]("paid_media")
-        _photo                 <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
-        _sticker               <- h.get[Option[Sticker]]("sticker")
-        _story                 <- h.get[Option[Story]]("story")
-        _video                 <- h.get[Option[Video]]("video")
-        _videoNote             <- h.get[Option[VideoNote]]("video_note")
-        _voice                 <- h.get[Option[Voice]]("voice")
-        _caption               <- h.get[Option[String]]("caption")
-        _captionEntities       <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
-        _showCaptionAboveMedia <- h.get[Option[Boolean]]("show_caption_above_media")
-        _hasMediaSpoiler       <- h.get[Option[Boolean]]("has_media_spoiler")
-        _checklist             <- h.get[Option[Checklist]]("checklist")
-        _contact               <- h.get[Option[Contact]]("contact")
-        _dice                  <- h.get[Option[Dice]]("dice")
-        _game                  <- h.get[Option[Game]]("game")
-        _poll                  <- h.get[Option[Poll]]("poll")
-        _venue                 <- h.get[Option[Venue]]("venue")
-        _location              <- h.get[Option[Location]]("location")
-        _newChatMembers        <- h.getOrElse[List[User]]("new_chat_members")(List.empty)
-        _leftChatMember        <- h.get[Option[User]]("left_chat_member")
-        _newChatTitle          <- h.get[Option[String]]("new_chat_title")
-        _newChatPhoto          <- h.getOrElse[List[PhotoSize]]("new_chat_photo")(List.empty)
-        _deleteChatPhoto       <- h.get[Option[Boolean]]("delete_chat_photo")
-        _groupChatCreated      <- h.get[Option[Boolean]]("group_chat_created")
-        _supergroupChatCreated <- h.get[Option[Boolean]]("supergroup_chat_created")
-        _channelChatCreated    <- h.get[Option[Boolean]]("channel_chat_created")
+        _messageId              <- h.get[Int]("message_id")
+        _messageThreadId        <- h.get[Option[Int]]("message_thread_id")
+        _directMessagesTopic    <- h.get[Option[DirectMessagesTopic]]("direct_messages_topic")
+        _from                   <- h.get[Option[User]]("from")
+        _senderChat             <- h.get[Option[Chat]]("sender_chat")
+        _senderBoostCount       <- h.get[Option[Int]]("sender_boost_count")
+        _senderBusinessBot      <- h.get[Option[User]]("sender_business_bot")
+        _date                   <- h.get[Long]("date")
+        _businessConnectionId   <- h.get[Option[String]]("business_connection_id")
+        _chat                   <- h.get[Chat]("chat")
+        _forwardOrigin          <- h.get[Option[iozhik.OpenEnum[MessageOrigin]]]("forward_origin")
+        _isTopicMessage         <- h.get[Option[Boolean]]("is_topic_message")
+        _isAutomaticForward     <- h.get[Option[Boolean]]("is_automatic_forward")
+        _replyToMessage         <- h.get[Option[Message]]("reply_to_message")
+        _externalReply          <- h.get[Option[ExternalReplyInfo]]("external_reply")
+        _quote                  <- h.get[Option[TextQuote]]("quote")
+        _replyToStory           <- h.get[Option[Story]]("reply_to_story")
+        _replyToChecklistTaskId <- h.get[Option[Int]]("reply_to_checklist_task_id")
+        _viaBot                 <- h.get[Option[User]]("via_bot")
+        _editDate               <- h.get[Option[Long]]("edit_date")
+        _hasProtectedContent    <- h.get[Option[Boolean]]("has_protected_content")
+        _isFromOffline          <- h.get[Option[Boolean]]("is_from_offline")
+        _isPaidPost             <- h.get[Option[Boolean]]("is_paid_post")
+        _mediaGroupId           <- h.get[Option[String]]("media_group_id")
+        _authorSignature        <- h.get[Option[String]]("author_signature")
+        _paidStarCount          <- h.get[Option[Int]]("paid_star_count")
+        _text                   <- h.get[Option[String]]("text")
+        _entities               <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
+        _linkPreviewOptions     <- h.get[Option[LinkPreviewOptions]]("link_preview_options")
+        _suggestedPostInfo      <- h.get[Option[SuggestedPostInfo]]("suggested_post_info")
+        _effectId               <- h.get[Option[String]]("effect_id")
+        _animation              <- h.get[Option[Animation]]("animation")
+        _audio                  <- h.get[Option[Audio]]("audio")
+        _document               <- h.get[Option[Document]]("document")
+        _paidMedia              <- h.get[Option[PaidMediaInfo]]("paid_media")
+        _photo                  <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
+        _sticker                <- h.get[Option[Sticker]]("sticker")
+        _story                  <- h.get[Option[Story]]("story")
+        _video                  <- h.get[Option[Video]]("video")
+        _videoNote              <- h.get[Option[VideoNote]]("video_note")
+        _voice                  <- h.get[Option[Voice]]("voice")
+        _caption                <- h.get[Option[String]]("caption")
+        _captionEntities        <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
+        _showCaptionAboveMedia  <- h.get[Option[Boolean]]("show_caption_above_media")
+        _hasMediaSpoiler        <- h.get[Option[Boolean]]("has_media_spoiler")
+        _checklist              <- h.get[Option[Checklist]]("checklist")
+        _contact                <- h.get[Option[Contact]]("contact")
+        _dice                   <- h.get[Option[Dice]]("dice")
+        _game                   <- h.get[Option[Game]]("game")
+        _poll                   <- h.get[Option[Poll]]("poll")
+        _venue                  <- h.get[Option[Venue]]("venue")
+        _location               <- h.get[Option[Location]]("location")
+        _newChatMembers         <- h.getOrElse[List[User]]("new_chat_members")(List.empty)
+        _leftChatMember         <- h.get[Option[User]]("left_chat_member")
+        _newChatTitle           <- h.get[Option[String]]("new_chat_title")
+        _newChatPhoto           <- h.getOrElse[List[PhotoSize]]("new_chat_photo")(List.empty)
+        _deleteChatPhoto        <- h.get[Option[Boolean]]("delete_chat_photo")
+        _groupChatCreated       <- h.get[Option[Boolean]]("group_chat_created")
+        _supergroupChatCreated  <- h.get[Option[Boolean]]("supergroup_chat_created")
+        _channelChatCreated     <- h.get[Option[Boolean]]("channel_chat_created")
         _messageAutoDeleteTimerChanged <- h.get[Option[MessageAutoDeleteTimerChanged]](
           "message_auto_delete_timer_changed"
         )
@@ -1578,6 +1594,11 @@ object CirceImplicits {
         _giveawayWinners              <- h.get[Option[GiveawayWinners]]("giveaway_winners")
         _giveawayCompleted            <- h.get[Option[GiveawayCompleted]]("giveaway_completed")
         _paidMessagePriceChanged      <- h.get[Option[PaidMessagePriceChanged]]("paid_message_price_changed")
+        _suggestedPostApproved        <- h.get[Option[SuggestedPostApproved]]("suggested_post_approved")
+        _suggestedPostApprovalFailed  <- h.get[Option[SuggestedPostApprovalFailed]]("suggested_post_approval_failed")
+        _suggestedPostDeclined        <- h.get[Option[SuggestedPostDeclined]]("suggested_post_declined")
+        _suggestedPostPaid            <- h.get[Option[SuggestedPostPaid]]("suggested_post_paid")
+        _suggestedPostRefunded        <- h.get[Option[SuggestedPostRefunded]]("suggested_post_refunded")
         _videoChatScheduled           <- h.get[Option[VideoChatScheduled]]("video_chat_scheduled")
         _videoChatStarted             <- h.get[Option[VideoChatStarted.type]]("video_chat_started")
         _videoChatEnded               <- h.get[Option[VideoChatEnded]]("video_chat_ended")
@@ -1588,6 +1609,7 @@ object CirceImplicits {
         Message(
           messageId = _messageId,
           messageThreadId = _messageThreadId,
+          directMessagesTopic = _directMessagesTopic,
           from = _from,
           senderChat = _senderChat,
           senderBoostCount = _senderBoostCount,
@@ -1602,16 +1624,19 @@ object CirceImplicits {
           externalReply = _externalReply,
           quote = _quote,
           replyToStory = _replyToStory,
+          replyToChecklistTaskId = _replyToChecklistTaskId,
           viaBot = _viaBot,
           editDate = _editDate,
           hasProtectedContent = _hasProtectedContent,
           isFromOffline = _isFromOffline,
+          isPaidPost = _isPaidPost,
           mediaGroupId = _mediaGroupId,
           authorSignature = _authorSignature,
           paidStarCount = _paidStarCount,
           text = _text,
           entities = _entities,
           linkPreviewOptions = _linkPreviewOptions,
+          suggestedPostInfo = _suggestedPostInfo,
           effectId = _effectId,
           animation = _animation,
           audio = _audio,
@@ -1673,6 +1698,11 @@ object CirceImplicits {
           giveawayWinners = _giveawayWinners,
           giveawayCompleted = _giveawayCompleted,
           paidMessagePriceChanged = _paidMessagePriceChanged,
+          suggestedPostApproved = _suggestedPostApproved,
+          suggestedPostApprovalFailed = _suggestedPostApprovalFailed,
+          suggestedPostDeclined = _suggestedPostDeclined,
+          suggestedPostPaid = _suggestedPostPaid,
+          suggestedPostRefunded = _suggestedPostRefunded,
           videoChatScheduled = _videoChatScheduled,
           videoChatStarted = _videoChatStarted,
           videoChatEnded = _videoChatEnded,
@@ -2225,7 +2255,7 @@ object CirceImplicits {
   implicit lazy val messageoriginuserDecoder: Decoder[MessageOriginUser] =
     Decoder.instance { h =>
       for {
-        _date       <- h.get[Int]("date")
+        _date       <- h.get[Long]("date")
         _senderUser <- h.get[User]("sender_user")
       } yield {
         MessageOriginUser(date = _date, senderUser = _senderUser)
@@ -2247,7 +2277,7 @@ object CirceImplicits {
   implicit lazy val messageoriginchannelDecoder: Decoder[MessageOriginChannel] =
     Decoder.instance { h =>
       for {
-        _date            <- h.get[Int]("date")
+        _date            <- h.get[Long]("date")
         _chat            <- h.get[Chat]("chat")
         _messageId       <- h.get[Int]("message_id")
         _authorSignature <- h.get[Option[String]]("author_signature")
@@ -2269,7 +2299,7 @@ object CirceImplicits {
   implicit lazy val messageoriginhiddenuserDecoder: Decoder[MessageOriginHiddenUser] =
     Decoder.instance { h =>
       for {
-        _date           <- h.get[Int]("date")
+        _date           <- h.get[Long]("date")
         _senderUserName <- h.get[String]("sender_user_name")
       } yield {
         MessageOriginHiddenUser(date = _date, senderUserName = _senderUserName)
@@ -2290,7 +2320,7 @@ object CirceImplicits {
   implicit lazy val messageoriginchatDecoder: Decoder[MessageOriginChat] =
     Decoder.instance { h =>
       for {
-        _date            <- h.get[Int]("date")
+        _date            <- h.get[Long]("date")
         _senderChat      <- h.get[Chat]("sender_chat")
         _authorSignature <- h.get[Option[String]]("author_signature")
       } yield {
@@ -2334,11 +2364,11 @@ object CirceImplicits {
         _gift              <- h.get[UniqueGift]("gift")
         _ownedGiftId       <- h.get[Option[String]]("owned_gift_id")
         _senderUser        <- h.get[Option[User]]("sender_user")
-        _sendDate          <- h.get[Int]("send_date")
+        _sendDate          <- h.get[Long]("send_date")
         _isSaved           <- h.get[Option[Boolean]]("is_saved")
         _canBeTransferred  <- h.get[Option[Boolean]]("can_be_transferred")
         _transferStarCount <- h.get[Option[Int]]("transfer_star_count")
-        _nextTransferDate  <- h.get[Option[Int]]("next_transfer_date")
+        _nextTransferDate  <- h.get[Option[Long]]("next_transfer_date")
       } yield {
         OwnedGiftUnique(
           gift = _gift,
@@ -2379,7 +2409,7 @@ object CirceImplicits {
         _gift                    <- h.get[Gift]("gift")
         _ownedGiftId             <- h.get[Option[String]]("owned_gift_id")
         _senderUser              <- h.get[Option[User]]("sender_user")
-        _sendDate                <- h.get[Int]("send_date")
+        _sendDate                <- h.get[Long]("send_date")
         _text                    <- h.get[Option[String]]("text")
         _entities                <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
         _isPrivate               <- h.get[Option[Boolean]]("is_private")
@@ -2690,7 +2720,7 @@ object CirceImplicits {
   implicit lazy val revenuewithdrawalstatesucceededDecoder: Decoder[RevenueWithdrawalStateSucceeded] =
     Decoder.instance { h =>
       for {
-        _date <- h.get[Int]("date")
+        _date <- h.get[Long]("date")
         _url  <- h.get[String]("url")
       } yield {
         RevenueWithdrawalStateSucceeded(date = _date, url = _url)
@@ -2971,7 +3001,7 @@ object CirceImplicits {
         _affiliateUser      <- h.get[Option[User]]("affiliate_user")
         _affiliateChat      <- h.get[Option[Chat]]("affiliate_chat")
         _commissionPerMille <- h.get[Int]("commission_per_mille")
-        _amount             <- h.get[Int]("amount")
+        _amount             <- h.get[Long]("amount")
         _nanostarAmount     <- h.get[Option[Int]]("nanostar_amount")
       } yield {
         AffiliateInfo(
@@ -3247,7 +3277,7 @@ object CirceImplicits {
         _id         <- h.get[String]("id")
         _user       <- h.get[User]("user")
         _userChatId <- h.get[Long]("user_chat_id")
-        _date       <- h.get[Int]("date")
+        _date       <- h.get[Long]("date")
         _rights     <- h.get[Option[BusinessBotRights]]("rights")
         _isEnabled  <- h.get[Boolean]("is_enabled")
       } yield {
@@ -3411,13 +3441,14 @@ object CirceImplicits {
     (x: Chat) => {
       Json.fromFields(
         List(
-          "id"         -> x.id.asJson,
-          "type"       -> x.`type`.asJson,
-          "title"      -> x.title.asJson,
-          "username"   -> x.username.asJson,
-          "first_name" -> x.firstName.asJson,
-          "last_name"  -> x.lastName.asJson,
-          "is_forum"   -> x.isForum.asJson
+          "id"                 -> x.id.asJson,
+          "type"               -> x.`type`.asJson,
+          "title"              -> x.title.asJson,
+          "username"           -> x.username.asJson,
+          "first_name"         -> x.firstName.asJson,
+          "last_name"          -> x.lastName.asJson,
+          "is_forum"           -> x.isForum.asJson,
+          "is_direct_messages" -> x.isDirectMessages.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3425,13 +3456,14 @@ object CirceImplicits {
   implicit lazy val chatDecoder: Decoder[Chat] =
     Decoder.instance { h =>
       for {
-        _id        <- h.get[Long]("id")
-        _type      <- h.get[String]("type")
-        _title     <- h.get[Option[String]]("title")
-        _username  <- h.get[Option[String]]("username")
-        _firstName <- h.get[Option[String]]("first_name")
-        _lastName  <- h.get[Option[String]]("last_name")
-        _isForum   <- h.get[Option[Boolean]]("is_forum")
+        _id               <- h.get[Long]("id")
+        _type             <- h.get[String]("type")
+        _title            <- h.get[Option[String]]("title")
+        _username         <- h.get[Option[String]]("username")
+        _firstName        <- h.get[Option[String]]("first_name")
+        _lastName         <- h.get[Option[String]]("last_name")
+        _isForum          <- h.get[Option[Boolean]]("is_forum")
+        _isDirectMessages <- h.get[Option[Boolean]]("is_direct_messages")
       } yield {
         Chat(
           id = _id,
@@ -3440,7 +3472,8 @@ object CirceImplicits {
           username = _username,
           firstName = _firstName,
           lastName = _lastName,
-          isForum = _isForum
+          isForum = _isForum,
+          isDirectMessages = _isDirectMessages
         )
       }
     }
@@ -3449,21 +3482,22 @@ object CirceImplicits {
     (x: ChatAdministratorRights) => {
       Json.fromFields(
         List(
-          "is_anonymous"           -> x.isAnonymous.asJson,
-          "can_manage_chat"        -> x.canManageChat.asJson,
-          "can_delete_messages"    -> x.canDeleteMessages.asJson,
-          "can_manage_video_chats" -> x.canManageVideoChats.asJson,
-          "can_restrict_members"   -> x.canRestrictMembers.asJson,
-          "can_promote_members"    -> x.canPromoteMembers.asJson,
-          "can_change_info"        -> x.canChangeInfo.asJson,
-          "can_invite_users"       -> x.canInviteUsers.asJson,
-          "can_post_stories"       -> x.canPostStories.asJson,
-          "can_edit_stories"       -> x.canEditStories.asJson,
-          "can_delete_stories"     -> x.canDeleteStories.asJson,
-          "can_post_messages"      -> x.canPostMessages.asJson,
-          "can_edit_messages"      -> x.canEditMessages.asJson,
-          "can_pin_messages"       -> x.canPinMessages.asJson,
-          "can_manage_topics"      -> x.canManageTopics.asJson
+          "is_anonymous"               -> x.isAnonymous.asJson,
+          "can_manage_chat"            -> x.canManageChat.asJson,
+          "can_delete_messages"        -> x.canDeleteMessages.asJson,
+          "can_manage_video_chats"     -> x.canManageVideoChats.asJson,
+          "can_restrict_members"       -> x.canRestrictMembers.asJson,
+          "can_promote_members"        -> x.canPromoteMembers.asJson,
+          "can_change_info"            -> x.canChangeInfo.asJson,
+          "can_invite_users"           -> x.canInviteUsers.asJson,
+          "can_post_stories"           -> x.canPostStories.asJson,
+          "can_edit_stories"           -> x.canEditStories.asJson,
+          "can_delete_stories"         -> x.canDeleteStories.asJson,
+          "can_post_messages"          -> x.canPostMessages.asJson,
+          "can_edit_messages"          -> x.canEditMessages.asJson,
+          "can_pin_messages"           -> x.canPinMessages.asJson,
+          "can_manage_topics"          -> x.canManageTopics.asJson,
+          "can_manage_direct_messages" -> x.canManageDirectMessages.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3471,21 +3505,22 @@ object CirceImplicits {
   implicit lazy val chatadministratorrightsDecoder: Decoder[ChatAdministratorRights] =
     Decoder.instance { h =>
       for {
-        _isAnonymous         <- h.get[Boolean]("is_anonymous")
-        _canManageChat       <- h.get[Boolean]("can_manage_chat")
-        _canDeleteMessages   <- h.get[Boolean]("can_delete_messages")
-        _canManageVideoChats <- h.get[Boolean]("can_manage_video_chats")
-        _canRestrictMembers  <- h.get[Boolean]("can_restrict_members")
-        _canPromoteMembers   <- h.get[Boolean]("can_promote_members")
-        _canChangeInfo       <- h.get[Boolean]("can_change_info")
-        _canInviteUsers      <- h.get[Boolean]("can_invite_users")
-        _canPostStories      <- h.get[Boolean]("can_post_stories")
-        _canEditStories      <- h.get[Boolean]("can_edit_stories")
-        _canDeleteStories    <- h.get[Boolean]("can_delete_stories")
-        _canPostMessages     <- h.get[Option[Boolean]]("can_post_messages")
-        _canEditMessages     <- h.get[Option[Boolean]]("can_edit_messages")
-        _canPinMessages      <- h.get[Option[Boolean]]("can_pin_messages")
-        _canManageTopics     <- h.get[Option[Boolean]]("can_manage_topics")
+        _isAnonymous             <- h.get[Boolean]("is_anonymous")
+        _canManageChat           <- h.get[Boolean]("can_manage_chat")
+        _canDeleteMessages       <- h.get[Boolean]("can_delete_messages")
+        _canManageVideoChats     <- h.get[Boolean]("can_manage_video_chats")
+        _canRestrictMembers      <- h.get[Boolean]("can_restrict_members")
+        _canPromoteMembers       <- h.get[Boolean]("can_promote_members")
+        _canChangeInfo           <- h.get[Boolean]("can_change_info")
+        _canInviteUsers          <- h.get[Boolean]("can_invite_users")
+        _canPostStories          <- h.get[Boolean]("can_post_stories")
+        _canEditStories          <- h.get[Boolean]("can_edit_stories")
+        _canDeleteStories        <- h.get[Boolean]("can_delete_stories")
+        _canPostMessages         <- h.get[Option[Boolean]]("can_post_messages")
+        _canEditMessages         <- h.get[Option[Boolean]]("can_edit_messages")
+        _canPinMessages          <- h.get[Option[Boolean]]("can_pin_messages")
+        _canManageTopics         <- h.get[Option[Boolean]]("can_manage_topics")
+        _canManageDirectMessages <- h.get[Option[Boolean]]("can_manage_direct_messages")
       } yield {
         ChatAdministratorRights(
           isAnonymous = _isAnonymous,
@@ -3502,7 +3537,8 @@ object CirceImplicits {
           canPostMessages = _canPostMessages,
           canEditMessages = _canEditMessages,
           canPinMessages = _canPinMessages,
-          canManageTopics = _canManageTopics
+          canManageTopics = _canManageTopics,
+          canManageDirectMessages = _canManageDirectMessages
         )
       }
     }
@@ -3541,8 +3577,8 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _boostId        <- h.get[String]("boost_id")
-        _addDate        <- h.get[Int]("add_date")
-        _expirationDate <- h.get[Int]("expiration_date")
+        _addDate        <- h.get[Long]("add_date")
+        _expirationDate <- h.get[Long]("expiration_date")
         _source         <- h.get[iozhik.OpenEnum[ChatBoostSource]]("source")
       } yield {
         ChatBoost(boostId = _boostId, addDate = _addDate, expirationDate = _expirationDate, source = _source)
@@ -3584,7 +3620,7 @@ object CirceImplicits {
       for {
         _chat       <- h.get[Chat]("chat")
         _boostId    <- h.get[String]("boost_id")
-        _removeDate <- h.get[Int]("remove_date")
+        _removeDate <- h.get[Long]("remove_date")
         _source     <- h.get[iozhik.OpenEnum[ChatBoostSource]]("source")
       } yield {
         ChatBoostRemoved(chat = _chat, boostId = _boostId, removeDate = _removeDate, source = _source)
@@ -3622,6 +3658,7 @@ object CirceImplicits {
           "first_name"                              -> x.firstName.asJson,
           "last_name"                               -> x.lastName.asJson,
           "is_forum"                                -> x.isForum.asJson,
+          "is_direct_messages"                      -> x.isDirectMessages.asJson,
           "accent_color_id"                         -> x.accentColorId.asJson,
           "max_reaction_count"                      -> x.maxReactionCount.asJson,
           "photo"                                   -> x.photo.asJson,
@@ -3631,6 +3668,7 @@ object CirceImplicits {
           "business_location"                       -> x.businessLocation.asJson,
           "business_opening_hours"                  -> x.businessOpeningHours.asJson,
           "personal_chat"                           -> x.personalChat.asJson,
+          "parent_chat"                             -> x.parentChat.asJson,
           "available_reactions"                     -> x.availableReactions.asJson,
           "background_custom_emoji_id"              -> x.backgroundCustomEmojiId.asJson,
           "profile_accent_color_id"                 -> x.profileAccentColorId.asJson,
@@ -3674,6 +3712,7 @@ object CirceImplicits {
         _firstName               <- h.get[Option[String]]("first_name")
         _lastName                <- h.get[Option[String]]("last_name")
         _isForum                 <- h.get[Option[Boolean]]("is_forum")
+        _isDirectMessages        <- h.get[Option[Boolean]]("is_direct_messages")
         _accentColorId           <- h.get[Int]("accent_color_id")
         _maxReactionCount        <- h.get[Int]("max_reaction_count")
         _photo                   <- h.get[Option[ChatPhoto]]("photo")
@@ -3683,12 +3722,13 @@ object CirceImplicits {
         _businessLocation        <- h.get[Option[BusinessLocation]]("business_location")
         _businessOpeningHours    <- h.get[Option[BusinessOpeningHours]]("business_opening_hours")
         _personalChat            <- h.get[Option[Chat]]("personal_chat")
+        _parentChat              <- h.get[Option[Chat]]("parent_chat")
         _availableReactions      <- h.getOrElse[List[iozhik.OpenEnum[ReactionType]]]("available_reactions")(List.empty)
         _backgroundCustomEmojiId <- h.get[Option[String]]("background_custom_emoji_id")
         _profileAccentColorId    <- h.get[Option[Int]]("profile_accent_color_id")
         _profileBackgroundCustomEmojiId     <- h.get[Option[String]]("profile_background_custom_emoji_id")
         _emojiStatusCustomEmojiId           <- h.get[Option[String]]("emoji_status_custom_emoji_id")
-        _emojiStatusExpirationDate          <- h.get[Option[Int]]("emoji_status_expiration_date")
+        _emojiStatusExpirationDate          <- h.get[Option[Long]]("emoji_status_expiration_date")
         _bio                                <- h.get[Option[String]]("bio")
         _hasPrivateForwards                 <- h.get[Option[Boolean]]("has_private_forwards")
         _hasRestrictedVoiceAndVideoMessages <- h.get[Option[Boolean]]("has_restricted_voice_and_video_messages")
@@ -3721,6 +3761,7 @@ object CirceImplicits {
           firstName = _firstName,
           lastName = _lastName,
           isForum = _isForum,
+          isDirectMessages = _isDirectMessages,
           accentColorId = _accentColorId,
           maxReactionCount = _maxReactionCount,
           photo = _photo,
@@ -3730,6 +3771,7 @@ object CirceImplicits {
           businessLocation = _businessLocation,
           businessOpeningHours = _businessOpeningHours,
           personalChat = _personalChat,
+          parentChat = _parentChat,
           availableReactions = _availableReactions,
           backgroundCustomEmojiId = _backgroundCustomEmojiId,
           profileAccentColorId = _profileAccentColorId,
@@ -3791,7 +3833,7 @@ object CirceImplicits {
         _isPrimary               <- h.get[Boolean]("is_primary")
         _isRevoked               <- h.get[Boolean]("is_revoked")
         _name                    <- h.get[Option[String]]("name")
-        _expireDate              <- h.get[Option[Int]]("expire_date")
+        _expireDate              <- h.get[Option[Long]]("expire_date")
         _memberLimit             <- h.get[Option[Int]]("member_limit")
         _pendingJoinRequestCount <- h.get[Option[Int]]("pending_join_request_count")
         _subscriptionPeriod      <- h.get[Option[Int]]("subscription_period")
@@ -3833,7 +3875,7 @@ object CirceImplicits {
         _chat       <- h.get[Chat]("chat")
         _from       <- h.get[User]("from")
         _userChatId <- h.get[Long]("user_chat_id")
-        _date       <- h.get[Int]("date")
+        _date       <- h.get[Long]("date")
         _bio        <- h.get[Option[String]]("bio")
         _inviteLink <- h.get[Option[ChatInviteLink]]("invite_link")
       } yield {
@@ -3889,7 +3931,7 @@ object CirceImplicits {
       for {
         _chat                    <- h.get[Chat]("chat")
         _from                    <- h.get[User]("from")
-        _date                    <- h.get[Int]("date")
+        _date                    <- h.get[Long]("date")
         _oldChatMember           <- h.get[iozhik.OpenEnum[ChatMember]]("old_chat_member")
         _newChatMember           <- h.get[iozhik.OpenEnum[ChatMember]]("new_chat_member")
         _inviteLink              <- h.get[Option[ChatInviteLink]]("invite_link")
@@ -4075,7 +4117,7 @@ object CirceImplicits {
         _text            <- h.get[String]("text")
         _textEntities    <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("text_entities")(List.empty)
         _completedByUser <- h.get[Option[User]]("completed_by_user")
-        _completionDate  <- h.get[Option[Int]]("completion_date")
+        _completionDate  <- h.get[Option[Long]]("completion_date")
       } yield {
         ChecklistTask(
           id = _id,
@@ -4255,6 +4297,26 @@ object CirceImplicits {
           areDirectMessagesEnabled = _areDirectMessagesEnabled,
           directMessageStarCount = _directMessageStarCount
         )
+      }
+    }
+
+  implicit lazy val directmessagestopicEncoder: Encoder[DirectMessagesTopic] =
+    (x: DirectMessagesTopic) => {
+      Json.fromFields(
+        List(
+          "topic_id" -> x.topicId.asJson,
+          "user"     -> x.user.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val directmessagestopicDecoder: Decoder[DirectMessagesTopic] =
+    Decoder.instance { h =>
+      for {
+        _topicId <- h.get[Long]("topic_id")
+        _user    <- h.get[Option[User]]("user")
+      } yield {
+        DirectMessagesTopic(topicId = _topicId, user = _user)
       }
     }
 
@@ -4636,7 +4698,8 @@ object CirceImplicits {
           "star_count"         -> x.starCount.asJson,
           "upgrade_star_count" -> x.upgradeStarCount.asJson,
           "total_count"        -> x.totalCount.asJson,
-          "remaining_count"    -> x.remainingCount.asJson
+          "remaining_count"    -> x.remainingCount.asJson,
+          "publisher_chat"     -> x.publisherChat.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4650,6 +4713,7 @@ object CirceImplicits {
         _upgradeStarCount <- h.get[Option[Int]]("upgrade_star_count")
         _totalCount       <- h.get[Option[Int]]("total_count")
         _remainingCount   <- h.get[Option[Int]]("remaining_count")
+        _publisherChat    <- h.get[Option[Chat]]("publisher_chat")
       } yield {
         Gift(
           id = _id,
@@ -4657,7 +4721,8 @@ object CirceImplicits {
           starCount = _starCount,
           upgradeStarCount = _upgradeStarCount,
           totalCount = _totalCount,
-          remainingCount = _remainingCount
+          remainingCount = _remainingCount,
+          publisherChat = _publisherChat
         )
       }
     }
@@ -4742,7 +4807,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _chats                         <- h.getOrElse[List[Chat]]("chats")(List.empty)
-        _winnersSelectionDate          <- h.get[Int]("winners_selection_date")
+        _winnersSelectionDate          <- h.get[Long]("winners_selection_date")
         _winnerCount                   <- h.get[Int]("winner_count")
         _onlyNewMembers                <- h.get[Option[Boolean]]("only_new_members")
         _hasPublicWinners              <- h.get[Option[Boolean]]("has_public_winners")
@@ -4837,7 +4902,7 @@ object CirceImplicits {
       for {
         _chat                          <- h.get[Chat]("chat")
         _giveawayMessageId             <- h.get[Int]("giveaway_message_id")
-        _winnersSelectionDate          <- h.get[Int]("winners_selection_date")
+        _winnersSelectionDate          <- h.get[Long]("winners_selection_date")
         _winnerCount                   <- h.get[Int]("winner_count")
         _winners                       <- h.getOrElse[List[User]]("winners")(List.empty)
         _additionalChatCount           <- h.get[Option[Int]]("additional_chat_count")
@@ -5298,7 +5363,7 @@ object CirceImplicits {
       for {
         _chat      <- h.get[Chat]("chat")
         _messageId <- h.get[Int]("message_id")
-        _date      <- h.get[Int]("date")
+        _date      <- h.get[Long]("date")
         _reactions <- h.getOrElse[List[ReactionCount]]("reactions")(List.empty)
       } yield {
         MessageReactionCountUpdated(chat = _chat, messageId = _messageId, date = _date, reactions = _reactions)
@@ -5327,7 +5392,7 @@ object CirceImplicits {
         _messageId   <- h.get[Int]("message_id")
         _user        <- h.get[Option[User]]("user")
         _actorChat   <- h.get[Option[Chat]]("actor_chat")
-        _date        <- h.get[Int]("date")
+        _date        <- h.get[Long]("date")
         _oldReaction <- h.getOrElse[List[iozhik.OpenEnum[ReactionType]]]("old_reaction")(List.empty)
         _newReaction <- h.getOrElse[List[iozhik.OpenEnum[ReactionType]]]("new_reaction")(List.empty)
       } yield {
@@ -5485,7 +5550,7 @@ object CirceImplicits {
         _fileId       <- h.get[String]("file_id")
         _fileUniqueId <- h.get[String]("file_unique_id")
         _fileSize     <- h.get[Long]("file_size")
-        _fileDate     <- h.get[Int]("file_date")
+        _fileDate     <- h.get[Long]("file_date")
       } yield {
         PassportFile(fileId = _fileId, fileUniqueId = _fileUniqueId, fileSize = _fileSize, fileDate = _fileDate)
       }
@@ -5561,7 +5626,7 @@ object CirceImplicits {
         _explanation           <- h.get[Option[String]]("explanation")
         _explanationEntities   <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("explanation_entities")(List.empty)
         _openPeriod            <- h.get[Option[Int]]("open_period")
-        _closeDate             <- h.get[Option[Int]]("close_date")
+        _closeDate             <- h.get[Option[Long]]("close_date")
       } yield {
         Poll(
           id = _id,
@@ -5680,7 +5745,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _id             <- h.get[String]("id")
-        _expirationDate <- h.get[Int]("expiration_date")
+        _expirationDate <- h.get[Long]("expiration_date")
       } yield {
         PreparedInlineMessage(id = _id, expirationDate = _expirationDate)
       }
@@ -5770,7 +5835,8 @@ object CirceImplicits {
           "quote"                       -> x.quote.asJson,
           "quote_parse_mode"            -> x.quoteParseMode.asJson,
           "quote_entities"              -> x.quoteEntities.asJson,
-          "quote_position"              -> x.quotePosition.asJson
+          "quote_position"              -> x.quotePosition.asJson,
+          "checklist_task_id"           -> x.checklistTaskId.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5912,7 +5978,7 @@ object CirceImplicits {
   implicit lazy val staramountDecoder: Decoder[StarAmount] =
     Decoder.instance { h =>
       for {
-        _amount         <- h.get[Int]("amount")
+        _amount         <- h.get[Long]("amount")
         _nanostarAmount <- h.get[Option[Int]]("nanostar_amount")
       } yield {
         StarAmount(amount = _amount, nanostarAmount = _nanostarAmount)
@@ -5937,9 +6003,9 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _id             <- h.get[String]("id")
-        _amount         <- h.get[Int]("amount")
+        _amount         <- h.get[Long]("amount")
         _nanostarAmount <- h.get[Option[Int]]("nanostar_amount")
-        _date           <- h.get[Int]("date")
+        _date           <- h.get[Long]("date")
         _source         <- h.get[Option[iozhik.OpenEnum[TransactionPartner]]]("source")
         _receiver       <- h.get[Option[iozhik.OpenEnum[TransactionPartner]]]("receiver")
       } yield {
@@ -6134,7 +6200,7 @@ object CirceImplicits {
         _currency                   <- h.get[String]("currency")
         _totalAmount                <- h.get[Int]("total_amount")
         _invoicePayload             <- h.get[String]("invoice_payload")
-        _subscriptionExpirationDate <- h.get[Option[Int]]("subscription_expiration_date")
+        _subscriptionExpirationDate <- h.get[Option[Long]]("subscription_expiration_date")
         _isRecurring                <- h.get[Option[Boolean]]("is_recurring")
         _isFirstRecurring           <- h.get[Option[Boolean]]("is_first_recurring")
         _shippingOptionId           <- h.get[Option[String]]("shipping_option_id")
@@ -6154,6 +6220,169 @@ object CirceImplicits {
           telegramPaymentChargeId = _telegramPaymentChargeId,
           providerPaymentChargeId = _providerPaymentChargeId
         )
+      }
+    }
+
+  implicit lazy val suggestedpostapprovalfailedEncoder: Encoder[SuggestedPostApprovalFailed] =
+    (x: SuggestedPostApprovalFailed) => {
+      Json.fromFields(
+        List(
+          "suggested_post_message" -> x.suggestedPostMessage.asJson,
+          "price"                  -> x.price.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val suggestedpostapprovalfailedDecoder: Decoder[SuggestedPostApprovalFailed] =
+    Decoder.instance { h =>
+      for {
+        _suggestedPostMessage <- h.get[Option[Message]]("suggested_post_message")
+        _price                <- h.get[SuggestedPostPrice]("price")
+      } yield {
+        SuggestedPostApprovalFailed(suggestedPostMessage = _suggestedPostMessage, price = _price)
+      }
+    }
+
+  implicit lazy val suggestedpostapprovedEncoder: Encoder[SuggestedPostApproved] =
+    (x: SuggestedPostApproved) => {
+      Json.fromFields(
+        List(
+          "suggested_post_message" -> x.suggestedPostMessage.asJson,
+          "price"                  -> x.price.asJson,
+          "send_date"              -> x.sendDate.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val suggestedpostapprovedDecoder: Decoder[SuggestedPostApproved] =
+    Decoder.instance { h =>
+      for {
+        _suggestedPostMessage <- h.get[Option[Message]]("suggested_post_message")
+        _price                <- h.get[Option[SuggestedPostPrice]]("price")
+        _sendDate             <- h.get[Long]("send_date")
+      } yield {
+        SuggestedPostApproved(suggestedPostMessage = _suggestedPostMessage, price = _price, sendDate = _sendDate)
+      }
+    }
+
+  implicit lazy val suggestedpostdeclinedEncoder: Encoder[SuggestedPostDeclined] =
+    (x: SuggestedPostDeclined) => {
+      Json.fromFields(
+        List(
+          "suggested_post_message" -> x.suggestedPostMessage.asJson,
+          "comment"                -> x.comment.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val suggestedpostdeclinedDecoder: Decoder[SuggestedPostDeclined] =
+    Decoder.instance { h =>
+      for {
+        _suggestedPostMessage <- h.get[Option[Message]]("suggested_post_message")
+        _comment              <- h.get[Option[String]]("comment")
+      } yield {
+        SuggestedPostDeclined(suggestedPostMessage = _suggestedPostMessage, comment = _comment)
+      }
+    }
+
+  implicit lazy val suggestedpostinfoEncoder: Encoder[SuggestedPostInfo] =
+    (x: SuggestedPostInfo) => {
+      Json.fromFields(
+        List(
+          "state"     -> x.state.asJson,
+          "price"     -> x.price.asJson,
+          "send_date" -> x.sendDate.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val suggestedpostinfoDecoder: Decoder[SuggestedPostInfo] =
+    Decoder.instance { h =>
+      for {
+        _state    <- h.get[String]("state")
+        _price    <- h.get[Option[SuggestedPostPrice]]("price")
+        _sendDate <- h.get[Option[Long]]("send_date")
+      } yield {
+        SuggestedPostInfo(state = _state, price = _price, sendDate = _sendDate)
+      }
+    }
+
+  implicit lazy val suggestedpostpaidEncoder: Encoder[SuggestedPostPaid] =
+    (x: SuggestedPostPaid) => {
+      Json.fromFields(
+        List(
+          "suggested_post_message" -> x.suggestedPostMessage.asJson,
+          "currency"               -> x.currency.asJson,
+          "amount"                 -> x.amount.asJson,
+          "star_amount"            -> x.starAmount.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val suggestedpostpaidDecoder: Decoder[SuggestedPostPaid] =
+    Decoder.instance { h =>
+      for {
+        _suggestedPostMessage <- h.get[Option[Message]]("suggested_post_message")
+        _currency             <- h.get[String]("currency")
+        _amount               <- h.get[Option[Long]]("amount")
+        _starAmount           <- h.get[Option[StarAmount]]("star_amount")
+      } yield {
+        SuggestedPostPaid(
+          suggestedPostMessage = _suggestedPostMessage,
+          currency = _currency,
+          amount = _amount,
+          starAmount = _starAmount
+        )
+      }
+    }
+
+  implicit lazy val suggestedpostparametersEncoder: Encoder[SuggestedPostParameters] =
+    (x: SuggestedPostParameters) => {
+      Json.fromFields(
+        List(
+          "price"     -> x.price.asJson,
+          "send_date" -> x.sendDate.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val suggestedpostpriceEncoder: Encoder[SuggestedPostPrice] =
+    (x: SuggestedPostPrice) => {
+      Json.fromFields(
+        List(
+          "currency" -> x.currency.asJson,
+          "amount"   -> x.amount.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val suggestedpostpriceDecoder: Decoder[SuggestedPostPrice] =
+    Decoder.instance { h =>
+      for {
+        _currency <- h.get[String]("currency")
+        _amount   <- h.get[Long]("amount")
+      } yield {
+        SuggestedPostPrice(currency = _currency, amount = _amount)
+      }
+    }
+
+  implicit lazy val suggestedpostrefundedEncoder: Encoder[SuggestedPostRefunded] =
+    (x: SuggestedPostRefunded) => {
+      Json.fromFields(
+        List(
+          "suggested_post_message" -> x.suggestedPostMessage.asJson,
+          "reason"                 -> x.reason.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val suggestedpostrefundedDecoder: Decoder[SuggestedPostRefunded] =
+    Decoder.instance { h =>
+      for {
+        _suggestedPostMessage <- h.get[Option[Message]]("suggested_post_message")
+        _reason               <- h.get[String]("reason")
+      } yield {
+        SuggestedPostRefunded(suggestedPostMessage = _suggestedPostMessage, reason = _reason)
       }
     }
 
@@ -6217,12 +6446,13 @@ object CirceImplicits {
     (x: UniqueGift) => {
       Json.fromFields(
         List(
-          "base_name" -> x.baseName.asJson,
-          "name"      -> x.name.asJson,
-          "number"    -> x.number.asJson,
-          "model"     -> x.model.asJson,
-          "symbol"    -> x.symbol.asJson,
-          "backdrop"  -> x.backdrop.asJson
+          "base_name"      -> x.baseName.asJson,
+          "name"           -> x.name.asJson,
+          "number"         -> x.number.asJson,
+          "model"          -> x.model.asJson,
+          "symbol"         -> x.symbol.asJson,
+          "backdrop"       -> x.backdrop.asJson,
+          "publisher_chat" -> x.publisherChat.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6230,12 +6460,13 @@ object CirceImplicits {
   implicit lazy val uniquegiftDecoder: Decoder[UniqueGift] =
     Decoder.instance { h =>
       for {
-        _baseName <- h.get[String]("base_name")
-        _name     <- h.get[String]("name")
-        _number   <- h.get[Int]("number")
-        _model    <- h.get[UniqueGiftModel]("model")
-        _symbol   <- h.get[UniqueGiftSymbol]("symbol")
-        _backdrop <- h.get[UniqueGiftBackdrop]("backdrop")
+        _baseName      <- h.get[String]("base_name")
+        _name          <- h.get[String]("name")
+        _number        <- h.get[Int]("number")
+        _model         <- h.get[UniqueGiftModel]("model")
+        _symbol        <- h.get[UniqueGiftSymbol]("symbol")
+        _backdrop      <- h.get[UniqueGiftBackdrop]("backdrop")
+        _publisherChat <- h.get[Option[Chat]]("publisher_chat")
       } yield {
         UniqueGift(
           baseName = _baseName,
@@ -6243,7 +6474,8 @@ object CirceImplicits {
           number = _number,
           model = _model,
           symbol = _symbol,
-          backdrop = _backdrop
+          backdrop = _backdrop,
+          publisherChat = _publisherChat
         )
       }
     }
@@ -6321,7 +6553,7 @@ object CirceImplicits {
         _lastResaleStarCount <- h.get[Option[Int]]("last_resale_star_count")
         _ownedGiftId         <- h.get[Option[String]]("owned_gift_id")
         _transferStarCount   <- h.get[Option[Int]]("transfer_star_count")
-        _nextTransferDate    <- h.get[Option[Int]]("next_transfer_date")
+        _nextTransferDate    <- h.get[Option[Long]]("next_transfer_date")
       } yield {
         UniqueGiftInfo(
           gift = _gift,
@@ -6717,7 +6949,7 @@ object CirceImplicits {
   implicit lazy val videochatscheduledDecoder: Decoder[VideoChatScheduled] =
     Decoder.instance { h =>
       for {
-        _startDate <- h.get[Int]("start_date")
+        _startDate <- h.get[Long]("start_date")
       } yield {
         VideoChatScheduled(startDate = _startDate)
       }
@@ -6855,9 +7087,9 @@ object CirceImplicits {
         _hasCustomCertificate         <- h.get[Boolean]("has_custom_certificate")
         _pendingUpdateCount           <- h.get[Int]("pending_update_count")
         _ipAddress                    <- h.get[Option[String]]("ip_address")
-        _lastErrorDate                <- h.get[Option[Int]]("last_error_date")
+        _lastErrorDate                <- h.get[Option[Long]]("last_error_date")
         _lastErrorMessage             <- h.get[Option[String]]("last_error_message")
-        _lastSynchronizationErrorDate <- h.get[Option[Int]]("last_synchronization_error_date")
+        _lastSynchronizationErrorDate <- h.get[Option[Long]]("last_synchronization_error_date")
         _maxConnections               <- h.get[Option[Int]]("max_connections")
         _allowedUpdates               <- h.getOrElse[List[String]]("allowed_updates")(List.empty)
       } yield {

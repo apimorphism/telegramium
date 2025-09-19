@@ -14,6 +14,8 @@ package telegramium.bots
   *   Optional. The total number of the gifts of this type that can be sent; for limited gifts only
   * @param remainingCount
   *   Optional. The number of remaining gifts of this type that can be sent; for limited gifts only
+  * @param publisherChat
+  *   Optional. Information about the chat that published the gift
   */
 final case class Gift(
   id: String,
@@ -21,5 +23,6 @@ final case class Gift(
   starCount: Int,
   upgradeStarCount: Option[Int] = Option.empty,
   totalCount: Option[Int] = Option.empty,
-  remainingCount: Option[Int] = Option.empty
+  remainingCount: Option[Int] = Option.empty,
+  publisherChat: Option[Chat] = Option.empty
 )

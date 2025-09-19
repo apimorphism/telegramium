@@ -20,7 +20,7 @@ package telegramium.bots
 final case class MessageReactionUpdated(
   chat: Chat,
   messageId: Int,
-  date: Int,
+  date: Long,
   user: Option[User] = Option.empty,
   actorChat: Option[Chat] = Option.empty,
   oldReaction: List[iozhik.OpenEnum[ReactionType]] = List.empty,

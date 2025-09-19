@@ -10,6 +10,9 @@ import telegramium.bots.ReplyParameters
   *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+  * @param directMessagesTopicId
+  *   Identifier of the direct messages topic to which the messages will be sent; required if the messages are sent to a
+  *   direct messages chat
   * @param media
   *   A JSON-serialized array describing messages to be sent, must include 2-10 items
   * @param disableNotification
@@ -28,6 +31,7 @@ final case class SendMediaGroupReq(
   chatId: ChatId,
   businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,
+  directMessagesTopicId: Option[Long] = Option.empty,
   media: List[InputMedia] = List.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,

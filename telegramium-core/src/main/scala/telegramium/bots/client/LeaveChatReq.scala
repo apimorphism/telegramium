@@ -4,6 +4,6 @@ import telegramium.bots.ChatId
 
 /** @param chatId
   *   Unique identifier for the target chat or username of the target supergroup or channel (in the format
-  *   &#064;channelusername)
+  *   &#064;channelusername). Channel direct messages chats aren't supported; leave the corresponding channel instead.
   */
 final case class LeaveChatReq(chatId: ChatId)

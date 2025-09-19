@@ -21,7 +21,7 @@ final case class EditChatInviteLinkReq(
   chatId: ChatId,
   inviteLink: String,
   name: Option[String] = Option.empty,
-  expireDate: Option[Int] = Option.empty,
+  expireDate: Option[Long] = Option.empty,
   memberLimit: Option[Int] = Option.empty,
   createsJoinRequest: Option[Boolean] = Option.empty
 )

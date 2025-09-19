@@ -25,6 +25,8 @@ package telegramium.bots
   *   Optional. Last name of the other party in a private chat
   * @param isForum
   *   Optional. True, if the supergroup chat is a forum (has topics enabled)
+  * @param isDirectMessages
+  *   Optional. True, if the chat is the direct messages chat of a channel
   * @param photo
   *   Optional. Chat photo
   * @param activeUsernames
@@ -39,6 +41,8 @@ package telegramium.bots
   *   Optional. For private chats with business accounts, the opening hours of the business
   * @param personalChat
   *   Optional. For private chats, the personal channel of the user
+  * @param parentChat
+  *   Optional. Information about the corresponding channel chat; for direct messages chats only
   * @param availableReactions
   *   Optional. List of available reactions allowed in the chat. If omitted, then all emoji reactions are allowed.
   * @param backgroundCustomEmojiId
@@ -120,6 +124,7 @@ final case class ChatFullInfo(
   firstName: Option[String] = Option.empty,
   lastName: Option[String] = Option.empty,
   isForum: Option[Boolean] = Option.empty,
+  isDirectMessages: Option[Boolean] = Option.empty,
   photo: Option[ChatPhoto] = Option.empty,
   activeUsernames: List[String] = List.empty,
   birthdate: Option[Birthdate] = Option.empty,
@@ -127,12 +132,13 @@ final case class ChatFullInfo(
   businessLocation: Option[BusinessLocation] = Option.empty,
   businessOpeningHours: Option[BusinessOpeningHours] = Option.empty,
   personalChat: Option[Chat] = Option.empty,
+  parentChat: Option[Chat] = Option.empty,
   availableReactions: List[iozhik.OpenEnum[ReactionType]] = List.empty,
   backgroundCustomEmojiId: Option[String] = Option.empty,
   profileAccentColorId: Option[Int] = Option.empty,
   profileBackgroundCustomEmojiId: Option[String] = Option.empty,
   emojiStatusCustomEmojiId: Option[String] = Option.empty,
-  emojiStatusExpirationDate: Option[Int] = Option.empty,
+  emojiStatusExpirationDate: Option[Long] = Option.empty,
   bio: Option[String] = Option.empty,
   hasPrivateForwards: Option[Boolean] = Option.empty,
   hasRestrictedVoiceAndVideoMessages: Option[Boolean] = Option.empty,

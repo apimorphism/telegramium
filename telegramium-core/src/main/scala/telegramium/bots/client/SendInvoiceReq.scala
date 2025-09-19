@@ -2,6 +2,7 @@ package telegramium.bots.client
 
 import telegramium.bots.ChatId
 import telegramium.bots.LabeledPrice
+import telegramium.bots.SuggestedPostParameters
 import telegramium.bots.ReplyParameters
 import telegramium.bots.InlineKeyboardMarkup
 
@@ -18,6 +19,9 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+  * @param directMessagesTopicId
+  *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+  *   direct messages chat
   * @param providerToken
   *   Payment provider token, obtained via &#064;BotFather. Pass an empty string for payments in Telegram Stars.
   * @param prices
@@ -73,6 +77,9 @@ import telegramium.bots.InlineKeyboardMarkup
   *   per message. The relevant Stars will be withdrawn from the bot's balance
   * @param messageEffectId
   *   Unique identifier of the message effect to be added to the message; for private chats only
+  * @param suggestedPostParameters
+  *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats only.
+  *   If the message is sent as a reply to another suggested post, then that suggested post is automatically declined.
   * @param replyParameters
   *   Description of the message to reply to
   * @param replyMarkup
@@ -86,6 +93,7 @@ final case class SendInvoiceReq(
   payload: String,
   currency: String,
   messageThreadId: Option[Int] = Option.empty,
+  directMessagesTopicId: Option[Long] = Option.empty,
   providerToken: Option[String] = Option.empty,
   prices: List[LabeledPrice] = List.empty,
   maxTipAmount: Option[Int] = Option.empty,
@@ -107,6 +115,7 @@ final case class SendInvoiceReq(
   protectContent: Option[Boolean] = Option.empty,
   allowPaidBroadcast: Option[Boolean] = Option.empty,
   messageEffectId: Option[String] = Option.empty,
+  suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
   replyParameters: Option[ReplyParameters] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
 )

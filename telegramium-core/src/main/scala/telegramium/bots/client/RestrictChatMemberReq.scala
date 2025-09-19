@@ -24,5 +24,5 @@ final case class RestrictChatMemberReq(
   userId: Long,
   permissions: ChatPermissions,
   useIndependentChatPermissions: Option[Boolean] = Option.empty,
-  untilDate: Option[Int] = Option.empty
+  untilDate: Option[Long] = Option.empty
 )

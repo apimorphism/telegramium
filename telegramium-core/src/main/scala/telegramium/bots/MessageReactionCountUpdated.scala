@@ -14,6 +14,6 @@ package telegramium.bots
 final case class MessageReactionCountUpdated(
   chat: Chat,
   messageId: Int,
-  date: Int,
+  date: Long,
   reactions: List[ReactionCount] = List.empty
 )

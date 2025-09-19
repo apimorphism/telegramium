@@ -199,6 +199,23 @@ trait Methods {
     MethodReq[Boolean]("approveChatJoinRequest", req.asJson)
   }
 
+  /** Use this method to approve a suggested post in a direct messages chat. The bot must have the 'can_post_messages'
+    * administrator right in the corresponding channel chat. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target direct messages chat
+    * @param messageId
+    *   Identifier of a suggested post message to approve
+    * @param sendDate
+    *   Point in time (Unix timestamp) when the post is expected to be published; omit if the date has already been
+    *   specified when the suggested post was created. If specified, then the date must be not more than 2678400 seconds
+    *   (30 days) in the future
+    */
+  def approveSuggestedPost(chatId: Long, messageId: Int, sendDate: Option[Long] = Option.empty): Method[Boolean] = {
+    val req = ApproveSuggestedPostReq(chatId, messageId, sendDate)
+    MethodReq[Boolean]("approveSuggestedPost", req.asJson)
+  }
+
   /** Use this method to ban a user in a group, a supergroup or a channel. In the case of supergroups and channels, the
     * user will not be able to return to the chat on their own using invite links, etc., unless unbanned first. The bot
     * must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns
@@ -220,7 +237,7 @@ trait Methods {
   def banChatMember(
     chatId: ChatId,
     userId: Long,
-    untilDate: Option[Int] = Option.empty,
+    untilDate: Option[Long] = Option.empty,
     revokeMessages: Option[Boolean] = Option.empty
   ): Method[Boolean] = {
     val req = BanChatMemberReq(chatId, userId, untilDate, revokeMessages)
@@ -306,6 +323,9 @@ trait Methods {
     *   Message identifier in the chat specified in from_chat_id
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param videoStartTimestamp
     *   New start timestamp for the copied video in the message
     * @param caption
@@ -324,6 +344,10 @@ trait Methods {
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
     *   per message. The relevant Stars will be withdrawn from the bot's balance
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -335,6 +359,7 @@ trait Methods {
     fromChatId: ChatId,
     messageId: Int,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     videoStartTimestamp: Option[Int] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
@@ -343,6 +368,7 @@ trait Methods {
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[MessageId] = {
@@ -351,6 +377,7 @@ trait Methods {
       fromChatId,
       messageId,
       messageThreadId,
+      directMessagesTopicId,
       videoStartTimestamp,
       caption,
       parseMode,
@@ -359,6 +386,7 @@ trait Methods {
       disableNotification,
       protectContent,
       allowPaidBroadcast,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -379,6 +407,9 @@ trait Methods {
     *   &#064;channelusername)
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the messages will be sent; required if the messages are sent to
+    *   a direct messages chat
     * @param messageIds
     *   A JSON-serialized list of 1-100 identifiers of messages in the chat from_chat_id to copy. The identifiers must
     *   be specified in a strictly increasing order.
@@ -393,6 +424,7 @@ trait Methods {
     chatId: ChatId,
     fromChatId: ChatId,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     messageIds: List[Int] = List.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
@@ -402,6 +434,7 @@ trait Methods {
       chatId,
       fromChatId,
       messageThreadId,
+      directMessagesTopicId,
       messageIds,
       disableNotification,
       protectContent,
@@ -430,7 +463,7 @@ trait Methods {
   def createChatInviteLink(
     chatId: ChatId,
     name: Option[String] = Option.empty,
-    expireDate: Option[Int] = Option.empty,
+    expireDate: Option[Long] = Option.empty,
     memberLimit: Option[Int] = Option.empty,
     createsJoinRequest: Option[Boolean] = Option.empty
   ): Method[ChatInviteLink] = {
@@ -647,6 +680,21 @@ trait Methods {
     MethodReq[Boolean]("declineChatJoinRequest", req.asJson)
   }
 
+  /** Use this method to decline a suggested post in a direct messages chat. The bot must have the
+    * 'can_manage_direct_messages' administrator right in the corresponding channel chat. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target direct messages chat
+    * @param messageId
+    *   Identifier of a suggested post message to decline
+    * @param comment
+    *   Comment for the creator of the suggested post; 0-128 characters
+    */
+  def declineSuggestedPost(chatId: Long, messageId: Int, comment: Option[String] = Option.empty): Method[Boolean] = {
+    val req = DeclineSuggestedPostReq(chatId, messageId, comment)
+    MethodReq[Boolean]("declineSuggestedPost", req.asJson)
+  }
+
   /** Delete messages on behalf of a business account. Requires the can_delete_sent_messages business bot right to
     * delete messages sent by the bot itself, or the can_delete_all_messages business bot right to delete any message.
     * Returns True on success.
@@ -708,8 +756,9 @@ trait Methods {
     * 24 hours ago. - Bots can delete outgoing messages in private chats, groups, and supergroups. - Bots can delete
     * incoming messages in private chats. - Bots granted can_post_messages permissions can delete outgoing messages in
     * channels. - If the bot is an administrator of a group, it can delete any message there. - If the bot has
-    * can_delete_messages permission in a supergroup or a channel, it can delete any message there. Returns True on
-    * success.
+    * can_delete_messages administrator right in a supergroup or a channel, it can delete any message there. - If the
+    * bot has can_manage_direct_messages administrator right in a channel, it can delete any message in the
+    * corresponding direct messages chat. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -819,7 +868,7 @@ trait Methods {
     chatId: ChatId,
     inviteLink: String,
     name: Option[String] = Option.empty,
-    expireDate: Option[Int] = Option.empty,
+    expireDate: Option[Long] = Option.empty,
     memberLimit: Option[Int] = Option.empty,
     createsJoinRequest: Option[Boolean] = Option.empty
   ): Method[ChatInviteLink] = {
@@ -1208,30 +1257,39 @@ trait Methods {
     *   Message identifier in the chat specified in from_chat_id
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be forwarded; required if the message is
+    *   forwarded to a direct messages chat
     * @param videoStartTimestamp
     *   New start timestamp for the forwarded video in the message
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the forwarded message from forwarding and saving
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats only
     */
   def forwardMessage(
     chatId: ChatId,
     fromChatId: ChatId,
     messageId: Int,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     videoStartTimestamp: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
-    protectContent: Option[Boolean] = Option.empty
+    protectContent: Option[Boolean] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty
   ): Method[Message] = {
     val req = ForwardMessageReq(
       chatId,
       fromChatId,
       messageId,
       messageThreadId,
+      directMessagesTopicId,
       videoStartTimestamp,
       disableNotification,
-      protectContent
+      protectContent,
+      suggestedPostParameters
     )
     MethodReq[Message]("forwardMessage", req.asJson)
   }
@@ -1247,6 +1305,9 @@ trait Methods {
     *   &#064;channelusername)
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the messages will be forwarded; required if the messages are
+    *   forwarded to a direct messages chat
     * @param messageIds
     *   A JSON-serialized list of 1-100 identifiers of messages in the chat from_chat_id to forward. The identifiers
     *   must be specified in a strictly increasing order.
@@ -1259,11 +1320,20 @@ trait Methods {
     chatId: ChatId,
     fromChatId: ChatId,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     messageIds: List[Int] = List.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty
   ): Method[List[MessageId]] = {
-    val req = ForwardMessagesReq(chatId, fromChatId, messageThreadId, messageIds, disableNotification, protectContent)
+    val req = ForwardMessagesReq(
+      chatId,
+      fromChatId,
+      messageThreadId,
+      directMessagesTopicId,
+      messageIds,
+      disableNotification,
+      protectContent
+    )
     MethodReq[List[MessageId]]("forwardMessages", req.asJson)
   }
 
@@ -1678,7 +1748,7 @@ trait Methods {
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup or channel (in the format
-    *   &#064;channelusername)
+    *   &#064;channelusername). Channel direct messages chats aren't supported; leave the corresponding channel instead.
     */
   def leaveChat(chatId: ChatId): Method[Boolean] = {
     val req = LeaveChatReq(chatId)
@@ -1695,9 +1765,10 @@ trait Methods {
     MethodReq[Boolean]("logOut", req.asJson)
   }
 
-  /** Use this method to add a message to the list of pinned messages in a chat. If the chat is not a private chat, the
-    * bot must be an administrator in the chat for this to work and must have the 'can_pin_messages' administrator right
-    * in a supergroup or 'can_edit_messages' administrator right in a channel. Returns True on success.
+  /** Use this method to add a message to the list of pinned messages in a chat. In private chats and channel direct
+    * messages chats, all non-service messages can be pinned. Conversely, the bot must be an administrator with the
+    * 'can_pin_messages' right or the 'can_edit_messages' right to pin messages in groups and channels respectively.
+    * Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -1812,6 +1883,9 @@ trait Methods {
     *   Pass True if the administrator can pin messages; for supergroups only
     * @param canManageTopics
     *   Pass True if the user is allowed to create, rename, close, and reopen forum topics; for supergroups only
+    * @param canManageDirectMessages
+    *   Pass True if the administrator can manage direct messages within the channel and decline suggested posts; for
+    *   channels only
     */
   def promoteChatMember(
     chatId: ChatId,
@@ -1830,7 +1904,8 @@ trait Methods {
     canPostMessages: Option[Boolean] = Option.empty,
     canEditMessages: Option[Boolean] = Option.empty,
     canPinMessages: Option[Boolean] = Option.empty,
-    canManageTopics: Option[Boolean] = Option.empty
+    canManageTopics: Option[Boolean] = Option.empty,
+    canManageDirectMessages: Option[Boolean] = Option.empty
   ): Method[Boolean] = {
     val req = PromoteChatMemberReq(
       chatId,
@@ -1849,7 +1924,8 @@ trait Methods {
       canPostMessages,
       canEditMessages,
       canPinMessages,
-      canManageTopics
+      canManageTopics,
+      canManageDirectMessages
     )
     MethodReq[Boolean]("promoteChatMember", req.asJson)
   }
@@ -1993,7 +2069,7 @@ trait Methods {
     userId: Long,
     permissions: ChatPermissions,
     useIndependentChatPermissions: Option[Boolean] = Option.empty,
-    untilDate: Option[Int] = Option.empty
+    untilDate: Option[Long] = Option.empty
   ): Method[Boolean] = {
     val req = RestrictChatMemberReq(chatId, userId, permissions, useIndependentChatPermissions, untilDate)
     MethodReq[Boolean]("restrictChatMember", req.asJson)
@@ -2055,6 +2131,9 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param duration
     *   Duration of sent animation in seconds
     * @param width
@@ -2088,6 +2167,10 @@ trait Methods {
     *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -2099,6 +2182,7 @@ trait Methods {
     animation: IFile,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     duration: Option[Int] = Option.empty,
     width: Option[Int] = Option.empty,
     height: Option[Int] = Option.empty,
@@ -2112,6 +2196,7 @@ trait Methods {
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -2120,6 +2205,7 @@ trait Methods {
       animation,
       businessConnectionId,
       messageThreadId,
+      directMessagesTopicId,
       duration,
       width,
       height,
@@ -2133,6 +2219,7 @@ trait Methods {
       protectContent,
       allowPaidBroadcast,
       messageEffectId,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -2158,6 +2245,9 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param caption
     *   Audio caption, 0-1024 characters after entities parsing
     * @param parseMode
@@ -2186,6 +2276,10 @@ trait Methods {
     *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -2197,6 +2291,7 @@ trait Methods {
     audio: IFile,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -2208,6 +2303,7 @@ trait Methods {
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -2216,6 +2312,7 @@ trait Methods {
       audio,
       businessConnectionId,
       messageThreadId,
+      directMessagesTopicId,
       caption,
       parseMode,
       captionEntities,
@@ -2227,6 +2324,7 @@ trait Methods {
       protectContent,
       allowPaidBroadcast,
       messageEffectId,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -2243,7 +2341,8 @@ trait Methods {
     * time to arrive.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target supergroup (in the format
+    *   &#064;supergroupusername). Channel chats and channel direct messages chats aren't supported.
     * @param action
     *   Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text
     *   messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for
@@ -2319,6 +2418,9 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param lastName
     *   Contact's last name
     * @param vcard
@@ -2332,6 +2434,10 @@ trait Methods {
     *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -2344,12 +2450,14 @@ trait Methods {
     firstName: String,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     lastName: Option[String] = Option.empty,
     vcard: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -2359,12 +2467,14 @@ trait Methods {
       firstName,
       businessConnectionId,
       messageThreadId,
+      directMessagesTopicId,
       lastName,
       vcard,
       disableNotification,
       protectContent,
       allowPaidBroadcast,
       messageEffectId,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -2380,6 +2490,9 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param emoji
     *   Emoji on which the dice throw animation is based. Currently, must be one of “🎲”, “🎯”, “🏀”, “⚽”, “🎳”, or
     *   “🎰”. Dice can have values 1-6 for “🎲”, “🎯” and “🎳”, values 1-5 for “🏀” and “⚽”, and values 1-64 for “🎰”.
@@ -2393,6 +2506,10 @@ trait Methods {
     *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -2403,11 +2520,13 @@ trait Methods {
     chatId: ChatId,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     emoji: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -2415,11 +2534,13 @@ trait Methods {
       chatId,
       businessConnectionId,
       messageThreadId,
+      directMessagesTopicId,
       emoji,
       disableNotification,
       protectContent,
       allowPaidBroadcast,
       messageEffectId,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -2439,6 +2560,9 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param thumbnail
     *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
     *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not
@@ -2464,6 +2588,10 @@ trait Methods {
     *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -2475,6 +2603,7 @@ trait Methods {
     document: IFile,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     thumbnail: Option[IFile] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
@@ -2484,6 +2613,7 @@ trait Methods {
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -2492,6 +2622,7 @@ trait Methods {
       document,
       businessConnectionId,
       messageThreadId,
+      directMessagesTopicId,
       thumbnail,
       caption,
       parseMode,
@@ -2501,6 +2632,7 @@ trait Methods {
       protectContent,
       allowPaidBroadcast,
       messageEffectId,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -2514,7 +2646,7 @@ trait Methods {
   /** Use this method to send a game. On success, the sent Message is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat
+    *   Unique identifier for the target chat. Games can't be sent to channel direct messages chats and channel chats.
     * @param gameShortName
     *   Short name of the game, serves as the unique identifier for the game. Set up your games via &#064;BotFather.
     * @param businessConnectionId
@@ -2613,6 +2745,9 @@ trait Methods {
     *   Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param providerToken
     *   Payment provider token, obtained via &#064;BotFather. Pass an empty string for payments in Telegram Stars.
     * @param prices
@@ -2668,6 +2803,10 @@ trait Methods {
     *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -2681,6 +2820,7 @@ trait Methods {
     payload: String,
     currency: String,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     providerToken: Option[String] = Option.empty,
     prices: List[LabeledPrice] = List.empty,
     maxTipAmount: Option[Int] = Option.empty,
@@ -2702,6 +2842,7 @@ trait Methods {
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -2712,6 +2853,7 @@ trait Methods {
       payload,
       currency,
       messageThreadId,
+      directMessagesTopicId,
       providerToken,
       prices,
       maxTipAmount,
@@ -2733,6 +2875,7 @@ trait Methods {
       protectContent,
       allowPaidBroadcast,
       messageEffectId,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -2751,6 +2894,9 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param horizontalAccuracy
     *   The radius of uncertainty for the location, measured in meters; 0-1500
     * @param livePeriod
@@ -2770,6 +2916,10 @@ trait Methods {
     *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -2782,6 +2932,7 @@ trait Methods {
     longitude: Float,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     horizontalAccuracy: Option[Float] = Option.empty,
     livePeriod: Option[Int] = Option.empty,
     heading: Option[Int] = Option.empty,
@@ -2790,6 +2941,7 @@ trait Methods {
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -2799,6 +2951,7 @@ trait Methods {
       longitude,
       businessConnectionId,
       messageThreadId,
+      directMessagesTopicId,
       horizontalAccuracy,
       livePeriod,
       heading,
@@ -2807,6 +2960,7 @@ trait Methods {
       protectContent,
       allowPaidBroadcast,
       messageEffectId,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -2814,8 +2968,8 @@ trait Methods {
   }
 
   /** Use this method to send a group of photos, videos, documents or audios as an album. Documents and audio files can
-    * be only grouped in an album with messages of the same type. On success, an array of Messages that were sent is
-    * returned.
+    * be only grouped in an album with messages of the same type. On success, an array of Message objects that were sent
+    * is returned.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -2823,6 +2977,9 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the messages will be sent; required if the messages are sent to
+    *   a direct messages chat
     * @param media
     *   A JSON-serialized array describing messages to be sent, must include 2-10 items
     * @param disableNotification
@@ -2841,6 +2998,7 @@ trait Methods {
     chatId: ChatId,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     media: List[InputMedia] = List.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
@@ -2852,6 +3010,7 @@ trait Methods {
       chatId,
       businessConnectionId,
       messageThreadId,
+      directMessagesTopicId,
       media,
       disableNotification,
       protectContent,
@@ -2872,6 +3031,9 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param parseMode
     *   Mode for parsing entities in the message text. See formatting options for more details.
     * @param entities
@@ -2888,6 +3050,10 @@ trait Methods {
     *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -2899,6 +3065,7 @@ trait Methods {
     text: String,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     entities: List[MessageEntity] = List.empty,
     linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
@@ -2906,6 +3073,7 @@ trait Methods {
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -2914,6 +3082,7 @@ trait Methods {
       text,
       businessConnectionId,
       messageThreadId,
+      directMessagesTopicId,
       parseMode,
       entities,
       linkPreviewOptions,
@@ -2921,6 +3090,7 @@ trait Methods {
       protectContent,
       allowPaidBroadcast,
       messageEffectId,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -2937,6 +3107,11 @@ trait Methods {
     *   The number of Telegram Stars that must be paid to buy access to the media; 1-10000
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param media
     *   A JSON-serialized array describing the media to be sent; up to 10 items
     * @param payload
@@ -2958,6 +3133,10 @@ trait Methods {
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
     *   per message. The relevant Stars will be withdrawn from the bot's balance
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -2968,6 +3147,8 @@ trait Methods {
     chatId: ChatId,
     starCount: Int,
     businessConnectionId: Option[String] = Option.empty,
+    messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     media: List[InputPaidMedia] = List.empty,
     payload: Option[String] = Option.empty,
     caption: Option[String] = Option.empty,
@@ -2977,6 +3158,7 @@ trait Methods {
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -2984,6 +3166,8 @@ trait Methods {
       chatId,
       starCount,
       businessConnectionId,
+      messageThreadId,
+      directMessagesTopicId,
       media,
       payload,
       caption,
@@ -2993,6 +3177,7 @@ trait Methods {
       disableNotification,
       protectContent,
       allowPaidBroadcast,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -3012,6 +3197,9 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param caption
     *   Photo caption (may also be used when resending photos by file_id), 0-1024 characters after entities parsing
     * @param parseMode
@@ -3032,6 +3220,10 @@ trait Methods {
     *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -3043,6 +3235,7 @@ trait Methods {
     photo: IFile,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -3052,6 +3245,7 @@ trait Methods {
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -3060,6 +3254,7 @@ trait Methods {
       photo,
       businessConnectionId,
       messageThreadId,
+      directMessagesTopicId,
       caption,
       parseMode,
       captionEntities,
@@ -3069,6 +3264,7 @@ trait Methods {
       protectContent,
       allowPaidBroadcast,
       messageEffectId,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -3078,7 +3274,8 @@ trait Methods {
   /** Use this method to send a native poll. On success, the sent Message is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername).
+    *   Polls can't be sent to channel direct messages chats.
     * @param question
     *   Poll question, 1-300 characters
     * @param businessConnectionId
@@ -3147,7 +3344,7 @@ trait Methods {
     explanationParseMode: Option[ParseMode] = Option.empty,
     explanationEntities: List[MessageEntity] = List.empty,
     openPeriod: Option[Int] = Option.empty,
-    closeDate: Option[Int] = Option.empty,
+    closeDate: Option[Long] = Option.empty,
     isClosed: Option[Boolean] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
@@ -3197,6 +3394,9 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param emoji
     *   Emoji associated with the sticker; only for just uploaded stickers
     * @param disableNotification
@@ -3208,6 +3408,10 @@ trait Methods {
     *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -3219,11 +3423,13 @@ trait Methods {
     sticker: IFile,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     emoji: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -3232,11 +3438,13 @@ trait Methods {
       sticker,
       businessConnectionId,
       messageThreadId,
+      directMessagesTopicId,
       emoji,
       disableNotification,
       protectContent,
       allowPaidBroadcast,
       messageEffectId,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -3263,6 +3471,9 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param foursquareId
     *   Foursquare identifier of the venue
     * @param foursquareType
@@ -3281,6 +3492,10 @@ trait Methods {
     *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -3295,6 +3510,7 @@ trait Methods {
     address: String,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     foursquareId: Option[String] = Option.empty,
     foursquareType: Option[String] = Option.empty,
     googlePlaceId: Option[String] = Option.empty,
@@ -3303,6 +3519,7 @@ trait Methods {
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -3314,6 +3531,7 @@ trait Methods {
       address,
       businessConnectionId,
       messageThreadId,
+      directMessagesTopicId,
       foursquareId,
       foursquareType,
       googlePlaceId,
@@ -3322,6 +3540,7 @@ trait Methods {
       protectContent,
       allowPaidBroadcast,
       messageEffectId,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -3342,6 +3561,9 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param duration
     *   Duration of sent video in seconds
     * @param width
@@ -3382,6 +3604,10 @@ trait Methods {
     *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -3393,6 +3619,7 @@ trait Methods {
     video: IFile,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     duration: Option[Int] = Option.empty,
     width: Option[Int] = Option.empty,
     height: Option[Int] = Option.empty,
@@ -3409,6 +3636,7 @@ trait Methods {
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -3417,6 +3645,7 @@ trait Methods {
       video,
       businessConnectionId,
       messageThreadId,
+      directMessagesTopicId,
       duration,
       width,
       height,
@@ -3433,6 +3662,7 @@ trait Methods {
       protectContent,
       allowPaidBroadcast,
       messageEffectId,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -3456,6 +3686,9 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param duration
     *   Duration of sent video in seconds
     * @param length
@@ -3475,6 +3708,10 @@ trait Methods {
     *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -3486,6 +3723,7 @@ trait Methods {
     videoNote: IFile,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     duration: Option[Int] = Option.empty,
     length: Option[Int] = Option.empty,
     thumbnail: Option[IFile] = Option.empty,
@@ -3493,6 +3731,7 @@ trait Methods {
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -3501,6 +3740,7 @@ trait Methods {
       videoNote,
       businessConnectionId,
       messageThreadId,
+      directMessagesTopicId,
       duration,
       length,
       thumbnail,
@@ -3508,6 +3748,7 @@ trait Methods {
       protectContent,
       allowPaidBroadcast,
       messageEffectId,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -3533,6 +3774,9 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
     * @param caption
     *   Voice message caption, 0-1024 characters after entities parsing
     * @param parseMode
@@ -3551,6 +3795,10 @@ trait Methods {
     *   per message. The relevant Stars will be withdrawn from the bot's balance
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
@@ -3562,6 +3810,7 @@ trait Methods {
     voice: IFile,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -3570,6 +3819,7 @@ trait Methods {
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
     messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
@@ -3578,6 +3828,7 @@ trait Methods {
       voice,
       businessConnectionId,
       messageThreadId,
+      directMessagesTopicId,
       caption,
       parseMode,
       captionEntities,
@@ -3586,6 +3837,7 @@ trait Methods {
       protectContent,
       allowPaidBroadcast,
       messageEffectId,
+      suggestedPostParameters,
       replyParameters,
       replyMarkup
     )
@@ -4269,9 +4521,10 @@ trait Methods {
     MethodReq[Boolean]("unhideGeneralForumTopic", req.asJson)
   }
 
-  /** Use this method to clear the list of pinned messages in a chat. If the chat is not a private chat, the bot must be
-    * an administrator in the chat for this to work and must have the 'can_pin_messages' administrator right in a
-    * supergroup or 'can_edit_messages' administrator right in a channel. Returns True on success.
+  /** Use this method to clear the list of pinned messages in a chat. In private chats and channel direct messages
+    * chats, no additional rights are required to unpin all pinned messages. Conversely, the bot must be an
+    * administrator with the 'can_pin_messages' right or the 'can_edit_messages' right to unpin all pinned messages in
+    * groups and channels respectively. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -4309,9 +4562,10 @@ trait Methods {
     MethodReq[Boolean]("unpinAllGeneralForumTopicMessages", req.asJson)
   }
 
-  /** Use this method to remove a message from the list of pinned messages in a chat. If the chat is not a private chat,
-    * the bot must be an administrator in the chat for this to work and must have the 'can_pin_messages' administrator
-    * right in a supergroup or 'can_edit_messages' administrator right in a channel. Returns True on success.
+  /** Use this method to remove a message from the list of pinned messages in a chat. In private chats and channel
+    * direct messages chats, all messages can be unpinned. Conversely, the bot must be an administrator with the
+    * 'can_pin_messages' right or the 'can_edit_messages' right to unpin messages in groups and channels respectively.
+    * Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
@@ -4377,7 +4631,8 @@ trait Methods {
   /** Verifies a chat on behalf of the organization which is represented by the bot. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername).
+    *   Channel direct messages chats can't be verified.
     * @param customDescription
     *   Custom description for the verification; 0-70 characters. Must be empty if the organization isn't allowed to
     *   provide a custom verification description.

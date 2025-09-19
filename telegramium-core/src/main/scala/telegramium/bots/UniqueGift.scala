@@ -14,6 +14,8 @@ package telegramium.bots
   *   Symbol of the gift
   * @param backdrop
   *   Backdrop of the gift
+  * @param publisherChat
+  *   Optional. Information about the chat that published the gift
   */
 final case class UniqueGift(
   baseName: String,
@@ -21,5 +23,6 @@ final case class UniqueGift(
   number: Int,
   model: UniqueGiftModel,
   symbol: UniqueGiftSymbol,
-  backdrop: UniqueGiftBackdrop
+  backdrop: UniqueGiftBackdrop,
+  publisherChat: Option[Chat] = Option.empty
 )

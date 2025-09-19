@@ -3,7 +3,8 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+  *   Unique identifier for the target chat or username of the target supergroup (in the format
+  *   &#064;supergroupusername). Channel chats and channel direct messages chats aren't supported.
   * @param action
   *   Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages,
   *   upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for voice notes,

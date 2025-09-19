@@ -650,6 +650,41 @@ final case class InlineQueryResultCachedAudio(
   inputMessageContent: Option[InputMessageContent] = Option.empty
 ) extends InlineQueryResult
 
+/** Represents a link to an animated GIF file stored on the Telegram servers. By default, this animated GIF file will be
+  * sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with
+  * specified content instead of the animation.
+  *
+  * @param id
+  *   Unique identifier for this result, 1-64 bytes
+  * @param gifFileId
+  *   A valid file identifier for the GIF file
+  * @param title
+  *   Optional. Title for the result
+  * @param caption
+  *   Optional. Caption of the GIF file to be sent, 0-1024 characters after entities parsing
+  * @param parseMode
+  *   Optional. Mode for parsing entities in the caption. See formatting options for more details.
+  * @param captionEntities
+  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param showCaptionAboveMedia
+  *   Optional. Pass True, if the caption must be shown above the message media
+  * @param replyMarkup
+  *   Optional. Inline keyboard attached to the message
+  * @param inputMessageContent
+  *   Optional. Content of the message to be sent instead of the GIF animation
+  */
+final case class InlineQueryResultCachedGif(
+  id: String,
+  gifFileId: String,
+  title: Option[String] = Option.empty,
+  caption: Option[String] = Option.empty,
+  parseMode: Option[ParseMode] = Option.empty,
+  captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
+  replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
+  inputMessageContent: Option[InputMessageContent] = Option.empty
+) extends InlineQueryResult
+
 /** Represents a location on a map. By default, the location will be sent by the user. Alternatively, you can use
   * input_message_content to send a message with the specified content instead of the location.
   *
@@ -697,41 +732,6 @@ final case class InlineQueryResultLocation(
   thumbnailUrl: Option[String] = Option.empty,
   thumbnailWidth: Option[Int] = Option.empty,
   thumbnailHeight: Option[Int] = Option.empty
-) extends InlineQueryResult
-
-/** Represents a link to an animated GIF file stored on the Telegram servers. By default, this animated GIF file will be
-  * sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with
-  * specified content instead of the animation.
-  *
-  * @param id
-  *   Unique identifier for this result, 1-64 bytes
-  * @param gifFileId
-  *   A valid file identifier for the GIF file
-  * @param title
-  *   Optional. Title for the result
-  * @param caption
-  *   Optional. Caption of the GIF file to be sent, 0-1024 characters after entities parsing
-  * @param parseMode
-  *   Optional. Mode for parsing entities in the caption. See formatting options for more details.
-  * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
-  * @param showCaptionAboveMedia
-  *   Optional. Pass True, if the caption must be shown above the message media
-  * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
-  * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the GIF animation
-  */
-final case class InlineQueryResultCachedGif(
-  id: String,
-  gifFileId: String,
-  title: Option[String] = Option.empty,
-  caption: Option[String] = Option.empty,
-  parseMode: Option[ParseMode] = Option.empty,
-  captionEntities: List[MessageEntity] = List.empty,
-  showCaptionAboveMedia: Option[Boolean] = Option.empty,
-  replyMarkup: Option[InlineKeyboardMarkup] = Option.empty,
-  inputMessageContent: Option[InputMessageContent] = Option.empty
 ) extends InlineQueryResult
 
 /** Represents a link to a voice recording in an .OGG container encoded with OPUS. By default, this voice recording will

@@ -4,6 +4,7 @@ import telegramium.bots.ChatId
 import telegramium.bots.IFile
 import telegramium.bots.ParseMode
 import telegramium.bots.MessageEntity
+import telegramium.bots.SuggestedPostParameters
 import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
 
@@ -17,6 +18,9 @@ import telegramium.bots.KeyboardMarkup
   *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+  * @param directMessagesTopicId
+  *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+  *   direct messages chat
   * @param caption
   *   Audio caption, 0-1024 characters after entities parsing
   * @param parseMode
@@ -45,6 +49,9 @@ import telegramium.bots.KeyboardMarkup
   *   per message. The relevant Stars will be withdrawn from the bot's balance
   * @param messageEffectId
   *   Unique identifier of the message effect to be added to the message; for private chats only
+  * @param suggestedPostParameters
+  *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats only.
+  *   If the message is sent as a reply to another suggested post, then that suggested post is automatically declined.
   * @param replyParameters
   *   Description of the message to reply to
   * @param replyMarkup
@@ -56,6 +63,7 @@ final case class SendAudioReq(
   audio: IFile,
   businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,
+  directMessagesTopicId: Option[Long] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
@@ -67,6 +75,7 @@ final case class SendAudioReq(
   protectContent: Option[Boolean] = Option.empty,
   allowPaidBroadcast: Option[Boolean] = Option.empty,
   messageEffectId: Option[String] = Option.empty,
+  suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
   replyParameters: Option[ReplyParameters] = Option.empty,
   replyMarkup: Option[KeyboardMarkup] = Option.empty
 )

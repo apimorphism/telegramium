@@ -13,4 +13,4 @@ package telegramium.bots
   * @param fileDate
   *   Unix time when the file was uploaded
   */
-final case class PassportFile(fileId: String, fileUniqueId: String, fileSize: Long, fileDate: Int)
+final case class PassportFile(fileId: String, fileUniqueId: String, fileSize: Long, fileDate: Long)

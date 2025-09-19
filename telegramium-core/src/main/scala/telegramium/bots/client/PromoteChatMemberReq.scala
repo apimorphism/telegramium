@@ -42,6 +42,9 @@ import telegramium.bots.ChatId
   *   Pass True if the administrator can pin messages; for supergroups only
   * @param canManageTopics
   *   Pass True if the user is allowed to create, rename, close, and reopen forum topics; for supergroups only
+  * @param canManageDirectMessages
+  *   Pass True if the administrator can manage direct messages within the channel and decline suggested posts; for
+  *   channels only
   */
 final case class PromoteChatMemberReq(
   chatId: ChatId,
@@ -60,5 +63,6 @@ final case class PromoteChatMemberReq(
   canPostMessages: Option[Boolean] = Option.empty,
   canEditMessages: Option[Boolean] = Option.empty,
   canPinMessages: Option[Boolean] = Option.empty,
-  canManageTopics: Option[Boolean] = Option.empty
+  canManageTopics: Option[Boolean] = Option.empty,
+  canManageDirectMessages: Option[Boolean] = Option.empty
 )

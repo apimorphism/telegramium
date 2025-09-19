@@ -9,6 +9,9 @@ import telegramium.bots.ChatId
   *   &#064;channelusername)
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+  * @param directMessagesTopicId
+  *   Identifier of the direct messages topic to which the messages will be sent; required if the messages are sent to a
+  *   direct messages chat
   * @param messageIds
   *   A JSON-serialized list of 1-100 identifiers of messages in the chat from_chat_id to copy. The identifiers must be
   *   specified in a strictly increasing order.
@@ -23,6 +26,7 @@ final case class CopyMessagesReq(
   chatId: ChatId,
   fromChatId: ChatId,
   messageThreadId: Option[Int] = Option.empty,
+  directMessagesTopicId: Option[Long] = Option.empty,
   messageIds: List[Int] = List.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,

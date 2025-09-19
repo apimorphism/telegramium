@@ -14,6 +14,8 @@ sealed trait MaybeInaccessibleMessage {}
   *   Chat the message belongs to
   * @param messageThreadId
   *   Optional. Unique identifier of a message thread to which the message belongs; for supergroups only
+  * @param directMessagesTopic
+  *   Optional. Information about the direct messages chat topic that contains the message
   * @param from
   *   Optional. Sender of the message; may be empty for messages sent to channels. For backward compatibility, if the
   *   message was sent on behalf of a chat, the field contains a fake sender user in non-channel chats
@@ -47,6 +49,8 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. For replies that quote part of the original message, the quoted part of the message
   * @param replyToStory
   *   Optional. For replies to a story, the original story
+  * @param replyToChecklistTaskId
+  *   Optional. Identifier of the specific checklist task that is being replied to
   * @param viaBot
   *   Optional. Bot through which the message was sent
   * @param editDate
@@ -56,6 +60,9 @@ sealed trait MaybeInaccessibleMessage {}
   * @param isFromOffline
   *   Optional. True, if the message was sent by an implicit action, for example, as an away or a greeting business
   *   message, or as a scheduled message
+  * @param isPaidPost
+  *   Optional. True, if the message is a paid post. Note that such posts must not be deleted for 24 hours to receive
+  *   the payment and can't be edited.
   * @param mediaGroupId
   *   Optional. The unique identifier of a media message group this message belongs to
   * @param authorSignature
@@ -70,6 +77,9 @@ sealed trait MaybeInaccessibleMessage {}
   * @param linkPreviewOptions
   *   Optional. Options used for link preview generation for the message, if it is a text message and link preview
   *   options were changed
+  * @param suggestedPostInfo
+  *   Optional. Information about suggested post parameters if the message is a suggested post in a channel direct
+  *   messages chat. If the message is an approved or declined suggested post, then it can't be edited.
   * @param effectId
   *   Optional. Unique identifier of the message effect added to the message
   * @param animation
@@ -211,6 +221,16 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. Service message: a giveaway without public winners was completed
   * @param paidMessagePriceChanged
   *   Optional. Service message: the price for paid messages has changed in the chat
+  * @param suggestedPostApproved
+  *   Optional. Service message: a suggested post was approved
+  * @param suggestedPostApprovalFailed
+  *   Optional. Service message: approval of a suggested post has failed
+  * @param suggestedPostDeclined
+  *   Optional. Service message: a suggested post was declined
+  * @param suggestedPostPaid
+  *   Optional. Service message: payment for a suggested post was received
+  * @param suggestedPostRefunded
+  *   Optional. Service message: payment for a suggested post was refunded
   * @param videoChatScheduled
   *   Optional. Service message: video chat scheduled
   * @param videoChatStarted
@@ -226,9 +246,10 @@ sealed trait MaybeInaccessibleMessage {}
   */
 final case class Message(
   messageId: Int,
-  date: Int,
+  date: Long,
   chat: Chat,
   messageThreadId: Option[Int] = Option.empty,
+  directMessagesTopic: Option[DirectMessagesTopic] = Option.empty,
   from: Option[User] = Option.empty,
   senderChat: Option[Chat] = Option.empty,
   senderBoostCount: Option[Int] = Option.empty,
@@ -241,16 +262,19 @@ final case class Message(
   externalReply: Option[ExternalReplyInfo] = Option.empty,
   quote: Option[TextQuote] = Option.empty,
   replyToStory: Option[Story] = Option.empty,
+  replyToChecklistTaskId: Option[Int] = Option.empty,
   viaBot: Option[User] = Option.empty,
-  editDate: Option[Int] = Option.empty,
+  editDate: Option[Long] = Option.empty,
   hasProtectedContent: Option[Boolean] = Option.empty,
   isFromOffline: Option[Boolean] = Option.empty,
+  isPaidPost: Option[Boolean] = Option.empty,
   mediaGroupId: Option[String] = Option.empty,
   authorSignature: Option[String] = Option.empty,
   paidStarCount: Option[Int] = Option.empty,
   text: Option[String] = Option.empty,
   entities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
+  suggestedPostInfo: Option[SuggestedPostInfo] = Option.empty,
   effectId: Option[String] = Option.empty,
   animation: Option[Animation] = Option.empty,
   audio: Option[Audio] = Option.empty,
@@ -312,6 +336,11 @@ final case class Message(
   giveawayWinners: Option[GiveawayWinners] = Option.empty,
   giveawayCompleted: Option[GiveawayCompleted] = Option.empty,
   paidMessagePriceChanged: Option[PaidMessagePriceChanged] = Option.empty,
+  suggestedPostApproved: Option[SuggestedPostApproved] = Option.empty,
+  suggestedPostApprovalFailed: Option[SuggestedPostApprovalFailed] = Option.empty,
+  suggestedPostDeclined: Option[SuggestedPostDeclined] = Option.empty,
+  suggestedPostPaid: Option[SuggestedPostPaid] = Option.empty,
+  suggestedPostRefunded: Option[SuggestedPostRefunded] = Option.empty,
   videoChatScheduled: Option[VideoChatScheduled] = Option.empty,
   videoChatStarted: Option[VideoChatStarted.type] = Option.empty,
   videoChatEnded: Option[VideoChatEnded] = Option.empty,

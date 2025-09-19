@@ -12,7 +12,7 @@ case object RevenueWithdrawalStatePending extends RevenueWithdrawalState
   * @param url
   *   An HTTPS URL that can be used to see transaction details
   */
-final case class RevenueWithdrawalStateSucceeded(date: Int, url: String) extends RevenueWithdrawalState
+final case class RevenueWithdrawalStateSucceeded(date: Long, url: String) extends RevenueWithdrawalState
 
 /** The withdrawal failed and the transaction was refunded. */
 case object RevenueWithdrawalStateFailed extends RevenueWithdrawalState

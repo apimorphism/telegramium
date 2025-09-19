@@ -63,6 +63,9 @@ final case class ChatMemberLeft(user: User) extends ChatMember
   *   Optional. True, if the user is allowed to pin messages; for groups and supergroups only
   * @param canManageTopics
   *   Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; for supergroups only
+  * @param canManageDirectMessages
+  *   Optional. True, if the administrator can manage direct messages of the channel and decline suggested posts; for
+  *   channels only
   * @param customTitle
   *   Optional. Custom title for this user
   */
@@ -84,6 +87,7 @@ final case class ChatMemberAdministrator(
   canEditMessages: Option[Boolean] = Option.empty,
   canPinMessages: Option[Boolean] = Option.empty,
   canManageTopics: Option[Boolean] = Option.empty,
+  canManageDirectMessages: Option[Boolean] = Option.empty,
   customTitle: Option[String] = Option.empty
 ) extends ChatMember
 
@@ -94,7 +98,7 @@ final case class ChatMemberAdministrator(
   * @param untilDate
   *   Optional. Date when the user's subscription will expire; Unix time
   */
-final case class ChatMemberMember(user: User, untilDate: Option[Int] = Option.empty) extends ChatMember
+final case class ChatMemberMember(user: User, untilDate: Option[Long] = Option.empty) extends ChatMember
 
 /** Represents a chat member that was banned in the chat and can't return to the chat or view chat messages.
   *
@@ -103,7 +107,7 @@ final case class ChatMemberMember(user: User, untilDate: Option[Int] = Option.em
   * @param untilDate
   *   Date when restrictions will be lifted for this user; Unix time. If 0, then the user is banned forever
   */
-final case class ChatMemberBanned(user: User, untilDate: Int) extends ChatMember
+final case class ChatMemberBanned(user: User, untilDate: Long) extends ChatMember
 
 /** Represents a chat member that is under certain restrictions in the chat. Supergroups only.
   *
@@ -160,5 +164,5 @@ final case class ChatMemberRestricted(
   canInviteUsers: Boolean,
   canPinMessages: Boolean,
   canManageTopics: Boolean,
-  untilDate: Int
+  untilDate: Long
 ) extends ChatMember
