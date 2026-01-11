@@ -5,7 +5,7 @@ import telegramium.bots.ParseMode
 import telegramium.bots.MessageEntity
 
 /** @param giftId
-  *   Identifier of the gift
+  *   Identifier of the gift; limited gifts can't be sent to channel chats
   * @param userId
   *   Required if chat_id is not specified. Unique identifier of the target user who will receive the gift.
   * @param chatId

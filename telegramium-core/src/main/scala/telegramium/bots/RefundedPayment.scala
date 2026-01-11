@@ -18,7 +18,7 @@ package telegramium.bots
   */
 final case class RefundedPayment(
   currency: String,
-  totalAmount: Int,
+  totalAmount: Long,
   invoicePayload: String,
   telegramPaymentChargeId: String,
   providerPaymentChargeId: Option[String] = Option.empty

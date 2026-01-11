@@ -29,7 +29,7 @@ package telegramium.bots
   */
 final case class SuccessfulPayment(
   currency: String,
-  totalAmount: Int,
+  totalAmount: Long,
   invoicePayload: String,
   telegramPaymentChargeId: String,
   providerPaymentChargeId: String,

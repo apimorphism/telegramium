@@ -112,6 +112,13 @@ package telegramium.bots
   *   bit integer or double-precision float type are safe for storing this identifier.
   * @param location
   *   Optional. For supergroups, the location to which the supergroup is connected
+  * @param rating
+  *   Optional. For private chats, the rating of the user if any
+  * @param uniqueGiftColors
+  *   Optional. The color scheme based on a unique gift that must be used for the chat's name, message replies and link
+  *   previews
+  * @param paidMessageStarCount
+  *   Optional. The number of Telegram Stars a general user have to pay to send a message to the chat
   */
 final case class ChatFullInfo(
   id: Long,
@@ -160,5 +167,8 @@ final case class ChatFullInfo(
   canSetStickerSet: Option[Boolean] = Option.empty,
   customEmojiStickerSetName: Option[String] = Option.empty,
   linkedChatId: Option[Long] = Option.empty,
-  location: Option[ChatLocation] = Option.empty
+  location: Option[ChatLocation] = Option.empty,
+  rating: Option[UserRating] = Option.empty,
+  uniqueGiftColors: Option[UniqueGiftColors] = Option.empty,
+  paidMessageStarCount: Option[Int] = Option.empty
 )

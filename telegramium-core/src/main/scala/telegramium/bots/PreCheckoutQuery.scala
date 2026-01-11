@@ -23,7 +23,7 @@ final case class PreCheckoutQuery(
   id: String,
   from: User,
   currency: String,
-  totalAmount: Int,
+  totalAmount: Long,
   invoicePayload: String,
   shippingOptionId: Option[String] = Option.empty,
   orderInfo: Option[OrderInfo] = Option.empty

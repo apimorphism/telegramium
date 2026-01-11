@@ -17,7 +17,8 @@ import telegramium.bots.ChatId
   * @param canManageVideoChats
   *   Pass True if the administrator can manage video chats
   * @param canRestrictMembers
-  *   Pass True if the administrator can restrict, ban or unban chat members, or access supergroup statistics
+  *   Pass True if the administrator can restrict, ban or unban chat members, or access supergroup statistics. For
+  *   backward compatibility, defaults to True for promotions of channel administrators
   * @param canPromoteMembers
   *   Pass True if the administrator can add new administrators with a subset of their own privileges or demote
   *   administrators that they have promoted, directly or indirectly (promoted by administrators that were appointed by

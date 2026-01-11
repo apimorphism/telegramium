@@ -11,7 +11,9 @@ package telegramium.bots
   *   Optional. Number of Telegram Stars that can be claimed by the receiver by converting the gift; omitted if
   *   conversion to Telegram Stars is impossible
   * @param prepaidUpgradeStarCount
-  *   Optional. Number of Telegram Stars that were prepaid by the sender for the ability to upgrade the gift
+  *   Optional. Number of Telegram Stars that were prepaid for the ability to upgrade the gift
+  * @param isUpgradeSeparate
+  *   Optional. True, if the gift's upgrade was purchased after the gift was sent
   * @param canBeUpgraded
   *   Optional. True, if the gift can be upgraded to a unique gift
   * @param text
@@ -21,14 +23,18 @@ package telegramium.bots
   * @param isPrivate
   *   Optional. True, if the sender and gift text are shown only to the gift receiver; otherwise, everyone will be able
   *   to see them
+  * @param uniqueGiftNumber
+  *   Optional. Unique number reserved for this gift when upgraded. See the number field in UniqueGift
   */
 final case class GiftInfo(
   gift: Gift,
   ownedGiftId: Option[String] = Option.empty,
   convertStarCount: Option[Int] = Option.empty,
   prepaidUpgradeStarCount: Option[Int] = Option.empty,
+  isUpgradeSeparate: Option[Boolean] = Option.empty,
   canBeUpgraded: Option[Boolean] = Option.empty,
   text: Option[String] = Option.empty,
   entities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
-  isPrivate: Option[Boolean] = Option.empty
+  isPrivate: Option[Boolean] = Option.empty,
+  uniqueGiftNumber: Option[Int] = Option.empty
 )

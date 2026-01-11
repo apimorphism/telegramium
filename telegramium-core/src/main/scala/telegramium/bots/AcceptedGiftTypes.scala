@@ -10,10 +10,13 @@ package telegramium.bots
   *   True, if unique gifts or gifts that can be upgraded to unique for free are accepted
   * @param premiumSubscription
   *   True, if a Telegram Premium subscription is accepted
+  * @param giftsFromChannels
+  *   True, if transfers of unique gifts from channels are accepted
   */
 final case class AcceptedGiftTypes(
   unlimitedGifts: Boolean,
   limitedGifts: Boolean,
   uniqueGifts: Boolean,
-  premiumSubscription: Boolean
+  premiumSubscription: Boolean,
+  giftsFromChannels: Boolean
 )

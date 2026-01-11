@@ -64,9 +64,14 @@ final case class OwnedGiftUnique(
   *   Optional. True, if the gift was refunded and isn't available anymore
   * @param convertStarCount
   *   Optional. Number of Telegram Stars that can be claimed by the receiver instead of the gift; omitted if the gift
-  *   cannot be converted to Telegram Stars
+  *   cannot be converted to Telegram Stars; for gifts received on behalf of business accounts only
   * @param prepaidUpgradeStarCount
-  *   Optional. Number of Telegram Stars that were paid by the sender for the ability to upgrade the gift
+  *   Optional. Number of Telegram Stars that were paid for the ability to upgrade the gift
+  * @param isUpgradeSeparate
+  *   Optional. True, if the gift's upgrade was purchased after the gift was sent; for gifts received on behalf of
+  *   business accounts only
+  * @param uniqueGiftNumber
+  *   Optional. Unique number reserved for this gift when upgraded. See the number field in UniqueGift
   */
 final case class OwnedGiftRegular(
   gift: Gift,
@@ -80,5 +85,7 @@ final case class OwnedGiftRegular(
   canBeUpgraded: Option[Boolean] = Option.empty,
   wasRefunded: Option[Boolean] = Option.empty,
   convertStarCount: Option[Int] = Option.empty,
-  prepaidUpgradeStarCount: Option[Int] = Option.empty
+  prepaidUpgradeStarCount: Option[Int] = Option.empty,
+  isUpgradeSeparate: Option[Boolean] = Option.empty,
+  uniqueGiftNumber: Option[Int] = Option.empty
 ) extends OwnedGift

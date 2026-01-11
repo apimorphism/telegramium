@@ -18,7 +18,8 @@ import telegramium.bots.InlineKeyboardMarkup
   * @param currency
   *   Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
   * @param messageThreadId
-  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+  *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+  *   bots with forum topic mode enabled only
   * @param directMessagesTopicId
   *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
   *   direct messages chat
@@ -96,8 +97,8 @@ final case class SendInvoiceReq(
   directMessagesTopicId: Option[Long] = Option.empty,
   providerToken: Option[String] = Option.empty,
   prices: List[LabeledPrice] = List.empty,
-  maxTipAmount: Option[Int] = Option.empty,
-  suggestedTipAmounts: List[Int] = List.empty,
+  maxTipAmount: Option[Long] = Option.empty,
+  suggestedTipAmounts: List[Long] = List.empty,
   startParameter: Option[String] = Option.empty,
   providerData: Option[String] = Option.empty,
   photoUrl: Option[String] = Option.empty,

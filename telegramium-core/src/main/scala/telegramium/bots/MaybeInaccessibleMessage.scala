@@ -13,7 +13,8 @@ sealed trait MaybeInaccessibleMessage {}
   * @param chat
   *   Chat the message belongs to
   * @param messageThreadId
-  *   Optional. Unique identifier of a message thread to which the message belongs; for supergroups only
+  *   Optional. Unique identifier of a message thread or forum topic to which the message belongs; for supergroups and
+  *   private chats only
   * @param directMessagesTopic
   *   Optional. Information about the direct messages chat topic that contains the message
   * @param from
@@ -36,7 +37,7 @@ sealed trait MaybeInaccessibleMessage {}
   * @param forwardOrigin
   *   Optional. Information about the original message for forwarded messages
   * @param isTopicMessage
-  *   Optional. True, if the message is sent to a forum topic
+  *   Optional. True, if the message is sent to a topic in a forum supergroup or a private chat with the bot
   * @param isAutomaticForward
   *   Optional. True, if the message is a channel post that was automatically forwarded to the connected discussion
   *   group
@@ -177,6 +178,8 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. Service message: a regular gift was sent or received
   * @param uniqueGift
   *   Optional. Service message: a unique gift was sent or received
+  * @param giftUpgradeSent
+  *   Optional. Service message: upgrade of a gift was purchased after the gift was sent
   * @param connectedWebsite
   *   Optional. The domain name of the website on which the user has logged in.
   * @param writeAccessAllowed
@@ -316,6 +319,7 @@ final case class Message(
   chatShared: Option[ChatShared] = Option.empty,
   gift: Option[GiftInfo] = Option.empty,
   uniqueGift: Option[UniqueGiftInfo] = Option.empty,
+  giftUpgradeSent: Option[GiftInfo] = Option.empty,
   connectedWebsite: Option[String] = Option.empty,
   writeAccessAllowed: Option[WriteAccessAllowed] = Option.empty,
   passportData: Option[PassportData] = Option.empty,

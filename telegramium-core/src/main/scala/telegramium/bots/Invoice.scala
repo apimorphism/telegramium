@@ -15,4 +15,10 @@ package telegramium.bots
   *   1.45 pass amount = 145. See the exp parameter in currencies.json, it shows the number of digits past the decimal
   *   point for each currency (2 for the majority of currencies).
   */
-final case class Invoice(title: String, description: String, startParameter: String, currency: String, totalAmount: Int)
+final case class Invoice(
+  title: String,
+  description: String,
+  startParameter: String,
+  currency: String,
+  totalAmount: Long
+)

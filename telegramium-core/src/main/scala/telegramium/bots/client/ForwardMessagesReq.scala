@@ -8,7 +8,8 @@ import telegramium.bots.ChatId
   *   Unique identifier for the chat where the original messages were sent (or channel username in the format
   *   &#064;channelusername)
   * @param messageThreadId
-  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+  *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+  *   bots with forum topic mode enabled only
   * @param directMessagesTopicId
   *   Identifier of the direct messages topic to which the messages will be forwarded; required if the messages are
   *   forwarded to a direct messages chat

@@ -15,7 +15,8 @@ import telegramium.bots.KeyboardMarkup
   * @param businessConnectionId
   *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param messageThreadId
-  *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+  *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+  *   bots with forum topic mode enabled only
   * @param directMessagesTopicId
   *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
   *   direct messages chat

@@ -1463,6 +1463,7 @@ object CirceImplicits {
           "chat_shared"                       -> x.chatShared.asJson,
           "gift"                              -> x.gift.asJson,
           "unique_gift"                       -> x.uniqueGift.asJson,
+          "gift_upgrade_sent"                 -> x.giftUpgradeSent.asJson,
           "connected_website"                 -> x.connectedWebsite.asJson,
           "write_access_allowed"              -> x.writeAccessAllowed.asJson,
           "passport_data"                     -> x.passportData.asJson,
@@ -1574,6 +1575,7 @@ object CirceImplicits {
         _chatShared                   <- h.get[Option[ChatShared]]("chat_shared")
         _gift                         <- h.get[Option[GiftInfo]]("gift")
         _uniqueGift                   <- h.get[Option[UniqueGiftInfo]]("unique_gift")
+        _giftUpgradeSent              <- h.get[Option[GiftInfo]]("gift_upgrade_sent")
         _connectedWebsite             <- h.get[Option[String]]("connected_website")
         _writeAccessAllowed           <- h.get[Option[WriteAccessAllowed]]("write_access_allowed")
         _passportData                 <- h.get[Option[PassportData]]("passport_data")
@@ -1678,6 +1680,7 @@ object CirceImplicits {
           chatShared = _chatShared,
           gift = _gift,
           uniqueGift = _uniqueGift,
+          giftUpgradeSent = _giftUpgradeSent,
           connectedWebsite = _connectedWebsite,
           writeAccessAllowed = _writeAccessAllowed,
           passportData = _passportData,
@@ -2398,7 +2401,9 @@ object CirceImplicits {
           "can_be_upgraded"            -> x.canBeUpgraded.asJson,
           "was_refunded"               -> x.wasRefunded.asJson,
           "convert_star_count"         -> x.convertStarCount.asJson,
-          "prepaid_upgrade_star_count" -> x.prepaidUpgradeStarCount.asJson
+          "prepaid_upgrade_star_count" -> x.prepaidUpgradeStarCount.asJson,
+          "is_upgrade_separate"        -> x.isUpgradeSeparate.asJson,
+          "unique_gift_number"         -> x.uniqueGiftNumber.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2418,6 +2423,8 @@ object CirceImplicits {
         _wasRefunded             <- h.get[Option[Boolean]]("was_refunded")
         _convertStarCount        <- h.get[Option[Int]]("convert_star_count")
         _prepaidUpgradeStarCount <- h.get[Option[Int]]("prepaid_upgrade_star_count")
+        _isUpgradeSeparate       <- h.get[Option[Boolean]]("is_upgrade_separate")
+        _uniqueGiftNumber        <- h.get[Option[Int]]("unique_gift_number")
       } yield {
         OwnedGiftRegular(
           gift = _gift,
@@ -2431,7 +2438,9 @@ object CirceImplicits {
           canBeUpgraded = _canBeUpgraded,
           wasRefunded = _wasRefunded,
           convertStarCount = _convertStarCount,
-          prepaidUpgradeStarCount = _prepaidUpgradeStarCount
+          prepaidUpgradeStarCount = _prepaidUpgradeStarCount,
+          isUpgradeSeparate = _isUpgradeSeparate,
+          uniqueGiftNumber = _uniqueGiftNumber
         )
       }
     }
@@ -2960,7 +2969,8 @@ object CirceImplicits {
           "unlimited_gifts"      -> x.unlimitedGifts.asJson,
           "limited_gifts"        -> x.limitedGifts.asJson,
           "unique_gifts"         -> x.uniqueGifts.asJson,
-          "premium_subscription" -> x.premiumSubscription.asJson
+          "premium_subscription" -> x.premiumSubscription.asJson,
+          "gifts_from_channels"  -> x.giftsFromChannels.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2972,12 +2982,14 @@ object CirceImplicits {
         _limitedGifts        <- h.get[Boolean]("limited_gifts")
         _uniqueGifts         <- h.get[Boolean]("unique_gifts")
         _premiumSubscription <- h.get[Boolean]("premium_subscription")
+        _giftsFromChannels   <- h.get[Boolean]("gifts_from_channels")
       } yield {
         AcceptedGiftTypes(
           unlimitedGifts = _unlimitedGifts,
           limitedGifts = _limitedGifts,
           uniqueGifts = _uniqueGifts,
-          premiumSubscription = _premiumSubscription
+          premiumSubscription = _premiumSubscription,
+          giftsFromChannels = _giftsFromChannels
         )
       }
     }
@@ -3002,7 +3014,7 @@ object CirceImplicits {
         _affiliateChat      <- h.get[Option[Chat]]("affiliate_chat")
         _commissionPerMille <- h.get[Int]("commission_per_mille")
         _amount             <- h.get[Long]("amount")
-        _nanostarAmount     <- h.get[Option[Int]]("nanostar_amount")
+        _nanostarAmount     <- h.get[Option[Long]]("nanostar_amount")
       } yield {
         AffiliateInfo(
           affiliateUser = _affiliateUser,
@@ -3697,7 +3709,10 @@ object CirceImplicits {
           "can_set_sticker_set"                     -> x.canSetStickerSet.asJson,
           "custom_emoji_sticker_set_name"           -> x.customEmojiStickerSetName.asJson,
           "linked_chat_id"                          -> x.linkedChatId.asJson,
-          "location"                                -> x.location.asJson
+          "location"                                -> x.location.asJson,
+          "rating"                                  -> x.rating.asJson,
+          "unique_gift_colors"                      -> x.uniqueGiftColors.asJson,
+          "paid_message_star_count"                 -> x.paidMessageStarCount.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3752,6 +3767,9 @@ object CirceImplicits {
         _customEmojiStickerSetName          <- h.get[Option[String]]("custom_emoji_sticker_set_name")
         _linkedChatId                       <- h.get[Option[Long]]("linked_chat_id")
         _location                           <- h.get[Option[ChatLocation]]("location")
+        _rating                             <- h.get[Option[UserRating]]("rating")
+        _uniqueGiftColors                   <- h.get[Option[UniqueGiftColors]]("unique_gift_colors")
+        _paidMessageStarCount               <- h.get[Option[Int]]("paid_message_star_count")
       } yield {
         ChatFullInfo(
           id = _id,
@@ -3800,7 +3818,10 @@ object CirceImplicits {
           canSetStickerSet = _canSetStickerSet,
           customEmojiStickerSetName = _customEmojiStickerSetName,
           linkedChatId = _linkedChatId,
-          location = _location
+          location = _location,
+          rating = _rating,
+          uniqueGiftColors = _uniqueGiftColors,
+          paidMessageStarCount = _paidMessageStarCount
         )
       }
     }
@@ -4105,6 +4126,7 @@ object CirceImplicits {
           "text"              -> x.text.asJson,
           "text_entities"     -> x.textEntities.asJson,
           "completed_by_user" -> x.completedByUser.asJson,
+          "completed_by_chat" -> x.completedByChat.asJson,
           "completion_date"   -> x.completionDate.asJson
         ).filter(!_._2.isNull)
       )
@@ -4117,6 +4139,7 @@ object CirceImplicits {
         _text            <- h.get[String]("text")
         _textEntities    <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("text_entities")(List.empty)
         _completedByUser <- h.get[Option[User]]("completed_by_user")
+        _completedByChat <- h.get[Option[Chat]]("completed_by_chat")
         _completionDate  <- h.get[Option[Long]]("completion_date")
       } yield {
         ChecklistTask(
@@ -4124,6 +4147,7 @@ object CirceImplicits {
           text = _text,
           textEntities = _textEntities,
           completedByUser = _completedByUser,
+          completedByChat = _completedByChat,
           completionDate = _completionDate
         )
       }
@@ -4547,7 +4571,8 @@ object CirceImplicits {
           "message_thread_id"    -> x.messageThreadId.asJson,
           "name"                 -> x.name.asJson,
           "icon_color"           -> x.iconColor.asJson,
-          "icon_custom_emoji_id" -> x.iconCustomEmojiId.asJson
+          "icon_custom_emoji_id" -> x.iconCustomEmojiId.asJson,
+          "is_name_implicit"     -> x.isNameImplicit.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4559,12 +4584,14 @@ object CirceImplicits {
         _name              <- h.get[String]("name")
         _iconColor         <- h.get[Int]("icon_color")
         _iconCustomEmojiId <- h.get[Option[String]]("icon_custom_emoji_id")
+        _isNameImplicit    <- h.get[Option[Boolean]]("is_name_implicit")
       } yield {
         ForumTopic(
           messageThreadId = _messageThreadId,
           name = _name,
           iconColor = _iconColor,
-          iconCustomEmojiId = _iconCustomEmojiId
+          iconCustomEmojiId = _iconCustomEmojiId,
+          isNameImplicit = _isNameImplicit
         )
       }
     }
@@ -4578,7 +4605,8 @@ object CirceImplicits {
         List(
           "name"                 -> x.name.asJson,
           "icon_color"           -> x.iconColor.asJson,
-          "icon_custom_emoji_id" -> x.iconCustomEmojiId.asJson
+          "icon_custom_emoji_id" -> x.iconCustomEmojiId.asJson,
+          "is_name_implicit"     -> x.isNameImplicit.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4589,8 +4617,14 @@ object CirceImplicits {
         _name              <- h.get[String]("name")
         _iconColor         <- h.get[Int]("icon_color")
         _iconCustomEmojiId <- h.get[Option[String]]("icon_custom_emoji_id")
+        _isNameImplicit    <- h.get[Option[Boolean]]("is_name_implicit")
       } yield {
-        ForumTopicCreated(name = _name, iconColor = _iconColor, iconCustomEmojiId = _iconCustomEmojiId)
+        ForumTopicCreated(
+          name = _name,
+          iconColor = _iconColor,
+          iconCustomEmojiId = _iconCustomEmojiId,
+          isNameImplicit = _isNameImplicit
+        )
       }
     }
 
@@ -4693,13 +4727,19 @@ object CirceImplicits {
     (x: Gift) => {
       Json.fromFields(
         List(
-          "id"                 -> x.id.asJson,
-          "sticker"            -> x.sticker.asJson,
-          "star_count"         -> x.starCount.asJson,
-          "upgrade_star_count" -> x.upgradeStarCount.asJson,
-          "total_count"        -> x.totalCount.asJson,
-          "remaining_count"    -> x.remainingCount.asJson,
-          "publisher_chat"     -> x.publisherChat.asJson
+          "id"                        -> x.id.asJson,
+          "sticker"                   -> x.sticker.asJson,
+          "star_count"                -> x.starCount.asJson,
+          "upgrade_star_count"        -> x.upgradeStarCount.asJson,
+          "is_premium"                -> x.isPremium.asJson,
+          "has_colors"                -> x.hasColors.asJson,
+          "total_count"               -> x.totalCount.asJson,
+          "remaining_count"           -> x.remainingCount.asJson,
+          "personal_total_count"      -> x.personalTotalCount.asJson,
+          "personal_remaining_count"  -> x.personalRemainingCount.asJson,
+          "background"                -> x.background.asJson,
+          "unique_gift_variant_count" -> x.uniqueGiftVariantCount.asJson,
+          "publisher_chat"            -> x.publisherChat.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4707,23 +4747,57 @@ object CirceImplicits {
   implicit lazy val giftDecoder: Decoder[Gift] =
     Decoder.instance { h =>
       for {
-        _id               <- h.get[String]("id")
-        _sticker          <- h.get[Sticker]("sticker")
-        _starCount        <- h.get[Int]("star_count")
-        _upgradeStarCount <- h.get[Option[Int]]("upgrade_star_count")
-        _totalCount       <- h.get[Option[Int]]("total_count")
-        _remainingCount   <- h.get[Option[Int]]("remaining_count")
-        _publisherChat    <- h.get[Option[Chat]]("publisher_chat")
+        _id                     <- h.get[String]("id")
+        _sticker                <- h.get[Sticker]("sticker")
+        _starCount              <- h.get[Int]("star_count")
+        _upgradeStarCount       <- h.get[Option[Int]]("upgrade_star_count")
+        _isPremium              <- h.get[Option[Boolean]]("is_premium")
+        _hasColors              <- h.get[Option[Boolean]]("has_colors")
+        _totalCount             <- h.get[Option[Int]]("total_count")
+        _remainingCount         <- h.get[Option[Int]]("remaining_count")
+        _personalTotalCount     <- h.get[Option[Int]]("personal_total_count")
+        _personalRemainingCount <- h.get[Option[Int]]("personal_remaining_count")
+        _background             <- h.get[Option[GiftBackground]]("background")
+        _uniqueGiftVariantCount <- h.get[Option[Int]]("unique_gift_variant_count")
+        _publisherChat          <- h.get[Option[Chat]]("publisher_chat")
       } yield {
         Gift(
           id = _id,
           sticker = _sticker,
           starCount = _starCount,
           upgradeStarCount = _upgradeStarCount,
+          isPremium = _isPremium,
+          hasColors = _hasColors,
           totalCount = _totalCount,
           remainingCount = _remainingCount,
+          personalTotalCount = _personalTotalCount,
+          personalRemainingCount = _personalRemainingCount,
+          background = _background,
+          uniqueGiftVariantCount = _uniqueGiftVariantCount,
           publisherChat = _publisherChat
         )
+      }
+    }
+
+  implicit lazy val giftbackgroundEncoder: Encoder[GiftBackground] =
+    (x: GiftBackground) => {
+      Json.fromFields(
+        List(
+          "center_color" -> x.centerColor.asJson,
+          "edge_color"   -> x.edgeColor.asJson,
+          "text_color"   -> x.textColor.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val giftbackgroundDecoder: Decoder[GiftBackground] =
+    Decoder.instance { h =>
+      for {
+        _centerColor <- h.get[Int]("center_color")
+        _edgeColor   <- h.get[Int]("edge_color")
+        _textColor   <- h.get[Int]("text_color")
+      } yield {
+        GiftBackground(centerColor = _centerColor, edgeColor = _edgeColor, textColor = _textColor)
       }
     }
 
@@ -4735,10 +4809,12 @@ object CirceImplicits {
           "owned_gift_id"              -> x.ownedGiftId.asJson,
           "convert_star_count"         -> x.convertStarCount.asJson,
           "prepaid_upgrade_star_count" -> x.prepaidUpgradeStarCount.asJson,
+          "is_upgrade_separate"        -> x.isUpgradeSeparate.asJson,
           "can_be_upgraded"            -> x.canBeUpgraded.asJson,
           "text"                       -> x.text.asJson,
           "entities"                   -> x.entities.asJson,
-          "is_private"                 -> x.isPrivate.asJson
+          "is_private"                 -> x.isPrivate.asJson,
+          "unique_gift_number"         -> x.uniqueGiftNumber.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4750,20 +4826,24 @@ object CirceImplicits {
         _ownedGiftId             <- h.get[Option[String]]("owned_gift_id")
         _convertStarCount        <- h.get[Option[Int]]("convert_star_count")
         _prepaidUpgradeStarCount <- h.get[Option[Int]]("prepaid_upgrade_star_count")
+        _isUpgradeSeparate       <- h.get[Option[Boolean]]("is_upgrade_separate")
         _canBeUpgraded           <- h.get[Option[Boolean]]("can_be_upgraded")
         _text                    <- h.get[Option[String]]("text")
         _entities                <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
         _isPrivate               <- h.get[Option[Boolean]]("is_private")
+        _uniqueGiftNumber        <- h.get[Option[Int]]("unique_gift_number")
       } yield {
         GiftInfo(
           gift = _gift,
           ownedGiftId = _ownedGiftId,
           convertStarCount = _convertStarCount,
           prepaidUpgradeStarCount = _prepaidUpgradeStarCount,
+          isUpgradeSeparate = _isUpgradeSeparate,
           canBeUpgraded = _canBeUpgraded,
           text = _text,
           entities = _entities,
-          isPrivate = _isPrivate
+          isPrivate = _isPrivate,
+          uniqueGiftNumber = _uniqueGiftNumber
         )
       }
     }
@@ -5098,7 +5178,7 @@ object CirceImplicits {
         _description    <- h.get[String]("description")
         _startParameter <- h.get[String]("start_parameter")
         _currency       <- h.get[String]("currency")
-        _totalAmount    <- h.get[Int]("total_amount")
+        _totalAmount    <- h.get[Long]("total_amount")
       } yield {
         Invoice(
           title = _title,
@@ -5714,7 +5794,7 @@ object CirceImplicits {
         _id               <- h.get[String]("id")
         _from             <- h.get[User]("from")
         _currency         <- h.get[String]("currency")
-        _totalAmount      <- h.get[Int]("total_amount")
+        _totalAmount      <- h.get[Long]("total_amount")
         _invoicePayload   <- h.get[String]("invoice_payload")
         _shippingOptionId <- h.get[Option[String]]("shipping_option_id")
         _orderInfo        <- h.get[Option[OrderInfo]]("order_info")
@@ -5810,7 +5890,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _currency                <- h.get[String]("currency")
-        _totalAmount             <- h.get[Int]("total_amount")
+        _totalAmount             <- h.get[Long]("total_amount")
         _invoicePayload          <- h.get[String]("invoice_payload")
         _telegramPaymentChargeId <- h.get[String]("telegram_payment_charge_id")
         _providerPaymentChargeId <- h.get[Option[String]]("provider_payment_charge_id")
@@ -5979,7 +6059,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _amount         <- h.get[Long]("amount")
-        _nanostarAmount <- h.get[Option[Int]]("nanostar_amount")
+        _nanostarAmount <- h.get[Option[Long]]("nanostar_amount")
       } yield {
         StarAmount(amount = _amount, nanostarAmount = _nanostarAmount)
       }
@@ -6004,7 +6084,7 @@ object CirceImplicits {
       for {
         _id             <- h.get[String]("id")
         _amount         <- h.get[Long]("amount")
-        _nanostarAmount <- h.get[Option[Int]]("nanostar_amount")
+        _nanostarAmount <- h.get[Option[Long]]("nanostar_amount")
         _date           <- h.get[Long]("date")
         _source         <- h.get[Option[iozhik.OpenEnum[TransactionPartner]]]("source")
         _receiver       <- h.get[Option[iozhik.OpenEnum[TransactionPartner]]]("receiver")
@@ -6198,7 +6278,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _currency                   <- h.get[String]("currency")
-        _totalAmount                <- h.get[Int]("total_amount")
+        _totalAmount                <- h.get[Long]("total_amount")
         _invoicePayload             <- h.get[String]("invoice_payload")
         _subscriptionExpirationDate <- h.get[Option[Long]]("subscription_expiration_date")
         _isRecurring                <- h.get[Option[Boolean]]("is_recurring")
@@ -6446,13 +6526,17 @@ object CirceImplicits {
     (x: UniqueGift) => {
       Json.fromFields(
         List(
-          "base_name"      -> x.baseName.asJson,
-          "name"           -> x.name.asJson,
-          "number"         -> x.number.asJson,
-          "model"          -> x.model.asJson,
-          "symbol"         -> x.symbol.asJson,
-          "backdrop"       -> x.backdrop.asJson,
-          "publisher_chat" -> x.publisherChat.asJson
+          "gift_id"            -> x.giftId.asJson,
+          "base_name"          -> x.baseName.asJson,
+          "name"               -> x.name.asJson,
+          "number"             -> x.number.asJson,
+          "model"              -> x.model.asJson,
+          "symbol"             -> x.symbol.asJson,
+          "backdrop"           -> x.backdrop.asJson,
+          "is_premium"         -> x.isPremium.asJson,
+          "is_from_blockchain" -> x.isFromBlockchain.asJson,
+          "colors"             -> x.colors.asJson,
+          "publisher_chat"     -> x.publisherChat.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6460,21 +6544,29 @@ object CirceImplicits {
   implicit lazy val uniquegiftDecoder: Decoder[UniqueGift] =
     Decoder.instance { h =>
       for {
-        _baseName      <- h.get[String]("base_name")
-        _name          <- h.get[String]("name")
-        _number        <- h.get[Int]("number")
-        _model         <- h.get[UniqueGiftModel]("model")
-        _symbol        <- h.get[UniqueGiftSymbol]("symbol")
-        _backdrop      <- h.get[UniqueGiftBackdrop]("backdrop")
-        _publisherChat <- h.get[Option[Chat]]("publisher_chat")
+        _giftId           <- h.get[String]("gift_id")
+        _baseName         <- h.get[String]("base_name")
+        _name             <- h.get[String]("name")
+        _number           <- h.get[Int]("number")
+        _model            <- h.get[UniqueGiftModel]("model")
+        _symbol           <- h.get[UniqueGiftSymbol]("symbol")
+        _backdrop         <- h.get[UniqueGiftBackdrop]("backdrop")
+        _isPremium        <- h.get[Option[Boolean]]("is_premium")
+        _isFromBlockchain <- h.get[Option[Boolean]]("is_from_blockchain")
+        _colors           <- h.get[Option[UniqueGiftColors]]("colors")
+        _publisherChat    <- h.get[Option[Chat]]("publisher_chat")
       } yield {
         UniqueGift(
+          giftId = _giftId,
           baseName = _baseName,
           name = _name,
           number = _number,
           model = _model,
           symbol = _symbol,
           backdrop = _backdrop,
+          isPremium = _isPremium,
+          isFromBlockchain = _isFromBlockchain,
+          colors = _colors,
           publisherChat = _publisherChat
         )
       }
@@ -6531,16 +6623,52 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val uniquegiftcolorsEncoder: Encoder[UniqueGiftColors] =
+    (x: UniqueGiftColors) => {
+      Json.fromFields(
+        List(
+          "model_custom_emoji_id"    -> x.modelCustomEmojiId.asJson,
+          "symbol_custom_emoji_id"   -> x.symbolCustomEmojiId.asJson,
+          "light_theme_main_color"   -> x.lightThemeMainColor.asJson,
+          "light_theme_other_colors" -> x.lightThemeOtherColors.asJson,
+          "dark_theme_main_color"    -> x.darkThemeMainColor.asJson,
+          "dark_theme_other_colors"  -> x.darkThemeOtherColors.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val uniquegiftcolorsDecoder: Decoder[UniqueGiftColors] =
+    Decoder.instance { h =>
+      for {
+        _modelCustomEmojiId    <- h.get[String]("model_custom_emoji_id")
+        _symbolCustomEmojiId   <- h.get[String]("symbol_custom_emoji_id")
+        _lightThemeMainColor   <- h.get[Int]("light_theme_main_color")
+        _lightThemeOtherColors <- h.getOrElse[List[Int]]("light_theme_other_colors")(List.empty)
+        _darkThemeMainColor    <- h.get[Int]("dark_theme_main_color")
+        _darkThemeOtherColors  <- h.getOrElse[List[Int]]("dark_theme_other_colors")(List.empty)
+      } yield {
+        UniqueGiftColors(
+          modelCustomEmojiId = _modelCustomEmojiId,
+          symbolCustomEmojiId = _symbolCustomEmojiId,
+          lightThemeMainColor = _lightThemeMainColor,
+          lightThemeOtherColors = _lightThemeOtherColors,
+          darkThemeMainColor = _darkThemeMainColor,
+          darkThemeOtherColors = _darkThemeOtherColors
+        )
+      }
+    }
+
   implicit lazy val uniquegiftinfoEncoder: Encoder[UniqueGiftInfo] =
     (x: UniqueGiftInfo) => {
       Json.fromFields(
         List(
-          "gift"                   -> x.gift.asJson,
-          "origin"                 -> x.origin.asJson,
-          "last_resale_star_count" -> x.lastResaleStarCount.asJson,
-          "owned_gift_id"          -> x.ownedGiftId.asJson,
-          "transfer_star_count"    -> x.transferStarCount.asJson,
-          "next_transfer_date"     -> x.nextTransferDate.asJson
+          "gift"                 -> x.gift.asJson,
+          "origin"               -> x.origin.asJson,
+          "last_resale_currency" -> x.lastResaleCurrency.asJson,
+          "last_resale_amount"   -> x.lastResaleAmount.asJson,
+          "owned_gift_id"        -> x.ownedGiftId.asJson,
+          "transfer_star_count"  -> x.transferStarCount.asJson,
+          "next_transfer_date"   -> x.nextTransferDate.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6548,17 +6676,19 @@ object CirceImplicits {
   implicit lazy val uniquegiftinfoDecoder: Decoder[UniqueGiftInfo] =
     Decoder.instance { h =>
       for {
-        _gift                <- h.get[UniqueGift]("gift")
-        _origin              <- h.get[String]("origin")
-        _lastResaleStarCount <- h.get[Option[Int]]("last_resale_star_count")
-        _ownedGiftId         <- h.get[Option[String]]("owned_gift_id")
-        _transferStarCount   <- h.get[Option[Int]]("transfer_star_count")
-        _nextTransferDate    <- h.get[Option[Long]]("next_transfer_date")
+        _gift               <- h.get[UniqueGift]("gift")
+        _origin             <- h.get[String]("origin")
+        _lastResaleCurrency <- h.get[Option[String]]("last_resale_currency")
+        _lastResaleAmount   <- h.get[Option[Long]]("last_resale_amount")
+        _ownedGiftId        <- h.get[Option[String]]("owned_gift_id")
+        _transferStarCount  <- h.get[Option[Int]]("transfer_star_count")
+        _nextTransferDate   <- h.get[Option[Long]]("next_transfer_date")
       } yield {
         UniqueGiftInfo(
           gift = _gift,
           origin = _origin,
-          lastResaleStarCount = _lastResaleStarCount,
+          lastResaleCurrency = _lastResaleCurrency,
+          lastResaleAmount = _lastResaleAmount,
           ownedGiftId = _ownedGiftId,
           transferStarCount = _transferStarCount,
           nextTransferDate = _nextTransferDate
@@ -6715,7 +6845,8 @@ object CirceImplicits {
           "can_read_all_group_messages" -> x.canReadAllGroupMessages.asJson,
           "supports_inline_queries"     -> x.supportsInlineQueries.asJson,
           "can_connect_to_business"     -> x.canConnectToBusiness.asJson,
-          "has_main_web_app"            -> x.hasMainWebApp.asJson
+          "has_main_web_app"            -> x.hasMainWebApp.asJson,
+          "has_topics_enabled"          -> x.hasTopicsEnabled.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6736,6 +6867,7 @@ object CirceImplicits {
         _supportsInlineQueries   <- h.get[Option[Boolean]]("supports_inline_queries")
         _canConnectToBusiness    <- h.get[Option[Boolean]]("can_connect_to_business")
         _hasMainWebApp           <- h.get[Option[Boolean]]("has_main_web_app")
+        _hasTopicsEnabled        <- h.get[Option[Boolean]]("has_topics_enabled")
       } yield {
         User(
           id = _id,
@@ -6750,7 +6882,8 @@ object CirceImplicits {
           canReadAllGroupMessages = _canReadAllGroupMessages,
           supportsInlineQueries = _supportsInlineQueries,
           canConnectToBusiness = _canConnectToBusiness,
-          hasMainWebApp = _hasMainWebApp
+          hasMainWebApp = _hasMainWebApp,
+          hasTopicsEnabled = _hasTopicsEnabled
         )
       }
     }
@@ -6790,6 +6923,35 @@ object CirceImplicits {
         _photos     <- h.getOrElse[List[List[PhotoSize]]]("photos")(List.empty)
       } yield {
         UserProfilePhotos(totalCount = _totalCount, photos = _photos)
+      }
+    }
+
+  implicit lazy val userratingEncoder: Encoder[UserRating] =
+    (x: UserRating) => {
+      Json.fromFields(
+        List(
+          "level"                -> x.level.asJson,
+          "rating"               -> x.rating.asJson,
+          "current_level_rating" -> x.currentLevelRating.asJson,
+          "next_level_rating"    -> x.nextLevelRating.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val userratingDecoder: Decoder[UserRating] =
+    Decoder.instance { h =>
+      for {
+        _level              <- h.get[Int]("level")
+        _rating             <- h.get[Int]("rating")
+        _currentLevelRating <- h.get[Int]("current_level_rating")
+        _nextLevelRating    <- h.get[Option[Int]]("next_level_rating")
+      } yield {
+        UserRating(
+          level = _level,
+          rating = _rating,
+          currentLevelRating = _currentLevelRating,
+          nextLevelRating = _nextLevelRating
+        )
       }
     }
 

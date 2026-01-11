@@ -13,7 +13,8 @@ import telegramium.bots.ChatId
   * @param businessConnectionId
   *   Unique identifier of the business connection on behalf of which the action will be sent
   * @param messageThreadId
-  *   Unique identifier for the target message thread; for supergroups only
+  *   Unique identifier for the target message thread or topic of a forum; for supergroups and private chats of bots
+  *   with forum topic mode enabled only
   */
 final case class SendChatActionReq(
   chatId: ChatId,

@@ -25,7 +25,7 @@ final case class StarTransaction(
   id: String,
   amount: Long,
   date: Long,
-  nanostarAmount: Option[Int] = Option.empty,
+  nanostarAmount: Option[Long] = Option.empty,
   source: Option[iozhik.OpenEnum[TransactionPartner]] = Option.empty,
   receiver: Option[iozhik.OpenEnum[TransactionPartner]] = Option.empty
 )

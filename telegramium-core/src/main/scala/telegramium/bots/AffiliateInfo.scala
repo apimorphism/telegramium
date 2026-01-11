@@ -21,5 +21,5 @@ final case class AffiliateInfo(
   amount: Long,
   affiliateUser: Option[User] = Option.empty,
   affiliateChat: Option[Chat] = Option.empty,
-  nanostarAmount: Option[Int] = Option.empty
+  nanostarAmount: Option[Long] = Option.empty
 )

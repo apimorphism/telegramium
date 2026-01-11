@@ -322,7 +322,8 @@ trait Methods {
     * @param messageId
     *   Message identifier in the chat specified in from_chat_id
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -344,6 +345,8 @@ trait Methods {
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
     *   per message. The relevant Stars will be withdrawn from the bot's balance
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; only available when copying to private chats
     * @param suggestedPostParameters
     *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
     *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
@@ -368,6 +371,7 @@ trait Methods {
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
@@ -386,6 +390,7 @@ trait Methods {
       disableNotification,
       protectContent,
       allowPaidBroadcast,
+      messageEffectId,
       suggestedPostParameters,
       replyParameters,
       replyMarkup
@@ -406,7 +411,8 @@ trait Methods {
     *   Unique identifier for the chat where the original messages were sent (or channel username in the format
     *   &#064;channelusername)
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the messages will be sent; required if the messages are sent to
     *   a direct messages chat
@@ -592,8 +598,8 @@ trait Methods {
     providerToken: Option[String] = Option.empty,
     prices: List[LabeledPrice] = List.empty,
     subscriptionPeriod: Option[Int] = Option.empty,
-    maxTipAmount: Option[Int] = Option.empty,
-    suggestedTipAmounts: List[Int] = List.empty,
+    maxTipAmount: Option[Long] = Option.empty,
+    suggestedTipAmounts: List[Long] = List.empty,
     providerData: Option[String] = Option.empty,
     photoUrl: Option[String] = Option.empty,
     photoSize: Option[Long] = Option.empty,
@@ -735,9 +741,9 @@ trait Methods {
     MethodReq[Boolean]("deleteChatStickerSet", req.asJson)
   }
 
-  /** Use this method to delete a forum topic along with all its messages in a forum supergroup chat. The bot must be an
-    * administrator in the chat for this to work and must have the can_delete_messages administrator rights. Returns
-    * True on success.
+  /** Use this method to delete a forum topic along with all its messages in a forum supergroup chat or a private chat
+    * with a user. In the case of a supergroup chat the bot must be an administrator in the chat for this to work and
+    * must have the can_delete_messages administrator rights. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup (in the format
@@ -895,9 +901,9 @@ trait Methods {
     MethodReq[ChatInviteLink]("editChatSubscriptionInviteLink", req.asJson)
   }
 
-  /** Use this method to edit name and icon of a topic in a forum supergroup chat. The bot must be an administrator in
-    * the chat for this to work and must have the can_manage_topics administrator rights, unless it is the creator of
-    * the topic. Returns True on success.
+  /** Use this method to edit name and icon of a topic in a forum supergroup chat or a private chat with a user. In the
+    * case of a supergroup chat the bot must be an administrator in the chat for this to work and must have the
+    * can_manage_topics administrator rights, unless it is the creator of the topic. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup (in the format
@@ -1256,7 +1262,8 @@ trait Methods {
     * @param messageId
     *   Message identifier in the chat specified in from_chat_id
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be forwarded; required if the message is
     *   forwarded to a direct messages chat
@@ -1266,6 +1273,9 @@ trait Methods {
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the forwarded message from forwarding and saving
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; only available when forwarding to private
+    *   chats
     * @param suggestedPostParameters
     *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats only
     */
@@ -1278,6 +1288,7 @@ trait Methods {
     videoStartTimestamp: Option[Int] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
     suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty
   ): Method[Message] = {
     val req = ForwardMessageReq(
@@ -1289,6 +1300,7 @@ trait Methods {
       videoStartTimestamp,
       disableNotification,
       protectContent,
+      messageEffectId,
       suggestedPostParameters
     )
     MethodReq[Message]("forwardMessage", req.asJson)
@@ -1304,7 +1316,8 @@ trait Methods {
     *   Unique identifier for the chat where the original messages were sent (or channel username in the format
     *   &#064;channelusername)
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the messages will be forwarded; required if the messages are
     *   forwarded to a direct messages chat
@@ -1356,10 +1369,15 @@ trait Methods {
     *   Pass True to exclude gifts that are saved to the account's profile page
     * @param excludeUnlimited
     *   Pass True to exclude gifts that can be purchased an unlimited number of times
-    * @param excludeLimited
-    *   Pass True to exclude gifts that can be purchased a limited number of times
+    * @param excludeLimitedUpgradable
+    *   Pass True to exclude gifts that can be purchased a limited number of times and can be upgraded to unique
+    * @param excludeLimitedNonUpgradable
+    *   Pass True to exclude gifts that can be purchased a limited number of times and can't be upgraded to unique
     * @param excludeUnique
     *   Pass True to exclude unique gifts
+    * @param excludeFromBlockchain
+    *   Pass True to exclude gifts that were assigned from the TON blockchain and can't be resold or transferred in
+    *   Telegram
     * @param sortByPrice
     *   Pass True to sort results by gift price instead of send date. Sorting is applied before pagination.
     * @param offset
@@ -1373,8 +1391,10 @@ trait Methods {
     excludeUnsaved: Option[Boolean] = Option.empty,
     excludeSaved: Option[Boolean] = Option.empty,
     excludeUnlimited: Option[Boolean] = Option.empty,
-    excludeLimited: Option[Boolean] = Option.empty,
+    excludeLimitedUpgradable: Option[Boolean] = Option.empty,
+    excludeLimitedNonUpgradable: Option[Boolean] = Option.empty,
     excludeUnique: Option[Boolean] = Option.empty,
+    excludeFromBlockchain: Option[Boolean] = Option.empty,
     sortByPrice: Option[Boolean] = Option.empty,
     offset: Option[String] = Option.empty,
     limit: Option[Int] = Option.empty
@@ -1384,8 +1404,10 @@ trait Methods {
       excludeUnsaved,
       excludeSaved,
       excludeUnlimited,
-      excludeLimited,
+      excludeLimitedUpgradable,
+      excludeLimitedNonUpgradable,
       excludeUnique,
+      excludeFromBlockchain,
       sortByPrice,
       offset,
       limit
@@ -1436,6 +1458,64 @@ trait Methods {
   def getChatAdministrators(chatId: ChatId): Method[List[iozhik.OpenEnum[ChatMember]]] = {
     val req = GetChatAdministratorsReq(chatId)
     MethodReq[List[iozhik.OpenEnum[ChatMember]]]("getChatAdministrators", req.asJson)
+  }
+
+  /** Returns the gifts owned by a chat. Returns OwnedGifts on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param excludeUnsaved
+    *   Pass True to exclude gifts that aren't saved to the chat's profile page. Always True, unless the bot has the
+    *   can_post_messages administrator right in the channel.
+    * @param excludeSaved
+    *   Pass True to exclude gifts that are saved to the chat's profile page. Always False, unless the bot has the
+    *   can_post_messages administrator right in the channel.
+    * @param excludeUnlimited
+    *   Pass True to exclude gifts that can be purchased an unlimited number of times
+    * @param excludeLimitedUpgradable
+    *   Pass True to exclude gifts that can be purchased a limited number of times and can be upgraded to unique
+    * @param excludeLimitedNonUpgradable
+    *   Pass True to exclude gifts that can be purchased a limited number of times and can't be upgraded to unique
+    * @param excludeFromBlockchain
+    *   Pass True to exclude gifts that were assigned from the TON blockchain and can't be resold or transferred in
+    *   Telegram
+    * @param excludeUnique
+    *   Pass True to exclude unique gifts
+    * @param sortByPrice
+    *   Pass True to sort results by gift price instead of send date. Sorting is applied before pagination.
+    * @param offset
+    *   Offset of the first entry to return as received from the previous request; use an empty string to get the first
+    *   chunk of results
+    * @param limit
+    *   The maximum number of gifts to be returned; 1-100. Defaults to 100
+    */
+  def getChatGifts(
+    chatId: ChatId,
+    excludeUnsaved: Option[Boolean] = Option.empty,
+    excludeSaved: Option[Boolean] = Option.empty,
+    excludeUnlimited: Option[Boolean] = Option.empty,
+    excludeLimitedUpgradable: Option[Boolean] = Option.empty,
+    excludeLimitedNonUpgradable: Option[Boolean] = Option.empty,
+    excludeFromBlockchain: Option[Boolean] = Option.empty,
+    excludeUnique: Option[Boolean] = Option.empty,
+    sortByPrice: Option[Boolean] = Option.empty,
+    offset: Option[String] = Option.empty,
+    limit: Option[Int] = Option.empty
+  ): Method[OwnedGifts] = {
+    val req = GetChatGiftsReq(
+      chatId,
+      excludeUnsaved,
+      excludeSaved,
+      excludeUnlimited,
+      excludeLimitedUpgradable,
+      excludeLimitedNonUpgradable,
+      excludeFromBlockchain,
+      excludeUnique,
+      sortByPrice,
+      offset,
+      limit
+    )
+    MethodReq[OwnedGifts]("getChatGifts", req.asJson)
   }
 
   /** Use this method to get information about a member of a chat. The method is only guaranteed to work for other users
@@ -1674,6 +1754,54 @@ trait Methods {
     MethodReq[UserChatBoosts]("getUserChatBoosts", req.asJson)
   }
 
+  /** Returns the gifts owned and hosted by a user. Returns OwnedGifts on success.
+    *
+    * @param userId
+    *   Unique identifier of the user
+    * @param excludeUnlimited
+    *   Pass True to exclude gifts that can be purchased an unlimited number of times
+    * @param excludeLimitedUpgradable
+    *   Pass True to exclude gifts that can be purchased a limited number of times and can be upgraded to unique
+    * @param excludeLimitedNonUpgradable
+    *   Pass True to exclude gifts that can be purchased a limited number of times and can't be upgraded to unique
+    * @param excludeFromBlockchain
+    *   Pass True to exclude gifts that were assigned from the TON blockchain and can't be resold or transferred in
+    *   Telegram
+    * @param excludeUnique
+    *   Pass True to exclude unique gifts
+    * @param sortByPrice
+    *   Pass True to sort results by gift price instead of send date. Sorting is applied before pagination.
+    * @param offset
+    *   Offset of the first entry to return as received from the previous request; use an empty string to get the first
+    *   chunk of results
+    * @param limit
+    *   The maximum number of gifts to be returned; 1-100. Defaults to 100
+    */
+  def getUserGifts(
+    userId: Long,
+    excludeUnlimited: Option[Boolean] = Option.empty,
+    excludeLimitedUpgradable: Option[Boolean] = Option.empty,
+    excludeLimitedNonUpgradable: Option[Boolean] = Option.empty,
+    excludeFromBlockchain: Option[Boolean] = Option.empty,
+    excludeUnique: Option[Boolean] = Option.empty,
+    sortByPrice: Option[Boolean] = Option.empty,
+    offset: Option[String] = Option.empty,
+    limit: Option[Int] = Option.empty
+  ): Method[OwnedGifts] = {
+    val req = GetUserGiftsReq(
+      userId,
+      excludeUnlimited,
+      excludeLimitedUpgradable,
+      excludeLimitedNonUpgradable,
+      excludeFromBlockchain,
+      excludeUnique,
+      sortByPrice,
+      offset,
+      limit
+    )
+    MethodReq[OwnedGifts]("getUserGifts", req.asJson)
+  }
+
   /** Use this method to get a list of profile pictures for a user. Returns a UserProfilePhotos object.
     *
     * @param userId
@@ -1858,7 +1986,8 @@ trait Methods {
     * @param canManageVideoChats
     *   Pass True if the administrator can manage video chats
     * @param canRestrictMembers
-    *   Pass True if the administrator can restrict, ban or unban chat members, or access supergroup statistics
+    *   Pass True if the administrator can restrict, ban or unban chat members, or access supergroup statistics. For
+    *   backward compatibility, defaults to True for promotions of channel administrators
     * @param canPromoteMembers
     *   Pass True if the administrator can add new administrators with a subset of their own privileges or demote
     *   administrators that they have promoted, directly or indirectly (promoted by administrators that were appointed
@@ -2044,6 +2173,37 @@ trait Methods {
     MethodReq[Boolean]("replaceStickerInSet", req.asJson)
   }
 
+  /** Reposts a story on behalf of a business account from another business account. Both business accounts must be
+    * managed by the same bot, and the story on the source account must have been posted (or reposted) by the bot.
+    * Requires the can_manage_stories business bot right for both business accounts. Returns Story on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param fromChatId
+    *   Unique identifier of the chat which posted the story that should be reposted
+    * @param fromStoryId
+    *   Unique identifier of the story that should be reposted
+    * @param activePeriod
+    *   Period after which the story is moved to the archive, in seconds; must be one of 6 * 3600, 12 * 3600, 86400, or
+    *   2 * 86400
+    * @param postToChatPage
+    *   Pass True to keep the story accessible after it expires
+    * @param protectContent
+    *   Pass True if the content of the story must be protected from forwarding and screenshotting
+    */
+  def repostStory(
+    businessConnectionId: String,
+    fromChatId: Int,
+    fromStoryId: Int,
+    activePeriod: Int,
+    postToChatPage: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty
+  ): Method[Story] = {
+    val req =
+      RepostStoryReq(businessConnectionId, fromChatId, fromStoryId, activePeriod, postToChatPage, protectContent)
+    MethodReq[Story]("repostStory", req.asJson)
+  }
+
   /** Use this method to restrict a user in a supergroup. The bot must be an administrator in the supergroup for this to
     * work and must have the appropriate administrator rights. Pass True for all permissions to lift restrictions from a
     * user. Returns True on success.
@@ -2130,7 +2290,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -2244,7 +2405,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -2351,7 +2513,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the action will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread; for supergroups only
+    *   Unique identifier for the target message thread or topic of a forum; for supergroups and private chats of bots
+    *   with forum topic mode enabled only
     */
   def sendChatAction(
     chatId: ChatId,
@@ -2417,7 +2580,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -2489,7 +2653,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -2559,7 +2724,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -2652,7 +2818,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -2699,7 +2866,7 @@ trait Methods {
     * Returns True on success.
     *
     * @param giftId
-    *   Identifier of the gift
+    *   Identifier of the gift; limited gifts can't be sent to channel chats
     * @param userId
     *   Required if chat_id is not specified. Unique identifier of the target user who will receive the gift.
     * @param chatId
@@ -2744,7 +2911,8 @@ trait Methods {
     * @param currency
     *   Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -2823,8 +2991,8 @@ trait Methods {
     directMessagesTopicId: Option[Long] = Option.empty,
     providerToken: Option[String] = Option.empty,
     prices: List[LabeledPrice] = List.empty,
-    maxTipAmount: Option[Int] = Option.empty,
-    suggestedTipAmounts: List[Int] = List.empty,
+    maxTipAmount: Option[Long] = Option.empty,
+    suggestedTipAmounts: List[Long] = List.empty,
     startParameter: Option[String] = Option.empty,
     providerData: Option[String] = Option.empty,
     photoUrl: Option[String] = Option.empty,
@@ -2893,7 +3061,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -2976,7 +3145,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the messages will be sent; required if the messages are sent to
     *   a direct messages chat
@@ -3030,7 +3200,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -3097,6 +3268,36 @@ trait Methods {
     MethodReq[Message]("sendMessage", req.asJson)
   }
 
+  /** Use this method to stream a partial message to a user while the message is being generated; supported only for
+    * bots with forum topic mode enabled. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target private chat
+    * @param draftId
+    *   Unique identifier of the message draft; must be non-zero. Changes of drafts with the same identifier are
+    *   animated
+    * @param text
+    *   Text of the message to be sent, 1-4096 characters after entities parsing
+    * @param messageThreadId
+    *   Unique identifier for the target message thread
+    * @param parseMode
+    *   Mode for parsing entities in the message text. See formatting options for more details.
+    * @param entities
+    *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
+    *   parse_mode
+    */
+  def sendMessageDraft(
+    chatId: Long,
+    draftId: Int,
+    text: String,
+    messageThreadId: Option[Int] = Option.empty,
+    parseMode: Option[ParseMode] = Option.empty,
+    entities: List[MessageEntity] = List.empty
+  ): Method[Boolean] = {
+    val req = SendMessageDraftReq(chatId, draftId, text, messageThreadId, parseMode, entities)
+    MethodReq[Boolean]("sendMessageDraft", req.asJson)
+  }
+
   /** Use this method to send paid media. On success, the sent Message is returned.
     *
     * @param chatId
@@ -3104,11 +3305,12 @@ trait Methods {
     *   If the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance.
     *   Otherwise, they will be credited to the bot's balance.
     * @param starCount
-    *   The number of Telegram Stars that must be paid to buy access to the media; 1-10000
+    *   The number of Telegram Stars that must be paid to buy access to the media; 1-25000
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -3196,7 +3398,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -3281,7 +3484,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param questionParseMode
     *   Mode for parsing entities in the question. See formatting options for more details. Currently, only custom emoji
     *   entities are allowed
@@ -3393,7 +3597,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -3470,7 +3675,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -3560,7 +3766,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -3685,7 +3892,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -3773,7 +3981,8 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
-    *   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
@@ -4534,9 +4743,9 @@ trait Methods {
     MethodReq[Boolean]("unpinAllChatMessages", req.asJson)
   }
 
-  /** Use this method to clear the list of pinned messages in a forum topic. The bot must be an administrator in the
-    * chat for this to work and must have the can_pin_messages administrator right in the supergroup. Returns True on
-    * success.
+  /** Use this method to clear the list of pinned messages in a forum topic in a forum supergroup chat or a private chat
+    * with a user. In the case of a supergroup chat the bot must be an administrator in the chat for this to work and
+    * must have the can_pin_messages administrator right in the supergroup. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup (in the format

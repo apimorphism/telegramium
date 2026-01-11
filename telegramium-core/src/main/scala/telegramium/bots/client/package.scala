@@ -212,6 +212,7 @@ object CirceImplicits {
           "disable_notification"      -> x.disableNotification.asJson,
           "protect_content"           -> x.protectContent.asJson,
           "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"         -> x.messageEffectId.asJson,
           "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
           "reply_parameters"          -> x.replyParameters.asJson,
           "reply_markup"              -> x.replyMarkup.asJson,
@@ -661,6 +662,7 @@ object CirceImplicits {
           "video_start_timestamp"     -> x.videoStartTimestamp.asJson,
           "disable_notification"      -> x.disableNotification.asJson,
           "protect_content"           -> x.protectContent.asJson,
+          "message_effect_id"         -> x.messageEffectId.asJson,
           "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
           "message_id"                -> x.messageId.asJson,
           "method"                    -> "forwardMessage".asJson
@@ -691,16 +693,18 @@ object CirceImplicits {
     (x: GetBusinessAccountGiftsReq) => {
       Json.fromFields(
         List(
-          "business_connection_id" -> x.businessConnectionId.asJson,
-          "exclude_unsaved"        -> x.excludeUnsaved.asJson,
-          "exclude_saved"          -> x.excludeSaved.asJson,
-          "exclude_unlimited"      -> x.excludeUnlimited.asJson,
-          "exclude_limited"        -> x.excludeLimited.asJson,
-          "exclude_unique"         -> x.excludeUnique.asJson,
-          "sort_by_price"          -> x.sortByPrice.asJson,
-          "offset"                 -> x.offset.asJson,
-          "limit"                  -> x.limit.asJson,
-          "method"                 -> "getBusinessAccountGifts".asJson
+          "business_connection_id"         -> x.businessConnectionId.asJson,
+          "exclude_unsaved"                -> x.excludeUnsaved.asJson,
+          "exclude_saved"                  -> x.excludeSaved.asJson,
+          "exclude_unlimited"              -> x.excludeUnlimited.asJson,
+          "exclude_limited_upgradable"     -> x.excludeLimitedUpgradable.asJson,
+          "exclude_limited_non_upgradable" -> x.excludeLimitedNonUpgradable.asJson,
+          "exclude_unique"                 -> x.excludeUnique.asJson,
+          "exclude_from_blockchain"        -> x.excludeFromBlockchain.asJson,
+          "sort_by_price"                  -> x.sortByPrice.asJson,
+          "offset"                         -> x.offset.asJson,
+          "limit"                          -> x.limit.asJson,
+          "method"                         -> "getBusinessAccountGifts".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -741,6 +745,26 @@ object CirceImplicits {
         List(
           "chat_id" -> x.chatId.asJson,
           "method"  -> "getChatAdministrators".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getchatgiftsreqEncoder: Encoder[GetChatGiftsReq] =
+    (x: GetChatGiftsReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"                        -> x.chatId.asJson,
+          "exclude_unsaved"                -> x.excludeUnsaved.asJson,
+          "exclude_saved"                  -> x.excludeSaved.asJson,
+          "exclude_unlimited"              -> x.excludeUnlimited.asJson,
+          "exclude_limited_upgradable"     -> x.excludeLimitedUpgradable.asJson,
+          "exclude_limited_non_upgradable" -> x.excludeLimitedNonUpgradable.asJson,
+          "exclude_from_blockchain"        -> x.excludeFromBlockchain.asJson,
+          "exclude_unique"                 -> x.excludeUnique.asJson,
+          "sort_by_price"                  -> x.sortByPrice.asJson,
+          "offset"                         -> x.offset.asJson,
+          "limit"                          -> x.limit.asJson,
+          "method"                         -> "getChatGifts".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -909,6 +933,24 @@ object CirceImplicits {
           "chat_id" -> x.chatId.asJson,
           "user_id" -> x.userId.asJson,
           "method"  -> "getUserChatBoosts".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getusergiftsreqEncoder: Encoder[GetUserGiftsReq] =
+    (x: GetUserGiftsReq) => {
+      Json.fromFields(
+        List(
+          "user_id"                        -> x.userId.asJson,
+          "exclude_unlimited"              -> x.excludeUnlimited.asJson,
+          "exclude_limited_upgradable"     -> x.excludeLimitedUpgradable.asJson,
+          "exclude_limited_non_upgradable" -> x.excludeLimitedNonUpgradable.asJson,
+          "exclude_from_blockchain"        -> x.excludeFromBlockchain.asJson,
+          "exclude_unique"                 -> x.excludeUnique.asJson,
+          "sort_by_price"                  -> x.sortByPrice.asJson,
+          "offset"                         -> x.offset.asJson,
+          "limit"                          -> x.limit.asJson,
+          "method"                         -> "getUserGifts".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1106,6 +1148,21 @@ object CirceImplicits {
           "old_sticker" -> x.oldSticker.asJson,
           "sticker"     -> x.sticker.asJson,
           "method"      -> "replaceStickerInSet".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val repoststoryreqEncoder: Encoder[RepostStoryReq] =
+    (x: RepostStoryReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "from_chat_id"           -> x.fromChatId.asJson,
+          "from_story_id"          -> x.fromStoryId.asJson,
+          "active_period"          -> x.activePeriod.asJson,
+          "post_to_chat_page"      -> x.postToChatPage.asJson,
+          "protect_content"        -> x.protectContent.asJson,
+          "method"                 -> "repostStory".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1449,6 +1506,21 @@ object CirceImplicits {
           "reply_parameters"          -> x.replyParameters.asJson,
           "reply_markup"              -> x.replyMarkup.asJson,
           "method"                    -> "sendMessage".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val sendmessagedraftreqEncoder: Encoder[SendMessageDraftReq] =
+    (x: SendMessageDraftReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"           -> x.chatId.asJson,
+          "message_thread_id" -> x.messageThreadId.asJson,
+          "draft_id"          -> x.draftId.asJson,
+          "text"              -> x.text.asJson,
+          "parse_mode"        -> x.parseMode.asJson,
+          "entities"          -> x.entities.asJson,
+          "method"            -> "sendMessageDraft".asJson
         ).filter(!_._2.isNull)
       )
     }
