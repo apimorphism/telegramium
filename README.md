@@ -1,6 +1,6 @@
 # F[Tg] - Telegramium
 
-[![Telegram](https://img.shields.io/badge/Telegram%20Bot%20API-9.3%20(December%2031%2C%202025)-blue)](https://core.telegram.org/bots/api#recent-changes)
+[![Telegram](https://img.shields.io/badge/Telegram%20Bot%20API-9.4%20(February%209%2C%202026)-blue)](https://core.telegram.org/bots/api#recent-changes)
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.apimorphism/telegramium-core_3)
 
 F[Tg] is a pure functional Telegram Bot API for Scala.

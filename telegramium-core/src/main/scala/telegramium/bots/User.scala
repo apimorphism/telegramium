@@ -33,6 +33,8 @@ package telegramium.bots
   *   Optional. True, if the bot has a main Web App. Returned only in getMe.
   * @param hasTopicsEnabled
   *   Optional. True, if the bot has forum topic mode enabled in private chats. Returned only in getMe.
+  * @param allowsUsersToCreateTopics
+  *   Optional. True, if the bot allows users to create and delete topics in private chats. Returned only in getMe.
   */
 final case class User(
   id: Long,
@@ -48,5 +50,6 @@ final case class User(
   supportsInlineQueries: Option[Boolean] = Option.empty,
   canConnectToBusiness: Option[Boolean] = Option.empty,
   hasMainWebApp: Option[Boolean] = Option.empty,
-  hasTopicsEnabled: Option[Boolean] = Option.empty
+  hasTopicsEnabled: Option[Boolean] = Option.empty,
+  allowsUsersToCreateTopics: Option[Boolean] = Option.empty
 )

@@ -18,6 +18,8 @@ package telegramium.bots
   *   Backdrop of the gift
   * @param isPremium
   *   Optional. True, if the original regular gift was exclusively purchaseable by Telegram Premium subscribers
+  * @param isBurned
+  *   Optional. True, if the gift was used to craft another gift and isn't available anymore
   * @param isFromBlockchain
   *   Optional. True, if the gift is assigned from the TON blockchain and can't be resold or transferred in Telegram
   * @param colors
@@ -35,6 +37,7 @@ final case class UniqueGift(
   symbol: UniqueGiftSymbol,
   backdrop: UniqueGiftBackdrop,
   isPremium: Option[Boolean] = Option.empty,
+  isBurned: Option[Boolean] = Option.empty,
   isFromBlockchain: Option[Boolean] = Option.empty,
   colors: Option[UniqueGiftColors] = Option.empty,
   publisherChat: Option[Chat] = Option.empty

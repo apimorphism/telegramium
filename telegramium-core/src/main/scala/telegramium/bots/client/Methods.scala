@@ -30,6 +30,7 @@ import telegramium.bots.StarTransactions
 import telegramium.bots.StickerSet
 import telegramium.bots.Update
 import telegramium.bots.UserChatBoosts
+import telegramium.bots.UserProfileAudios
 import telegramium.bots.UserProfilePhotos
 import telegramium.bots.WebhookInfo
 import telegramium.bots.PreparedInlineMessage
@@ -503,9 +504,9 @@ trait Methods {
     MethodReq[ChatInviteLink]("createChatSubscriptionInviteLink", req.asJson)
   }
 
-  /** Use this method to create a topic in a forum supergroup chat. The bot must be an administrator in the chat for
-    * this to work and must have the can_manage_topics administrator rights. Returns information about the created topic
-    * as a ForumTopic object.
+  /** Use this method to create a topic in a forum supergroup chat or a private chat with a user. In the case of a
+    * supergroup chat the bot must be an administrator in the chat for this to work and must have the can_manage_topics
+    * administrator right. Returns information about the created topic as a ForumTopic object.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup (in the format
@@ -1802,6 +1803,24 @@ trait Methods {
     MethodReq[OwnedGifts]("getUserGifts", req.asJson)
   }
 
+  /** Use this method to get a list of profile audios for a user. Returns a UserProfileAudios object.
+    *
+    * @param userId
+    *   Unique identifier of the target user
+    * @param offset
+    *   Sequential number of the first audio to be returned. By default, all audios are returned.
+    * @param limit
+    *   Limits the number of audios to be retrieved. Values between 1-100 are accepted. Defaults to 100.
+    */
+  def getUserProfileAudios(
+    userId: Long,
+    offset: Option[Int] = Option.empty,
+    limit: Option[Int] = Option.empty
+  ): Method[UserProfileAudios] = {
+    val req = GetUserProfileAudiosReq(userId, offset, limit)
+    MethodReq[UserProfileAudios]("getUserProfileAudios", req.asJson)
+  }
+
   /** Use this method to get a list of profile pictures for a user. Returns a UserProfilePhotos object.
     *
     * @param userId
@@ -2114,6 +2133,13 @@ trait Methods {
   def removeChatVerification(chatId: ChatId): Method[Boolean] = {
     val req = RemoveChatVerificationReq(chatId)
     MethodReq[Boolean]("removeChatVerification", req.asJson)
+  }
+
+  /** Removes the profile photo of the bot. Requires no parameters. Returns True on success.
+    */
+  def removeMyProfilePhoto(): Method[Boolean] = {
+    val req = RemoveMyProfilePhotoReq
+    MethodReq[Boolean]("removeMyProfilePhoto", req.asJson)
   }
 
   /** Removes verification from a user who is currently verified on behalf of the organization represented by the bot.
@@ -4398,6 +4424,16 @@ trait Methods {
   def setMyName(name: Option[String] = Option.empty, languageCode: Option[String] = Option.empty): Method[Boolean] = {
     val req = SetMyNameReq(name, languageCode)
     MethodReq[Boolean]("setMyName", req.asJson)
+  }
+
+  /** Changes the profile photo of the bot. Returns True on success.
+    *
+    * @param photo
+    *   The new profile photo to set
+    */
+  def setMyProfilePhoto(photo: InputProfilePhoto): Method[Boolean] = {
+    val req = SetMyProfilePhotoReq(photo)
+    MethodReq[Boolean]("setMyProfilePhoto", req.asJson)
   }
 
   /** Use this method to change the bot's short description, which is shown on the bot's profile page and is sent

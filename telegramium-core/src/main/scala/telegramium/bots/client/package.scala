@@ -955,6 +955,18 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val getuserprofileaudiosreqEncoder: Encoder[GetUserProfileAudiosReq] =
+    (x: GetUserProfileAudiosReq) => {
+      Json.fromFields(
+        List(
+          "user_id" -> x.userId.asJson,
+          "offset"  -> x.offset.asJson,
+          "limit"   -> x.limit.asJson,
+          "method"  -> "getUserProfileAudios".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val getuserprofilephotosreqEncoder: Encoder[GetUserProfilePhotosReq] =
     (x: GetUserProfilePhotosReq) => {
       Json.fromFields(
@@ -1107,6 +1119,9 @@ object CirceImplicits {
         ).filter(!_._2.isNull)
       )
     }
+
+  implicit lazy val removemyprofilephotoreqEncoder: Encoder[RemoveMyProfilePhotoReq.type] =
+    (_: RemoveMyProfilePhotoReq.type) => ().asJson
 
   implicit lazy val removeuserverificationreqEncoder: Encoder[RemoveUserVerificationReq] =
     (x: RemoveUserVerificationReq) => {
@@ -1959,6 +1974,16 @@ object CirceImplicits {
           "name"          -> x.name.asJson,
           "language_code" -> x.languageCode.asJson,
           "method"        -> "setMyName".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setmyprofilephotoreqEncoder: Encoder[SetMyProfilePhotoReq] =
+    (x: SetMyProfilePhotoReq) => {
+      Json.fromFields(
+        List(
+          "photo"  -> x.photo.asJson,
+          "method" -> "setMyProfilePhoto".asJson
         ).filter(!_._2.isNull)
       )
     }

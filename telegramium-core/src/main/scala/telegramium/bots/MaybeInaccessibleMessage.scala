@@ -133,6 +133,10 @@ sealed trait MaybeInaccessibleMessage {}
   *   one of these members)
   * @param leftChatMember
   *   Optional. A member was removed from the group, information about them (this member may be the bot itself)
+  * @param chatOwnerLeft
+  *   Optional. Service message: chat owner has left
+  * @param chatOwnerChanged
+  *   Optional. Service message: chat owner has changed
   * @param newChatTitle
   *   Optional. A chat title was changed to this value
   * @param newChatPhoto
@@ -302,6 +306,8 @@ final case class Message(
   location: Option[Location] = Option.empty,
   newChatMembers: List[User] = List.empty,
   leftChatMember: Option[User] = Option.empty,
+  chatOwnerLeft: Option[ChatOwnerLeft] = Option.empty,
+  chatOwnerChanged: Option[ChatOwnerChanged] = Option.empty,
   newChatTitle: Option[String] = Option.empty,
   newChatPhoto: List[PhotoSize] = List.empty,
   deleteChatPhoto: Option[Boolean] = Option.empty,
