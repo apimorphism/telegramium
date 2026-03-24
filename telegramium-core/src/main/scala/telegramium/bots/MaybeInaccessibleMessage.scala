@@ -30,6 +30,8 @@ sealed trait MaybeInaccessibleMessage {}
   * @param senderBusinessBot
   *   Optional. The bot that actually sent the message on behalf of the business account. Available only for outgoing
   *   messages sent on behalf of the connected business account.
+  * @param senderTag
+  *   Optional. Tag or custom title of the sender of the message; for supergroups only
   * @param businessConnectionId
   *   Optional. Unique identifier of the business connection from which the message was received. If non-empty, the
   *   message belongs to a chat of the corresponding business account that is independent from any potential bot chat
@@ -65,7 +67,7 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. True, if the message is a paid post. Note that such posts must not be deleted for 24 hours to receive
   *   the payment and can't be edited.
   * @param mediaGroupId
-  *   Optional. The unique identifier of a media message group this message belongs to
+  *   Optional. The unique identifier inside this chat of a media message group this message belongs to
   * @param authorSignature
   *   Optional. Signature of the post author for messages in channels, or the custom title of an anonymous group
   *   administrator
@@ -261,6 +263,7 @@ final case class Message(
   senderChat: Option[Chat] = Option.empty,
   senderBoostCount: Option[Int] = Option.empty,
   senderBusinessBot: Option[User] = Option.empty,
+  senderTag: Option[String] = Option.empty,
   businessConnectionId: Option[String] = Option.empty,
   forwardOrigin: Option[iozhik.OpenEnum[MessageOrigin]] = Option.empty,
   isTopicMessage: Option[Boolean] = Option.empty,

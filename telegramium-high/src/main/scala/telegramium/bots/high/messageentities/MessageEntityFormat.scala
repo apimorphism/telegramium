@@ -6,6 +6,7 @@ import telegramium.bots.BotCommandMessageEntity
 import telegramium.bots.CashtagMessageEntity
 import telegramium.bots.CodeMessageEntity
 import telegramium.bots.CustomEmojiMessageEntity
+import telegramium.bots.DateTimeMessageEntity
 import telegramium.bots.EmailMessageEntity
 import telegramium.bots.ExpandableBlockquoteMessageEntity
 import telegramium.bots.HashtagMessageEntity
@@ -65,13 +66,15 @@ object MessageEntityFormat {
           case Bold(text)                 => accumulate(BoldMessageEntity(offset, text.length))
           case Pre(text, language)        => accumulate(PreMessageEntity(offset, text.length, language))
           case Italic(text)               => accumulate(ItalicMessageEntity(offset, text.length))
-          case Strikethrough(text)        => accumulate(StrikethroughMessageEntity(offset, text.length))
-          case Underline(text)            => accumulate(UnderlineMessageEntity(offset, text.length))
-          case Hashtag(text)              => accumulate(HashtagMessageEntity(offset, text.length))
-          case TextMention(text, user)    => accumulate(TextMentionMessageEntity(offset, text.length, user))
-          case TextLink(text, url)        => accumulate(TextLinkMessageEntity(offset, text.length, url))
-          case Url(text)                  => accumulate(UrlMessageEntity(offset, text.length))
-          case PhoneNumber(text)          => accumulate(PhoneNumberMessageEntity(offset, text.length))
+          case DateTime(text, unixTime, dateTimeFormat) =>
+            accumulate(DateTimeMessageEntity(offset, text.length, unixTime, dateTimeFormat))
+          case Strikethrough(text)     => accumulate(StrikethroughMessageEntity(offset, text.length))
+          case Underline(text)         => accumulate(UnderlineMessageEntity(offset, text.length))
+          case Hashtag(text)           => accumulate(HashtagMessageEntity(offset, text.length))
+          case TextMention(text, user) => accumulate(TextMentionMessageEntity(offset, text.length, user))
+          case TextLink(text, url)     => accumulate(TextLinkMessageEntity(offset, text.length, url))
+          case Url(text)               => accumulate(UrlMessageEntity(offset, text.length))
+          case PhoneNumber(text)       => accumulate(PhoneNumberMessageEntity(offset, text.length))
         }
       }
       ._1
@@ -106,6 +109,8 @@ object MessageEntityFormat {
   final case class Pre(text: String, language: Option[String]) extends MessageEntityFormat
 
   final case class Italic(text: String) extends MessageEntityFormat
+
+  final case class DateTime(text: String, unixTime: Long, dateTimeFormat: String) extends MessageEntityFormat
 
   final case class Strikethrough(text: String) extends MessageEntityFormat
 

@@ -564,6 +564,7 @@ object CirceImplicits {
           "can_pin_messages"           -> x.canPinMessages.asJson,
           "can_manage_topics"          -> x.canManageTopics.asJson,
           "can_manage_direct_messages" -> x.canManageDirectMessages.asJson,
+          "can_manage_tags"            -> x.canManageTags.asJson,
           "custom_title"               -> x.customTitle.asJson
         ).filter(!_._2.isNull)
       )
@@ -590,6 +591,7 @@ object CirceImplicits {
         _canPinMessages          <- h.get[Option[Boolean]]("can_pin_messages")
         _canManageTopics         <- h.get[Option[Boolean]]("can_manage_topics")
         _canManageDirectMessages <- h.get[Option[Boolean]]("can_manage_direct_messages")
+        _canManageTags           <- h.get[Option[Boolean]]("can_manage_tags")
         _customTitle             <- h.get[Option[String]]("custom_title")
       } yield {
         ChatMemberAdministrator(
@@ -611,6 +613,7 @@ object CirceImplicits {
           canPinMessages = _canPinMessages,
           canManageTopics = _canManageTopics,
           canManageDirectMessages = _canManageDirectMessages,
+          canManageTags = _canManageTags,
           customTitle = _customTitle
         )
       }
@@ -620,6 +623,7 @@ object CirceImplicits {
     (x: ChatMemberMember) => {
       Json.fromFields(
         List(
+          "tag"        -> x.tag.asJson,
           "user"       -> x.user.asJson,
           "until_date" -> x.untilDate.asJson
         ).filter(!_._2.isNull)
@@ -629,10 +633,11 @@ object CirceImplicits {
   implicit lazy val chatmembermemberDecoder: Decoder[ChatMemberMember] =
     Decoder.instance { h =>
       for {
+        _tag       <- h.get[Option[String]]("tag")
         _user      <- h.get[User]("user")
         _untilDate <- h.get[Option[Long]]("until_date")
       } yield {
-        ChatMemberMember(user = _user, untilDate = _untilDate)
+        ChatMemberMember(tag = _tag, user = _user, untilDate = _untilDate)
       }
     }
 
@@ -660,6 +665,7 @@ object CirceImplicits {
     (x: ChatMemberRestricted) => {
       Json.fromFields(
         List(
+          "tag"                       -> x.tag.asJson,
           "user"                      -> x.user.asJson,
           "is_member"                 -> x.isMember.asJson,
           "can_send_messages"         -> x.canSendMessages.asJson,
@@ -672,6 +678,7 @@ object CirceImplicits {
           "can_send_polls"            -> x.canSendPolls.asJson,
           "can_send_other_messages"   -> x.canSendOtherMessages.asJson,
           "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson,
+          "can_edit_tag"              -> x.canEditTag.asJson,
           "can_change_info"           -> x.canChangeInfo.asJson,
           "can_invite_users"          -> x.canInviteUsers.asJson,
           "can_pin_messages"          -> x.canPinMessages.asJson,
@@ -684,6 +691,7 @@ object CirceImplicits {
   implicit lazy val chatmemberrestrictedDecoder: Decoder[ChatMemberRestricted] =
     Decoder.instance { h =>
       for {
+        _tag                   <- h.get[Option[String]]("tag")
         _user                  <- h.get[User]("user")
         _isMember              <- h.get[Boolean]("is_member")
         _canSendMessages       <- h.get[Boolean]("can_send_messages")
@@ -696,6 +704,7 @@ object CirceImplicits {
         _canSendPolls          <- h.get[Boolean]("can_send_polls")
         _canSendOtherMessages  <- h.get[Boolean]("can_send_other_messages")
         _canAddWebPagePreviews <- h.get[Boolean]("can_add_web_page_previews")
+        _canEditTag            <- h.get[Boolean]("can_edit_tag")
         _canChangeInfo         <- h.get[Boolean]("can_change_info")
         _canInviteUsers        <- h.get[Boolean]("can_invite_users")
         _canPinMessages        <- h.get[Boolean]("can_pin_messages")
@@ -703,6 +712,7 @@ object CirceImplicits {
         _untilDate             <- h.get[Long]("until_date")
       } yield {
         ChatMemberRestricted(
+          tag = _tag,
           user = _user,
           isMember = _isMember,
           canSendMessages = _canSendMessages,
@@ -715,6 +725,7 @@ object CirceImplicits {
           canSendPolls = _canSendPolls,
           canSendOtherMessages = _canSendOtherMessages,
           canAddWebPagePreviews = _canAddWebPagePreviews,
+          canEditTag = _canEditTag,
           canChangeInfo = _canChangeInfo,
           canInviteUsers = _canInviteUsers,
           canPinMessages = _canPinMessages,
@@ -1399,6 +1410,7 @@ object CirceImplicits {
           "sender_chat"                       -> x.senderChat.asJson,
           "sender_boost_count"                -> x.senderBoostCount.asJson,
           "sender_business_bot"               -> x.senderBusinessBot.asJson,
+          "sender_tag"                        -> x.senderTag.asJson,
           "date"                              -> x.date.asJson,
           "business_connection_id"            -> x.businessConnectionId.asJson,
           "chat"                              -> x.chat.asJson,
@@ -1511,6 +1523,7 @@ object CirceImplicits {
         _senderChat             <- h.get[Option[Chat]]("sender_chat")
         _senderBoostCount       <- h.get[Option[Int]]("sender_boost_count")
         _senderBusinessBot      <- h.get[Option[User]]("sender_business_bot")
+        _senderTag              <- h.get[Option[String]]("sender_tag")
         _date                   <- h.get[Long]("date")
         _businessConnectionId   <- h.get[Option[String]]("business_connection_id")
         _chat                   <- h.get[Chat]("chat")
@@ -1620,6 +1633,7 @@ object CirceImplicits {
           senderChat = _senderChat,
           senderBoostCount = _senderBoostCount,
           senderBusinessBot = _senderBusinessBot,
+          senderTag = _senderTag,
           date = _date,
           businessConnectionId = _businessConnectionId,
           chat = _chat,
@@ -1796,6 +1810,7 @@ object CirceImplicits {
     case hashtag: HashtagMessageEntity => hashtag.asJson.mapObject(_.add("type", Json.fromString("hashtag")))
     case blockquote: BlockquoteMessageEntity =>
       blockquote.asJson.mapObject(_.add("type", Json.fromString("blockquote")))
+    case date_time: DateTimeMessageEntity => date_time.asJson.mapObject(_.add("type", Json.fromString("date_time")))
     case text_link: TextLinkMessageEntity => text_link.asJson.mapObject(_.add("type", Json.fromString("text_link")))
     case strikethrough: StrikethroughMessageEntity =>
       strikethrough.asJson.mapObject(_.add("type", Json.fromString("strikethrough")))
@@ -1825,6 +1840,7 @@ object CirceImplicits {
       case "expandable_blockquote" => Decoder[ExpandableBlockquoteMessageEntity].map(iozhik.OpenEnum.Known(_))
       case "hashtag"               => Decoder[HashtagMessageEntity].map(iozhik.OpenEnum.Known(_))
       case "blockquote"            => Decoder[BlockquoteMessageEntity].map(iozhik.OpenEnum.Known(_))
+      case "date_time"             => Decoder[DateTimeMessageEntity].map(iozhik.OpenEnum.Known(_))
       case "text_link"             => Decoder[TextLinkMessageEntity].map(iozhik.OpenEnum.Known(_))
       case "strikethrough"         => Decoder[StrikethroughMessageEntity].map(iozhik.OpenEnum.Known(_))
       case "pre"                   => Decoder[PreMessageEntity].map(iozhik.OpenEnum.Known(_))
@@ -2085,6 +2101,35 @@ object CirceImplicits {
         _length <- h.get[Int]("length")
       } yield {
         ItalicMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val datetimemessageentityEncoder: Encoder[DateTimeMessageEntity] =
+    (x: DateTimeMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset"           -> x.offset.asJson,
+          "length"           -> x.length.asJson,
+          "unix_time"        -> x.unixTime.asJson,
+          "date_time_format" -> x.dateTimeFormat.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val datetimemessageentityDecoder: Decoder[DateTimeMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset         <- h.get[Int]("offset")
+        _length         <- h.get[Int]("length")
+        _unixTime       <- h.get[Long]("unix_time")
+        _dateTimeFormat <- h.get[String]("date_time_format")
+      } yield {
+        DateTimeMessageEntity(
+          offset = _offset,
+          length = _length,
+          unixTime = _unixTime,
+          dateTimeFormat = _dateTimeFormat
+        )
       }
     }
 
@@ -3515,7 +3560,8 @@ object CirceImplicits {
           "can_edit_messages"          -> x.canEditMessages.asJson,
           "can_pin_messages"           -> x.canPinMessages.asJson,
           "can_manage_topics"          -> x.canManageTopics.asJson,
-          "can_manage_direct_messages" -> x.canManageDirectMessages.asJson
+          "can_manage_direct_messages" -> x.canManageDirectMessages.asJson,
+          "can_manage_tags"            -> x.canManageTags.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3539,6 +3585,7 @@ object CirceImplicits {
         _canPinMessages          <- h.get[Option[Boolean]]("can_pin_messages")
         _canManageTopics         <- h.get[Option[Boolean]]("can_manage_topics")
         _canManageDirectMessages <- h.get[Option[Boolean]]("can_manage_direct_messages")
+        _canManageTags           <- h.get[Option[Boolean]]("can_manage_tags")
       } yield {
         ChatAdministratorRights(
           isAnonymous = _isAnonymous,
@@ -3556,7 +3603,8 @@ object CirceImplicits {
           canEditMessages = _canEditMessages,
           canPinMessages = _canPinMessages,
           canManageTopics = _canManageTopics,
-          canManageDirectMessages = _canManageDirectMessages
+          canManageDirectMessages = _canManageDirectMessages,
+          canManageTags = _canManageTags
         )
       }
     }
@@ -4031,6 +4079,7 @@ object CirceImplicits {
           "can_send_polls"            -> x.canSendPolls.asJson,
           "can_send_other_messages"   -> x.canSendOtherMessages.asJson,
           "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson,
+          "can_edit_tag"              -> x.canEditTag.asJson,
           "can_change_info"           -> x.canChangeInfo.asJson,
           "can_invite_users"          -> x.canInviteUsers.asJson,
           "can_pin_messages"          -> x.canPinMessages.asJson,
@@ -4052,6 +4101,7 @@ object CirceImplicits {
         _canSendPolls          <- h.get[Option[Boolean]]("can_send_polls")
         _canSendOtherMessages  <- h.get[Option[Boolean]]("can_send_other_messages")
         _canAddWebPagePreviews <- h.get[Option[Boolean]]("can_add_web_page_previews")
+        _canEditTag            <- h.get[Option[Boolean]]("can_edit_tag")
         _canChangeInfo         <- h.get[Option[Boolean]]("can_change_info")
         _canInviteUsers        <- h.get[Option[Boolean]]("can_invite_users")
         _canPinMessages        <- h.get[Option[Boolean]]("can_pin_messages")
@@ -4068,6 +4118,7 @@ object CirceImplicits {
           canSendPolls = _canSendPolls,
           canSendOtherMessages = _canSendOtherMessages,
           canAddWebPagePreviews = _canAddWebPagePreviews,
+          canEditTag = _canEditTag,
           canChangeInfo = _canChangeInfo,
           canInviteUsers = _canInviteUsers,
           canPinMessages = _canPinMessages,

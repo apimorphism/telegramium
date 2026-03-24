@@ -66,6 +66,9 @@ final case class ChatMemberLeft(user: User) extends ChatMember
   * @param canManageDirectMessages
   *   Optional. True, if the administrator can manage direct messages of the channel and decline suggested posts; for
   *   channels only
+  * @param canManageTags
+  *   Optional. True, if the administrator can edit the tags of regular members; for groups and supergroups only. If
+  *   omitted defaults to the value of can_pin_messages.
   * @param customTitle
   *   Optional. Custom title for this user
   */
@@ -88,6 +91,7 @@ final case class ChatMemberAdministrator(
   canPinMessages: Option[Boolean] = Option.empty,
   canManageTopics: Option[Boolean] = Option.empty,
   canManageDirectMessages: Option[Boolean] = Option.empty,
+  canManageTags: Option[Boolean] = Option.empty,
   customTitle: Option[String] = Option.empty
 ) extends ChatMember
 
@@ -95,10 +99,16 @@ final case class ChatMemberAdministrator(
   *
   * @param user
   *   Information about the user
+  * @param tag
+  *   Optional. Tag of the member
   * @param untilDate
   *   Optional. Date when the user's subscription will expire; Unix time
   */
-final case class ChatMemberMember(user: User, untilDate: Option[Long] = Option.empty) extends ChatMember
+final case class ChatMemberMember(
+  user: User,
+  tag: Option[String] = Option.empty,
+  untilDate: Option[Long] = Option.empty
+) extends ChatMember
 
 /** Represents a chat member that was banned in the chat and can't return to the chat or view chat messages.
   *
@@ -136,6 +146,8 @@ final case class ChatMemberBanned(user: User, untilDate: Long) extends ChatMembe
   *   True, if the user is allowed to send animations, games, stickers and use inline bots
   * @param canAddWebPagePreviews
   *   True, if the user is allowed to add web page previews to their messages
+  * @param canEditTag
+  *   True, if the user is allowed to edit their own tag
   * @param canChangeInfo
   *   True, if the user is allowed to change the chat title, photo and other settings
   * @param canInviteUsers
@@ -146,6 +158,8 @@ final case class ChatMemberBanned(user: User, untilDate: Long) extends ChatMembe
   *   True, if the user is allowed to create forum topics
   * @param untilDate
   *   Date when restrictions will be lifted for this user; Unix time. If 0, then the user is restricted forever
+  * @param tag
+  *   Optional. Tag of the member
   */
 final case class ChatMemberRestricted(
   user: User,
@@ -160,9 +174,11 @@ final case class ChatMemberRestricted(
   canSendPolls: Boolean,
   canSendOtherMessages: Boolean,
   canAddWebPagePreviews: Boolean,
+  canEditTag: Boolean,
   canChangeInfo: Boolean,
   canInviteUsers: Boolean,
   canPinMessages: Boolean,
   canManageTopics: Boolean,
-  untilDate: Long
+  untilDate: Long,
+  tag: Option[String] = Option.empty
 ) extends ChatMember

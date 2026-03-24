@@ -2034,6 +2034,8 @@ trait Methods {
     * @param canManageDirectMessages
     *   Pass True if the administrator can manage direct messages within the channel and decline suggested posts; for
     *   channels only
+    * @param canManageTags
+    *   Pass True if the administrator can edit the tags of regular members; for groups and supergroups only
     */
   def promoteChatMember(
     chatId: ChatId,
@@ -2053,7 +2055,8 @@ trait Methods {
     canEditMessages: Option[Boolean] = Option.empty,
     canPinMessages: Option[Boolean] = Option.empty,
     canManageTopics: Option[Boolean] = Option.empty,
-    canManageDirectMessages: Option[Boolean] = Option.empty
+    canManageDirectMessages: Option[Boolean] = Option.empty,
+    canManageTags: Option[Boolean] = Option.empty
   ): Method[Boolean] = {
     val req = PromoteChatMemberReq(
       chatId,
@@ -2073,7 +2076,8 @@ trait Methods {
       canEditMessages,
       canPinMessages,
       canManageTopics,
-      canManageDirectMessages
+      canManageDirectMessages,
+      canManageTags
     )
     MethodReq[Boolean]("promoteChatMember", req.asJson)
   }
@@ -3294,8 +3298,8 @@ trait Methods {
     MethodReq[Message]("sendMessage", req.asJson)
   }
 
-  /** Use this method to stream a partial message to a user while the message is being generated; supported only for
-    * bots with forum topic mode enabled. Returns True on success.
+  /** Use this method to stream a partial message to a user while the message is being generated. Returns True on
+    * success.
     *
     * @param chatId
     *   Unique identifier for the target private chat
@@ -4194,6 +4198,22 @@ trait Methods {
   def setChatDescription(chatId: ChatId, description: Option[String] = Option.empty): Method[Boolean] = {
     val req = SetChatDescriptionReq(chatId, description)
     MethodReq[Boolean]("setChatDescription", req.asJson)
+  }
+
+  /** Use this method to set a tag for a regular member in a group or a supergroup. The bot must be an administrator in
+    * the chat for this to work and must have the can_manage_tags administrator right. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup (in the format
+    *   &#064;supergroupusername)
+    * @param userId
+    *   Unique identifier of the target user
+    * @param tag
+    *   New tag for the member; 0-16 characters, emoji are not allowed
+    */
+  def setChatMemberTag(chatId: ChatId, userId: Long, tag: Option[String] = Option.empty): Method[Boolean] = {
+    val req = SetChatMemberTagReq(chatId, userId, tag)
+    MethodReq[Boolean]("setChatMemberTag", req.asJson)
   }
 
   /** Use this method to change the bot's menu button in a private chat, or the default menu button. Returns True on

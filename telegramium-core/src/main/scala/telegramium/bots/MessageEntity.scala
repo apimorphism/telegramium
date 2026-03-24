@@ -122,6 +122,20 @@ final case class PreMessageEntity(offset: Int, length: Int, language: Option[Str
   */
 final case class ItalicMessageEntity(offset: Int, length: Int) extends MessageEntity
 
+/** date_time
+  *
+  * @param offset
+  *   Offset in UTF-16 code units to the start of the entity
+  * @param length
+  *   Length of the entity in UTF-16 code units
+  * @param unixTime
+  *   the Unix time associated with the entity
+  * @param dateTimeFormat
+  *   the string that defines the formatting of the date and time. See date-time entity formatting for more details.
+  */
+final case class DateTimeMessageEntity(offset: Int, length: Int, unixTime: Long, dateTimeFormat: String)
+    extends MessageEntity
+
 /** strikethrough
   *
   * @param offset

@@ -95,6 +95,12 @@ class MessageEntitiesSpec extends AnyFlatSpec with Matchers {
     entities.toTelegramEntities() shouldBe List(ItalicMessageEntity(0, 4))
   }
 
+  it should "add date time correctly" in {
+    val entities = MessageEntities().dateTime("22:45 tomorrow", 1647531900, "wDT")
+    entities.toPlainText() shouldBe "22:45 tomorrow"
+    entities.toTelegramEntities() shouldBe List(DateTimeMessageEntity(0, 14, 1647531900, "wDT"))
+  }
+
   it should "add strikethrough text correctly" in {
     val entities = MessageEntities().strikethrough("test")
     entities.toPlainText() shouldBe "test"
@@ -172,13 +178,15 @@ class MessageEntitiesSpec extends AnyFlatSpec with Matchers {
       .url("https://example.com")
       .plain(" ")
       .phoneNumber("+12065550100")
+      .plain(" ")
+      .dateTime("dateTime", 1647531900, "wDT")
       .lineBreak()
 
     entities
-      .toPlainText() shouldBe "bold @mention $USD code /command example@example.com blockquote expandableBlockquote pre italic strikethrough underline #hashtag textMention textLink https://example.com +12065550100\n"
+      .toPlainText() shouldBe "bold @mention $USD code /command example@example.com blockquote expandableBlockquote pre italic strikethrough underline #hashtag textMention textLink https://example.com +12065550100 dateTime\n"
 
     val messageEntities = entities.toTelegramEntities()
-    messageEntities.size should be(17)
+    messageEntities.size should be(18)
     messageEntities.head should be(BoldMessageEntity(0, 4))
     messageEntities(1) should be(MentionMessageEntity(5, 8))
     messageEntities(2) should be(CashtagMessageEntity(14, 4))
@@ -196,6 +204,7 @@ class MessageEntitiesSpec extends AnyFlatSpec with Matchers {
     messageEntities(14) should be(TextLinkMessageEntity(141, 8, "https://example.com"))
     messageEntities(15) should be(UrlMessageEntity(150, 19))
     messageEntities(16) should be(PhoneNumberMessageEntity(170, 12))
+    messageEntities(17) should be(DateTimeMessageEntity(183, 8, 1647531900, "wDT"))
   }
 
 }

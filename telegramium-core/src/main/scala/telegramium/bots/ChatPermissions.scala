@@ -23,6 +23,8 @@ package telegramium.bots
   *   Optional. True, if the user is allowed to send animations, games, stickers and use inline bots
   * @param canAddWebPagePreviews
   *   Optional. True, if the user is allowed to add web page previews to their messages
+  * @param canEditTag
+  *   Optional. True, if the user is allowed to edit their own tag
   * @param canChangeInfo
   *   Optional. True, if the user is allowed to change the chat title, photo and other settings. Ignored in public
   *   supergroups
@@ -45,6 +47,7 @@ final case class ChatPermissions(
   canSendPolls: Option[Boolean] = Option.empty,
   canSendOtherMessages: Option[Boolean] = Option.empty,
   canAddWebPagePreviews: Option[Boolean] = Option.empty,
+  canEditTag: Option[Boolean] = Option.empty,
   canChangeInfo: Option[Boolean] = Option.empty,
   canInviteUsers: Option[Boolean] = Option.empty,
   canPinMessages: Option[Boolean] = Option.empty,

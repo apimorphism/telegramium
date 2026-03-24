@@ -41,6 +41,9 @@ package telegramium.bots
   * @param canManageDirectMessages
   *   Optional. True, if the administrator can manage direct messages of the channel and decline suggested posts; for
   *   channels only
+  * @param canManageTags
+  *   Optional. True, if the administrator can edit the tags of regular members; for groups and supergroups only. If
+  *   omitted defaults to the value of can_pin_messages.
   */
 final case class ChatAdministratorRights(
   isAnonymous: Boolean,
@@ -58,5 +61,6 @@ final case class ChatAdministratorRights(
   canEditMessages: Option[Boolean] = Option.empty,
   canPinMessages: Option[Boolean] = Option.empty,
   canManageTopics: Option[Boolean] = Option.empty,
-  canManageDirectMessages: Option[Boolean] = Option.empty
+  canManageDirectMessages: Option[Boolean] = Option.empty,
+  canManageTags: Option[Boolean] = Option.empty
 )

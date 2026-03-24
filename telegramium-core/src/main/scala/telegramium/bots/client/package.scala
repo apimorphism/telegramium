@@ -1071,6 +1071,7 @@ object CirceImplicits {
           "can_pin_messages"           -> x.canPinMessages.asJson,
           "can_manage_topics"          -> x.canManageTopics.asJson,
           "can_manage_direct_messages" -> x.canManageDirectMessages.asJson,
+          "can_manage_tags"            -> x.canManageTags.asJson,
           "method"                     -> "promoteChatMember".asJson
         ).filter(!_._2.isNull)
       )
@@ -1833,6 +1834,18 @@ object CirceImplicits {
           "chat_id"     -> x.chatId.asJson,
           "description" -> x.description.asJson,
           "method"      -> "setChatDescription".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setchatmembertagreqEncoder: Encoder[SetChatMemberTagReq] =
+    (x: SetChatMemberTagReq) => {
+      Json.fromFields(
+        List(
+          "chat_id" -> x.chatId.asJson,
+          "user_id" -> x.userId.asJson,
+          "tag"     -> x.tag.asJson,
+          "method"  -> "setChatMemberTag".asJson
         ).filter(!_._2.isNull)
       )
     }
