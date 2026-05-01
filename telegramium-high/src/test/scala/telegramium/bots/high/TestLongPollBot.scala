@@ -16,6 +16,7 @@ import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
 import telegramium.bots.MessageReactionCountUpdated
 import telegramium.bots.MessageReactionUpdated
+import telegramium.bots.PaidMediaPurchased
 import telegramium.bots.Poll
 import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
@@ -42,8 +43,10 @@ class TestLongPollBot(api: Api[IO]) extends LongPollBot[IO](api) {
   override def onChosenInlineResult(inlineResult: ChosenInlineResult): IO[Unit] = sendMessageTask(
     "onChosenInlineResult"
   )
-  override def onShippingQuery(query: ShippingQuery): IO[Unit]              = sendMessageTask("onShippingQuery")
-  override def onPreCheckoutQuery(query: PreCheckoutQuery): IO[Unit]        = sendMessageTask("onPreCheckoutQuery")
+  override def onShippingQuery(query: ShippingQuery): IO[Unit]       = sendMessageTask("onShippingQuery")
+  override def onPreCheckoutQuery(query: PreCheckoutQuery): IO[Unit] = sendMessageTask("onPreCheckoutQuery")
+  override def onPurchasedPaidMedia(purchasedPaidMedia: PaidMediaPurchased): IO[Unit] =
+    sendMessageTask("onPurchasedPaidMedia")
   override def onPoll(poll: Poll): IO[Unit]                                 = sendMessageTask("onPoll")
   override def onPollAnswer(pollAnswer: PollAnswer): IO[Unit]               = sendMessageTask("onPollAnswer")
   override def onMyChatMember(myChatMember: ChatMemberUpdated): IO[Unit]    = sendMessageTask("onMyChatMember")

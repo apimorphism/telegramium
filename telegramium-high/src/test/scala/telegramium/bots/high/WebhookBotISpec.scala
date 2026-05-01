@@ -43,6 +43,7 @@ import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
 import telegramium.bots.MessageReactionCountUpdated
 import telegramium.bots.MessageReactionUpdated
+import telegramium.bots.PaidMediaPurchased
 import telegramium.bots.Poll
 import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
@@ -335,6 +336,16 @@ class WebhookBotISpec
       verifyResult(
         testUpdate.copy(preCheckoutQuery = PreCheckoutQuery("0", testUser, "", 0, "").some),
         "onPreCheckoutQueryReply"
+      )
+    }
+
+    "purchased paid media" in {
+      mockServerClient
+        .when(sendMessageRequest("onPurchasedPaidMedia"))
+        .respond(sendMessageResponse)
+      verifyResult(
+        testUpdate.copy(purchasedPaidMedia = PaidMediaPurchased(testUser, "payload").some),
+        "onPurchasedPaidMediaReply"
       )
     }
 

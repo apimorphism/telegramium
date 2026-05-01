@@ -13,15 +13,16 @@ import telegramium.bots.ChatJoinRequest
 import telegramium.bots.ChatMemberUpdated
 import telegramium.bots.ChosenInlineResult
 import telegramium.bots.InlineQuery
+import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
 import telegramium.bots.MessageReactionCountUpdated
 import telegramium.bots.MessageReactionUpdated
+import telegramium.bots.PaidMediaPurchased
 import telegramium.bots.Poll
 import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
 import telegramium.bots.ShippingQuery
 import telegramium.bots.client.Method
-import telegramium.bots.ManagedBotUpdated
 
 class TestWebhookBot(api: Api[IO], path: String = "/")
     extends WebhookBot[IO](
@@ -75,6 +76,9 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
 
   override def onPreCheckoutQuery(query: PreCheckoutQuery): IO[Unit] =
     api.execute(sendMessageMethod("onPreCheckoutQuery")).void
+
+  override def onPurchasedPaidMedia(purchasedPaidMedia: PaidMediaPurchased): IO[Unit] =
+    api.execute(sendMessageMethod("onPurchasedPaidMedia")).void
 
   override def onPoll(poll: Poll): IO[Unit] =
     api.execute(sendMessageMethod("onPoll")).void
@@ -144,6 +148,9 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
 
   override def onPreCheckoutQueryReply(query: PreCheckoutQuery): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onPreCheckoutQueryReply").some)
+
+  override def onPurchasedPaidMediaReply(purchasedPaidMedia: PaidMediaPurchased): IO[Option[Method[?]]] =
+    IO.pure(sendMessageMethod("onPurchasedPaidMediaReply").some)
 
   override def onPollReply(poll: Poll): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onPollReply").some)

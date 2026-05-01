@@ -39,6 +39,7 @@ import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
 import telegramium.bots.MessageReactionCountUpdated
 import telegramium.bots.MessageReactionUpdated
+import telegramium.bots.PaidMediaPurchased
 import telegramium.bots.Poll
 import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
@@ -98,6 +99,7 @@ abstract class WebhookBot[F[_]: Async](
   def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit]       = noop(inlineResult)
   def onShippingQuery(query: ShippingQuery): F[Unit]                        = noop(query)
   def onPreCheckoutQuery(query: PreCheckoutQuery): F[Unit]                  = noop(query)
+  def onPurchasedPaidMedia(purchasedPaidMedia: PaidMediaPurchased): F[Unit] = noop(purchasedPaidMedia)
   def onPoll(poll: Poll): F[Unit]                                           = noop(poll)
   def onPollAnswer(pollAnswer: PollAnswer): F[Unit]                         = noop(pollAnswer)
   def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit]              = noop(myChatMember)
@@ -124,14 +126,17 @@ abstract class WebhookBot[F[_]: Async](
   def onChosenInlineResultReply(inlineResult: ChosenInlineResult): F[Option[Method[?]]]       = noopReply(inlineResult)
   def onShippingQueryReply(query: ShippingQuery): F[Option[Method[?]]]                        = noopReply(query)
   def onPreCheckoutQueryReply(query: PreCheckoutQuery): F[Option[Method[?]]]                  = noopReply(query)
-  def onPollReply(poll: Poll): F[Option[Method[?]]]                                           = noopReply(poll)
-  def onPollAnswerReply(pollAnswer: PollAnswer): F[Option[Method[?]]]                         = noopReply(pollAnswer)
-  def onMyChatMemberReply(myChatMember: ChatMemberUpdated): F[Option[Method[?]]]              = noopReply(myChatMember)
-  def onChatMemberReply(chatMember: ChatMemberUpdated): F[Option[Method[?]]]                  = noopReply(chatMember)
-  def onChatJoinRequestReply(request: ChatJoinRequest): F[Option[Method[?]]]                  = noopReply(request)
-  def onChatBoostReply(boost: ChatBoostUpdated): F[Option[Method[?]]]                         = noopReply(boost)
-  def onRemovedChatBoostReply(boostRemoved: ChatBoostRemoved): F[Option[Method[?]]]           = noopReply(boostRemoved)
-  def onManagedBotReply(managedBot: ManagedBotUpdated): F[Option[Method[?]]]                  = noopReply(managedBot)
+  def onPurchasedPaidMediaReply(purchasedPaidMedia: PaidMediaPurchased): F[Option[Method[?]]] = noopReply(
+    purchasedPaidMedia
+  )
+  def onPollReply(poll: Poll): F[Option[Method[?]]]                                 = noopReply(poll)
+  def onPollAnswerReply(pollAnswer: PollAnswer): F[Option[Method[?]]]               = noopReply(pollAnswer)
+  def onMyChatMemberReply(myChatMember: ChatMemberUpdated): F[Option[Method[?]]]    = noopReply(myChatMember)
+  def onChatMemberReply(chatMember: ChatMemberUpdated): F[Option[Method[?]]]        = noopReply(chatMember)
+  def onChatJoinRequestReply(request: ChatJoinRequest): F[Option[Method[?]]]        = noopReply(request)
+  def onChatBoostReply(boost: ChatBoostUpdated): F[Option[Method[?]]]               = noopReply(boost)
+  def onRemovedChatBoostReply(boostRemoved: ChatBoostRemoved): F[Option[Method[?]]] = noopReply(boostRemoved)
+  def onManagedBotReply(managedBot: ManagedBotUpdated): F[Option[Method[?]]]        = noopReply(managedBot)
 
   def onUpdate(update: Update): F[Option[Method[?]]] =
     List(
@@ -156,6 +161,9 @@ abstract class WebhookBot[F[_]: Async](
       ),
       update.shippingQuery.map(query => onShippingQueryReply(query) <* onShippingQuery(query)),
       update.preCheckoutQuery.map(query => onPreCheckoutQueryReply(query) <* onPreCheckoutQuery(query)),
+      update.purchasedPaidMedia.map(purchasedPaidMedia =>
+        onPurchasedPaidMediaReply(purchasedPaidMedia) <* onPurchasedPaidMedia(purchasedPaidMedia)
+      ),
       update.poll.map(poll => onPollReply(poll) <* onPoll(poll)),
       update.pollAnswer.map(pollAnswer => onPollAnswerReply(pollAnswer) <* onPollAnswer(pollAnswer)),
       update.myChatMember.map(myChatMember => onMyChatMemberReply(myChatMember) <* onMyChatMember(myChatMember)),

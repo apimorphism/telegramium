@@ -31,6 +31,7 @@ import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
 import telegramium.bots.MessageReactionCountUpdated
 import telegramium.bots.MessageReactionUpdated
+import telegramium.bots.PaidMediaPurchased
 import telegramium.bots.Poll
 import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
@@ -224,6 +225,16 @@ class LongPollBotISpec
         .respond(sendMessageResponse)
       bot.onUpdate(testUpdate.copy(preCheckoutQuery = PreCheckoutQuery("0", testUser, "", 0, "").some)).unsafeRunSync()
       verifyMessageSent("onPreCheckoutQuery")
+    }
+
+    "purchased paid media" in {
+      mockServerClient
+        .when(sendMessageRequest("onPurchasedPaidMedia"))
+        .respond(sendMessageResponse)
+      bot
+        .onUpdate(testUpdate.copy(purchasedPaidMedia = PaidMediaPurchased(testUser, "payload").some))
+        .unsafeRunSync()
+      verifyMessageSent("onPurchasedPaidMedia")
     }
 
     "poll" in {
