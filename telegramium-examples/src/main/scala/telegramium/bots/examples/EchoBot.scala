@@ -67,7 +67,7 @@ class EchoBot[F[_]]()(implicit
           InputPollOption("1.62"),
           InputPollOption("Sunshine in the air!")
         ),
-        correctOptionId = Some(2),
+        correctOptionIds = List(2),
         isAnonymous = Some(false),
         explanation = Some("https://en.wikipedia.org/wiki/Golden_ratio")
       ).exec.void >>

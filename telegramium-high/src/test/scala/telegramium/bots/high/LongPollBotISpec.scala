@@ -27,6 +27,7 @@ import telegramium.bots.ChatMemberMember
 import telegramium.bots.ChatMemberUpdated
 import telegramium.bots.ChosenInlineResult
 import telegramium.bots.InlineQuery
+import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
 import telegramium.bots.MessageReactionCountUpdated
 import telegramium.bots.MessageReactionUpdated
@@ -239,7 +240,8 @@ class LongPollBotISpec
               isClosed = false,
               isAnonymous = false,
               `type` = "",
-              allowsMultipleAnswers = false
+              allowsMultipleAnswers = false,
+              allowsRevoting = true
             ).some
           )
         )
@@ -253,6 +255,20 @@ class LongPollBotISpec
         .respond(sendMessageResponse)
       bot.onUpdate(testUpdate.copy(pollAnswer = PollAnswer("0", user = testUser.some).some)).unsafeRunSync()
       verifyMessageSent("onPollAnswer")
+    }
+
+    "managed bot" in {
+      mockServerClient
+        .when(sendMessageRequest("onManagedBot"))
+        .respond(sendMessageResponse)
+      bot
+        .onUpdate(
+          testUpdate.copy(
+            managedBot = ManagedBotUpdated(user = testUser, bot = testUser).some
+          )
+        )
+        .unsafeRunSync()
+      verifyMessageSent("onManagedBot")
     }
 
     "The bot's chat member status was updated in a chat" in {

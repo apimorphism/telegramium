@@ -68,6 +68,8 @@ package telegramium.bots
   *   updates.
   * @param removedChatBoost
   *   Optional. A boost was removed from a chat. The bot must be an administrator in the chat to receive these updates.
+  * @param managedBot
+  *   Optional. A new bot was created to be managed by the bot, or token or owner of a managed bot was changed
   */
 final case class Update(
   updateId: Int,
@@ -93,5 +95,6 @@ final case class Update(
   chatMember: Option[ChatMemberUpdated] = Option.empty,
   chatJoinRequest: Option[ChatJoinRequest] = Option.empty,
   chatBoost: Option[ChatBoostUpdated] = Option.empty,
-  removedChatBoost: Option[ChatBoostRemoved] = Option.empty
+  removedChatBoost: Option[ChatBoostRemoved] = Option.empty,
+  managedBot: Option[ManagedBotUpdated] = Option.empty
 )

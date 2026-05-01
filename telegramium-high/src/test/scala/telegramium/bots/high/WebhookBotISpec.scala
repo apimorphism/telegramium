@@ -39,6 +39,7 @@ import telegramium.bots.ChatMemberUpdated
 import telegramium.bots.ChosenInlineResult
 import telegramium.bots.CirceImplicits.*
 import telegramium.bots.InlineQuery
+import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
 import telegramium.bots.MessageReactionCountUpdated
 import telegramium.bots.MessageReactionUpdated
@@ -350,7 +351,8 @@ class WebhookBotISpec
             isClosed = false,
             isAnonymous = false,
             `type` = "",
-            allowsMultipleAnswers = false
+            allowsMultipleAnswers = false,
+            allowsRevoting = true
           ).some
         ),
         "onPollReply"
@@ -362,6 +364,16 @@ class WebhookBotISpec
         .when(sendMessageRequest("onPollAnswer"))
         .respond(sendMessageResponse)
       verifyResult(testUpdate.copy(pollAnswer = PollAnswer("0", user = testUser.some).some), "onPollAnswerReply")
+    }
+
+    "managed bot" in {
+      mockServerClient
+        .when(sendMessageRequest("onManagedBot"))
+        .respond(sendMessageResponse)
+      verifyResult(
+        testUpdate.copy(managedBot = ManagedBotUpdated(user = testUser, bot = testUser).some),
+        "onManagedBotReply"
+      )
     }
 
     "The bot's chat member status was updated in a chat" in {

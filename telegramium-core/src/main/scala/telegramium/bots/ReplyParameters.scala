@@ -14,8 +14,9 @@ package telegramium.bots
   *   account.
   * @param quote
   *   Optional. Quoted part of the message to be replied to; 0-1024 characters after entities parsing. The quote must be
-  *   an exact substring of the message to be replied to, including bold, italic, underline, strikethrough, spoiler, and
-  *   custom_emoji entities. The message will fail to send if the quote isn't found in the original message.
+  *   an exact substring of the message to be replied to, including bold, italic, underline, strikethrough, spoiler,
+  *   custom_emoji, and date_time entities. The message will fail to send if the quote isn't found in the original
+  *   message.
   * @param quoteParseMode
   *   Optional. Mode for parsing entities in the quote. See formatting options for more details.
   * @param quoteEntities
@@ -25,6 +26,8 @@ package telegramium.bots
   *   Optional. Position of the quote in the original message in UTF-16 code units
   * @param checklistTaskId
   *   Optional. Identifier of the specific checklist task to be replied to
+  * @param pollOptionId
+  *   Optional. Persistent identifier of the specific poll option to be replied to
   */
 final case class ReplyParameters(
   messageId: Int,
@@ -34,5 +37,6 @@ final case class ReplyParameters(
   quoteParseMode: Option[ParseMode] = Option.empty,
   quoteEntities: List[MessageEntity] = List.empty,
   quotePosition: Option[Int] = Option.empty,
-  checklistTaskId: Option[Int] = Option.empty
+  checklistTaskId: Option[Int] = Option.empty,
+  pollOptionId: Option[String] = Option.empty
 )

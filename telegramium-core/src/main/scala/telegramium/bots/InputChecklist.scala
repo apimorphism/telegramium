@@ -8,7 +8,7 @@ package telegramium.bots
   *   Optional. Mode for parsing entities in the title. See formatting options for more details.
   * @param titleEntities
   *   Optional. List of special entities that appear in the title, which can be specified instead of parse_mode.
-  *   Currently, only bold, italic, underline, strikethrough, spoiler, and custom_emoji entities are allowed.
+  *   Currently, only bold, italic, underline, strikethrough, spoiler, custom_emoji, and date_time entities are allowed.
   * @param tasks
   *   List of 1-30 tasks in the checklist
   * @param othersCanAddTasks

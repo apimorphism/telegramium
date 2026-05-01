@@ -3,6 +3,7 @@ package telegramium.bots.high.keyboards
 import telegramium.bots.KeyboardButton
 import telegramium.bots.KeyboardButtonPollType
 import telegramium.bots.KeyboardButtonRequestChat
+import telegramium.bots.KeyboardButtonRequestManagedBot
 import telegramium.bots.KeyboardButtonRequestUsers
 import telegramium.bots.WebAppInfo
 
@@ -75,5 +76,20 @@ object KeyboardButtons {
     style: Option[String] = Option.empty
   ) =
     KeyboardButton(text, webApp = Some(webApp), iconCustomEmojiId = iconCustomEmojiId, style = style)
+
+  /** Pressing the button will ask the user to create and share a bot that will be managed by the current bot.
+    */
+  def requestManagedBot(
+    text: String,
+    requestManagedBot: KeyboardButtonRequestManagedBot,
+    iconCustomEmojiId: Option[String] = Option.empty,
+    style: Option[String] = Option.empty
+  ) =
+    KeyboardButton(
+      text,
+      requestManagedBot = Some(requestManagedBot),
+      iconCustomEmojiId = iconCustomEmojiId,
+      style = style
+    )
 
 }

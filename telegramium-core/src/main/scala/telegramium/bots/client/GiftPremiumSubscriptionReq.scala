@@ -14,11 +14,11 @@ import telegramium.bots.MessageEntity
   *   Text that will be shown along with the service message about the subscription; 0-128 characters
   * @param textParseMode
   *   Mode for parsing entities in the text. See formatting options for more details. Entities other than “bold”,
-  *   “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
+  *   “italic”, “underline”, “strikethrough”, “spoiler”, “custom_emoji”, and “date_time” are ignored.
   * @param textEntities
   *   A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of
-  *   text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji”
-  *   are ignored.
+  *   text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, “custom_emoji”,
+  *   and “date_time” are ignored.
   */
 final case class GiftPremiumSubscriptionReq(
   userId: Long,

@@ -12,6 +12,7 @@ import telegramium.bots.ChatJoinRequest
 import telegramium.bots.ChatMemberUpdated
 import telegramium.bots.ChosenInlineResult
 import telegramium.bots.InlineQuery
+import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
 import telegramium.bots.MessageReactionCountUpdated
 import telegramium.bots.MessageReactionUpdated
@@ -50,4 +51,6 @@ class TestLongPollBot(api: Api[IO]) extends LongPollBot[IO](api) {
   override def onChatJoinRequest(request: ChatJoinRequest): IO[Unit]        = sendMessageTask("onChatJoinRequest")
   override def onChatBoost(boost: ChatBoostUpdated): IO[Unit]               = sendMessageTask("onChatBoost")
   override def onRemovedChatBoost(boostRemoved: ChatBoostRemoved): IO[Unit] = sendMessageTask("onRemovedChatBoost")
+
+  override def onManagedBot(managedBot: ManagedBotUpdated): IO[Unit] = sendMessageTask("onManagedBot")
 }

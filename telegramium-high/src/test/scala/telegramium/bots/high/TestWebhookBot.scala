@@ -21,6 +21,7 @@ import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
 import telegramium.bots.ShippingQuery
 import telegramium.bots.client.Method
+import telegramium.bots.ManagedBotUpdated
 
 class TestWebhookBot(api: Api[IO], path: String = "/")
     extends WebhookBot[IO](
@@ -96,6 +97,9 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
   override def onRemovedChatBoost(boostRemoved: ChatBoostRemoved): IO[Unit] =
     api.execute(sendMessageMethod("onRemovedChatBoost")).void
 
+  override def onManagedBot(managedBot: ManagedBotUpdated): IO[Unit] =
+    api.execute(sendMessageMethod("onManagedBot")).void
+
   override def onMessageReply(msg: Message): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onMessageReply").some)
 
@@ -161,5 +165,8 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
 
   override def onRemovedChatBoostReply(boostRemoved: ChatBoostRemoved): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onRemovedChatBoostReply").some)
+
+  override def onManagedBotReply(managedBot: ManagedBotUpdated): IO[Option[Method[?]]] =
+    IO.pure(sendMessageMethod("onManagedBotReply").some)
 
 }

@@ -54,6 +54,8 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. For replies to a story, the original story
   * @param replyToChecklistTaskId
   *   Optional. Identifier of the specific checklist task that is being replied to
+  * @param replyToPollOptionId
+  *   Optional. Persistent identifier of the specific poll option that is being replied to
   * @param viaBot
   *   Optional. Bot through which the message was sent
   * @param editDate
@@ -228,8 +230,14 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. A giveaway with public winners was completed
   * @param giveawayCompleted
   *   Optional. Service message: a giveaway without public winners was completed
+  * @param managedBotCreated
+  *   Optional. Service message: user created a bot that will be managed by the current bot
   * @param paidMessagePriceChanged
   *   Optional. Service message: the price for paid messages has changed in the chat
+  * @param pollOptionAdded
+  *   Optional. Service message: answer option was added to a poll
+  * @param pollOptionDeleted
+  *   Optional. Service message: answer option was deleted from a poll
   * @param suggestedPostApproved
   *   Optional. Service message: a suggested post was approved
   * @param suggestedPostApprovalFailed
@@ -273,6 +281,7 @@ final case class Message(
   quote: Option[TextQuote] = Option.empty,
   replyToStory: Option[Story] = Option.empty,
   replyToChecklistTaskId: Option[Int] = Option.empty,
+  replyToPollOptionId: Option[String] = Option.empty,
   viaBot: Option[User] = Option.empty,
   editDate: Option[Long] = Option.empty,
   hasProtectedContent: Option[Boolean] = Option.empty,
@@ -348,7 +357,10 @@ final case class Message(
   giveaway: Option[Giveaway] = Option.empty,
   giveawayWinners: Option[GiveawayWinners] = Option.empty,
   giveawayCompleted: Option[GiveawayCompleted] = Option.empty,
+  managedBotCreated: Option[ManagedBotCreated] = Option.empty,
   paidMessagePriceChanged: Option[PaidMessagePriceChanged] = Option.empty,
+  pollOptionAdded: Option[PollOptionAdded] = Option.empty,
+  pollOptionDeleted: Option[PollOptionDeleted] = Option.empty,
   suggestedPostApproved: Option[SuggestedPostApproved] = Option.empty,
   suggestedPostApprovalFailed: Option[SuggestedPostApprovalFailed] = Option.empty,
   suggestedPostDeclined: Option[SuggestedPostDeclined] = Option.empty,

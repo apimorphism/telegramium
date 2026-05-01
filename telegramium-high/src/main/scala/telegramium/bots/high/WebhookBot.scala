@@ -35,6 +35,7 @@ import telegramium.bots.ChosenInlineResult
 import telegramium.bots.CirceImplicits.*
 import telegramium.bots.InlineQuery
 import telegramium.bots.InputPartFile
+import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
 import telegramium.bots.MessageReactionCountUpdated
 import telegramium.bots.MessageReactionUpdated
@@ -104,6 +105,7 @@ abstract class WebhookBot[F[_]: Async](
   def onChatJoinRequest(request: ChatJoinRequest): F[Unit]                  = noop(request)
   def onChatBoost(boost: ChatBoostUpdated): F[Unit]                         = noop(boost)
   def onRemovedChatBoost(boostRemoved: ChatBoostRemoved): F[Unit]           = noop(boostRemoved)
+  def onManagedBot(managedBot: ManagedBotUpdated): F[Unit]                  = noop(managedBot)
 
   private def noopReply[A](a: A) = Monad[F].pure(a).map(_ => Option.empty[Method[?]])
 
@@ -129,6 +131,7 @@ abstract class WebhookBot[F[_]: Async](
   def onChatJoinRequestReply(request: ChatJoinRequest): F[Option[Method[?]]]                  = noopReply(request)
   def onChatBoostReply(boost: ChatBoostUpdated): F[Option[Method[?]]]                         = noopReply(boost)
   def onRemovedChatBoostReply(boostRemoved: ChatBoostRemoved): F[Option[Method[?]]]           = noopReply(boostRemoved)
+  def onManagedBotReply(managedBot: ManagedBotUpdated): F[Option[Method[?]]]                  = noopReply(managedBot)
 
   def onUpdate(update: Update): F[Option[Method[?]]] =
     List(
@@ -161,7 +164,8 @@ abstract class WebhookBot[F[_]: Async](
       update.chatBoost.map(boost => onChatBoostReply(boost) <* onChatBoost(boost)),
       update.removedChatBoost.map(boostRemoved =>
         onRemovedChatBoostReply(boostRemoved) <* onRemovedChatBoost(boostRemoved)
-      )
+      ),
+      update.managedBot.map(managedBot => onManagedBotReply(managedBot) <* onManagedBot(managedBot))
     ).flatten.head
 
   private implicit val HandleUpdateReqEntityDecoder: EntityDecoder[F, Update] = jsonOf[F, Update]

@@ -20,6 +20,10 @@ package telegramium.bots
   * @param requestChat
   *   Optional. If specified, pressing the button will open a list of suitable chats. Tapping on a chat will send its
   *   identifier to the bot in a “chat_shared” service message. Available in private chats only.
+  * @param requestManagedBot
+  *   Optional. If specified, pressing the button will ask the user to create and share a bot that will be managed by
+  *   the current bot. Available for bots that enabled management of other bots in the &#064;BotFather Mini App.
+  *   Available in private chats only.
   * @param requestContact
   *   Optional. If True, the user's phone number will be sent as a contact when the button is pressed. Available in
   *   private chats only.
@@ -39,6 +43,7 @@ final case class KeyboardButton(
   style: Option[String] = Option.empty,
   requestUsers: Option[KeyboardButtonRequestUsers] = Option.empty,
   requestChat: Option[KeyboardButtonRequestChat] = Option.empty,
+  requestManagedBot: Option[KeyboardButtonRequestManagedBot] = Option.empty,
   requestContact: Option[Boolean] = Option.empty,
   requestLocation: Option[Boolean] = Option.empty,
   requestPoll: Option[KeyboardButtonPollType] = Option.empty,

@@ -25,6 +25,7 @@ object CirceImplicits {
   import telegramium.bots.InputStoryContent
   import telegramium.bots.StoryArea
   import telegramium.bots.ChatPermissions
+  import telegramium.bots.KeyboardButton
   import telegramium.bots.IFile
   import telegramium.bots.InputPaidMedia
   import telegramium.bots.InputPollOption
@@ -836,6 +837,16 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val getmanagedbottokenreqEncoder: Encoder[GetManagedBotTokenReq] =
+    (x: GetManagedBotTokenReq) => {
+      Json.fromFields(
+        List(
+          "user_id" -> x.userId.asJson,
+          "method"  -> "getManagedBotToken".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val getmereqEncoder: Encoder[GetMeReq.type] = (_: GetMeReq.type) => ().asJson
 
   implicit lazy val getmycommandsreqEncoder: Encoder[GetMyCommandsReq] =
@@ -1155,6 +1166,16 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val replacemanagedbottokenreqEncoder: Encoder[ReplaceManagedBotTokenReq] =
+    (x: ReplaceManagedBotTokenReq) => {
+      Json.fromFields(
+        List(
+          "user_id" -> x.userId.asJson,
+          "method"  -> "replaceManagedBotToken".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val replacestickerinsetreqEncoder: Encoder[ReplaceStickerInSetReq] =
     (x: ReplaceStickerInSetReq) => {
       Json.fromFields(
@@ -1219,6 +1240,17 @@ object CirceImplicits {
           "allow_group_chats"   -> x.allowGroupChats.asJson,
           "allow_channel_chats" -> x.allowChannelChats.asJson,
           "method"              -> "savePreparedInlineMessage".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val savepreparedkeyboardbuttonreqEncoder: Encoder[SavePreparedKeyboardButtonReq] =
+    (x: SavePreparedKeyboardButtonReq) => {
+      Json.fromFields(
+        List(
+          "user_id" -> x.userId.asJson,
+          "button"  -> x.button.asJson,
+          "method"  -> "savePreparedKeyboardButton".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1597,30 +1629,37 @@ object CirceImplicits {
     (x: SendPollReq) => {
       Json.fromFields(
         List(
-          "business_connection_id"  -> x.businessConnectionId.asJson,
-          "chat_id"                 -> x.chatId.asJson,
-          "message_thread_id"       -> x.messageThreadId.asJson,
-          "question"                -> x.question.asJson,
-          "question_parse_mode"     -> x.questionParseMode.asJson,
-          "question_entities"       -> x.questionEntities.asJson,
-          "options"                 -> x.options.asJson,
-          "is_anonymous"            -> x.isAnonymous.asJson,
-          "type"                    -> x.`type`.asJson,
-          "allows_multiple_answers" -> x.allowsMultipleAnswers.asJson,
-          "correct_option_id"       -> x.correctOptionId.asJson,
-          "explanation"             -> x.explanation.asJson,
-          "explanation_parse_mode"  -> x.explanationParseMode.asJson,
-          "explanation_entities"    -> x.explanationEntities.asJson,
-          "open_period"             -> x.openPeriod.asJson,
-          "close_date"              -> x.closeDate.asJson,
-          "is_closed"               -> x.isClosed.asJson,
-          "disable_notification"    -> x.disableNotification.asJson,
-          "protect_content"         -> x.protectContent.asJson,
-          "allow_paid_broadcast"    -> x.allowPaidBroadcast.asJson,
-          "message_effect_id"       -> x.messageEffectId.asJson,
-          "reply_parameters"        -> x.replyParameters.asJson,
-          "reply_markup"            -> x.replyMarkup.asJson,
-          "method"                  -> "sendPoll".asJson
+          "business_connection_id"    -> x.businessConnectionId.asJson,
+          "chat_id"                   -> x.chatId.asJson,
+          "message_thread_id"         -> x.messageThreadId.asJson,
+          "question"                  -> x.question.asJson,
+          "question_parse_mode"       -> x.questionParseMode.asJson,
+          "question_entities"         -> x.questionEntities.asJson,
+          "options"                   -> x.options.asJson,
+          "is_anonymous"              -> x.isAnonymous.asJson,
+          "type"                      -> x.`type`.asJson,
+          "allows_multiple_answers"   -> x.allowsMultipleAnswers.asJson,
+          "allows_revoting"           -> x.allowsRevoting.asJson,
+          "shuffle_options"           -> x.shuffleOptions.asJson,
+          "allow_adding_options"      -> x.allowAddingOptions.asJson,
+          "hide_results_until_closes" -> x.hideResultsUntilCloses.asJson,
+          "correct_option_ids"        -> x.correctOptionIds.asJson,
+          "explanation"               -> x.explanation.asJson,
+          "explanation_parse_mode"    -> x.explanationParseMode.asJson,
+          "explanation_entities"      -> x.explanationEntities.asJson,
+          "open_period"               -> x.openPeriod.asJson,
+          "close_date"                -> x.closeDate.asJson,
+          "is_closed"                 -> x.isClosed.asJson,
+          "description"               -> x.description.asJson,
+          "description_parse_mode"    -> x.descriptionParseMode.asJson,
+          "description_entities"      -> x.descriptionEntities.asJson,
+          "disable_notification"      -> x.disableNotification.asJson,
+          "protect_content"           -> x.protectContent.asJson,
+          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"         -> x.messageEffectId.asJson,
+          "reply_parameters"          -> x.replyParameters.asJson,
+          "reply_markup"              -> x.replyMarkup.asJson,
+          "method"                    -> "sendPoll".asJson
         ).filter(!_._2.isNull)
       )
     }

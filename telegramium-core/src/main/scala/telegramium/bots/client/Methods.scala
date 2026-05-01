@@ -34,6 +34,7 @@ import telegramium.bots.UserProfileAudios
 import telegramium.bots.UserProfilePhotos
 import telegramium.bots.WebhookInfo
 import telegramium.bots.PreparedInlineMessage
+import telegramium.bots.PreparedKeyboardButton
 import telegramium.bots.Poll
 
 trait Methods {
@@ -1610,6 +1611,16 @@ trait Methods {
     MethodReq[List[GameHighScore]]("getGameHighScores", req.asJson)
   }
 
+  /** Use this method to get the token of a managed bot. Returns the token as String on success.
+    *
+    * @param userId
+    *   User identifier of the managed bot whose token will be returned
+    */
+  def getManagedBotToken(userId: Long): Method[String] = {
+    val req = GetManagedBotTokenReq(userId)
+    MethodReq[String]("getManagedBotToken", req.asJson)
+  }
+
   /** A simple method for testing your bot's authentication token. Requires no parameters. Returns basic information
     * about the bot in form of a User object.
     */
@@ -1860,11 +1871,11 @@ trait Methods {
     *   Text that will be shown along with the service message about the subscription; 0-128 characters
     * @param textParseMode
     *   Mode for parsing entities in the text. See formatting options for more details. Entities other than “bold”,
-    *   “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
+    *   “italic”, “underline”, “strikethrough”, “spoiler”, “custom_emoji”, and “date_time” are ignored.
     * @param textEntities
     *   A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of
-    *   text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and
-    *   “custom_emoji” are ignored.
+    *   text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, “custom_emoji”,
+    *   and “date_time” are ignored.
     */
   def giftPremiumSubscription(
     userId: Long,
@@ -2185,6 +2196,17 @@ trait Methods {
     MethodReq[Boolean]("reopenGeneralForumTopic", req.asJson)
   }
 
+  /** Use this method to revoke the current token of a managed bot and generate a new one. Returns the new token as
+    * String on success.
+    *
+    * @param userId
+    *   User identifier of the managed bot whose token will be replaced
+    */
+  def replaceManagedBotToken(userId: Long): Method[String] = {
+    val req = ReplaceManagedBotTokenReq(userId)
+    MethodReq[String]("replaceManagedBotToken", req.asJson)
+  }
+
   /** Use this method to replace an existing sticker in a sticker set with a new one. The method is equivalent to
     * calling deleteStickerFromSet, then addStickerToSet, then setStickerPositionInSet. Returns True on success.
     *
@@ -2305,6 +2327,19 @@ trait Methods {
     val req =
       SavePreparedInlineMessageReq(userId, result, allowUserChats, allowBotChats, allowGroupChats, allowChannelChats)
     MethodReq[PreparedInlineMessage]("savePreparedInlineMessage", req.asJson)
+  }
+
+  /** Stores a keyboard button that can be used by a user within a Mini App. Returns a PreparedKeyboardButton object.
+    *
+    * @param userId
+    *   Unique identifier of the target user that can use the button
+    * @param button
+    *   A JSON-serialized object describing the button to be saved. The button must be of the type request_users,
+    *   request_chat, or request_managed_bot
+    */
+  def savePreparedKeyboardButton(userId: Long, button: KeyboardButton): Method[PreparedKeyboardButton] = {
+    val req = SavePreparedKeyboardButtonReq(userId, button)
+    MethodReq[PreparedKeyboardButton]("savePreparedKeyboardButton", req.asJson)
   }
 
   /** Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On success, the sent
@@ -2908,11 +2943,11 @@ trait Methods {
     *   Text that will be shown along with the gift; 0-128 characters
     * @param textParseMode
     *   Mode for parsing entities in the text. See formatting options for more details. Entities other than “bold”,
-    *   “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
+    *   “italic”, “underline”, “strikethrough”, “spoiler”, “custom_emoji”, and “date_time” are ignored.
     * @param textEntities
     *   A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of
-    *   text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and
-    *   “custom_emoji” are ignored.
+    *   text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, “custom_emoji”,
+    *   and “date_time” are ignored.
     */
   def sendGift(
     giftId: String,
@@ -3529,9 +3564,20 @@ trait Methods {
     * @param type
     *   Poll type, “quiz” or “regular”, defaults to “regular”
     * @param allowsMultipleAnswers
-    *   True, if the poll allows multiple answers, ignored for polls in quiz mode, defaults to False
-    * @param correctOptionId
-    *   0-based identifier of the correct answer option, required for polls in quiz mode
+    *   Pass True, if the poll allows multiple answers, defaults to False
+    * @param allowsRevoting
+    *   Pass True, if the poll allows to change chosen answer options, defaults to False for quizzes and to True for
+    *   regular polls
+    * @param shuffleOptions
+    *   Pass True, if the poll options must be shown in random order
+    * @param allowAddingOptions
+    *   Pass True, if answer options can be added to the poll after creation; not supported for anonymous polls and
+    *   quizzes
+    * @param hideResultsUntilCloses
+    *   Pass True, if poll results must be shown only after the poll closes
+    * @param correctOptionIds
+    *   A JSON-serialized list of monotonically increasing 0-based identifiers of the correct answer options, required
+    *   for polls in quiz mode
     * @param explanation
     *   Text that is shown when a user chooses an incorrect answer or taps on the lamp icon in a quiz-style poll, 0-200
     *   characters with at most 2 line feeds after entities parsing
@@ -3541,12 +3587,20 @@ trait Methods {
     *   A JSON-serialized list of special entities that appear in the poll explanation. It can be specified instead of
     *   explanation_parse_mode
     * @param openPeriod
-    *   Amount of time in seconds the poll will be active after creation, 5-600. Can't be used together with close_date.
+    *   Amount of time in seconds the poll will be active after creation, 5-2628000. Can't be used together with
+    *   close_date.
     * @param closeDate
     *   Point in time (Unix timestamp) when the poll will be automatically closed. Must be at least 5 and no more than
-    *   600 seconds in the future. Can't be used together with open_period.
+    *   2628000 seconds in the future. Can't be used together with open_period.
     * @param isClosed
     *   Pass True if the poll needs to be immediately closed. This can be useful for poll preview.
+    * @param description
+    *   Description of the poll to be sent, 0-1024 characters after entities parsing
+    * @param descriptionParseMode
+    *   Mode for parsing entities in the poll description. See formatting options for more details.
+    * @param descriptionEntities
+    *   A JSON-serialized list of special entities that appear in the poll description, which can be specified instead
+    *   of description_parse_mode
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -3573,13 +3627,20 @@ trait Methods {
     isAnonymous: Option[Boolean] = Option.empty,
     `type`: Option[String] = Option.empty,
     allowsMultipleAnswers: Option[Boolean] = Option.empty,
-    correctOptionId: Option[Int] = Option.empty,
+    allowsRevoting: Option[Boolean] = Option.empty,
+    shuffleOptions: Option[Boolean] = Option.empty,
+    allowAddingOptions: Option[Boolean] = Option.empty,
+    hideResultsUntilCloses: Option[Boolean] = Option.empty,
+    correctOptionIds: List[Int] = List.empty,
     explanation: Option[String] = Option.empty,
     explanationParseMode: Option[ParseMode] = Option.empty,
     explanationEntities: List[MessageEntity] = List.empty,
     openPeriod: Option[Int] = Option.empty,
     closeDate: Option[Long] = Option.empty,
     isClosed: Option[Boolean] = Option.empty,
+    description: Option[String] = Option.empty,
+    descriptionParseMode: Option[String] = Option.empty,
+    descriptionEntities: List[MessageEntity] = List.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
@@ -3598,13 +3659,20 @@ trait Methods {
       isAnonymous,
       `type`,
       allowsMultipleAnswers,
-      correctOptionId,
+      allowsRevoting,
+      shuffleOptions,
+      allowAddingOptions,
+      hideResultsUntilCloses,
+      correctOptionIds,
       explanation,
       explanationParseMode,
       explanationEntities,
       openPeriod,
       closeDate,
       isClosed,
+      description,
+      descriptionParseMode,
+      descriptionEntities,
       disableNotification,
       protectContent,
       allowPaidBroadcast,

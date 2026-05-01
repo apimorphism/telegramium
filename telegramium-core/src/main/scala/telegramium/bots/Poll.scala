@@ -16,14 +16,16 @@ package telegramium.bots
   *   Poll type, currently can be “regular” or “quiz”
   * @param allowsMultipleAnswers
   *   True, if the poll allows multiple answers
+  * @param allowsRevoting
+  *   True, if the poll allows to change the chosen answer options
   * @param questionEntities
   *   Optional. Special entities that appear in the question. Currently, only custom emoji entities are allowed in poll
   *   questions
   * @param options
   *   List of poll options
-  * @param correctOptionId
-  *   Optional. 0-based identifier of the correct answer option. Available only for polls in the quiz mode, which are
-  *   closed, or was sent (not forwarded) by the bot or to the private chat with the bot.
+  * @param correctOptionIds
+  *   Optional. Array of 0-based identifiers of the correct answer options. Available only for polls in quiz mode which
+  *   are closed or were sent (not forwarded) by the bot or to the private chat with the bot.
   * @param explanation
   *   Optional. Text that is shown when a user chooses an incorrect answer or taps on the lamp icon in a quiz-style
   *   poll, 0-200 characters
@@ -33,6 +35,10 @@ package telegramium.bots
   *   Optional. Amount of time in seconds the poll will be active after creation
   * @param closeDate
   *   Optional. Point in time (Unix timestamp) when the poll will be automatically closed
+  * @param description
+  *   Optional. Description of the poll; for polls inside the Message object only
+  * @param descriptionEntities
+  *   Optional. Special entities like usernames, URLs, bot commands, etc. that appear in the description
   */
 final case class Poll(
   id: String,
@@ -42,11 +48,14 @@ final case class Poll(
   isAnonymous: Boolean,
   `type`: String,
   allowsMultipleAnswers: Boolean,
+  allowsRevoting: Boolean,
   questionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   options: List[PollOption] = List.empty,
-  correctOptionId: Option[Int] = Option.empty,
+  correctOptionIds: List[Int] = List.empty,
   explanation: Option[String] = Option.empty,
   explanationEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   openPeriod: Option[Int] = Option.empty,
-  closeDate: Option[Long] = Option.empty
+  closeDate: Option[Long] = Option.empty,
+  description: Option[String] = Option.empty,
+  descriptionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty
 )

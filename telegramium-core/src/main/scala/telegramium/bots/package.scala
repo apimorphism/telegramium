@@ -1422,6 +1422,7 @@ object CirceImplicits {
           "quote"                             -> x.quote.asJson,
           "reply_to_story"                    -> x.replyToStory.asJson,
           "reply_to_checklist_task_id"        -> x.replyToChecklistTaskId.asJson,
+          "reply_to_poll_option_id"           -> x.replyToPollOptionId.asJson,
           "via_bot"                           -> x.viaBot.asJson,
           "edit_date"                         -> x.editDate.asJson,
           "has_protected_content"             -> x.hasProtectedContent.asJson,
@@ -1497,7 +1498,10 @@ object CirceImplicits {
           "giveaway"                          -> x.giveaway.asJson,
           "giveaway_winners"                  -> x.giveawayWinners.asJson,
           "giveaway_completed"                -> x.giveawayCompleted.asJson,
+          "managed_bot_created"               -> x.managedBotCreated.asJson,
           "paid_message_price_changed"        -> x.paidMessagePriceChanged.asJson,
+          "poll_option_added"                 -> x.pollOptionAdded.asJson,
+          "poll_option_deleted"               -> x.pollOptionDeleted.asJson,
           "suggested_post_approved"           -> x.suggestedPostApproved.asJson,
           "suggested_post_approval_failed"    -> x.suggestedPostApprovalFailed.asJson,
           "suggested_post_declined"           -> x.suggestedPostDeclined.asJson,
@@ -1535,6 +1539,7 @@ object CirceImplicits {
         _quote                  <- h.get[Option[TextQuote]]("quote")
         _replyToStory           <- h.get[Option[Story]]("reply_to_story")
         _replyToChecklistTaskId <- h.get[Option[Int]]("reply_to_checklist_task_id")
+        _replyToPollOptionId    <- h.get[Option[String]]("reply_to_poll_option_id")
         _viaBot                 <- h.get[Option[User]]("via_bot")
         _editDate               <- h.get[Option[Long]]("edit_date")
         _hasProtectedContent    <- h.get[Option[Boolean]]("has_protected_content")
@@ -1612,7 +1617,10 @@ object CirceImplicits {
         _giveaway                     <- h.get[Option[Giveaway]]("giveaway")
         _giveawayWinners              <- h.get[Option[GiveawayWinners]]("giveaway_winners")
         _giveawayCompleted            <- h.get[Option[GiveawayCompleted]]("giveaway_completed")
+        _managedBotCreated            <- h.get[Option[ManagedBotCreated]]("managed_bot_created")
         _paidMessagePriceChanged      <- h.get[Option[PaidMessagePriceChanged]]("paid_message_price_changed")
+        _pollOptionAdded              <- h.get[Option[PollOptionAdded]]("poll_option_added")
+        _pollOptionDeleted            <- h.get[Option[PollOptionDeleted]]("poll_option_deleted")
         _suggestedPostApproved        <- h.get[Option[SuggestedPostApproved]]("suggested_post_approved")
         _suggestedPostApprovalFailed  <- h.get[Option[SuggestedPostApprovalFailed]]("suggested_post_approval_failed")
         _suggestedPostDeclined        <- h.get[Option[SuggestedPostDeclined]]("suggested_post_declined")
@@ -1645,6 +1653,7 @@ object CirceImplicits {
           quote = _quote,
           replyToStory = _replyToStory,
           replyToChecklistTaskId = _replyToChecklistTaskId,
+          replyToPollOptionId = _replyToPollOptionId,
           viaBot = _viaBot,
           editDate = _editDate,
           hasProtectedContent = _hasProtectedContent,
@@ -1720,7 +1729,10 @@ object CirceImplicits {
           giveaway = _giveaway,
           giveawayWinners = _giveawayWinners,
           giveawayCompleted = _giveawayCompleted,
+          managedBotCreated = _managedBotCreated,
           paidMessagePriceChanged = _paidMessagePriceChanged,
+          pollOptionAdded = _pollOptionAdded,
+          pollOptionDeleted = _pollOptionDeleted,
           suggestedPostApproved = _suggestedPostApproved,
           suggestedPostApprovalFailed = _suggestedPostApprovalFailed,
           suggestedPostDeclined = _suggestedPostDeclined,
@@ -5301,6 +5313,7 @@ object CirceImplicits {
           "style"                -> x.style.asJson,
           "request_users"        -> x.requestUsers.asJson,
           "request_chat"         -> x.requestChat.asJson,
+          "request_managed_bot"  -> x.requestManagedBot.asJson,
           "request_contact"      -> x.requestContact.asJson,
           "request_location"     -> x.requestLocation.asJson,
           "request_poll"         -> x.requestPoll.asJson,
@@ -5333,6 +5346,17 @@ object CirceImplicits {
           "request_title"             -> x.requestTitle.asJson,
           "request_username"          -> x.requestUsername.asJson,
           "request_photo"             -> x.requestPhoto.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val keyboardbuttonrequestmanagedbotEncoder: Encoder[KeyboardButtonRequestManagedBot] =
+    (x: KeyboardButtonRequestManagedBot) => {
+      Json.fromFields(
+        List(
+          "request_id"         -> x.requestId.asJson,
+          "suggested_name"     -> x.suggestedName.asJson,
+          "suggested_username" -> x.suggestedUsername.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5467,6 +5491,44 @@ object CirceImplicits {
           botUsername = _botUsername,
           requestWriteAccess = _requestWriteAccess
         )
+      }
+    }
+
+  implicit lazy val managedbotcreatedEncoder: Encoder[ManagedBotCreated] =
+    (x: ManagedBotCreated) => {
+      Json.fromFields(
+        List(
+          "bot" -> x.bot.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val managedbotcreatedDecoder: Decoder[ManagedBotCreated] =
+    Decoder.instance { h =>
+      for {
+        _bot <- h.get[User]("bot")
+      } yield {
+        ManagedBotCreated(bot = _bot)
+      }
+    }
+
+  implicit lazy val managedbotupdatedEncoder: Encoder[ManagedBotUpdated] =
+    (x: ManagedBotUpdated) => {
+      Json.fromFields(
+        List(
+          "user" -> x.user.asJson,
+          "bot"  -> x.bot.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val managedbotupdatedDecoder: Decoder[ManagedBotUpdated] =
+    Decoder.instance { h =>
+      for {
+        _user <- h.get[User]("user")
+        _bot  <- h.get[User]("bot")
+      } yield {
+        ManagedBotUpdated(user = _user, bot = _bot)
       }
     }
 
@@ -5785,11 +5847,14 @@ object CirceImplicits {
           "is_anonymous"            -> x.isAnonymous.asJson,
           "type"                    -> x.`type`.asJson,
           "allows_multiple_answers" -> x.allowsMultipleAnswers.asJson,
-          "correct_option_id"       -> x.correctOptionId.asJson,
+          "allows_revoting"         -> x.allowsRevoting.asJson,
+          "correct_option_ids"      -> x.correctOptionIds.asJson,
           "explanation"             -> x.explanation.asJson,
           "explanation_entities"    -> x.explanationEntities.asJson,
           "open_period"             -> x.openPeriod.asJson,
-          "close_date"              -> x.closeDate.asJson
+          "close_date"              -> x.closeDate.asJson,
+          "description"             -> x.description.asJson,
+          "description_entities"    -> x.descriptionEntities.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5806,11 +5871,14 @@ object CirceImplicits {
         _isAnonymous           <- h.get[Boolean]("is_anonymous")
         _type                  <- h.get[String]("type")
         _allowsMultipleAnswers <- h.get[Boolean]("allows_multiple_answers")
-        _correctOptionId       <- h.get[Option[Int]]("correct_option_id")
+        _allowsRevoting        <- h.get[Boolean]("allows_revoting")
+        _correctOptionIds      <- h.getOrElse[List[Int]]("correct_option_ids")(List.empty)
         _explanation           <- h.get[Option[String]]("explanation")
         _explanationEntities   <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("explanation_entities")(List.empty)
         _openPeriod            <- h.get[Option[Int]]("open_period")
         _closeDate             <- h.get[Option[Long]]("close_date")
+        _description           <- h.get[Option[String]]("description")
+        _descriptionEntities   <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("description_entities")(List.empty)
       } yield {
         Poll(
           id = _id,
@@ -5822,11 +5890,14 @@ object CirceImplicits {
           isAnonymous = _isAnonymous,
           `type` = _type,
           allowsMultipleAnswers = _allowsMultipleAnswers,
-          correctOptionId = _correctOptionId,
+          allowsRevoting = _allowsRevoting,
+          correctOptionIds = _correctOptionIds,
           explanation = _explanation,
           explanationEntities = _explanationEntities,
           openPeriod = _openPeriod,
-          closeDate = _closeDate
+          closeDate = _closeDate,
+          description = _description,
+          descriptionEntities = _descriptionEntities
         )
       }
     }
@@ -5835,10 +5906,11 @@ object CirceImplicits {
     (x: PollAnswer) => {
       Json.fromFields(
         List(
-          "poll_id"    -> x.pollId.asJson,
-          "voter_chat" -> x.voterChat.asJson,
-          "user"       -> x.user.asJson,
-          "option_ids" -> x.optionIds.asJson
+          "poll_id"               -> x.pollId.asJson,
+          "voter_chat"            -> x.voterChat.asJson,
+          "user"                  -> x.user.asJson,
+          "option_ids"            -> x.optionIds.asJson,
+          "option_persistent_ids" -> x.optionPersistentIds.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5846,12 +5918,19 @@ object CirceImplicits {
   implicit lazy val pollanswerDecoder: Decoder[PollAnswer] =
     Decoder.instance { h =>
       for {
-        _pollId    <- h.get[String]("poll_id")
-        _voterChat <- h.get[Option[Chat]]("voter_chat")
-        _user      <- h.get[Option[User]]("user")
-        _optionIds <- h.getOrElse[List[Int]]("option_ids")(List.empty)
+        _pollId              <- h.get[String]("poll_id")
+        _voterChat           <- h.get[Option[Chat]]("voter_chat")
+        _user                <- h.get[Option[User]]("user")
+        _optionIds           <- h.getOrElse[List[Int]]("option_ids")(List.empty)
+        _optionPersistentIds <- h.getOrElse[List[String]]("option_persistent_ids")(List.empty)
       } yield {
-        PollAnswer(pollId = _pollId, voterChat = _voterChat, user = _user, optionIds = _optionIds)
+        PollAnswer(
+          pollId = _pollId,
+          voterChat = _voterChat,
+          user = _user,
+          optionIds = _optionIds,
+          optionPersistentIds = _optionPersistentIds
+        )
       }
     }
 
@@ -5859,9 +5938,13 @@ object CirceImplicits {
     (x: PollOption) => {
       Json.fromFields(
         List(
+          "persistent_id" -> x.persistentId.asJson,
           "text"          -> x.text.asJson,
           "text_entities" -> x.textEntities.asJson,
-          "voter_count"   -> x.voterCount.asJson
+          "voter_count"   -> x.voterCount.asJson,
+          "added_by_user" -> x.addedByUser.asJson,
+          "added_by_chat" -> x.addedByChat.asJson,
+          "addition_date" -> x.additionDate.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5869,11 +5952,81 @@ object CirceImplicits {
   implicit lazy val polloptionDecoder: Decoder[PollOption] =
     Decoder.instance { h =>
       for {
+        _persistentId <- h.get[String]("persistent_id")
         _text         <- h.get[String]("text")
         _textEntities <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("text_entities")(List.empty)
         _voterCount   <- h.get[Int]("voter_count")
+        _addedByUser  <- h.get[Option[User]]("added_by_user")
+        _addedByChat  <- h.get[Option[Chat]]("added_by_chat")
+        _additionDate <- h.get[Option[Long]]("addition_date")
       } yield {
-        PollOption(text = _text, textEntities = _textEntities, voterCount = _voterCount)
+        PollOption(
+          persistentId = _persistentId,
+          text = _text,
+          textEntities = _textEntities,
+          voterCount = _voterCount,
+          addedByUser = _addedByUser,
+          addedByChat = _addedByChat,
+          additionDate = _additionDate
+        )
+      }
+    }
+
+  implicit lazy val polloptionaddedEncoder: Encoder[PollOptionAdded] =
+    (x: PollOptionAdded) => {
+      Json.fromFields(
+        List(
+          "poll_message"         -> x.pollMessage.asJson,
+          "option_persistent_id" -> x.optionPersistentId.asJson,
+          "option_text"          -> x.optionText.asJson,
+          "option_text_entities" -> x.optionTextEntities.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val polloptionaddedDecoder: Decoder[PollOptionAdded] =
+    Decoder.instance { h =>
+      for {
+        _pollMessage        <- h.get[Option[MaybeInaccessibleMessage]]("poll_message")
+        _optionPersistentId <- h.get[String]("option_persistent_id")
+        _optionText         <- h.get[String]("option_text")
+        _optionTextEntities <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("option_text_entities")(List.empty)
+      } yield {
+        PollOptionAdded(
+          pollMessage = _pollMessage,
+          optionPersistentId = _optionPersistentId,
+          optionText = _optionText,
+          optionTextEntities = _optionTextEntities
+        )
+      }
+    }
+
+  implicit lazy val polloptiondeletedEncoder: Encoder[PollOptionDeleted] =
+    (x: PollOptionDeleted) => {
+      Json.fromFields(
+        List(
+          "poll_message"         -> x.pollMessage.asJson,
+          "option_persistent_id" -> x.optionPersistentId.asJson,
+          "option_text"          -> x.optionText.asJson,
+          "option_text_entities" -> x.optionTextEntities.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val polloptiondeletedDecoder: Decoder[PollOptionDeleted] =
+    Decoder.instance { h =>
+      for {
+        _pollMessage        <- h.get[Option[MaybeInaccessibleMessage]]("poll_message")
+        _optionPersistentId <- h.get[String]("option_persistent_id")
+        _optionText         <- h.get[String]("option_text")
+        _optionTextEntities <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("option_text_entities")(List.empty)
+      } yield {
+        PollOptionDeleted(
+          pollMessage = _pollMessage,
+          optionPersistentId = _optionPersistentId,
+          optionText = _optionText,
+          optionTextEntities = _optionTextEntities
+        )
       }
     }
 
@@ -5932,6 +6085,24 @@ object CirceImplicits {
         _expirationDate <- h.get[Long]("expiration_date")
       } yield {
         PreparedInlineMessage(id = _id, expirationDate = _expirationDate)
+      }
+    }
+
+  implicit lazy val preparedkeyboardbuttonEncoder: Encoder[PreparedKeyboardButton] =
+    (x: PreparedKeyboardButton) => {
+      Json.fromFields(
+        List(
+          "id" -> x.id.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val preparedkeyboardbuttonDecoder: Decoder[PreparedKeyboardButton] =
+    Decoder.instance { h =>
+      for {
+        _id <- h.get[String]("id")
+      } yield {
+        PreparedKeyboardButton(id = _id)
       }
     }
 
@@ -6020,7 +6191,8 @@ object CirceImplicits {
           "quote_parse_mode"            -> x.quoteParseMode.asJson,
           "quote_entities"              -> x.quoteEntities.asJson,
           "quote_position"              -> x.quotePosition.asJson,
-          "checklist_task_id"           -> x.checklistTaskId.asJson
+          "checklist_task_id"           -> x.checklistTaskId.asJson,
+          "poll_option_id"              -> x.pollOptionId.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6876,7 +7048,8 @@ object CirceImplicits {
           "chat_member"               -> x.chatMember.asJson,
           "chat_join_request"         -> x.chatJoinRequest.asJson,
           "chat_boost"                -> x.chatBoost.asJson,
-          "removed_chat_boost"        -> x.removedChatBoost.asJson
+          "removed_chat_boost"        -> x.removedChatBoost.asJson,
+          "managed_bot"               -> x.managedBot.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6908,6 +7081,7 @@ object CirceImplicits {
         _chatJoinRequest         <- h.get[Option[ChatJoinRequest]]("chat_join_request")
         _chatBoost               <- h.get[Option[ChatBoostUpdated]]("chat_boost")
         _removedChatBoost        <- h.get[Option[ChatBoostRemoved]]("removed_chat_boost")
+        _managedBot              <- h.get[Option[ManagedBotUpdated]]("managed_bot")
       } yield {
         Update(
           updateId = _updateId,
@@ -6933,7 +7107,8 @@ object CirceImplicits {
           chatMember = _chatMember,
           chatJoinRequest = _chatJoinRequest,
           chatBoost = _chatBoost,
-          removedChatBoost = _removedChatBoost
+          removedChatBoost = _removedChatBoost,
+          managedBot = _managedBot
         )
       }
     }
@@ -6956,7 +7131,8 @@ object CirceImplicits {
           "can_connect_to_business"       -> x.canConnectToBusiness.asJson,
           "has_main_web_app"              -> x.hasMainWebApp.asJson,
           "has_topics_enabled"            -> x.hasTopicsEnabled.asJson,
-          "allows_users_to_create_topics" -> x.allowsUsersToCreateTopics.asJson
+          "allows_users_to_create_topics" -> x.allowsUsersToCreateTopics.asJson,
+          "can_manage_bots"               -> x.canManageBots.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6979,6 +7155,7 @@ object CirceImplicits {
         _hasMainWebApp             <- h.get[Option[Boolean]]("has_main_web_app")
         _hasTopicsEnabled          <- h.get[Option[Boolean]]("has_topics_enabled")
         _allowsUsersToCreateTopics <- h.get[Option[Boolean]]("allows_users_to_create_topics")
+        _canManageBots             <- h.get[Option[Boolean]]("can_manage_bots")
       } yield {
         User(
           id = _id,
@@ -6995,7 +7172,8 @@ object CirceImplicits {
           canConnectToBusiness = _canConnectToBusiness,
           hasMainWebApp = _hasMainWebApp,
           hasTopicsEnabled = _hasTopicsEnabled,
-          allowsUsersToCreateTopics = _allowsUsersToCreateTopics
+          allowsUsersToCreateTopics = _allowsUsersToCreateTopics,
+          canManageBots = _canManageBots
         )
       }
     }
