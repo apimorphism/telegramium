@@ -728,7 +728,7 @@ trait Methods {
   def deleteAllMessageReactions(
     chatId: ChatId,
     userId: Option[Long] = Option.empty,
-    actorChatId: Option[Int] = Option.empty
+    actorChatId: Option[Long] = Option.empty
   ): Method[Boolean] = {
     val req = DeleteAllMessageReactionsReq(chatId, userId, actorChatId)
     MethodReq[Boolean]("deleteAllMessageReactions", req.asJson)
@@ -824,7 +824,7 @@ trait Methods {
     chatId: ChatId,
     messageId: Int,
     userId: Option[Long] = Option.empty,
-    actorChatId: Option[Int] = Option.empty
+    actorChatId: Option[Long] = Option.empty
   ): Method[Boolean] = {
     val req = DeleteMessageReactionReq(chatId, messageId, userId, actorChatId)
     MethodReq[Boolean]("deleteMessageReaction", req.asJson)

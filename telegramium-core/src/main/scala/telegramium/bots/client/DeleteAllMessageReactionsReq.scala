@@ -12,5 +12,5 @@ import telegramium.bots.ChatId
 final case class DeleteAllMessageReactionsReq(
   chatId: ChatId,
   userId: Option[Long] = Option.empty,
-  actorChatId: Option[Int] = Option.empty
+  actorChatId: Option[Long] = Option.empty
 )

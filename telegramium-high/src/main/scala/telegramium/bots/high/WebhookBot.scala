@@ -120,7 +120,7 @@ abstract class WebhookBot[F[_]: Async](
   def onBusinessMessageReply(msg: Message): F[Option[Method[?]]]                              = noopReply(msg)
   def onEditedBusinessMessageReply(msg: Message): F[Option[Method[?]]]                        = noopReply(msg)
   def onDeletedBusinessMessagesReply(messages: BusinessMessagesDeleted): F[Option[Method[?]]] = noopReply(messages)
-  def onGuestMessageReply(msg: Message): F[Option[Method[?]]]                                = noopReply(msg)
+  def onGuestMessageReply(msg: Message): F[Option[Method[?]]]                                 = noopReply(msg)
   def onMessageReactionReply(reaction: MessageReactionUpdated): F[Option[Method[?]]]          = noopReply(reaction)
   def onMessageReactionCountReply(count: MessageReactionCountUpdated): F[Option[Method[?]]]   = noopReply(count)
   def onInlineQueryReply(query: InlineQuery): F[Option[Method[?]]]                            = noopReply(query)

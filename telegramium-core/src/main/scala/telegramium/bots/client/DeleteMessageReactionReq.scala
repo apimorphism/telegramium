@@ -15,5 +15,5 @@ final case class DeleteMessageReactionReq(
   chatId: ChatId,
   messageId: Int,
   userId: Option[Long] = Option.empty,
-  actorChatId: Option[Int] = Option.empty
+  actorChatId: Option[Long] = Option.empty
 )
