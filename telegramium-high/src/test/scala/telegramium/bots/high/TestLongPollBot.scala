@@ -34,6 +34,7 @@ class TestLongPollBot(api: Api[IO]) extends LongPollBot[IO](api) {
   override def onEditedBusinessMessage(msg: Message): IO[Unit] = sendMessageTask("onEditedBusinessMessage")
   override def onDeletedBusinessMessages(messages: BusinessMessagesDeleted): IO[Unit] =
     sendMessageTask("onDeletedBusinessMessages")
+  override def onGuestMessage(msg: Message): IO[Unit]                        = sendMessageTask("onGuestMessage")
   override def onMessageReaction(reaction: MessageReactionUpdated): IO[Unit] = sendMessageTask("onMessageReaction")
   override def onMessageReactionCount(count: MessageReactionCountUpdated): IO[Unit] = sendMessageTask(
     "onMessageReactionCount"

@@ -269,6 +269,13 @@ class WebhookBotISpec
       )
     }
 
+    "guest message" in {
+      mockServerClient
+        .when(sendMessageRequest("onGuestMessage"))
+        .respond(sendMessageResponse)
+      verifyResult(testUpdate.copy(guestMessage = testMessage.some), "onGuestMessageReply")
+    }
+
     "message reaction" in {
       mockServerClient
         .when(sendMessageRequest("onMessageReaction"))

@@ -56,6 +56,9 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
   override def onDeletedBusinessMessages(messages: BusinessMessagesDeleted): IO[Unit] =
     api.execute(sendMessageMethod("onDeletedBusinessMessages")).void
 
+  override def onGuestMessage(msg: Message): IO[Unit] =
+    api.execute(sendMessageMethod("onGuestMessage")).void
+
   override def onMessageReaction(reaction: MessageReactionUpdated): IO[Unit] =
     api.execute(sendMessageMethod("onMessageReaction")).void
 
@@ -127,6 +130,9 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
 
   override def onDeletedBusinessMessagesReply(messages: BusinessMessagesDeleted): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onDeletedBusinessMessagesReply").some)
+
+  override def onGuestMessageReply(msg: Message): IO[Option[Method[?]]] =
+    IO.pure(sendMessageMethod("onGuestMessageReply").some)
 
   override def onMessageReactionReply(reaction: MessageReactionUpdated): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onMessageReactionReply").some)

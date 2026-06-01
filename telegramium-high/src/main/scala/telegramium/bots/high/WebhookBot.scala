@@ -92,6 +92,7 @@ abstract class WebhookBot[F[_]: Async](
   def onBusinessMessage(msg: Message): F[Unit]                              = noop(msg)
   def onEditedBusinessMessage(msg: Message): F[Unit]                        = noop(msg)
   def onDeletedBusinessMessages(messages: BusinessMessagesDeleted): F[Unit] = noop(messages)
+  def onGuestMessage(msg: Message): F[Unit]                                 = noop(msg)
   def onMessageReaction(reaction: MessageReactionUpdated): F[Unit]          = noop(reaction)
   def onMessageReactionCount(count: MessageReactionCountUpdated): F[Unit]   = noop(count)
   def onInlineQuery(query: InlineQuery): F[Unit]                            = noop(query)
@@ -119,6 +120,7 @@ abstract class WebhookBot[F[_]: Async](
   def onBusinessMessageReply(msg: Message): F[Option[Method[?]]]                              = noopReply(msg)
   def onEditedBusinessMessageReply(msg: Message): F[Option[Method[?]]]                        = noopReply(msg)
   def onDeletedBusinessMessagesReply(messages: BusinessMessagesDeleted): F[Option[Method[?]]] = noopReply(messages)
+  def onGuestMessageReply(msg: Message): F[Option[Method[?]]]                                = noopReply(msg)
   def onMessageReactionReply(reaction: MessageReactionUpdated): F[Option[Method[?]]]          = noopReply(reaction)
   def onMessageReactionCountReply(count: MessageReactionCountUpdated): F[Option[Method[?]]]   = noopReply(count)
   def onInlineQueryReply(query: InlineQuery): F[Option[Method[?]]]                            = noopReply(query)
@@ -152,6 +154,7 @@ abstract class WebhookBot[F[_]: Async](
       update.deletedBusinessMessages.map(messages =>
         onDeletedBusinessMessagesReply(messages) <* onDeletedBusinessMessages(messages)
       ),
+      update.guestMessage.map(msg => onGuestMessageReply(msg) <* onGuestMessage(msg)),
       update.messageReaction.map(reaction => onMessageReactionReply(reaction) <* onMessageReaction(reaction)),
       update.messageReactionCount.map(count => onMessageReactionCountReply(count) <* onMessageReactionCount(count)),
       update.inlineQuery.map(query => onInlineQueryReply(query) <* onInlineQuery(query)),

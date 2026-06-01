@@ -152,6 +152,14 @@ class LongPollBotISpec
       verifyMessageSent("onDeletedBusinessMessages")
     }
 
+    "guest message" in {
+      mockServerClient
+        .when(sendMessageRequest("onGuestMessage"))
+        .respond(sendMessageResponse)
+      bot.onUpdate(testUpdate.copy(guestMessage = testMessage.some)).unsafeRunSync()
+      verifyMessageSent("onGuestMessage")
+    }
+
     "message reaction" in {
       mockServerClient
         .when(sendMessageRequest("onMessageReaction"))
