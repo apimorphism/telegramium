@@ -16,7 +16,7 @@ package telegramium.bots.client
   */
 final case class RepostStoryReq(
   businessConnectionId: String,
-  fromChatId: Int,
+  fromChatId: Long,
   fromStoryId: Int,
   activePeriod: Int,
   postToChatPage: Option[Boolean] = Option.empty,

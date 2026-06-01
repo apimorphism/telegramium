@@ -11,5 +11,5 @@ package telegramium.bots.client
 final case class SetManagedBotAccessSettingsReq(
   userId: Long,
   isAccessRestricted: Boolean,
-  addedUserIds: List[Int] = List.empty
+  addedUserIds: List[Long] = List.empty
 )

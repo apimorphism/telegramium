@@ -2323,7 +2323,7 @@ trait Methods {
     */
   def repostStory(
     businessConnectionId: String,
-    fromChatId: Int,
+    fromChatId: Long,
     fromStoryId: Int,
     activePeriod: Int,
     postToChatPage: Option[Boolean] = Option.empty,
@@ -4636,7 +4636,7 @@ trait Methods {
   def setManagedBotAccessSettings(
     userId: Long,
     isAccessRestricted: Boolean,
-    addedUserIds: List[Int] = List.empty
+    addedUserIds: List[Long] = List.empty
   ): Method[Boolean] = {
     val req = SetManagedBotAccessSettingsReq(userId, isAccessRestricted, addedUserIds)
     MethodReq[Boolean]("setManagedBotAccessSettings", req.asJson)
