@@ -5,7 +5,7 @@ package telegramium.bots
   *
   * @param query
   *   Optional. The default inline query to be inserted in the input field. If left empty, only the bot's username will
-  *   be inserted
+  *   be inserted.
   * @param allowUserChats
   *   Optional. True, if private chats with users can be chosen
   * @param allowBotChats

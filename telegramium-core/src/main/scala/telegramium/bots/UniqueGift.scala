@@ -7,7 +7,7 @@ package telegramium.bots
   * @param baseName
   *   Human-readable name of the regular gift from which this unique gift was upgraded
   * @param name
-  *   Unique name of the gift. This name can be used in https://t.me/nft/... links and story areas
+  *   Unique name of the gift. This name can be used in https://t.me/nft/... links and story areas.
   * @param number
   *   Unique number of the upgraded gift among gifts upgraded from the same regular gift
   * @param model

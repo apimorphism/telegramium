@@ -11,7 +11,7 @@ import telegramium.bots.BotCommandScope
   *   BotCommandScopeDefault.
   * @param languageCode
   *   A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for
-  *   whose language there are no dedicated commands
+  *   whose language there are no dedicated commands.
   */
 final case class SetMyCommandsReq(
   commands: List[BotCommand] = List.empty,

@@ -6,6 +6,6 @@ package telegramium.bots
   * @param requestId
   *   Identifier of the request
   * @param users
-  *   Information about users shared with the bot.
+  *   Information about users shared with the bot
   */
 final case class UsersShared(requestId: Int, users: List[SharedUser] = List.empty)

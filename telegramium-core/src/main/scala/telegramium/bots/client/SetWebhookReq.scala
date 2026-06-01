@@ -3,7 +3,7 @@ package telegramium.bots.client
 import telegramium.bots.IFile
 
 /** @param url
-  *   HTTPS URL to send updates to. Use an empty string to remove webhook integration
+  *   HTTPS URL to send updates to. Use an empty string to remove webhook integration.
   * @param certificate
   *   Upload your public key certificate so that the root certificate in use can be checked. See our self-signed guide
   *   for details.

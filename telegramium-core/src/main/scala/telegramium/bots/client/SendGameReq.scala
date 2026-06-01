@@ -1,10 +1,12 @@
 package telegramium.bots.client
 
+import telegramium.bots.ChatId
 import telegramium.bots.ReplyParameters
 import telegramium.bots.InlineKeyboardMarkup
 
 /** @param chatId
-  *   Unique identifier for the target chat. Games can't be sent to channel direct messages chats and channel chats.
+  *   Unique identifier for the target chat or username of the target bot in the format &#064;username. Games can't be
+  *   sent to channel direct messages chats and channel chats.
   * @param gameShortName
   *   Short name of the game, serves as the unique identifier for the game. Set up your games via &#064;BotFather.
   * @param businessConnectionId
@@ -18,7 +20,7 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Protects the contents of the sent message from forwarding and saving
   * @param allowPaidBroadcast
   *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-  *   per message. The relevant Stars will be withdrawn from the bot's balance
+  *   per message. The relevant Stars will be withdrawn from the bot's balance.
   * @param messageEffectId
   *   Unique identifier of the message effect to be added to the message; for private chats only
   * @param replyParameters
@@ -28,7 +30,7 @@ import telegramium.bots.InlineKeyboardMarkup
   *   empty, the first button must launch the game.
   */
 final case class SendGameReq(
-  chatId: Long,
+  chatId: ChatId,
   gameShortName: String,
   businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,

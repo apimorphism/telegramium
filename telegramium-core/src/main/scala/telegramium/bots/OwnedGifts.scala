@@ -7,7 +7,7 @@ package telegramium.bots
   * @param gifts
   *   The list of gifts
   * @param nextOffset
-  *   Optional. Offset for the next request. If empty, then there are no more results
+  *   Optional. Offset for the next request. If empty, then there are no more results.
   */
 final case class OwnedGifts(
   totalCount: Int,

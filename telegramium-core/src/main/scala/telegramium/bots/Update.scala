@@ -1,7 +1,6 @@
 package telegramium.bots
 
-/** This object represents an incoming update. At most one of the optional parameters can be present in any given
-  * update.
+/** This object represents an incoming update. At most one of the optional fields can be present in any given update.
   *
   * @param updateId
   *   The update's unique identifier. Update identifiers start from a certain positive number and increase sequentially.
@@ -27,6 +26,9 @@ package telegramium.bots
   *   Optional. New version of a message from a connected business account
   * @param deletedBusinessMessages
   *   Optional. Messages were deleted from a connected business account
+  * @param guestMessage
+  *   Optional. New guest message. The bot can use the field Message.guest_query_id and the method answerGuestQuery to
+  *   send a message in response.
   * @param messageReaction
   *   Optional. A reaction to a message was changed by a user. The bot must be an administrator in the chat and must
   *   explicitly specify "message_reaction" in the list of allowed_updates to receive these updates. The update isn't
@@ -43,14 +45,14 @@ package telegramium.bots
   * @param callbackQuery
   *   Optional. New incoming callback query
   * @param shippingQuery
-  *   Optional. New incoming shipping query. Only for invoices with flexible price
+  *   Optional. New incoming shipping query. Only for invoices with flexible price.
   * @param preCheckoutQuery
-  *   Optional. New incoming pre-checkout query. Contains full information about checkout
+  *   Optional. New incoming pre-checkout query. Contains full information about checkout.
   * @param purchasedPaidMedia
   *   Optional. A user purchased paid media with a non-empty payload sent by the bot in a non-channel chat
   * @param poll
   *   Optional. New poll state. Bots receive only updates about manually stopped polls and polls, which are sent by the
-  *   bot
+  *   bot.
   * @param pollAnswer
   *   Optional. A user changed their answer in a non-anonymous poll. Bots receive new votes only in polls that were sent
   *   by the bot itself.
@@ -81,6 +83,7 @@ final case class Update(
   businessMessage: Option[Message] = Option.empty,
   editedBusinessMessage: Option[Message] = Option.empty,
   deletedBusinessMessages: Option[BusinessMessagesDeleted] = Option.empty,
+  guestMessage: Option[Message] = Option.empty,
   messageReaction: Option[MessageReactionUpdated] = Option.empty,
   messageReactionCount: Option[MessageReactionCountUpdated] = Option.empty,
   inlineQuery: Option[InlineQuery] = Option.empty,

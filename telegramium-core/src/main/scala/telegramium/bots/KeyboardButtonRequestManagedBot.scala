@@ -4,7 +4,7 @@ package telegramium.bots
   * shared with the bot using the update managed_bot and a Message with the field managed_bot_created.
   *
   * @param requestId
-  *   Signed 32-bit identifier of the request. Must be unique within the message
+  *   Signed 32-bit identifier of the request. Must be unique within the message.
   * @param suggestedName
   *   Optional. Suggested name for the bot
   * @param suggestedUsername

@@ -7,7 +7,8 @@ import telegramium.bots.ReplyParameters
 import telegramium.bots.InlineKeyboardMarkup
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+  *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+  *   &#064;username
   * @param title
   *   Product name, 1-32 characters
   * @param description
@@ -41,7 +42,7 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Unique deep-linking parameter. If left empty, forwarded copies of the sent message will have a Pay button,
   *   allowing multiple users to pay directly from the forwarded message, using the same invoice. If non-empty,
   *   forwarded copies of the sent message will have a URL button with a deep link to the bot (instead of a Pay button),
-  *   with the value used as the start parameter
+  *   with the value used as the start parameter.
   * @param providerData
   *   JSON-serialized data about the invoice, which will be shared with the payment provider. A detailed description of
   *   required fields should be provided by the payment provider.
@@ -75,7 +76,7 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Protects the contents of the sent message from forwarding and saving
   * @param allowPaidBroadcast
   *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-  *   per message. The relevant Stars will be withdrawn from the bot's balance
+  *   per message. The relevant Stars will be withdrawn from the bot's balance.
   * @param messageEffectId
   *   Unique identifier of the message effect to be added to the message; for private chats only
   * @param suggestedPostParameters

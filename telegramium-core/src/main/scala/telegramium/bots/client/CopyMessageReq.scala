@@ -8,10 +8,11 @@ import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+  *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+  *   &#064;username
   * @param fromChatId
-  *   Unique identifier for the chat where the original message was sent (or channel username in the format
-  *   &#064;channelusername)
+  *   Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup or
+  *   channel in the format &#064;username)
   * @param messageId
   *   Message identifier in the chat specified in from_chat_id
   * @param messageThreadId
@@ -23,7 +24,7 @@ import telegramium.bots.KeyboardMarkup
   * @param videoStartTimestamp
   *   New start timestamp for the copied video in the message
   * @param caption
-  *   New caption for media, 0-1024 characters after entities parsing. If not specified, the original caption is kept
+  *   New caption for media, 0-1024 characters after entities parsing. If not specified, the original caption is kept.
   * @param parseMode
   *   Mode for parsing entities in the new caption. See formatting options for more details.
   * @param captionEntities
@@ -37,7 +38,7 @@ import telegramium.bots.KeyboardMarkup
   *   Protects the contents of the sent message from forwarding and saving
   * @param allowPaidBroadcast
   *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-  *   per message. The relevant Stars will be withdrawn from the bot's balance
+  *   per message. The relevant Stars will be withdrawn from the bot's balance.
   * @param messageEffectId
   *   Unique identifier of the message effect to be added to the message; only available when copying to private chats
   * @param suggestedPostParameters
@@ -47,7 +48,7 @@ import telegramium.bots.KeyboardMarkup
   *   Description of the message to reply to
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove a reply keyboard or to force a reply from the user
+  *   to remove a reply keyboard or to force a reply from the user.
   */
 final case class CopyMessageReq(
   chatId: ChatId,

@@ -10,7 +10,7 @@ import telegramium.bots.MessageEntity
   *   Required if chat_id is not specified. Unique identifier of the target user who will receive the gift.
   * @param chatId
   *   Required if user_id is not specified. Unique identifier for the chat or username of the channel (in the format
-  *   &#064;channelusername) that will receive the gift.
+  *   &#064;username) that will receive the gift.
   * @param payForUpgrade
   *   Pass True to pay for the gift upgrade from the bot's balance, thereby making the upgrade free for the receiver
   * @param text

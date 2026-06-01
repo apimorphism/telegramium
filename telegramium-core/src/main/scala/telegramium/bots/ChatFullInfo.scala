@@ -120,7 +120,7 @@ package telegramium.bots
   *   Optional. The color scheme based on a unique gift that must be used for the chat's name, message replies and link
   *   previews
   * @param paidMessageStarCount
-  *   Optional. The number of Telegram Stars a general user have to pay to send a message to the chat
+  *   Optional. The number of Telegram Stars a general user has to pay to send a message to the chat
   */
 final case class ChatFullInfo(
   id: Long,

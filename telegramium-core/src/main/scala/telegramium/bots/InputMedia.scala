@@ -2,6 +2,18 @@ package telegramium.bots
 
 sealed trait InputMedia {}
 
+/** Represents a location to be sent.
+  *
+  * @param latitude
+  *   Latitude of the location
+  * @param longitude
+  *   Longitude of the location
+  * @param horizontalAccuracy
+  *   Optional. The radius of uncertainty for the location, measured in meters; 0-1500
+  */
+final case class InputMediaLocation(latitude: Float, longitude: Float, horizontalAccuracy: Option[Float] = Option.empty)
+    extends InputMedia
+
 /** Represents an animation file (GIF or H.264/MPEG-4 AVC video without sound) to be sent.
   *
   * @param media
@@ -123,6 +135,68 @@ final case class InputMediaVideo(
   hasSpoiler: Option[Boolean] = Option.empty
 ) extends InputMedia
 
+/** Represents a live photo to be sent.
+  *
+  * @param media
+  *   Video of the live photo to send. Pass a file_id to send a file that exists on the Telegram servers (recommended)
+  *   or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name.
+  *   Sending live photos by a URL is currently unsupported.
+  * @param photo
+  *   The static photo to send. Pass a file_id to send a file that exists on the Telegram servers (recommended) or pass
+  *   “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. Sending
+  *   live photos by a URL is currently unsupported.
+  * @param caption
+  *   Optional. Caption of the live photo to be sent, 0-1024 characters after entities parsing
+  * @param parseMode
+  *   Optional. Mode for parsing entities in the live photo caption. See formatting options for more details.
+  * @param captionEntities
+  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param showCaptionAboveMedia
+  *   Optional. Pass True, if the caption must be shown above the message media
+  * @param hasSpoiler
+  *   Optional. Pass True if the live photo needs to be covered with a spoiler animation
+  */
+final case class InputMediaLivePhoto(
+  media: IFile,
+  photo: IFile,
+  caption: Option[String] = Option.empty,
+  parseMode: Option[ParseMode] = Option.empty,
+  captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
+  hasSpoiler: Option[Boolean] = Option.empty
+) extends InputMedia
+
+/** Represents a venue to be sent.
+  *
+  * @param latitude
+  *   Latitude of the location
+  * @param longitude
+  *   Longitude of the location
+  * @param title
+  *   Name of the venue
+  * @param address
+  *   Address of the venue
+  * @param foursquareId
+  *   Optional. Foursquare identifier of the venue
+  * @param foursquareType
+  *   Optional. Foursquare type of the venue, if known. (For example, “arts_entertainment/default”,
+  *   “arts_entertainment/aquarium” or “food/icecream”.)
+  * @param googlePlaceId
+  *   Optional. Google Places identifier of the venue
+  * @param googlePlaceType
+  *   Optional. Google Places type of the venue. (See supported types.)
+  */
+final case class InputMediaVenue(
+  latitude: Float,
+  longitude: Float,
+  title: String,
+  address: String,
+  foursquareId: Option[String] = Option.empty,
+  foursquareType: Option[String] = Option.empty,
+  googlePlaceId: Option[String] = Option.empty,
+  googlePlaceType: Option[String] = Option.empty
+) extends InputMedia
+
 /** Represents a general file to be sent.
   *
   * @param media
@@ -153,6 +227,17 @@ final case class InputMediaDocument(
   captionEntities: List[MessageEntity] = List.empty,
   disableContentTypeDetection: Option[Boolean] = Option.empty
 ) extends InputMedia
+
+/** Represents a sticker file to be sent.
+  *
+  * @param media
+  *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
+  *   for Telegram to get a .WEBP sticker from the Internet, or pass “attach://<file_attach_name>” to upload a new
+  *   .WEBP, .TGS, or .WEBM sticker using multipart/form-data under <file_attach_name> name.
+  * @param emoji
+  *   Optional. Emoji associated with the sticker; only for just uploaded stickers
+  */
+final case class InputMediaSticker(media: IFile, emoji: Option[String] = Option.empty) extends InputMedia
 
 /** Represents an audio file to be treated as music to be sent.
   *

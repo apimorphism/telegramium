@@ -3,7 +3,7 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+  *   Unique identifier for the target chat or username of the target channel in the format &#064;username
   * @param excludeUnsaved
   *   Pass True to exclude gifts that aren't saved to the chat's profile page. Always True, unless the bot has the
   *   can_post_messages administrator right in the channel.
@@ -27,7 +27,7 @@ import telegramium.bots.ChatId
   *   Offset of the first entry to return as received from the previous request; use an empty string to get the first
   *   chunk of results
   * @param limit
-  *   The maximum number of gifts to be returned; 1-100. Defaults to 100
+  *   The maximum number of gifts to be returned; 1-100. Defaults to 100.
   */
 final case class GetChatGiftsReq(
   chatId: ChatId,

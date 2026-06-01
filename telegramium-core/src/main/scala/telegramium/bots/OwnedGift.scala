@@ -24,7 +24,7 @@ sealed trait OwnedGift {}
   *   gift
   * @param nextTransferDate
   *   Optional. Point in time (Unix timestamp) when the gift can be transferred. If it is in the past, then the gift can
-  *   be transferred now
+  *   be transferred now.
   */
 final case class OwnedGiftUnique(
   gift: UniqueGift,
@@ -71,7 +71,7 @@ final case class OwnedGiftUnique(
   *   Optional. True, if the gift's upgrade was purchased after the gift was sent; for gifts received on behalf of
   *   business accounts only
   * @param uniqueGiftNumber
-  *   Optional. Unique number reserved for this gift when upgraded. See the number field in UniqueGift
+  *   Optional. Unique number reserved for this gift when upgraded. See the number field in UniqueGift.
   */
 final case class OwnedGiftRegular(
   gift: Gift,

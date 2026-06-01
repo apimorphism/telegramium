@@ -4,8 +4,7 @@ import telegramium.bots.ChatId
 import telegramium.bots.ChatPermissions
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target supergroup (in the format
-  *   &#064;supergroupusername)
+  *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
   * @param userId
   *   Unique identifier of the target user
   * @param permissions
@@ -17,7 +16,7 @@ import telegramium.bots.ChatPermissions
   *   permission will imply the can_send_messages permission.
   * @param untilDate
   *   Date when restrictions will be lifted for the user; Unix time. If user is restricted for more than 366 days or
-  *   less than 30 seconds from the current time, they are considered to be restricted forever
+  *   less than 30 seconds from the current time, they are considered to be restricted forever.
   */
 final case class RestrictChatMemberReq(
   chatId: ChatId,

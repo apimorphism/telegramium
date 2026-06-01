@@ -3,7 +3,7 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+  *   Unique identifier for the target chat or username of the target channel in the format &#064;username
   * @param name
   *   Invite link name; 0-32 characters
   * @param expireDate
@@ -13,7 +13,7 @@ import telegramium.bots.ChatId
   *   link; 1-99999
   * @param createsJoinRequest
   *   True, if users joining the chat via the link need to be approved by chat administrators. If True, member_limit
-  *   can't be specified
+  *   can't be specified.
   */
 final case class CreateChatInviteLinkReq(
   chatId: ChatId,

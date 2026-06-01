@@ -11,6 +11,8 @@ package telegramium.bots
   * @param textEntities
   *   Optional. Special entities that appear in the option text. Currently, only custom emoji entities are allowed in
   *   poll option texts
+  * @param media
+  *   Optional. Media added to the poll option
   * @param addedByUser
   *   Optional. User who added the option; omitted if the option wasn't added by a user after poll creation
   * @param addedByChat
@@ -24,6 +26,7 @@ final case class PollOption(
   text: String,
   voterCount: Int,
   textEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  media: Option[PollMedia] = Option.empty,
   addedByUser: Option[User] = Option.empty,
   addedByChat: Option[Chat] = Option.empty,
   additionDate: Option[Long] = Option.empty

@@ -15,7 +15,7 @@ package telegramium.bots
   * @param date
   *   Date the request was sent in Unix time
   * @param bio
-  *   Optional. Bio of the user.
+  *   Optional. Bio of the user
   * @param inviteLink
   *   Optional. Chat invite link that was used by the user to send the join request
   */

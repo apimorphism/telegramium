@@ -115,7 +115,7 @@ final case class ChatMemberMember(
   * @param user
   *   Information about the user
   * @param untilDate
-  *   Date when restrictions will be lifted for this user; Unix time. If 0, then the user is banned forever
+  *   Date when restrictions will be lifted for this user; Unix time. If 0, then the user is banned forever.
   */
 final case class ChatMemberBanned(user: User, untilDate: Long) extends ChatMember
 
@@ -146,6 +146,8 @@ final case class ChatMemberBanned(user: User, untilDate: Long) extends ChatMembe
   *   True, if the user is allowed to send animations, games, stickers and use inline bots
   * @param canAddWebPagePreviews
   *   True, if the user is allowed to add web page previews to their messages
+  * @param canReactToMessages
+  *   True, if the user is allowed to react to messages
   * @param canEditTag
   *   True, if the user is allowed to edit their own tag
   * @param canChangeInfo
@@ -157,7 +159,7 @@ final case class ChatMemberBanned(user: User, untilDate: Long) extends ChatMembe
   * @param canManageTopics
   *   True, if the user is allowed to create forum topics
   * @param untilDate
-  *   Date when restrictions will be lifted for this user; Unix time. If 0, then the user is restricted forever
+  *   Date when restrictions will be lifted for this user; Unix time. If 0, then the user is restricted forever.
   * @param tag
   *   Optional. Tag of the member
   */
@@ -174,6 +176,7 @@ final case class ChatMemberRestricted(
   canSendPolls: Boolean,
   canSendOtherMessages: Boolean,
   canAddWebPagePreviews: Boolean,
+  canReactToMessages: Boolean,
   canEditTag: Boolean,
   canChangeInfo: Boolean,
   canInviteUsers: Boolean,

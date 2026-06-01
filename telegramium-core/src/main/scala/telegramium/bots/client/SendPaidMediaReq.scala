@@ -9,9 +9,9 @@ import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername). If
-  *   the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance.
-  *   Otherwise, they will be credited to the bot's balance.
+  *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+  *   &#064;username. If the chat is a channel, all Telegram Star proceeds from this media will be credited to the
+  *   chat's balance. Otherwise, they will be credited to the bot's balance.
   * @param starCount
   *   The number of Telegram Stars that must be paid to buy access to the media; 1-25000
   * @param businessConnectionId
@@ -42,7 +42,7 @@ import telegramium.bots.KeyboardMarkup
   *   Protects the contents of the sent message from forwarding and saving
   * @param allowPaidBroadcast
   *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-  *   per message. The relevant Stars will be withdrawn from the bot's balance
+  *   per message. The relevant Stars will be withdrawn from the bot's balance.
   * @param suggestedPostParameters
   *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats only.
   *   If the message is sent as a reply to another suggested post, then that suggested post is automatically declined.
@@ -50,7 +50,7 @@ import telegramium.bots.KeyboardMarkup
   *   Description of the message to reply to
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove a reply keyboard or to force a reply from the user
+  *   to remove a reply keyboard or to force a reply from the user.
   */
 final case class SendPaidMediaReq(
   chatId: ChatId,

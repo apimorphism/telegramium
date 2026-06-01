@@ -4,6 +4,7 @@ import io.circe.syntax._
 import CirceImplicits._
 import telegramium.bots._
 import telegramium.bots.CirceImplicits._
+import telegramium.bots.SentGuestMessage
 import telegramium.bots.SentWebAppMessage
 import telegramium.bots.MessageId
 import telegramium.bots.ChatInviteLink
@@ -20,6 +21,7 @@ import telegramium.bots.MenuButton
 import telegramium.bots.Sticker
 import telegramium.bots.File
 import telegramium.bots.GameHighScore
+import telegramium.bots.BotAccessSettings
 import telegramium.bots.User
 import telegramium.bots.BotCommand
 import telegramium.bots.ChatAdministratorRights
@@ -68,7 +70,7 @@ trait Methods {
     * @param callbackQueryId
     *   Unique identifier for the query to be answered
     * @param text
-    *   Text of the notification. If not specified, nothing will be shown to the user, 0-200 characters
+    *   Text of the notification. If not specified, nothing will be shown to the user, 0-200 characters.
     * @param showAlert
     *   If True, an alert will be shown by the client instead of a notification at the top of the chat screen. Defaults
     *   to false.
@@ -90,6 +92,18 @@ trait Methods {
   ): Method[Boolean] = {
     val req = AnswerCallbackQueryReq(callbackQueryId, text, showAlert, url, cacheTime)
     MethodReq[Boolean]("answerCallbackQuery", req.asJson)
+  }
+
+  /** Use this method to reply to a received guest message. On success, a SentGuestMessage object is returned.
+    *
+    * @param guestQueryId
+    *   Unique identifier for the query to be answered
+    * @param result
+    *   A JSON-serialized object describing the message to be sent
+    */
+  def answerGuestQuery(guestQueryId: String, result: InlineQueryResult): Method[SentGuestMessage] = {
+    val req = AnswerGuestQueryReq(guestQueryId, result)
+    MethodReq[SentGuestMessage]("answerGuestQuery", req.asJson)
   }
 
   /** Use this method to send answers to an inline query. On success, True is returned. No more than 50 results per
@@ -192,7 +206,7 @@ trait Methods {
     * must have the can_invite_users administrator right. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     * @param userId
     *   Unique identifier of the target user
     */
@@ -211,7 +225,7 @@ trait Methods {
     * @param sendDate
     *   Point in time (Unix timestamp) when the post is expected to be published; omit if the date has already been
     *   specified when the suggested post was created. If specified, then the date must be not more than 2678400 seconds
-    *   (30 days) in the future
+    *   (30 days) in the future.
     */
   def approveSuggestedPost(chatId: Long, messageId: Int, sendDate: Option[Long] = Option.empty): Method[Boolean] = {
     val req = ApproveSuggestedPostReq(chatId, messageId, sendDate)
@@ -224,8 +238,8 @@ trait Methods {
     * True on success.
     *
     * @param chatId
-    *   Unique identifier for the target group or username of the target supergroup or channel (in the format
-    *   &#064;channelusername)
+    *   Unique identifier for the target group or username of the target supergroup or channel in the format
+    *   &#064;username
     * @param userId
     *   Unique identifier of the target user
     * @param untilDate
@@ -252,7 +266,7 @@ trait Methods {
     * success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     * @param senderChatId
     *   Unique identifier of the target sender chat
     */
@@ -276,8 +290,7 @@ trait Methods {
     * Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     * @param messageThreadId
     *   Unique identifier for the target message thread of the forum topic
     */
@@ -290,8 +303,7 @@ trait Methods {
     * the chat for this to work and must have the can_manage_topics administrator rights. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     */
   def closeGeneralForumTopic(chatId: ChatId): Method[Boolean] = {
     val req = CloseGeneralForumTopicReq(chatId)
@@ -317,10 +329,11 @@ trait Methods {
     * message doesn't have a link to the original message. Returns the MessageId of the sent message on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param fromChatId
-    *   Unique identifier for the chat where the original message was sent (or channel username in the format
-    *   &#064;channelusername)
+    *   Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup or
+    *   channel in the format &#064;username)
     * @param messageId
     *   Message identifier in the chat specified in from_chat_id
     * @param messageThreadId
@@ -332,7 +345,7 @@ trait Methods {
     * @param videoStartTimestamp
     *   New start timestamp for the copied video in the message
     * @param caption
-    *   New caption for media, 0-1024 characters after entities parsing. If not specified, the original caption is kept
+    *   New caption for media, 0-1024 characters after entities parsing. If not specified, the original caption is kept.
     * @param parseMode
     *   Mode for parsing entities in the new caption. See formatting options for more details.
     * @param captionEntities
@@ -346,7 +359,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; only available when copying to private chats
     * @param suggestedPostParameters
@@ -357,7 +370,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def copyMessage(
     chatId: ChatId,
@@ -408,10 +421,11 @@ trait Methods {
     * returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param fromChatId
-    *   Unique identifier for the chat where the original messages were sent (or channel username in the format
-    *   &#064;channelusername)
+    *   Unique identifier for the chat where the original messages were sent (or username of the target bot, supergroup
+    *   or channel in the format &#064;username)
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -456,7 +470,7 @@ trait Methods {
     * revokeChatInviteLink. Returns the new invite link as ChatInviteLink object.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     * @param name
     *   Invite link name; 0-32 characters
     * @param expireDate
@@ -466,7 +480,7 @@ trait Methods {
     *   invite link; 1-99999
     * @param createsJoinRequest
     *   True, if users joining the chat via the link need to be approved by chat administrators. If True, member_limit
-    *   can't be specified
+    *   can't be specified.
     */
   def createChatInviteLink(
     chatId: ChatId,
@@ -484,8 +498,7 @@ trait Methods {
     * method revokeChatInviteLink. Returns the new invite link as a ChatInviteLink object.
     *
     * @param chatId
-    *   Unique identifier for the target channel chat or username of the target channel (in the format
-    *   &#064;channelusername)
+    *   Unique identifier for the target channel chat or username of the target channel in the format &#064;username
     * @param subscriptionPeriod
     *   The number of seconds the subscription will be active for before the next payment. Currently, it must always be
     *   2592000 (30 days).
@@ -510,13 +523,12 @@ trait Methods {
     * administrator right. Returns information about the created topic as a ForumTopic object.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     * @param name
     *   Topic name, 1-128 characters
     * @param iconColor
     *   Color of the topic icon in RGB format. Currently, must be one of 7322096 (0x6FB9F0), 16766590 (0xFFD67E),
-    *   13338331 (0xCB86DB), 9367192 (0x8EEE98), 16749490 (0xFF93B2), or 16478047 (0xFB6F5F)
+    *   13338331 (0xCB86DB), 9367192 (0x8EEE98), 16749490 (0xFF93B2), or 16478047 (0xFB6F5F).
     * @param iconCustomEmojiId
     *   Unique identifier of the custom emoji shown as the topic icon. Use getForumTopicIconStickers to get all allowed
     *   custom emoji identifiers.
@@ -679,7 +691,7 @@ trait Methods {
     * must have the can_invite_users administrator right. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     * @param userId
     *   Unique identifier of the target user
     */
@@ -703,6 +715,25 @@ trait Methods {
     MethodReq[Boolean]("declineSuggestedPost", req.asJson)
   }
 
+  /** Use this method to remove up to 10000 recent reactions in a group or a supergroup chat added by a given user or
+    * chat. The bot must have the 'can_delete_messages' administrator right in the chat. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
+    * @param userId
+    *   Identifier of the user whose reactions will be removed, if the reactions were added by a user
+    * @param actorChatId
+    *   Identifier of the chat whose reactions will be removed, if the reactions were added by a chat
+    */
+  def deleteAllMessageReactions(
+    chatId: ChatId,
+    userId: Option[Long] = Option.empty,
+    actorChatId: Option[Int] = Option.empty
+  ): Method[Boolean] = {
+    val req = DeleteAllMessageReactionsReq(chatId, userId, actorChatId)
+    MethodReq[Boolean]("deleteAllMessageReactions", req.asJson)
+  }
+
   /** Delete messages on behalf of a business account. Requires the can_delete_sent_messages business bot right to
     * delete messages sent by the bot itself, or the can_delete_all_messages business bot right to delete any message.
     * Returns True on success.
@@ -711,7 +742,7 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which to delete the messages
     * @param messageIds
     *   A JSON-serialized list of 1-100 identifiers of messages to delete. All messages must be from the same chat. See
-    *   deleteMessage for limitations on which messages can be deleted
+    *   deleteMessage for limitations on which messages can be deleted.
     */
   def deleteBusinessMessages(businessConnectionId: String, messageIds: List[Int] = List.empty): Method[Boolean] = {
     val req = DeleteBusinessMessagesReq(businessConnectionId, messageIds)
@@ -723,7 +754,7 @@ trait Methods {
     * success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     */
   def deleteChatPhoto(chatId: ChatId): Method[Boolean] = {
     val req = DeleteChatPhotoReq(chatId)
@@ -735,8 +766,7 @@ trait Methods {
     * returned in getChat requests to check if the bot can use this method. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     */
   def deleteChatStickerSet(chatId: ChatId): Method[Boolean] = {
     val req = DeleteChatStickerSetReq(chatId)
@@ -748,8 +778,7 @@ trait Methods {
     * must have the can_delete_messages administrator rights. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     * @param messageThreadId
     *   Unique identifier for the target message thread of the forum topic
     */
@@ -769,7 +798,8 @@ trait Methods {
     * corresponding direct messages chat. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param messageId
     *   Identifier of the message to delete
     */
@@ -778,14 +808,37 @@ trait Methods {
     MethodReq[Boolean]("deleteMessage", req.asJson)
   }
 
+  /** Use this method to remove a reaction from a message in a group or a supergroup chat. The bot must have the
+    * 'can_delete_messages' administrator right in the chat. Returns True on success.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
+    * @param messageId
+    *   Identifier of the target message
+    * @param userId
+    *   Identifier of the user whose reaction will be removed, if the reaction was added by a user
+    * @param actorChatId
+    *   Identifier of the chat whose reaction will be removed, if the reaction was added by a chat
+    */
+  def deleteMessageReaction(
+    chatId: ChatId,
+    messageId: Int,
+    userId: Option[Long] = Option.empty,
+    actorChatId: Option[Int] = Option.empty
+  ): Method[Boolean] = {
+    val req = DeleteMessageReactionReq(chatId, messageId, userId, actorChatId)
+    MethodReq[Boolean]("deleteMessageReaction", req.asJson)
+  }
+
   /** Use this method to delete multiple messages simultaneously. If some of the specified messages can't be found, they
     * are skipped. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param messageIds
     *   A JSON-serialized list of 1-100 identifiers of messages to delete. See deleteMessage for limitations on which
-    *   messages can be deleted
+    *   messages can be deleted.
     */
   def deleteMessages(chatId: ChatId, messageIds: List[Int] = List.empty): Method[Boolean] = {
     val req = DeleteMessagesReq(chatId, messageIds)
@@ -800,7 +853,7 @@ trait Methods {
     *   BotCommandScopeDefault.
     * @param languageCode
     *   A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for
-    *   whose language there are no dedicated commands
+    *   whose language there are no dedicated commands.
     */
   def deleteMyCommands(
     scope: Option[BotCommandScope] = Option.empty,
@@ -858,7 +911,7 @@ trait Methods {
     * ChatInviteLink object.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     * @param inviteLink
     *   The invite link to edit
     * @param name
@@ -870,7 +923,7 @@ trait Methods {
     *   invite link; 1-99999
     * @param createsJoinRequest
     *   True, if users joining the chat via the link need to be approved by chat administrators. If True, member_limit
-    *   can't be specified
+    *   can't be specified.
     */
   def editChatInviteLink(
     chatId: ChatId,
@@ -888,7 +941,7 @@ trait Methods {
     * administrator rights. Returns the edited invite link as a ChatInviteLink object.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     * @param inviteLink
     *   The invite link to edit
     * @param name
@@ -908,16 +961,15 @@ trait Methods {
     * can_manage_topics administrator rights, unless it is the creator of the topic. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     * @param messageThreadId
     *   Unique identifier for the target message thread of the forum topic
     * @param name
-    *   New topic name, 0-128 characters. If not specified or empty, the current name of the topic will be kept
+    *   New topic name, 0-128 characters. If not specified or empty, the current name of the topic will be kept.
     * @param iconCustomEmojiId
     *   New unique identifier of the custom emoji shown as the topic icon. Use getForumTopicIconStickers to get all
     *   allowed custom emoji identifiers. Pass an empty string to remove the icon. If not specified, the current icon
-    *   will be kept
+    *   will be kept.
     */
   def editForumTopic(
     chatId: ChatId,
@@ -934,8 +986,7 @@ trait Methods {
     * on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     * @param name
     *   New topic name, 1-128 characters
     */
@@ -952,11 +1003,11 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
-    *   channel (in the format &#064;channelusername)
+    *   bot, supergroup or channel in the format &#064;username.
     * @param messageId
-    *   Required if inline_message_id is not specified. Identifier of the message to edit
+    *   Required if inline_message_id is not specified. Identifier of the message to edit.
     * @param inlineMessageId
-    *   Required if chat_id and message_id are not specified. Identifier of the inline message
+    *   Required if chat_id and message_id are not specified. Identifier of the inline message.
     * @param caption
     *   New caption of the message, 0-1024 characters after entities parsing
     * @param parseMode
@@ -968,7 +1019,7 @@ trait Methods {
     *   Pass True, if the caption must be shown above the message media. Supported only for animation, photo and video
     *   messages.
     * @param replyMarkup
-    *   A JSON-serialized object for an inline keyboard.
+    *   A JSON-serialized object for an inline keyboard
     */
   def editMessageCaption(
     businessConnectionId: Option[String] = Option.empty,
@@ -1001,7 +1052,7 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param chatId
-    *   Unique identifier for the target chat
+    *   Unique identifier for the target chat or username of the target bot in the format &#064;username
     * @param messageId
     *   Unique identifier for the target message
     * @param checklist
@@ -1011,7 +1062,7 @@ trait Methods {
     */
   def editMessageChecklist(
     businessConnectionId: String,
-    chatId: Long,
+    chatId: ChatId,
     messageId: Int,
     checklist: InputChecklist,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
@@ -1032,16 +1083,16 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
-    *   channel (in the format &#064;channelusername)
+    *   bot, supergroup or channel in the format &#064;username.
     * @param messageId
-    *   Required if inline_message_id is not specified. Identifier of the message to edit
+    *   Required if inline_message_id is not specified. Identifier of the message to edit.
     * @param inlineMessageId
-    *   Required if chat_id and message_id are not specified. Identifier of the inline message
+    *   Required if chat_id and message_id are not specified. Identifier of the inline message.
     * @param livePeriod
     *   New period in seconds during which the location can be updated, starting from the message send date. If
     *   0x7FFFFFFF is specified, then the location can be updated forever. Otherwise, the new value must not exceed the
     *   current live_period by more than a day, and the live location expiration date must remain within the next 90
-    *   days. If not specified, then live_period remains unchanged
+    *   days. If not specified, then live_period remains unchanged.
     * @param horizontalAccuracy
     *   The radius of uncertainty for the location, measured in meters; 0-1500
     * @param heading
@@ -1050,7 +1101,7 @@ trait Methods {
     *   The maximum distance for proximity alerts about approaching another chat member, in meters. Must be between 1
     *   and 100000 if specified.
     * @param replyMarkup
-    *   A JSON-serialized object for a new inline keyboard.
+    *   A JSON-serialized object for a new inline keyboard
     */
   def editMessageLiveLocation(
     latitude: Float,
@@ -1081,13 +1132,13 @@ trait Methods {
     MethodReq[Either[Boolean, Message]]("editMessageLiveLocation", req.asJson)
   }
 
-  /** Use this method to edit animation, audio, document, photo, or video messages, or to add media to text messages. If
-    * a message is part of a message album, then it can be edited only to an audio for audio albums, only to a document
-    * for document albums and to a photo or a video otherwise. When an inline message is edited, a new file can't be
-    * uploaded; use a previously uploaded file via its file_id or specify a URL. On success, if the edited message is
-    * not an inline message, the edited Message is returned, otherwise True is returned. Note that business messages
-    * that were not sent by the bot and do not contain an inline keyboard can only be edited within 48 hours from the
-    * time they were sent.
+  /** Use this method to edit animation, audio, document, live photo, photo, or video messages, or to add media to text
+    * messages. If a message is part of a message album, then it can be edited only to an audio for audio albums, only
+    * to a document for document albums and to a photo, a live photo, or a video otherwise. When an inline message is
+    * edited, a new file can't be uploaded; use a previously uploaded file via its file_id or specify a URL. On success,
+    * if the edited message is not an inline message, the edited Message is returned, otherwise True is returned. Note
+    * that business messages that were not sent by the bot and do not contain an inline keyboard can only be edited
+    * within 48 hours from the time they were sent.
     *
     * @param media
     *   A JSON-serialized object for a new media content of the message
@@ -1095,13 +1146,13 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
-    *   channel (in the format &#064;channelusername)
+    *   bot, supergroup or channel in the format &#064;username.
     * @param messageId
-    *   Required if inline_message_id is not specified. Identifier of the message to edit
+    *   Required if inline_message_id is not specified. Identifier of the message to edit.
     * @param inlineMessageId
-    *   Required if chat_id and message_id are not specified. Identifier of the inline message
+    *   Required if chat_id and message_id are not specified. Identifier of the inline message.
     * @param replyMarkup
-    *   A JSON-serialized object for a new inline keyboard.
+    *   A JSON-serialized object for a new inline keyboard
     */
   def editMessageMedia(
     media: InputMedia,
@@ -1124,13 +1175,13 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
-    *   channel (in the format &#064;channelusername)
+    *   bot, supergroup or channel in the format &#064;username.
     * @param messageId
-    *   Required if inline_message_id is not specified. Identifier of the message to edit
+    *   Required if inline_message_id is not specified. Identifier of the message to edit.
     * @param inlineMessageId
-    *   Required if chat_id and message_id are not specified. Identifier of the inline message
+    *   Required if chat_id and message_id are not specified. Identifier of the inline message.
     * @param replyMarkup
-    *   A JSON-serialized object for an inline keyboard.
+    *   A JSON-serialized object for an inline keyboard
     */
   def editMessageReplyMarkup(
     businessConnectionId: Option[String] = Option.empty,
@@ -1153,11 +1204,11 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
-    *   channel (in the format &#064;channelusername)
+    *   bot, supergroup or channel in the format &#064;username.
     * @param messageId
-    *   Required if inline_message_id is not specified. Identifier of the message to edit
+    *   Required if inline_message_id is not specified. Identifier of the message to edit.
     * @param inlineMessageId
-    *   Required if chat_id and message_id are not specified. Identifier of the inline message
+    *   Required if chat_id and message_id are not specified. Identifier of the inline message.
     * @param parseMode
     *   Mode for parsing entities in the message text. See formatting options for more details.
     * @param entities
@@ -1166,7 +1217,7 @@ trait Methods {
     * @param linkPreviewOptions
     *   Link preview generation options for the message
     * @param replyMarkup
-    *   A JSON-serialized object for an inline keyboard.
+    *   A JSON-serialized object for an inline keyboard
     */
   def editMessageText(
     text: String,
@@ -1246,7 +1297,7 @@ trait Methods {
     * rights. Returns the new invite link as String on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     */
   def exportChatInviteLink(chatId: ChatId): Method[String] = {
     val req = ExportChatInviteLinkReq(chatId)
@@ -1257,10 +1308,11 @@ trait Methods {
     * forwarded. On success, the sent Message is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param fromChatId
-    *   Unique identifier for the chat where the original message was sent (or channel username in the format
-    *   &#064;channelusername)
+    *   Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup or
+    *   channel in the format &#064;username)
     * @param messageId
     *   Message identifier in the chat specified in from_chat_id
     * @param messageThreadId
@@ -1313,10 +1365,11 @@ trait Methods {
     * grouping is kept for forwarded messages. On success, an array of MessageId of the sent messages is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param fromChatId
-    *   Unique identifier for the chat where the original messages were sent (or channel username in the format
-    *   &#064;channelusername)
+    *   Unique identifier for the chat where the original messages were sent (or username of the target bot, supergroup
+    *   or channel in the format &#064;username)
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -1386,7 +1439,7 @@ trait Methods {
     *   Offset of the first entry to return as received from the previous request; use empty string to get the first
     *   chunk of results
     * @param limit
-    *   The maximum number of gifts to be returned; 1-100. Defaults to 100
+    *   The maximum number of gifts to be returned; 1-100. Defaults to 100.
     */
   def getBusinessAccountGifts(
     businessConnectionId: String,
@@ -1442,30 +1495,35 @@ trait Methods {
   /** Use this method to get up-to-date information about the chat. Returns a ChatFullInfo object on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup or channel (in the format
-    *   &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target supergroup or channel in the format
+    *   &#064;username
     */
   def getChat(chatId: ChatId): Method[ChatFullInfo] = {
     val req = GetChatReq(chatId)
     MethodReq[ChatFullInfo]("getChat", req.asJson)
   }
 
-  /** Use this method to get a list of administrators in a chat, which aren't bots. Returns an Array of ChatMember
-    * objects.
+  /** Use this method to get a list of administrators in a chat. Returns an Array of ChatMember objects.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup or channel (in the format
-    *   &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target supergroup or channel in the format
+    *   &#064;username
+    * @param returnBots
+    *   Pass True to additionally receive all bots that are administrators of the chat. By default, bots other than the
+    *   current bot are omitted.
     */
-  def getChatAdministrators(chatId: ChatId): Method[List[iozhik.OpenEnum[ChatMember]]] = {
-    val req = GetChatAdministratorsReq(chatId)
+  def getChatAdministrators(
+    chatId: ChatId,
+    returnBots: Option[Boolean] = Option.empty
+  ): Method[List[iozhik.OpenEnum[ChatMember]]] = {
+    val req = GetChatAdministratorsReq(chatId, returnBots)
     MethodReq[List[iozhik.OpenEnum[ChatMember]]]("getChatAdministrators", req.asJson)
   }
 
   /** Returns the gifts owned by a chat. Returns OwnedGifts on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     * @param excludeUnsaved
     *   Pass True to exclude gifts that aren't saved to the chat's profile page. Always True, unless the bot has the
     *   can_post_messages administrator right in the channel.
@@ -1489,7 +1547,7 @@ trait Methods {
     *   Offset of the first entry to return as received from the previous request; use an empty string to get the first
     *   chunk of results
     * @param limit
-    *   The maximum number of gifts to be returned; 1-100. Defaults to 100
+    *   The maximum number of gifts to be returned; 1-100. Defaults to 100.
     */
   def getChatGifts(
     chatId: ChatId,
@@ -1524,8 +1582,8 @@ trait Methods {
     * if the bot is an administrator in the chat. Returns a ChatMember object on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup or channel (in the format
-    *   &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target supergroup or channel in the format
+    *   &#064;username
     * @param userId
     *   Unique identifier of the target user
     */
@@ -1537,8 +1595,8 @@ trait Methods {
   /** Use this method to get the number of members in a chat. Returns Int on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup or channel (in the format
-    *   &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target supergroup or channel in the format
+    *   &#064;username
     */
   def getChatMemberCount(chatId: ChatId): Method[Int] = {
     val req = GetChatMemberCountReq(chatId)
@@ -1549,7 +1607,7 @@ trait Methods {
     * Returns MenuButton on success.
     *
     * @param chatId
-    *   Unique identifier for the target private chat. If not specified, default bot's menu button will be returned
+    *   Unique identifier for the target private chat. If not specified, the bot's default menu button will be returned.
     */
   def getChatMenuButton(chatId: Option[Long] = Option.empty): Method[iozhik.OpenEnum[MenuButton]] = {
     val req = GetChatMenuButtonReq(chatId)
@@ -1595,11 +1653,11 @@ trait Methods {
     * @param userId
     *   Target user id
     * @param chatId
-    *   Required if inline_message_id is not specified. Unique identifier for the target chat
+    *   Required if inline_message_id is not specified. Unique identifier for the target chat.
     * @param messageId
-    *   Required if inline_message_id is not specified. Identifier of the sent message
+    *   Required if inline_message_id is not specified. Identifier of the sent message.
     * @param inlineMessageId
-    *   Required if chat_id and message_id are not specified. Identifier of the inline message
+    *   Required if chat_id and message_id are not specified. Identifier of the inline message.
     */
   def getGameHighScores(
     userId: Long,
@@ -1609,6 +1667,16 @@ trait Methods {
   ): Method[List[GameHighScore]] = {
     val req = GetGameHighScoresReq(userId, chatId, messageId, inlineMessageId)
     MethodReq[List[GameHighScore]]("getGameHighScores", req.asJson)
+  }
+
+  /** Use this method to get the access settings of a managed bot. Returns a BotAccessSettings object on success.
+    *
+    * @param userId
+    *   User identifier of the managed bot whose access settings will be returned
+    */
+  def getManagedBotAccessSettings(userId: Long): Method[BotAccessSettings] = {
+    val req = GetManagedBotAccessSettingsReq(userId)
+    MethodReq[BotAccessSettings]("getManagedBotAccessSettings", req.asJson)
   }
 
   /** Use this method to get the token of a managed bot. Returns the token as String on success.
@@ -1757,7 +1825,7 @@ trait Methods {
     * Returns a UserChatBoosts object.
     *
     * @param chatId
-    *   Unique identifier for the chat or username of the channel (in the format &#064;channelusername)
+    *   Unique identifier for the chat or username of the channel in the format &#064;username
     * @param userId
     *   Unique identifier of the target user
     */
@@ -1787,7 +1855,7 @@ trait Methods {
     *   Offset of the first entry to return as received from the previous request; use an empty string to get the first
     *   chunk of results
     * @param limit
-    *   The maximum number of gifts to be returned; 1-100. Defaults to 100
+    *   The maximum number of gifts to be returned; 1-100. Defaults to 100.
     */
   def getUserGifts(
     userId: Long,
@@ -1812,6 +1880,19 @@ trait Methods {
       limit
     )
     MethodReq[OwnedGifts]("getUserGifts", req.asJson)
+  }
+
+  /** Use this method to get the last messages from the personal chat (i.e., the chat currently added to their profile)
+    * of a given user. On success, an array of Message objects is returned.
+    *
+    * @param userId
+    *   Unique identifier for the target user
+    * @param limit
+    *   The maximum number of messages to return; 1-20
+    */
+  def getUserPersonalChatMessages(userId: Long, limit: Int): Method[List[Message]] = {
+    val req = GetUserPersonalChatMessagesReq(userId, limit)
+    MethodReq[List[Message]]("getUserPersonalChatMessages", req.asJson)
   }
 
   /** Use this method to get a list of profile audios for a user. Returns a UserProfileAudios object.
@@ -1894,8 +1975,7 @@ trait Methods {
     * closed if it was open. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     */
   def hideGeneralForumTopic(chatId: ChatId): Method[Boolean] = {
     val req = HideGeneralForumTopicReq(chatId)
@@ -1905,8 +1985,8 @@ trait Methods {
   /** Use this method for your bot to leave a group, supergroup or channel. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup or channel (in the format
-    *   &#064;channelusername). Channel direct messages chats aren't supported; leave the corresponding channel instead.
+    *   Unique identifier for the target chat or username of the target supergroup or channel in the format
+    *   &#064;username. Channel direct messages chats aren't supported; leave the corresponding channel instead.
     */
   def leaveChat(chatId: ChatId): Method[Boolean] = {
     val req = LeaveChatReq(chatId)
@@ -1929,7 +2009,7 @@ trait Methods {
     * Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     * @param messageId
     *   Identifier of a message to pin
     * @param businessConnectionId
@@ -2002,7 +2082,7 @@ trait Methods {
     * demote a user. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     * @param userId
     *   Unique identifier of the target user
     * @param isAnonymous
@@ -2017,7 +2097,7 @@ trait Methods {
     *   Pass True if the administrator can manage video chats
     * @param canRestrictMembers
     *   Pass True if the administrator can restrict, ban or unban chat members, or access supergroup statistics. For
-    *   backward compatibility, defaults to True for promotions of channel administrators
+    *   backward compatibility, defaults to True for promotions of channel administrators.
     * @param canPromoteMembers
     *   Pass True if the administrator can add new administrators with a subset of their own privileges or demote
     *   administrators that they have promoted, directly or indirectly (promoted by administrators that were appointed
@@ -2143,7 +2223,7 @@ trait Methods {
     * Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot or channel in the format &#064;username
     */
   def removeChatVerification(chatId: ChatId): Method[Boolean] = {
     val req = RemoveChatVerificationReq(chatId)
@@ -2173,8 +2253,7 @@ trait Methods {
     * Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     * @param messageThreadId
     *   Unique identifier for the target message thread of the forum topic
     */
@@ -2188,8 +2267,7 @@ trait Methods {
     * automatically unhidden if it was hidden. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     */
   def reopenGeneralForumTopic(chatId: ChatId): Method[Boolean] = {
     val req = ReopenGeneralForumTopicReq(chatId)
@@ -2261,8 +2339,7 @@ trait Methods {
     * user. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     * @param userId
     *   Unique identifier of the target user
     * @param permissions
@@ -2274,7 +2351,7 @@ trait Methods {
     *   permission will imply the can_send_messages permission.
     * @param untilDate
     *   Date when restrictions will be lifted for the user; Unix time. If user is restricted for more than 366 days or
-    *   less than 30 seconds from the current time, they are considered to be restricted forever
+    *   less than 30 seconds from the current time, they are considered to be restricted forever.
     */
   def restrictChatMember(
     chatId: ChatId,
@@ -2292,7 +2369,7 @@ trait Methods {
     * appropriate administrator rights. Returns the revoked invite link as ChatInviteLink object.
     *
     * @param chatId
-    *   Unique identifier of the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier of the target chat or username of the target channel in the format &#064;username
     * @param inviteLink
     *   The invite link to revoke
     */
@@ -2335,7 +2412,7 @@ trait Methods {
     *   Unique identifier of the target user that can use the button
     * @param button
     *   A JSON-serialized object describing the button to be saved. The button must be of the type request_users,
-    *   request_chat, or request_managed_bot
+    *   request_chat, or request_managed_bot.
     */
   def savePreparedKeyboardButton(userId: Long, button: KeyboardButton): Method[PreparedKeyboardButton] = {
     val req = SavePreparedKeyboardButtonReq(userId, button)
@@ -2347,7 +2424,8 @@ trait Methods {
     * the future.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param animation
     *   Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers
     *   (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new
@@ -2390,7 +2468,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param suggestedPostParameters
@@ -2401,7 +2479,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendAnimation(
     chatId: ChatId,
@@ -2462,7 +2540,8 @@ trait Methods {
     * method instead.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param audio
     *   Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers
     *   (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new
@@ -2500,7 +2579,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param suggestedPostParameters
@@ -2511,7 +2590,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendAudio(
     chatId: ChatId,
@@ -2568,8 +2647,8 @@ trait Methods {
     * time to arrive.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername). Channel chats and channel direct messages chats aren't supported.
+    *   Unique identifier for the target chat or username of the target bot or supergroup in the format &#064;username.
+    *   Channel chats and channel direct messages chats aren't supported.
     * @param action
     *   Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text
     *   messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for
@@ -2597,7 +2676,7 @@ trait Methods {
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param chatId
-    *   Unique identifier for the target chat
+    *   Unique identifier for the target chat or username of the target bot in the format &#064;username
     * @param checklist
     *   A JSON-serialized object for the checklist to send
     * @param disableNotification
@@ -2613,7 +2692,7 @@ trait Methods {
     */
   def sendChecklist(
     businessConnectionId: String,
-    chatId: Long,
+    chatId: ChatId,
     checklist: InputChecklist,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
@@ -2637,7 +2716,8 @@ trait Methods {
   /** Use this method to send phone contacts. On success, the sent Message is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param phoneNumber
     *   Contact's phone number
     * @param firstName
@@ -2660,7 +2740,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param suggestedPostParameters
@@ -2671,7 +2751,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendContact(
     chatId: ChatId,
@@ -2714,7 +2794,8 @@ trait Methods {
     * returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
@@ -2726,14 +2807,14 @@ trait Methods {
     * @param emoji
     *   Emoji on which the dice throw animation is based. Currently, must be one of “🎲”, “🎯”, “🏀”, “⚽”, “🎳”, or
     *   “🎰”. Dice can have values 1-6 for “🎲”, “🎯” and “🎳”, values 1-5 for “🏀” and “⚽”, and values 1-64 for “🎰”.
-    *   Defaults to “🎲”
+    *   Defaults to “🎲”.
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param suggestedPostParameters
@@ -2744,7 +2825,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendDice(
     chatId: ChatId,
@@ -2781,7 +2862,8 @@ trait Methods {
     * any type of up to 50 MB in size, this limit may be changed in the future.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param document
     *   File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an
     *   HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using
@@ -2816,7 +2898,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param suggestedPostParameters
@@ -2827,7 +2909,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendDocument(
     chatId: ChatId,
@@ -2877,7 +2959,8 @@ trait Methods {
   /** Use this method to send a game. On success, the sent Message is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat. Games can't be sent to channel direct messages chats and channel chats.
+    *   Unique identifier for the target chat or username of the target bot in the format &#064;username. Games can't be
+    *   sent to channel direct messages chats and channel chats.
     * @param gameShortName
     *   Short name of the game, serves as the unique identifier for the game. Set up your games via &#064;BotFather.
     * @param businessConnectionId
@@ -2891,7 +2974,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -2901,7 +2984,7 @@ trait Methods {
     *   empty, the first button must launch the game.
     */
   def sendGame(
-    chatId: Long,
+    chatId: ChatId,
     gameShortName: String,
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
@@ -2936,7 +3019,7 @@ trait Methods {
     *   Required if chat_id is not specified. Unique identifier of the target user who will receive the gift.
     * @param chatId
     *   Required if user_id is not specified. Unique identifier for the chat or username of the channel (in the format
-    *   &#064;channelusername) that will receive the gift.
+    *   &#064;username) that will receive the gift.
     * @param payForUpgrade
     *   Pass True to pay for the gift upgrade from the bot's balance, thereby making the upgrade free for the receiver
     * @param text
@@ -2965,7 +3048,8 @@ trait Methods {
   /** Use this method to send invoices. On success, the sent Message is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param title
     *   Product name, 1-32 characters
     * @param description
@@ -2999,7 +3083,7 @@ trait Methods {
     *   Unique deep-linking parameter. If left empty, forwarded copies of the sent message will have a Pay button,
     *   allowing multiple users to pay directly from the forwarded message, using the same invoice. If non-empty,
     *   forwarded copies of the sent message will have a URL button with a deep link to the bot (instead of a Pay
-    *   button), with the value used as the start parameter
+    *   button), with the value used as the start parameter.
     * @param providerData
     *   JSON-serialized data about the invoice, which will be shared with the payment provider. A detailed description
     *   of required fields should be provided by the payment provider.
@@ -3033,7 +3117,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param suggestedPostParameters
@@ -3115,10 +3199,108 @@ trait Methods {
     MethodReq[Message]("sendInvoice", req.asJson)
   }
 
-  /** Use this method to send point on the map. On success, the sent Message is returned.
+  /** Use this method to send live photos. On success, the sent Message is returned.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    * @param livePhoto
+    *   Live photo video to send. The video must be no longer than 10 seconds and must not exceed 10 MB in size. Pass a
+    *   file_id as String to send a video that exists on the Telegram servers (recommended) or upload a new video using
+    *   multipart/form-data. Sending live photos by a URL is currently unsupported.
+    * @param photo
+    *   The static photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers
+    *   (recommended) or upload a new video using multipart/form-data. Sending live photos by a URL is currently
+    *   unsupported.
+    * @param businessConnectionId
+    *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
+    * @param directMessagesTopicId
+    *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
+    *   direct messages chat
+    * @param caption
+    *   Video caption (may also be used when resending videos by file_id), 0-1024 characters after entities parsing
+    * @param parseMode
+    *   Mode for parsing entities in the video caption. See formatting options for more details.
+    * @param captionEntities
+    *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+    *   parse_mode
+    * @param showCaptionAboveMedia
+    *   Pass True, if the caption must be shown above the message media
+    * @param hasSpoiler
+    *   Pass True if the video needs to be covered with a spoiler animation
+    * @param disableNotification
+    *   Sends the message silently. Users will receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param suggestedPostParameters
+    *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
+    *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
+    *   declined.
+    * @param replyParameters
+    *   Description of the message to reply to
+    * @param replyMarkup
+    *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
+    *   instructions to remove a reply keyboard or to force a reply from the user.
+    */
+  def sendLivePhoto(
+    chatId: ChatId,
+    livePhoto: IFile,
+    photo: IFile,
+    businessConnectionId: Option[String] = Option.empty,
+    messageThreadId: Option[Int] = Option.empty,
+    directMessagesTopicId: Option[Long] = Option.empty,
+    caption: Option[String] = Option.empty,
+    parseMode: Option[ParseMode] = Option.empty,
+    captionEntities: List[MessageEntity] = List.empty,
+    showCaptionAboveMedia: Option[Boolean] = Option.empty,
+    hasSpoiler: Option[Boolean] = Option.empty,
+    disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
+    suggestedPostParameters: Option[SuggestedPostParameters] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
+    replyMarkup: Option[KeyboardMarkup] = Option.empty
+  ): Method[Message] = {
+    val req = SendLivePhotoReq(
+      chatId,
+      livePhoto,
+      photo,
+      businessConnectionId,
+      messageThreadId,
+      directMessagesTopicId,
+      caption,
+      parseMode,
+      captionEntities,
+      showCaptionAboveMedia,
+      hasSpoiler,
+      disableNotification,
+      protectContent,
+      allowPaidBroadcast,
+      messageEffectId,
+      suggestedPostParameters,
+      replyParameters,
+      replyMarkup
+    )
+    MethodReq[Message](
+      "sendLivePhoto",
+      req.asJson,
+      Map("live_photo" -> Option(livePhoto), "photo" -> Option(photo)).collect { case (k, Some(v)) => k -> v }
+    )
+  }
+
+  /** Use this method to send point on the map. On success, the sent Message is returned.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param latitude
     *   Latitude of the location
     * @param longitude
@@ -3135,7 +3317,7 @@ trait Methods {
     *   The radius of uncertainty for the location, measured in meters; 0-1500
     * @param livePeriod
     *   Period in seconds during which the location will be updated (see Live Locations, should be between 60 and 86400,
-    *   or 0x7FFFFFFF for live locations that can be edited indefinitely.
+    *   or 0x7FFFFFFF for live locations that can be edited indefinitely
     * @param heading
     *   For live locations, a direction in which the user is moving, in degrees. Must be between 1 and 360 if specified.
     * @param proximityAlertRadius
@@ -3147,7 +3329,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param suggestedPostParameters
@@ -3158,7 +3340,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendLocation(
     chatId: ChatId,
@@ -3201,12 +3383,13 @@ trait Methods {
     MethodReq[Message]("sendLocation", req.asJson)
   }
 
-  /** Use this method to send a group of photos, videos, documents or audios as an album. Documents and audio files can
-    * be only grouped in an album with messages of the same type. On success, an array of Message objects that were sent
-    * is returned.
+  /** Use this method to send a group of photos, live photos, videos, documents or audios as an album. Documents and
+    * audio files can be only grouped in an album with messages of the same type. On success, an array of Message
+    * objects that were sent is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
@@ -3223,7 +3406,7 @@ trait Methods {
     *   Protects the contents of the sent messages from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
@@ -3259,7 +3442,8 @@ trait Methods {
   /** Use this method to send text messages. On success, the sent Message is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param text
     *   Text of the message to be sent, 1-4096 characters after entities parsing
     * @param businessConnectionId
@@ -3283,7 +3467,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param suggestedPostParameters
@@ -3294,7 +3478,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendMessage(
     chatId: ChatId,
@@ -3333,18 +3517,20 @@ trait Methods {
     MethodReq[Message]("sendMessage", req.asJson)
   }
 
-  /** Use this method to stream a partial message to a user while the message is being generated. Returns True on
-    * success.
+  /** Use this method to stream a partial message to a user while the message is being generated. Note that the streamed
+    * draft is ephemeral and acts as a temporary 30-second preview - once the output is finalized, you must call
+    * sendMessage with the complete message to persist it in the user's chat. Returns True on success.
     *
     * @param chatId
     *   Unique identifier for the target private chat
     * @param draftId
     *   Unique identifier of the message draft; must be non-zero. Changes of drafts with the same identifier are
-    *   animated
-    * @param text
-    *   Text of the message to be sent, 1-4096 characters after entities parsing
+    *   animated.
     * @param messageThreadId
     *   Unique identifier for the target message thread
+    * @param text
+    *   Text of the message to be sent, 0-4096 characters after entities parsing. Pass an empty text to show a
+    *   “Thinking…” placeholder.
     * @param parseMode
     *   Mode for parsing entities in the message text. See formatting options for more details.
     * @param entities
@@ -3354,21 +3540,21 @@ trait Methods {
   def sendMessageDraft(
     chatId: Long,
     draftId: Int,
-    text: String,
     messageThreadId: Option[Int] = Option.empty,
+    text: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     entities: List[MessageEntity] = List.empty
   ): Method[Boolean] = {
-    val req = SendMessageDraftReq(chatId, draftId, text, messageThreadId, parseMode, entities)
+    val req = SendMessageDraftReq(chatId, draftId, messageThreadId, text, parseMode, entities)
     MethodReq[Boolean]("sendMessageDraft", req.asJson)
   }
 
   /** Use this method to send paid media. On success, the sent Message is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername).
-    *   If the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance.
-    *   Otherwise, they will be credited to the bot's balance.
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username. If the chat is a channel, all Telegram Star proceeds from this media will be credited to the
+    *   chat's balance. Otherwise, they will be credited to the bot's balance.
     * @param starCount
     *   The number of Telegram Stars that must be paid to buy access to the media; 1-25000
     * @param businessConnectionId
@@ -3399,7 +3585,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param suggestedPostParameters
     *   A JSON-serialized object containing the parameters of the suggested post to send; for direct messages chats
     *   only. If the message is sent as a reply to another suggested post, then that suggested post is automatically
@@ -3408,7 +3594,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendPaidMedia(
     chatId: ChatId,
@@ -3454,7 +3640,8 @@ trait Methods {
   /** Use this method to send photos. On success, the sent Message is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param photo
     *   Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass
     *   an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using
@@ -3485,7 +3672,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param suggestedPostParameters
@@ -3496,7 +3683,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendPhoto(
     chatId: ChatId,
@@ -3542,8 +3729,8 @@ trait Methods {
   /** Use this method to send a native poll. On success, the sent Message is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername).
-    *   Polls can't be sent to channel direct messages chats.
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username. Polls can't be sent to channel direct messages chats.
     * @param question
     *   Poll question, 1-300 characters
     * @param businessConnectionId
@@ -3553,12 +3740,12 @@ trait Methods {
     *   bots with forum topic mode enabled only
     * @param questionParseMode
     *   Mode for parsing entities in the question. See formatting options for more details. Currently, only custom emoji
-    *   entities are allowed
+    *   entities are allowed.
     * @param questionEntities
     *   A JSON-serialized list of special entities that appear in the poll question. It can be specified instead of
-    *   question_parse_mode
+    *   question_parse_mode.
     * @param options
-    *   A JSON-serialized list of 2-12 answer options
+    *   A JSON-serialized list of 1-12 answer options
     * @param isAnonymous
     *   True, if the poll needs to be anonymous, defaults to True
     * @param type
@@ -3575,6 +3762,13 @@ trait Methods {
     *   quizzes
     * @param hideResultsUntilCloses
     *   Pass True, if poll results must be shown only after the poll closes
+    * @param membersOnly
+    *   Pass True, if voting is limited to users who have been members of the chat where the poll is being sent for more
+    *   than 24 hours; for channel chats only
+    * @param countryCodes
+    *   A JSON-serialized list of 0-12 two-letter ISO 3166-1 alpha-2 country codes indicating the countries from which
+    *   users can vote in the poll; for channel chats only. Use “FT” as a country code to allow users with anonymous
+    *   numbers to vote. If omitted or empty, then users from any country can participate in the poll.
     * @param correctOptionIds
     *   A JSON-serialized list of monotonically increasing 0-based identifiers of the correct answer options, required
     *   for polls in quiz mode
@@ -3585,7 +3779,9 @@ trait Methods {
     *   Mode for parsing entities in the explanation. See formatting options for more details.
     * @param explanationEntities
     *   A JSON-serialized list of special entities that appear in the poll explanation. It can be specified instead of
-    *   explanation_parse_mode
+    *   explanation_parse_mode.
+    * @param explanationMedia
+    *   Media added to the quiz explanation
     * @param openPeriod
     *   Amount of time in seconds the poll will be active after creation, 5-2628000. Can't be used together with
     *   close_date.
@@ -3601,20 +3797,22 @@ trait Methods {
     * @param descriptionEntities
     *   A JSON-serialized list of special entities that appear in the poll description, which can be specified instead
     *   of description_parse_mode
+    * @param media
+    *   Media added to the poll description
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param replyParameters
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendPoll(
     chatId: ChatId,
@@ -3631,16 +3829,20 @@ trait Methods {
     shuffleOptions: Option[Boolean] = Option.empty,
     allowAddingOptions: Option[Boolean] = Option.empty,
     hideResultsUntilCloses: Option[Boolean] = Option.empty,
+    membersOnly: Option[Boolean] = Option.empty,
+    countryCodes: List[String] = List.empty,
     correctOptionIds: List[Int] = List.empty,
     explanation: Option[String] = Option.empty,
     explanationParseMode: Option[ParseMode] = Option.empty,
     explanationEntities: List[MessageEntity] = List.empty,
+    explanationMedia: Option[InputMedia] = Option.empty,
     openPeriod: Option[Int] = Option.empty,
     closeDate: Option[Long] = Option.empty,
     isClosed: Option[Boolean] = Option.empty,
     description: Option[String] = Option.empty,
     descriptionParseMode: Option[String] = Option.empty,
     descriptionEntities: List[MessageEntity] = List.empty,
+    media: Option[InputMedia] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
@@ -3663,16 +3865,20 @@ trait Methods {
       shuffleOptions,
       allowAddingOptions,
       hideResultsUntilCloses,
+      membersOnly,
+      countryCodes,
       correctOptionIds,
       explanation,
       explanationParseMode,
       explanationEntities,
+      explanationMedia,
       openPeriod,
       closeDate,
       isClosed,
       description,
       descriptionParseMode,
       descriptionEntities,
+      media,
       disableNotification,
       protectContent,
       allowPaidBroadcast,
@@ -3687,7 +3893,8 @@ trait Methods {
     * returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param sticker
     *   Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass
     *   an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP, .TGS, or
@@ -3708,7 +3915,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param suggestedPostParameters
@@ -3719,7 +3926,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendSticker(
     chatId: ChatId,
@@ -3761,7 +3968,8 @@ trait Methods {
   /** Use this method to send information about a venue. On success, the sent Message is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param latitude
     *   Latitude of the venue
     * @param longitude
@@ -3793,7 +4001,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param suggestedPostParameters
@@ -3804,7 +4012,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendVenue(
     chatId: ChatId,
@@ -3856,7 +4064,8 @@ trait Methods {
     * this limit may be changed in the future.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param video
     *   Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass
     *   an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using
@@ -3906,7 +4115,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param suggestedPostParameters
@@ -3917,7 +4126,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendVideo(
     chatId: ChatId,
@@ -3982,11 +4191,12 @@ trait Methods {
     * video messages. On success, the sent Message is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param videoNote
     *   Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers
     *   (recommended) or upload a new video using multipart/form-data. Sending video notes by a URL is currently
-    *   unsupported
+    *   unsupported.
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
     * @param messageThreadId
@@ -4011,7 +4221,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param suggestedPostParameters
@@ -4022,7 +4232,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendVideoNote(
     chatId: ChatId,
@@ -4071,7 +4281,8 @@ trait Methods {
     * send voice messages of up to 50 MB in size, this limit may be changed in the future.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param voice
     *   Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended),
     *   pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using
@@ -4099,7 +4310,7 @@ trait Methods {
     *   Protects the contents of the sent message from forwarding and saving
     * @param allowPaidBroadcast
     *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-    *   per message. The relevant Stars will be withdrawn from the bot's balance
+    *   per message. The relevant Stars will be withdrawn from the bot's balance.
     * @param messageEffectId
     *   Unique identifier of the message effect to be added to the message; for private chats only
     * @param suggestedPostParameters
@@ -4110,7 +4321,7 @@ trait Methods {
     *   Description of the message to reply to
     * @param replyMarkup
     *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    *   instructions to remove a reply keyboard or to force a reply from the user
+    *   instructions to remove a reply keyboard or to force a reply from the user.
     */
   def sendVoice(
     chatId: ChatId,
@@ -4243,8 +4454,7 @@ trait Methods {
     * success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     * @param userId
     *   Unique identifier of the target user
     * @param customTitle
@@ -4259,7 +4469,7 @@ trait Methods {
     * in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     * @param description
     *   New chat description, 0-255 characters
     */
@@ -4272,8 +4482,7 @@ trait Methods {
     * the chat for this to work and must have the can_manage_tags administrator right. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     * @param userId
     *   Unique identifier of the target user
     * @param tag
@@ -4288,9 +4497,9 @@ trait Methods {
     * success.
     *
     * @param chatId
-    *   Unique identifier for the target private chat. If not specified, default bot's menu button will be changed
+    *   Unique identifier for the target private chat. If not specified, the bot's default menu button will be changed.
     * @param menuButton
-    *   A JSON-serialized object for the bot's new menu button. Defaults to MenuButtonDefault
+    *   A JSON-serialized object for the bot's new menu button. Defaults to MenuButtonDefault.
     */
   def setChatMenuButton(
     chatId: Option[Long] = Option.empty,
@@ -4305,8 +4514,7 @@ trait Methods {
     * success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     * @param permissions
     *   A JSON-serialized object for new default chat permissions
     * @param useIndependentChatPermissions
@@ -4329,7 +4537,7 @@ trait Methods {
     * on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     * @param photo
     *   New chat photo, uploaded using multipart/form-data
     */
@@ -4347,8 +4555,7 @@ trait Methods {
     * returned in getChat requests to check if the bot can use this method. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     * @param stickerSetName
     *   Name of the sticker set to be set as the group sticker set
     */
@@ -4362,7 +4569,7 @@ trait Methods {
     * success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     * @param title
     *   New chat title, 1-128 characters
     */
@@ -4377,7 +4584,7 @@ trait Methods {
     *   Sticker set name
     * @param customEmojiId
     *   Custom emoji identifier of a sticker from the sticker set; pass an empty string to drop the thumbnail and use
-    *   the first sticker as the thumbnail.
+    *   the first sticker as the thumbnail
     */
   def setCustomEmojiStickerSetThumbnail(name: String, customEmojiId: Option[String] = Option.empty): Method[Boolean] = {
     val req = SetCustomEmojiStickerSetThumbnailReq(name, customEmojiId)
@@ -4393,15 +4600,15 @@ trait Methods {
     * @param score
     *   New score, must be non-negative
     * @param force
-    *   Pass True if the high score is allowed to decrease. This can be useful when fixing mistakes or banning cheaters
+    *   Pass True if the high score is allowed to decrease. This can be useful when fixing mistakes or banning cheaters.
     * @param disableEditMessage
     *   Pass True if the game message should not be automatically edited to include the current scoreboard
     * @param chatId
-    *   Required if inline_message_id is not specified. Unique identifier for the target chat
+    *   Required if inline_message_id is not specified. Unique identifier for the target chat.
     * @param messageId
-    *   Required if inline_message_id is not specified. Identifier of the sent message
+    *   Required if inline_message_id is not specified. Identifier of the sent message.
     * @param inlineMessageId
-    *   Required if chat_id and message_id are not specified. Identifier of the inline message
+    *   Required if chat_id and message_id are not specified. Identifier of the inline message.
     */
   def setGameScore(
     userId: Long,
@@ -4416,12 +4623,32 @@ trait Methods {
     MethodReq[Either[Boolean, Message]]("setGameScore", req.asJson)
   }
 
+  /** Use this method to change the access settings of a managed bot. Returns True on success.
+    *
+    * @param userId
+    *   User identifier of the managed bot whose access settings will be changed
+    * @param isAccessRestricted
+    *   Pass True, if only selected users can access the bot. The bot's owner can always access it.
+    * @param addedUserIds
+    *   A JSON-serialized list of up to 10 identifiers of users who will have access to the bot in addition to its
+    *   owner. Ignored if is_access_restricted is false.
+    */
+  def setManagedBotAccessSettings(
+    userId: Long,
+    isAccessRestricted: Boolean,
+    addedUserIds: List[Int] = List.empty
+  ): Method[Boolean] = {
+    val req = SetManagedBotAccessSettingsReq(userId, isAccessRestricted, addedUserIds)
+    MethodReq[Boolean]("setManagedBotAccessSettings", req.asJson)
+  }
+
   /** Use this method to change the chosen reactions on a message. Service messages of some types can't be reacted to.
     * Automatically forwarded messages from a channel to its discussion group have the same available reactions as
     * messages in the channel. Bots can't use paid reactions. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param messageId
     *   Identifier of the target message. If the message belongs to a media group, the reaction is set to the first
     *   non-deleted message in the group instead.
@@ -4453,7 +4680,7 @@ trait Methods {
     *   BotCommandScopeDefault.
     * @param languageCode
     *   A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for
-    *   whose language there are no dedicated commands
+    *   whose language there are no dedicated commands.
     */
   def setMyCommands(
     commands: List[BotCommand] = List.empty,
@@ -4685,7 +4912,7 @@ trait Methods {
     * request will contain a header “X-Telegram-Bot-Api-Secret-Token” with the secret token as content.
     *
     * @param url
-    *   HTTPS URL to send updates to. Use an empty string to remove webhook integration
+    *   HTTPS URL to send updates to. Use an empty string to remove webhook integration.
     * @param certificate
     *   Upload your public key certificate so that the root certificate in use can be checked. See our self-signed guide
     *   for details.
@@ -4734,13 +4961,13 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
-    *   channel (in the format &#064;channelusername)
+    *   bot, supergroup or channel in the format &#064;username.
     * @param messageId
-    *   Required if inline_message_id is not specified. Identifier of the message with live location to stop
+    *   Required if inline_message_id is not specified. Identifier of the message with live location to stop.
     * @param inlineMessageId
-    *   Required if chat_id and message_id are not specified. Identifier of the inline message
+    *   Required if chat_id and message_id are not specified. Identifier of the inline message.
     * @param replyMarkup
-    *   A JSON-serialized object for a new inline keyboard.
+    *   A JSON-serialized object for a new inline keyboard
     */
   def stopMessageLiveLocation(
     businessConnectionId: Option[String] = Option.empty,
@@ -4756,13 +4983,14 @@ trait Methods {
   /** Use this method to stop a poll which was sent by the bot. On success, the stopped Poll is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username
     * @param messageId
     *   Identifier of the original message with the poll
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param replyMarkup
-    *   A JSON-serialized object for a new message inline keyboard.
+    *   A JSON-serialized object for a new message inline keyboard
     */
   def stopPoll(
     chatId: ChatId,
@@ -4817,8 +5045,8 @@ trait Methods {
     * this, use the parameter only_if_banned. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target group or username of the target supergroup or channel (in the format
-    *   &#064;channelusername)
+    *   Unique identifier for the target group or username of the target supergroup or channel in the format
+    *   &#064;username
     * @param userId
     *   Unique identifier of the target user
     * @param onlyIfBanned
@@ -4833,7 +5061,7 @@ trait Methods {
     * administrator for this to work and must have the appropriate administrator rights. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     * @param senderChatId
     *   Unique identifier of the target sender chat
     */
@@ -4846,8 +5074,7 @@ trait Methods {
     * chat for this to work and must have the can_manage_topics administrator rights. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     */
   def unhideGeneralForumTopic(chatId: ChatId): Method[Boolean] = {
     val req = UnhideGeneralForumTopicReq(chatId)
@@ -4860,7 +5087,7 @@ trait Methods {
     * groups and channels respectively. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     */
   def unpinAllChatMessages(chatId: ChatId): Method[Boolean] = {
     val req = UnpinAllChatMessagesReq(chatId)
@@ -4872,8 +5099,7 @@ trait Methods {
     * must have the can_pin_messages administrator right in the supergroup. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     * @param messageThreadId
     *   Unique identifier for the target message thread of the forum topic
     */
@@ -4887,8 +5113,7 @@ trait Methods {
     * on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target supergroup (in the format
-    *   &#064;supergroupusername)
+    *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
     */
   def unpinAllGeneralForumTopicMessages(chatId: ChatId): Method[Boolean] = {
     val req = UnpinAllGeneralForumTopicMessagesReq(chatId)
@@ -4901,7 +5126,7 @@ trait Methods {
     * Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+    *   Unique identifier for the target chat or username of the target channel in the format &#064;username
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be unpinned
     * @param messageId
@@ -4964,8 +5189,8 @@ trait Methods {
   /** Verifies a chat on behalf of the organization which is represented by the bot. Returns True on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername).
-    *   Channel direct messages chats can't be verified.
+    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   &#064;username. Channel direct messages chats can't be verified.
     * @param customDescription
     *   Custom description for the verification; 0-70 characters. Must be empty if the organization isn't allowed to
     *   provide a custom verification description.

@@ -1,5 +1,6 @@
 package telegramium.bots.client
 
+import telegramium.bots.ChatId
 import telegramium.bots.InputChecklist
 import telegramium.bots.ReplyParameters
 import telegramium.bots.InlineKeyboardMarkup
@@ -7,7 +8,7 @@ import telegramium.bots.InlineKeyboardMarkup
 /** @param businessConnectionId
   *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param chatId
-  *   Unique identifier for the target chat
+  *   Unique identifier for the target chat or username of the target bot in the format &#064;username
   * @param checklist
   *   A JSON-serialized object for the checklist to send
   * @param disableNotification
@@ -23,7 +24,7 @@ import telegramium.bots.InlineKeyboardMarkup
   */
 final case class SendChecklistReq(
   businessConnectionId: String,
-  chatId: Long,
+  chatId: ChatId,
   checklist: InputChecklist,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,

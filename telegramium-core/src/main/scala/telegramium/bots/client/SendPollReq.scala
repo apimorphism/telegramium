@@ -4,12 +4,13 @@ import telegramium.bots.ChatId
 import telegramium.bots.MessageEntity
 import telegramium.bots.InputPollOption
 import telegramium.bots.ParseMode
+import telegramium.bots.InputMedia
 import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername).
-  *   Polls can't be sent to channel direct messages chats.
+  *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+  *   &#064;username. Polls can't be sent to channel direct messages chats.
   * @param question
   *   Poll question, 1-300 characters
   * @param businessConnectionId
@@ -19,12 +20,12 @@ import telegramium.bots.KeyboardMarkup
   *   bots with forum topic mode enabled only
   * @param questionParseMode
   *   Mode for parsing entities in the question. See formatting options for more details. Currently, only custom emoji
-  *   entities are allowed
+  *   entities are allowed.
   * @param questionEntities
   *   A JSON-serialized list of special entities that appear in the poll question. It can be specified instead of
-  *   question_parse_mode
+  *   question_parse_mode.
   * @param options
-  *   A JSON-serialized list of 2-12 answer options
+  *   A JSON-serialized list of 1-12 answer options
   * @param isAnonymous
   *   True, if the poll needs to be anonymous, defaults to True
   * @param type
@@ -41,6 +42,13 @@ import telegramium.bots.KeyboardMarkup
   *   quizzes
   * @param hideResultsUntilCloses
   *   Pass True, if poll results must be shown only after the poll closes
+  * @param membersOnly
+  *   Pass True, if voting is limited to users who have been members of the chat where the poll is being sent for more
+  *   than 24 hours; for channel chats only
+  * @param countryCodes
+  *   A JSON-serialized list of 0-12 two-letter ISO 3166-1 alpha-2 country codes indicating the countries from which
+  *   users can vote in the poll; for channel chats only. Use “FT” as a country code to allow users with anonymous
+  *   numbers to vote. If omitted or empty, then users from any country can participate in the poll.
   * @param correctOptionIds
   *   A JSON-serialized list of monotonically increasing 0-based identifiers of the correct answer options, required for
   *   polls in quiz mode
@@ -51,7 +59,9 @@ import telegramium.bots.KeyboardMarkup
   *   Mode for parsing entities in the explanation. See formatting options for more details.
   * @param explanationEntities
   *   A JSON-serialized list of special entities that appear in the poll explanation. It can be specified instead of
-  *   explanation_parse_mode
+  *   explanation_parse_mode.
+  * @param explanationMedia
+  *   Media added to the quiz explanation
   * @param openPeriod
   *   Amount of time in seconds the poll will be active after creation, 5-2628000. Can't be used together with
   *   close_date.
@@ -67,20 +77,22 @@ import telegramium.bots.KeyboardMarkup
   * @param descriptionEntities
   *   A JSON-serialized list of special entities that appear in the poll description, which can be specified instead of
   *   description_parse_mode
+  * @param media
+  *   Media added to the poll description
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
   *   Protects the contents of the sent message from forwarding and saving
   * @param allowPaidBroadcast
   *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-  *   per message. The relevant Stars will be withdrawn from the bot's balance
+  *   per message. The relevant Stars will be withdrawn from the bot's balance.
   * @param messageEffectId
   *   Unique identifier of the message effect to be added to the message; for private chats only
   * @param replyParameters
   *   Description of the message to reply to
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove a reply keyboard or to force a reply from the user
+  *   to remove a reply keyboard or to force a reply from the user.
   */
 final case class SendPollReq(
   chatId: ChatId,
@@ -97,16 +109,20 @@ final case class SendPollReq(
   shuffleOptions: Option[Boolean] = Option.empty,
   allowAddingOptions: Option[Boolean] = Option.empty,
   hideResultsUntilCloses: Option[Boolean] = Option.empty,
+  membersOnly: Option[Boolean] = Option.empty,
+  countryCodes: List[String] = List.empty,
   correctOptionIds: List[Int] = List.empty,
   explanation: Option[String] = Option.empty,
   explanationParseMode: Option[ParseMode] = Option.empty,
   explanationEntities: List[MessageEntity] = List.empty,
+  explanationMedia: Option[InputMedia] = Option.empty,
   openPeriod: Option[Int] = Option.empty,
   closeDate: Option[Long] = Option.empty,
   isClosed: Option[Boolean] = Option.empty,
   description: Option[String] = Option.empty,
   descriptionParseMode: Option[String] = Option.empty,
   descriptionEntities: List[MessageEntity] = List.empty,
+  media: Option[InputMedia] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
   allowPaidBroadcast: Option[Boolean] = Option.empty,

@@ -18,6 +18,8 @@ package telegramium.bots
   *   Optional. Message is an audio file, information about the file
   * @param document
   *   Optional. Message is a general file, information about the file
+  * @param livePhoto
+  *   Optional. Message is a live photo, information about the live photo
   * @param paidMedia
   *   Optional. Message contains paid media; information about the paid media
   * @param photo
@@ -63,6 +65,7 @@ final case class ExternalReplyInfo(
   animation: Option[Animation] = Option.empty,
   audio: Option[Audio] = Option.empty,
   document: Option[Document] = Option.empty,
+  livePhoto: Option[LivePhoto] = Option.empty,
   paidMedia: Option[PaidMediaInfo] = Option.empty,
   photo: List[PhotoSize] = List.empty,
   sticker: Option[Sticker] = Option.empty,

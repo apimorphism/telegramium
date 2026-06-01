@@ -23,18 +23,22 @@ package telegramium.bots
   *   Optional. True, if the user is allowed to send animations, games, stickers and use inline bots
   * @param canAddWebPagePreviews
   *   Optional. True, if the user is allowed to add web page previews to their messages
+  * @param canReactToMessages
+  *   Optional. True, if the user is allowed to react to messages. If omitted, defaults to the value of
+  *   can_send_messages.
   * @param canEditTag
-  *   Optional. True, if the user is allowed to edit their own tag
+  *   Optional. True, if the user is allowed to edit their own tag. If omitted, defaults to the value of
+  *   can_pin_messages.
   * @param canChangeInfo
   *   Optional. True, if the user is allowed to change the chat title, photo and other settings. Ignored in public
-  *   supergroups
+  *   supergroups.
   * @param canInviteUsers
   *   Optional. True, if the user is allowed to invite new users to the chat
   * @param canPinMessages
-  *   Optional. True, if the user is allowed to pin messages. Ignored in public supergroups
+  *   Optional. True, if the user is allowed to pin messages. Ignored in public supergroups.
   * @param canManageTopics
   *   Optional. True, if the user is allowed to create forum topics. If omitted defaults to the value of
-  *   can_pin_messages
+  *   can_pin_messages.
   */
 final case class ChatPermissions(
   canSendMessages: Option[Boolean] = Option.empty,
@@ -47,6 +51,7 @@ final case class ChatPermissions(
   canSendPolls: Option[Boolean] = Option.empty,
   canSendOtherMessages: Option[Boolean] = Option.empty,
   canAddWebPagePreviews: Option[Boolean] = Option.empty,
+  canReactToMessages: Option[Boolean] = Option.empty,
   canEditTag: Option[Boolean] = Option.empty,
   canChangeInfo: Option[Boolean] = Option.empty,
   canInviteUsers: Option[Boolean] = Option.empty,

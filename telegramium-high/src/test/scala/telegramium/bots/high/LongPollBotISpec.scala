@@ -252,7 +252,8 @@ class LongPollBotISpec
               isAnonymous = false,
               `type` = "",
               allowsMultipleAnswers = false,
-              allowsRevoting = true
+              allowsRevoting = true,
+              membersOnly = false
             ).some
           )
         )

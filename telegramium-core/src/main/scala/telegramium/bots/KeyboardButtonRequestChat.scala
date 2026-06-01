@@ -6,9 +6,9 @@ package telegramium.bots
   *
   * @param requestId
   *   Signed 32-bit identifier of the request, which will be received back in the ChatShared object. Must be unique
-  *   within the message
+  *   within the message.
   * @param chatIsChannel
-  *   Pass True to request a channel chat, pass False to request a group or a supergroup chat.
+  *   Pass True to request a channel chat, pass False to request a group or a supergroup chat
   * @param chatIsForum
   *   Optional. Pass True to request a forum supergroup, pass False to request a non-forum chat. If not specified, no
   *   additional restrictions are applied.

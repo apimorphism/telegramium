@@ -5,7 +5,8 @@ import telegramium.bots.InputMedia
 import telegramium.bots.ReplyParameters
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+  *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+  *   &#064;username
   * @param businessConnectionId
   *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param messageThreadId
@@ -22,7 +23,7 @@ import telegramium.bots.ReplyParameters
   *   Protects the contents of the sent messages from forwarding and saving
   * @param allowPaidBroadcast
   *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-  *   per message. The relevant Stars will be withdrawn from the bot's balance
+  *   per message. The relevant Stars will be withdrawn from the bot's balance.
   * @param messageEffectId
   *   Unique identifier of the message effect to be added to the message; for private chats only
   * @param replyParameters

@@ -19,7 +19,7 @@ package telegramium.bots.client
   *   Offset of the first entry to return as received from the previous request; use an empty string to get the first
   *   chunk of results
   * @param limit
-  *   The maximum number of gifts to be returned; 1-100. Defaults to 100
+  *   The maximum number of gifts to be returned; 1-100. Defaults to 100.
   */
 final case class GetUserGiftsReq(
   userId: Long,

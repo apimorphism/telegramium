@@ -6,13 +6,16 @@ package telegramium.bots
   *   Option text, 1-100 characters
   * @param textParseMode
   *   Optional. Mode for parsing entities in the text. See formatting options for more details. Currently, only custom
-  *   emoji entities are allowed
+  *   emoji entities are allowed.
   * @param textEntities
   *   Optional. A JSON-serialized list of special entities that appear in the poll option text. It can be specified
-  *   instead of text_parse_mode
+  *   instead of text_parse_mode.
+  * @param media
+  *   Optional. Media added to the poll option
   */
 final case class InputPollOption(
   text: String,
   textParseMode: Option[ParseMode] = Option.empty,
-  textEntities: List[MessageEntity] = List.empty
+  textEntities: List[MessageEntity] = List.empty,
+  media: Option[InputMedia] = Option.empty
 )

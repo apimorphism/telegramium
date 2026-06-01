@@ -11,13 +11,13 @@ package telegramium.bots
   *   hash of the received data to verify the authentication and the integrity of the data as described in Checking
   *   authorization.
   * @param forwardText
-  *   Optional. New text of the button in forwarded messages.
+  *   Optional. New text of the button in forwarded messages
   * @param botUsername
   *   Optional. Username of a bot, which will be used for user authorization. See Setting up a bot for more details. If
   *   not specified, the current bot's username will be assumed. The url's domain must be the same as the domain linked
   *   with the bot. See Linking your domain to the bot for more details.
   * @param requestWriteAccess
-  *   Optional. Pass True to request the permission for your bot to send messages to the user.
+  *   Optional. Pass True to request the permission for your bot to send messages to the user
   */
 final case class LoginUrl(
   url: String,

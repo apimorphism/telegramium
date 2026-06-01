@@ -52,7 +52,7 @@ final case class BotCommandMessageEntity(offset: Int, length: Int) extends Messa
   * @param length
   *   Length of the entity in UTF-16 code units
   * @param customEmojiId
-  *   unique identifier of the custom emoji. Use getCustomEmojiStickers to get full information about the sticker
+  *   unique identifier of the custom emoji. Use getCustomEmojiStickers to get full information about the sticker.
   */
 final case class CustomEmojiMessageEntity(offset: Int, length: Int, customEmojiId: String) extends MessageEntity
 

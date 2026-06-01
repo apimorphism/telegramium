@@ -3,7 +3,7 @@ package telegramium.bots
 /** Describes a service message about a successful payment for a suggested post.
   *
   * @param currency
-  *   Currency in which the payment was made. Currently, one of “XTR” for Telegram Stars or “TON” for toncoins
+  *   Currency in which the payment was made. Currently, one of “XTR” for Telegram Stars or “TON” for toncoins.
   * @param suggestedPostMessage
   *   Optional. Message containing the suggested post. Note that the Message object in this field will not contain the
   *   reply_to_message field even if it itself is a reply.

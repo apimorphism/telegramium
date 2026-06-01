@@ -3,7 +3,7 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+  *   Unique identifier for the target chat or username of the target channel in the format &#064;username
   * @param userId
   *   Unique identifier of the target user
   * @param isAnonymous
@@ -18,7 +18,7 @@ import telegramium.bots.ChatId
   *   Pass True if the administrator can manage video chats
   * @param canRestrictMembers
   *   Pass True if the administrator can restrict, ban or unban chat members, or access supergroup statistics. For
-  *   backward compatibility, defaults to True for promotions of channel administrators
+  *   backward compatibility, defaults to True for promotions of channel administrators.
   * @param canPromoteMembers
   *   Pass True if the administrator can add new administrators with a subset of their own privileges or demote
   *   administrators that they have promoted, directly or indirectly (promoted by administrators that were appointed by

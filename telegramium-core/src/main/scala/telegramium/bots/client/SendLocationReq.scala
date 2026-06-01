@@ -6,7 +6,8 @@ import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target channel (in the format &#064;channelusername)
+  *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+  *   &#064;username
   * @param latitude
   *   Latitude of the location
   * @param longitude
@@ -23,7 +24,7 @@ import telegramium.bots.KeyboardMarkup
   *   The radius of uncertainty for the location, measured in meters; 0-1500
   * @param livePeriod
   *   Period in seconds during which the location will be updated (see Live Locations, should be between 60 and 86400,
-  *   or 0x7FFFFFFF for live locations that can be edited indefinitely.
+  *   or 0x7FFFFFFF for live locations that can be edited indefinitely
   * @param heading
   *   For live locations, a direction in which the user is moving, in degrees. Must be between 1 and 360 if specified.
   * @param proximityAlertRadius
@@ -35,7 +36,7 @@ import telegramium.bots.KeyboardMarkup
   *   Protects the contents of the sent message from forwarding and saving
   * @param allowPaidBroadcast
   *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-  *   per message. The relevant Stars will be withdrawn from the bot's balance
+  *   per message. The relevant Stars will be withdrawn from the bot's balance.
   * @param messageEffectId
   *   Unique identifier of the message effect to be added to the message; for private chats only
   * @param suggestedPostParameters
@@ -45,7 +46,7 @@ import telegramium.bots.KeyboardMarkup
   *   Description of the message to reply to
   * @param replyMarkup
   *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove a reply keyboard or to force a reply from the user
+  *   to remove a reply keyboard or to force a reply from the user.
   */
 final case class SendLocationReq(
   chatId: ChatId,

@@ -5,7 +5,7 @@ package telegramium.bots
   *
   * @param requestId
   *   Signed 32-bit identifier of the request that will be received back in the UsersShared object. Must be unique
-  *   within the message
+  *   within the message.
   * @param userIsBot
   *   Optional. Pass True to request bots, pass False to request regular users. If not specified, no additional
   *   restrictions are applied.

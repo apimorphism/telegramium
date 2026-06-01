@@ -1,12 +1,13 @@
 package telegramium.bots.client
 
+import telegramium.bots.ChatId
 import telegramium.bots.InputChecklist
 import telegramium.bots.InlineKeyboardMarkup
 
 /** @param businessConnectionId
   *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param chatId
-  *   Unique identifier for the target chat
+  *   Unique identifier for the target chat or username of the target bot in the format &#064;username
   * @param messageId
   *   Unique identifier for the target message
   * @param checklist
@@ -16,7 +17,7 @@ import telegramium.bots.InlineKeyboardMarkup
   */
 final case class EditMessageChecklistReq(
   businessConnectionId: String,
-  chatId: Long,
+  chatId: ChatId,
   messageId: Int,
   checklist: InputChecklist,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty

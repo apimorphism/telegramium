@@ -20,7 +20,7 @@ sealed trait InlineQueryResult {}
   *   Optional. Duration of the GIF in seconds
   * @param thumbnailMimeType
   *   Optional. MIME type of the thumbnail, must be one of “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to
-  *   “image/jpeg”
+  *   “image/jpeg”.
   * @param title
   *   Optional. Title for the result
   * @param caption
@@ -146,7 +146,7 @@ final case class InlineQueryResultContact(
   * @param id
   *   Unique identifier for this result, 1-64 bytes
   * @param photoUrl
-  *   A valid URL of the photo. Photo must be in JPEG format. Photo size must not exceed 5MB
+  *   A valid URL of the photo. Photo must be in JPEG format. Photo size must not exceed 5MB.
   * @param thumbnailUrl
   *   URL of the thumbnail for the photo
   * @param photoWidth
@@ -353,7 +353,7 @@ final case class InlineQueryResultAudio(
   *   Optional. Video duration in seconds
   * @param thumbnailMimeType
   *   Optional. MIME type of the thumbnail, must be one of “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to
-  *   “image/jpeg”
+  *   “image/jpeg”.
   * @param title
   *   Optional. Title for the result
   * @param caption
@@ -699,8 +699,8 @@ final case class InlineQueryResultCachedGif(
   * @param horizontalAccuracy
   *   Optional. The radius of uncertainty for the location, measured in meters; 0-1500
   * @param livePeriod
-  *   Optional. Period in seconds during which the location can be updated, should be between 60 and 86400, or
-  *   0x7FFFFFFF for live locations that can be edited indefinitely.
+  *   Optional. Period in seconds during which the location can be updated, must be between 60 and 86400, or 0x7FFFFFFF
+  *   for live locations that can be edited indefinitely
   * @param heading
   *   Optional. For live locations, a direction in which the user is moving, in degrees. Must be between 1 and 360 if
   *   specified.

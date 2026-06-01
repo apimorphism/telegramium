@@ -64,6 +64,17 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val answerguestqueryreqEncoder: Encoder[AnswerGuestQueryReq] =
+    (x: AnswerGuestQueryReq) => {
+      Json.fromFields(
+        List(
+          "guest_query_id" -> x.guestQueryId.asJson,
+          "result"         -> x.result.asJson,
+          "method"         -> "answerGuestQuery".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val answerinlinequeryreqEncoder: Encoder[AnswerInlineQueryReq] =
     (x: AnswerInlineQueryReq) => {
       Json.fromFields(
@@ -348,6 +359,18 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val deleteallmessagereactionsreqEncoder: Encoder[DeleteAllMessageReactionsReq] =
+    (x: DeleteAllMessageReactionsReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"       -> x.chatId.asJson,
+          "user_id"       -> x.userId.asJson,
+          "actor_chat_id" -> x.actorChatId.asJson,
+          "method"        -> "deleteAllMessageReactions".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val deletebusinessmessagesreqEncoder: Encoder[DeleteBusinessMessagesReq] =
     (x: DeleteBusinessMessagesReq) => {
       Json.fromFields(
@@ -397,6 +420,19 @@ object CirceImplicits {
           "chat_id"    -> x.chatId.asJson,
           "message_id" -> x.messageId.asJson,
           "method"     -> "deleteMessage".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val deletemessagereactionreqEncoder: Encoder[DeleteMessageReactionReq] =
+    (x: DeleteMessageReactionReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"       -> x.chatId.asJson,
+          "message_id"    -> x.messageId.asJson,
+          "user_id"       -> x.userId.asJson,
+          "actor_chat_id" -> x.actorChatId.asJson,
+          "method"        -> "deleteMessageReaction".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -744,8 +780,9 @@ object CirceImplicits {
     (x: GetChatAdministratorsReq) => {
       Json.fromFields(
         List(
-          "chat_id" -> x.chatId.asJson,
-          "method"  -> "getChatAdministrators".asJson
+          "chat_id"     -> x.chatId.asJson,
+          "return_bots" -> x.returnBots.asJson,
+          "method"      -> "getChatAdministrators".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -833,6 +870,16 @@ object CirceImplicits {
           "message_id"        -> x.messageId.asJson,
           "inline_message_id" -> x.inlineMessageId.asJson,
           "method"            -> "getGameHighScores".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getmanagedbotaccesssettingsreqEncoder: Encoder[GetManagedBotAccessSettingsReq] =
+    (x: GetManagedBotAccessSettingsReq) => {
+      Json.fromFields(
+        List(
+          "user_id" -> x.userId.asJson,
+          "method"  -> "getManagedBotAccessSettings".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -962,6 +1009,17 @@ object CirceImplicits {
           "offset"                         -> x.offset.asJson,
           "limit"                          -> x.limit.asJson,
           "method"                         -> "getUserGifts".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getuserpersonalchatmessagesreqEncoder: Encoder[GetUserPersonalChatMessagesReq] =
+    (x: GetUserPersonalChatMessagesReq) => {
+      Json.fromFields(
+        List(
+          "user_id" -> x.userId.asJson,
+          "limit"   -> x.limit.asJson,
+          "method"  -> "getUserPersonalChatMessages".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1489,6 +1547,33 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val sendlivephotoreqEncoder: Encoder[SendLivePhotoReq] =
+    (x: SendLivePhotoReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id"    -> x.businessConnectionId.asJson,
+          "chat_id"                   -> x.chatId.asJson,
+          "message_thread_id"         -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
+          "live_photo"                -> x.livePhoto.asJson,
+          "photo"                     -> x.photo.asJson,
+          "caption"                   -> x.caption.asJson,
+          "parse_mode"                -> x.parseMode.asJson,
+          "caption_entities"          -> x.captionEntities.asJson,
+          "show_caption_above_media"  -> x.showCaptionAboveMedia.asJson,
+          "has_spoiler"               -> x.hasSpoiler.asJson,
+          "disable_notification"      -> x.disableNotification.asJson,
+          "protect_content"           -> x.protectContent.asJson,
+          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"         -> x.messageEffectId.asJson,
+          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
+          "reply_parameters"          -> x.replyParameters.asJson,
+          "reply_markup"              -> x.replyMarkup.asJson,
+          "method"                    -> "sendLivePhoto".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val sendlocationreqEncoder: Encoder[SendLocationReq] =
     (x: SendLocationReq) => {
       Json.fromFields(
@@ -1643,16 +1728,20 @@ object CirceImplicits {
           "shuffle_options"           -> x.shuffleOptions.asJson,
           "allow_adding_options"      -> x.allowAddingOptions.asJson,
           "hide_results_until_closes" -> x.hideResultsUntilCloses.asJson,
+          "members_only"              -> x.membersOnly.asJson,
+          "country_codes"             -> x.countryCodes.asJson,
           "correct_option_ids"        -> x.correctOptionIds.asJson,
           "explanation"               -> x.explanation.asJson,
           "explanation_parse_mode"    -> x.explanationParseMode.asJson,
           "explanation_entities"      -> x.explanationEntities.asJson,
+          "explanation_media"         -> x.explanationMedia.asJson,
           "open_period"               -> x.openPeriod.asJson,
           "close_date"                -> x.closeDate.asJson,
           "is_closed"                 -> x.isClosed.asJson,
           "description"               -> x.description.asJson,
           "description_parse_mode"    -> x.descriptionParseMode.asJson,
           "description_entities"      -> x.descriptionEntities.asJson,
+          "media"                     -> x.media.asJson,
           "disable_notification"      -> x.disableNotification.asJson,
           "protect_content"           -> x.protectContent.asJson,
           "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
@@ -1968,6 +2057,18 @@ object CirceImplicits {
           "message_id"           -> x.messageId.asJson,
           "inline_message_id"    -> x.inlineMessageId.asJson,
           "method"               -> "setGameScore".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val setmanagedbotaccesssettingsreqEncoder: Encoder[SetManagedBotAccessSettingsReq] =
+    (x: SetManagedBotAccessSettingsReq) => {
+      Json.fromFields(
+        List(
+          "user_id"              -> x.userId.asJson,
+          "is_access_restricted" -> x.isAccessRestricted.asJson,
+          "added_user_ids"       -> x.addedUserIds.asJson,
+          "method"               -> "setManagedBotAccessSettings".asJson
         ).filter(!_._2.isNull)
       )
     }

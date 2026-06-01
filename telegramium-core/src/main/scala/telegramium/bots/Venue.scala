@@ -3,7 +3,7 @@ package telegramium.bots
 /** This object represents a venue.
   *
   * @param location
-  *   Venue location. Can't be a live location
+  *   Venue location. Can't be a live location.
   * @param title
   *   Name of the venue
   * @param address

@@ -31,7 +31,7 @@ final case class BackgroundTypeWallpaper(
   *   Intensity of the pattern when it is shown above the filled background; 0-100
   * @param isInverted
   *   Optional. True, if the background fill must be applied only to the pattern itself. All other pixels are black in
-  *   this case. For dark themes only
+  *   this case. For dark themes only.
   * @param isMoving
   *   Optional. True, if the background moves slightly when the device is tilted
   */

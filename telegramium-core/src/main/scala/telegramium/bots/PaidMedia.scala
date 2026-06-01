@@ -2,6 +2,13 @@ package telegramium.bots
 
 sealed trait PaidMedia {}
 
+/** The paid media is a live photo.
+  *
+  * @param livePhoto
+  *   The photo
+  */
+final case class PaidMediaLivePhoto(livePhoto: LivePhoto) extends PaidMedia
+
 /** The paid media is a video.
   *
   * @param video

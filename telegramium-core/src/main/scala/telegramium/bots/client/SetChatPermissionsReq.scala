@@ -4,8 +4,7 @@ import telegramium.bots.ChatId
 import telegramium.bots.ChatPermissions
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target supergroup (in the format
-  *   &#064;supergroupusername)
+  *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
   * @param permissions
   *   A JSON-serialized object for new default chat permissions
   * @param useIndependentChatPermissions

@@ -678,6 +678,7 @@ object CirceImplicits {
           "can_send_polls"            -> x.canSendPolls.asJson,
           "can_send_other_messages"   -> x.canSendOtherMessages.asJson,
           "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson,
+          "can_react_to_messages"     -> x.canReactToMessages.asJson,
           "can_edit_tag"              -> x.canEditTag.asJson,
           "can_change_info"           -> x.canChangeInfo.asJson,
           "can_invite_users"          -> x.canInviteUsers.asJson,
@@ -704,6 +705,7 @@ object CirceImplicits {
         _canSendPolls          <- h.get[Boolean]("can_send_polls")
         _canSendOtherMessages  <- h.get[Boolean]("can_send_other_messages")
         _canAddWebPagePreviews <- h.get[Boolean]("can_add_web_page_previews")
+        _canReactToMessages    <- h.get[Boolean]("can_react_to_messages")
         _canEditTag            <- h.get[Boolean]("can_edit_tag")
         _canChangeInfo         <- h.get[Boolean]("can_change_info")
         _canInviteUsers        <- h.get[Boolean]("can_invite_users")
@@ -725,6 +727,7 @@ object CirceImplicits {
           canSendPolls = _canSendPolls,
           canSendOtherMessages = _canSendOtherMessages,
           canAddWebPagePreviews = _canAddWebPagePreviews,
+          canReactToMessages = _canReactToMessages,
           canEditTag = _canEditTag,
           canChangeInfo = _canChangeInfo,
           canInviteUsers = _canInviteUsers,
@@ -1124,12 +1127,27 @@ object CirceImplicits {
     }
 
   implicit lazy val inputmediaEncoder: Encoder[InputMedia] = {
-    case photo: InputMediaPhoto         => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case document: InputMediaDocument   => document.asJson.mapObject(_.add("type", Json.fromString("document")))
-    case audio: InputMediaAudio         => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
-    case animation: InputMediaAnimation => animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
-    case video: InputMediaVideo         => video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case location: InputMediaLocation    => location.asJson.mapObject(_.add("type", Json.fromString("location")))
+    case photo: InputMediaPhoto          => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case document: InputMediaDocument    => document.asJson.mapObject(_.add("type", Json.fromString("document")))
+    case audio: InputMediaAudio          => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
+    case live_photo: InputMediaLivePhoto => live_photo.asJson.mapObject(_.add("type", Json.fromString("live_photo")))
+    case animation: InputMediaAnimation  => animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
+    case video: InputMediaVideo          => video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case sticker: InputMediaSticker      => sticker.asJson.mapObject(_.add("type", Json.fromString("sticker")))
+    case venue: InputMediaVenue          => venue.asJson.mapObject(_.add("type", Json.fromString("venue")))
   }
+
+  implicit lazy val inputmedialocationEncoder: Encoder[InputMediaLocation] =
+    (x: InputMediaLocation) => {
+      Json.fromFields(
+        List(
+          "latitude"            -> x.latitude.asJson,
+          "longitude"           -> x.longitude.asJson,
+          "horizontal_accuracy" -> x.horizontalAccuracy.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
 
   implicit lazy val inputmediaanimationEncoder: Encoder[InputMediaAnimation] =
     (x: InputMediaAnimation) => {
@@ -1184,6 +1202,37 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val inputmedialivephotoEncoder: Encoder[InputMediaLivePhoto] =
+    (x: InputMediaLivePhoto) => {
+      Json.fromFields(
+        List(
+          "media"                    -> x.media.asJson,
+          "photo"                    -> x.photo.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "has_spoiler"              -> x.hasSpoiler.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputmediavenueEncoder: Encoder[InputMediaVenue] =
+    (x: InputMediaVenue) => {
+      Json.fromFields(
+        List(
+          "latitude"          -> x.latitude.asJson,
+          "longitude"         -> x.longitude.asJson,
+          "title"             -> x.title.asJson,
+          "address"           -> x.address.asJson,
+          "foursquare_id"     -> x.foursquareId.asJson,
+          "foursquare_type"   -> x.foursquareType.asJson,
+          "google_place_id"   -> x.googlePlaceId.asJson,
+          "google_place_type" -> x.googlePlaceType.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val inputmediadocumentEncoder: Encoder[InputMediaDocument] =
     (x: InputMediaDocument) => {
       Json.fromFields(
@@ -1194,6 +1243,16 @@ object CirceImplicits {
           "parse_mode"                     -> x.parseMode.asJson,
           "caption_entities"               -> x.captionEntities.asJson,
           "disable_content_type_detection" -> x.disableContentTypeDetection.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputmediastickerEncoder: Encoder[InputMediaSticker] =
+    (x: InputMediaSticker) => {
+      Json.fromFields(
+        List(
+          "media" -> x.media.asJson,
+          "emoji" -> x.emoji.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1306,6 +1365,8 @@ object CirceImplicits {
 
   implicit lazy val inputpaidmediaEncoder: Encoder[InputPaidMedia] = {
     case photo: InputPaidMediaPhoto => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case live_photo: InputPaidMediaLivePhoto =>
+      live_photo.asJson.mapObject(_.add("type", Json.fromString("live_photo")))
     case video: InputPaidMediaVideo => video.asJson.mapObject(_.add("type", Json.fromString("video")))
   }
 
@@ -1314,6 +1375,16 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "media" -> x.media.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputpaidmedialivephotoEncoder: Encoder[InputPaidMediaLivePhoto] =
+    (x: InputPaidMediaLivePhoto) => {
+      Json.fromFields(
+        List(
+          "media" -> x.media.asJson,
+          "photo" -> x.photo.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1412,6 +1483,7 @@ object CirceImplicits {
           "sender_business_bot"               -> x.senderBusinessBot.asJson,
           "sender_tag"                        -> x.senderTag.asJson,
           "date"                              -> x.date.asJson,
+          "guest_query_id"                    -> x.guestQueryId.asJson,
           "business_connection_id"            -> x.businessConnectionId.asJson,
           "chat"                              -> x.chat.asJson,
           "forward_origin"                    -> x.forwardOrigin.asJson,
@@ -1424,6 +1496,8 @@ object CirceImplicits {
           "reply_to_checklist_task_id"        -> x.replyToChecklistTaskId.asJson,
           "reply_to_poll_option_id"           -> x.replyToPollOptionId.asJson,
           "via_bot"                           -> x.viaBot.asJson,
+          "guest_bot_caller_user"             -> x.guestBotCallerUser.asJson,
+          "guest_bot_caller_chat"             -> x.guestBotCallerChat.asJson,
           "edit_date"                         -> x.editDate.asJson,
           "has_protected_content"             -> x.hasProtectedContent.asJson,
           "is_from_offline"                   -> x.isFromOffline.asJson,
@@ -1439,6 +1513,7 @@ object CirceImplicits {
           "animation"                         -> x.animation.asJson,
           "audio"                             -> x.audio.asJson,
           "document"                          -> x.document.asJson,
+          "live_photo"                        -> x.livePhoto.asJson,
           "paid_media"                        -> x.paidMedia.asJson,
           "photo"                             -> x.photo.asJson,
           "sticker"                           -> x.sticker.asJson,
@@ -1529,6 +1604,7 @@ object CirceImplicits {
         _senderBusinessBot      <- h.get[Option[User]]("sender_business_bot")
         _senderTag              <- h.get[Option[String]]("sender_tag")
         _date                   <- h.get[Long]("date")
+        _guestQueryId           <- h.get[Option[String]]("guest_query_id")
         _businessConnectionId   <- h.get[Option[String]]("business_connection_id")
         _chat                   <- h.get[Chat]("chat")
         _forwardOrigin          <- h.get[Option[iozhik.OpenEnum[MessageOrigin]]]("forward_origin")
@@ -1541,6 +1617,8 @@ object CirceImplicits {
         _replyToChecklistTaskId <- h.get[Option[Int]]("reply_to_checklist_task_id")
         _replyToPollOptionId    <- h.get[Option[String]]("reply_to_poll_option_id")
         _viaBot                 <- h.get[Option[User]]("via_bot")
+        _guestBotCallerUser     <- h.get[Option[User]]("guest_bot_caller_user")
+        _guestBotCallerChat     <- h.get[Option[Chat]]("guest_bot_caller_chat")
         _editDate               <- h.get[Option[Long]]("edit_date")
         _hasProtectedContent    <- h.get[Option[Boolean]]("has_protected_content")
         _isFromOffline          <- h.get[Option[Boolean]]("is_from_offline")
@@ -1556,6 +1634,7 @@ object CirceImplicits {
         _animation              <- h.get[Option[Animation]]("animation")
         _audio                  <- h.get[Option[Audio]]("audio")
         _document               <- h.get[Option[Document]]("document")
+        _livePhoto              <- h.get[Option[LivePhoto]]("live_photo")
         _paidMedia              <- h.get[Option[PaidMediaInfo]]("paid_media")
         _photo                  <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
         _sticker                <- h.get[Option[Sticker]]("sticker")
@@ -1643,6 +1722,7 @@ object CirceImplicits {
           senderBusinessBot = _senderBusinessBot,
           senderTag = _senderTag,
           date = _date,
+          guestQueryId = _guestQueryId,
           businessConnectionId = _businessConnectionId,
           chat = _chat,
           forwardOrigin = _forwardOrigin,
@@ -1655,6 +1735,8 @@ object CirceImplicits {
           replyToChecklistTaskId = _replyToChecklistTaskId,
           replyToPollOptionId = _replyToPollOptionId,
           viaBot = _viaBot,
+          guestBotCallerUser = _guestBotCallerUser,
+          guestBotCallerChat = _guestBotCallerChat,
           editDate = _editDate,
           hasProtectedContent = _hasProtectedContent,
           isFromOffline = _isFromOffline,
@@ -1670,6 +1752,7 @@ object CirceImplicits {
           animation = _animation,
           audio = _audio,
           document = _document,
+          livePhoto = _livePhoto,
           paidMedia = _paidMedia,
           photo = _photo,
           sticker = _sticker,
@@ -2509,20 +2592,40 @@ object CirceImplicits {
     }
 
   implicit lazy val paidmediaEncoder: Encoder[PaidMedia] = {
-    case photo: PaidMediaPhoto     => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case preview: PaidMediaPreview => preview.asJson.mapObject(_.add("type", Json.fromString("preview")))
-    case video: PaidMediaVideo     => video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case photo: PaidMediaPhoto          => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case preview: PaidMediaPreview      => preview.asJson.mapObject(_.add("type", Json.fromString("preview")))
+    case live_photo: PaidMediaLivePhoto => live_photo.asJson.mapObject(_.add("type", Json.fromString("live_photo")))
+    case video: PaidMediaVideo          => video.asJson.mapObject(_.add("type", Json.fromString("video")))
   }
 
   implicit lazy val paidmediaDecoder: Decoder[iozhik.OpenEnum[PaidMedia]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "photo"   => Decoder[PaidMediaPhoto].map(iozhik.OpenEnum.Known(_))
-      case "preview" => Decoder[PaidMediaPreview].map(iozhik.OpenEnum.Known(_))
-      case "video"   => Decoder[PaidMediaVideo].map(iozhik.OpenEnum.Known(_))
-      case unknown   => Decoder.const(iozhik.OpenEnum.Unknown[PaidMedia](unknown))
+      case "photo"      => Decoder[PaidMediaPhoto].map(iozhik.OpenEnum.Known(_))
+      case "preview"    => Decoder[PaidMediaPreview].map(iozhik.OpenEnum.Known(_))
+      case "live_photo" => Decoder[PaidMediaLivePhoto].map(iozhik.OpenEnum.Known(_))
+      case "video"      => Decoder[PaidMediaVideo].map(iozhik.OpenEnum.Known(_))
+      case unknown      => Decoder.const(iozhik.OpenEnum.Unknown[PaidMedia](unknown))
     }
   } yield value
+
+  implicit lazy val paidmedialivephotoEncoder: Encoder[PaidMediaLivePhoto] =
+    (x: PaidMediaLivePhoto) => {
+      Json.fromFields(
+        List(
+          "live_photo" -> x.livePhoto.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val paidmedialivephotoDecoder: Decoder[PaidMediaLivePhoto] =
+    Decoder.instance { h =>
+      for {
+        _livePhoto <- h.get[LivePhoto]("live_photo")
+      } yield {
+        PaidMediaLivePhoto(livePhoto = _livePhoto)
+      }
+    }
 
   implicit lazy val paidmediavideoEncoder: Encoder[PaidMediaVideo] =
     (x: PaidMediaVideo) => {
@@ -3196,6 +3299,26 @@ object CirceImplicits {
         _year  <- h.get[Option[Int]]("year")
       } yield {
         Birthdate(day = _day, month = _month, year = _year)
+      }
+    }
+
+  implicit lazy val botaccesssettingsEncoder: Encoder[BotAccessSettings] =
+    (x: BotAccessSettings) => {
+      Json.fromFields(
+        List(
+          "is_access_restricted" -> x.isAccessRestricted.asJson,
+          "added_users"          -> x.addedUsers.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val botaccesssettingsDecoder: Decoder[BotAccessSettings] =
+    Decoder.instance { h =>
+      for {
+        _isAccessRestricted <- h.get[Boolean]("is_access_restricted")
+        _addedUsers         <- h.getOrElse[List[User]]("added_users")(List.empty)
+      } yield {
+        BotAccessSettings(isAccessRestricted = _isAccessRestricted, addedUsers = _addedUsers)
       }
     }
 
@@ -4091,6 +4214,7 @@ object CirceImplicits {
           "can_send_polls"            -> x.canSendPolls.asJson,
           "can_send_other_messages"   -> x.canSendOtherMessages.asJson,
           "can_add_web_page_previews" -> x.canAddWebPagePreviews.asJson,
+          "can_react_to_messages"     -> x.canReactToMessages.asJson,
           "can_edit_tag"              -> x.canEditTag.asJson,
           "can_change_info"           -> x.canChangeInfo.asJson,
           "can_invite_users"          -> x.canInviteUsers.asJson,
@@ -4113,6 +4237,7 @@ object CirceImplicits {
         _canSendPolls          <- h.get[Option[Boolean]]("can_send_polls")
         _canSendOtherMessages  <- h.get[Option[Boolean]]("can_send_other_messages")
         _canAddWebPagePreviews <- h.get[Option[Boolean]]("can_add_web_page_previews")
+        _canReactToMessages    <- h.get[Option[Boolean]]("can_react_to_messages")
         _canEditTag            <- h.get[Option[Boolean]]("can_edit_tag")
         _canChangeInfo         <- h.get[Option[Boolean]]("can_change_info")
         _canInviteUsers        <- h.get[Option[Boolean]]("can_invite_users")
@@ -4130,6 +4255,7 @@ object CirceImplicits {
           canSendPolls = _canSendPolls,
           canSendOtherMessages = _canSendOtherMessages,
           canAddWebPagePreviews = _canAddWebPagePreviews,
+          canReactToMessages = _canReactToMessages,
           canEditTag = _canEditTag,
           canChangeInfo = _canChangeInfo,
           canInviteUsers = _canInviteUsers,
@@ -4567,6 +4693,7 @@ object CirceImplicits {
           "animation"            -> x.animation.asJson,
           "audio"                -> x.audio.asJson,
           "document"             -> x.document.asJson,
+          "live_photo"           -> x.livePhoto.asJson,
           "paid_media"           -> x.paidMedia.asJson,
           "photo"                -> x.photo.asJson,
           "sticker"              -> x.sticker.asJson,
@@ -4599,6 +4726,7 @@ object CirceImplicits {
         _animation          <- h.get[Option[Animation]]("animation")
         _audio              <- h.get[Option[Audio]]("audio")
         _document           <- h.get[Option[Document]]("document")
+        _livePhoto          <- h.get[Option[LivePhoto]]("live_photo")
         _paidMedia          <- h.get[Option[PaidMediaInfo]]("paid_media")
         _photo              <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
         _sticker            <- h.get[Option[Sticker]]("sticker")
@@ -4626,6 +4754,7 @@ object CirceImplicits {
           animation = _animation,
           audio = _audio,
           document = _document,
+          livePhoto = _livePhoto,
           paidMedia = _paidMedia,
           photo = _photo,
           sticker = _sticker,
@@ -5254,7 +5383,8 @@ object CirceImplicits {
         List(
           "text"            -> x.text.asJson,
           "text_parse_mode" -> x.textParseMode.asJson,
-          "text_entities"   -> x.textEntities.asJson
+          "text_entities"   -> x.textEntities.asJson,
+          "media"           -> x.media.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5414,6 +5544,47 @@ object CirceImplicits {
           preferSmallMedia = _preferSmallMedia,
           preferLargeMedia = _preferLargeMedia,
           showAboveText = _showAboveText
+        )
+      }
+    }
+
+  implicit lazy val livephotoEncoder: Encoder[LivePhoto] =
+    (x: LivePhoto) => {
+      Json.fromFields(
+        List(
+          "photo"          -> x.photo.asJson,
+          "file_id"        -> x.fileId.asJson,
+          "file_unique_id" -> x.fileUniqueId.asJson,
+          "width"          -> x.width.asJson,
+          "height"         -> x.height.asJson,
+          "duration"       -> x.duration.asJson,
+          "mime_type"      -> x.mimeType.asJson,
+          "file_size"      -> x.fileSize.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val livephotoDecoder: Decoder[LivePhoto] =
+    Decoder.instance { h =>
+      for {
+        _photo        <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
+        _fileId       <- h.get[String]("file_id")
+        _fileUniqueId <- h.get[String]("file_unique_id")
+        _width        <- h.get[Int]("width")
+        _height       <- h.get[Int]("height")
+        _duration     <- h.get[Int]("duration")
+        _mimeType     <- h.get[Option[String]]("mime_type")
+        _fileSize     <- h.get[Option[Long]]("file_size")
+      } yield {
+        LivePhoto(
+          photo = _photo,
+          fileId = _fileId,
+          fileUniqueId = _fileUniqueId,
+          width = _width,
+          height = _height,
+          duration = _duration,
+          mimeType = _mimeType,
+          fileSize = _fileSize
         )
       }
     }
@@ -5848,13 +6019,17 @@ object CirceImplicits {
           "type"                    -> x.`type`.asJson,
           "allows_multiple_answers" -> x.allowsMultipleAnswers.asJson,
           "allows_revoting"         -> x.allowsRevoting.asJson,
+          "members_only"            -> x.membersOnly.asJson,
+          "country_codes"           -> x.countryCodes.asJson,
           "correct_option_ids"      -> x.correctOptionIds.asJson,
           "explanation"             -> x.explanation.asJson,
           "explanation_entities"    -> x.explanationEntities.asJson,
+          "explanation_media"       -> x.explanationMedia.asJson,
           "open_period"             -> x.openPeriod.asJson,
           "close_date"              -> x.closeDate.asJson,
           "description"             -> x.description.asJson,
-          "description_entities"    -> x.descriptionEntities.asJson
+          "description_entities"    -> x.descriptionEntities.asJson,
+          "media"                   -> x.media.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5872,13 +6047,17 @@ object CirceImplicits {
         _type                  <- h.get[String]("type")
         _allowsMultipleAnswers <- h.get[Boolean]("allows_multiple_answers")
         _allowsRevoting        <- h.get[Boolean]("allows_revoting")
+        _membersOnly           <- h.get[Boolean]("members_only")
+        _countryCodes          <- h.getOrElse[List[String]]("country_codes")(List.empty)
         _correctOptionIds      <- h.getOrElse[List[Int]]("correct_option_ids")(List.empty)
         _explanation           <- h.get[Option[String]]("explanation")
         _explanationEntities   <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("explanation_entities")(List.empty)
+        _explanationMedia      <- h.get[Option[PollMedia]]("explanation_media")
         _openPeriod            <- h.get[Option[Int]]("open_period")
         _closeDate             <- h.get[Option[Long]]("close_date")
         _description           <- h.get[Option[String]]("description")
         _descriptionEntities   <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("description_entities")(List.empty)
+        _media                 <- h.get[Option[PollMedia]]("media")
       } yield {
         Poll(
           id = _id,
@@ -5891,13 +6070,17 @@ object CirceImplicits {
           `type` = _type,
           allowsMultipleAnswers = _allowsMultipleAnswers,
           allowsRevoting = _allowsRevoting,
+          membersOnly = _membersOnly,
+          countryCodes = _countryCodes,
           correctOptionIds = _correctOptionIds,
           explanation = _explanation,
           explanationEntities = _explanationEntities,
+          explanationMedia = _explanationMedia,
           openPeriod = _openPeriod,
           closeDate = _closeDate,
           description = _description,
-          descriptionEntities = _descriptionEntities
+          descriptionEntities = _descriptionEntities,
+          media = _media
         )
       }
     }
@@ -5934,6 +6117,50 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val pollmediaEncoder: Encoder[PollMedia] =
+    (x: PollMedia) => {
+      Json.fromFields(
+        List(
+          "animation"  -> x.animation.asJson,
+          "audio"      -> x.audio.asJson,
+          "document"   -> x.document.asJson,
+          "live_photo" -> x.livePhoto.asJson,
+          "location"   -> x.location.asJson,
+          "photo"      -> x.photo.asJson,
+          "sticker"    -> x.sticker.asJson,
+          "venue"      -> x.venue.asJson,
+          "video"      -> x.video.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val pollmediaDecoder: Decoder[PollMedia] =
+    Decoder.instance { h =>
+      for {
+        _animation <- h.get[Option[Animation]]("animation")
+        _audio     <- h.get[Option[Audio]]("audio")
+        _document  <- h.get[Option[Document]]("document")
+        _livePhoto <- h.get[Option[LivePhoto]]("live_photo")
+        _location  <- h.get[Option[Location]]("location")
+        _photo     <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
+        _sticker   <- h.get[Option[Sticker]]("sticker")
+        _venue     <- h.get[Option[Venue]]("venue")
+        _video     <- h.get[Option[Video]]("video")
+      } yield {
+        PollMedia(
+          animation = _animation,
+          audio = _audio,
+          document = _document,
+          livePhoto = _livePhoto,
+          location = _location,
+          photo = _photo,
+          sticker = _sticker,
+          venue = _venue,
+          video = _video
+        )
+      }
+    }
+
   implicit lazy val polloptionEncoder: Encoder[PollOption] =
     (x: PollOption) => {
       Json.fromFields(
@@ -5941,6 +6168,7 @@ object CirceImplicits {
           "persistent_id" -> x.persistentId.asJson,
           "text"          -> x.text.asJson,
           "text_entities" -> x.textEntities.asJson,
+          "media"         -> x.media.asJson,
           "voter_count"   -> x.voterCount.asJson,
           "added_by_user" -> x.addedByUser.asJson,
           "added_by_chat" -> x.addedByChat.asJson,
@@ -5955,6 +6183,7 @@ object CirceImplicits {
         _persistentId <- h.get[String]("persistent_id")
         _text         <- h.get[String]("text")
         _textEntities <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("text_entities")(List.empty)
+        _media        <- h.get[Option[PollMedia]]("media")
         _voterCount   <- h.get[Int]("voter_count")
         _addedByUser  <- h.get[Option[User]]("added_by_user")
         _addedByChat  <- h.get[Option[Chat]]("added_by_chat")
@@ -5964,6 +6193,7 @@ object CirceImplicits {
           persistentId = _persistentId,
           text = _text,
           textEntities = _textEntities,
+          media = _media,
           voterCount = _voterCount,
           addedByUser = _addedByUser,
           addedByChat = _addedByChat,
@@ -6205,6 +6435,24 @@ object CirceImplicits {
           "retry_after"        -> x.retryAfter.asJson
         ).filter(!_._2.isNull)
       )
+    }
+
+  implicit lazy val sentguestmessageEncoder: Encoder[SentGuestMessage] =
+    (x: SentGuestMessage) => {
+      Json.fromFields(
+        List(
+          "inline_message_id" -> x.inlineMessageId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val sentguestmessageDecoder: Decoder[SentGuestMessage] =
+    Decoder.instance { h =>
+      for {
+        _inlineMessageId <- h.get[String]("inline_message_id")
+      } yield {
+        SentGuestMessage(inlineMessageId = _inlineMessageId)
+      }
     }
 
   implicit lazy val sentwebappmessageEncoder: Encoder[SentWebAppMessage] =
@@ -7034,6 +7282,7 @@ object CirceImplicits {
           "business_message"          -> x.businessMessage.asJson,
           "edited_business_message"   -> x.editedBusinessMessage.asJson,
           "deleted_business_messages" -> x.deletedBusinessMessages.asJson,
+          "guest_message"             -> x.guestMessage.asJson,
           "message_reaction"          -> x.messageReaction.asJson,
           "message_reaction_count"    -> x.messageReactionCount.asJson,
           "inline_query"              -> x.inlineQuery.asJson,
@@ -7066,6 +7315,7 @@ object CirceImplicits {
         _businessMessage         <- h.get[Option[Message]]("business_message")
         _editedBusinessMessage   <- h.get[Option[Message]]("edited_business_message")
         _deletedBusinessMessages <- h.get[Option[BusinessMessagesDeleted]]("deleted_business_messages")
+        _guestMessage            <- h.get[Option[Message]]("guest_message")
         _messageReaction         <- h.get[Option[MessageReactionUpdated]]("message_reaction")
         _messageReactionCount    <- h.get[Option[MessageReactionCountUpdated]]("message_reaction_count")
         _inlineQuery             <- h.get[Option[InlineQuery]]("inline_query")
@@ -7093,6 +7343,7 @@ object CirceImplicits {
           businessMessage = _businessMessage,
           editedBusinessMessage = _editedBusinessMessage,
           deletedBusinessMessages = _deletedBusinessMessages,
+          guestMessage = _guestMessage,
           messageReaction = _messageReaction,
           messageReactionCount = _messageReactionCount,
           inlineQuery = _inlineQuery,
@@ -7127,6 +7378,7 @@ object CirceImplicits {
           "added_to_attachment_menu"      -> x.addedToAttachmentMenu.asJson,
           "can_join_groups"               -> x.canJoinGroups.asJson,
           "can_read_all_group_messages"   -> x.canReadAllGroupMessages.asJson,
+          "supports_guest_queries"        -> x.supportsGuestQueries.asJson,
           "supports_inline_queries"       -> x.supportsInlineQueries.asJson,
           "can_connect_to_business"       -> x.canConnectToBusiness.asJson,
           "has_main_web_app"              -> x.hasMainWebApp.asJson,
@@ -7150,6 +7402,7 @@ object CirceImplicits {
         _addedToAttachmentMenu     <- h.get[Option[Boolean]]("added_to_attachment_menu")
         _canJoinGroups             <- h.get[Option[Boolean]]("can_join_groups")
         _canReadAllGroupMessages   <- h.get[Option[Boolean]]("can_read_all_group_messages")
+        _supportsGuestQueries      <- h.get[Option[Boolean]]("supports_guest_queries")
         _supportsInlineQueries     <- h.get[Option[Boolean]]("supports_inline_queries")
         _canConnectToBusiness      <- h.get[Option[Boolean]]("can_connect_to_business")
         _hasMainWebApp             <- h.get[Option[Boolean]]("has_main_web_app")
@@ -7168,6 +7421,7 @@ object CirceImplicits {
           addedToAttachmentMenu = _addedToAttachmentMenu,
           canJoinGroups = _canJoinGroups,
           canReadAllGroupMessages = _canReadAllGroupMessages,
+          supportsGuestQueries = _supportsGuestQueries,
           supportsInlineQueries = _supportsInlineQueries,
           canConnectToBusiness = _canConnectToBusiness,
           hasMainWebApp = _hasMainWebApp,

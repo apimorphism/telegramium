@@ -3,7 +3,7 @@ package telegramium.bots
 /** This object contains basic information about a refunded payment.
   *
   * @param currency
-  *   Three-letter ISO 4217 currency code, or “XTR” for payments in Telegram Stars. Currently, always “XTR”
+  *   Three-letter ISO 4217 currency code, or “XTR” for payments in Telegram Stars. Currently, always “XTR”.
   * @param totalAmount
   *   Total refunded price in the smallest units of the currency (integer, not float/double). For example, for a price
   *   of US$

@@ -7,7 +7,7 @@ sealed trait MaybeInaccessibleMessage {}
   * @param messageId
   *   Unique message identifier inside this chat. In specific instances (e.g., message containing a video sent to a big
   *   chat), the server might automatically schedule a message instead of sending it immediately. In such cases, this
-  *   field will be 0 and the relevant message will be unusable until it is actually sent
+  *   field will be 0 and the relevant message will be unusable until it is actually sent.
   * @param date
   *   Date the message was sent in Unix time. It is always a positive number, representing a valid date.
   * @param chat
@@ -19,7 +19,7 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. Information about the direct messages chat topic that contains the message
   * @param from
   *   Optional. Sender of the message; may be empty for messages sent to channels. For backward compatibility, if the
-  *   message was sent on behalf of a chat, the field contains a fake sender user in non-channel chats
+  *   message was sent on behalf of a chat, the field contains a fake sender user in non-channel chats.
   * @param senderChat
   *   Optional. Sender of the message when sent on behalf of a chat. For example, the supergroup itself for messages
   *   sent by its anonymous administrators or a linked channel for messages automatically forwarded to the channel's
@@ -32,6 +32,10 @@ sealed trait MaybeInaccessibleMessage {}
   *   messages sent on behalf of the connected business account.
   * @param senderTag
   *   Optional. Tag or custom title of the sender of the message; for supergroups only
+  * @param guestQueryId
+  *   Optional. The unique identifier for the guest query. Use this identifier with the method answerGuestQuery to send
+  *   a response message. If non-empty, the message belongs to the chat where the guest bot was summoned, which may not
+  *   coincide with other existing bot chats sharing the same identifier.
   * @param businessConnectionId
   *   Optional. Unique identifier of the business connection from which the message was received. If non-empty, the
   *   message belongs to a chat of the corresponding business account that is independent from any potential bot chat
@@ -58,6 +62,10 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. Persistent identifier of the specific poll option that is being replied to
   * @param viaBot
   *   Optional. Bot through which the message was sent
+  * @param guestBotCallerUser
+  *   Optional. For a message sent by a guest bot, this is the user whose original message triggered the bot's response
+  * @param guestBotCallerChat
+  *   Optional. For a message sent by a guest bot, this is the chat whose original message triggered the bot's response
   * @param editDate
   *   Optional. Date the message was last edited in Unix time
   * @param hasProtectedContent
@@ -89,11 +97,14 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. Unique identifier of the message effect added to the message
   * @param animation
   *   Optional. Message is an animation, information about the animation. For backward compatibility, when this field is
-  *   set, the document field will also be set
+  *   set, the document field will also be set.
   * @param audio
   *   Optional. Message is an audio file, information about the file
   * @param document
   *   Optional. Message is a general file, information about the file
+  * @param livePhoto
+  *   Optional. Message is a live photo, information about the live photo. For backward compatibility, when this field
+  *   is set, the photo field will also be set.
   * @param paidMedia
   *   Optional. Message contains paid media; information about the paid media
   * @param photo
@@ -129,7 +140,7 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. Message is a native poll, information about the poll
   * @param venue
   *   Optional. Message is a venue, information about the venue. For backward compatibility, when this field is set, the
-  *   location field will also be set
+  *   location field will also be set.
   * @param location
   *   Optional. Message is a shared location, information about the location
   * @param newChatMembers
@@ -272,6 +283,7 @@ final case class Message(
   senderBoostCount: Option[Int] = Option.empty,
   senderBusinessBot: Option[User] = Option.empty,
   senderTag: Option[String] = Option.empty,
+  guestQueryId: Option[String] = Option.empty,
   businessConnectionId: Option[String] = Option.empty,
   forwardOrigin: Option[iozhik.OpenEnum[MessageOrigin]] = Option.empty,
   isTopicMessage: Option[Boolean] = Option.empty,
@@ -283,6 +295,8 @@ final case class Message(
   replyToChecklistTaskId: Option[Int] = Option.empty,
   replyToPollOptionId: Option[String] = Option.empty,
   viaBot: Option[User] = Option.empty,
+  guestBotCallerUser: Option[User] = Option.empty,
+  guestBotCallerChat: Option[Chat] = Option.empty,
   editDate: Option[Long] = Option.empty,
   hasProtectedContent: Option[Boolean] = Option.empty,
   isFromOffline: Option[Boolean] = Option.empty,
@@ -298,6 +312,7 @@ final case class Message(
   animation: Option[Animation] = Option.empty,
   audio: Option[Audio] = Option.empty,
   document: Option[Document] = Option.empty,
+  livePhoto: Option[LivePhoto] = Option.empty,
   paidMedia: Option[PaidMediaInfo] = Option.empty,
   photo: List[PhotoSize] = List.empty,
   sticker: Option[Sticker] = Option.empty,

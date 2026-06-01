@@ -3,8 +3,7 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target supergroup (in the format
-  *   &#064;supergroupusername)
+  *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
   * @param stickerSetName
   *   Name of the sticker set to be set as the group sticker set
   */
