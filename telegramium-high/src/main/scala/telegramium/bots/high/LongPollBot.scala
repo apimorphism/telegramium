@@ -43,7 +43,7 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
   def onChatBoost(boost: ChatBoostUpdated): F[Unit]                         = noop(boost)
   def onRemovedChatBoost(boostRemoved: ChatBoostRemoved): F[Unit]           = noop(boostRemoved)
   def onManagedBot(managedBot: ManagedBotUpdated): F[Unit]                  = noop(managedBot)
-  def onSubscription(subscription: BotSubscriptionUpdated): F[Unit]        = noop(subscription)
+  def onSubscription(subscription: BotSubscriptionUpdated): F[Unit]         = noop(subscription)
 
   def onUpdate(update: Update): F[Unit] =
     for {

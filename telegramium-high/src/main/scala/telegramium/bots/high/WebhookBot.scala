@@ -110,7 +110,7 @@ abstract class WebhookBot[F[_]: Async](
   def onChatBoost(boost: ChatBoostUpdated): F[Unit]                         = noop(boost)
   def onRemovedChatBoost(boostRemoved: ChatBoostRemoved): F[Unit]           = noop(boostRemoved)
   def onManagedBot(managedBot: ManagedBotUpdated): F[Unit]                  = noop(managedBot)
-  def onSubscription(subscription: BotSubscriptionUpdated): F[Unit]        = noop(subscription)
+  def onSubscription(subscription: BotSubscriptionUpdated): F[Unit]         = noop(subscription)
 
   private def noopReply[A](a: A) = Monad[F].pure(a).map(_ => Option.empty[Method[?]])
 
@@ -133,14 +133,14 @@ abstract class WebhookBot[F[_]: Async](
   def onPurchasedPaidMediaReply(purchasedPaidMedia: PaidMediaPurchased): F[Option[Method[?]]] = noopReply(
     purchasedPaidMedia
   )
-  def onPollReply(poll: Poll): F[Option[Method[?]]]                                 = noopReply(poll)
-  def onPollAnswerReply(pollAnswer: PollAnswer): F[Option[Method[?]]]               = noopReply(pollAnswer)
-  def onMyChatMemberReply(myChatMember: ChatMemberUpdated): F[Option[Method[?]]]    = noopReply(myChatMember)
-  def onChatMemberReply(chatMember: ChatMemberUpdated): F[Option[Method[?]]]        = noopReply(chatMember)
-  def onChatJoinRequestReply(request: ChatJoinRequest): F[Option[Method[?]]]        = noopReply(request)
-  def onChatBoostReply(boost: ChatBoostUpdated): F[Option[Method[?]]]               = noopReply(boost)
-  def onRemovedChatBoostReply(boostRemoved: ChatBoostRemoved): F[Option[Method[?]]] = noopReply(boostRemoved)
-  def onManagedBotReply(managedBot: ManagedBotUpdated): F[Option[Method[?]]]        = noopReply(managedBot)
+  def onPollReply(poll: Poll): F[Option[Method[?]]]                                   = noopReply(poll)
+  def onPollAnswerReply(pollAnswer: PollAnswer): F[Option[Method[?]]]                 = noopReply(pollAnswer)
+  def onMyChatMemberReply(myChatMember: ChatMemberUpdated): F[Option[Method[?]]]      = noopReply(myChatMember)
+  def onChatMemberReply(chatMember: ChatMemberUpdated): F[Option[Method[?]]]          = noopReply(chatMember)
+  def onChatJoinRequestReply(request: ChatJoinRequest): F[Option[Method[?]]]          = noopReply(request)
+  def onChatBoostReply(boost: ChatBoostUpdated): F[Option[Method[?]]]                 = noopReply(boost)
+  def onRemovedChatBoostReply(boostRemoved: ChatBoostRemoved): F[Option[Method[?]]]   = noopReply(boostRemoved)
+  def onManagedBotReply(managedBot: ManagedBotUpdated): F[Option[Method[?]]]          = noopReply(managedBot)
   def onSubscriptionReply(subscription: BotSubscriptionUpdated): F[Option[Method[?]]] = noopReply(subscription)
 
   def onUpdate(update: Update): F[Option[Method[?]]] =
@@ -180,9 +180,7 @@ abstract class WebhookBot[F[_]: Async](
         onRemovedChatBoostReply(boostRemoved) <* onRemovedChatBoost(boostRemoved)
       ),
       update.managedBot.map(managedBot => onManagedBotReply(managedBot) <* onManagedBot(managedBot)),
-      update.subscription.map(subscription =>
-        onSubscriptionReply(subscription) <* onSubscription(subscription)
-      )
+      update.subscription.map(subscription => onSubscriptionReply(subscription) <* onSubscription(subscription))
     ).flatten.head
 
   private implicit val HandleUpdateReqEntityDecoder: EntityDecoder[F, Update] = jsonOf[F, Update]

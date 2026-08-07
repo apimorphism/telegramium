@@ -16,9 +16,9 @@ object Dependencies {
     val mockServerClient = "5.14.0"
   }
 
-  val catsCore      = "org.typelevel" %% "cats-core"   % V.catsCore
-  val catsEffect    = "org.typelevel" %% "cats-effect" % V.catsEffect
-  val scalatest     = "org.scalatest" %% "scalatest"   % V.scalatest % Test
+  val catsCore      = "org.typelevel"     %% "cats-core"       % V.catsCore
+  val catsEffect    = "org.typelevel"     %% "cats-effect"     % V.catsEffect
+  val scalatest     = "org.scalatest"     %% "scalatest"       % V.scalatest     % Test
   val scalatestplus = "org.scalatestplus" %% "scalacheck-1-19" % V.scalatestplus % Test
 
   val circe = Seq(
