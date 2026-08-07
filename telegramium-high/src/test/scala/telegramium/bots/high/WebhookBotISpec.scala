@@ -24,6 +24,7 @@ import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
+import telegramium.bots.BotSubscriptionUpdated
 import telegramium.bots.BusinessConnection
 import telegramium.bots.BusinessMessagesDeleted
 import telegramium.bots.CallbackQuery
@@ -39,7 +40,6 @@ import telegramium.bots.ChatMemberUpdated
 import telegramium.bots.ChosenInlineResult
 import telegramium.bots.CirceImplicits.*
 import telegramium.bots.InlineQuery
-import telegramium.bots.BotSubscriptionUpdated
 import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
 import telegramium.bots.MessageReactionCountUpdated
