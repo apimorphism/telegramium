@@ -180,7 +180,7 @@ final case class InputRichBlockAnimation(
   caption: Option[RichBlockCaption] = Option.empty
 ) extends InputRichBlock
 
-/** A section heading, corresponding to the HTML tags <h1>, <h2>, <h3>, <h4>, <h5>, or <h6>.
+/** A section heading, corresponding to the HTML tags &lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;h4&gt;, &lt;h5&gt;, or &lt;h6&gt;.
   *
   * @param text
   *   Text of the block
