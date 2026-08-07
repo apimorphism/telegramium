@@ -31,19 +31,18 @@ import telegramium.bots.KeyboardMarkup
   * @param type
   *   Poll type, “quiz” or “regular”, defaults to “regular”
   * @param allowsMultipleAnswers
-  *   Pass True, if the poll allows multiple answers, defaults to False
+  *   Pass True if the poll allows multiple answers, defaults to False
   * @param allowsRevoting
-  *   Pass True, if the poll allows to change chosen answer options, defaults to False for quizzes and to True for
+  *   Pass True if the poll allows to change chosen answer options, defaults to False for quizzes and to True for
   *   regular polls
   * @param shuffleOptions
-  *   Pass True, if the poll options must be shown in random order
+  *   Pass True if the poll options must be shown in random order
   * @param allowAddingOptions
-  *   Pass True, if answer options can be added to the poll after creation; not supported for anonymous polls and
-  *   quizzes
+  *   Pass True if answer options can be added to the poll after creation; not supported for anonymous polls and quizzes
   * @param hideResultsUntilCloses
-  *   Pass True, if poll results must be shown only after the poll closes
+  *   Pass True if poll results must be shown only after the poll closes
   * @param membersOnly
-  *   Pass True, if voting is limited to users who have been members of the chat where the poll is being sent for more
+  *   Pass True if voting is limited to users who have been members of the chat where the poll is being sent for more
   *   than 24 hours; for channel chats only
   * @param countryCodes
   *   A JSON-serialized list of 0-12 two-letter ISO 3166-1 alpha-2 country codes indicating the countries from which

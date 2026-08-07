@@ -38,6 +38,9 @@ package telegramium.bots
   *   Optional. True, if the bot allows users to create and delete topics in private chats. Returned only in getMe.
   * @param canManageBots
   *   Optional. True, if other bots can be created to be controlled by the bot. Returned only in getMe.
+  * @param supportsJoinRequestQueries
+  *   Optional. True, if the bot supports join request queries and can be assigned to process them. Returned only in
+  *   getMe.
   */
 final case class User(
   id: Long,
@@ -56,5 +59,6 @@ final case class User(
   hasMainWebApp: Option[Boolean] = Option.empty,
   hasTopicsEnabled: Option[Boolean] = Option.empty,
   allowsUsersToCreateTopics: Option[Boolean] = Option.empty,
-  canManageBots: Option[Boolean] = Option.empty
+  canManageBots: Option[Boolean] = Option.empty,
+  supportsJoinRequestQueries: Option[Boolean] = Option.empty
 )

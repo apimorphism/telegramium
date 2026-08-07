@@ -121,6 +121,11 @@ package telegramium.bots
   *   previews
   * @param paidMessageStarCount
   *   Optional. The number of Telegram Stars a general user has to pay to send a message to the chat
+  * @param guardBot
+  *   Optional. The bot that processes join request queries in the chat. The field is only available to chat
+  *   administrators.
+  * @param community
+  *   Optional. The Community to which the chat belongs
   */
 final case class ChatFullInfo(
   id: Long,
@@ -173,5 +178,7 @@ final case class ChatFullInfo(
   rating: Option[UserRating] = Option.empty,
   firstProfileAudio: Option[Audio] = Option.empty,
   uniqueGiftColors: Option[UniqueGiftColors] = Option.empty,
-  paidMessageStarCount: Option[Int] = Option.empty
+  paidMessageStarCount: Option[Int] = Option.empty,
+  guardBot: Option[User] = Option.empty,
+  community: Option[Community] = Option.empty
 )

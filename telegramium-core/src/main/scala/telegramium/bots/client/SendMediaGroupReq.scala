@@ -16,7 +16,7 @@ import telegramium.bots.ReplyParameters
   *   Identifier of the direct messages topic to which the messages will be sent; required if the messages are sent to a
   *   direct messages chat
   * @param media
-  *   A JSON-serialized array describing messages to be sent, must include 2-10 items
+  *   A JSON-serialized Array describing messages to be sent, must include 2-10 items
   * @param disableNotification
   *   Sends messages silently. Users will receive a notification with no sound.
   * @param protectContent

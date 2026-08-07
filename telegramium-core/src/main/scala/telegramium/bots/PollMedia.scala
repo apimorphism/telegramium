@@ -8,6 +8,8 @@ package telegramium.bots
   *   Optional. Media is an audio file, information about the file; currently, can't be received in a poll option
   * @param document
   *   Optional. Media is a general file, information about the file; currently, can't be received in a poll option
+  * @param link
+  *   Optional. The HTTP link attached to the poll option
   * @param livePhoto
   *   Optional. Media is a live photo, information about the live photo
   * @param location
@@ -25,6 +27,7 @@ final case class PollMedia(
   animation: Option[Animation] = Option.empty,
   audio: Option[Audio] = Option.empty,
   document: Option[Document] = Option.empty,
+  link: Option[Link] = Option.empty,
   livePhoto: Option[LivePhoto] = Option.empty,
   location: Option[Location] = Option.empty,
   photo: List[PhotoSize] = List.empty,

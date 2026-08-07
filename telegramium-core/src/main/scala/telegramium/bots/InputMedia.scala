@@ -33,7 +33,7 @@ final case class InputMediaLocation(latitude: Float, longitude: Float, horizonta
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
   * @param showCaptionAboveMedia
-  *   Optional. Pass True, if the caption must be shown above the message media
+  *   Optional. Pass True if the caption must be shown above the message media
   * @param width
   *   Optional. Animation width
   * @param height
@@ -56,6 +56,36 @@ final case class InputMediaAnimation(
   hasSpoiler: Option[Boolean] = Option.empty
 ) extends InputMedia
 
+/** Represents an HTTP link to be sent.
+  *
+  * @param url
+  *   HTTP URL of the link
+  */
+final case class InputMediaLink(url: String) extends InputMedia
+
+/** Represents a voice message file to be sent.
+  *
+  * @param media
+  *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
+  *   for Telegram to get a file from the Internet, or pass "attach://<file_attach_name>" to upload a new one using
+  *   multipart/form-data under <file_attach_name> name.
+  * @param caption
+  *   Optional. Caption of the voice message to be sent, 0-1024 characters after entities parsing
+  * @param parseMode
+  *   Optional. Mode for parsing entities in the voice message caption. See formatting options for more details.
+  * @param captionEntities
+  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  * @param duration
+  *   Optional. Duration of the voice message in seconds
+  */
+final case class InputMediaVoiceNote(
+  media: IFile,
+  caption: Option[String] = Option.empty,
+  parseMode: Option[ParseMode] = Option.empty,
+  captionEntities: List[MessageEntity] = List.empty,
+  duration: Option[Int] = Option.empty
+) extends InputMedia
+
 /** Represents a photo to be sent.
   *
   * @param media
@@ -69,7 +99,7 @@ final case class InputMediaAnimation(
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
   * @param showCaptionAboveMedia
-  *   Optional. Pass True, if the caption must be shown above the message media
+  *   Optional. Pass True if the caption must be shown above the message media
   * @param hasSpoiler
   *   Optional. Pass True if the photo needs to be covered with a spoiler animation
   */
@@ -107,7 +137,7 @@ final case class InputMediaPhoto(
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
   * @param showCaptionAboveMedia
-  *   Optional. Pass True, if the caption must be shown above the message media
+  *   Optional. Pass True if the caption must be shown above the message media
   * @param width
   *   Optional. Video width
   * @param height
@@ -152,7 +182,7 @@ final case class InputMediaVideo(
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
   * @param showCaptionAboveMedia
-  *   Optional. Pass True, if the caption must be shown above the message media
+  *   Optional. Pass True if the caption must be shown above the message media
   * @param hasSpoiler
   *   Optional. Pass True if the live photo needs to be covered with a spoiler animation
   */

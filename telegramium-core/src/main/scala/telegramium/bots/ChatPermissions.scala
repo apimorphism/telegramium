@@ -3,8 +3,8 @@ package telegramium.bots
 /** Describes actions that a non-administrator user is allowed to take in a chat.
   *
   * @param canSendMessages
-  *   Optional. True, if the user is allowed to send text messages, contacts, giveaways, giveaway winners, invoices,
-  *   locations and venues
+  *   Optional. True, if the user is allowed to send text messages, rich messages, contacts, giveaways, giveaway
+  *   winners, invoices, locations and venues
   * @param canSendAudios
   *   Optional. True, if the user is allowed to send audios
   * @param canSendDocuments
@@ -37,7 +37,7 @@ package telegramium.bots
   * @param canPinMessages
   *   Optional. True, if the user is allowed to pin messages. Ignored in public supergroups.
   * @param canManageTopics
-  *   Optional. True, if the user is allowed to create forum topics. If omitted defaults to the value of
+  *   Optional. True, if the user is allowed to create forum topics. If omitted, defaults to the value of
   *   can_pin_messages.
   */
 final case class ChatPermissions(

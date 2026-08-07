@@ -1132,10 +1132,12 @@ object CirceImplicits {
     case document: InputMediaDocument    => document.asJson.mapObject(_.add("type", Json.fromString("document")))
     case audio: InputMediaAudio          => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
     case live_photo: InputMediaLivePhoto => live_photo.asJson.mapObject(_.add("type", Json.fromString("live_photo")))
-    case animation: InputMediaAnimation  => animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
     case video: InputMediaVideo          => video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case link: InputMediaLink            => link.asJson.mapObject(_.add("type", Json.fromString("link")))
     case sticker: InputMediaSticker      => sticker.asJson.mapObject(_.add("type", Json.fromString("sticker")))
     case venue: InputMediaVenue          => venue.asJson.mapObject(_.add("type", Json.fromString("venue")))
+    case voice_note: InputMediaVoiceNote => voice_note.asJson.mapObject(_.add("type", Json.fromString("voice_note")))
+    case animation: InputMediaAnimation  => animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
   }
 
   implicit lazy val inputmedialocationEncoder: Encoder[InputMediaLocation] =
@@ -1163,6 +1165,28 @@ object CirceImplicits {
           "height"                   -> x.height.asJson,
           "duration"                 -> x.duration.asJson,
           "has_spoiler"              -> x.hasSpoiler.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputmedialinkEncoder: Encoder[InputMediaLink] =
+    (x: InputMediaLink) => {
+      Json.fromFields(
+        List(
+          "url" -> x.url.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputmediavoicenoteEncoder: Encoder[InputMediaVoiceNote] =
+    (x: InputMediaVoiceNote) => {
+      Json.fromFields(
+        List(
+          "media"            -> x.media.asJson,
+          "caption"          -> x.caption.asJson,
+          "parse_mode"       -> x.parseMode.asJson,
+          "caption_entities" -> x.captionEntities.asJson,
+          "duration"         -> x.duration.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1279,6 +1303,7 @@ object CirceImplicits {
     case x: InputContactMessageContent  => x.asJson
     case x: InputLocationMessageContent => x.asJson
     case x: InputTextMessageContent     => x.asJson
+    case x: InputRichMessageContent     => x.asJson
   }
 
   implicit lazy val inputvenuemessagecontentEncoder: Encoder[InputVenueMessageContent] =
@@ -1363,6 +1388,15 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val inputrichmessagecontentEncoder: Encoder[InputRichMessageContent] =
+    (x: InputRichMessageContent) => {
+      Json.fromFields(
+        List(
+          "rich_message" -> x.richMessage.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val inputpaidmediaEncoder: Encoder[InputPaidMedia] = {
     case photo: InputPaidMediaPhoto => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
     case live_photo: InputPaidMediaLivePhoto =>
@@ -1429,6 +1463,237 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val inputrichblockEncoder: Encoder[InputRichBlock] = {
+    case heading: InputRichBlockSectionHeading => heading.asJson.mapObject(_.add("type", Json.fromString("heading")))
+    case map: InputRichBlockMap                => map.asJson.mapObject(_.add("type", Json.fromString("map")))
+    case audio: InputRichBlockAudio            => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
+    case collage: InputRichBlockCollage        => collage.asJson.mapObject(_.add("type", Json.fromString("collage")))
+    case divider: InputRichBlockDivider.type   => divider.asJson.mapObject(_.add("type", Json.fromString("divider")))
+    case blockquote: InputRichBlockBlockQuotation =>
+      blockquote.asJson.mapObject(_.add("type", Json.fromString("blockquote")))
+    case video: InputRichBlockVideo       => video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case details: InputRichBlockDetails   => details.asJson.mapObject(_.add("type", Json.fromString("details")))
+    case thinking: InputRichBlockThinking => thinking.asJson.mapObject(_.add("type", Json.fromString("thinking")))
+    case footer: InputRichBlockFooter     => footer.asJson.mapObject(_.add("type", Json.fromString("footer")))
+    case anchor: InputRichBlockAnchor     => anchor.asJson.mapObject(_.add("type", Json.fromString("anchor")))
+    case pre: InputRichBlockPreformatted  => pre.asJson.mapObject(_.add("type", Json.fromString("pre")))
+    case pullquote: InputRichBlockPullQuotation =>
+      pullquote.asJson.mapObject(_.add("type", Json.fromString("pullquote")))
+    case mathematical_expression: InputRichBlockMathematicalExpression =>
+      mathematical_expression.asJson.mapObject(_.add("type", Json.fromString("mathematical_expression")))
+    case slideshow: InputRichBlockSlideshow => slideshow.asJson.mapObject(_.add("type", Json.fromString("slideshow")))
+    case photo: InputRichBlockPhoto         => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case voice_note: InputRichBlockVoiceNote =>
+      voice_note.asJson.mapObject(_.add("type", Json.fromString("voice_note")))
+    case paragraph: InputRichBlockParagraph => paragraph.asJson.mapObject(_.add("type", Json.fromString("paragraph")))
+    case animation: InputRichBlockAnimation => animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
+    case list: InputRichBlockList           => list.asJson.mapObject(_.add("type", Json.fromString("list")))
+    case table: InputRichBlockTable         => table.asJson.mapObject(_.add("type", Json.fromString("table")))
+  }
+
+  implicit lazy val inputrichblocktableEncoder: Encoder[InputRichBlockTable] =
+    (x: InputRichBlockTable) => {
+      Json.fromFields(
+        List(
+          "cells"       -> x.cells.asJson,
+          "is_bordered" -> x.isBordered.asJson,
+          "is_striped"  -> x.isStriped.asJson,
+          "caption"     -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockanchorEncoder: Encoder[InputRichBlockAnchor] =
+    (x: InputRichBlockAnchor) => {
+      Json.fromFields(
+        List(
+          "name" -> x.name.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockvoicenoteEncoder: Encoder[InputRichBlockVoiceNote] =
+    (x: InputRichBlockVoiceNote) => {
+      Json.fromFields(
+        List(
+          "voice_note" -> x.voiceNote.asJson,
+          "caption"    -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblocklistEncoder: Encoder[InputRichBlockList] =
+    (x: InputRichBlockList) => {
+      Json.fromFields(
+        List(
+          "items" -> x.items.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockparagraphEncoder: Encoder[InputRichBlockParagraph] =
+    (x: InputRichBlockParagraph) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockpreformattedEncoder: Encoder[InputRichBlockPreformatted] =
+    (x: InputRichBlockPreformatted) => {
+      Json.fromFields(
+        List(
+          "text"     -> x.text.asJson,
+          "language" -> x.language.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockaudioEncoder: Encoder[InputRichBlockAudio] =
+    (x: InputRichBlockAudio) => {
+      Json.fromFields(
+        List(
+          "audio"   -> x.audio.asJson,
+          "caption" -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockcollageEncoder: Encoder[InputRichBlockCollage] =
+    (x: InputRichBlockCollage) => {
+      Json.fromFields(
+        List(
+          "blocks"  -> x.blocks.asJson,
+          "caption" -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockfooterEncoder: Encoder[InputRichBlockFooter] =
+    (x: InputRichBlockFooter) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockmathematicalexpressionEncoder: Encoder[InputRichBlockMathematicalExpression] =
+    (x: InputRichBlockMathematicalExpression) => {
+      Json.fromFields(
+        List(
+          "expression" -> x.expression.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockdividerEncoder: Encoder[InputRichBlockDivider.type] =
+    (_: InputRichBlockDivider.type) => ().asJson
+
+  implicit lazy val inputrichblockblockquotationEncoder: Encoder[InputRichBlockBlockQuotation] =
+    (x: InputRichBlockBlockQuotation) => {
+      Json.fromFields(
+        List(
+          "blocks" -> x.blocks.asJson,
+          "credit" -> x.credit.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockthinkingEncoder: Encoder[InputRichBlockThinking] =
+    (x: InputRichBlockThinking) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockmapEncoder: Encoder[InputRichBlockMap] =
+    (x: InputRichBlockMap) => {
+      Json.fromFields(
+        List(
+          "location" -> x.location.asJson,
+          "zoom"     -> x.zoom.asJson,
+          "width"    -> x.width.asJson,
+          "height"   -> x.height.asJson,
+          "caption"  -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockslideshowEncoder: Encoder[InputRichBlockSlideshow] =
+    (x: InputRichBlockSlideshow) => {
+      Json.fromFields(
+        List(
+          "blocks"  -> x.blocks.asJson,
+          "caption" -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockphotoEncoder: Encoder[InputRichBlockPhoto] =
+    (x: InputRichBlockPhoto) => {
+      Json.fromFields(
+        List(
+          "photo"   -> x.photo.asJson,
+          "caption" -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockanimationEncoder: Encoder[InputRichBlockAnimation] =
+    (x: InputRichBlockAnimation) => {
+      Json.fromFields(
+        List(
+          "animation" -> x.animation.asJson,
+          "caption"   -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblocksectionheadingEncoder: Encoder[InputRichBlockSectionHeading] =
+    (x: InputRichBlockSectionHeading) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson,
+          "size" -> x.size.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockdetailsEncoder: Encoder[InputRichBlockDetails] =
+    (x: InputRichBlockDetails) => {
+      Json.fromFields(
+        List(
+          "summary" -> x.summary.asJson,
+          "blocks"  -> x.blocks.asJson,
+          "is_open" -> x.isOpen.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockvideoEncoder: Encoder[InputRichBlockVideo] =
+    (x: InputRichBlockVideo) => {
+      Json.fromFields(
+        List(
+          "video"   -> x.video.asJson,
+          "caption" -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockpullquotationEncoder: Encoder[InputRichBlockPullQuotation] =
+    (x: InputRichBlockPullQuotation) => {
+      Json.fromFields(
+        List(
+          "text"   -> x.text.asJson,
+          "credit" -> x.credit.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val inputstorycontentEncoder: Encoder[InputStoryContent] = {
     case photo: InputStoryContentPhoto => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
     case video: InputStoryContentVideo => video.asJson.mapObject(_.add("type", Json.fromString("video")))
@@ -1482,6 +1747,8 @@ object CirceImplicits {
           "sender_boost_count"                -> x.senderBoostCount.asJson,
           "sender_business_bot"               -> x.senderBusinessBot.asJson,
           "sender_tag"                        -> x.senderTag.asJson,
+          "receiver_user"                     -> x.receiverUser.asJson,
+          "ephemeral_message_id"              -> x.ephemeralMessageId.asJson,
           "date"                              -> x.date.asJson,
           "guest_query_id"                    -> x.guestQueryId.asJson,
           "business_connection_id"            -> x.businessConnectionId.asJson,
@@ -1510,6 +1777,7 @@ object CirceImplicits {
           "link_preview_options"              -> x.linkPreviewOptions.asJson,
           "suggested_post_info"               -> x.suggestedPostInfo.asJson,
           "effect_id"                         -> x.effectId.asJson,
+          "rich_message"                      -> x.richMessage.asJson,
           "animation"                         -> x.animation.asJson,
           "audio"                             -> x.audio.asJson,
           "document"                          -> x.document.asJson,
@@ -1562,6 +1830,8 @@ object CirceImplicits {
           "chat_background_set"               -> x.chatBackgroundSet.asJson,
           "checklist_tasks_done"              -> x.checklistTasksDone.asJson,
           "checklist_tasks_added"             -> x.checklistTasksAdded.asJson,
+          "community_chat_added"              -> x.communityChatAdded.asJson,
+          "community_chat_removed"            -> x.communityChatRemoved.asJson,
           "direct_message_price_changed"      -> x.directMessagePriceChanged.asJson,
           "forum_topic_created"               -> x.forumTopicCreated.asJson,
           "forum_topic_edited"                -> x.forumTopicEdited.asJson,
@@ -1603,6 +1873,8 @@ object CirceImplicits {
         _senderBoostCount       <- h.get[Option[Int]]("sender_boost_count")
         _senderBusinessBot      <- h.get[Option[User]]("sender_business_bot")
         _senderTag              <- h.get[Option[String]]("sender_tag")
+        _receiverUser           <- h.get[Option[User]]("receiver_user")
+        _ephemeralMessageId     <- h.get[Option[Int]]("ephemeral_message_id")
         _date                   <- h.get[Long]("date")
         _guestQueryId           <- h.get[Option[String]]("guest_query_id")
         _businessConnectionId   <- h.get[Option[String]]("business_connection_id")
@@ -1631,6 +1903,7 @@ object CirceImplicits {
         _linkPreviewOptions     <- h.get[Option[LinkPreviewOptions]]("link_preview_options")
         _suggestedPostInfo      <- h.get[Option[SuggestedPostInfo]]("suggested_post_info")
         _effectId               <- h.get[Option[String]]("effect_id")
+        _richMessage            <- h.get[Option[RichMessage]]("rich_message")
         _animation              <- h.get[Option[Animation]]("animation")
         _audio                  <- h.get[Option[Audio]]("audio")
         _document               <- h.get[Option[Document]]("document")
@@ -1685,6 +1958,8 @@ object CirceImplicits {
         _chatBackgroundSet            <- h.get[Option[ChatBackground]]("chat_background_set")
         _checklistTasksDone           <- h.get[Option[ChecklistTasksDone]]("checklist_tasks_done")
         _checklistTasksAdded          <- h.get[Option[ChecklistTasksAdded]]("checklist_tasks_added")
+        _communityChatAdded           <- h.get[Option[CommunityChatAdded]]("community_chat_added")
+        _communityChatRemoved         <- h.get[Option[CommunityChatRemoved.type]]("community_chat_removed")
         _directMessagePriceChanged    <- h.get[Option[DirectMessagePriceChanged]]("direct_message_price_changed")
         _forumTopicCreated            <- h.get[Option[ForumTopicCreated]]("forum_topic_created")
         _forumTopicEdited             <- h.get[Option[ForumTopicEdited]]("forum_topic_edited")
@@ -1721,6 +1996,8 @@ object CirceImplicits {
           senderBoostCount = _senderBoostCount,
           senderBusinessBot = _senderBusinessBot,
           senderTag = _senderTag,
+          receiverUser = _receiverUser,
+          ephemeralMessageId = _ephemeralMessageId,
           date = _date,
           guestQueryId = _guestQueryId,
           businessConnectionId = _businessConnectionId,
@@ -1749,6 +2026,7 @@ object CirceImplicits {
           linkPreviewOptions = _linkPreviewOptions,
           suggestedPostInfo = _suggestedPostInfo,
           effectId = _effectId,
+          richMessage = _richMessage,
           animation = _animation,
           audio = _audio,
           document = _document,
@@ -1801,6 +2079,8 @@ object CirceImplicits {
           chatBackgroundSet = _chatBackgroundSet,
           checklistTasksDone = _checklistTasksDone,
           checklistTasksAdded = _checklistTasksAdded,
+          communityChatAdded = _communityChatAdded,
+          communityChatRemoved = _communityChatRemoved,
           directMessagePriceChanged = _directMessagePriceChanged,
           forumTopicCreated = _forumTopicCreated,
           forumTopicEdited = _forumTopicEdited,
@@ -2908,6 +3188,1017 @@ object CirceImplicits {
   implicit lazy val revenuewithdrawalstatefailedDecoder: Decoder[RevenueWithdrawalStateFailed.type] = (_: HCursor) =>
     Right(RevenueWithdrawalStateFailed)
 
+  implicit lazy val richblockEncoder: Encoder[RichBlock] = {
+    case heading: RichBlockSectionHeading => heading.asJson.mapObject(_.add("type", Json.fromString("heading")))
+    case map: RichBlockMap                => map.asJson.mapObject(_.add("type", Json.fromString("map")))
+    case audio: RichBlockAudio            => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
+    case collage: RichBlockCollage        => collage.asJson.mapObject(_.add("type", Json.fromString("collage")))
+    case divider: RichBlockDivider.type   => divider.asJson.mapObject(_.add("type", Json.fromString("divider")))
+    case blockquote: RichBlockBlockQuotation =>
+      blockquote.asJson.mapObject(_.add("type", Json.fromString("blockquote")))
+    case video: RichBlockVideo             => video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case details: RichBlockDetails         => details.asJson.mapObject(_.add("type", Json.fromString("details")))
+    case thinking: RichBlockThinking       => thinking.asJson.mapObject(_.add("type", Json.fromString("thinking")))
+    case footer: RichBlockFooter           => footer.asJson.mapObject(_.add("type", Json.fromString("footer")))
+    case anchor: RichBlockAnchor           => anchor.asJson.mapObject(_.add("type", Json.fromString("anchor")))
+    case pre: RichBlockPreformatted        => pre.asJson.mapObject(_.add("type", Json.fromString("pre")))
+    case pullquote: RichBlockPullQuotation => pullquote.asJson.mapObject(_.add("type", Json.fromString("pullquote")))
+    case mathematical_expression: RichBlockMathematicalExpression =>
+      mathematical_expression.asJson.mapObject(_.add("type", Json.fromString("mathematical_expression")))
+    case slideshow: RichBlockSlideshow  => slideshow.asJson.mapObject(_.add("type", Json.fromString("slideshow")))
+    case photo: RichBlockPhoto          => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case voice_note: RichBlockVoiceNote => voice_note.asJson.mapObject(_.add("type", Json.fromString("voice_note")))
+    case paragraph: RichBlockParagraph  => paragraph.asJson.mapObject(_.add("type", Json.fromString("paragraph")))
+    case animation: RichBlockAnimation  => animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
+    case list: RichBlockList            => list.asJson.mapObject(_.add("type", Json.fromString("list")))
+    case table: RichBlockTable          => table.asJson.mapObject(_.add("type", Json.fromString("table")))
+  }
+
+  implicit lazy val richblockDecoder: Decoder[iozhik.OpenEnum[RichBlock]] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "heading"                 => Decoder[RichBlockSectionHeading].map(iozhik.OpenEnum.Known(_))
+      case "map"                     => Decoder[RichBlockMap].map(iozhik.OpenEnum.Known(_))
+      case "audio"                   => Decoder[RichBlockAudio].map(iozhik.OpenEnum.Known(_))
+      case "collage"                 => Decoder[RichBlockCollage].map(iozhik.OpenEnum.Known(_))
+      case "divider"                 => Decoder[RichBlockDivider.type].map(iozhik.OpenEnum.Known(_))
+      case "blockquote"              => Decoder[RichBlockBlockQuotation].map(iozhik.OpenEnum.Known(_))
+      case "video"                   => Decoder[RichBlockVideo].map(iozhik.OpenEnum.Known(_))
+      case "details"                 => Decoder[RichBlockDetails].map(iozhik.OpenEnum.Known(_))
+      case "thinking"                => Decoder[RichBlockThinking].map(iozhik.OpenEnum.Known(_))
+      case "footer"                  => Decoder[RichBlockFooter].map(iozhik.OpenEnum.Known(_))
+      case "anchor"                  => Decoder[RichBlockAnchor].map(iozhik.OpenEnum.Known(_))
+      case "pre"                     => Decoder[RichBlockPreformatted].map(iozhik.OpenEnum.Known(_))
+      case "pullquote"               => Decoder[RichBlockPullQuotation].map(iozhik.OpenEnum.Known(_))
+      case "mathematical_expression" => Decoder[RichBlockMathematicalExpression].map(iozhik.OpenEnum.Known(_))
+      case "slideshow"               => Decoder[RichBlockSlideshow].map(iozhik.OpenEnum.Known(_))
+      case "photo"                   => Decoder[RichBlockPhoto].map(iozhik.OpenEnum.Known(_))
+      case "voice_note"              => Decoder[RichBlockVoiceNote].map(iozhik.OpenEnum.Known(_))
+      case "paragraph"               => Decoder[RichBlockParagraph].map(iozhik.OpenEnum.Known(_))
+      case "animation"               => Decoder[RichBlockAnimation].map(iozhik.OpenEnum.Known(_))
+      case "list"                    => Decoder[RichBlockList].map(iozhik.OpenEnum.Known(_))
+      case "table"                   => Decoder[RichBlockTable].map(iozhik.OpenEnum.Known(_))
+      case unknown                   => Decoder.const(iozhik.OpenEnum.Unknown[RichBlock](unknown))
+    }
+  } yield value
+
+  implicit lazy val richblockvideoEncoder: Encoder[RichBlockVideo] =
+    (x: RichBlockVideo) => {
+      Json.fromFields(
+        List(
+          "video"       -> x.video.asJson,
+          "has_spoiler" -> x.hasSpoiler.asJson,
+          "caption"     -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockvideoDecoder: Decoder[RichBlockVideo] =
+    Decoder.instance { h =>
+      for {
+        _video      <- h.get[Video]("video")
+        _hasSpoiler <- h.get[Option[Boolean]]("has_spoiler")
+        _caption    <- h.get[Option[RichBlockCaption]]("caption")
+      } yield {
+        RichBlockVideo(video = _video, hasSpoiler = _hasSpoiler, caption = _caption)
+      }
+    }
+
+  implicit lazy val richblockdetailsEncoder: Encoder[RichBlockDetails] =
+    (x: RichBlockDetails) => {
+      Json.fromFields(
+        List(
+          "summary" -> x.summary.asJson,
+          "blocks"  -> x.blocks.asJson,
+          "is_open" -> x.isOpen.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockdetailsDecoder: Decoder[RichBlockDetails] =
+    Decoder.instance { h =>
+      for {
+        _summary <- h.get[iozhik.OpenEnum[RichText]]("summary")
+        _blocks  <- h.getOrElse[List[iozhik.OpenEnum[RichBlock]]]("blocks")(List.empty)
+        _isOpen  <- h.get[Option[Boolean]]("is_open")
+      } yield {
+        RichBlockDetails(summary = _summary, blocks = _blocks, isOpen = _isOpen)
+      }
+    }
+
+  implicit lazy val richblocklistEncoder: Encoder[RichBlockList] =
+    (x: RichBlockList) => {
+      Json.fromFields(
+        List(
+          "items" -> x.items.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblocklistDecoder: Decoder[RichBlockList] =
+    Decoder.instance { h =>
+      for {
+        _items <- h.getOrElse[List[RichBlockListItem]]("items")(List.empty)
+      } yield {
+        RichBlockList(items = _items)
+      }
+    }
+
+  implicit lazy val richblockphotoEncoder: Encoder[RichBlockPhoto] =
+    (x: RichBlockPhoto) => {
+      Json.fromFields(
+        List(
+          "photo"       -> x.photo.asJson,
+          "has_spoiler" -> x.hasSpoiler.asJson,
+          "caption"     -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockphotoDecoder: Decoder[RichBlockPhoto] =
+    Decoder.instance { h =>
+      for {
+        _photo      <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
+        _hasSpoiler <- h.get[Option[Boolean]]("has_spoiler")
+        _caption    <- h.get[Option[RichBlockCaption]]("caption")
+      } yield {
+        RichBlockPhoto(photo = _photo, hasSpoiler = _hasSpoiler, caption = _caption)
+      }
+    }
+
+  implicit lazy val richblockthinkingEncoder: Encoder[RichBlockThinking] =
+    (x: RichBlockThinking) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockthinkingDecoder: Decoder[RichBlockThinking] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+      } yield {
+        RichBlockThinking(text = _text)
+      }
+    }
+
+  implicit lazy val richblockfooterEncoder: Encoder[RichBlockFooter] =
+    (x: RichBlockFooter) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockfooterDecoder: Decoder[RichBlockFooter] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+      } yield {
+        RichBlockFooter(text = _text)
+      }
+    }
+
+  implicit lazy val richblockanchorEncoder: Encoder[RichBlockAnchor] =
+    (x: RichBlockAnchor) => {
+      Json.fromFields(
+        List(
+          "name" -> x.name.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockanchorDecoder: Decoder[RichBlockAnchor] =
+    Decoder.instance { h =>
+      for {
+        _name <- h.get[String]("name")
+      } yield {
+        RichBlockAnchor(name = _name)
+      }
+    }
+
+  implicit lazy val richblockmathematicalexpressionEncoder: Encoder[RichBlockMathematicalExpression] =
+    (x: RichBlockMathematicalExpression) => {
+      Json.fromFields(
+        List(
+          "expression" -> x.expression.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockmathematicalexpressionDecoder: Decoder[RichBlockMathematicalExpression] =
+    Decoder.instance { h =>
+      for {
+        _expression <- h.get[String]("expression")
+      } yield {
+        RichBlockMathematicalExpression(expression = _expression)
+      }
+    }
+
+  implicit lazy val richblockblockquotationEncoder: Encoder[RichBlockBlockQuotation] =
+    (x: RichBlockBlockQuotation) => {
+      Json.fromFields(
+        List(
+          "blocks" -> x.blocks.asJson,
+          "credit" -> x.credit.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockblockquotationDecoder: Decoder[RichBlockBlockQuotation] =
+    Decoder.instance { h =>
+      for {
+        _blocks <- h.getOrElse[List[iozhik.OpenEnum[RichBlock]]]("blocks")(List.empty)
+        _credit <- h.get[Option[iozhik.OpenEnum[RichText]]]("credit")
+      } yield {
+        RichBlockBlockQuotation(blocks = _blocks, credit = _credit)
+      }
+    }
+
+  implicit lazy val richblockmapEncoder: Encoder[RichBlockMap] =
+    (x: RichBlockMap) => {
+      Json.fromFields(
+        List(
+          "location" -> x.location.asJson,
+          "zoom"     -> x.zoom.asJson,
+          "width"    -> x.width.asJson,
+          "height"   -> x.height.asJson,
+          "caption"  -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockmapDecoder: Decoder[RichBlockMap] =
+    Decoder.instance { h =>
+      for {
+        _location <- h.get[Location]("location")
+        _zoom     <- h.get[Int]("zoom")
+        _width    <- h.get[Int]("width")
+        _height   <- h.get[Int]("height")
+        _caption  <- h.get[Option[RichBlockCaption]]("caption")
+      } yield {
+        RichBlockMap(location = _location, zoom = _zoom, width = _width, height = _height, caption = _caption)
+      }
+    }
+
+  implicit lazy val richblockslideshowEncoder: Encoder[RichBlockSlideshow] =
+    (x: RichBlockSlideshow) => {
+      Json.fromFields(
+        List(
+          "blocks"  -> x.blocks.asJson,
+          "caption" -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockslideshowDecoder: Decoder[RichBlockSlideshow] =
+    Decoder.instance { h =>
+      for {
+        _blocks  <- h.getOrElse[List[iozhik.OpenEnum[RichBlock]]]("blocks")(List.empty)
+        _caption <- h.get[Option[RichBlockCaption]]("caption")
+      } yield {
+        RichBlockSlideshow(blocks = _blocks, caption = _caption)
+      }
+    }
+
+  implicit lazy val richblockparagraphEncoder: Encoder[RichBlockParagraph] =
+    (x: RichBlockParagraph) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockparagraphDecoder: Decoder[RichBlockParagraph] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+      } yield {
+        RichBlockParagraph(text = _text)
+      }
+    }
+
+  implicit lazy val richblockpullquotationEncoder: Encoder[RichBlockPullQuotation] =
+    (x: RichBlockPullQuotation) => {
+      Json.fromFields(
+        List(
+          "text"   -> x.text.asJson,
+          "credit" -> x.credit.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockpullquotationDecoder: Decoder[RichBlockPullQuotation] =
+    Decoder.instance { h =>
+      for {
+        _text   <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _credit <- h.get[Option[iozhik.OpenEnum[RichText]]]("credit")
+      } yield {
+        RichBlockPullQuotation(text = _text, credit = _credit)
+      }
+    }
+
+  implicit lazy val richblockpreformattedEncoder: Encoder[RichBlockPreformatted] =
+    (x: RichBlockPreformatted) => {
+      Json.fromFields(
+        List(
+          "text"     -> x.text.asJson,
+          "language" -> x.language.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockpreformattedDecoder: Decoder[RichBlockPreformatted] =
+    Decoder.instance { h =>
+      for {
+        _text     <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _language <- h.get[Option[String]]("language")
+      } yield {
+        RichBlockPreformatted(text = _text, language = _language)
+      }
+    }
+
+  implicit lazy val richblocktableEncoder: Encoder[RichBlockTable] =
+    (x: RichBlockTable) => {
+      Json.fromFields(
+        List(
+          "cells"       -> x.cells.asJson,
+          "is_bordered" -> x.isBordered.asJson,
+          "is_striped"  -> x.isStriped.asJson,
+          "caption"     -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblocktableDecoder: Decoder[RichBlockTable] =
+    Decoder.instance { h =>
+      for {
+        _cells      <- h.getOrElse[List[List[RichBlockTableCell]]]("cells")(List.empty)
+        _isBordered <- h.get[Option[Boolean]]("is_bordered")
+        _isStriped  <- h.get[Option[Boolean]]("is_striped")
+        _caption    <- h.get[Option[iozhik.OpenEnum[RichText]]]("caption")
+      } yield {
+        RichBlockTable(cells = _cells, isBordered = _isBordered, isStriped = _isStriped, caption = _caption)
+      }
+    }
+
+  implicit lazy val richblockcollageEncoder: Encoder[RichBlockCollage] =
+    (x: RichBlockCollage) => {
+      Json.fromFields(
+        List(
+          "blocks"  -> x.blocks.asJson,
+          "caption" -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockcollageDecoder: Decoder[RichBlockCollage] =
+    Decoder.instance { h =>
+      for {
+        _blocks  <- h.getOrElse[List[iozhik.OpenEnum[RichBlock]]]("blocks")(List.empty)
+        _caption <- h.get[Option[RichBlockCaption]]("caption")
+      } yield {
+        RichBlockCollage(blocks = _blocks, caption = _caption)
+      }
+    }
+
+  implicit lazy val richblockaudioEncoder: Encoder[RichBlockAudio] =
+    (x: RichBlockAudio) => {
+      Json.fromFields(
+        List(
+          "audio"   -> x.audio.asJson,
+          "caption" -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockaudioDecoder: Decoder[RichBlockAudio] =
+    Decoder.instance { h =>
+      for {
+        _audio   <- h.get[Audio]("audio")
+        _caption <- h.get[Option[RichBlockCaption]]("caption")
+      } yield {
+        RichBlockAudio(audio = _audio, caption = _caption)
+      }
+    }
+
+  implicit lazy val richblockdividerEncoder: Encoder[RichBlockDivider.type] = (_: RichBlockDivider.type) => ().asJson
+  implicit lazy val richblockdividerDecoder: Decoder[RichBlockDivider.type] = (_: HCursor) => Right(RichBlockDivider)
+
+  implicit lazy val richblockanimationEncoder: Encoder[RichBlockAnimation] =
+    (x: RichBlockAnimation) => {
+      Json.fromFields(
+        List(
+          "animation"   -> x.animation.asJson,
+          "has_spoiler" -> x.hasSpoiler.asJson,
+          "caption"     -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockanimationDecoder: Decoder[RichBlockAnimation] =
+    Decoder.instance { h =>
+      for {
+        _animation  <- h.get[Animation]("animation")
+        _hasSpoiler <- h.get[Option[Boolean]]("has_spoiler")
+        _caption    <- h.get[Option[RichBlockCaption]]("caption")
+      } yield {
+        RichBlockAnimation(animation = _animation, hasSpoiler = _hasSpoiler, caption = _caption)
+      }
+    }
+
+  implicit lazy val richblocksectionheadingEncoder: Encoder[RichBlockSectionHeading] =
+    (x: RichBlockSectionHeading) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson,
+          "size" -> x.size.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblocksectionheadingDecoder: Decoder[RichBlockSectionHeading] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _size <- h.get[Int]("size")
+      } yield {
+        RichBlockSectionHeading(text = _text, size = _size)
+      }
+    }
+
+  implicit lazy val richblockvoicenoteEncoder: Encoder[RichBlockVoiceNote] =
+    (x: RichBlockVoiceNote) => {
+      Json.fromFields(
+        List(
+          "voice_note" -> x.voiceNote.asJson,
+          "caption"    -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockvoicenoteDecoder: Decoder[RichBlockVoiceNote] =
+    Decoder.instance { h =>
+      for {
+        _voiceNote <- h.get[Voice]("voice_note")
+        _caption   <- h.get[Option[RichBlockCaption]]("caption")
+      } yield {
+        RichBlockVoiceNote(voiceNote = _voiceNote, caption = _caption)
+      }
+    }
+
+  implicit lazy val richtextEncoder: Encoder[RichText] = {
+    case mathematical_expression: RichTextMathematicalExpression =>
+      mathematical_expression.asJson.mapObject(_.add("type", Json.fromString("mathematical_expression")))
+    case underline: RichTextUnderline => underline.asJson.mapObject(_.add("type", Json.fromString("underline")))
+    case subscript: RichTextSubscript => subscript.asJson.mapObject(_.add("type", Json.fromString("subscript")))
+    case marked: RichTextMarked       => marked.asJson.mapObject(_.add("type", Json.fromString("marked")))
+    case hashtag: RichTextHashtag     => hashtag.asJson.mapObject(_.add("type", Json.fromString("hashtag")))
+    case date_time: RichTextDateTime  => date_time.asJson.mapObject(_.add("type", Json.fromString("date_time")))
+    case reference_link: RichTextReferenceLink =>
+      reference_link.asJson.mapObject(_.add("type", Json.fromString("reference_link")))
+    case anchor_link: RichTextAnchorLink => anchor_link.asJson.mapObject(_.add("type", Json.fromString("anchor_link")))
+    case bank_card_number: RichTextBankCardNumber =>
+      bank_card_number.asJson.mapObject(_.add("type", Json.fromString("bank_card_number")))
+    case strikethrough: RichTextStrikethrough =>
+      strikethrough.asJson.mapObject(_.add("type", Json.fromString("strikethrough")))
+    case reference: RichTextReference => reference.asJson.mapObject(_.add("type", Json.fromString("reference")))
+    case anchor: RichTextAnchor       => anchor.asJson.mapObject(_.add("type", Json.fromString("anchor")))
+    case text_mention: RichTextTextMention =>
+      text_mention.asJson.mapObject(_.add("type", Json.fromString("text_mention")))
+    case bot_command: RichTextBotCommand => bot_command.asJson.mapObject(_.add("type", Json.fromString("bot_command")))
+    case phone_number: RichTextPhoneNumber =>
+      phone_number.asJson.mapObject(_.add("type", Json.fromString("phone_number")))
+    case email_address: RichTextEmailAddress =>
+      email_address.asJson.mapObject(_.add("type", Json.fromString("email_address")))
+    case custom_emoji: RichTextCustomEmoji =>
+      custom_emoji.asJson.mapObject(_.add("type", Json.fromString("custom_emoji")))
+    case url: RichTextUrl                 => url.asJson.mapObject(_.add("type", Json.fromString("url")))
+    case italic: RichTextItalic           => italic.asJson.mapObject(_.add("type", Json.fromString("italic")))
+    case bold: RichTextBold               => bold.asJson.mapObject(_.add("type", Json.fromString("bold")))
+    case superscript: RichTextSuperscript => superscript.asJson.mapObject(_.add("type", Json.fromString("superscript")))
+    case cashtag: RichTextCashtag         => cashtag.asJson.mapObject(_.add("type", Json.fromString("cashtag")))
+    case code: RichTextCode               => code.asJson.mapObject(_.add("type", Json.fromString("code")))
+    case spoiler: RichTextSpoiler         => spoiler.asJson.mapObject(_.add("type", Json.fromString("spoiler")))
+    case mention: RichTextMention         => mention.asJson.mapObject(_.add("type", Json.fromString("mention")))
+  }
+
+  implicit lazy val richtextDecoder: Decoder[iozhik.OpenEnum[RichText]] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "mathematical_expression" => Decoder[RichTextMathematicalExpression].map(iozhik.OpenEnum.Known(_))
+      case "underline"               => Decoder[RichTextUnderline].map(iozhik.OpenEnum.Known(_))
+      case "subscript"               => Decoder[RichTextSubscript].map(iozhik.OpenEnum.Known(_))
+      case "marked"                  => Decoder[RichTextMarked].map(iozhik.OpenEnum.Known(_))
+      case "hashtag"                 => Decoder[RichTextHashtag].map(iozhik.OpenEnum.Known(_))
+      case "date_time"               => Decoder[RichTextDateTime].map(iozhik.OpenEnum.Known(_))
+      case "reference_link"          => Decoder[RichTextReferenceLink].map(iozhik.OpenEnum.Known(_))
+      case "anchor_link"             => Decoder[RichTextAnchorLink].map(iozhik.OpenEnum.Known(_))
+      case "bank_card_number"        => Decoder[RichTextBankCardNumber].map(iozhik.OpenEnum.Known(_))
+      case "strikethrough"           => Decoder[RichTextStrikethrough].map(iozhik.OpenEnum.Known(_))
+      case "reference"               => Decoder[RichTextReference].map(iozhik.OpenEnum.Known(_))
+      case "anchor"                  => Decoder[RichTextAnchor].map(iozhik.OpenEnum.Known(_))
+      case "text_mention"            => Decoder[RichTextTextMention].map(iozhik.OpenEnum.Known(_))
+      case "bot_command"             => Decoder[RichTextBotCommand].map(iozhik.OpenEnum.Known(_))
+      case "phone_number"            => Decoder[RichTextPhoneNumber].map(iozhik.OpenEnum.Known(_))
+      case "email_address"           => Decoder[RichTextEmailAddress].map(iozhik.OpenEnum.Known(_))
+      case "custom_emoji"            => Decoder[RichTextCustomEmoji].map(iozhik.OpenEnum.Known(_))
+      case "url"                     => Decoder[RichTextUrl].map(iozhik.OpenEnum.Known(_))
+      case "italic"                  => Decoder[RichTextItalic].map(iozhik.OpenEnum.Known(_))
+      case "bold"                    => Decoder[RichTextBold].map(iozhik.OpenEnum.Known(_))
+      case "superscript"             => Decoder[RichTextSuperscript].map(iozhik.OpenEnum.Known(_))
+      case "cashtag"                 => Decoder[RichTextCashtag].map(iozhik.OpenEnum.Known(_))
+      case "code"                    => Decoder[RichTextCode].map(iozhik.OpenEnum.Known(_))
+      case "spoiler"                 => Decoder[RichTextSpoiler].map(iozhik.OpenEnum.Known(_))
+      case "mention"                 => Decoder[RichTextMention].map(iozhik.OpenEnum.Known(_))
+      case unknown                   => Decoder.const(iozhik.OpenEnum.Unknown[RichText](unknown))
+    }
+  } yield value
+
+  implicit lazy val richtextsubscriptEncoder: Encoder[RichTextSubscript] =
+    (x: RichTextSubscript) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextsubscriptDecoder: Decoder[RichTextSubscript] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+      } yield {
+        RichTextSubscript(text = _text)
+      }
+    }
+
+  implicit lazy val richtextphonenumberEncoder: Encoder[RichTextPhoneNumber] =
+    (x: RichTextPhoneNumber) => {
+      Json.fromFields(
+        List(
+          "text"         -> x.text.asJson,
+          "phone_number" -> x.phoneNumber.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextphonenumberDecoder: Decoder[RichTextPhoneNumber] =
+    Decoder.instance { h =>
+      for {
+        _text        <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _phoneNumber <- h.get[String]("phone_number")
+      } yield {
+        RichTextPhoneNumber(text = _text, phoneNumber = _phoneNumber)
+      }
+    }
+
+  implicit lazy val richtextcodeEncoder: Encoder[RichTextCode] =
+    (x: RichTextCode) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextcodeDecoder: Decoder[RichTextCode] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+      } yield {
+        RichTextCode(text = _text)
+      }
+    }
+
+  implicit lazy val richtextanchorlinkEncoder: Encoder[RichTextAnchorLink] =
+    (x: RichTextAnchorLink) => {
+      Json.fromFields(
+        List(
+          "text"        -> x.text.asJson,
+          "anchor_name" -> x.anchorName.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextanchorlinkDecoder: Decoder[RichTextAnchorLink] =
+    Decoder.instance { h =>
+      for {
+        _text       <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _anchorName <- h.get[String]("anchor_name")
+      } yield {
+        RichTextAnchorLink(text = _text, anchorName = _anchorName)
+      }
+    }
+
+  implicit lazy val richtextspoilerEncoder: Encoder[RichTextSpoiler] =
+    (x: RichTextSpoiler) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextspoilerDecoder: Decoder[RichTextSpoiler] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+      } yield {
+        RichTextSpoiler(text = _text)
+      }
+    }
+
+  implicit lazy val richtextreferenceEncoder: Encoder[RichTextReference] =
+    (x: RichTextReference) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson,
+          "name" -> x.name.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextreferenceDecoder: Decoder[RichTextReference] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _name <- h.get[String]("name")
+      } yield {
+        RichTextReference(text = _text, name = _name)
+      }
+    }
+
+  implicit lazy val richtextmentionEncoder: Encoder[RichTextMention] =
+    (x: RichTextMention) => {
+      Json.fromFields(
+        List(
+          "text"     -> x.text.asJson,
+          "username" -> x.username.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextmentionDecoder: Decoder[RichTextMention] =
+    Decoder.instance { h =>
+      for {
+        _text     <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _username <- h.get[String]("username")
+      } yield {
+        RichTextMention(text = _text, username = _username)
+      }
+    }
+
+  implicit lazy val richtextunderlineEncoder: Encoder[RichTextUnderline] =
+    (x: RichTextUnderline) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextunderlineDecoder: Decoder[RichTextUnderline] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+      } yield {
+        RichTextUnderline(text = _text)
+      }
+    }
+
+  implicit lazy val richtexturlEncoder: Encoder[RichTextUrl] =
+    (x: RichTextUrl) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson,
+          "url"  -> x.url.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtexturlDecoder: Decoder[RichTextUrl] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _url  <- h.get[String]("url")
+      } yield {
+        RichTextUrl(text = _text, url = _url)
+      }
+    }
+
+  implicit lazy val richtextbotcommandEncoder: Encoder[RichTextBotCommand] =
+    (x: RichTextBotCommand) => {
+      Json.fromFields(
+        List(
+          "text"        -> x.text.asJson,
+          "bot_command" -> x.botCommand.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextbotcommandDecoder: Decoder[RichTextBotCommand] =
+    Decoder.instance { h =>
+      for {
+        _text       <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _botCommand <- h.get[String]("bot_command")
+      } yield {
+        RichTextBotCommand(text = _text, botCommand = _botCommand)
+      }
+    }
+
+  implicit lazy val richtexttextmentionEncoder: Encoder[RichTextTextMention] =
+    (x: RichTextTextMention) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson,
+          "user" -> x.user.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtexttextmentionDecoder: Decoder[RichTextTextMention] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _user <- h.get[User]("user")
+      } yield {
+        RichTextTextMention(text = _text, user = _user)
+      }
+    }
+
+  implicit lazy val richtextmathematicalexpressionEncoder: Encoder[RichTextMathematicalExpression] =
+    (x: RichTextMathematicalExpression) => {
+      Json.fromFields(
+        List(
+          "expression" -> x.expression.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextmathematicalexpressionDecoder: Decoder[RichTextMathematicalExpression] =
+    Decoder.instance { h =>
+      for {
+        _expression <- h.get[String]("expression")
+      } yield {
+        RichTextMathematicalExpression(expression = _expression)
+      }
+    }
+
+  implicit lazy val richtextsuperscriptEncoder: Encoder[RichTextSuperscript] =
+    (x: RichTextSuperscript) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextsuperscriptDecoder: Decoder[RichTextSuperscript] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+      } yield {
+        RichTextSuperscript(text = _text)
+      }
+    }
+
+  implicit lazy val richtextemailaddressEncoder: Encoder[RichTextEmailAddress] =
+    (x: RichTextEmailAddress) => {
+      Json.fromFields(
+        List(
+          "text"          -> x.text.asJson,
+          "email_address" -> x.emailAddress.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextemailaddressDecoder: Decoder[RichTextEmailAddress] =
+    Decoder.instance { h =>
+      for {
+        _text         <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _emailAddress <- h.get[String]("email_address")
+      } yield {
+        RichTextEmailAddress(text = _text, emailAddress = _emailAddress)
+      }
+    }
+
+  implicit lazy val richtextmarkedEncoder: Encoder[RichTextMarked] =
+    (x: RichTextMarked) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextmarkedDecoder: Decoder[RichTextMarked] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+      } yield {
+        RichTextMarked(text = _text)
+      }
+    }
+
+  implicit lazy val richtextitalicEncoder: Encoder[RichTextItalic] =
+    (x: RichTextItalic) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextitalicDecoder: Decoder[RichTextItalic] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+      } yield {
+        RichTextItalic(text = _text)
+      }
+    }
+
+  implicit lazy val richtextbankcardnumberEncoder: Encoder[RichTextBankCardNumber] =
+    (x: RichTextBankCardNumber) => {
+      Json.fromFields(
+        List(
+          "text"             -> x.text.asJson,
+          "bank_card_number" -> x.bankCardNumber.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextbankcardnumberDecoder: Decoder[RichTextBankCardNumber] =
+    Decoder.instance { h =>
+      for {
+        _text           <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _bankCardNumber <- h.get[String]("bank_card_number")
+      } yield {
+        RichTextBankCardNumber(text = _text, bankCardNumber = _bankCardNumber)
+      }
+    }
+
+  implicit lazy val richtextstrikethroughEncoder: Encoder[RichTextStrikethrough] =
+    (x: RichTextStrikethrough) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextstrikethroughDecoder: Decoder[RichTextStrikethrough] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+      } yield {
+        RichTextStrikethrough(text = _text)
+      }
+    }
+
+  implicit lazy val richtextcustomemojiEncoder: Encoder[RichTextCustomEmoji] =
+    (x: RichTextCustomEmoji) => {
+      Json.fromFields(
+        List(
+          "custom_emoji_id"  -> x.customEmojiId.asJson,
+          "alternative_text" -> x.alternativeText.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextcustomemojiDecoder: Decoder[RichTextCustomEmoji] =
+    Decoder.instance { h =>
+      for {
+        _customEmojiId   <- h.get[String]("custom_emoji_id")
+        _alternativeText <- h.get[String]("alternative_text")
+      } yield {
+        RichTextCustomEmoji(customEmojiId = _customEmojiId, alternativeText = _alternativeText)
+      }
+    }
+
+  implicit lazy val richtextanchorEncoder: Encoder[RichTextAnchor] =
+    (x: RichTextAnchor) => {
+      Json.fromFields(
+        List(
+          "name" -> x.name.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextanchorDecoder: Decoder[RichTextAnchor] =
+    Decoder.instance { h =>
+      for {
+        _name <- h.get[String]("name")
+      } yield {
+        RichTextAnchor(name = _name)
+      }
+    }
+
+  implicit lazy val richtexthashtagEncoder: Encoder[RichTextHashtag] =
+    (x: RichTextHashtag) => {
+      Json.fromFields(
+        List(
+          "text"    -> x.text.asJson,
+          "hashtag" -> x.hashtag.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtexthashtagDecoder: Decoder[RichTextHashtag] =
+    Decoder.instance { h =>
+      for {
+        _text    <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _hashtag <- h.get[String]("hashtag")
+      } yield {
+        RichTextHashtag(text = _text, hashtag = _hashtag)
+      }
+    }
+
+  implicit lazy val richtextdatetimeEncoder: Encoder[RichTextDateTime] =
+    (x: RichTextDateTime) => {
+      Json.fromFields(
+        List(
+          "text"             -> x.text.asJson,
+          "unix_time"        -> x.unixTime.asJson,
+          "date_time_format" -> x.dateTimeFormat.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextdatetimeDecoder: Decoder[RichTextDateTime] =
+    Decoder.instance { h =>
+      for {
+        _text           <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _unixTime       <- h.get[Long]("unix_time")
+        _dateTimeFormat <- h.get[String]("date_time_format")
+      } yield {
+        RichTextDateTime(text = _text, unixTime = _unixTime, dateTimeFormat = _dateTimeFormat)
+      }
+    }
+
+  implicit lazy val richtextcashtagEncoder: Encoder[RichTextCashtag] =
+    (x: RichTextCashtag) => {
+      Json.fromFields(
+        List(
+          "text"    -> x.text.asJson,
+          "cashtag" -> x.cashtag.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextcashtagDecoder: Decoder[RichTextCashtag] =
+    Decoder.instance { h =>
+      for {
+        _text    <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _cashtag <- h.get[String]("cashtag")
+      } yield {
+        RichTextCashtag(text = _text, cashtag = _cashtag)
+      }
+    }
+
+  implicit lazy val richtextboldEncoder: Encoder[RichTextBold] =
+    (x: RichTextBold) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextboldDecoder: Decoder[RichTextBold] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+      } yield {
+        RichTextBold(text = _text)
+      }
+    }
+
+  implicit lazy val richtextreferencelinkEncoder: Encoder[RichTextReferenceLink] =
+    (x: RichTextReferenceLink) => {
+      Json.fromFields(
+        List(
+          "text"           -> x.text.asJson,
+          "reference_name" -> x.referenceName.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextreferencelinkDecoder: Decoder[RichTextReferenceLink] =
+    Decoder.instance { h =>
+      for {
+        _text          <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _referenceName <- h.get[String]("reference_name")
+      } yield {
+        RichTextReferenceLink(text = _text, referenceName = _referenceName)
+      }
+    }
+
   implicit lazy val storyareatypeEncoder: Encoder[StoryAreaType] = {
     case unique_gift: StoryAreaTypeUniqueGift =>
       unique_gift.asJson.mapObject(_.add("type", Json.fromString("unique_gift")))
@@ -3326,8 +4617,9 @@ object CirceImplicits {
     (x: BotCommand) => {
       Json.fromFields(
         List(
-          "command"     -> x.command.asJson,
-          "description" -> x.description.asJson
+          "command"      -> x.command.asJson,
+          "description"  -> x.description.asJson,
+          "is_ephemeral" -> x.isEphemeral.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3337,8 +4629,9 @@ object CirceImplicits {
       for {
         _command     <- h.get[String]("command")
         _description <- h.get[String]("description")
+        _isEphemeral <- h.get[Option[Boolean]]("is_ephemeral")
       } yield {
-        BotCommand(command = _command, description = _description)
+        BotCommand(command = _command, description = _description, isEphemeral = _isEphemeral)
       }
     }
 
@@ -3393,6 +4686,28 @@ object CirceImplicits {
         _shortDescription <- h.get[String]("short_description")
       } yield {
         BotShortDescription(shortDescription = _shortDescription)
+      }
+    }
+
+  implicit lazy val botsubscriptionupdatedEncoder: Encoder[BotSubscriptionUpdated] =
+    (x: BotSubscriptionUpdated) => {
+      Json.fromFields(
+        List(
+          "user"            -> x.user.asJson,
+          "invoice_payload" -> x.invoicePayload.asJson,
+          "state"           -> x.state.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val botsubscriptionupdatedDecoder: Decoder[BotSubscriptionUpdated] =
+    Decoder.instance { h =>
+      for {
+        _user           <- h.get[User]("user")
+        _invoicePayload <- h.get[String]("invoice_payload")
+        _state          <- h.get[String]("state")
+      } yield {
+        BotSubscriptionUpdated(user = _user, invoicePayload = _invoicePayload, state = _state)
       }
     }
 
@@ -3902,7 +5217,9 @@ object CirceImplicits {
           "rating"                                  -> x.rating.asJson,
           "first_profile_audio"                     -> x.firstProfileAudio.asJson,
           "unique_gift_colors"                      -> x.uniqueGiftColors.asJson,
-          "paid_message_star_count"                 -> x.paidMessageStarCount.asJson
+          "paid_message_star_count"                 -> x.paidMessageStarCount.asJson,
+          "guard_bot"                               -> x.guardBot.asJson,
+          "community"                               -> x.community.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3961,6 +5278,8 @@ object CirceImplicits {
         _firstProfileAudio                  <- h.get[Option[Audio]]("first_profile_audio")
         _uniqueGiftColors                   <- h.get[Option[UniqueGiftColors]]("unique_gift_colors")
         _paidMessageStarCount               <- h.get[Option[Int]]("paid_message_star_count")
+        _guardBot                           <- h.get[Option[User]]("guard_bot")
+        _community                          <- h.get[Option[Community]]("community")
       } yield {
         ChatFullInfo(
           id = _id,
@@ -4013,7 +5332,9 @@ object CirceImplicits {
           rating = _rating,
           firstProfileAudio = _firstProfileAudio,
           uniqueGiftColors = _uniqueGiftColors,
-          paidMessageStarCount = _paidMessageStarCount
+          paidMessageStarCount = _paidMessageStarCount,
+          guardBot = _guardBot,
+          community = _community
         )
       }
     }
@@ -4077,7 +5398,8 @@ object CirceImplicits {
           "user_chat_id" -> x.userChatId.asJson,
           "date"         -> x.date.asJson,
           "bio"          -> x.bio.asJson,
-          "invite_link"  -> x.inviteLink.asJson
+          "invite_link"  -> x.inviteLink.asJson,
+          "query_id"     -> x.queryId.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4091,6 +5413,7 @@ object CirceImplicits {
         _date       <- h.get[Long]("date")
         _bio        <- h.get[Option[String]]("bio")
         _inviteLink <- h.get[Option[ChatInviteLink]]("invite_link")
+        _queryId    <- h.get[Option[String]]("query_id")
       } yield {
         ChatJoinRequest(
           chat = _chat,
@@ -4098,7 +5421,8 @@ object CirceImplicits {
           userChatId = _userChatId,
           date = _date,
           bio = _bio,
-          inviteLink = _inviteLink
+          inviteLink = _inviteLink,
+          queryId = _queryId
         )
       }
     }
@@ -4464,6 +5788,50 @@ object CirceImplicits {
         )
       }
     }
+
+  implicit lazy val communityEncoder: Encoder[Community] =
+    (x: Community) => {
+      Json.fromFields(
+        List(
+          "id"   -> x.id.asJson,
+          "name" -> x.name.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val communityDecoder: Decoder[Community] =
+    Decoder.instance { h =>
+      for {
+        _id   <- h.get[Long]("id")
+        _name <- h.get[String]("name")
+      } yield {
+        Community(id = _id, name = _name)
+      }
+    }
+
+  implicit lazy val communitychataddedEncoder: Encoder[CommunityChatAdded] =
+    (x: CommunityChatAdded) => {
+      Json.fromFields(
+        List(
+          "community" -> x.community.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val communitychataddedDecoder: Decoder[CommunityChatAdded] =
+    Decoder.instance { h =>
+      for {
+        _community <- h.get[Community]("community")
+      } yield {
+        CommunityChatAdded(community = _community)
+      }
+    }
+
+  implicit lazy val communitychatremovedEncoder: Encoder[CommunityChatRemoved.type] = (_: CommunityChatRemoved.type) =>
+    ().asJson
+
+  implicit lazy val communitychatremovedDecoder: Decoder[CommunityChatRemoved.type] = (_: HCursor) =>
+    Right(CommunityChatRemoved)
 
   implicit lazy val contactEncoder: Encoder[Contact] =
     (x: Contact) => {
@@ -5389,6 +6757,43 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val inputrichblocklistitemEncoder: Encoder[InputRichBlockListItem] =
+    (x: InputRichBlockListItem) => {
+      Json.fromFields(
+        List(
+          "blocks"       -> x.blocks.asJson,
+          "has_checkbox" -> x.hasCheckbox.asJson,
+          "is_checked"   -> x.isChecked.asJson,
+          "value"        -> x.value.asJson,
+          "type"         -> x.`type`.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichmessageEncoder: Encoder[InputRichMessage] =
+    (x: InputRichMessage) => {
+      Json.fromFields(
+        List(
+          "blocks"                -> x.blocks.asJson,
+          "html"                  -> x.html.asJson,
+          "markdown"              -> x.markdown.asJson,
+          "media"                 -> x.media.asJson,
+          "is_rtl"                -> x.isRtl.asJson,
+          "skip_entity_detection" -> x.skipEntityDetection.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichmessagemediaEncoder: Encoder[InputRichMessageMedia] =
+    (x: InputRichMessageMedia) => {
+      Json.fromFields(
+        List(
+          "id"    -> x.id.asJson,
+          "media" -> x.media.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val inputstickerEncoder: Encoder[InputSticker] =
     (x: InputSticker) => {
       Json.fromFields(
@@ -5514,6 +6919,24 @@ object CirceImplicits {
           "amount" -> x.amount.asJson
         ).filter(!_._2.isNull)
       )
+    }
+
+  implicit lazy val linkEncoder: Encoder[Link] =
+    (x: Link) => {
+      Json.fromFields(
+        List(
+          "url" -> x.url.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val linkDecoder: Decoder[Link] =
+    Decoder.instance { h =>
+      for {
+        _url <- h.get[String]("url")
+      } yield {
+        Link(url = _url)
+      }
     }
 
   implicit lazy val linkpreviewoptionsEncoder: Encoder[LinkPreviewOptions] =
@@ -6124,6 +7547,7 @@ object CirceImplicits {
           "animation"  -> x.animation.asJson,
           "audio"      -> x.audio.asJson,
           "document"   -> x.document.asJson,
+          "link"       -> x.link.asJson,
           "live_photo" -> x.livePhoto.asJson,
           "location"   -> x.location.asJson,
           "photo"      -> x.photo.asJson,
@@ -6140,6 +7564,7 @@ object CirceImplicits {
         _animation <- h.get[Option[Animation]]("animation")
         _audio     <- h.get[Option[Audio]]("audio")
         _document  <- h.get[Option[Document]]("document")
+        _link      <- h.get[Option[Link]]("link")
         _livePhoto <- h.get[Option[LivePhoto]]("live_photo")
         _location  <- h.get[Option[Location]]("location")
         _photo     <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
@@ -6151,6 +7576,7 @@ object CirceImplicits {
           animation = _animation,
           audio = _audio,
           document = _document,
+          link = _link,
           livePhoto = _livePhoto,
           location = _location,
           photo = _photo,
@@ -6416,6 +7842,7 @@ object CirceImplicits {
         List(
           "message_id"                  -> x.messageId.asJson,
           "chat_id"                     -> x.chatId.asJson,
+          "ephemeral_message_id"        -> x.ephemeralMessageId.asJson,
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "quote"                       -> x.quote.asJson,
           "quote_parse_mode"            -> x.quoteParseMode.asJson,
@@ -6435,6 +7862,116 @@ object CirceImplicits {
           "retry_after"        -> x.retryAfter.asJson
         ).filter(!_._2.isNull)
       )
+    }
+
+  implicit lazy val richblockcaptionEncoder: Encoder[RichBlockCaption] =
+    (x: RichBlockCaption) => {
+      Json.fromFields(
+        List(
+          "text"   -> x.text.asJson,
+          "credit" -> x.credit.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockcaptionDecoder: Decoder[RichBlockCaption] =
+    Decoder.instance { h =>
+      for {
+        _text   <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _credit <- h.get[Option[iozhik.OpenEnum[RichText]]]("credit")
+      } yield {
+        RichBlockCaption(text = _text, credit = _credit)
+      }
+    }
+
+  implicit lazy val richblocklistitemEncoder: Encoder[RichBlockListItem] =
+    (x: RichBlockListItem) => {
+      Json.fromFields(
+        List(
+          "label"        -> x.label.asJson,
+          "blocks"       -> x.blocks.asJson,
+          "has_checkbox" -> x.hasCheckbox.asJson,
+          "is_checked"   -> x.isChecked.asJson,
+          "value"        -> x.value.asJson,
+          "type"         -> x.`type`.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblocklistitemDecoder: Decoder[RichBlockListItem] =
+    Decoder.instance { h =>
+      for {
+        _label       <- h.get[String]("label")
+        _blocks      <- h.getOrElse[List[iozhik.OpenEnum[RichBlock]]]("blocks")(List.empty)
+        _hasCheckbox <- h.get[Option[Boolean]]("has_checkbox")
+        _isChecked   <- h.get[Option[Boolean]]("is_checked")
+        _value       <- h.get[Option[Int]]("value")
+        _type        <- h.get[Option[String]]("type")
+      } yield {
+        RichBlockListItem(
+          label = _label,
+          blocks = _blocks,
+          hasCheckbox = _hasCheckbox,
+          isChecked = _isChecked,
+          value = _value,
+          `type` = _type
+        )
+      }
+    }
+
+  implicit lazy val richblocktablecellEncoder: Encoder[RichBlockTableCell] =
+    (x: RichBlockTableCell) => {
+      Json.fromFields(
+        List(
+          "text"      -> x.text.asJson,
+          "is_header" -> x.isHeader.asJson,
+          "colspan"   -> x.colspan.asJson,
+          "rowspan"   -> x.rowspan.asJson,
+          "align"     -> x.align.asJson,
+          "valign"    -> x.valign.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblocktablecellDecoder: Decoder[RichBlockTableCell] =
+    Decoder.instance { h =>
+      for {
+        _text     <- h.get[Option[iozhik.OpenEnum[RichText]]]("text")
+        _isHeader <- h.get[Option[Boolean]]("is_header")
+        _colspan  <- h.get[Option[Int]]("colspan")
+        _rowspan  <- h.get[Option[Int]]("rowspan")
+        _align    <- h.get[String]("align")
+        _valign   <- h.get[String]("valign")
+      } yield {
+        RichBlockTableCell(
+          text = _text,
+          isHeader = _isHeader,
+          colspan = _colspan,
+          rowspan = _rowspan,
+          align = _align,
+          valign = _valign
+        )
+      }
+    }
+
+  implicit lazy val richmessageEncoder: Encoder[RichMessage] =
+    (x: RichMessage) => {
+      Json.fromFields(
+        List(
+          "blocks" -> x.blocks.asJson,
+          "is_rtl" -> x.isRtl.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richmessageDecoder: Decoder[RichMessage] =
+    Decoder.instance { h =>
+      for {
+        _blocks <- h.getOrElse[List[iozhik.OpenEnum[RichBlock]]]("blocks")(List.empty)
+        _isRtl  <- h.get[Option[Boolean]]("is_rtl")
+      } yield {
+        RichMessage(blocks = _blocks, isRtl = _isRtl)
+      }
     }
 
   implicit lazy val sentguestmessageEncoder: Encoder[SentGuestMessage] =
@@ -7298,7 +8835,8 @@ object CirceImplicits {
           "chat_join_request"         -> x.chatJoinRequest.asJson,
           "chat_boost"                -> x.chatBoost.asJson,
           "removed_chat_boost"        -> x.removedChatBoost.asJson,
-          "managed_bot"               -> x.managedBot.asJson
+          "managed_bot"               -> x.managedBot.asJson,
+          "subscription"              -> x.subscription.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -7332,6 +8870,7 @@ object CirceImplicits {
         _chatBoost               <- h.get[Option[ChatBoostUpdated]]("chat_boost")
         _removedChatBoost        <- h.get[Option[ChatBoostRemoved]]("removed_chat_boost")
         _managedBot              <- h.get[Option[ManagedBotUpdated]]("managed_bot")
+        _subscription            <- h.get[Option[BotSubscriptionUpdated]]("subscription")
       } yield {
         Update(
           updateId = _updateId,
@@ -7359,7 +8898,8 @@ object CirceImplicits {
           chatJoinRequest = _chatJoinRequest,
           chatBoost = _chatBoost,
           removedChatBoost = _removedChatBoost,
-          managedBot = _managedBot
+          managedBot = _managedBot,
+          subscription = _subscription
         )
       }
     }
@@ -7384,7 +8924,8 @@ object CirceImplicits {
           "has_main_web_app"              -> x.hasMainWebApp.asJson,
           "has_topics_enabled"            -> x.hasTopicsEnabled.asJson,
           "allows_users_to_create_topics" -> x.allowsUsersToCreateTopics.asJson,
-          "can_manage_bots"               -> x.canManageBots.asJson
+          "can_manage_bots"               -> x.canManageBots.asJson,
+          "supports_join_request_queries" -> x.supportsJoinRequestQueries.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -7392,23 +8933,24 @@ object CirceImplicits {
   implicit lazy val userDecoder: Decoder[User] =
     Decoder.instance { h =>
       for {
-        _id                        <- h.get[Long]("id")
-        _isBot                     <- h.get[Boolean]("is_bot")
-        _firstName                 <- h.get[String]("first_name")
-        _lastName                  <- h.get[Option[String]]("last_name")
-        _username                  <- h.get[Option[String]]("username")
-        _languageCode              <- h.get[Option[String]]("language_code")
-        _isPremium                 <- h.get[Option[Boolean]]("is_premium")
-        _addedToAttachmentMenu     <- h.get[Option[Boolean]]("added_to_attachment_menu")
-        _canJoinGroups             <- h.get[Option[Boolean]]("can_join_groups")
-        _canReadAllGroupMessages   <- h.get[Option[Boolean]]("can_read_all_group_messages")
-        _supportsGuestQueries      <- h.get[Option[Boolean]]("supports_guest_queries")
-        _supportsInlineQueries     <- h.get[Option[Boolean]]("supports_inline_queries")
-        _canConnectToBusiness      <- h.get[Option[Boolean]]("can_connect_to_business")
-        _hasMainWebApp             <- h.get[Option[Boolean]]("has_main_web_app")
-        _hasTopicsEnabled          <- h.get[Option[Boolean]]("has_topics_enabled")
-        _allowsUsersToCreateTopics <- h.get[Option[Boolean]]("allows_users_to_create_topics")
-        _canManageBots             <- h.get[Option[Boolean]]("can_manage_bots")
+        _id                         <- h.get[Long]("id")
+        _isBot                      <- h.get[Boolean]("is_bot")
+        _firstName                  <- h.get[String]("first_name")
+        _lastName                   <- h.get[Option[String]]("last_name")
+        _username                   <- h.get[Option[String]]("username")
+        _languageCode               <- h.get[Option[String]]("language_code")
+        _isPremium                  <- h.get[Option[Boolean]]("is_premium")
+        _addedToAttachmentMenu      <- h.get[Option[Boolean]]("added_to_attachment_menu")
+        _canJoinGroups              <- h.get[Option[Boolean]]("can_join_groups")
+        _canReadAllGroupMessages    <- h.get[Option[Boolean]]("can_read_all_group_messages")
+        _supportsGuestQueries       <- h.get[Option[Boolean]]("supports_guest_queries")
+        _supportsInlineQueries      <- h.get[Option[Boolean]]("supports_inline_queries")
+        _canConnectToBusiness       <- h.get[Option[Boolean]]("can_connect_to_business")
+        _hasMainWebApp              <- h.get[Option[Boolean]]("has_main_web_app")
+        _hasTopicsEnabled           <- h.get[Option[Boolean]]("has_topics_enabled")
+        _allowsUsersToCreateTopics  <- h.get[Option[Boolean]]("allows_users_to_create_topics")
+        _canManageBots              <- h.get[Option[Boolean]]("can_manage_bots")
+        _supportsJoinRequestQueries <- h.get[Option[Boolean]]("supports_join_request_queries")
       } yield {
         User(
           id = _id,
@@ -7427,7 +8969,8 @@ object CirceImplicits {
           hasMainWebApp = _hasMainWebApp,
           hasTopicsEnabled = _hasTopicsEnabled,
           allowsUsersToCreateTopics = _allowsUsersToCreateTopics,
-          canManageBots = _canManageBots
+          canManageBots = _canManageBots,
+          supportsJoinRequestQueries = _supportsJoinRequestQueries
         )
       }
     }

@@ -31,7 +31,7 @@ import telegramium.bots.KeyboardMarkup
   *   A JSON-serialized list of special entities that appear in the new caption, which can be specified instead of
   *   parse_mode
   * @param showCaptionAboveMedia
-  *   Pass True, if the caption must be shown above the message media. Ignored if a new caption isn't specified.
+  *   Pass True if the caption must be shown above the message media. Ignored if a new caption isn't specified.
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent

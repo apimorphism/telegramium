@@ -22,6 +22,12 @@ import telegramium.bots.KeyboardMarkup
   * @param directMessagesTopicId
   *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
   *   direct messages chat
+  * @param receiverUserId
+  *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
+  *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
+  *   offline. See ephemeral message sending for more details.
+  * @param callbackQueryId
+  *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
   * @param thumbnail
   *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
   *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed
@@ -61,6 +67,8 @@ final case class SendDocumentReq(
   businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,
   directMessagesTopicId: Option[Long] = Option.empty,
+  receiverUserId: Option[Int] = Option.empty,
+  callbackQueryId: Option[String] = Option.empty,
   thumbnail: Option[IFile] = Option.empty,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,

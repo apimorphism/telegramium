@@ -55,7 +55,7 @@ class IceCreamParlorBot[F[_]]()(implicit
               editMessageText(
                 chatId = Some(ChatIntId(msg.chat.id)),
                 messageId = Some(msg.messageId),
-                text = s"You have chosen: $flavor"
+                text = Some(s"You have chosen: $flavor")
               ).exec.void
           }
       }

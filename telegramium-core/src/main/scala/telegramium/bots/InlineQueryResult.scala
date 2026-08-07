@@ -30,7 +30,7 @@ sealed trait InlineQueryResult {}
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
   * @param showCaptionAboveMedia
-  *   Optional. Pass True, if the caption must be shown above the message media
+  *   Optional. Pass True if the caption must be shown above the message media
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
@@ -164,7 +164,7 @@ final case class InlineQueryResultContact(
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
   * @param showCaptionAboveMedia
-  *   Optional. Pass True, if the caption must be shown above the message media
+  *   Optional. Pass True if the caption must be shown above the message media
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
@@ -363,7 +363,7 @@ final case class InlineQueryResultAudio(
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
   * @param showCaptionAboveMedia
-  *   Optional. Pass True, if the caption must be shown above the message media
+  *   Optional. Pass True if the caption must be shown above the message media
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
@@ -403,7 +403,7 @@ final case class InlineQueryResultMpeg4Gif(
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
   * @param showCaptionAboveMedia
-  *   Optional. Pass True, if the caption must be shown above the message media
+  *   Optional. Pass True if the caption must be shown above the message media
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
@@ -475,7 +475,7 @@ final case class InlineQueryResultCachedDocument(
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
   * @param showCaptionAboveMedia
-  *   Optional. Pass True, if the caption must be shown above the message media
+  *   Optional. Pass True if the caption must be shown above the message media
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
@@ -528,7 +528,7 @@ final case class InlineQueryResultGame(
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
   * @param showCaptionAboveMedia
-  *   Optional. Pass True, if the caption must be shown above the message media
+  *   Optional. Pass True if the caption must be shown above the message media
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent
@@ -588,7 +588,7 @@ final case class InlineQueryResultCachedSticker(
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
   * @param showCaptionAboveMedia
-  *   Optional. Pass True, if the caption must be shown above the message media
+  *   Optional. Pass True if the caption must be shown above the message media
   * @param videoWidth
   *   Optional. Video width
   * @param videoHeight
@@ -667,7 +667,7 @@ final case class InlineQueryResultCachedAudio(
   * @param captionEntities
   *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
   * @param showCaptionAboveMedia
-  *   Optional. Pass True, if the caption must be shown above the message media
+  *   Optional. Pass True if the caption must be shown above the message media
   * @param replyMarkup
   *   Optional. Inline keyboard attached to the message
   * @param inputMessageContent

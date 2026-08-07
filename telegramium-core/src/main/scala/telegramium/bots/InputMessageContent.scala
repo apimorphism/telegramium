@@ -56,7 +56,7 @@ final case class InputVenueMessageContent(
   *   shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults
   *   to 0. Not supported for payments in Telegram Stars.
   * @param suggestedTipAmounts
-  *   Optional. A JSON-serialized array of suggested amounts of tip in the smallest units of the currency (integer, not
+  *   Optional. A JSON-serialized Array of suggested amounts of tip in the smallest units of the currency (integer, not
   *   float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts must be positive,
   *   passed in a strictly increased order and must not exceed max_tip_amount.
   * @param providerData
@@ -177,3 +177,10 @@ final case class InputTextMessageContent(
   entities: List[MessageEntity] = List.empty,
   linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty
 ) extends InputMessageContent
+
+/** Represents the content of a rich message to be sent as the result of an inline query.
+  *
+  * @param richMessage
+  *   The message to be sent
+  */
+final case class InputRichMessageContent(richMessage: InputRichMessage) extends InputMessageContent

@@ -68,7 +68,7 @@ final case class ChatMemberLeft(user: User) extends ChatMember
   *   channels only
   * @param canManageTags
   *   Optional. True, if the administrator can edit the tags of regular members; for groups and supergroups only. If
-  *   omitted defaults to the value of can_pin_messages.
+  *   omitted, defaults to the value of can_pin_messages.
   * @param customTitle
   *   Optional. Custom title for this user
   */
@@ -126,8 +126,8 @@ final case class ChatMemberBanned(user: User, untilDate: Long) extends ChatMembe
   * @param isMember
   *   True, if the user is a member of the chat at the moment of the request
   * @param canSendMessages
-  *   True, if the user is allowed to send text messages, contacts, giveaways, giveaway winners, invoices, locations and
-  *   venues
+  *   True, if the user is allowed to send text messages, rich messages, contacts, giveaways, giveaway winners,
+  *   invoices, locations and venues
   * @param canSendAudios
   *   True, if the user is allowed to send audios
   * @param canSendDocuments

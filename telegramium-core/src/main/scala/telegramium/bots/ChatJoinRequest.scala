@@ -18,6 +18,9 @@ package telegramium.bots
   *   Optional. Bio of the user
   * @param inviteLink
   *   Optional. Chat invite link that was used by the user to send the join request
+  * @param queryId
+  *   Optional. Identifier of the join request query; for bots assigned to process join requests only. If present, then
+  *   the bot must call sendChatJoinRequestWebApp or directly call answerChatJoinRequestQuery within 10 seconds.
   */
 final case class ChatJoinRequest(
   chat: Chat,
@@ -25,5 +28,6 @@ final case class ChatJoinRequest(
   userChatId: Long,
   date: Long,
   bio: Option[String] = Option.empty,
-  inviteLink: Option[ChatInviteLink] = Option.empty
+  inviteLink: Option[ChatInviteLink] = Option.empty,
+  queryId: Option[String] = Option.empty
 )

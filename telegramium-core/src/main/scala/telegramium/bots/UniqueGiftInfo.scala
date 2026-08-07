@@ -10,9 +10,9 @@ package telegramium.bots
   *   upgrades purchased after the gift was sent, or “offer” for gifts bought or sold through gift purchase offers.
   * @param lastResaleCurrency
   *   Optional. For gifts bought from other users, the currency in which the payment for the gift was done. Currently,
-  *   one of “XTR” for Telegram Stars or “TON” for toncoins.
+  *   one of “XTR” for Telegram Stars or “TON” for TON grams.
   * @param lastResaleAmount
-  *   Optional. For gifts bought from other users, the price paid for the gift in either Telegram Stars or nanotoncoins
+  *   Optional. For gifts bought from other users, the price paid for the gift in either Telegram Stars or nanograms
   * @param ownedGiftId
   *   Optional. Unique identifier of the received gift for the bot; only present for gifts received on behalf of
   *   business accounts

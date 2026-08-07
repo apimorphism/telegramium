@@ -6,7 +6,7 @@ import telegramium.bots.InlineQueryResultsButton
 /** @param inlineQueryId
   *   Unique identifier for the answered query
   * @param results
-  *   A JSON-serialized array of results for the inline query
+  *   A JSON-serialized Array of results for the inline query
   * @param cacheTime
   *   The maximum amount of time in seconds that the result of the inline query may be cached on the server. Defaults to
   *   300.

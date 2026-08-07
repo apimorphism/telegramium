@@ -30,7 +30,7 @@ import telegramium.bots.LabeledPrice
   *   shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults
   *   to 0. Not supported for payments in Telegram Stars.
   * @param suggestedTipAmounts
-  *   A JSON-serialized array of suggested amounts of tips in the smallest units of the currency (integer, not
+  *   A JSON-serialized Array of suggested amounts of tips in the smallest units of the currency (integer, not
   *   float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts must be positive,
   *   passed in a strictly increased order and must not exceed max_tip_amount.
   * @param providerData

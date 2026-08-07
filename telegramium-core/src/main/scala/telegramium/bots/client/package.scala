@@ -19,9 +19,10 @@ object CirceImplicits {
   import telegramium.bots.LabeledPrice
   import telegramium.bots.BotCommandScope
   import telegramium.bots.InlineKeyboardMarkup
-  import telegramium.bots.InputChecklist
   import telegramium.bots.InputMedia
   import telegramium.bots.LinkPreviewOptions
+  import telegramium.bots.InputChecklist
+  import telegramium.bots.InputRichMessage
   import telegramium.bots.InputStoryContent
   import telegramium.bots.StoryArea
   import telegramium.bots.ChatPermissions
@@ -60,6 +61,17 @@ object CirceImplicits {
           "url"               -> x.url.asJson,
           "cache_time"        -> x.cacheTime.asJson,
           "method"            -> "answerCallbackQuery".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val answerchatjoinrequestqueryreqEncoder: Encoder[AnswerChatJoinRequestQueryReq] =
+    (x: AnswerChatJoinRequestQueryReq) => {
+      Json.fromFields(
+        List(
+          "chat_join_request_query_id" -> x.chatJoinRequestQueryId.asJson,
+          "result"                     -> x.result.asJson,
+          "method"                     -> "answerChatJoinRequestQuery".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -402,6 +414,18 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val deleteephemeralmessagereqEncoder: Encoder[DeleteEphemeralMessageReq] =
+    (x: DeleteEphemeralMessageReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"              -> x.chatId.asJson,
+          "receiver_user_id"     -> x.receiverUserId.asJson,
+          "ephemeral_message_id" -> x.ephemeralMessageId.asJson,
+          "method"               -> "deleteEphemeralMessage".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val deleteforumtopicreqEncoder: Encoder[DeleteForumTopicReq] =
     (x: DeleteForumTopicReq) => {
       Json.fromFields(
@@ -527,6 +551,66 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val editephemeralmessagecaptionreqEncoder: Encoder[EditEphemeralMessageCaptionReq] =
+    (x: EditEphemeralMessageCaptionReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"              -> x.chatId.asJson,
+          "receiver_user_id"     -> x.receiverUserId.asJson,
+          "ephemeral_message_id" -> x.ephemeralMessageId.asJson,
+          "caption"              -> x.caption.asJson,
+          "parse_mode"           -> x.parseMode.asJson,
+          "caption_entities"     -> x.captionEntities.asJson,
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "editEphemeralMessageCaption".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val editephemeralmessagemediareqEncoder: Encoder[EditEphemeralMessageMediaReq] =
+    (x: EditEphemeralMessageMediaReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"              -> x.chatId.asJson,
+          "receiver_user_id"     -> x.receiverUserId.asJson,
+          "ephemeral_message_id" -> x.ephemeralMessageId.asJson,
+          "media"                -> x.media.asJson,
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "editEphemeralMessageMedia".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val editephemeralmessagereplymarkupreqEncoder: Encoder[EditEphemeralMessageReplyMarkupReq] =
+    (x: EditEphemeralMessageReplyMarkupReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"              -> x.chatId.asJson,
+          "receiver_user_id"     -> x.receiverUserId.asJson,
+          "ephemeral_message_id" -> x.ephemeralMessageId.asJson,
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "editEphemeralMessageReplyMarkup".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val editephemeralmessagetextreqEncoder: Encoder[EditEphemeralMessageTextReq] =
+    (x: EditEphemeralMessageTextReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"              -> x.chatId.asJson,
+          "receiver_user_id"     -> x.receiverUserId.asJson,
+          "ephemeral_message_id" -> x.ephemeralMessageId.asJson,
+          "text"                 -> x.text.asJson,
+          "parse_mode"           -> x.parseMode.asJson,
+          "entities"             -> x.entities.asJson,
+          "link_preview_options" -> x.linkPreviewOptions.asJson,
+          "reply_markup"         -> x.replyMarkup.asJson,
+          "method"               -> "editEphemeralMessageText".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val editforumtopicreqEncoder: Encoder[EditForumTopicReq] =
     (x: EditForumTopicReq) => {
       Json.fromFields(
@@ -644,6 +728,7 @@ object CirceImplicits {
           "parse_mode"             -> x.parseMode.asJson,
           "entities"               -> x.entities.asJson,
           "link_preview_options"   -> x.linkPreviewOptions.asJson,
+          "rich_message"           -> x.richMessage.asJson,
           "reply_markup"           -> x.replyMarkup.asJson,
           "method"                 -> "editMessageText".asJson
         ).filter(!_._2.isNull)
@@ -1321,6 +1406,8 @@ object CirceImplicits {
           "chat_id"                   -> x.chatId.asJson,
           "message_thread_id"         -> x.messageThreadId.asJson,
           "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
+          "receiver_user_id"          -> x.receiverUserId.asJson,
+          "callback_query_id"         -> x.callbackQueryId.asJson,
           "animation"                 -> x.animation.asJson,
           "duration"                  -> x.duration.asJson,
           "width"                     -> x.width.asJson,
@@ -1351,6 +1438,8 @@ object CirceImplicits {
           "chat_id"                   -> x.chatId.asJson,
           "message_thread_id"         -> x.messageThreadId.asJson,
           "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
+          "receiver_user_id"          -> x.receiverUserId.asJson,
+          "callback_query_id"         -> x.callbackQueryId.asJson,
           "audio"                     -> x.audio.asJson,
           "caption"                   -> x.caption.asJson,
           "parse_mode"                -> x.parseMode.asJson,
@@ -1384,6 +1473,17 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val sendchatjoinrequestwebappreqEncoder: Encoder[SendChatJoinRequestWebAppReq] =
+    (x: SendChatJoinRequestWebAppReq) => {
+      Json.fromFields(
+        List(
+          "chat_join_request_query_id" -> x.chatJoinRequestQueryId.asJson,
+          "web_app_url"                -> x.webAppUrl.asJson,
+          "method"                     -> "sendChatJoinRequestWebApp".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val sendchecklistreqEncoder: Encoder[SendChecklistReq] =
     (x: SendChecklistReq) => {
       Json.fromFields(
@@ -1409,6 +1509,8 @@ object CirceImplicits {
           "chat_id"                   -> x.chatId.asJson,
           "message_thread_id"         -> x.messageThreadId.asJson,
           "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
+          "receiver_user_id"          -> x.receiverUserId.asJson,
+          "callback_query_id"         -> x.callbackQueryId.asJson,
           "phone_number"              -> x.phoneNumber.asJson,
           "first_name"                -> x.firstName.asJson,
           "last_name"                 -> x.lastName.asJson,
@@ -1454,6 +1556,8 @@ object CirceImplicits {
           "chat_id"                        -> x.chatId.asJson,
           "message_thread_id"              -> x.messageThreadId.asJson,
           "direct_messages_topic_id"       -> x.directMessagesTopicId.asJson,
+          "receiver_user_id"               -> x.receiverUserId.asJson,
+          "callback_query_id"              -> x.callbackQueryId.asJson,
           "document"                       -> x.document.asJson,
           "thumbnail"                      -> x.thumbnail.asJson,
           "caption"                        -> x.caption.asJson,
@@ -1555,6 +1659,8 @@ object CirceImplicits {
           "chat_id"                   -> x.chatId.asJson,
           "message_thread_id"         -> x.messageThreadId.asJson,
           "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
+          "receiver_user_id"          -> x.receiverUserId.asJson,
+          "callback_query_id"         -> x.callbackQueryId.asJson,
           "live_photo"                -> x.livePhoto.asJson,
           "photo"                     -> x.photo.asJson,
           "caption"                   -> x.caption.asJson,
@@ -1582,6 +1688,8 @@ object CirceImplicits {
           "chat_id"                   -> x.chatId.asJson,
           "message_thread_id"         -> x.messageThreadId.asJson,
           "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
+          "receiver_user_id"          -> x.receiverUserId.asJson,
+          "callback_query_id"         -> x.callbackQueryId.asJson,
           "latitude"                  -> x.latitude.asJson,
           "longitude"                 -> x.longitude.asJson,
           "horizontal_accuracy"       -> x.horizontalAccuracy.asJson,
@@ -1627,6 +1735,8 @@ object CirceImplicits {
           "chat_id"                   -> x.chatId.asJson,
           "message_thread_id"         -> x.messageThreadId.asJson,
           "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
+          "receiver_user_id"          -> x.receiverUserId.asJson,
+          "callback_query_id"         -> x.callbackQueryId.asJson,
           "text"                      -> x.text.asJson,
           "parse_mode"                -> x.parseMode.asJson,
           "entities"                  -> x.entities.asJson,
@@ -1692,6 +1802,8 @@ object CirceImplicits {
           "chat_id"                   -> x.chatId.asJson,
           "message_thread_id"         -> x.messageThreadId.asJson,
           "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
+          "receiver_user_id"          -> x.receiverUserId.asJson,
+          "callback_query_id"         -> x.callbackQueryId.asJson,
           "photo"                     -> x.photo.asJson,
           "caption"                   -> x.caption.asJson,
           "parse_mode"                -> x.parseMode.asJson,
@@ -1753,6 +1865,40 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val sendrichmessagereqEncoder: Encoder[SendRichMessageReq] =
+    (x: SendRichMessageReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id"    -> x.businessConnectionId.asJson,
+          "chat_id"                   -> x.chatId.asJson,
+          "message_thread_id"         -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
+          "rich_message"              -> x.richMessage.asJson,
+          "disable_notification"      -> x.disableNotification.asJson,
+          "protect_content"           -> x.protectContent.asJson,
+          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"         -> x.messageEffectId.asJson,
+          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
+          "reply_parameters"          -> x.replyParameters.asJson,
+          "reply_markup"              -> x.replyMarkup.asJson,
+          "method"                    -> "sendRichMessage".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val sendrichmessagedraftreqEncoder: Encoder[SendRichMessageDraftReq] =
+    (x: SendRichMessageDraftReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"           -> x.chatId.asJson,
+          "message_thread_id" -> x.messageThreadId.asJson,
+          "draft_id"          -> x.draftId.asJson,
+          "rich_message"      -> x.richMessage.asJson,
+          "method"            -> "sendRichMessageDraft".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val sendstickerreqEncoder: Encoder[SendStickerReq] =
     (x: SendStickerReq) => {
       Json.fromFields(
@@ -1761,6 +1907,8 @@ object CirceImplicits {
           "chat_id"                   -> x.chatId.asJson,
           "message_thread_id"         -> x.messageThreadId.asJson,
           "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
+          "receiver_user_id"          -> x.receiverUserId.asJson,
+          "callback_query_id"         -> x.callbackQueryId.asJson,
           "sticker"                   -> x.sticker.asJson,
           "emoji"                     -> x.emoji.asJson,
           "disable_notification"      -> x.disableNotification.asJson,
@@ -1783,6 +1931,8 @@ object CirceImplicits {
           "chat_id"                   -> x.chatId.asJson,
           "message_thread_id"         -> x.messageThreadId.asJson,
           "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
+          "receiver_user_id"          -> x.receiverUserId.asJson,
+          "callback_query_id"         -> x.callbackQueryId.asJson,
           "latitude"                  -> x.latitude.asJson,
           "longitude"                 -> x.longitude.asJson,
           "title"                     -> x.title.asJson,
@@ -1811,6 +1961,8 @@ object CirceImplicits {
           "chat_id"                   -> x.chatId.asJson,
           "message_thread_id"         -> x.messageThreadId.asJson,
           "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
+          "receiver_user_id"          -> x.receiverUserId.asJson,
+          "callback_query_id"         -> x.callbackQueryId.asJson,
           "video"                     -> x.video.asJson,
           "duration"                  -> x.duration.asJson,
           "width"                     -> x.width.asJson,
@@ -1844,6 +1996,8 @@ object CirceImplicits {
           "chat_id"                   -> x.chatId.asJson,
           "message_thread_id"         -> x.messageThreadId.asJson,
           "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
+          "receiver_user_id"          -> x.receiverUserId.asJson,
+          "callback_query_id"         -> x.callbackQueryId.asJson,
           "video_note"                -> x.videoNote.asJson,
           "duration"                  -> x.duration.asJson,
           "length"                    -> x.length.asJson,
@@ -1868,6 +2022,8 @@ object CirceImplicits {
           "chat_id"                   -> x.chatId.asJson,
           "message_thread_id"         -> x.messageThreadId.asJson,
           "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
+          "receiver_user_id"          -> x.receiverUserId.asJson,
+          "callback_query_id"         -> x.callbackQueryId.asJson,
           "voice"                     -> x.voice.asJson,
           "caption"                   -> x.caption.asJson,
           "parse_mode"                -> x.parseMode.asJson,

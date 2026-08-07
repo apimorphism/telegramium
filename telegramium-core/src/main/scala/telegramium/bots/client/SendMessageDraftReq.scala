@@ -6,7 +6,7 @@ import telegramium.bots.MessageEntity
 /** @param chatId
   *   Unique identifier for the target private chat
   * @param draftId
-  *   Unique identifier of the message draft; must be non-zero. Changes of drafts with the same identifier are animated.
+  *   Unique identifier of the message draft; must be non-zero. Changes to drafts with the same identifier are animated.
   * @param messageThreadId
   *   Unique identifier for the target message thread
   * @param text

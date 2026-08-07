@@ -43,7 +43,7 @@ package telegramium.bots
   *   channels only
   * @param canManageTags
   *   Optional. True, if the administrator can edit the tags of regular members; for groups and supergroups only. If
-  *   omitted defaults to the value of can_pin_messages.
+  *   omitted, defaults to the value of can_pin_messages.
   */
 final case class ChatAdministratorRights(
   isAnonymous: Boolean,

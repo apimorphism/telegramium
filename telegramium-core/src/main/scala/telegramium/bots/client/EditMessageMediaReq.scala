@@ -5,7 +5,7 @@ import telegramium.bots.InputMedia
 import telegramium.bots.InlineKeyboardMarkup
 
 /** @param media
-  *   A JSON-serialized object for a new media content of the message
+  *   A JSON-serialized object for the new media content of the message
   * @param businessConnectionId
   *   Unique identifier of the business connection on behalf of which the message to be edited was sent
   * @param chatId

@@ -23,7 +23,7 @@ import telegramium.bots.KeyboardMarkup
   *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
   *   direct messages chat
   * @param media
-  *   A JSON-serialized array describing the media to be sent; up to 10 items
+  *   A JSON-serialized Array describing the media to be sent; up to 10 items
   * @param payload
   *   Bot-defined paid media payload, 0-128 bytes. This will not be displayed to the user, use it for your internal
   *   processes.
@@ -35,7 +35,7 @@ import telegramium.bots.KeyboardMarkup
   *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
   *   parse_mode
   * @param showCaptionAboveMedia
-  *   Pass True, if the caption must be shown above the message media
+  *   Pass True if the caption must be shown above the message media
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent

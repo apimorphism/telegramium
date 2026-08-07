@@ -5,9 +5,10 @@ sealed trait MaybeInaccessibleMessage {}
 /** This object represents a message.
   *
   * @param messageId
-  *   Unique message identifier inside this chat. In specific instances (e.g., message containing a video sent to a big
-  *   chat), the server might automatically schedule a message instead of sending it immediately. In such cases, this
-  *   field will be 0 and the relevant message will be unusable until it is actually sent.
+  *   Unique message identifier inside this chat; 0 for ephemeral messages. In specific instances (e.g., a message
+  *   containing a video sent to a big chat), the server might automatically schedule a message instead of sending it
+  *   immediately. In such cases, this field will be 0 and the relevant message will be unusable until it is actually
+  *   sent.
   * @param date
   *   Date the message was sent in Unix time. It is always a positive number, representing a valid date.
   * @param chat
@@ -32,6 +33,11 @@ sealed trait MaybeInaccessibleMessage {}
   *   messages sent on behalf of the connected business account.
   * @param senderTag
   *   Optional. Tag or custom title of the sender of the message; for supergroups only
+  * @param receiverUser
+  *   Optional. For ephemeral messages, the user who received the message
+  * @param ephemeralMessageId
+  *   Optional. For ephemeral messages, identifier of the ephemeral message inside this chat. The identifier may be
+  *   reused for another ephemeral message after the message is deleted or expires.
   * @param guestQueryId
   *   Optional. The unique identifier for the guest query. Use this identifier with the method answerGuestQuery to send
   *   a response message. If non-empty, the message belongs to the chat where the guest bot was summoned, which may not
@@ -49,7 +55,8 @@ sealed trait MaybeInaccessibleMessage {}
   *   group
   * @param replyToMessage
   *   Optional. For replies in the same chat and message thread, the original message. Note that the Message object in
-  *   this field will not contain further reply_to_message fields even if it itself is a reply.
+  *   this field will not contain further reply_to_message fields even if it itself is a reply. If the message is a
+  *   reply to an ephemeral message, then this field may be omitted.
   * @param externalReply
   *   Optional. Information about the message that is being replied to, which may come from another chat or forum topic
   * @param quote
@@ -95,6 +102,8 @@ sealed trait MaybeInaccessibleMessage {}
   *   messages chat. If the message is an approved or declined suggested post, then it can't be edited.
   * @param effectId
   *   Optional. Unique identifier of the message effect added to the message
+  * @param richMessage
+  *   Optional. Message is a rich formatted message
   * @param animation
   *   Optional. Message is an animation, information about the animation. For backward compatibility, when this field is
   *   set, the document field will also be set.
@@ -208,8 +217,7 @@ sealed trait MaybeInaccessibleMessage {}
   * @param passportData
   *   Optional. Telegram Passport data
   * @param proximityAlertTriggered
-  *   Optional. Service message. A user in the chat triggered another user's proximity alert while sharing Live
-  *   Location.
+  *   Optional. Service message: a user in the chat triggered another user's proximity alert while sharing Live Location
   * @param boostAdded
   *   Optional. Service message: user boosted the chat
   * @param chatBackgroundSet
@@ -218,6 +226,10 @@ sealed trait MaybeInaccessibleMessage {}
   *   Optional. Service message: some tasks in a checklist were marked as done or not done
   * @param checklistTasksAdded
   *   Optional. Service message: tasks were added to a checklist
+  * @param communityChatAdded
+  *   Optional. Service message: chat added to a Community
+  * @param communityChatRemoved
+  *   Optional. Service message: chat removed from a Community
   * @param directMessagePriceChanged
   *   Optional. Service message: the price for paid messages in the corresponding direct messages chat of a channel has
   *   changed
@@ -283,6 +295,8 @@ final case class Message(
   senderBoostCount: Option[Int] = Option.empty,
   senderBusinessBot: Option[User] = Option.empty,
   senderTag: Option[String] = Option.empty,
+  receiverUser: Option[User] = Option.empty,
+  ephemeralMessageId: Option[Int] = Option.empty,
   guestQueryId: Option[String] = Option.empty,
   businessConnectionId: Option[String] = Option.empty,
   forwardOrigin: Option[iozhik.OpenEnum[MessageOrigin]] = Option.empty,
@@ -309,6 +323,7 @@ final case class Message(
   linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
   suggestedPostInfo: Option[SuggestedPostInfo] = Option.empty,
   effectId: Option[String] = Option.empty,
+  richMessage: Option[RichMessage] = Option.empty,
   animation: Option[Animation] = Option.empty,
   audio: Option[Audio] = Option.empty,
   document: Option[Document] = Option.empty,
@@ -361,6 +376,8 @@ final case class Message(
   chatBackgroundSet: Option[ChatBackground] = Option.empty,
   checklistTasksDone: Option[ChecklistTasksDone] = Option.empty,
   checklistTasksAdded: Option[ChecklistTasksAdded] = Option.empty,
+  communityChatAdded: Option[CommunityChatAdded] = Option.empty,
+  communityChatRemoved: Option[CommunityChatRemoved.type] = Option.empty,
   directMessagePriceChanged: Option[DirectMessagePriceChanged] = Option.empty,
   forumTopicCreated: Option[ForumTopicCreated] = Option.empty,
   forumTopicEdited: Option[ForumTopicEdited] = Option.empty,
