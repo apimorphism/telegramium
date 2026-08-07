@@ -27,6 +27,7 @@ import telegramium.bots.ChatMemberMember
 import telegramium.bots.ChatMemberUpdated
 import telegramium.bots.ChosenInlineResult
 import telegramium.bots.InlineQuery
+import telegramium.bots.BotSubscriptionUpdated
 import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
 import telegramium.bots.MessageReactionCountUpdated
@@ -289,6 +290,20 @@ class LongPollBotISpec
         )
         .unsafeRunSync()
       verifyMessageSent("onManagedBot")
+    }
+
+    "subscription" in {
+      mockServerClient
+        .when(sendMessageRequest("onSubscription"))
+        .respond(sendMessageResponse)
+      bot
+        .onUpdate(
+          testUpdate.copy(
+            subscription = BotSubscriptionUpdated(user = testUser, invoicePayload = "test", state = "active").some
+          )
+        )
+        .unsafeRunSync()
+      verifyMessageSent("onSubscription")
     }
 
     "The bot's chat member status was updated in a chat" in {

@@ -11,13 +11,15 @@ object Dependencies {
     val slf4j            = "2.0.7"
     val logback          = "1.3.7"
     val scalatest        = "3.2.20"
+    val scalatestplus    = "3.2.20.0"
     val testcontainers   = "0.44.1"
     val mockServerClient = "5.14.0"
   }
 
-  val catsCore   = "org.typelevel" %% "cats-core"   % V.catsCore
-  val catsEffect = "org.typelevel" %% "cats-effect" % V.catsEffect
-  val scalatest  = "org.scalatest" %% "scalatest"   % V.scalatest % Test
+  val catsCore      = "org.typelevel" %% "cats-core"   % V.catsCore
+  val catsEffect    = "org.typelevel" %% "cats-effect" % V.catsEffect
+  val scalatest     = "org.scalatest" %% "scalatest"   % V.scalatest % Test
+  val scalatestplus = "org.scalatestplus" %% "scalacheck-1-19" % V.scalatestplus % Test
 
   val circe = Seq(
     "io.circe" %% "circe-core"   % V.circe,
@@ -42,7 +44,7 @@ object Dependencies {
 
   val common: Seq[ModuleID] = Seq(catsCore) ++ circe
 
-  val telegramiumCore: Seq[ModuleID] = common
+  val telegramiumCore: Seq[ModuleID] = common ++ Seq(scalatest, scalatestplus)
 
   val telegramiumHigh: Seq[ModuleID] = common ++ Seq(catsEffect, scalatest) ++ http4sServer ++
     http4sClient ++ testcontainers

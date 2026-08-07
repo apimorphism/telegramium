@@ -43,6 +43,7 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
   def onChatBoost(boost: ChatBoostUpdated): F[Unit]                         = noop(boost)
   def onRemovedChatBoost(boostRemoved: ChatBoostRemoved): F[Unit]           = noop(boostRemoved)
   def onManagedBot(managedBot: ManagedBotUpdated): F[Unit]                  = noop(managedBot)
+  def onSubscription(subscription: BotSubscriptionUpdated): F[Unit]        = noop(subscription)
 
   def onUpdate(update: Update): F[Unit] =
     for {
@@ -71,6 +72,7 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
       _ <- update.chatBoost.fold(Monad[F].unit)(onChatBoost)
       _ <- update.removedChatBoost.fold(Monad[F].unit)(onRemovedChatBoost)
       _ <- update.managedBot.fold(Monad[F].unit)(onManagedBot)
+      _ <- update.subscription.fold(Monad[F].unit)(onSubscription)
     } yield ()
 
   def onError(e: Throwable): F[Unit] = {

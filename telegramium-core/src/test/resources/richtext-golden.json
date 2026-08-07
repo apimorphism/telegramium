@@ -1,0 +1,65 @@
+{
+  "plain_string": "Hello, world!",
+  "flat_array": [
+    "Hello, ",
+    {"type": "bold", "text": "world"},
+    "!"
+  ],
+  "nested_array": [
+    "Start ",
+    [
+      {"type": "bold", "text": "bold "},
+      {"type": "italic", "text": "and italic"}
+    ],
+    " end"
+  ],
+  "typed_object_bold": {
+    "type": "bold",
+    "text": "important"
+  },
+  "typed_object_with_nested_text": {
+    "type": "url",
+    "text": ["Click ", {"type": "bold", "text": "here"}],
+    "url": "https://example.com"
+  },
+  "paragraph_text": [
+    "This is a ",
+    {"type": "bold", "text": "rich"},
+    " message with ",
+    {"type": "italic", "text": [
+      "nested ",
+      {"type": "underline", "text": "formatting"}
+    ]},
+    " and a ",
+    {"type": "url", "text": "link", "url": "https://telegram.org"},
+    "."
+  ],
+  "mathematical_expression": {
+    "type": "mathematical_expression",
+    "expression": "E = mc^2"
+  },
+  "custom_emoji": {
+    "type": "custom_emoji",
+    "custom_emoji_id": "5368324170671202286",
+    "alternative_text": "👍"
+  },
+  "anchor": {
+    "type": "anchor",
+    "name": "section-1"
+  },
+  "date_time": {
+    "type": "date_time",
+    "text": "tomorrow",
+    "unix_time": 1720000000,
+    "date_time_format": "dd MMM yyyy"
+  },
+  "deeply_nested": [
+    [
+      [
+        "deep",
+        {"type": "bold", "text": "ly nested"}
+      ]
+    ]
+  ],
+  "empty_array": []
+}

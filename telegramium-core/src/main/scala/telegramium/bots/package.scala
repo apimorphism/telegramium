@@ -3651,16 +3651,16 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val richtextEncoder: Encoder[RichText] = {
+  private lazy val richtextGeneratedEncoder: Encoder[RichText] = {
     case mathematical_expression: RichTextMathematicalExpression =>
       mathematical_expression.asJson.mapObject(_.add("type", Json.fromString("mathematical_expression")))
     case underline: RichTextUnderline => underline.asJson.mapObject(_.add("type", Json.fromString("underline")))
-    case subscript: RichTextSubscript => subscript.asJson.mapObject(_.add("type", Json.fromString("subscript")))
     case marked: RichTextMarked       => marked.asJson.mapObject(_.add("type", Json.fromString("marked")))
     case hashtag: RichTextHashtag     => hashtag.asJson.mapObject(_.add("type", Json.fromString("hashtag")))
     case date_time: RichTextDateTime  => date_time.asJson.mapObject(_.add("type", Json.fromString("date_time")))
     case reference_link: RichTextReferenceLink =>
       reference_link.asJson.mapObject(_.add("type", Json.fromString("reference_link")))
+    case plain: RichTextPlain            => plain.asJson.mapObject(_.add("type", Json.fromString("plain")))
     case anchor_link: RichTextAnchorLink => anchor_link.asJson.mapObject(_.add("type", Json.fromString("anchor_link")))
     case bank_card_number: RichTextBankCardNumber =>
       bank_card_number.asJson.mapObject(_.add("type", Json.fromString("bank_card_number")))
@@ -3680,6 +3680,8 @@ object CirceImplicits {
     case url: RichTextUrl                 => url.asJson.mapObject(_.add("type", Json.fromString("url")))
     case italic: RichTextItalic           => italic.asJson.mapObject(_.add("type", Json.fromString("italic")))
     case bold: RichTextBold               => bold.asJson.mapObject(_.add("type", Json.fromString("bold")))
+    case concat: RichTextConcat           => concat.asJson.mapObject(_.add("type", Json.fromString("concat")))
+    case subscript: RichTextSubscript     => subscript.asJson.mapObject(_.add("type", Json.fromString("subscript")))
     case superscript: RichTextSuperscript => superscript.asJson.mapObject(_.add("type", Json.fromString("superscript")))
     case cashtag: RichTextCashtag         => cashtag.asJson.mapObject(_.add("type", Json.fromString("cashtag")))
     case code: RichTextCode               => code.asJson.mapObject(_.add("type", Json.fromString("code")))
@@ -3687,16 +3689,22 @@ object CirceImplicits {
     case mention: RichTextMention         => mention.asJson.mapObject(_.add("type", Json.fromString("mention")))
   }
 
-  implicit lazy val richtextDecoder: Decoder[iozhik.OpenEnum[RichText]] = for {
+  implicit lazy val richtextEncoder: Encoder[RichText] = {
+    case plain: RichTextPlain   => Json.fromString(plain.text)
+    case concat: RichTextConcat => Json.arr(concat.texts.map(_.asJson): _*)
+    case other                  => richtextGeneratedEncoder(other)
+  }
+
+  private lazy val richtextGeneratedDecoder: Decoder[iozhik.OpenEnum[RichText]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
       case "mathematical_expression" => Decoder[RichTextMathematicalExpression].map(iozhik.OpenEnum.Known(_))
       case "underline"               => Decoder[RichTextUnderline].map(iozhik.OpenEnum.Known(_))
-      case "subscript"               => Decoder[RichTextSubscript].map(iozhik.OpenEnum.Known(_))
       case "marked"                  => Decoder[RichTextMarked].map(iozhik.OpenEnum.Known(_))
       case "hashtag"                 => Decoder[RichTextHashtag].map(iozhik.OpenEnum.Known(_))
       case "date_time"               => Decoder[RichTextDateTime].map(iozhik.OpenEnum.Known(_))
       case "reference_link"          => Decoder[RichTextReferenceLink].map(iozhik.OpenEnum.Known(_))
+      case "plain"                   => Decoder[RichTextPlain].map(iozhik.OpenEnum.Known(_))
       case "anchor_link"             => Decoder[RichTextAnchorLink].map(iozhik.OpenEnum.Known(_))
       case "bank_card_number"        => Decoder[RichTextBankCardNumber].map(iozhik.OpenEnum.Known(_))
       case "strikethrough"           => Decoder[RichTextStrikethrough].map(iozhik.OpenEnum.Known(_))
@@ -3710,6 +3718,8 @@ object CirceImplicits {
       case "url"                     => Decoder[RichTextUrl].map(iozhik.OpenEnum.Known(_))
       case "italic"                  => Decoder[RichTextItalic].map(iozhik.OpenEnum.Known(_))
       case "bold"                    => Decoder[RichTextBold].map(iozhik.OpenEnum.Known(_))
+      case "concat"                  => Decoder[RichTextConcat].map(iozhik.OpenEnum.Known(_))
+      case "subscript"               => Decoder[RichTextSubscript].map(iozhik.OpenEnum.Known(_))
       case "superscript"             => Decoder[RichTextSuperscript].map(iozhik.OpenEnum.Known(_))
       case "cashtag"                 => Decoder[RichTextCashtag].map(iozhik.OpenEnum.Known(_))
       case "code"                    => Decoder[RichTextCode].map(iozhik.OpenEnum.Known(_))
@@ -3718,6 +3728,15 @@ object CirceImplicits {
       case unknown                   => Decoder.const(iozhik.OpenEnum.Unknown[RichText](unknown))
     }
   } yield value
+
+  implicit lazy val richtextDecoder: Decoder[iozhik.OpenEnum[RichText]] = Decoder.instance { c =>
+    if (c.value.isString)
+      c.as[String].map(s => iozhik.OpenEnum.Known(RichTextPlain(s)))
+    else if (c.value.isArray)
+      c.as[List[iozhik.OpenEnum[RichText]]].map(ts => iozhik.OpenEnum.Known(RichTextConcat(ts)))
+    else
+      richtextGeneratedDecoder(c)
+  }
 
   implicit lazy val richtextsubscriptEncoder: Encoder[RichTextSubscript] =
     (x: RichTextSubscript) => {
@@ -3792,6 +3811,24 @@ object CirceImplicits {
         _anchorName <- h.get[String]("anchor_name")
       } yield {
         RichTextAnchorLink(text = _text, anchorName = _anchorName)
+      }
+    }
+
+  implicit lazy val richtextconcatEncoder: Encoder[RichTextConcat] =
+    (x: RichTextConcat) => {
+      Json.fromFields(
+        List(
+          "texts" -> x.texts.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextconcatDecoder: Decoder[RichTextConcat] =
+    Decoder.instance { h =>
+      for {
+        _texts <- h.getOrElse[List[iozhik.OpenEnum[RichText]]]("texts")(List.empty)
+      } yield {
+        RichTextConcat(texts = _texts)
       }
     }
 
@@ -4002,6 +4039,24 @@ object CirceImplicits {
         _text <- h.get[iozhik.OpenEnum[RichText]]("text")
       } yield {
         RichTextMarked(text = _text)
+      }
+    }
+
+  implicit lazy val richtextplainEncoder: Encoder[RichTextPlain] =
+    (x: RichTextPlain) => {
+      Json.fromFields(
+        List(
+          "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextplainDecoder: Decoder[RichTextPlain] =
+    Decoder.instance { h =>
+      for {
+        _text <- h.get[String]("text")
+      } yield {
+        RichTextPlain(text = _text)
       }
     }
 

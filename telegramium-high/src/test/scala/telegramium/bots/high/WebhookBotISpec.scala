@@ -39,6 +39,7 @@ import telegramium.bots.ChatMemberUpdated
 import telegramium.bots.ChosenInlineResult
 import telegramium.bots.CirceImplicits.*
 import telegramium.bots.InlineQuery
+import telegramium.bots.BotSubscriptionUpdated
 import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
 import telegramium.bots.MessageReactionCountUpdated
@@ -392,6 +393,18 @@ class WebhookBotISpec
       verifyResult(
         testUpdate.copy(managedBot = ManagedBotUpdated(user = testUser, bot = testUser).some),
         "onManagedBotReply"
+      )
+    }
+
+    "subscription" in {
+      mockServerClient
+        .when(sendMessageRequest("onSubscription"))
+        .respond(sendMessageResponse)
+      verifyResult(
+        testUpdate.copy(
+          subscription = BotSubscriptionUpdated(user = testUser, invoicePayload = "test", state = "active").some
+        ),
+        "onSubscriptionReply"
       )
     }
 

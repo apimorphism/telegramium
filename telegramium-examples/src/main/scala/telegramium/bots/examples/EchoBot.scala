@@ -18,33 +18,41 @@ class EchoBot[F[_]]()(implicit
   import telegramium.bots.*
 
   override def onMessage(msg: Message): F[Unit] = {
-    sendMessage(
-      chatId = ChatIntId(msg.chat.id),
-      text = msg.text.getOrElse("NO_TEXT"),
-      replyMarkup = Some(
-        InlineKeyboardMarkup(
-          inlineKeyboard = List(
-            List(
-              InlineKeyboardButton("Markdown", callbackData = Some("Markdown")),
-              InlineKeyboardButton("Markdown2", callbackData = Some("Markdown2")),
-              InlineKeyboardButton("HTML", callbackData = Some("HTML"))
-            ),
-            List(
-              InlineKeyboardButton("Yes", callbackData = Some("Yes")),
-              InlineKeyboardButton("No", callbackData = Some("No"))
-            ),
-            List(
-              InlineKeyboardButton(EmojiDice.toString(), callbackData = Some("dice")),
-              InlineKeyboardButton(EmojiDarts.toString(), callbackData = Some("darts")),
-              InlineKeyboardButton(EmojiBasketball.toString(), callbackData = Some("basketball"))
-            ),
-            List(
-              InlineKeyboardButton("Gimme a quiz", callbackData = Some("quiz"))
+    msg.text match {
+      case Some("/rich") =>
+        sendRichMessage(
+          chatId = ChatIntId(msg.chat.id),
+          richMessage = InputRichMessage(html = Some(richHtmlText))
+        ).exec.void
+      case _ =>
+        sendMessage(
+          chatId = ChatIntId(msg.chat.id),
+          text = msg.text.getOrElse("NO_TEXT"),
+          replyMarkup = Some(
+            InlineKeyboardMarkup(
+              inlineKeyboard = List(
+                List(
+                  InlineKeyboardButton("Markdown", callbackData = Some("Markdown")),
+                  InlineKeyboardButton("Markdown2", callbackData = Some("Markdown2")),
+                  InlineKeyboardButton("HTML", callbackData = Some("HTML"))
+                ),
+                List(
+                  InlineKeyboardButton("Yes", callbackData = Some("Yes")),
+                  InlineKeyboardButton("No", callbackData = Some("No"))
+                ),
+                List(
+                  InlineKeyboardButton(EmojiDice.toString(), callbackData = Some("dice")),
+                  InlineKeyboardButton(EmojiDarts.toString(), callbackData = Some("darts")),
+                  InlineKeyboardButton(EmojiBasketball.toString(), callbackData = Some("basketball"))
+                ),
+                List(
+                  InlineKeyboardButton("Gimme a quiz", callbackData = Some("quiz"))
+                )
+              )
             )
           )
-        )
-      )
-    ).exec.void
+        ).exec.void
+    }
   }
 
   override def onCallbackQuery(query: CallbackQuery): F[Unit] = {
@@ -168,6 +176,21 @@ class EchoBot[F[_]]()(implicit
       |```python
       |pre-formatted fixed-width code block written in the Python programming language
       |```
+      |""".stripMargin
+
+  val richHtmlText: String =
+    """<h2>Rich Message Demo</h2>
+      |<p>This is a <b>rich message</b> sent via <i>telegramium</i>.</p>
+      |<p>Features include:</p>
+      |<ul>
+      |<li>Bold, italic, and <u>underline</u> text</li>
+      |<li><a href="https://core.telegram.org/bots/api">Hyperlinks</a></li>
+      |<li>Code: <code>val x = 42</code></li>
+      |</ul>
+      |<pre><code class="language-scala">def hello(): Unit =
+      |  println("Hello from telegramium!")
+      |</code></pre>
+      |<blockquote>Rich messages support structured formatting with blocks.</blockquote>
       |""".stripMargin
 
 }

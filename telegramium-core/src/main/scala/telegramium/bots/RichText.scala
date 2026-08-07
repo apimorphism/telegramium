@@ -34,6 +34,13 @@ final case class RichTextCode(text: iozhik.OpenEnum[RichText]) extends RichText
   */
 final case class RichTextAnchorLink(text: iozhik.OpenEnum[RichText], anchorName: String) extends RichText
 
+/** Concatenation of rich texts.
+  *
+  * @param texts
+  *   The texts
+  */
+final case class RichTextConcat(texts: List[iozhik.OpenEnum[RichText]] = List.empty) extends RichText
+
 /** A text covered by a spoiler.
   *
   * @param text
@@ -122,6 +129,13 @@ final case class RichTextEmailAddress(text: iozhik.OpenEnum[RichText], emailAddr
   *   The text
   */
 final case class RichTextMarked(text: iozhik.OpenEnum[RichText]) extends RichText
+
+/** Plain text.
+  *
+  * @param text
+  *   The text
+  */
+final case class RichTextPlain(text: String) extends RichText
 
 /** An italicized text.
   *

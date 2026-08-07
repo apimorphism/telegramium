@@ -24,6 +24,7 @@ import org.http4s.implicits.*
 import org.http4s.server.Server
 import org.http4s.server.inDefaultServiceErrorHandler
 
+import telegramium.bots.BotSubscriptionUpdated
 import telegramium.bots.BusinessConnection
 import telegramium.bots.BusinessMessagesDeleted
 import telegramium.bots.CallbackQuery
@@ -109,6 +110,7 @@ abstract class WebhookBot[F[_]: Async](
   def onChatBoost(boost: ChatBoostUpdated): F[Unit]                         = noop(boost)
   def onRemovedChatBoost(boostRemoved: ChatBoostRemoved): F[Unit]           = noop(boostRemoved)
   def onManagedBot(managedBot: ManagedBotUpdated): F[Unit]                  = noop(managedBot)
+  def onSubscription(subscription: BotSubscriptionUpdated): F[Unit]        = noop(subscription)
 
   private def noopReply[A](a: A) = Monad[F].pure(a).map(_ => Option.empty[Method[?]])
 
@@ -139,6 +141,7 @@ abstract class WebhookBot[F[_]: Async](
   def onChatBoostReply(boost: ChatBoostUpdated): F[Option[Method[?]]]               = noopReply(boost)
   def onRemovedChatBoostReply(boostRemoved: ChatBoostRemoved): F[Option[Method[?]]] = noopReply(boostRemoved)
   def onManagedBotReply(managedBot: ManagedBotUpdated): F[Option[Method[?]]]        = noopReply(managedBot)
+  def onSubscriptionReply(subscription: BotSubscriptionUpdated): F[Option[Method[?]]] = noopReply(subscription)
 
   def onUpdate(update: Update): F[Option[Method[?]]] =
     List(
@@ -176,7 +179,10 @@ abstract class WebhookBot[F[_]: Async](
       update.removedChatBoost.map(boostRemoved =>
         onRemovedChatBoostReply(boostRemoved) <* onRemovedChatBoost(boostRemoved)
       ),
-      update.managedBot.map(managedBot => onManagedBotReply(managedBot) <* onManagedBot(managedBot))
+      update.managedBot.map(managedBot => onManagedBotReply(managedBot) <* onManagedBot(managedBot)),
+      update.subscription.map(subscription =>
+        onSubscriptionReply(subscription) <* onSubscription(subscription)
+      )
     ).flatten.head
 
   private implicit val HandleUpdateReqEntityDecoder: EntityDecoder[F, Update] = jsonOf[F, Update]
