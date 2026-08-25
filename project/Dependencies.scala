@@ -4,7 +4,7 @@ object Dependencies {
 
   object V {
     val catsCore         = "2.13.0"
-    val catsEffect       = "3.7.0"
+    val catsEffect       = "3.7.1"
     val circe            = "0.14.16"
     val http4s           = "0.23.36"
     val blazeHttp4s      = "0.23.18"
