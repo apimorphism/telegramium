@@ -1,6 +1,7 @@
 package telegramium.bots.client
 
 import telegramium.bots.ChatId
+import telegramium.bots.EphemeralMessageParameters
 import telegramium.bots.InputRichMessage
 import telegramium.bots.SuggestedPostParameters
 import telegramium.bots.ReplyParameters
@@ -20,6 +21,8 @@ import telegramium.bots.KeyboardMarkup
   * @param directMessagesTopicId
   *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
   *   direct messages chat
+  * @param ephemeralMessageParameters
+  *   A JSON-serialized object containing the parameters of the ephemeral message to send
   * @param disableNotification
   *   Sends the message silently. Users will receive a notification with no sound.
   * @param protectContent
@@ -44,6 +47,7 @@ final case class SendRichMessageReq(
   businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,
   directMessagesTopicId: Option[Long] = Option.empty,
+  ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,
   protectContent: Option[Boolean] = Option.empty,
   allowPaidBroadcast: Option[Boolean] = Option.empty,

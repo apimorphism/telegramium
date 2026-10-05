@@ -13,8 +13,8 @@ package telegramium.bots.client
   *   callback_game button. Otherwise, you may use links like t.me/your_bot?start=XXXX that open your bot with a
   *   parameter.
   * @param cacheTime
-  *   The maximum amount of time in seconds that the result of the callback query may be cached client-side. Telegram
-  *   apps will support caching starting in version 3.14. Defaults to 0.
+  *   The maximum amount of time in seconds that the result of the callback query may be cached client-side. Defaults to
+  *   0.
   */
 final case class AnswerCallbackQueryReq(
   callbackQueryId: String,

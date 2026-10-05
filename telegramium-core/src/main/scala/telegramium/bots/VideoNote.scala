@@ -1,6 +1,6 @@
 package telegramium.bots
 
-/** This object represents a video message (available in Telegram apps as of v.4.0).
+/** This object represents a video message.
   *
   * @param fileId
   *   Identifier for this file, which can be used to download or reuse the file

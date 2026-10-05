@@ -74,6 +74,8 @@ package telegramium.bots
   *   Optional. A new bot was created to be managed by the bot, or token or owner of a managed bot was changed
   * @param subscription
   *   Optional. User payment subscription has changed
+  * @param stoppedMessageGeneration
+  *   Optional. A user asked the bot to stop the generation of a message
   */
 final case class Update(
   updateId: Int,
@@ -102,5 +104,6 @@ final case class Update(
   chatBoost: Option[ChatBoostUpdated] = Option.empty,
   removedChatBoost: Option[ChatBoostRemoved] = Option.empty,
   managedBot: Option[ManagedBotUpdated] = Option.empty,
-  subscription: Option[BotSubscriptionUpdated] = Option.empty
+  subscription: Option[BotSubscriptionUpdated] = Option.empty,
+  stoppedMessageGeneration: Option[MessageGenerationStopped] = Option.empty
 )

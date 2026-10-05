@@ -11,8 +11,7 @@ import telegramium.bots.InlineKeyboardMarkup
   * @param ephemeralMessageId
   *   Identifier of the ephemeral message to edit
   * @param media
-  *   A JSON-serialized object for the new media content of the message. A new file can't be uploaded; use a previously
-  *   uploaded file via its file_id or specify a URL.
+  *   A JSON-serialized object for the new media content of the message
   * @param replyMarkup
   *   A JSON-serialized object for an inline keyboard
   */

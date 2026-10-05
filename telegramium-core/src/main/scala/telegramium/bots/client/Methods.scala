@@ -80,8 +80,8 @@ trait Methods {
     *   callback_game button. Otherwise, you may use links like t.me/your_bot?start=XXXX that open your bot with a
     *   parameter.
     * @param cacheTime
-    *   The maximum amount of time in seconds that the result of the callback query may be cached client-side. Telegram
-    *   apps will support caching starting in version 3.14. Defaults to 0.
+    *   The maximum amount of time in seconds that the result of the callback query may be cached client-side. Defaults
+    *   to 0.
     */
   def answerCallbackQuery(
     callbackQueryId: String,
@@ -1000,6 +1000,9 @@ trait Methods {
     * @param captionEntities
     *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
     *   parse_mode
+    * @param showCaptionAboveMedia
+    *   Pass True if the caption must be shown above the message media. Supported only for animation, photo and video
+    *   messages.
     * @param replyMarkup
     *   A JSON-serialized object for an inline keyboard
     */
@@ -1010,6 +1013,7 @@ trait Methods {
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
+    showCaptionAboveMedia: Option[Boolean] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Boolean] = {
     val req = EditEphemeralMessageCaptionReq(
@@ -1019,6 +1023,7 @@ trait Methods {
       caption,
       parseMode,
       captionEntities,
+      showCaptionAboveMedia,
       replyMarkup
     )
     MethodReq[Boolean]("editEphemeralMessageCaption", req.asJson)
@@ -1034,8 +1039,7 @@ trait Methods {
     * @param ephemeralMessageId
     *   Identifier of the ephemeral message to edit
     * @param media
-    *   A JSON-serialized object for the new media content of the message. A new file can't be uploaded; use a
-    *   previously uploaded file via its file_id or specify a URL.
+    *   A JSON-serialized object for the new media content of the message
     * @param replyMarkup
     *   A JSON-serialized object for an inline keyboard
     */
@@ -1072,8 +1076,8 @@ trait Methods {
     MethodReq[Boolean]("editEphemeralMessageReplyMarkup", req.asJson)
   }
 
-  /** Use this method to edit an ephemeral text message. Note that it is not guaranteed that the user will receive the
-    * message edit event, especially if they are offline. On success, True is returned.
+  /** Use this method to edit an ephemeral text or rich message. Note that it is not guaranteed that the user will
+    * receive the message edit event, especially if they are offline. On success, True is returned.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
@@ -1082,12 +1086,14 @@ trait Methods {
     * @param ephemeralMessageId
     *   Identifier of the ephemeral message to edit
     * @param text
-    *   New text of the message, 1-4096 characters after entity parsing
+    *   New text of the message, 1-4096 characters after entity parsing; required if rich_message isn't specified
     * @param parseMode
     *   Mode for parsing entities in the message text. See formatting options for more details.
     * @param entities
     *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
     *   parse_mode
+    * @param richMessage
+    *   New rich content of the message; required if text isn't specified
     * @param linkPreviewOptions
     *   Link preview generation options for the message
     * @param replyMarkup
@@ -1097,9 +1103,10 @@ trait Methods {
     chatId: ChatId,
     receiverUserId: Int,
     ephemeralMessageId: Int,
-    text: String,
+    text: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     entities: List[MessageEntity] = List.empty,
+    richMessage: Option[InputRichMessage] = Option.empty,
     linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Boolean] = {
@@ -1110,6 +1117,7 @@ trait Methods {
       text,
       parseMode,
       entities,
+      richMessage,
       linkPreviewOptions,
       replyMarkup
     )
@@ -1377,8 +1385,8 @@ trait Methods {
     * @param linkPreviewOptions
     *   Link preview generation options for the message
     * @param richMessage
-    *   New rich content of the message; required if text isn't specified. Direct upload of new files isn't supported
-    *   when an inline message is edited.
+    *   New rich content of the message; required if text isn't specified. Direct upload of new files and explicit
+    *   upload of files by a URL isn't supported when an inline message is edited.
     * @param replyMarkup
     *   A JSON-serialized object for an inline keyboard
     */
@@ -2292,6 +2300,8 @@ trait Methods {
     *   channels only
     * @param canManageTags
     *   Pass True if the administrator can edit the tags of regular members; for groups and supergroups only
+    * @param canSendWelcomeMessages
+    *   Pass True if the administrator can manage chat welcome messages or directly send them in the case of bots
     */
   def promoteChatMember(
     chatId: ChatId,
@@ -2312,7 +2322,8 @@ trait Methods {
     canPinMessages: Option[Boolean] = Option.empty,
     canManageTopics: Option[Boolean] = Option.empty,
     canManageDirectMessages: Option[Boolean] = Option.empty,
-    canManageTags: Option[Boolean] = Option.empty
+    canManageTags: Option[Boolean] = Option.empty,
+    canSendWelcomeMessages: Option[Boolean] = Option.empty
   ): Method[Boolean] = {
     val req = PromoteChatMemberReq(
       chatId,
@@ -2333,7 +2344,8 @@ trait Methods {
       canPinMessages,
       canManageTopics,
       canManageDirectMessages,
-      canManageTags
+      canManageTags,
+      canSendWelcomeMessages
     )
     MethodReq[Boolean]("promoteChatMember", req.asJson)
   }
@@ -2603,12 +2615,8 @@ trait Methods {
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
-    * @param receiverUserId
-    *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
-    *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
-    *   offline. See ephemeral message sending for more details.
-    * @param callbackQueryId
-    *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
+    * @param ephemeralMessageParameters
+    *   A JSON-serialized object containing the parameters of the ephemeral message to send
     * @param duration
     *   Duration of sent animation in seconds
     * @param width
@@ -2658,8 +2666,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
-    receiverUserId: Option[Int] = Option.empty,
-    callbackQueryId: Option[String] = Option.empty,
+    ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
     duration: Option[Int] = Option.empty,
     width: Option[Int] = Option.empty,
     height: Option[Int] = Option.empty,
@@ -2683,8 +2690,7 @@ trait Methods {
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
-      receiverUserId,
-      callbackQueryId,
+      ephemeralMessageParameters,
       duration,
       width,
       height,
@@ -2729,12 +2735,8 @@ trait Methods {
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
-    * @param receiverUserId
-    *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
-    *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
-    *   offline. See ephemeral message sending for more details.
-    * @param callbackQueryId
-    *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
+    * @param ephemeralMessageParameters
+    *   A JSON-serialized object containing the parameters of the ephemeral message to send
     * @param caption
     *   Audio caption, 0-1024 characters after entities parsing
     * @param parseMode
@@ -2779,8 +2781,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
-    receiverUserId: Option[Int] = Option.empty,
-    callbackQueryId: Option[String] = Option.empty,
+    ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -2802,8 +2803,7 @@ trait Methods {
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
-      receiverUserId,
-      callbackQueryId,
+      ephemeralMessageParameters,
       caption,
       parseMode,
       captionEntities,
@@ -2929,12 +2929,8 @@ trait Methods {
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
-    * @param receiverUserId
-    *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
-    *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
-    *   offline. See ephemeral message sending for more details.
-    * @param callbackQueryId
-    *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
+    * @param ephemeralMessageParameters
+    *   A JSON-serialized object containing the parameters of the ephemeral message to send
     * @param lastName
     *   Contact's last name
     * @param vcard
@@ -2965,8 +2961,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
-    receiverUserId: Option[Int] = Option.empty,
-    callbackQueryId: Option[String] = Option.empty,
+    ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
     lastName: Option[String] = Option.empty,
     vcard: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
@@ -2984,8 +2979,7 @@ trait Methods {
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
-      receiverUserId,
-      callbackQueryId,
+      ephemeralMessageParameters,
       lastName,
       vcard,
       disableNotification,
@@ -3085,12 +3079,8 @@ trait Methods {
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
-    * @param receiverUserId
-    *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
-    *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
-    *   offline. See ephemeral message sending for more details.
-    * @param callbackQueryId
-    *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
+    * @param ephemeralMessageParameters
+    *   A JSON-serialized object containing the parameters of the ephemeral message to send
     * @param thumbnail
     *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
     *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not
@@ -3132,8 +3122,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
-    receiverUserId: Option[Int] = Option.empty,
-    callbackQueryId: Option[String] = Option.empty,
+    ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
     thumbnail: Option[IFile] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
@@ -3153,8 +3142,7 @@ trait Methods {
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
-      receiverUserId,
-      callbackQueryId,
+      ephemeralMessageParameters,
       thumbnail,
       caption,
       parseMode,
@@ -3438,12 +3426,8 @@ trait Methods {
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
-    * @param receiverUserId
-    *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
-    *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
-    *   offline. See ephemeral message sending for more details.
-    * @param callbackQueryId
-    *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
+    * @param ephemeralMessageParameters
+    *   A JSON-serialized object containing the parameters of the ephemeral message to send
     * @param caption
     *   Video caption (may also be used when resending videos by file_id), 0-1024 characters after entities parsing
     * @param parseMode
@@ -3481,8 +3465,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
-    receiverUserId: Option[Int] = Option.empty,
-    callbackQueryId: Option[String] = Option.empty,
+    ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -3503,8 +3486,7 @@ trait Methods {
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
-      receiverUserId,
-      callbackQueryId,
+      ephemeralMessageParameters,
       caption,
       parseMode,
       captionEntities,
@@ -3542,12 +3524,8 @@ trait Methods {
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
-    * @param receiverUserId
-    *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
-    *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
-    *   offline. See ephemeral message sending for more details.
-    * @param callbackQueryId
-    *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
+    * @param ephemeralMessageParameters
+    *   A JSON-serialized object containing the parameters of the ephemeral message to send
     * @param horizontalAccuracy
     *   The radius of uncertainty for the location, measured in meters; 0-1500
     * @param livePeriod
@@ -3584,8 +3562,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
-    receiverUserId: Option[Int] = Option.empty,
-    callbackQueryId: Option[String] = Option.empty,
+    ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
     horizontalAccuracy: Option[Float] = Option.empty,
     livePeriod: Option[Int] = Option.empty,
     heading: Option[Int] = Option.empty,
@@ -3605,8 +3582,7 @@ trait Methods {
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
-      receiverUserId,
-      callbackQueryId,
+      ephemeralMessageParameters,
       horizontalAccuracy,
       livePeriod,
       heading,
@@ -3693,12 +3669,8 @@ trait Methods {
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
-    * @param receiverUserId
-    *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
-    *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
-    *   offline. See ephemeral message sending for more details.
-    * @param callbackQueryId
-    *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
+    * @param ephemeralMessageParameters
+    *   A JSON-serialized object containing the parameters of the ephemeral message to send
     * @param parseMode
     *   Mode for parsing entities in the message text. See formatting options for more details.
     * @param entities
@@ -3731,8 +3703,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
-    receiverUserId: Option[Int] = Option.empty,
-    callbackQueryId: Option[String] = Option.empty,
+    ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     entities: List[MessageEntity] = List.empty,
     linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
@@ -3750,8 +3721,7 @@ trait Methods {
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
-      receiverUserId,
-      callbackQueryId,
+      ephemeralMessageParameters,
       parseMode,
       entities,
       linkPreviewOptions,
@@ -3774,7 +3744,7 @@ trait Methods {
     *   Unique identifier for the target private chat
     * @param draftId
     *   Unique identifier of the message draft; must be non-zero. Changes to drafts with the same identifier are
-    *   animated.
+    *   animated. Otherwise, the draft is replaced without animation.
     * @param messageThreadId
     *   Unique identifier for the target message thread
     * @param text
@@ -3785,6 +3755,13 @@ trait Methods {
     * @param entities
     *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
     *   parse_mode
+    * @param canStop
+    *   Pass True to show the user a button to stop further drafts. The bot will receive an Update
+    *   “stopped_message_generation” if the user presses the button.
+    * @param keepOnStop
+    *   Pass True to keep the draft in the chat when the button is pressed. The draft will still disappear after a short
+    *   time or if the bot sends a message. To fully preserve the partial draft, the bot should send it as a new
+    *   message.
     */
   def sendMessageDraft(
     chatId: Long,
@@ -3792,9 +3769,11 @@ trait Methods {
     messageThreadId: Option[Int] = Option.empty,
     text: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
-    entities: List[MessageEntity] = List.empty
+    entities: List[MessageEntity] = List.empty,
+    canStop: Option[Boolean] = Option.empty,
+    keepOnStop: Option[Boolean] = Option.empty
   ): Method[Boolean] = {
-    val req = SendMessageDraftReq(chatId, draftId, messageThreadId, text, parseMode, entities)
+    val req = SendMessageDraftReq(chatId, draftId, messageThreadId, text, parseMode, entities, canStop, keepOnStop)
     MethodReq[Boolean]("sendMessageDraft", req.asJson)
   }
 
@@ -3904,12 +3883,8 @@ trait Methods {
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
-    * @param receiverUserId
-    *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
-    *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
-    *   offline. See ephemeral message sending for more details.
-    * @param callbackQueryId
-    *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
+    * @param ephemeralMessageParameters
+    *   A JSON-serialized object containing the parameters of the ephemeral message to send
     * @param caption
     *   Photo caption (may also be used when resending photos by file_id), 0-1024 characters after entities parsing
     * @param parseMode
@@ -3946,8 +3921,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
-    receiverUserId: Option[Int] = Option.empty,
-    callbackQueryId: Option[String] = Option.empty,
+    ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -3967,8 +3941,7 @@ trait Methods {
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
-      receiverUserId,
-      callbackQueryId,
+      ephemeralMessageParameters,
       caption,
       parseMode,
       captionEntities,
@@ -4165,6 +4138,8 @@ trait Methods {
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
+    * @param ephemeralMessageParameters
+    *   A JSON-serialized object containing the parameters of the ephemeral message to send
     * @param disableNotification
     *   Sends the message silently. Users will receive a notification with no sound.
     * @param protectContent
@@ -4190,6 +4165,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
+    ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,
@@ -4204,6 +4180,7 @@ trait Methods {
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
+      ephemeralMessageParameters,
       disableNotification,
       protectContent,
       allowPaidBroadcast,
@@ -4223,19 +4200,29 @@ trait Methods {
     *   Unique identifier for the target private chat
     * @param draftId
     *   Unique identifier of the message draft; must be non-zero. Changes to drafts with the same identifier are
-    *   animated.
+    *   animated. Otherwise, the draft is replaced without animation.
     * @param richMessage
-    *   The partial message to be streamed. Direct upload of new files isn't supported.
+    *   The partial message to be streamed. Direct upload of new files and explicit upload of files by a URL isn't
+    *   supported.
     * @param messageThreadId
     *   Unique identifier for the target message thread
+    * @param canStop
+    *   Pass True to show the user a button to stop further drafts. The bot will receive an Update
+    *   “stopped_message_generation” if the user presses the button.
+    * @param keepOnStop
+    *   Pass True to keep the draft in the chat when the button is pressed. The draft will still disappear after a short
+    *   time or if the bot sends a message. To fully preserve the partial draft, the bot should send it as a new
+    *   message.
     */
   def sendRichMessageDraft(
     chatId: Long,
     draftId: Int,
     richMessage: InputRichMessage,
-    messageThreadId: Option[Int] = Option.empty
+    messageThreadId: Option[Int] = Option.empty,
+    canStop: Option[Boolean] = Option.empty,
+    keepOnStop: Option[Boolean] = Option.empty
   ): Method[Boolean] = {
-    val req = SendRichMessageDraftReq(chatId, draftId, richMessage, messageThreadId)
+    val req = SendRichMessageDraftReq(chatId, draftId, richMessage, messageThreadId, canStop, keepOnStop)
     MethodReq[Boolean]("sendRichMessageDraft", req.asJson)
   }
 
@@ -4257,12 +4244,8 @@ trait Methods {
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
-    * @param receiverUserId
-    *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
-    *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
-    *   offline. See ephemeral message sending for more details.
-    * @param callbackQueryId
-    *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
+    * @param ephemeralMessageParameters
+    *   A JSON-serialized object containing the parameters of the ephemeral message to send
     * @param emoji
     *   Emoji associated with the sticker; only for just uploaded stickers
     * @param disableNotification
@@ -4290,8 +4273,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
-    receiverUserId: Option[Int] = Option.empty,
-    callbackQueryId: Option[String] = Option.empty,
+    ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
     emoji: Option[String] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
@@ -4307,8 +4289,7 @@ trait Methods {
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
-      receiverUserId,
-      callbackQueryId,
+      ephemeralMessageParameters,
       emoji,
       disableNotification,
       protectContent,
@@ -4346,12 +4327,8 @@ trait Methods {
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
-    * @param receiverUserId
-    *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
-    *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
-    *   offline. See ephemeral message sending for more details.
-    * @param callbackQueryId
-    *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
+    * @param ephemeralMessageParameters
+    *   A JSON-serialized object containing the parameters of the ephemeral message to send
     * @param foursquareId
     *   Foursquare identifier of the venue
     * @param foursquareType
@@ -4389,8 +4366,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
-    receiverUserId: Option[Int] = Option.empty,
-    callbackQueryId: Option[String] = Option.empty,
+    ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
     foursquareId: Option[String] = Option.empty,
     foursquareType: Option[String] = Option.empty,
     googlePlaceId: Option[String] = Option.empty,
@@ -4412,8 +4388,7 @@ trait Methods {
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
-      receiverUserId,
-      callbackQueryId,
+      ephemeralMessageParameters,
       foursquareId,
       foursquareType,
       googlePlaceId,
@@ -4448,12 +4423,8 @@ trait Methods {
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
-    * @param receiverUserId
-    *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
-    *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
-    *   offline. See ephemeral message sending for more details.
-    * @param callbackQueryId
-    *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
+    * @param ephemeralMessageParameters
+    *   A JSON-serialized object containing the parameters of the ephemeral message to send
     * @param duration
     *   Duration of sent video in seconds
     * @param width
@@ -4510,8 +4481,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
-    receiverUserId: Option[Int] = Option.empty,
-    callbackQueryId: Option[String] = Option.empty,
+    ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
     duration: Option[Int] = Option.empty,
     width: Option[Int] = Option.empty,
     height: Option[Int] = Option.empty,
@@ -4538,8 +4508,7 @@ trait Methods {
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
-      receiverUserId,
-      callbackQueryId,
+      ephemeralMessageParameters,
       duration,
       width,
       height,
@@ -4567,8 +4536,8 @@ trait Methods {
     )
   }
 
-  /** As of v.4.0, Telegram clients support rounded square MPEG4 videos of up to 1 minute long. Use this method to send
-    * video messages. On success, the sent Message is returned.
+  /** Use this method to send a rounded square MPEG4 video of up to 1 minute long. On success, the sent Message is
+    * returned.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
@@ -4585,12 +4554,8 @@ trait Methods {
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
-    * @param receiverUserId
-    *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
-    *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
-    *   offline. See ephemeral message sending for more details.
-    * @param callbackQueryId
-    *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
+    * @param ephemeralMessageParameters
+    *   A JSON-serialized object containing the parameters of the ephemeral message to send
     * @param duration
     *   Duration of sent video in seconds
     * @param length
@@ -4626,8 +4591,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
-    receiverUserId: Option[Int] = Option.empty,
-    callbackQueryId: Option[String] = Option.empty,
+    ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
     duration: Option[Int] = Option.empty,
     length: Option[Int] = Option.empty,
     thumbnail: Option[IFile] = Option.empty,
@@ -4645,8 +4609,7 @@ trait Methods {
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
-      receiverUserId,
-      callbackQueryId,
+      ephemeralMessageParameters,
       duration,
       length,
       thumbnail,
@@ -4685,12 +4648,8 @@ trait Methods {
     * @param directMessagesTopicId
     *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
     *   direct messages chat
-    * @param receiverUserId
-    *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
-    *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
-    *   offline. See ephemeral message sending for more details.
-    * @param callbackQueryId
-    *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
+    * @param ephemeralMessageParameters
+    *   A JSON-serialized object containing the parameters of the ephemeral message to send
     * @param caption
     *   Voice message caption, 0-1024 characters after entities parsing
     * @param parseMode
@@ -4725,8 +4684,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
-    receiverUserId: Option[Int] = Option.empty,
-    callbackQueryId: Option[String] = Option.empty,
+    ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
@@ -4745,8 +4703,7 @@ trait Methods {
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
-      receiverUserId,
-      callbackQueryId,
+      ephemeralMessageParameters,
       caption,
       parseMode,
       captionEntities,

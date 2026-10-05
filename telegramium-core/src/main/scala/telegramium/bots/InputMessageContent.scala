@@ -181,6 +181,6 @@ final case class InputTextMessageContent(
 /** Represents the content of a rich message to be sent as the result of an inline query.
   *
   * @param richMessage
-  *   The message to be sent
+  *   The message to be sent. Only previously uploaded files may be used in the message.
   */
 final case class InputRichMessageContent(richMessage: InputRichMessage) extends InputMessageContent

@@ -3,6 +3,7 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 import telegramium.bots.ParseMode
 import telegramium.bots.MessageEntity
+import telegramium.bots.InputRichMessage
 import telegramium.bots.LinkPreviewOptions
 import telegramium.bots.InlineKeyboardMarkup
 
@@ -13,12 +14,14 @@ import telegramium.bots.InlineKeyboardMarkup
   * @param ephemeralMessageId
   *   Identifier of the ephemeral message to edit
   * @param text
-  *   New text of the message, 1-4096 characters after entity parsing
+  *   New text of the message, 1-4096 characters after entity parsing; required if rich_message isn't specified
   * @param parseMode
   *   Mode for parsing entities in the message text. See formatting options for more details.
   * @param entities
   *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
   *   parse_mode
+  * @param richMessage
+  *   New rich content of the message; required if text isn't specified
   * @param linkPreviewOptions
   *   Link preview generation options for the message
   * @param replyMarkup
@@ -28,9 +31,10 @@ final case class EditEphemeralMessageTextReq(
   chatId: ChatId,
   receiverUserId: Int,
   ephemeralMessageId: Int,
-  text: String,
+  text: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   entities: List[MessageEntity] = List.empty,
+  richMessage: Option[InputRichMessage] = Option.empty,
   linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
 )

@@ -7,6 +7,7 @@ import telegramium.bots.MessageEntity
   *   Unique identifier for the target private chat
   * @param draftId
   *   Unique identifier of the message draft; must be non-zero. Changes to drafts with the same identifier are animated.
+  *   Otherwise, the draft is replaced without animation.
   * @param messageThreadId
   *   Unique identifier for the target message thread
   * @param text
@@ -17,6 +18,12 @@ import telegramium.bots.MessageEntity
   * @param entities
   *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
   *   parse_mode
+  * @param canStop
+  *   Pass True to show the user a button to stop further drafts. The bot will receive an Update
+  *   “stopped_message_generation” if the user presses the button.
+  * @param keepOnStop
+  *   Pass True to keep the draft in the chat when the button is pressed. The draft will still disappear after a short
+  *   time or if the bot sends a message. To fully preserve the partial draft, the bot should send it as a new message.
   */
 final case class SendMessageDraftReq(
   chatId: Long,
@@ -24,5 +31,7 @@ final case class SendMessageDraftReq(
   messageThreadId: Option[Int] = Option.empty,
   text: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
-  entities: List[MessageEntity] = List.empty
+  entities: List[MessageEntity] = List.empty,
+  canStop: Option[Boolean] = Option.empty,
+  keepOnStop: Option[Boolean] = Option.empty
 )

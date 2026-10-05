@@ -8,6 +8,13 @@ package telegramium.bots
   *   Origin of the gift. Currently, either “upgrade” for gifts upgraded from regular gifts, “transfer” for gifts
   *   transferred from other users or channels, “resale” for gifts bought from other users, “gifted_upgrade” for
   *   upgrades purchased after the gift was sent, or “offer” for gifts bought or sold through gift purchase offers.
+  * @param text
+  *   Optional. Text of the message that was added to the gift
+  * @param entities
+  *   Optional. Special entities that appear in the text
+  * @param isPrivate
+  *   Optional. True, if the sender and gift text are shown only to the gift receiver; otherwise, everyone will be able
+  *   to see them
   * @param lastResaleCurrency
   *   Optional. For gifts bought from other users, the currency in which the payment for the gift was done. Currently,
   *   one of “XTR” for Telegram Stars or “TON” for TON grams.
@@ -26,6 +33,9 @@ package telegramium.bots
 final case class UniqueGiftInfo(
   gift: UniqueGift,
   origin: String,
+  text: Option[String] = Option.empty,
+  entities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  isPrivate: Option[Boolean] = Option.empty,
   lastResaleCurrency: Option[String] = Option.empty,
   lastResaleAmount: Option[Long] = Option.empty,
   ownedGiftId: Option[String] = Option.empty,

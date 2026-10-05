@@ -78,6 +78,16 @@ final case class RichBlockFooter(text: iozhik.OpenEnum[RichText]) extends RichBl
   */
 final case class RichBlockAnchor(name: String) extends RichBlock
 
+/** A block with a general file, corresponding to the custom HTML tag <tg-document>.
+  *
+  * @param document
+  *   The document
+  * @param caption
+  *   Optional. Caption of the block
+  */
+final case class RichBlockDocument(document: Document, caption: Option[RichBlockCaption] = Option.empty)
+    extends RichBlock
+
 /** A block with a mathematical expression in LaTeX format, corresponding to the custom HTML tag <tg-math-block>.
   *
   * @param expression
@@ -102,7 +112,7 @@ final case class RichBlockBlockQuotation(
   * @param location
   *   Location of the center of the map
   * @param zoom
-  *   Map zoom level; 13-20
+  *   Map zoom level
   * @param width
   *   Expected width of the map
   * @param height
@@ -167,6 +177,8 @@ final case class RichBlockPreformatted(text: iozhik.OpenEnum[RichText], language
   *   Optional. True, if the table has borders
   * @param isStriped
   *   Optional. True, if the table is striped
+  * @param isCompact
+  *   Optional. True, if table cells have smaller indents
   * @param caption
   *   Optional. Caption of the table
   */
@@ -174,6 +186,7 @@ final case class RichBlockTable(
   cells: List[List[RichBlockTableCell]] = List.empty,
   isBordered: Option[Boolean] = Option.empty,
   isStriped: Option[Boolean] = Option.empty,
+  isCompact: Option[Boolean] = Option.empty,
   caption: Option[iozhik.OpenEnum[RichText]] = Option.empty
 ) extends RichBlock
 
@@ -216,7 +229,19 @@ final case class RichBlockAnimation(
   caption: Option[RichBlockCaption] = Option.empty
 ) extends RichBlock
 
-/** A section heading, corresponding to the HTML tags &lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;h4&gt;, &lt;h5&gt;, or &lt;h6&gt;.
+/** A block quotation, corresponding to the HTML tag <blockquote> with custom attribute "expandable".
+  *
+  * @param text
+  *   Content of the block
+  * @param credit
+  *   Optional. Credit of the block
+  */
+final case class RichBlockExpandableBlockQuotation(
+  text: iozhik.OpenEnum[RichText],
+  credit: Option[iozhik.OpenEnum[RichText]] = Option.empty
+) extends RichBlock
+
+/** A section heading, corresponding to the HTML tags <h1>, <h2>, <h3>, <h4>, <h5>, or <h6>.
   *
   * @param text
   *   Text of the block
@@ -224,6 +249,17 @@ final case class RichBlockAnimation(
   *   Relative size of the text font; 1-6, 1 is the largest, 6 is the smallest
   */
 final case class RichBlockSectionHeading(text: iozhik.OpenEnum[RichText], size: Int) extends RichBlock
+
+/** A block containing a list of buttons that are shown in one row, corresponding to the custom HTML tag
+  * <tg-button-row>.
+  *
+  * @param buttons
+  *   The buttons
+  * @param align
+  *   Optional. Horizontal alignment of the buttons. Currently, must be one of “left”, “center”, or “right”.
+  */
+final case class RichBlockButtons(buttons: List[RichMessageButton] = List.empty, align: Option[String] = Option.empty)
+    extends RichBlock
 
 /** A block with a voice note, corresponding to the HTML tag <audio>.
   *
