@@ -29,7 +29,7 @@ import telegramium.bots.InlineKeyboardMarkup
   */
 final case class EditEphemeralMessageTextReq(
   chatId: ChatId,
-  receiverUserId: Int,
+  receiverUserId: Long,
   ephemeralMessageId: Int,
   text: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,

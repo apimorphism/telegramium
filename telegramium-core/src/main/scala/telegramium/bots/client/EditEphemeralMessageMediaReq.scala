@@ -17,7 +17,7 @@ import telegramium.bots.InlineKeyboardMarkup
   */
 final case class EditEphemeralMessageMediaReq(
   chatId: ChatId,
-  receiverUserId: Int,
+  receiverUserId: Long,
   ephemeralMessageId: Int,
   media: InputMedia,
   replyMarkup: Option[InlineKeyboardMarkup] = Option.empty

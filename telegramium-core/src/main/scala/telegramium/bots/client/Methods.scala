@@ -796,7 +796,7 @@ trait Methods {
     * @param ephemeralMessageId
     *   Identifier of the ephemeral message to delete
     */
-  def deleteEphemeralMessage(chatId: ChatId, receiverUserId: Int, ephemeralMessageId: Int): Method[Boolean] = {
+  def deleteEphemeralMessage(chatId: ChatId, receiverUserId: Long, ephemeralMessageId: Int): Method[Boolean] = {
     val req = DeleteEphemeralMessageReq(chatId, receiverUserId, ephemeralMessageId)
     MethodReq[Boolean]("deleteEphemeralMessage", req.asJson)
   }
@@ -1008,7 +1008,7 @@ trait Methods {
     */
   def editEphemeralMessageCaption(
     chatId: ChatId,
-    receiverUserId: Int,
+    receiverUserId: Long,
     ephemeralMessageId: Int,
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
@@ -1045,7 +1045,7 @@ trait Methods {
     */
   def editEphemeralMessageMedia(
     chatId: ChatId,
-    receiverUserId: Int,
+    receiverUserId: Long,
     ephemeralMessageId: Int,
     media: InputMedia,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
@@ -1068,7 +1068,7 @@ trait Methods {
     */
   def editEphemeralMessageReplyMarkup(
     chatId: ChatId,
-    receiverUserId: Int,
+    receiverUserId: Long,
     ephemeralMessageId: Int,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Boolean] = {
@@ -1101,7 +1101,7 @@ trait Methods {
     */
   def editEphemeralMessageText(
     chatId: ChatId,
-    receiverUserId: Int,
+    receiverUserId: Long,
     ephemeralMessageId: Int,
     text: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,

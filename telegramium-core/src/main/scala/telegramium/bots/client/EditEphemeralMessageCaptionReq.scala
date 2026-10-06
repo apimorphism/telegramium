@@ -26,7 +26,7 @@ import telegramium.bots.InlineKeyboardMarkup
   */
 final case class EditEphemeralMessageCaptionReq(
   chatId: ChatId,
-  receiverUserId: Int,
+  receiverUserId: Long,
   ephemeralMessageId: Int,
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,

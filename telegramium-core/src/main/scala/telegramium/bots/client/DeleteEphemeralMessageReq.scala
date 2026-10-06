@@ -9,4 +9,4 @@ import telegramium.bots.ChatId
   * @param ephemeralMessageId
   *   Identifier of the ephemeral message to delete
   */
-final case class DeleteEphemeralMessageReq(chatId: ChatId, receiverUserId: Int, ephemeralMessageId: Int)
+final case class DeleteEphemeralMessageReq(chatId: ChatId, receiverUserId: Long, ephemeralMessageId: Int)

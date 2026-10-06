@@ -10,7 +10,7 @@ package telegramium.bots
   *   callback queries from ephemeral messages, which must be edited using regular editEphemeralMessage… methods.
   */
 final case class EphemeralMessageParameters(
-  receiverUserId: Int,
+  receiverUserId: Long,
   callbackQueryId: Option[String] = Option.empty,
   replaceCallbackQueryMessage: Option[Boolean] = Option.empty
 )
