@@ -15,6 +15,7 @@ import telegramium.bots.ChosenInlineResult
 import telegramium.bots.InlineQuery
 import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
+import telegramium.bots.MessageGenerationStopped
 import telegramium.bots.MessageReactionCountUpdated
 import telegramium.bots.MessageReactionUpdated
 import telegramium.bots.PaidMediaPurchased
@@ -60,4 +61,7 @@ class TestLongPollBot(api: Api[IO]) extends LongPollBot[IO](api) {
   override def onManagedBot(managedBot: ManagedBotUpdated): IO[Unit] = sendMessageTask("onManagedBot")
 
   override def onSubscription(subscription: BotSubscriptionUpdated): IO[Unit] = sendMessageTask("onSubscription")
+
+  override def onStoppedMessageGeneration(stopped: MessageGenerationStopped): IO[Unit] =
+    sendMessageTask("onStoppedMessageGeneration")
 }

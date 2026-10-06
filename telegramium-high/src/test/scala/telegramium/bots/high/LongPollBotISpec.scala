@@ -30,6 +30,7 @@ import telegramium.bots.ChosenInlineResult
 import telegramium.bots.InlineQuery
 import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
+import telegramium.bots.MessageGenerationStopped
 import telegramium.bots.MessageReactionCountUpdated
 import telegramium.bots.MessageReactionUpdated
 import telegramium.bots.PaidMediaPurchased
@@ -304,6 +305,18 @@ class LongPollBotISpec
         )
         .unsafeRunSync()
       verifyMessageSent("onSubscription")
+    }
+
+    "stopped message generation" in {
+      mockServerClient
+        .when(sendMessageRequest("onStoppedMessageGeneration"))
+        .respond(sendMessageResponse)
+      bot
+        .onUpdate(
+          testUpdate.copy(stoppedMessageGeneration = MessageGenerationStopped(testChat, draftId = 1).some)
+        )
+        .unsafeRunSync()
+      verifyMessageSent("onStoppedMessageGeneration")
     }
 
     "The bot's chat member status was updated in a chat" in {

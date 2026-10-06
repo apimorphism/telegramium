@@ -38,6 +38,7 @@ import telegramium.bots.InlineQuery
 import telegramium.bots.InputPartFile
 import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
+import telegramium.bots.MessageGenerationStopped
 import telegramium.bots.MessageReactionCountUpdated
 import telegramium.bots.MessageReactionUpdated
 import telegramium.bots.PaidMediaPurchased
@@ -85,32 +86,33 @@ abstract class WebhookBot[F[_]: Async](
 
   private def noop[A](a: A) = Monad[F].pure(a).void
 
-  def onMessage(msg: Message): F[Unit]                                      = noop(msg)
-  def onEditedMessage(msg: Message): F[Unit]                                = noop(msg)
-  def onChannelPost(msg: Message): F[Unit]                                  = noop(msg)
-  def onEditedChannelPost(msg: Message): F[Unit]                            = noop(msg)
-  def onBusinessConnection(connection: BusinessConnection): F[Unit]         = noop(connection)
-  def onBusinessMessage(msg: Message): F[Unit]                              = noop(msg)
-  def onEditedBusinessMessage(msg: Message): F[Unit]                        = noop(msg)
-  def onDeletedBusinessMessages(messages: BusinessMessagesDeleted): F[Unit] = noop(messages)
-  def onGuestMessage(msg: Message): F[Unit]                                 = noop(msg)
-  def onMessageReaction(reaction: MessageReactionUpdated): F[Unit]          = noop(reaction)
-  def onMessageReactionCount(count: MessageReactionCountUpdated): F[Unit]   = noop(count)
-  def onInlineQuery(query: InlineQuery): F[Unit]                            = noop(query)
-  def onCallbackQuery(query: CallbackQuery): F[Unit]                        = noop(query)
-  def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit]       = noop(inlineResult)
-  def onShippingQuery(query: ShippingQuery): F[Unit]                        = noop(query)
-  def onPreCheckoutQuery(query: PreCheckoutQuery): F[Unit]                  = noop(query)
-  def onPurchasedPaidMedia(purchasedPaidMedia: PaidMediaPurchased): F[Unit] = noop(purchasedPaidMedia)
-  def onPoll(poll: Poll): F[Unit]                                           = noop(poll)
-  def onPollAnswer(pollAnswer: PollAnswer): F[Unit]                         = noop(pollAnswer)
-  def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit]              = noop(myChatMember)
-  def onChatMember(chatMember: ChatMemberUpdated): F[Unit]                  = noop(chatMember)
-  def onChatJoinRequest(request: ChatJoinRequest): F[Unit]                  = noop(request)
-  def onChatBoost(boost: ChatBoostUpdated): F[Unit]                         = noop(boost)
-  def onRemovedChatBoost(boostRemoved: ChatBoostRemoved): F[Unit]           = noop(boostRemoved)
-  def onManagedBot(managedBot: ManagedBotUpdated): F[Unit]                  = noop(managedBot)
-  def onSubscription(subscription: BotSubscriptionUpdated): F[Unit]         = noop(subscription)
+  def onMessage(msg: Message): F[Unit]                                       = noop(msg)
+  def onEditedMessage(msg: Message): F[Unit]                                 = noop(msg)
+  def onChannelPost(msg: Message): F[Unit]                                   = noop(msg)
+  def onEditedChannelPost(msg: Message): F[Unit]                             = noop(msg)
+  def onBusinessConnection(connection: BusinessConnection): F[Unit]          = noop(connection)
+  def onBusinessMessage(msg: Message): F[Unit]                               = noop(msg)
+  def onEditedBusinessMessage(msg: Message): F[Unit]                         = noop(msg)
+  def onDeletedBusinessMessages(messages: BusinessMessagesDeleted): F[Unit]  = noop(messages)
+  def onGuestMessage(msg: Message): F[Unit]                                  = noop(msg)
+  def onMessageReaction(reaction: MessageReactionUpdated): F[Unit]           = noop(reaction)
+  def onMessageReactionCount(count: MessageReactionCountUpdated): F[Unit]    = noop(count)
+  def onInlineQuery(query: InlineQuery): F[Unit]                             = noop(query)
+  def onCallbackQuery(query: CallbackQuery): F[Unit]                         = noop(query)
+  def onChosenInlineResult(inlineResult: ChosenInlineResult): F[Unit]        = noop(inlineResult)
+  def onShippingQuery(query: ShippingQuery): F[Unit]                         = noop(query)
+  def onPreCheckoutQuery(query: PreCheckoutQuery): F[Unit]                   = noop(query)
+  def onPurchasedPaidMedia(purchasedPaidMedia: PaidMediaPurchased): F[Unit]  = noop(purchasedPaidMedia)
+  def onPoll(poll: Poll): F[Unit]                                            = noop(poll)
+  def onPollAnswer(pollAnswer: PollAnswer): F[Unit]                          = noop(pollAnswer)
+  def onMyChatMember(myChatMember: ChatMemberUpdated): F[Unit]               = noop(myChatMember)
+  def onChatMember(chatMember: ChatMemberUpdated): F[Unit]                   = noop(chatMember)
+  def onChatJoinRequest(request: ChatJoinRequest): F[Unit]                   = noop(request)
+  def onChatBoost(boost: ChatBoostUpdated): F[Unit]                          = noop(boost)
+  def onRemovedChatBoost(boostRemoved: ChatBoostRemoved): F[Unit]            = noop(boostRemoved)
+  def onManagedBot(managedBot: ManagedBotUpdated): F[Unit]                   = noop(managedBot)
+  def onSubscription(subscription: BotSubscriptionUpdated): F[Unit]          = noop(subscription)
+  def onStoppedMessageGeneration(stopped: MessageGenerationStopped): F[Unit] = noop(stopped)
 
   private def noopReply[A](a: A) = Monad[F].pure(a).map(_ => Option.empty[Method[?]])
 
@@ -133,15 +135,16 @@ abstract class WebhookBot[F[_]: Async](
   def onPurchasedPaidMediaReply(purchasedPaidMedia: PaidMediaPurchased): F[Option[Method[?]]] = noopReply(
     purchasedPaidMedia
   )
-  def onPollReply(poll: Poll): F[Option[Method[?]]]                                   = noopReply(poll)
-  def onPollAnswerReply(pollAnswer: PollAnswer): F[Option[Method[?]]]                 = noopReply(pollAnswer)
-  def onMyChatMemberReply(myChatMember: ChatMemberUpdated): F[Option[Method[?]]]      = noopReply(myChatMember)
-  def onChatMemberReply(chatMember: ChatMemberUpdated): F[Option[Method[?]]]          = noopReply(chatMember)
-  def onChatJoinRequestReply(request: ChatJoinRequest): F[Option[Method[?]]]          = noopReply(request)
-  def onChatBoostReply(boost: ChatBoostUpdated): F[Option[Method[?]]]                 = noopReply(boost)
-  def onRemovedChatBoostReply(boostRemoved: ChatBoostRemoved): F[Option[Method[?]]]   = noopReply(boostRemoved)
-  def onManagedBotReply(managedBot: ManagedBotUpdated): F[Option[Method[?]]]          = noopReply(managedBot)
-  def onSubscriptionReply(subscription: BotSubscriptionUpdated): F[Option[Method[?]]] = noopReply(subscription)
+  def onPollReply(poll: Poll): F[Option[Method[?]]]                                            = noopReply(poll)
+  def onPollAnswerReply(pollAnswer: PollAnswer): F[Option[Method[?]]]                          = noopReply(pollAnswer)
+  def onMyChatMemberReply(myChatMember: ChatMemberUpdated): F[Option[Method[?]]]               = noopReply(myChatMember)
+  def onChatMemberReply(chatMember: ChatMemberUpdated): F[Option[Method[?]]]                   = noopReply(chatMember)
+  def onChatJoinRequestReply(request: ChatJoinRequest): F[Option[Method[?]]]                   = noopReply(request)
+  def onChatBoostReply(boost: ChatBoostUpdated): F[Option[Method[?]]]                          = noopReply(boost)
+  def onRemovedChatBoostReply(boostRemoved: ChatBoostRemoved): F[Option[Method[?]]]            = noopReply(boostRemoved)
+  def onManagedBotReply(managedBot: ManagedBotUpdated): F[Option[Method[?]]]                   = noopReply(managedBot)
+  def onSubscriptionReply(subscription: BotSubscriptionUpdated): F[Option[Method[?]]]          = noopReply(subscription)
+  def onStoppedMessageGenerationReply(stopped: MessageGenerationStopped): F[Option[Method[?]]] = noopReply(stopped)
 
   def onUpdate(update: Update): F[Option[Method[?]]] =
     List(
@@ -180,7 +183,10 @@ abstract class WebhookBot[F[_]: Async](
         onRemovedChatBoostReply(boostRemoved) <* onRemovedChatBoost(boostRemoved)
       ),
       update.managedBot.map(managedBot => onManagedBotReply(managedBot) <* onManagedBot(managedBot)),
-      update.subscription.map(subscription => onSubscriptionReply(subscription) <* onSubscription(subscription))
+      update.subscription.map(subscription => onSubscriptionReply(subscription) <* onSubscription(subscription)),
+      update.stoppedMessageGeneration.map(stopped =>
+        onStoppedMessageGenerationReply(stopped) <* onStoppedMessageGeneration(stopped)
+      )
     ).flatten.head
 
   private implicit val HandleUpdateReqEntityDecoder: EntityDecoder[F, Update] = jsonOf[F, Update]
