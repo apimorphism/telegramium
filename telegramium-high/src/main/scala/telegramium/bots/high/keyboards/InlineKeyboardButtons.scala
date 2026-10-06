@@ -15,16 +15,9 @@ object InlineKeyboardButtons {
     text: String,
     callbackData: String,
     iconCustomEmojiId: Option[String] = Option.empty,
-    style: Option[String] = Option.empty,
-    disabled: Boolean = false
+    style: Option[String] = Option.empty
   ): InlineKeyboardButton =
-    InlineKeyboardButton(
-      text,
-      callbackData = Some(callbackData),
-      iconCustomEmojiId = iconCustomEmojiId,
-      style = style,
-      disabled = toDisabled(disabled)
-    )
+    InlineKeyboardButton(text, callbackData = Some(callbackData), iconCustomEmojiId = iconCustomEmojiId, style = style)
 
   /** Creates an inline keyboard button that opens a HTTP url when pressed
     */
@@ -32,16 +25,9 @@ object InlineKeyboardButtons {
     text: String,
     url: String,
     iconCustomEmojiId: Option[String] = Option.empty,
-    style: Option[String] = Option.empty,
-    disabled: Boolean = false
+    style: Option[String] = Option.empty
   ): InlineKeyboardButton =
-    InlineKeyboardButton(
-      text,
-      url = Some(url),
-      iconCustomEmojiId = iconCustomEmojiId,
-      style = style,
-      disabled = toDisabled(disabled)
-    )
+    InlineKeyboardButton(text, url = Some(url), iconCustomEmojiId = iconCustomEmojiId, style = style)
 
   /** Creates an inline keyboard button that opens a HTTP URL to automatically authorize the user
     */
@@ -49,16 +35,9 @@ object InlineKeyboardButtons {
     text: String,
     loginUrl: LoginUrl,
     iconCustomEmojiId: Option[String] = Option.empty,
-    style: Option[String] = Option.empty,
-    disabled: Boolean = false
+    style: Option[String] = Option.empty
   ): InlineKeyboardButton =
-    InlineKeyboardButton(
-      text,
-      loginUrl = Some(loginUrl),
-      iconCustomEmojiId = iconCustomEmojiId,
-      style = style,
-      disabled = toDisabled(disabled)
-    )
+    InlineKeyboardButton(text, loginUrl = Some(loginUrl), iconCustomEmojiId = iconCustomEmojiId, style = style)
 
   /** Creates an inline keyboard button. Pressing the button will prompt the user to select one of their chats, open
     * that chat and insert the bot's username and the specified inline query in the input field.
@@ -67,16 +46,9 @@ object InlineKeyboardButtons {
     text: String,
     query: String,
     iconCustomEmojiId: Option[String] = Option.empty,
-    style: Option[String] = Option.empty,
-    disabled: Boolean = false
+    style: Option[String] = Option.empty
   ): InlineKeyboardButton =
-    InlineKeyboardButton(
-      text,
-      switchInlineQuery = Some(query),
-      iconCustomEmojiId = iconCustomEmojiId,
-      style = style,
-      disabled = toDisabled(disabled)
-    )
+    InlineKeyboardButton(text, switchInlineQuery = Some(query), iconCustomEmojiId = iconCustomEmojiId, style = style)
 
   /** Creates an inline keyboard button. Pressing the button will insert the bot's username and the specified inline
     * query in the current chat's input field.
@@ -85,15 +57,13 @@ object InlineKeyboardButtons {
     text: String,
     query: String,
     iconCustomEmojiId: Option[String] = Option.empty,
-    style: Option[String] = Option.empty,
-    disabled: Boolean = false
+    style: Option[String] = Option.empty
   ): InlineKeyboardButton =
     InlineKeyboardButton(
       text,
       switchInlineQueryCurrentChat = Some(query),
       iconCustomEmojiId = iconCustomEmojiId,
-      style = style,
-      disabled = toDisabled(disabled)
+      style = style
     )
 
   /** Creates an inline keyboard button. Pressing the button will prompt the user to select one of their chats of the
@@ -103,15 +73,13 @@ object InlineKeyboardButtons {
     text: String,
     switchInlineQueryChosenChat: SwitchInlineQueryChosenChat,
     iconCustomEmojiId: Option[String] = Option.empty,
-    style: Option[String] = Option.empty,
-    disabled: Boolean = false
+    style: Option[String] = Option.empty
   ): InlineKeyboardButton =
     InlineKeyboardButton(
       text,
       switchInlineQueryChosenChat = Some(switchInlineQueryChosenChat),
       iconCustomEmojiId = iconCustomEmojiId,
-      style = style,
-      disabled = toDisabled(disabled)
+      style = style
     )
 
   /** Creates an inline keyboard button. Pressing the button will launch the game.
@@ -119,32 +87,18 @@ object InlineKeyboardButtons {
   def callbackGame(
     text: String,
     iconCustomEmojiId: Option[String] = Option.empty,
-    style: Option[String] = Option.empty,
-    disabled: Boolean = false
+    style: Option[String] = Option.empty
   ): InlineKeyboardButton =
-    InlineKeyboardButton(
-      text,
-      callbackGame = Some(CallbackGame),
-      iconCustomEmojiId = iconCustomEmojiId,
-      style = style,
-      disabled = toDisabled(disabled)
-    )
+    InlineKeyboardButton(text, callbackGame = Some(CallbackGame), iconCustomEmojiId = iconCustomEmojiId, style = style)
 
   /** Creates an inline keyboard button for a Pay button
     */
   def pay(
     text: String,
     iconCustomEmojiId: Option[String] = Option.empty,
-    style: Option[String] = Option.empty,
-    disabled: Boolean = false
+    style: Option[String] = Option.empty
   ): InlineKeyboardButton =
-    InlineKeyboardButton(
-      text,
-      pay = Some(true),
-      iconCustomEmojiId = iconCustomEmojiId,
-      style = style,
-      disabled = toDisabled(disabled)
-    )
+    InlineKeyboardButton(text, pay = Some(true), iconCustomEmojiId = iconCustomEmojiId, style = style)
 
   /** Creates an inline keyboard button. Pressing the button will launch the described Web App.
     */
@@ -152,18 +106,17 @@ object InlineKeyboardButtons {
     text: String,
     webApp: WebAppInfo,
     iconCustomEmojiId: Option[String] = Option.empty,
-    style: Option[String] = Option.empty,
-    disabled: Boolean = false
+    style: Option[String] = Option.empty
   ): InlineKeyboardButton =
-    InlineKeyboardButton(
-      text,
-      webApp = Some(webApp),
-      iconCustomEmojiId = iconCustomEmojiId,
-      style = style,
-      disabled = toDisabled(disabled)
-    )
+    InlineKeyboardButton(text, webApp = Some(webApp), iconCustomEmojiId = iconCustomEmojiId, style = style)
 
-  private def toDisabled(disabled: Boolean): Option[DisabledButton.type] =
-    if (disabled) Some(DisabledButton) else Option.empty
+  /** Creates a disabled inline keyboard button which does nothing when pressed
+    */
+  def disabled(
+    text: String,
+    iconCustomEmojiId: Option[String] = Option.empty,
+    style: Option[String] = Option.empty
+  ): InlineKeyboardButton =
+    InlineKeyboardButton(text, disabled = Some(DisabledButton), iconCustomEmojiId = iconCustomEmojiId, style = style)
 
 }

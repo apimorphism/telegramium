@@ -3,22 +3,18 @@ package telegramium.bots.high.keyboards
 import org.scalatest.funsuite.AnyFunSuite
 
 import telegramium.bots.DisabledButton
+import telegramium.bots.InlineKeyboardButton
 
 class InlineKeyboardButtonsSpec extends AnyFunSuite {
 
-  test("callbackData should not set disabled by default") {
+  test("callbackData should not set disabled") {
     val button = InlineKeyboardButtons.callbackData("Button", "data")
     assert(button.disabled == Option.empty)
   }
 
-  test("callbackData should set disabled when requested") {
-    val button = InlineKeyboardButtons.callbackData("Button", "data", disabled = true)
-    assert(button.disabled == Some(DisabledButton))
-  }
-
-  test("url should set disabled when requested") {
-    val button = InlineKeyboardButtons.url("Button", "https://example.com", disabled = true)
-    assert(button.disabled == Some(DisabledButton))
+  test("disabled should create a disabled button") {
+    val button = InlineKeyboardButtons.disabled("Button")
+    assert(button == InlineKeyboardButton("Button", disabled = Some(DisabledButton)))
   }
 
 }
