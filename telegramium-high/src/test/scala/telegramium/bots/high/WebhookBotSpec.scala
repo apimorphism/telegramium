@@ -49,7 +49,7 @@ class WebhookBotSpec extends AnyFreeSpec with Matchers {
   "should not report an update of a known type" in {
     val (status, unknownUpdates) = (for {
       unknownUpdates <- Ref.of[IO, List[(Int, List[String])]](List.empty)
-      status <- post(
+      status         <- post(
         """{"update_id": 1, "message": {"message_id": 0, "date": 0, "chat": {"id": 0, "type": "private"}}}""",
         unknownUpdates
       )
