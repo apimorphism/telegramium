@@ -106,6 +106,12 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
     )))
   }
 
+  it should "decode a button" in {
+    val json = parse("""{"type": "button", "button": {"text": "Click me", "url": "https://example.com"}}""").toOption.get
+    val result = json.as[iozhik.OpenEnum[RichText]]
+    result shouldBe Right(known(RichTextButton(RichMessageButton(text = known(RichTextPlain("Click me")), url = Some("https://example.com")))))
+  }
+
   it should "decode an unknown type as OpenEnum.Unknown" in {
     val json = parse("""{"type": "future_type", "text": "hello"}""").toOption.get
     val result = json.as[iozhik.OpenEnum[RichText]]
@@ -145,6 +151,12 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
     rt.asJson shouldBe expected
   }
 
+  it should "encode a button" in {
+    val rt: RichText = RichTextButton(RichMessageButton(text = known(RichTextPlain("Click me")), url = Some("https://example.com")))
+    val expected = parse("""{"type": "button", "button": {"text": "Click me", "url": "https://example.com"}}""").toOption.get
+    rt.asJson shouldBe expected
+  }
+
   it should "encode nested RichText (url with array text)" in {
     val rt: RichText = RichTextUrl(
       text = known(RichTextConcat(List(
@@ -171,6 +183,12 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
       known(RichTextBold(known(RichTextPlain("b")))),
       known(RichTextPlain("c"))
     ))
+    val encoded = (rt: RichText).asJson
+    encoded.as[iozhik.OpenEnum[RichText]] shouldBe Right(known(rt))
+  }
+
+  it should "preserve a button" in {
+    val rt = RichTextButton(RichMessageButton(text = known(RichTextPlain("Click me")), url = Some("https://example.com")))
     val encoded = (rt: RichText).asJson
     encoded.as[iozhik.OpenEnum[RichText]] shouldBe Right(known(rt))
   }
@@ -230,6 +248,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
         1 -> Gen.zip(recursive, genPlainText).map { case (t, r) => RichTextReference(t, r) },
         1 -> Gen.zip(recursive, genPlainText).map { case (t, r) => RichTextReferenceLink(t, r) },
         1 -> Gen.zip(recursive, genPlainText).map { case (t, m) => RichTextMention(t, m) },
+        1 -> Gen.zip(recursive, genPlainText).map { case (t, u) => RichTextButton(RichMessageButton(text = t, url = Some(u))) },
         1 -> Gen.zip(recursive, genPlainText).map { case (t, b) => RichTextBankCardNumber(t, b) },
         1 -> Gen.zip(recursive, Gen.posNum[Long], genPlainText).map { case (t, u, f) => RichTextDateTime(t, u, f) },
         3 -> Gen.listOfN(3, genRichText(depth - 1).map(known)).map(RichTextConcat.apply)
@@ -292,6 +311,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
       "custom_emoji",
       "anchor",
       "date_time",
+      "button",
       "deeply_nested",
       "empty_array"
     )

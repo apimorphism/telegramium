@@ -11,13 +11,15 @@ object ReplyKeyboardMarkups {
     button: KeyboardButton,
     resizeKeyboard: Option[Boolean] = Option.empty,
     oneTimeKeyboard: Option[Boolean] = Option.empty,
-    selective: Option[Boolean] = Option.empty
+    selective: Option[Boolean] = Option.empty,
+    forceReply: Option[Boolean] = Option.empty
   ): ReplyKeyboardMarkup =
     ReplyKeyboardMarkup(
       keyboard = List(List(button)),
       resizeKeyboard = resizeKeyboard,
       oneTimeKeyboard = oneTimeKeyboard,
-      selective = selective
+      selective = selective,
+      forceReply = forceReply
     )
 
   /** Creates a reply keyboard markup with multiple buttons on a single row
@@ -26,13 +28,15 @@ object ReplyKeyboardMarkups {
     row: List[KeyboardButton],
     resizeKeyboard: Option[Boolean] = Option.empty,
     oneTimeKeyboard: Option[Boolean] = Option.empty,
-    selective: Option[Boolean] = Option.empty
+    selective: Option[Boolean] = Option.empty,
+    forceReply: Option[Boolean] = Option.empty
   ): ReplyKeyboardMarkup =
     ReplyKeyboardMarkup(
       keyboard = List(row),
       resizeKeyboard = resizeKeyboard,
       oneTimeKeyboard = oneTimeKeyboard,
-      selective = selective
+      selective = selective,
+      forceReply = forceReply
     )
 
   /** Creates a reply keyboard markup with multiple buttons on a single column
@@ -41,13 +45,15 @@ object ReplyKeyboardMarkups {
     column: List[KeyboardButton],
     resizeKeyboard: Option[Boolean] = Option.empty,
     oneTimeKeyboard: Option[Boolean] = Option.empty,
-    selective: Option[Boolean] = Option.empty
+    selective: Option[Boolean] = Option.empty,
+    forceReply: Option[Boolean] = Option.empty
   ): ReplyKeyboardMarkup =
     ReplyKeyboardMarkup(
       keyboard = column.map(List(_)),
       resizeKeyboard = resizeKeyboard,
       oneTimeKeyboard = oneTimeKeyboard,
-      selective = selective
+      selective = selective,
+      forceReply = forceReply
     )
 
 }

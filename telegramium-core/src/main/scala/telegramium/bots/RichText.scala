@@ -82,6 +82,13 @@ final case class RichTextUnderline(text: iozhik.OpenEnum[RichText]) extends Rich
   */
 final case class RichTextUrl(text: iozhik.OpenEnum[RichText], url: String) extends RichText
 
+/** A button.
+  *
+  * @param button
+  *   The button
+  */
+final case class RichTextButton(button: RichMessageButton) extends RichText
+
 /** A bot command.
   *
   * @param text

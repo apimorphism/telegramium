@@ -6,9 +6,14 @@ sealed trait KeyboardMarkup {}
   *
   * @param inlineKeyboard
   *   Array of button rows, each represented by an Array of InlineKeyboardButton objects
+  * @param forceReply
+  *   Optional. Pass True if the reply interface must be shown to the user, as if they had manually selected the bot's
+  *   message and tapped 'Reply'. The value of the field can't be changed when the inline keyboard is edited.
   */
-final case class InlineKeyboardMarkup(inlineKeyboard: List[List[InlineKeyboardButton]] = List.empty)
-    extends KeyboardMarkup
+final case class InlineKeyboardMarkup(
+  inlineKeyboard: List[List[InlineKeyboardButton]] = List.empty,
+  forceReply: Option[Boolean] = Option.empty
+) extends KeyboardMarkup
 
 /** Upon receiving a message with this object, Telegram clients will display a reply interface to the user (act as if
   * the user has selected the bot's message and tapped 'Reply'). This can be extremely useful if you want to create
@@ -16,7 +21,7 @@ final case class InlineKeyboardMarkup(inlineKeyboard: List[List[InlineKeyboardBu
   * messages sent on behalf of a user account.
   *
   * @param forceReply
-  *   Shows reply interface to the user, as if they manually selected the bot's message and tapped 'Reply'
+  *   Shows reply interface to the user, as if they had manually selected the bot's message and tapped 'Reply'
   * @param inputFieldPlaceholder
   *   Optional. The placeholder to be shown in the input field when the reply is active; 1-64 characters
   * @param selective
@@ -72,6 +77,9 @@ final case class ReplyKeyboardRemove(removeKeyboard: Boolean, selective: Option[
   *   chat and forum topic, sender of the original message. Example: A user requests to change the bot's language, bot
   *   replies to the request with a keyboard to select the new language. Other users in the group don't see the
   *   keyboard.
+  * @param forceReply
+  *   Optional. Pass True if the reply interface must be shown to the user, as if they had manually selected the bot's
+  *   message and tapped 'Reply'
   */
 final case class ReplyKeyboardMarkup(
   keyboard: List[List[KeyboardButton]] = List.empty,
@@ -79,5 +87,6 @@ final case class ReplyKeyboardMarkup(
   resizeKeyboard: Option[Boolean] = Option.empty,
   oneTimeKeyboard: Option[Boolean] = Option.empty,
   inputFieldPlaceholder: Option[String] = Option.empty,
-  selective: Option[Boolean] = Option.empty
+  selective: Option[Boolean] = Option.empty,
+  forceReply: Option[Boolean] = Option.empty
 ) extends KeyboardMarkup

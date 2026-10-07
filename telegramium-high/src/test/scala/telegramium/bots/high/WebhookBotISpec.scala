@@ -42,6 +42,7 @@ import telegramium.bots.CirceImplicits.*
 import telegramium.bots.InlineQuery
 import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
+import telegramium.bots.MessageGenerationStopped
 import telegramium.bots.MessageReactionCountUpdated
 import telegramium.bots.MessageReactionUpdated
 import telegramium.bots.PaidMediaPurchased
@@ -405,6 +406,16 @@ class WebhookBotISpec
           subscription = BotSubscriptionUpdated(user = testUser, invoicePayload = "test", state = "active").some
         ),
         "onSubscriptionReply"
+      )
+    }
+
+    "stopped message generation" in {
+      mockServerClient
+        .when(sendMessageRequest("onStoppedMessageGeneration"))
+        .respond(sendMessageResponse)
+      verifyResult(
+        testUpdate.copy(stoppedMessageGeneration = MessageGenerationStopped(testChat, draftId = 1).some),
+        "onStoppedMessageGenerationReply"
       )
     }
 

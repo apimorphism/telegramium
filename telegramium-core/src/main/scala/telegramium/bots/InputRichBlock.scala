@@ -10,6 +10,8 @@ sealed trait InputRichBlock {}
   *   Optional. Pass True if the table has borders
   * @param isStriped
   *   Optional. Pass True if the table is striped
+  * @param isCompact
+  *   Optional. Pass True if table cells must have smaller indents
   * @param caption
   *   Optional. Caption of the table
   */
@@ -17,6 +19,7 @@ final case class InputRichBlockTable(
   cells: List[List[RichBlockTableCell]] = List.empty,
   isBordered: Option[Boolean] = Option.empty,
   isStriped: Option[Boolean] = Option.empty,
+  isCompact: Option[Boolean] = Option.empty,
   caption: Option[RichText] = Option.empty
 ) extends InputRichBlock
 
@@ -73,6 +76,16 @@ final case class InputRichBlockPreformatted(text: RichText, language: Option[Str
 final case class InputRichBlockAudio(audio: InputMediaAudio, caption: Option[RichBlockCaption] = Option.empty)
     extends InputRichBlock
 
+/** A block quotation, corresponding to the HTML tag <blockquote> with custom attribute "expandable".
+  *
+  * @param text
+  *   Content of the block
+  * @param credit
+  *   Optional. Credit of the block
+  */
+final case class InputRichBlockExpandableBlockQuotation(text: RichText, credit: Option[RichText] = Option.empty)
+    extends InputRichBlock
+
 /** A collage, corresponding to the custom HTML tag <tg-collage>.
   *
   * @param blocks
@@ -91,6 +104,16 @@ final case class InputRichBlockCollage(
   *   Text of the block
   */
 final case class InputRichBlockFooter(text: RichText) extends InputRichBlock
+
+/** A block with a general file, corresponding to the custom HTML tag <tg-document>.
+  *
+  * @param document
+  *   The document. Caption is ignored.
+  * @param caption
+  *   Optional. Caption of the block
+  */
+final case class InputRichBlockDocument(document: InputMediaDocument, caption: Option[RichBlockCaption] = Option.empty)
+    extends InputRichBlock
 
 /** A block with a mathematical expression in LaTeX format, corresponding to the custom HTML tag <tg-math-block>.
   *
@@ -130,19 +153,19 @@ final case class InputRichBlockThinking(text: RichText) extends InputRichBlock
   * @param location
   *   Location of the center of the map
   * @param zoom
-  *   Map zoom level; 0-24
+  *   Optional. Map zoom level; 0-24
   * @param width
-  *   Map width; 0-10000
+  *   Optional. Map width; 0-10000
   * @param height
-  *   Map height; 0-10000
+  *   Optional. Map height; 0-10000
   * @param caption
   *   Optional. Caption of the block
   */
 final case class InputRichBlockMap(
   location: Location,
-  zoom: Int,
-  width: Int,
-  height: Int,
+  zoom: Option[Int] = Option.empty,
+  width: Option[Int] = Option.empty,
+  height: Option[Int] = Option.empty,
   caption: Option[RichBlockCaption] = Option.empty
 ) extends InputRichBlock
 
@@ -180,7 +203,7 @@ final case class InputRichBlockAnimation(
   caption: Option[RichBlockCaption] = Option.empty
 ) extends InputRichBlock
 
-/** A section heading, corresponding to the HTML tags &lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;h4&gt;, &lt;h5&gt;, or &lt;h6&gt;.
+/** A section heading, corresponding to the HTML tags <h1>, <h2>, <h3>, <h4>, <h5>, or <h6>.
   *
   * @param text
   *   Text of the block
@@ -202,6 +225,19 @@ final case class InputRichBlockDetails(
   summary: RichText,
   blocks: List[InputRichBlock] = List.empty,
   isOpen: Option[Boolean] = Option.empty
+) extends InputRichBlock
+
+/** A block containing a list of buttons that are shown in one row, corresponding to the custom HTML tag
+  * <tg-button-row>.
+  *
+  * @param buttons
+  *   List of 1-8 buttons to send
+  * @param align
+  *   Optional. Horizontal alignment of the buttons. Currently, must be one of “left”, “center”, or “right”.
+  */
+final case class InputRichBlockButtons(
+  buttons: List[RichMessageButton] = List.empty,
+  align: Option[String] = Option.empty
 ) extends InputRichBlock
 
 /** A block with a video, corresponding to the HTML tag <video>.

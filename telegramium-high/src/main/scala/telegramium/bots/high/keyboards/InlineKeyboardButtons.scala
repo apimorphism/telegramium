@@ -1,6 +1,7 @@
 package telegramium.bots.high.keyboards
 
 import telegramium.bots.CallbackGame
+import telegramium.bots.DisabledButton
 import telegramium.bots.InlineKeyboardButton
 import telegramium.bots.LoginUrl
 import telegramium.bots.SwitchInlineQueryChosenChat
@@ -108,5 +109,14 @@ object InlineKeyboardButtons {
     style: Option[String] = Option.empty
   ): InlineKeyboardButton =
     InlineKeyboardButton(text, webApp = Some(webApp), iconCustomEmojiId = iconCustomEmojiId, style = style)
+
+  /** Creates a disabled inline keyboard button which does nothing when pressed
+    */
+  def disabled(
+    text: String,
+    iconCustomEmojiId: Option[String] = Option.empty,
+    style: Option[String] = Option.empty
+  ): InlineKeyboardButton =
+    InlineKeyboardButton(text, disabled = Some(DisabledButton), iconCustomEmojiId = iconCustomEmojiId, style = style)
 
 }

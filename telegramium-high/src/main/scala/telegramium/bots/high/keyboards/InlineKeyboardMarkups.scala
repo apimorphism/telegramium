@@ -7,11 +7,19 @@ object InlineKeyboardMarkups {
 
   /** Creates an inline keyboard markup with one button
     */
-  def singleButton(button: InlineKeyboardButton): InlineKeyboardMarkup = InlineKeyboardMarkup(List(List(button)))
+  def singleButton(
+    button: InlineKeyboardButton,
+    forceReply: Option[Boolean] = Option.empty
+  ): InlineKeyboardMarkup =
+    InlineKeyboardMarkup(List(List(button)), forceReply = forceReply)
 
   /** Creates an inline keyboard markup with multiple buttons on a single row
     */
-  def singleRow(row: List[InlineKeyboardButton]): InlineKeyboardMarkup = InlineKeyboardMarkup(List(row))
+  def singleRow(
+    row: List[InlineKeyboardButton],
+    forceReply: Option[Boolean] = Option.empty
+  ): InlineKeyboardMarkup =
+    InlineKeyboardMarkup(List(row), forceReply = forceReply)
 
   /** Creates an inline keyboard markup with multiple buttons on a single row
     */
@@ -20,7 +28,11 @@ object InlineKeyboardMarkups {
 
   /** Creates an inline keyboard markup with multiple buttons on a single column
     */
-  def singleColumn(column: List[InlineKeyboardButton]): InlineKeyboardMarkup = InlineKeyboardMarkup(column.map(List(_)))
+  def singleColumn(
+    column: List[InlineKeyboardButton],
+    forceReply: Option[Boolean] = Option.empty
+  ): InlineKeyboardMarkup =
+    InlineKeyboardMarkup(column.map(List(_)), forceReply = forceReply)
 
   /** Creates an inline keyboard markup with multiple buttons on a single column
     */

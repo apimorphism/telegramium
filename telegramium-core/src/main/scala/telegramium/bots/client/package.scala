@@ -20,13 +20,14 @@ object CirceImplicits {
   import telegramium.bots.BotCommandScope
   import telegramium.bots.InlineKeyboardMarkup
   import telegramium.bots.InputMedia
+  import telegramium.bots.InputRichMessage
   import telegramium.bots.LinkPreviewOptions
   import telegramium.bots.InputChecklist
-  import telegramium.bots.InputRichMessage
   import telegramium.bots.InputStoryContent
   import telegramium.bots.StoryArea
   import telegramium.bots.ChatPermissions
   import telegramium.bots.KeyboardButton
+  import telegramium.bots.EphemeralMessageParameters
   import telegramium.bots.IFile
   import telegramium.bots.InputPaidMedia
   import telegramium.bots.InputPollOption
@@ -555,14 +556,15 @@ object CirceImplicits {
     (x: EditEphemeralMessageCaptionReq) => {
       Json.fromFields(
         List(
-          "chat_id"              -> x.chatId.asJson,
-          "receiver_user_id"     -> x.receiverUserId.asJson,
-          "ephemeral_message_id" -> x.ephemeralMessageId.asJson,
-          "caption"              -> x.caption.asJson,
-          "parse_mode"           -> x.parseMode.asJson,
-          "caption_entities"     -> x.captionEntities.asJson,
-          "reply_markup"         -> x.replyMarkup.asJson,
-          "method"               -> "editEphemeralMessageCaption".asJson
+          "chat_id"                  -> x.chatId.asJson,
+          "receiver_user_id"         -> x.receiverUserId.asJson,
+          "ephemeral_message_id"     -> x.ephemeralMessageId.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> x.captionEntities.asJson,
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "method"                   -> "editEphemeralMessageCaption".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -604,6 +606,7 @@ object CirceImplicits {
           "text"                 -> x.text.asJson,
           "parse_mode"           -> x.parseMode.asJson,
           "entities"             -> x.entities.asJson,
+          "rich_message"         -> x.richMessage.asJson,
           "link_preview_options" -> x.linkPreviewOptions.asJson,
           "reply_markup"         -> x.replyMarkup.asJson,
           "method"               -> "editEphemeralMessageText".asJson
@@ -1226,6 +1229,7 @@ object CirceImplicits {
           "can_manage_topics"          -> x.canManageTopics.asJson,
           "can_manage_direct_messages" -> x.canManageDirectMessages.asJson,
           "can_manage_tags"            -> x.canManageTags.asJson,
+          "can_send_welcome_messages"  -> x.canSendWelcomeMessages.asJson,
           "method"                     -> "promoteChatMember".asJson
         ).filter(!_._2.isNull)
       )
@@ -1402,30 +1406,29 @@ object CirceImplicits {
     (x: SendAnimationReq) => {
       Json.fromFields(
         List(
-          "business_connection_id"    -> x.businessConnectionId.asJson,
-          "chat_id"                   -> x.chatId.asJson,
-          "message_thread_id"         -> x.messageThreadId.asJson,
-          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
-          "receiver_user_id"          -> x.receiverUserId.asJson,
-          "callback_query_id"         -> x.callbackQueryId.asJson,
-          "animation"                 -> x.animation.asJson,
-          "duration"                  -> x.duration.asJson,
-          "width"                     -> x.width.asJson,
-          "height"                    -> x.height.asJson,
-          "thumbnail"                 -> x.thumbnail.asJson,
-          "caption"                   -> x.caption.asJson,
-          "parse_mode"                -> x.parseMode.asJson,
-          "caption_entities"          -> x.captionEntities.asJson,
-          "show_caption_above_media"  -> x.showCaptionAboveMedia.asJson,
-          "has_spoiler"               -> x.hasSpoiler.asJson,
-          "disable_notification"      -> x.disableNotification.asJson,
-          "protect_content"           -> x.protectContent.asJson,
-          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
-          "message_effect_id"         -> x.messageEffectId.asJson,
-          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
-          "reply_parameters"          -> x.replyParameters.asJson,
-          "reply_markup"              -> x.replyMarkup.asJson,
-          "method"                    -> "sendAnimation".asJson
+          "business_connection_id"       -> x.businessConnectionId.asJson,
+          "chat_id"                      -> x.chatId.asJson,
+          "message_thread_id"            -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"     -> x.directMessagesTopicId.asJson,
+          "ephemeral_message_parameters" -> x.ephemeralMessageParameters.asJson,
+          "animation"                    -> x.animation.asJson,
+          "duration"                     -> x.duration.asJson,
+          "width"                        -> x.width.asJson,
+          "height"                       -> x.height.asJson,
+          "thumbnail"                    -> x.thumbnail.asJson,
+          "caption"                      -> x.caption.asJson,
+          "parse_mode"                   -> x.parseMode.asJson,
+          "caption_entities"             -> x.captionEntities.asJson,
+          "show_caption_above_media"     -> x.showCaptionAboveMedia.asJson,
+          "has_spoiler"                  -> x.hasSpoiler.asJson,
+          "disable_notification"         -> x.disableNotification.asJson,
+          "protect_content"              -> x.protectContent.asJson,
+          "allow_paid_broadcast"         -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"            -> x.messageEffectId.asJson,
+          "suggested_post_parameters"    -> x.suggestedPostParameters.asJson,
+          "reply_parameters"             -> x.replyParameters.asJson,
+          "reply_markup"                 -> x.replyMarkup.asJson,
+          "method"                       -> "sendAnimation".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1434,28 +1437,27 @@ object CirceImplicits {
     (x: SendAudioReq) => {
       Json.fromFields(
         List(
-          "business_connection_id"    -> x.businessConnectionId.asJson,
-          "chat_id"                   -> x.chatId.asJson,
-          "message_thread_id"         -> x.messageThreadId.asJson,
-          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
-          "receiver_user_id"          -> x.receiverUserId.asJson,
-          "callback_query_id"         -> x.callbackQueryId.asJson,
-          "audio"                     -> x.audio.asJson,
-          "caption"                   -> x.caption.asJson,
-          "parse_mode"                -> x.parseMode.asJson,
-          "caption_entities"          -> x.captionEntities.asJson,
-          "duration"                  -> x.duration.asJson,
-          "performer"                 -> x.performer.asJson,
-          "title"                     -> x.title.asJson,
-          "thumbnail"                 -> x.thumbnail.asJson,
-          "disable_notification"      -> x.disableNotification.asJson,
-          "protect_content"           -> x.protectContent.asJson,
-          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
-          "message_effect_id"         -> x.messageEffectId.asJson,
-          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
-          "reply_parameters"          -> x.replyParameters.asJson,
-          "reply_markup"              -> x.replyMarkup.asJson,
-          "method"                    -> "sendAudio".asJson
+          "business_connection_id"       -> x.businessConnectionId.asJson,
+          "chat_id"                      -> x.chatId.asJson,
+          "message_thread_id"            -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"     -> x.directMessagesTopicId.asJson,
+          "ephemeral_message_parameters" -> x.ephemeralMessageParameters.asJson,
+          "audio"                        -> x.audio.asJson,
+          "caption"                      -> x.caption.asJson,
+          "parse_mode"                   -> x.parseMode.asJson,
+          "caption_entities"             -> x.captionEntities.asJson,
+          "duration"                     -> x.duration.asJson,
+          "performer"                    -> x.performer.asJson,
+          "title"                        -> x.title.asJson,
+          "thumbnail"                    -> x.thumbnail.asJson,
+          "disable_notification"         -> x.disableNotification.asJson,
+          "protect_content"              -> x.protectContent.asJson,
+          "allow_paid_broadcast"         -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"            -> x.messageEffectId.asJson,
+          "suggested_post_parameters"    -> x.suggestedPostParameters.asJson,
+          "reply_parameters"             -> x.replyParameters.asJson,
+          "reply_markup"                 -> x.replyMarkup.asJson,
+          "method"                       -> "sendAudio".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1505,24 +1507,23 @@ object CirceImplicits {
     (x: SendContactReq) => {
       Json.fromFields(
         List(
-          "business_connection_id"    -> x.businessConnectionId.asJson,
-          "chat_id"                   -> x.chatId.asJson,
-          "message_thread_id"         -> x.messageThreadId.asJson,
-          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
-          "receiver_user_id"          -> x.receiverUserId.asJson,
-          "callback_query_id"         -> x.callbackQueryId.asJson,
-          "phone_number"              -> x.phoneNumber.asJson,
-          "first_name"                -> x.firstName.asJson,
-          "last_name"                 -> x.lastName.asJson,
-          "vcard"                     -> x.vcard.asJson,
-          "disable_notification"      -> x.disableNotification.asJson,
-          "protect_content"           -> x.protectContent.asJson,
-          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
-          "message_effect_id"         -> x.messageEffectId.asJson,
-          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
-          "reply_parameters"          -> x.replyParameters.asJson,
-          "reply_markup"              -> x.replyMarkup.asJson,
-          "method"                    -> "sendContact".asJson
+          "business_connection_id"       -> x.businessConnectionId.asJson,
+          "chat_id"                      -> x.chatId.asJson,
+          "message_thread_id"            -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"     -> x.directMessagesTopicId.asJson,
+          "ephemeral_message_parameters" -> x.ephemeralMessageParameters.asJson,
+          "phone_number"                 -> x.phoneNumber.asJson,
+          "first_name"                   -> x.firstName.asJson,
+          "last_name"                    -> x.lastName.asJson,
+          "vcard"                        -> x.vcard.asJson,
+          "disable_notification"         -> x.disableNotification.asJson,
+          "protect_content"              -> x.protectContent.asJson,
+          "allow_paid_broadcast"         -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"            -> x.messageEffectId.asJson,
+          "suggested_post_parameters"    -> x.suggestedPostParameters.asJson,
+          "reply_parameters"             -> x.replyParameters.asJson,
+          "reply_markup"                 -> x.replyMarkup.asJson,
+          "method"                       -> "sendContact".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1556,8 +1557,7 @@ object CirceImplicits {
           "chat_id"                        -> x.chatId.asJson,
           "message_thread_id"              -> x.messageThreadId.asJson,
           "direct_messages_topic_id"       -> x.directMessagesTopicId.asJson,
-          "receiver_user_id"               -> x.receiverUserId.asJson,
-          "callback_query_id"              -> x.callbackQueryId.asJson,
+          "ephemeral_message_parameters"   -> x.ephemeralMessageParameters.asJson,
           "document"                       -> x.document.asJson,
           "thumbnail"                      -> x.thumbnail.asJson,
           "caption"                        -> x.caption.asJson,
@@ -1655,27 +1655,26 @@ object CirceImplicits {
     (x: SendLivePhotoReq) => {
       Json.fromFields(
         List(
-          "business_connection_id"    -> x.businessConnectionId.asJson,
-          "chat_id"                   -> x.chatId.asJson,
-          "message_thread_id"         -> x.messageThreadId.asJson,
-          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
-          "receiver_user_id"          -> x.receiverUserId.asJson,
-          "callback_query_id"         -> x.callbackQueryId.asJson,
-          "live_photo"                -> x.livePhoto.asJson,
-          "photo"                     -> x.photo.asJson,
-          "caption"                   -> x.caption.asJson,
-          "parse_mode"                -> x.parseMode.asJson,
-          "caption_entities"          -> x.captionEntities.asJson,
-          "show_caption_above_media"  -> x.showCaptionAboveMedia.asJson,
-          "has_spoiler"               -> x.hasSpoiler.asJson,
-          "disable_notification"      -> x.disableNotification.asJson,
-          "protect_content"           -> x.protectContent.asJson,
-          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
-          "message_effect_id"         -> x.messageEffectId.asJson,
-          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
-          "reply_parameters"          -> x.replyParameters.asJson,
-          "reply_markup"              -> x.replyMarkup.asJson,
-          "method"                    -> "sendLivePhoto".asJson
+          "business_connection_id"       -> x.businessConnectionId.asJson,
+          "chat_id"                      -> x.chatId.asJson,
+          "message_thread_id"            -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"     -> x.directMessagesTopicId.asJson,
+          "ephemeral_message_parameters" -> x.ephemeralMessageParameters.asJson,
+          "live_photo"                   -> x.livePhoto.asJson,
+          "photo"                        -> x.photo.asJson,
+          "caption"                      -> x.caption.asJson,
+          "parse_mode"                   -> x.parseMode.asJson,
+          "caption_entities"             -> x.captionEntities.asJson,
+          "show_caption_above_media"     -> x.showCaptionAboveMedia.asJson,
+          "has_spoiler"                  -> x.hasSpoiler.asJson,
+          "disable_notification"         -> x.disableNotification.asJson,
+          "protect_content"              -> x.protectContent.asJson,
+          "allow_paid_broadcast"         -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"            -> x.messageEffectId.asJson,
+          "suggested_post_parameters"    -> x.suggestedPostParameters.asJson,
+          "reply_parameters"             -> x.replyParameters.asJson,
+          "reply_markup"                 -> x.replyMarkup.asJson,
+          "method"                       -> "sendLivePhoto".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1684,26 +1683,25 @@ object CirceImplicits {
     (x: SendLocationReq) => {
       Json.fromFields(
         List(
-          "business_connection_id"    -> x.businessConnectionId.asJson,
-          "chat_id"                   -> x.chatId.asJson,
-          "message_thread_id"         -> x.messageThreadId.asJson,
-          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
-          "receiver_user_id"          -> x.receiverUserId.asJson,
-          "callback_query_id"         -> x.callbackQueryId.asJson,
-          "latitude"                  -> x.latitude.asJson,
-          "longitude"                 -> x.longitude.asJson,
-          "horizontal_accuracy"       -> x.horizontalAccuracy.asJson,
-          "live_period"               -> x.livePeriod.asJson,
-          "heading"                   -> x.heading.asJson,
-          "proximity_alert_radius"    -> x.proximityAlertRadius.asJson,
-          "disable_notification"      -> x.disableNotification.asJson,
-          "protect_content"           -> x.protectContent.asJson,
-          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
-          "message_effect_id"         -> x.messageEffectId.asJson,
-          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
-          "reply_parameters"          -> x.replyParameters.asJson,
-          "reply_markup"              -> x.replyMarkup.asJson,
-          "method"                    -> "sendLocation".asJson
+          "business_connection_id"       -> x.businessConnectionId.asJson,
+          "chat_id"                      -> x.chatId.asJson,
+          "message_thread_id"            -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"     -> x.directMessagesTopicId.asJson,
+          "ephemeral_message_parameters" -> x.ephemeralMessageParameters.asJson,
+          "latitude"                     -> x.latitude.asJson,
+          "longitude"                    -> x.longitude.asJson,
+          "horizontal_accuracy"          -> x.horizontalAccuracy.asJson,
+          "live_period"                  -> x.livePeriod.asJson,
+          "heading"                      -> x.heading.asJson,
+          "proximity_alert_radius"       -> x.proximityAlertRadius.asJson,
+          "disable_notification"         -> x.disableNotification.asJson,
+          "protect_content"              -> x.protectContent.asJson,
+          "allow_paid_broadcast"         -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"            -> x.messageEffectId.asJson,
+          "suggested_post_parameters"    -> x.suggestedPostParameters.asJson,
+          "reply_parameters"             -> x.replyParameters.asJson,
+          "reply_markup"                 -> x.replyMarkup.asJson,
+          "method"                       -> "sendLocation".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1731,24 +1729,23 @@ object CirceImplicits {
     (x: SendMessageReq) => {
       Json.fromFields(
         List(
-          "business_connection_id"    -> x.businessConnectionId.asJson,
-          "chat_id"                   -> x.chatId.asJson,
-          "message_thread_id"         -> x.messageThreadId.asJson,
-          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
-          "receiver_user_id"          -> x.receiverUserId.asJson,
-          "callback_query_id"         -> x.callbackQueryId.asJson,
-          "text"                      -> x.text.asJson,
-          "parse_mode"                -> x.parseMode.asJson,
-          "entities"                  -> x.entities.asJson,
-          "link_preview_options"      -> x.linkPreviewOptions.asJson,
-          "disable_notification"      -> x.disableNotification.asJson,
-          "protect_content"           -> x.protectContent.asJson,
-          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
-          "message_effect_id"         -> x.messageEffectId.asJson,
-          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
-          "reply_parameters"          -> x.replyParameters.asJson,
-          "reply_markup"              -> x.replyMarkup.asJson,
-          "method"                    -> "sendMessage".asJson
+          "business_connection_id"       -> x.businessConnectionId.asJson,
+          "chat_id"                      -> x.chatId.asJson,
+          "message_thread_id"            -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"     -> x.directMessagesTopicId.asJson,
+          "ephemeral_message_parameters" -> x.ephemeralMessageParameters.asJson,
+          "text"                         -> x.text.asJson,
+          "parse_mode"                   -> x.parseMode.asJson,
+          "entities"                     -> x.entities.asJson,
+          "link_preview_options"         -> x.linkPreviewOptions.asJson,
+          "disable_notification"         -> x.disableNotification.asJson,
+          "protect_content"              -> x.protectContent.asJson,
+          "allow_paid_broadcast"         -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"            -> x.messageEffectId.asJson,
+          "suggested_post_parameters"    -> x.suggestedPostParameters.asJson,
+          "reply_parameters"             -> x.replyParameters.asJson,
+          "reply_markup"                 -> x.replyMarkup.asJson,
+          "method"                       -> "sendMessage".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1763,6 +1760,8 @@ object CirceImplicits {
           "text"              -> x.text.asJson,
           "parse_mode"        -> x.parseMode.asJson,
           "entities"          -> x.entities.asJson,
+          "can_stop"          -> x.canStop.asJson,
+          "keep_on_stop"      -> x.keepOnStop.asJson,
           "method"            -> "sendMessageDraft".asJson
         ).filter(!_._2.isNull)
       )
@@ -1798,26 +1797,25 @@ object CirceImplicits {
     (x: SendPhotoReq) => {
       Json.fromFields(
         List(
-          "business_connection_id"    -> x.businessConnectionId.asJson,
-          "chat_id"                   -> x.chatId.asJson,
-          "message_thread_id"         -> x.messageThreadId.asJson,
-          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
-          "receiver_user_id"          -> x.receiverUserId.asJson,
-          "callback_query_id"         -> x.callbackQueryId.asJson,
-          "photo"                     -> x.photo.asJson,
-          "caption"                   -> x.caption.asJson,
-          "parse_mode"                -> x.parseMode.asJson,
-          "caption_entities"          -> x.captionEntities.asJson,
-          "show_caption_above_media"  -> x.showCaptionAboveMedia.asJson,
-          "has_spoiler"               -> x.hasSpoiler.asJson,
-          "disable_notification"      -> x.disableNotification.asJson,
-          "protect_content"           -> x.protectContent.asJson,
-          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
-          "message_effect_id"         -> x.messageEffectId.asJson,
-          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
-          "reply_parameters"          -> x.replyParameters.asJson,
-          "reply_markup"              -> x.replyMarkup.asJson,
-          "method"                    -> "sendPhoto".asJson
+          "business_connection_id"       -> x.businessConnectionId.asJson,
+          "chat_id"                      -> x.chatId.asJson,
+          "message_thread_id"            -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"     -> x.directMessagesTopicId.asJson,
+          "ephemeral_message_parameters" -> x.ephemeralMessageParameters.asJson,
+          "photo"                        -> x.photo.asJson,
+          "caption"                      -> x.caption.asJson,
+          "parse_mode"                   -> x.parseMode.asJson,
+          "caption_entities"             -> x.captionEntities.asJson,
+          "show_caption_above_media"     -> x.showCaptionAboveMedia.asJson,
+          "has_spoiler"                  -> x.hasSpoiler.asJson,
+          "disable_notification"         -> x.disableNotification.asJson,
+          "protect_content"              -> x.protectContent.asJson,
+          "allow_paid_broadcast"         -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"            -> x.messageEffectId.asJson,
+          "suggested_post_parameters"    -> x.suggestedPostParameters.asJson,
+          "reply_parameters"             -> x.replyParameters.asJson,
+          "reply_markup"                 -> x.replyMarkup.asJson,
+          "method"                       -> "sendPhoto".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1869,19 +1867,20 @@ object CirceImplicits {
     (x: SendRichMessageReq) => {
       Json.fromFields(
         List(
-          "business_connection_id"    -> x.businessConnectionId.asJson,
-          "chat_id"                   -> x.chatId.asJson,
-          "message_thread_id"         -> x.messageThreadId.asJson,
-          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
-          "rich_message"              -> x.richMessage.asJson,
-          "disable_notification"      -> x.disableNotification.asJson,
-          "protect_content"           -> x.protectContent.asJson,
-          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
-          "message_effect_id"         -> x.messageEffectId.asJson,
-          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
-          "reply_parameters"          -> x.replyParameters.asJson,
-          "reply_markup"              -> x.replyMarkup.asJson,
-          "method"                    -> "sendRichMessage".asJson
+          "business_connection_id"       -> x.businessConnectionId.asJson,
+          "chat_id"                      -> x.chatId.asJson,
+          "message_thread_id"            -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"     -> x.directMessagesTopicId.asJson,
+          "ephemeral_message_parameters" -> x.ephemeralMessageParameters.asJson,
+          "rich_message"                 -> x.richMessage.asJson,
+          "disable_notification"         -> x.disableNotification.asJson,
+          "protect_content"              -> x.protectContent.asJson,
+          "allow_paid_broadcast"         -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"            -> x.messageEffectId.asJson,
+          "suggested_post_parameters"    -> x.suggestedPostParameters.asJson,
+          "reply_parameters"             -> x.replyParameters.asJson,
+          "reply_markup"                 -> x.replyMarkup.asJson,
+          "method"                       -> "sendRichMessage".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1894,6 +1893,8 @@ object CirceImplicits {
           "message_thread_id" -> x.messageThreadId.asJson,
           "draft_id"          -> x.draftId.asJson,
           "rich_message"      -> x.richMessage.asJson,
+          "can_stop"          -> x.canStop.asJson,
+          "keep_on_stop"      -> x.keepOnStop.asJson,
           "method"            -> "sendRichMessageDraft".asJson
         ).filter(!_._2.isNull)
       )
@@ -1903,22 +1904,21 @@ object CirceImplicits {
     (x: SendStickerReq) => {
       Json.fromFields(
         List(
-          "business_connection_id"    -> x.businessConnectionId.asJson,
-          "chat_id"                   -> x.chatId.asJson,
-          "message_thread_id"         -> x.messageThreadId.asJson,
-          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
-          "receiver_user_id"          -> x.receiverUserId.asJson,
-          "callback_query_id"         -> x.callbackQueryId.asJson,
-          "sticker"                   -> x.sticker.asJson,
-          "emoji"                     -> x.emoji.asJson,
-          "disable_notification"      -> x.disableNotification.asJson,
-          "protect_content"           -> x.protectContent.asJson,
-          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
-          "message_effect_id"         -> x.messageEffectId.asJson,
-          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
-          "reply_parameters"          -> x.replyParameters.asJson,
-          "reply_markup"              -> x.replyMarkup.asJson,
-          "method"                    -> "sendSticker".asJson
+          "business_connection_id"       -> x.businessConnectionId.asJson,
+          "chat_id"                      -> x.chatId.asJson,
+          "message_thread_id"            -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"     -> x.directMessagesTopicId.asJson,
+          "ephemeral_message_parameters" -> x.ephemeralMessageParameters.asJson,
+          "sticker"                      -> x.sticker.asJson,
+          "emoji"                        -> x.emoji.asJson,
+          "disable_notification"         -> x.disableNotification.asJson,
+          "protect_content"              -> x.protectContent.asJson,
+          "allow_paid_broadcast"         -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"            -> x.messageEffectId.asJson,
+          "suggested_post_parameters"    -> x.suggestedPostParameters.asJson,
+          "reply_parameters"             -> x.replyParameters.asJson,
+          "reply_markup"                 -> x.replyMarkup.asJson,
+          "method"                       -> "sendSticker".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1927,28 +1927,27 @@ object CirceImplicits {
     (x: SendVenueReq) => {
       Json.fromFields(
         List(
-          "business_connection_id"    -> x.businessConnectionId.asJson,
-          "chat_id"                   -> x.chatId.asJson,
-          "message_thread_id"         -> x.messageThreadId.asJson,
-          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
-          "receiver_user_id"          -> x.receiverUserId.asJson,
-          "callback_query_id"         -> x.callbackQueryId.asJson,
-          "latitude"                  -> x.latitude.asJson,
-          "longitude"                 -> x.longitude.asJson,
-          "title"                     -> x.title.asJson,
-          "address"                   -> x.address.asJson,
-          "foursquare_id"             -> x.foursquareId.asJson,
-          "foursquare_type"           -> x.foursquareType.asJson,
-          "google_place_id"           -> x.googlePlaceId.asJson,
-          "google_place_type"         -> x.googlePlaceType.asJson,
-          "disable_notification"      -> x.disableNotification.asJson,
-          "protect_content"           -> x.protectContent.asJson,
-          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
-          "message_effect_id"         -> x.messageEffectId.asJson,
-          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
-          "reply_parameters"          -> x.replyParameters.asJson,
-          "reply_markup"              -> x.replyMarkup.asJson,
-          "method"                    -> "sendVenue".asJson
+          "business_connection_id"       -> x.businessConnectionId.asJson,
+          "chat_id"                      -> x.chatId.asJson,
+          "message_thread_id"            -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"     -> x.directMessagesTopicId.asJson,
+          "ephemeral_message_parameters" -> x.ephemeralMessageParameters.asJson,
+          "latitude"                     -> x.latitude.asJson,
+          "longitude"                    -> x.longitude.asJson,
+          "title"                        -> x.title.asJson,
+          "address"                      -> x.address.asJson,
+          "foursquare_id"                -> x.foursquareId.asJson,
+          "foursquare_type"              -> x.foursquareType.asJson,
+          "google_place_id"              -> x.googlePlaceId.asJson,
+          "google_place_type"            -> x.googlePlaceType.asJson,
+          "disable_notification"         -> x.disableNotification.asJson,
+          "protect_content"              -> x.protectContent.asJson,
+          "allow_paid_broadcast"         -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"            -> x.messageEffectId.asJson,
+          "suggested_post_parameters"    -> x.suggestedPostParameters.asJson,
+          "reply_parameters"             -> x.replyParameters.asJson,
+          "reply_markup"                 -> x.replyMarkup.asJson,
+          "method"                       -> "sendVenue".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1957,33 +1956,32 @@ object CirceImplicits {
     (x: SendVideoReq) => {
       Json.fromFields(
         List(
-          "business_connection_id"    -> x.businessConnectionId.asJson,
-          "chat_id"                   -> x.chatId.asJson,
-          "message_thread_id"         -> x.messageThreadId.asJson,
-          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
-          "receiver_user_id"          -> x.receiverUserId.asJson,
-          "callback_query_id"         -> x.callbackQueryId.asJson,
-          "video"                     -> x.video.asJson,
-          "duration"                  -> x.duration.asJson,
-          "width"                     -> x.width.asJson,
-          "height"                    -> x.height.asJson,
-          "thumbnail"                 -> x.thumbnail.asJson,
-          "cover"                     -> x.cover.asJson,
-          "start_timestamp"           -> x.startTimestamp.asJson,
-          "caption"                   -> x.caption.asJson,
-          "parse_mode"                -> x.parseMode.asJson,
-          "caption_entities"          -> x.captionEntities.asJson,
-          "show_caption_above_media"  -> x.showCaptionAboveMedia.asJson,
-          "has_spoiler"               -> x.hasSpoiler.asJson,
-          "supports_streaming"        -> x.supportsStreaming.asJson,
-          "disable_notification"      -> x.disableNotification.asJson,
-          "protect_content"           -> x.protectContent.asJson,
-          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
-          "message_effect_id"         -> x.messageEffectId.asJson,
-          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
-          "reply_parameters"          -> x.replyParameters.asJson,
-          "reply_markup"              -> x.replyMarkup.asJson,
-          "method"                    -> "sendVideo".asJson
+          "business_connection_id"       -> x.businessConnectionId.asJson,
+          "chat_id"                      -> x.chatId.asJson,
+          "message_thread_id"            -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"     -> x.directMessagesTopicId.asJson,
+          "ephemeral_message_parameters" -> x.ephemeralMessageParameters.asJson,
+          "video"                        -> x.video.asJson,
+          "duration"                     -> x.duration.asJson,
+          "width"                        -> x.width.asJson,
+          "height"                       -> x.height.asJson,
+          "thumbnail"                    -> x.thumbnail.asJson,
+          "cover"                        -> x.cover.asJson,
+          "start_timestamp"              -> x.startTimestamp.asJson,
+          "caption"                      -> x.caption.asJson,
+          "parse_mode"                   -> x.parseMode.asJson,
+          "caption_entities"             -> x.captionEntities.asJson,
+          "show_caption_above_media"     -> x.showCaptionAboveMedia.asJson,
+          "has_spoiler"                  -> x.hasSpoiler.asJson,
+          "supports_streaming"           -> x.supportsStreaming.asJson,
+          "disable_notification"         -> x.disableNotification.asJson,
+          "protect_content"              -> x.protectContent.asJson,
+          "allow_paid_broadcast"         -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"            -> x.messageEffectId.asJson,
+          "suggested_post_parameters"    -> x.suggestedPostParameters.asJson,
+          "reply_parameters"             -> x.replyParameters.asJson,
+          "reply_markup"                 -> x.replyMarkup.asJson,
+          "method"                       -> "sendVideo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1992,24 +1990,23 @@ object CirceImplicits {
     (x: SendVideoNoteReq) => {
       Json.fromFields(
         List(
-          "business_connection_id"    -> x.businessConnectionId.asJson,
-          "chat_id"                   -> x.chatId.asJson,
-          "message_thread_id"         -> x.messageThreadId.asJson,
-          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
-          "receiver_user_id"          -> x.receiverUserId.asJson,
-          "callback_query_id"         -> x.callbackQueryId.asJson,
-          "video_note"                -> x.videoNote.asJson,
-          "duration"                  -> x.duration.asJson,
-          "length"                    -> x.length.asJson,
-          "thumbnail"                 -> x.thumbnail.asJson,
-          "disable_notification"      -> x.disableNotification.asJson,
-          "protect_content"           -> x.protectContent.asJson,
-          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
-          "message_effect_id"         -> x.messageEffectId.asJson,
-          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
-          "reply_parameters"          -> x.replyParameters.asJson,
-          "reply_markup"              -> x.replyMarkup.asJson,
-          "method"                    -> "sendVideoNote".asJson
+          "business_connection_id"       -> x.businessConnectionId.asJson,
+          "chat_id"                      -> x.chatId.asJson,
+          "message_thread_id"            -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"     -> x.directMessagesTopicId.asJson,
+          "ephemeral_message_parameters" -> x.ephemeralMessageParameters.asJson,
+          "video_note"                   -> x.videoNote.asJson,
+          "duration"                     -> x.duration.asJson,
+          "length"                       -> x.length.asJson,
+          "thumbnail"                    -> x.thumbnail.asJson,
+          "disable_notification"         -> x.disableNotification.asJson,
+          "protect_content"              -> x.protectContent.asJson,
+          "allow_paid_broadcast"         -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"            -> x.messageEffectId.asJson,
+          "suggested_post_parameters"    -> x.suggestedPostParameters.asJson,
+          "reply_parameters"             -> x.replyParameters.asJson,
+          "reply_markup"                 -> x.replyMarkup.asJson,
+          "method"                       -> "sendVideoNote".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2018,25 +2015,24 @@ object CirceImplicits {
     (x: SendVoiceReq) => {
       Json.fromFields(
         List(
-          "business_connection_id"    -> x.businessConnectionId.asJson,
-          "chat_id"                   -> x.chatId.asJson,
-          "message_thread_id"         -> x.messageThreadId.asJson,
-          "direct_messages_topic_id"  -> x.directMessagesTopicId.asJson,
-          "receiver_user_id"          -> x.receiverUserId.asJson,
-          "callback_query_id"         -> x.callbackQueryId.asJson,
-          "voice"                     -> x.voice.asJson,
-          "caption"                   -> x.caption.asJson,
-          "parse_mode"                -> x.parseMode.asJson,
-          "caption_entities"          -> x.captionEntities.asJson,
-          "duration"                  -> x.duration.asJson,
-          "disable_notification"      -> x.disableNotification.asJson,
-          "protect_content"           -> x.protectContent.asJson,
-          "allow_paid_broadcast"      -> x.allowPaidBroadcast.asJson,
-          "message_effect_id"         -> x.messageEffectId.asJson,
-          "suggested_post_parameters" -> x.suggestedPostParameters.asJson,
-          "reply_parameters"          -> x.replyParameters.asJson,
-          "reply_markup"              -> x.replyMarkup.asJson,
-          "method"                    -> "sendVoice".asJson
+          "business_connection_id"       -> x.businessConnectionId.asJson,
+          "chat_id"                      -> x.chatId.asJson,
+          "message_thread_id"            -> x.messageThreadId.asJson,
+          "direct_messages_topic_id"     -> x.directMessagesTopicId.asJson,
+          "ephemeral_message_parameters" -> x.ephemeralMessageParameters.asJson,
+          "voice"                        -> x.voice.asJson,
+          "caption"                      -> x.caption.asJson,
+          "parse_mode"                   -> x.parseMode.asJson,
+          "caption_entities"             -> x.captionEntities.asJson,
+          "duration"                     -> x.duration.asJson,
+          "disable_notification"         -> x.disableNotification.asJson,
+          "protect_content"              -> x.protectContent.asJson,
+          "allow_paid_broadcast"         -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"            -> x.messageEffectId.asJson,
+          "suggested_post_parameters"    -> x.suggestedPostParameters.asJson,
+          "reply_parameters"             -> x.replyParameters.asJson,
+          "reply_markup"                 -> x.replyMarkup.asJson,
+          "method"                       -> "sendVoice".asJson
         ).filter(!_._2.isNull)
       )
     }

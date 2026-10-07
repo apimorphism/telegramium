@@ -45,4 +45,10 @@ class InlineKeyboardMarkupsSpec extends AnyFunSuite {
     assert(markup == InlineKeyboardMarkup(List(List(button1), List(button2))))
   }
 
+  test("singleButton should pass through forceReply") {
+    val button = InlineKeyboardButtons.url("Button", "https://example.com")
+    val markup = InlineKeyboardMarkups.singleButton(button, forceReply = Some(true))
+    assert(markup == InlineKeyboardMarkup(List(List(button)), forceReply = Some(true)))
+  }
+
 }
