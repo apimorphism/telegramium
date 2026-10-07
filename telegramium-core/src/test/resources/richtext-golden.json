@@ -53,6 +53,13 @@
     "unix_time": 1720000000,
     "date_time_format": "dd MMM yyyy"
   },
+  "button": {
+    "type": "button",
+    "button": {
+      "text": "Click me",
+      "url": "https://example.com"
+    }
+  },
   "deeply_nested": [
     [
       [

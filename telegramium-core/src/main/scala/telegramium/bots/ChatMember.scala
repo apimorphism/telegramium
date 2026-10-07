@@ -54,6 +54,8 @@ final case class ChatMemberLeft(user: User) extends ChatMember
   *   stories, and access the chat's story archive
   * @param canDeleteStories
   *   True, if the administrator can delete stories posted by other users
+  * @param canSendWelcomeMessages
+  *   True, if the administrator can manage chat welcome messages or directly send them in the case of bots
   * @param canPostMessages
   *   Optional. True, if the administrator can post messages in the channel, approve suggested posts, or access channel
   *   statistics; for channels only
@@ -67,8 +69,7 @@ final case class ChatMemberLeft(user: User) extends ChatMember
   *   Optional. True, if the administrator can manage direct messages of the channel and decline suggested posts; for
   *   channels only
   * @param canManageTags
-  *   Optional. True, if the administrator can edit the tags of regular members; for groups and supergroups only. If
-  *   omitted, defaults to the value of can_pin_messages.
+  *   Optional. True, if the administrator can edit the tags of regular members; for groups and supergroups only
   * @param customTitle
   *   Optional. Custom title for this user
   */
@@ -86,6 +87,7 @@ final case class ChatMemberAdministrator(
   canPostStories: Boolean,
   canEditStories: Boolean,
   canDeleteStories: Boolean,
+  canSendWelcomeMessages: Boolean,
   canPostMessages: Option[Boolean] = Option.empty,
   canEditMessages: Option[Boolean] = Option.empty,
   canPinMessages: Option[Boolean] = Option.empty,

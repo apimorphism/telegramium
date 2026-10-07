@@ -16,6 +16,7 @@ import telegramium.bots.ChosenInlineResult
 import telegramium.bots.InlineQuery
 import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
+import telegramium.bots.MessageGenerationStopped
 import telegramium.bots.MessageReactionCountUpdated
 import telegramium.bots.MessageReactionUpdated
 import telegramium.bots.PaidMediaPurchased
@@ -111,6 +112,9 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
   override def onSubscription(subscription: BotSubscriptionUpdated): IO[Unit] =
     api.execute(sendMessageMethod("onSubscription")).void
 
+  override def onStoppedMessageGeneration(stopped: MessageGenerationStopped): IO[Unit] =
+    api.execute(sendMessageMethod("onStoppedMessageGeneration")).void
+
   override def onMessageReply(msg: Message): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onMessageReply").some)
 
@@ -188,5 +192,8 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
 
   override def onSubscriptionReply(subscription: BotSubscriptionUpdated): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onSubscriptionReply").some)
+
+  override def onStoppedMessageGenerationReply(stopped: MessageGenerationStopped): IO[Option[Method[?]]] =
+    IO.pure(sendMessageMethod("onStoppedMessageGenerationReply").some)
 
 }

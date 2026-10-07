@@ -88,7 +88,8 @@ object CirceImplicits {
     (x: InlineKeyboardMarkup) => {
       Json.fromFields(
         List(
-          "inline_keyboard" -> x.inlineKeyboard.asJson
+          "inline_keyboard" -> x.inlineKeyboard.asJson,
+          "force_reply"     -> x.forceReply.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -97,8 +98,9 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _inlineKeyboard <- h.getOrElse[List[List[InlineKeyboardButton]]]("inline_keyboard")(List.empty)
+        _forceReply     <- h.get[Option[Boolean]]("force_reply")
       } yield {
-        InlineKeyboardMarkup(inlineKeyboard = _inlineKeyboard)
+        InlineKeyboardMarkup(inlineKeyboard = _inlineKeyboard, forceReply = _forceReply)
       }
     }
 
@@ -132,7 +134,8 @@ object CirceImplicits {
           "resize_keyboard"         -> x.resizeKeyboard.asJson,
           "one_time_keyboard"       -> x.oneTimeKeyboard.asJson,
           "input_field_placeholder" -> x.inputFieldPlaceholder.asJson,
-          "selective"               -> x.selective.asJson
+          "selective"               -> x.selective.asJson,
+          "force_reply"             -> x.forceReply.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -565,6 +568,7 @@ object CirceImplicits {
           "can_manage_topics"          -> x.canManageTopics.asJson,
           "can_manage_direct_messages" -> x.canManageDirectMessages.asJson,
           "can_manage_tags"            -> x.canManageTags.asJson,
+          "can_send_welcome_messages"  -> x.canSendWelcomeMessages.asJson,
           "custom_title"               -> x.customTitle.asJson
         ).filter(!_._2.isNull)
       )
@@ -592,6 +596,7 @@ object CirceImplicits {
         _canManageTopics         <- h.get[Option[Boolean]]("can_manage_topics")
         _canManageDirectMessages <- h.get[Option[Boolean]]("can_manage_direct_messages")
         _canManageTags           <- h.get[Option[Boolean]]("can_manage_tags")
+        _canSendWelcomeMessages  <- h.get[Boolean]("can_send_welcome_messages")
         _customTitle             <- h.get[Option[String]]("custom_title")
       } yield {
         ChatMemberAdministrator(
@@ -614,6 +619,7 @@ object CirceImplicits {
           canManageTopics = _canManageTopics,
           canManageDirectMessages = _canManageDirectMessages,
           canManageTags = _canManageTags,
+          canSendWelcomeMessages = _canSendWelcomeMessages,
           customTitle = _customTitle
         )
       }
@@ -1466,9 +1472,10 @@ object CirceImplicits {
   implicit lazy val inputrichblockEncoder: Encoder[InputRichBlock] = {
     case heading: InputRichBlockSectionHeading => heading.asJson.mapObject(_.add("type", Json.fromString("heading")))
     case map: InputRichBlockMap                => map.asJson.mapObject(_.add("type", Json.fromString("map")))
+    case document: InputRichBlockDocument      => document.asJson.mapObject(_.add("type", Json.fromString("document")))
     case audio: InputRichBlockAudio            => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
-    case collage: InputRichBlockCollage        => collage.asJson.mapObject(_.add("type", Json.fromString("collage")))
     case divider: InputRichBlockDivider.type   => divider.asJson.mapObject(_.add("type", Json.fromString("divider")))
+    case buttons: InputRichBlockButtons        => buttons.asJson.mapObject(_.add("type", Json.fromString("buttons")))
     case blockquote: InputRichBlockBlockQuotation =>
       blockquote.asJson.mapObject(_.add("type", Json.fromString("blockquote")))
     case video: InputRichBlockVideo       => video.asJson.mapObject(_.add("type", Json.fromString("video")))
@@ -1483,6 +1490,9 @@ object CirceImplicits {
       mathematical_expression.asJson.mapObject(_.add("type", Json.fromString("mathematical_expression")))
     case slideshow: InputRichBlockSlideshow => slideshow.asJson.mapObject(_.add("type", Json.fromString("slideshow")))
     case photo: InputRichBlockPhoto         => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case collage: InputRichBlockCollage     => collage.asJson.mapObject(_.add("type", Json.fromString("collage")))
+    case expandable_blockquote: InputRichBlockExpandableBlockQuotation =>
+      expandable_blockquote.asJson.mapObject(_.add("type", Json.fromString("expandable_blockquote")))
     case voice_note: InputRichBlockVoiceNote =>
       voice_note.asJson.mapObject(_.add("type", Json.fromString("voice_note")))
     case paragraph: InputRichBlockParagraph => paragraph.asJson.mapObject(_.add("type", Json.fromString("paragraph")))
@@ -1498,6 +1508,7 @@ object CirceImplicits {
           "cells"       -> x.cells.asJson,
           "is_bordered" -> x.isBordered.asJson,
           "is_striped"  -> x.isStriped.asJson,
+          "is_compact"  -> x.isCompact.asJson,
           "caption"     -> x.caption.asJson
         ).filter(!_._2.isNull)
       )
@@ -1560,6 +1571,16 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val inputrichblockexpandableblockquotationEncoder: Encoder[InputRichBlockExpandableBlockQuotation] =
+    (x: InputRichBlockExpandableBlockQuotation) => {
+      Json.fromFields(
+        List(
+          "text"   -> x.text.asJson,
+          "credit" -> x.credit.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val inputrichblockcollageEncoder: Encoder[InputRichBlockCollage] =
     (x: InputRichBlockCollage) => {
       Json.fromFields(
@@ -1575,6 +1596,16 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text" -> x.text.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockdocumentEncoder: Encoder[InputRichBlockDocument] =
+    (x: InputRichBlockDocument) => {
+      Json.fromFields(
+        List(
+          "document" -> x.document.asJson,
+          "caption"  -> x.caption.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1670,6 +1701,16 @@ object CirceImplicits {
           "summary" -> x.summary.asJson,
           "blocks"  -> x.blocks.asJson,
           "is_open" -> x.isOpen.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputrichblockbuttonsEncoder: Encoder[InputRichBlockButtons] =
+    (x: InputRichBlockButtons) => {
+      Json.fromFields(
+        List(
+          "buttons" -> x.buttons.asJson,
+          "align"   -> x.align.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1831,6 +1872,7 @@ object CirceImplicits {
           "checklist_tasks_done"              -> x.checklistTasksDone.asJson,
           "checklist_tasks_added"             -> x.checklistTasksAdded.asJson,
           "community_chat_added"              -> x.communityChatAdded.asJson,
+          "community_chat_joined"             -> x.communityChatJoined.asJson,
           "community_chat_removed"            -> x.communityChatRemoved.asJson,
           "direct_message_price_changed"      -> x.directMessagePriceChanged.asJson,
           "forum_topic_created"               -> x.forumTopicCreated.asJson,
@@ -1959,6 +2001,7 @@ object CirceImplicits {
         _checklistTasksDone           <- h.get[Option[ChecklistTasksDone]]("checklist_tasks_done")
         _checklistTasksAdded          <- h.get[Option[ChecklistTasksAdded]]("checklist_tasks_added")
         _communityChatAdded           <- h.get[Option[CommunityChatAdded]]("community_chat_added")
+        _communityChatJoined          <- h.get[Option[CommunityChatJoined]]("community_chat_joined")
         _communityChatRemoved         <- h.get[Option[CommunityChatRemoved.type]]("community_chat_removed")
         _directMessagePriceChanged    <- h.get[Option[DirectMessagePriceChanged]]("direct_message_price_changed")
         _forumTopicCreated            <- h.get[Option[ForumTopicCreated]]("forum_topic_created")
@@ -2080,6 +2123,7 @@ object CirceImplicits {
           checklistTasksDone = _checklistTasksDone,
           checklistTasksAdded = _checklistTasksAdded,
           communityChatAdded = _communityChatAdded,
+          communityChatJoined = _communityChatJoined,
           communityChatRemoved = _communityChatRemoved,
           directMessagePriceChanged = _directMessagePriceChanged,
           forumTopicCreated = _forumTopicCreated,
@@ -3191,9 +3235,10 @@ object CirceImplicits {
   implicit lazy val richblockEncoder: Encoder[RichBlock] = {
     case heading: RichBlockSectionHeading => heading.asJson.mapObject(_.add("type", Json.fromString("heading")))
     case map: RichBlockMap                => map.asJson.mapObject(_.add("type", Json.fromString("map")))
+    case document: RichBlockDocument      => document.asJson.mapObject(_.add("type", Json.fromString("document")))
     case audio: RichBlockAudio            => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
-    case collage: RichBlockCollage        => collage.asJson.mapObject(_.add("type", Json.fromString("collage")))
     case divider: RichBlockDivider.type   => divider.asJson.mapObject(_.add("type", Json.fromString("divider")))
+    case buttons: RichBlockButtons        => buttons.asJson.mapObject(_.add("type", Json.fromString("buttons")))
     case blockquote: RichBlockBlockQuotation =>
       blockquote.asJson.mapObject(_.add("type", Json.fromString("blockquote")))
     case video: RichBlockVideo             => video.asJson.mapObject(_.add("type", Json.fromString("video")))
@@ -3205,8 +3250,11 @@ object CirceImplicits {
     case pullquote: RichBlockPullQuotation => pullquote.asJson.mapObject(_.add("type", Json.fromString("pullquote")))
     case mathematical_expression: RichBlockMathematicalExpression =>
       mathematical_expression.asJson.mapObject(_.add("type", Json.fromString("mathematical_expression")))
-    case slideshow: RichBlockSlideshow  => slideshow.asJson.mapObject(_.add("type", Json.fromString("slideshow")))
-    case photo: RichBlockPhoto          => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case slideshow: RichBlockSlideshow => slideshow.asJson.mapObject(_.add("type", Json.fromString("slideshow")))
+    case photo: RichBlockPhoto         => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case collage: RichBlockCollage     => collage.asJson.mapObject(_.add("type", Json.fromString("collage")))
+    case expandable_blockquote: RichBlockExpandableBlockQuotation =>
+      expandable_blockquote.asJson.mapObject(_.add("type", Json.fromString("expandable_blockquote")))
     case voice_note: RichBlockVoiceNote => voice_note.asJson.mapObject(_.add("type", Json.fromString("voice_note")))
     case paragraph: RichBlockParagraph  => paragraph.asJson.mapObject(_.add("type", Json.fromString("paragraph")))
     case animation: RichBlockAnimation  => animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
@@ -3219,9 +3267,10 @@ object CirceImplicits {
     value <- fType match {
       case "heading"                 => Decoder[RichBlockSectionHeading].map(iozhik.OpenEnum.Known(_))
       case "map"                     => Decoder[RichBlockMap].map(iozhik.OpenEnum.Known(_))
+      case "document"                => Decoder[RichBlockDocument].map(iozhik.OpenEnum.Known(_))
       case "audio"                   => Decoder[RichBlockAudio].map(iozhik.OpenEnum.Known(_))
-      case "collage"                 => Decoder[RichBlockCollage].map(iozhik.OpenEnum.Known(_))
       case "divider"                 => Decoder[RichBlockDivider.type].map(iozhik.OpenEnum.Known(_))
+      case "buttons"                 => Decoder[RichBlockButtons].map(iozhik.OpenEnum.Known(_))
       case "blockquote"              => Decoder[RichBlockBlockQuotation].map(iozhik.OpenEnum.Known(_))
       case "video"                   => Decoder[RichBlockVideo].map(iozhik.OpenEnum.Known(_))
       case "details"                 => Decoder[RichBlockDetails].map(iozhik.OpenEnum.Known(_))
@@ -3233,6 +3282,8 @@ object CirceImplicits {
       case "mathematical_expression" => Decoder[RichBlockMathematicalExpression].map(iozhik.OpenEnum.Known(_))
       case "slideshow"               => Decoder[RichBlockSlideshow].map(iozhik.OpenEnum.Known(_))
       case "photo"                   => Decoder[RichBlockPhoto].map(iozhik.OpenEnum.Known(_))
+      case "collage"                 => Decoder[RichBlockCollage].map(iozhik.OpenEnum.Known(_))
+      case "expandable_blockquote"   => Decoder[RichBlockExpandableBlockQuotation].map(iozhik.OpenEnum.Known(_))
       case "voice_note"              => Decoder[RichBlockVoiceNote].map(iozhik.OpenEnum.Known(_))
       case "paragraph"               => Decoder[RichBlockParagraph].map(iozhik.OpenEnum.Known(_))
       case "animation"               => Decoder[RichBlockAnimation].map(iozhik.OpenEnum.Known(_))
@@ -3377,6 +3428,26 @@ object CirceImplicits {
         _name <- h.get[String]("name")
       } yield {
         RichBlockAnchor(name = _name)
+      }
+    }
+
+  implicit lazy val richblockdocumentEncoder: Encoder[RichBlockDocument] =
+    (x: RichBlockDocument) => {
+      Json.fromFields(
+        List(
+          "document" -> x.document.asJson,
+          "caption"  -> x.caption.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockdocumentDecoder: Decoder[RichBlockDocument] =
+    Decoder.instance { h =>
+      for {
+        _document <- h.get[Document]("document")
+        _caption  <- h.get[Option[RichBlockCaption]]("caption")
+      } yield {
+        RichBlockDocument(document = _document, caption = _caption)
       }
     }
 
@@ -3529,6 +3600,7 @@ object CirceImplicits {
           "cells"       -> x.cells.asJson,
           "is_bordered" -> x.isBordered.asJson,
           "is_striped"  -> x.isStriped.asJson,
+          "is_compact"  -> x.isCompact.asJson,
           "caption"     -> x.caption.asJson
         ).filter(!_._2.isNull)
       )
@@ -3540,9 +3612,16 @@ object CirceImplicits {
         _cells      <- h.getOrElse[List[List[RichBlockTableCell]]]("cells")(List.empty)
         _isBordered <- h.get[Option[Boolean]]("is_bordered")
         _isStriped  <- h.get[Option[Boolean]]("is_striped")
+        _isCompact  <- h.get[Option[Boolean]]("is_compact")
         _caption    <- h.get[Option[iozhik.OpenEnum[RichText]]]("caption")
       } yield {
-        RichBlockTable(cells = _cells, isBordered = _isBordered, isStriped = _isStriped, caption = _caption)
+        RichBlockTable(
+          cells = _cells,
+          isBordered = _isBordered,
+          isStriped = _isStriped,
+          isCompact = _isCompact,
+          caption = _caption
+        )
       }
     }
 
@@ -3611,6 +3690,26 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val richblockexpandableblockquotationEncoder: Encoder[RichBlockExpandableBlockQuotation] =
+    (x: RichBlockExpandableBlockQuotation) => {
+      Json.fromFields(
+        List(
+          "text"   -> x.text.asJson,
+          "credit" -> x.credit.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockexpandableblockquotationDecoder: Decoder[RichBlockExpandableBlockQuotation] =
+    Decoder.instance { h =>
+      for {
+        _text   <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _credit <- h.get[Option[iozhik.OpenEnum[RichText]]]("credit")
+      } yield {
+        RichBlockExpandableBlockQuotation(text = _text, credit = _credit)
+      }
+    }
+
   implicit lazy val richblocksectionheadingEncoder: Encoder[RichBlockSectionHeading] =
     (x: RichBlockSectionHeading) => {
       Json.fromFields(
@@ -3628,6 +3727,26 @@ object CirceImplicits {
         _size <- h.get[Int]("size")
       } yield {
         RichBlockSectionHeading(text = _text, size = _size)
+      }
+    }
+
+  implicit lazy val richblockbuttonsEncoder: Encoder[RichBlockButtons] =
+    (x: RichBlockButtons) => {
+      Json.fromFields(
+        List(
+          "buttons" -> x.buttons.asJson,
+          "align"   -> x.align.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richblockbuttonsDecoder: Decoder[RichBlockButtons] =
+    Decoder.instance { h =>
+      for {
+        _buttons <- h.getOrElse[List[RichMessageButton]]("buttons")(List.empty)
+        _align   <- h.get[Option[String]]("align")
+      } yield {
+        RichBlockButtons(buttons = _buttons, align = _align)
       }
     }
 
@@ -3685,6 +3804,7 @@ object CirceImplicits {
     case superscript: RichTextSuperscript => superscript.asJson.mapObject(_.add("type", Json.fromString("superscript")))
     case cashtag: RichTextCashtag         => cashtag.asJson.mapObject(_.add("type", Json.fromString("cashtag")))
     case code: RichTextCode               => code.asJson.mapObject(_.add("type", Json.fromString("code")))
+    case button: RichTextButton           => button.asJson.mapObject(_.add("type", Json.fromString("button")))
     case spoiler: RichTextSpoiler         => spoiler.asJson.mapObject(_.add("type", Json.fromString("spoiler")))
     case mention: RichTextMention         => mention.asJson.mapObject(_.add("type", Json.fromString("mention")))
   }
@@ -3723,6 +3843,7 @@ object CirceImplicits {
       case "superscript"             => Decoder[RichTextSuperscript].map(iozhik.OpenEnum.Known(_))
       case "cashtag"                 => Decoder[RichTextCashtag].map(iozhik.OpenEnum.Known(_))
       case "code"                    => Decoder[RichTextCode].map(iozhik.OpenEnum.Known(_))
+      case "button"                  => Decoder[RichTextButton].map(iozhik.OpenEnum.Known(_))
       case "spoiler"                 => Decoder[RichTextSpoiler].map(iozhik.OpenEnum.Known(_))
       case "mention"                 => Decoder[RichTextMention].map(iozhik.OpenEnum.Known(_))
       case unknown                   => Decoder.const(iozhik.OpenEnum.Unknown[RichText](unknown))
@@ -3925,6 +4046,24 @@ object CirceImplicits {
         _url  <- h.get[String]("url")
       } yield {
         RichTextUrl(text = _text, url = _url)
+      }
+    }
+
+  implicit lazy val richtextbuttonEncoder: Encoder[RichTextButton] =
+    (x: RichTextButton) => {
+      Json.fromFields(
+        List(
+          "button" -> x.button.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtextbuttonDecoder: Decoder[RichTextButton] =
+    Decoder.instance { h =>
+      for {
+        _button <- h.get[RichMessageButton]("button")
+      } yield {
+        RichTextButton(button = _button)
       }
     }
 
@@ -5066,7 +5205,8 @@ object CirceImplicits {
           "can_pin_messages"           -> x.canPinMessages.asJson,
           "can_manage_topics"          -> x.canManageTopics.asJson,
           "can_manage_direct_messages" -> x.canManageDirectMessages.asJson,
-          "can_manage_tags"            -> x.canManageTags.asJson
+          "can_manage_tags"            -> x.canManageTags.asJson,
+          "can_send_welcome_messages"  -> x.canSendWelcomeMessages.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5091,6 +5231,7 @@ object CirceImplicits {
         _canManageTopics         <- h.get[Option[Boolean]]("can_manage_topics")
         _canManageDirectMessages <- h.get[Option[Boolean]]("can_manage_direct_messages")
         _canManageTags           <- h.get[Option[Boolean]]("can_manage_tags")
+        _canSendWelcomeMessages  <- h.get[Boolean]("can_send_welcome_messages")
       } yield {
         ChatAdministratorRights(
           isAnonymous = _isAnonymous,
@@ -5109,7 +5250,8 @@ object CirceImplicits {
           canPinMessages = _canPinMessages,
           canManageTopics = _canManageTopics,
           canManageDirectMessages = _canManageDirectMessages,
-          canManageTags = _canManageTags
+          canManageTags = _canManageTags,
+          canSendWelcomeMessages = _canSendWelcomeMessages
         )
       }
     }
@@ -5882,6 +6024,24 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val communitychatjoinedEncoder: Encoder[CommunityChatJoined] =
+    (x: CommunityChatJoined) => {
+      Json.fromFields(
+        List(
+          "community" -> x.community.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val communitychatjoinedDecoder: Decoder[CommunityChatJoined] =
+    Decoder.instance { h =>
+      for {
+        _community <- h.get[Community]("community")
+      } yield {
+        CommunityChatJoined(community = _community)
+      }
+    }
+
   implicit lazy val communitychatremovedEncoder: Encoder[CommunityChatRemoved.type] = (_: CommunityChatRemoved.type) =>
     ().asJson
 
@@ -6001,6 +6161,9 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val disabledbuttonEncoder: Encoder[DisabledButton.type] = (_: DisabledButton.type) => ().asJson
+  implicit lazy val disabledbuttonDecoder: Decoder[DisabledButton.type] = (_: HCursor) => Right(DisabledButton)
+
   implicit lazy val documentEncoder: Encoder[Document] =
     (x: Document) => {
       Json.fromFields(
@@ -6103,6 +6266,17 @@ object CirceImplicits {
           hash = _hash
         )
       }
+    }
+
+  implicit lazy val ephemeralmessageparametersEncoder: Encoder[EphemeralMessageParameters] =
+    (x: EphemeralMessageParameters) => {
+      Json.fromFields(
+        List(
+          "receiver_user_id"               -> x.receiverUserId.asJson,
+          "callback_query_id"              -> x.callbackQueryId.asJson,
+          "replace_callback_query_message" -> x.replaceCallbackQueryMessage.asJson
+        ).filter(!_._2.isNull)
+      )
     }
 
   implicit lazy val externalreplyinfoEncoder: Encoder[ExternalReplyInfo] =
@@ -6686,7 +6860,8 @@ object CirceImplicits {
           "switch_inline_query_chosen_chat"  -> x.switchInlineQueryChosenChat.asJson,
           "copy_text"                        -> x.copyText.asJson,
           "callback_game"                    -> x.callbackGame.asJson,
-          "pay"                              -> x.pay.asJson
+          "pay"                              -> x.pay.asJson,
+          "disabled"                         -> x.disabled.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -6707,6 +6882,7 @@ object CirceImplicits {
         _copyText                     <- h.get[Option[CopyTextButton]]("copy_text")
         _callbackGame                 <- h.get[Option[CallbackGame.type]]("callback_game")
         _pay                          <- h.get[Option[Boolean]]("pay")
+        _disabled                     <- h.get[Option[DisabledButton.type]]("disabled")
       } yield {
         InlineKeyboardButton(
           text = _text,
@@ -6721,7 +6897,8 @@ object CirceImplicits {
           switchInlineQueryChosenChat = _switchInlineQueryChosenChat,
           copyText = _copyText,
           callbackGame = _callbackGame,
-          pay = _pay
+          pay = _pay,
+          disabled = _disabled
         )
       }
     }
@@ -7220,6 +7397,28 @@ object CirceImplicits {
         _messageAutoDeleteTime <- h.get[Int]("message_auto_delete_time")
       } yield {
         MessageAutoDeleteTimerChanged(messageAutoDeleteTime = _messageAutoDeleteTime)
+      }
+    }
+
+  implicit lazy val messagegenerationstoppedEncoder: Encoder[MessageGenerationStopped] =
+    (x: MessageGenerationStopped) => {
+      Json.fromFields(
+        List(
+          "chat"              -> x.chat.asJson,
+          "message_thread_id" -> x.messageThreadId.asJson,
+          "draft_id"          -> x.draftId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val messagegenerationstoppedDecoder: Decoder[MessageGenerationStopped] =
+    Decoder.instance { h =>
+      for {
+        _chat            <- h.get[Chat]("chat")
+        _messageThreadId <- h.get[Option[Int]]("message_thread_id")
+        _draftId         <- h.get[Int]("draft_id")
+      } yield {
+        MessageGenerationStopped(chat = _chat, messageThreadId = _messageThreadId, draftId = _draftId)
       }
     }
 
@@ -8029,6 +8228,56 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val richmessagebuttonEncoder: Encoder[RichMessageButton] =
+    (x: RichMessageButton) => {
+      Json.fromFields(
+        List(
+          "text"                             -> x.text.asJson,
+          "style"                            -> x.style.asJson,
+          "url"                              -> x.url.asJson,
+          "callback_data"                    -> x.callbackData.asJson,
+          "web_app"                          -> x.webApp.asJson,
+          "login_url"                        -> x.loginUrl.asJson,
+          "switch_inline_query"              -> x.switchInlineQuery.asJson,
+          "switch_inline_query_current_chat" -> x.switchInlineQueryCurrentChat.asJson,
+          "switch_inline_query_chosen_chat"  -> x.switchInlineQueryChosenChat.asJson,
+          "copy_text"                        -> x.copyText.asJson,
+          "disabled"                         -> x.disabled.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richmessagebuttonDecoder: Decoder[RichMessageButton] =
+    Decoder.instance { h =>
+      for {
+        _text                         <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _style                        <- h.get[Option[String]]("style")
+        _url                          <- h.get[Option[String]]("url")
+        _callbackData                 <- h.get[Option[String]]("callback_data")
+        _webApp                       <- h.get[Option[WebAppInfo]]("web_app")
+        _loginUrl                     <- h.get[Option[LoginUrl]]("login_url")
+        _switchInlineQuery            <- h.get[Option[String]]("switch_inline_query")
+        _switchInlineQueryCurrentChat <- h.get[Option[String]]("switch_inline_query_current_chat")
+        _switchInlineQueryChosenChat  <- h.get[Option[SwitchInlineQueryChosenChat]]("switch_inline_query_chosen_chat")
+        _copyText                     <- h.get[Option[CopyTextButton]]("copy_text")
+        _disabled                     <- h.get[Option[DisabledButton.type]]("disabled")
+      } yield {
+        RichMessageButton(
+          text = _text,
+          style = _style,
+          url = _url,
+          callbackData = _callbackData,
+          webApp = _webApp,
+          loginUrl = _loginUrl,
+          switchInlineQuery = _switchInlineQuery,
+          switchInlineQueryCurrentChat = _switchInlineQueryCurrentChat,
+          switchInlineQueryChosenChat = _switchInlineQueryChosenChat,
+          copyText = _copyText,
+          disabled = _disabled
+        )
+      }
+    }
+
   implicit lazy val sentguestmessageEncoder: Encoder[SentGuestMessage] =
     (x: SentGuestMessage) => {
       Json.fromFields(
@@ -8783,6 +9032,9 @@ object CirceImplicits {
         List(
           "gift"                 -> x.gift.asJson,
           "origin"               -> x.origin.asJson,
+          "text"                 -> x.text.asJson,
+          "entities"             -> x.entities.asJson,
+          "is_private"           -> x.isPrivate.asJson,
           "last_resale_currency" -> x.lastResaleCurrency.asJson,
           "last_resale_amount"   -> x.lastResaleAmount.asJson,
           "owned_gift_id"        -> x.ownedGiftId.asJson,
@@ -8797,6 +9049,9 @@ object CirceImplicits {
       for {
         _gift               <- h.get[UniqueGift]("gift")
         _origin             <- h.get[String]("origin")
+        _text               <- h.get[Option[String]]("text")
+        _entities           <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
+        _isPrivate          <- h.get[Option[Boolean]]("is_private")
         _lastResaleCurrency <- h.get[Option[String]]("last_resale_currency")
         _lastResaleAmount   <- h.get[Option[Long]]("last_resale_amount")
         _ownedGiftId        <- h.get[Option[String]]("owned_gift_id")
@@ -8806,6 +9061,9 @@ object CirceImplicits {
         UniqueGiftInfo(
           gift = _gift,
           origin = _origin,
+          text = _text,
+          entities = _entities,
+          isPrivate = _isPrivate,
           lastResaleCurrency = _lastResaleCurrency,
           lastResaleAmount = _lastResaleAmount,
           ownedGiftId = _ownedGiftId,
@@ -8865,33 +9123,34 @@ object CirceImplicits {
     (x: Update) => {
       Json.fromFields(
         List(
-          "update_id"                 -> x.updateId.asJson,
-          "message"                   -> x.message.asJson,
-          "edited_message"            -> x.editedMessage.asJson,
-          "channel_post"              -> x.channelPost.asJson,
-          "edited_channel_post"       -> x.editedChannelPost.asJson,
-          "business_connection"       -> x.businessConnection.asJson,
-          "business_message"          -> x.businessMessage.asJson,
-          "edited_business_message"   -> x.editedBusinessMessage.asJson,
-          "deleted_business_messages" -> x.deletedBusinessMessages.asJson,
-          "guest_message"             -> x.guestMessage.asJson,
-          "message_reaction"          -> x.messageReaction.asJson,
-          "message_reaction_count"    -> x.messageReactionCount.asJson,
-          "inline_query"              -> x.inlineQuery.asJson,
-          "chosen_inline_result"      -> x.chosenInlineResult.asJson,
-          "callback_query"            -> x.callbackQuery.asJson,
-          "shipping_query"            -> x.shippingQuery.asJson,
-          "pre_checkout_query"        -> x.preCheckoutQuery.asJson,
-          "purchased_paid_media"      -> x.purchasedPaidMedia.asJson,
-          "poll"                      -> x.poll.asJson,
-          "poll_answer"               -> x.pollAnswer.asJson,
-          "my_chat_member"            -> x.myChatMember.asJson,
-          "chat_member"               -> x.chatMember.asJson,
-          "chat_join_request"         -> x.chatJoinRequest.asJson,
-          "chat_boost"                -> x.chatBoost.asJson,
-          "removed_chat_boost"        -> x.removedChatBoost.asJson,
-          "managed_bot"               -> x.managedBot.asJson,
-          "subscription"              -> x.subscription.asJson
+          "update_id"                  -> x.updateId.asJson,
+          "message"                    -> x.message.asJson,
+          "edited_message"             -> x.editedMessage.asJson,
+          "channel_post"               -> x.channelPost.asJson,
+          "edited_channel_post"        -> x.editedChannelPost.asJson,
+          "business_connection"        -> x.businessConnection.asJson,
+          "business_message"           -> x.businessMessage.asJson,
+          "edited_business_message"    -> x.editedBusinessMessage.asJson,
+          "deleted_business_messages"  -> x.deletedBusinessMessages.asJson,
+          "guest_message"              -> x.guestMessage.asJson,
+          "message_reaction"           -> x.messageReaction.asJson,
+          "message_reaction_count"     -> x.messageReactionCount.asJson,
+          "inline_query"               -> x.inlineQuery.asJson,
+          "chosen_inline_result"       -> x.chosenInlineResult.asJson,
+          "callback_query"             -> x.callbackQuery.asJson,
+          "shipping_query"             -> x.shippingQuery.asJson,
+          "pre_checkout_query"         -> x.preCheckoutQuery.asJson,
+          "purchased_paid_media"       -> x.purchasedPaidMedia.asJson,
+          "poll"                       -> x.poll.asJson,
+          "poll_answer"                -> x.pollAnswer.asJson,
+          "my_chat_member"             -> x.myChatMember.asJson,
+          "chat_member"                -> x.chatMember.asJson,
+          "chat_join_request"          -> x.chatJoinRequest.asJson,
+          "chat_boost"                 -> x.chatBoost.asJson,
+          "removed_chat_boost"         -> x.removedChatBoost.asJson,
+          "managed_bot"                -> x.managedBot.asJson,
+          "subscription"               -> x.subscription.asJson,
+          "stopped_message_generation" -> x.stoppedMessageGeneration.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -8899,33 +9158,34 @@ object CirceImplicits {
   implicit lazy val updateDecoder: Decoder[Update] =
     Decoder.instance { h =>
       for {
-        _updateId                <- h.get[Int]("update_id")
-        _message                 <- h.get[Option[Message]]("message")
-        _editedMessage           <- h.get[Option[Message]]("edited_message")
-        _channelPost             <- h.get[Option[Message]]("channel_post")
-        _editedChannelPost       <- h.get[Option[Message]]("edited_channel_post")
-        _businessConnection      <- h.get[Option[BusinessConnection]]("business_connection")
-        _businessMessage         <- h.get[Option[Message]]("business_message")
-        _editedBusinessMessage   <- h.get[Option[Message]]("edited_business_message")
-        _deletedBusinessMessages <- h.get[Option[BusinessMessagesDeleted]]("deleted_business_messages")
-        _guestMessage            <- h.get[Option[Message]]("guest_message")
-        _messageReaction         <- h.get[Option[MessageReactionUpdated]]("message_reaction")
-        _messageReactionCount    <- h.get[Option[MessageReactionCountUpdated]]("message_reaction_count")
-        _inlineQuery             <- h.get[Option[InlineQuery]]("inline_query")
-        _chosenInlineResult      <- h.get[Option[ChosenInlineResult]]("chosen_inline_result")
-        _callbackQuery           <- h.get[Option[CallbackQuery]]("callback_query")
-        _shippingQuery           <- h.get[Option[ShippingQuery]]("shipping_query")
-        _preCheckoutQuery        <- h.get[Option[PreCheckoutQuery]]("pre_checkout_query")
-        _purchasedPaidMedia      <- h.get[Option[PaidMediaPurchased]]("purchased_paid_media")
-        _poll                    <- h.get[Option[Poll]]("poll")
-        _pollAnswer              <- h.get[Option[PollAnswer]]("poll_answer")
-        _myChatMember            <- h.get[Option[ChatMemberUpdated]]("my_chat_member")
-        _chatMember              <- h.get[Option[ChatMemberUpdated]]("chat_member")
-        _chatJoinRequest         <- h.get[Option[ChatJoinRequest]]("chat_join_request")
-        _chatBoost               <- h.get[Option[ChatBoostUpdated]]("chat_boost")
-        _removedChatBoost        <- h.get[Option[ChatBoostRemoved]]("removed_chat_boost")
-        _managedBot              <- h.get[Option[ManagedBotUpdated]]("managed_bot")
-        _subscription            <- h.get[Option[BotSubscriptionUpdated]]("subscription")
+        _updateId                 <- h.get[Int]("update_id")
+        _message                  <- h.get[Option[Message]]("message")
+        _editedMessage            <- h.get[Option[Message]]("edited_message")
+        _channelPost              <- h.get[Option[Message]]("channel_post")
+        _editedChannelPost        <- h.get[Option[Message]]("edited_channel_post")
+        _businessConnection       <- h.get[Option[BusinessConnection]]("business_connection")
+        _businessMessage          <- h.get[Option[Message]]("business_message")
+        _editedBusinessMessage    <- h.get[Option[Message]]("edited_business_message")
+        _deletedBusinessMessages  <- h.get[Option[BusinessMessagesDeleted]]("deleted_business_messages")
+        _guestMessage             <- h.get[Option[Message]]("guest_message")
+        _messageReaction          <- h.get[Option[MessageReactionUpdated]]("message_reaction")
+        _messageReactionCount     <- h.get[Option[MessageReactionCountUpdated]]("message_reaction_count")
+        _inlineQuery              <- h.get[Option[InlineQuery]]("inline_query")
+        _chosenInlineResult       <- h.get[Option[ChosenInlineResult]]("chosen_inline_result")
+        _callbackQuery            <- h.get[Option[CallbackQuery]]("callback_query")
+        _shippingQuery            <- h.get[Option[ShippingQuery]]("shipping_query")
+        _preCheckoutQuery         <- h.get[Option[PreCheckoutQuery]]("pre_checkout_query")
+        _purchasedPaidMedia       <- h.get[Option[PaidMediaPurchased]]("purchased_paid_media")
+        _poll                     <- h.get[Option[Poll]]("poll")
+        _pollAnswer               <- h.get[Option[PollAnswer]]("poll_answer")
+        _myChatMember             <- h.get[Option[ChatMemberUpdated]]("my_chat_member")
+        _chatMember               <- h.get[Option[ChatMemberUpdated]]("chat_member")
+        _chatJoinRequest          <- h.get[Option[ChatJoinRequest]]("chat_join_request")
+        _chatBoost                <- h.get[Option[ChatBoostUpdated]]("chat_boost")
+        _removedChatBoost         <- h.get[Option[ChatBoostRemoved]]("removed_chat_boost")
+        _managedBot               <- h.get[Option[ManagedBotUpdated]]("managed_bot")
+        _subscription             <- h.get[Option[BotSubscriptionUpdated]]("subscription")
+        _stoppedMessageGeneration <- h.get[Option[MessageGenerationStopped]]("stopped_message_generation")
       } yield {
         Update(
           updateId = _updateId,
@@ -8954,7 +9214,8 @@ object CirceImplicits {
           chatBoost = _chatBoost,
           removedChatBoost = _removedChatBoost,
           managedBot = _managedBot,
-          subscription = _subscription
+          subscription = _subscription,
+          stoppedMessageGeneration = _stoppedMessageGeneration
         )
       }
     }

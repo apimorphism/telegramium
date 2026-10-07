@@ -227,9 +227,11 @@ sealed trait MaybeInaccessibleMessage {}
   * @param checklistTasksAdded
   *   Optional. Service message: tasks were added to a checklist
   * @param communityChatAdded
-  *   Optional. Service message: chat added to a Community
+  *   Optional. Service message: chat or bot added to a Community
+  * @param communityChatJoined
+  *   Optional. Service message: chat was joined by a user from a Community
   * @param communityChatRemoved
-  *   Optional. Service message: chat removed from a Community
+  *   Optional. Service message: chat or bot removed from a Community
   * @param directMessagePriceChanged
   *   Optional. Service message: the price for paid messages in the corresponding direct messages chat of a channel has
   *   changed
@@ -377,6 +379,7 @@ final case class Message(
   checklistTasksDone: Option[ChecklistTasksDone] = Option.empty,
   checklistTasksAdded: Option[ChecklistTasksAdded] = Option.empty,
   communityChatAdded: Option[CommunityChatAdded] = Option.empty,
+  communityChatJoined: Option[CommunityChatJoined] = Option.empty,
   communityChatRemoved: Option[CommunityChatRemoved.type] = Option.empty,
   directMessagePriceChanged: Option[DirectMessagePriceChanged] = Option.empty,
   forumTopicCreated: Option[ForumTopicCreated] = Option.empty,

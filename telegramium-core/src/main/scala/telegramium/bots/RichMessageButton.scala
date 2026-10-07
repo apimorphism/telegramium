@@ -1,17 +1,14 @@
 package telegramium.bots
 
-/** This object represents one button of an inline keyboard. Exactly one of the fields other than text,
-  * icon_custom_emoji_id, and style must be used to specify the type of the button.
+/** This object represents a button in a RichMessage. Exactly one of the fields other than text and style must be used
+  * to specify the type of the button.
   *
   * @param text
-  *   Label text on the button
-  * @param iconCustomEmojiId
-  *   Optional. Unique identifier of the custom emoji shown before the text of the button. Can only be used by bots that
-  *   purchased additional usernames on Fragment or in the messages directly sent by the bot to private, group and
-  *   supergroup chats if the owner of the bot has a Telegram Premium subscription.
+  *   Text of the button. May contain only plain text, RichTextCustomEmoji and RichTextDateTime entities.
   * @param style
-  *   Optional. Style of the button. Must be one of “danger” (red), “success” (green) or “primary” (blue). If omitted,
-  *   then an app-specific style is used.
+  *   Optional. Style of the button. Must be one of “danger”, “success”, “primary”, or “link” (the button is shown as a
+  *   regular link without borders). Apps may use theme-specific colors for the button background and text based on the
+  *   style. The style “link” is allowed only for callback buttons.
   * @param url
   *   Optional. HTTP or tg:// URL to be opened when the button is pressed. Links tg://user?id=<user_id> can be used to
   *   mention a user by their identifier without using a username, if this is allowed by their privacy settings.
@@ -31,29 +28,19 @@ package telegramium.bots
   *   business account.
   * @param switchInlineQueryCurrentChat
   *   Optional. If set, pressing the button will insert the bot's username and the specified inline query in the current
-  *   chat's input field. May be empty, in which case only the bot's username will be inserted. This offers a quick way
-  *   for the user to open your bot in inline mode in the same chat - good for selecting something from multiple
-  *   options. Not supported in channels and for messages sent in channel direct messages chats and on behalf of a
-  *   business account.
+  *   chat's input field. May be empty, in which case only the bot's username will be inserted. Not supported in
+  *   channels and for messages sent in channel direct messages chats and on behalf of a business account.
   * @param switchInlineQueryChosenChat
   *   Optional. If set, pressing the button will prompt the user to select one of their chats of the specified type,
   *   open that chat and insert the bot's username and the specified inline query in the input field. Not supported for
   *   messages sent in channel direct messages chats and on behalf of a business account.
   * @param copyText
-  *   Optional. Description of the button that copies the specified text to the clipboard
-  * @param callbackGame
-  *   Optional. Description of the game that will be launched when the user presses the button. NOTE: This type of
-  *   button must always be the first button in the first row.
-  * @param pay
-  *   Optional. Specify True, to send a Pay button. Substrings “⭐” and “XTR” in the buttons's text will be replaced with
-  *   a Telegram Star icon. NOTE: This type of button must always be the first button in the first row and can only be
-  *   used in invoice messages.
+  *   Optional. A button that copies the specified text to the clipboard
   * @param disabled
   *   Optional. If set, then the button is disabled and does nothing
   */
-final case class InlineKeyboardButton(
-  text: String,
-  iconCustomEmojiId: Option[String] = Option.empty,
+final case class RichMessageButton(
+  text: iozhik.OpenEnum[RichText],
   style: Option[String] = Option.empty,
   url: Option[String] = Option.empty,
   callbackData: Option[String] = Option.empty,
@@ -63,7 +50,5 @@ final case class InlineKeyboardButton(
   switchInlineQueryCurrentChat: Option[String] = Option.empty,
   switchInlineQueryChosenChat: Option[SwitchInlineQueryChosenChat] = Option.empty,
   copyText: Option[CopyTextButton] = Option.empty,
-  callbackGame: Option[CallbackGame.type] = Option.empty,
-  pay: Option[Boolean] = Option.empty,
   disabled: Option[DisabledButton.type] = Option.empty
 )

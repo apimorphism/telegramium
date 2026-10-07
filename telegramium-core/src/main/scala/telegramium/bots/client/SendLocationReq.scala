@@ -1,6 +1,7 @@
 package telegramium.bots.client
 
 import telegramium.bots.ChatId
+import telegramium.bots.EphemeralMessageParameters
 import telegramium.bots.SuggestedPostParameters
 import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
@@ -20,12 +21,8 @@ import telegramium.bots.KeyboardMarkup
   * @param directMessagesTopicId
   *   Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a
   *   direct messages chat
-  * @param receiverUserId
-  *   For outgoing ephemeral messages, unique identifier of the user who will receive the message; for group and
-  *   supergroup chats only. It is not guaranteed that the user will receive the message, especially if they are
-  *   offline. See ephemeral message sending for more details.
-  * @param callbackQueryId
-  *   For outgoing ephemeral messages, identifier of the callback query which triggered the message if any
+  * @param ephemeralMessageParameters
+  *   A JSON-serialized object containing the parameters of the ephemeral message to send
   * @param horizontalAccuracy
   *   The radius of uncertainty for the location, measured in meters; 0-1500
   * @param livePeriod
@@ -61,8 +58,7 @@ final case class SendLocationReq(
   businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,
   directMessagesTopicId: Option[Long] = Option.empty,
-  receiverUserId: Option[Int] = Option.empty,
-  callbackQueryId: Option[String] = Option.empty,
+  ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
   horizontalAccuracy: Option[Float] = Option.empty,
   livePeriod: Option[Int] = Option.empty,
   heading: Option[Int] = Option.empty,
