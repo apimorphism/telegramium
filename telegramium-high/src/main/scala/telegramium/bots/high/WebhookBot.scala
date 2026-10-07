@@ -12,13 +12,14 @@ import cats.effect.Async
 import cats.effect.Resource
 import cats.syntax.all.*
 
+import io.circe.Json
 import iozhik.DecodingError
-import org.http4s.EntityDecoder
 import org.http4s.HttpRoutes
+import org.http4s.InvalidMessageBodyFailure
 import org.http4s.Uri.Path
 import org.http4s.blaze.server.BlazeServerBuilder
+import org.http4s.circe.jsonDecoder
 import org.http4s.circe.jsonEncoder
-import org.http4s.circe.jsonOf
 import org.http4s.dsl.Http4sDsl
 import org.http4s.implicits.*
 import org.http4s.server.Server
@@ -146,6 +147,13 @@ abstract class WebhookBot[F[_]: Async](
   def onSubscriptionReply(subscription: BotSubscriptionUpdated): F[Option[Method[?]]]          = noopReply(subscription)
   def onStoppedMessageGenerationReply(stopped: MessageGenerationStopped): F[Option[Method[?]]] = noopReply(stopped)
 
+  /** Called before onUpdate for an update containing fields unknown to this version of the library, e.g. a newer Bot
+    * API update type. The raw update may contain personal data, so the default implementation only reports the names of
+    * the unknown fields.
+    */
+  def onUnknownUpdate(update: Update, unknownFields: List[String], json: Json): F[Unit] =
+    Async[F].delay(System.err.println(UnknownUpdateFields.warning(update, unknownFields)))
+
   def onUpdate(update: Update): F[Option[Method[?]]] =
     List(
       update.message.map(msg => onMessageReply(msg) <* onMessage(msg)),
@@ -187,11 +195,18 @@ abstract class WebhookBot[F[_]: Async](
       update.stoppedMessageGeneration.map(stopped =>
         onStoppedMessageGenerationReply(stopped) <* onStoppedMessageGeneration(stopped)
       )
-    ).flatten.head
+    ).flatten.headOption.getOrElse(noopReply(update))
 
-  private implicit val HandleUpdateReqEntityDecoder: EntityDecoder[F, Update] = jsonOf[F, Update]
-
-  private def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Option[Method[?]]] = rawReq.as[Update].flatMap(onUpdate)
+  private def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Option[Method[?]]] =
+    for {
+      json   <- rawReq.as[Json]
+      update <- Async[F].fromEither(
+        json.as[Update].leftMap(e => InvalidMessageBodyFailure("Could not decode Update", Some(e)))
+      )
+      unknownFields = UnknownUpdateFields(update, json)
+      _      <- Monad[F].whenA(unknownFields.nonEmpty)(onUnknownUpdate(update, unknownFields, json))
+      result <- onUpdate(update)
+    } yield result
 
   /** @param port
     *   port used to bind the resulting Server

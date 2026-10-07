@@ -9,8 +9,13 @@ import cats.effect.Async
 import cats.effect.Ref
 import cats.syntax.all.*
 
+import io.circe.Json
+import io.circe.syntax.*
+
 import telegramium.bots.*
+import telegramium.bots.CirceImplicits.*
 import telegramium.bots.client.*
+import telegramium.bots.client.CirceImplicits.getupdatesreqEncoder
 
 abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
 
@@ -77,6 +82,13 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
       _ <- update.stoppedMessageGeneration.fold(Monad[F].unit)(onStoppedMessageGeneration)
     } yield ()
 
+  /** Called before onUpdate for an update containing fields unknown to this version of the library, e.g. a newer Bot
+    * API update type. The raw update may contain personal data, so the default implementation only reports the names of
+    * the unknown fields.
+    */
+  def onUnknownUpdate(update: Update, unknownFields: List[String], json: Json): F[Unit] =
+    Async[F].delay(System.err.println(UnknownUpdateFields.warning(update, unknownFields)))
+
   def onError(e: Throwable): F[Unit] = {
     Async[F].delay(e.printStackTrace())
   }
@@ -86,7 +98,7 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
       offset <- offsetKeeper.getOffset
       seconds = pollInterval.toSeconds.toInt
       updates <- bot
-        .execute(getUpdates(offset = Some(offset), timeout = Some(seconds)))
+        .execute(getRawUpdates(offset, seconds))
         .onError {
           case _: java.util.concurrent.TimeoutException => poll(offsetKeeper)
           case NonFatal(e)                              =>
@@ -98,16 +110,31 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
             } yield ()
         }
       _ <- updates.parTraverse {
-        onUpdate(_).recoverWith { case NonFatal(e) =>
+        handleRawUpdate(_).recoverWith { case NonFatal(e) =>
           onError(e)
         }
       }
-      _    <- updates.map(_.updateId).maximumOption.traverse(max => offsetKeeper.setOffset(max + 1))
+      _ <- updates
+        .flatMap(_.hcursor.get[Int]("update_id").toOption)
+        .maximumOption
+        .traverse(max => offsetKeeper.setOffset(max + 1))
       next <- poll(offsetKeeper)
     } yield {
       next
     }
   }
+
+  /* Updates are decoded one by one, so that an update which can't be decoded doesn't block the others */
+  private def getRawUpdates(offset: Int, timeout: Int): Method[List[Json]] =
+    MethodReq[List[Json]]("getUpdates", GetUpdatesReq(offset = Some(offset), timeout = Some(timeout)).asJson)
+
+  private def handleRawUpdate(json: Json): F[Unit] =
+    for {
+      update <- Async[F].fromEither(json.as[Update])
+      unknownFields = UnknownUpdateFields(update, json)
+      _ <- Monad[F].whenA(unknownFields.nonEmpty)(onUnknownUpdate(update, unknownFields, json))
+      _ <- onUpdate(update)
+    } yield ()
 
   def start(): F[Unit] = {
     for {
