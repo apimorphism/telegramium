@@ -9,12 +9,18 @@ import cats.effect.Async
 import cats.effect.Ref
 import cats.syntax.all.*
 
+import io.circe.Decoder
+import io.circe.Json
+
 import telegramium.bots.*
+import telegramium.bots.CirceImplicits.*
 import telegramium.bots.client.*
 
-abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
+abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods with UnknownUpdateHandling[F] {
 
   import LongPollBot.OffsetKeeper
+
+  protected def asyncF: Async[F] = Async[F]
 
   private def noop[A](a: A) = Monad[F].pure(a).void
 
@@ -86,7 +92,7 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
       offset <- offsetKeeper.getOffset
       seconds = pollInterval.toSeconds.toInt
       updates <- bot
-        .execute(getUpdates(offset = Some(offset), timeout = Some(seconds)))
+        .execute(getRawUpdates(offset, seconds))
         .onError {
           case _: java.util.concurrent.TimeoutException => poll(offsetKeeper)
           case NonFatal(e)                              =>
@@ -98,16 +104,33 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
             } yield ()
         }
       _ <- updates.parTraverse {
-        onUpdate(_).recoverWith { case NonFatal(e) =>
+        handleRawUpdate(_).recoverWith { case NonFatal(e) =>
           onError(e)
         }
       }
-      _    <- updates.map(_.updateId).maximumOption.traverse(max => offsetKeeper.setOffset(max + 1))
+      _ <- updates
+        .flatMap(_.hcursor.get[Int]("update_id").toOption)
+        .maximumOption
+        .traverse(max => offsetKeeper.setOffset(max + 1))
       next <- poll(offsetKeeper)
     } yield {
       next
     }
   }
+
+  /* Updates are decoded one by one, so that an update which can't be decoded doesn't block the others */
+  private def getRawUpdates(offset: Int, timeout: Int): Method[List[Json]] =
+    MethodReq[List[Json]](getUpdates(offset = Some(offset), timeout = Some(timeout)).payload, Decoder[List[Json]])
+
+  private def handleRawUpdate(json: Json): F[Unit] =
+    for {
+      update <- Async[F].fromEither(json.as[Update])
+      unknownFields = UnknownUpdateFields(update, json)
+      _ <- Monad[F].whenA(unknownFields.nonEmpty) {
+        onUnknownUpdate(update, unknownFields, json).recoverWith { case NonFatal(e) => onError(e) }
+      }
+      _ <- onUpdate(update)
+    } yield ()
 
   def start(): F[Unit] = {
     for {

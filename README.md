@@ -93,6 +93,17 @@ The Telegram Bot API is not versioned, which means bots and libraries must try t
 
 Telegramium introduces `OpenEnum`, a wrapper for Telegram Bot API enumerations with two cases: `Known` and `Unknown`. This type allows unknown values to be explicitly handled (similar to `Option` or `Either`), enabling bots using Telegramium to be more robust, improve error handling, and degrade gracefully in light of frequent Telegram Bot API updates.
 
+#### Unknown updates
+
+For the same reason, Telegram may introduce a new update type (a new top-level field on `Update`) before Telegramium adds explicit support for it. When that happens, `LongPollBot` and `WebhookBot` still dispatch the update's known fields as usual, and additionally call `onUnknownUpdate` with the decoded update, the names of the unknown fields and the raw JSON:
+
+```scala
+override def onUnknownUpdate(update: Update, unknownFields: List[String], json: Json): F[Unit] =
+  Async[F].delay(logger.warn(s"Update ${update.updateId} has unknown fields: ${unknownFields.mkString(", ")}"))
+```
+
+By default, a warning is printed to stderr. Detection only looks at top-level fields of `Update` itself, not at new fields nested inside an already-known object (e.g. a new field on `Message`). The raw update may contain personal data, so avoid logging `json` as-is unless you've considered that.
+
 #### Keyboards
 To use smart and safe constructors for keyboard markups, import `telegramium.bots.high.keyboards._`:
 ```scala

@@ -6,19 +6,21 @@ import java.security.Security
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
+import scala.util.control.NonFatal
 
 import cats.Monad
 import cats.effect.Async
 import cats.effect.Resource
 import cats.syntax.all.*
 
+import io.circe.Json
 import iozhik.DecodingError
-import org.http4s.EntityDecoder
 import org.http4s.HttpRoutes
+import org.http4s.InvalidMessageBodyFailure
 import org.http4s.Uri.Path
 import org.http4s.blaze.server.BlazeServerBuilder
+import org.http4s.circe.jsonDecoder
 import org.http4s.circe.jsonEncoder
-import org.http4s.circe.jsonOf
 import org.http4s.dsl.Http4sDsl
 import org.http4s.implicits.*
 import org.http4s.server.Server
@@ -80,9 +82,12 @@ abstract class WebhookBot[F[_]: Async](
   ipAddress: Option[String] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty
-) extends ApiMethods {
+) extends ApiMethods
+    with UnknownUpdateHandling[F] {
 
   private val BotPath = Path.unsafeFromString(if (path.startsWith("/")) path else "/" + path)
+
+  protected def asyncF: Async[F] = Async[F]
 
   private def noop[A](a: A) = Monad[F].pure(a).void
 
@@ -187,11 +192,22 @@ abstract class WebhookBot[F[_]: Async](
       update.stoppedMessageGeneration.map(stopped =>
         onStoppedMessageGenerationReply(stopped) <* onStoppedMessageGeneration(stopped)
       )
-    ).flatten.head
+    ).flatten.headOption.getOrElse(noopReply(update))
 
-  private implicit val HandleUpdateReqEntityDecoder: EntityDecoder[F, Update] = jsonOf[F, Update]
-
-  private def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Option[Method[?]]] = rawReq.as[Update].flatMap(onUpdate)
+  private def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Option[Method[?]]] =
+    for {
+      json   <- rawReq.as[Json]
+      update <- Async[F].fromEither(
+        json.as[Update].leftMap(e => InvalidMessageBodyFailure("Could not decode Update", Some(e)))
+      )
+      unknownFields = UnknownUpdateFields(update, json)
+      _ <- Monad[F].whenA(unknownFields.nonEmpty) {
+        onUnknownUpdate(update, unknownFields, json).recoverWith { case NonFatal(e) =>
+          Async[F].delay(e.printStackTrace())
+        }
+      }
+      result <- onUpdate(update)
+    } yield result
 
   /** @param port
     *   port used to bind the resulting Server
