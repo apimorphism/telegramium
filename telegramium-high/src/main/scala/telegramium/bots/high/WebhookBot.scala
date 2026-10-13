@@ -6,7 +6,6 @@ import java.security.Security
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
-
 import scala.util.control.NonFatal
 
 import cats.Monad
