@@ -9,17 +9,18 @@ import cats.effect.Async
 import cats.effect.Ref
 import cats.syntax.all.*
 
+import io.circe.Decoder
 import io.circe.Json
-import io.circe.syntax.*
 
 import telegramium.bots.*
 import telegramium.bots.CirceImplicits.*
 import telegramium.bots.client.*
-import telegramium.bots.client.CirceImplicits.getupdatesreqEncoder
 
-abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
+abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods with UnknownUpdateHandling[F] {
 
   import LongPollBot.OffsetKeeper
+
+  protected def asyncF: Async[F] = Async[F]
 
   private def noop[A](a: A) = Monad[F].pure(a).void
 
@@ -82,13 +83,6 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
       _ <- update.stoppedMessageGeneration.fold(Monad[F].unit)(onStoppedMessageGeneration)
     } yield ()
 
-  /** Called before onUpdate for an update containing fields unknown to this version of the library, e.g. a newer Bot
-    * API update type. The raw update may contain personal data, so the default implementation only reports the names of
-    * the unknown fields.
-    */
-  def onUnknownUpdate(update: Update, unknownFields: List[String], json: Json): F[Unit] =
-    Async[F].delay(System.err.println(UnknownUpdateFields.warning(update, unknownFields)))
-
   def onError(e: Throwable): F[Unit] = {
     Async[F].delay(e.printStackTrace())
   }
@@ -126,13 +120,15 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods {
 
   /* Updates are decoded one by one, so that an update which can't be decoded doesn't block the others */
   private def getRawUpdates(offset: Int, timeout: Int): Method[List[Json]] =
-    MethodReq[List[Json]]("getUpdates", GetUpdatesReq(offset = Some(offset), timeout = Some(timeout)).asJson)
+    MethodReq[List[Json]](getUpdates(offset = Some(offset), timeout = Some(timeout)).payload, Decoder[List[Json]])
 
   private def handleRawUpdate(json: Json): F[Unit] =
     for {
       update <- Async[F].fromEither(json.as[Update])
       unknownFields = UnknownUpdateFields(update, json)
-      _ <- Monad[F].whenA(unknownFields.nonEmpty)(onUnknownUpdate(update, unknownFields, json))
+      _ <- Monad[F].whenA(unknownFields.nonEmpty) {
+        onUnknownUpdate(update, unknownFields, json).recoverWith { case NonFatal(e) => onError(e) }
+      }
       _ <- onUpdate(update)
     } yield ()
 

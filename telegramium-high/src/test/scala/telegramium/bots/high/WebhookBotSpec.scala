@@ -15,6 +15,7 @@ import org.http4s.circe.*
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
+import telegramium.bots.Message
 import telegramium.bots.Update
 import telegramium.bots.client.Method
 
@@ -58,6 +59,31 @@ class WebhookBotSpec extends AnyFreeSpec with Matchers {
 
     status shouldBe Status.Ok
     unknownUpdates shouldBe List.empty
+  }
+
+  "should still dispatch an update's known fields even if onUnknownUpdate fails" in {
+    val (status, messages) = (for {
+      messages <- Ref.of[IO, List[String]](List.empty)
+      bot = new WebhookBot[IO](api, url = "localhost") {
+        override def onUnknownUpdate(update: Update, unknownFields: List[String], json: Json): IO[Unit] =
+          IO.raiseError(new RuntimeException("reporting failed"))
+        override def onMessage(msg: Message): IO[Unit] = messages.update(msg.text.mkString :: _)
+      }
+      status <- (bot.start(0), BlazeClientBuilder[IO].resource).tupled.use { case (server, client) =>
+        client.status(
+          Request[IO](POST, server.baseUri).withEntity(
+            parse(
+              """{"update_id": 1, "some_future_update": {"id": 0}, "message": {"message_id": 0, "date": 0,
+                |"chat": {"id": 0, "type": "private"}, "text": "hi"}}""".stripMargin
+            ).toOption.get
+          )
+        )
+      }
+      dispatched <- messages.get
+    } yield (status, dispatched)).unsafeRunSync()
+
+    status shouldBe Status.Ok
+    messages shouldBe List("hi")
   }
 
 }

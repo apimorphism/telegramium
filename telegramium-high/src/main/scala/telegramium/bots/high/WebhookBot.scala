@@ -7,6 +7,8 @@ import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
 
+import scala.util.control.NonFatal
+
 import cats.Monad
 import cats.effect.Async
 import cats.effect.Resource
@@ -81,9 +83,12 @@ abstract class WebhookBot[F[_]: Async](
   ipAddress: Option[String] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
   allowedUpdates: List[String] = List.empty
-) extends ApiMethods {
+) extends ApiMethods
+    with UnknownUpdateHandling[F] {
 
   private val BotPath = Path.unsafeFromString(if (path.startsWith("/")) path else "/" + path)
+
+  protected def asyncF: Async[F] = Async[F]
 
   private def noop[A](a: A) = Monad[F].pure(a).void
 
@@ -147,13 +152,6 @@ abstract class WebhookBot[F[_]: Async](
   def onSubscriptionReply(subscription: BotSubscriptionUpdated): F[Option[Method[?]]]          = noopReply(subscription)
   def onStoppedMessageGenerationReply(stopped: MessageGenerationStopped): F[Option[Method[?]]] = noopReply(stopped)
 
-  /** Called before onUpdate for an update containing fields unknown to this version of the library, e.g. a newer Bot
-    * API update type. The raw update may contain personal data, so the default implementation only reports the names of
-    * the unknown fields.
-    */
-  def onUnknownUpdate(update: Update, unknownFields: List[String], json: Json): F[Unit] =
-    Async[F].delay(System.err.println(UnknownUpdateFields.warning(update, unknownFields)))
-
   def onUpdate(update: Update): F[Option[Method[?]]] =
     List(
       update.message.map(msg => onMessageReply(msg) <* onMessage(msg)),
@@ -204,7 +202,11 @@ abstract class WebhookBot[F[_]: Async](
         json.as[Update].leftMap(e => InvalidMessageBodyFailure("Could not decode Update", Some(e)))
       )
       unknownFields = UnknownUpdateFields(update, json)
-      _      <- Monad[F].whenA(unknownFields.nonEmpty)(onUnknownUpdate(update, unknownFields, json))
+      _ <- Monad[F].whenA(unknownFields.nonEmpty) {
+        onUnknownUpdate(update, unknownFields, json).recoverWith { case NonFatal(e) =>
+          Async[F].delay(e.printStackTrace())
+        }
+      }
       result <- onUpdate(update)
     } yield result
 

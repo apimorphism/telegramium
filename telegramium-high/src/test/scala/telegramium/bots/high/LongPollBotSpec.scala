@@ -68,4 +68,45 @@ class LongPollBotSpec extends AnyFreeSpec with Matchers {
     )
   }
 
+  "poll should still dispatch an update's known fields even if onUnknownUpdate fails" in {
+    val update = parse(
+      """
+        [
+          {"update_id": 1, "some_future_update": {"id": 0}, "message": {"message_id": 0, "date": 0, "chat": {"id": 0, "type": "private"}, "text": "hi"}}
+        ]
+      """
+    ).toOption.get
+
+    val api: Api[IO] = new Api[IO] {
+      override def execute[Res](method: Method[Res]): IO[Res] =
+        if (method.payload.json.hcursor.get[Int]("offset").contains(0))
+          IO.fromEither(method.decoder.decodeJson(update))
+        else IO.never
+    }
+
+    val (offset, events) = (for {
+      events        <- Ref.of[IO, List[String]](List.empty)
+      currentOffset <- Ref.of[IO, Int](0)
+      newOffset     <- Deferred[IO, Int]
+      bot = new LongPollBot[IO](api) {
+        override def onMessage(msg: Message): IO[Unit] = events.update(s"message ${msg.text.mkString}" :: _)
+        override def onUnknownUpdate(update: Update, unknownFields: List[String], json: Json): IO[Unit] =
+          IO.raiseError(new RuntimeException("reporting failed"))
+        override def onError(e: Throwable): IO[Unit] = events.update(s"error ${e.getMessage}" :: _)
+      }
+      offsetKeeper = new OffsetKeeper[IO] {
+        def getOffset: IO[Int]               = currentOffset.get
+        def setOffset(offset: Int): IO[Unit] = currentOffset.set(offset) *> newOffset.complete(offset).void
+      }
+      offset <- IO.race(bot.poll(offsetKeeper), newOffset.get).timeout(10.seconds)
+      events <- events.get
+    } yield (offset, events)).unsafeRunSync()
+
+    offset shouldBe Right(2)
+    events should contain theSameElementsAs List(
+      "error reporting failed",
+      "message hi"
+    )
+  }
+
 }
