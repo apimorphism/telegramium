@@ -13,11 +13,18 @@ import org.http4s.multipart.Multipart
 import org.http4s.multipart.Multiparts
 import org.http4s.multipart.Part
 
+import telegramium.bots.NamedInputStream
+
 private[high] object Http4sUtils {
 
   def toFileDataParts[F[_]: Async](files: Map[String, File]): Vector[Part[F]] =
     files.map { case (filename, file) =>
       Part.fileData[F](filename, Path.fromNioPath(file.toPath))(using forAsync)
+    }.toVector
+
+  def toStreamDataParts[F[_]: Async](files: Map[String, NamedInputStream]): Vector[Part[F]] =
+    files.map { case (fieldName, NamedInputStream(filename, stream)) =>
+      Part.fileData[F](fieldName, filename, fs2.io.readInputStream(Async[F].blocking(stream), chunkSize = 8192))
     }.toVector
 
   def toMultipartWithFormData[F[_]: Sync](

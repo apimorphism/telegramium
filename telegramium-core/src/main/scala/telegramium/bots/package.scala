@@ -141,8 +141,9 @@ object CirceImplicits {
     }
 
   implicit lazy val ifileEncoder: Encoder[IFile] = {
-    case x: InputPartFile => x.asJson
-    case x: InputLinkFile => x.asJson
+    case x: InputPartFile   => x.asJson
+    case x: InputLinkFile   => x.asJson
+    case x: InputStreamFile => x.asJson
   }
 
   implicit lazy val inputpartfileEncoder: Encoder[InputPartFile] = (x: InputPartFile) => x.file.getName.asJson
@@ -150,8 +151,12 @@ object CirceImplicits {
   implicit lazy val inputpartfileDecoder: Decoder[InputPartFile] =
     Decoder[String].map(s => InputPartFile(new java.io.File(s)))
 
-  implicit lazy val inputlinkfileEncoder: Encoder[InputLinkFile] = (x: InputLinkFile) => x.file.asJson
-  implicit lazy val inputlinkfileDecoder: Decoder[InputLinkFile] = Decoder[String].map(InputLinkFile.apply)
+  implicit lazy val inputlinkfileEncoder: Encoder[InputLinkFile]     = (x: InputLinkFile) => x.file.asJson
+  implicit lazy val inputlinkfileDecoder: Decoder[InputLinkFile]     = Decoder[String].map(InputLinkFile.apply)
+  implicit lazy val inputstreamfileEncoder: Encoder[InputStreamFile] = (x: InputStreamFile) => x.file.filename.asJson
+
+  implicit lazy val inputstreamfileDecoder: Decoder[InputStreamFile] =
+    Decoder.failedWithMessage[InputStreamFile](s"InputStreamFile cannot be decoded")
 
   implicit lazy val backgroundfillEncoder: Encoder[BackgroundFill] = {
     case freeform_gradient: BackgroundFillFreeformGradient =>

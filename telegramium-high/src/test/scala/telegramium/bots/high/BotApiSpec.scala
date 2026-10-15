@@ -1,6 +1,7 @@
 package telegramium.bots.high
 
 import java.io.File
+import java.io.FileInputStream
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
@@ -19,7 +20,9 @@ import org.scalatest.matchers.should.Matchers
 import telegramium.bots.ChatIntId
 import telegramium.bots.InputLinkFile
 import telegramium.bots.InputPartFile
+import telegramium.bots.InputStreamFile
 import telegramium.bots.Message
+import telegramium.bots.NamedInputStream
 
 class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfterAll with Matchers {
   lazy val container: MockServerContainer = MockServerContainer(MockServerContainerVersion)
@@ -115,6 +118,22 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
       .respond(response().withBody(messageResult))
     val file = new File(this.getClass.getResource("/document.txt").getFile)
     api.execute(Methods.sendDocument(ChatIntId(0), InputPartFile(file))).unsafeRunSync()
+  }
+
+  "should send a file via InputStreamFile as multipart/form-data" in {
+    new MockServerClient("localhost", mockServer.getServerPort)
+      .when(
+        request()
+          .withPath("/sendDocument")
+          .withMethod("POST")
+          .withHeader("Content-Type", "multipart/form-data.*")
+      )
+      .respond(response().withBody(messageResult))
+    val file   = new File(this.getClass.getResource("/document.txt").getFile)
+    val stream = new FileInputStream(file)
+    api
+      .execute(Methods.sendDocument(ChatIntId(0), InputStreamFile(NamedInputStream("document.txt", stream))))
+      .unsafeRunSync()
   }
 
   "should send a file by link as JSON" in {

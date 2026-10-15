@@ -15,9 +15,11 @@ import org.http4s.dsl.io.*
 import org.http4s.multipart.Part
 
 import telegramium.bots.InputPartFile
+import telegramium.bots.InputStreamFile
 import telegramium.bots.client.Method
 import telegramium.bots.high.Http4sUtils.toFileDataParts
 import telegramium.bots.high.Http4sUtils.toMultipartWithFormData
+import telegramium.bots.high.Http4sUtils.toStreamDataParts
 
 class BotApi[F[_]](
   http: Client[F],
@@ -29,11 +31,15 @@ class BotApi[F[_]](
     val inputPartFiles = method.payload.files.collect { case (filename, InputPartFile(file)) =>
       (filename, file)
     }
-    val attachments = toFileDataParts(inputPartFiles)
+    val inputStreamFiles = method.payload.files.collect { case (filename, InputStreamFile(namedStream)) =>
+      (filename, namedStream)
+    }
+    val attachments    = toFileDataParts(inputPartFiles) ++ toStreamDataParts(inputStreamFiles)
+    val fileFieldNames = inputPartFiles.keys.toList ++ inputStreamFiles.keys.toList
 
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/${method.payload.name}"))
-      req <- mkRequest(uri, method.payload.json, inputPartFiles.keys.toList, attachments)
+      req <- mkRequest(uri, method.payload.json, fileFieldNames, attachments)
       res <- handleResponse[Res](method, req)(using method.decoder)
     } yield res
   }
