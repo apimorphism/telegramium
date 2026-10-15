@@ -10,19 +10,19 @@ package telegramium.bots
   * @param duration
   *   Duration of the audio in seconds as defined by the sender
   * @param performer
-  *   Optional. Performer of the audio as defined by the sender or by audio tags
+  *   <em>Optional</em>. Performer of the audio as defined by the sender or by audio tags
   * @param title
-  *   Optional. Title of the audio as defined by the sender or by audio tags
+  *   <em>Optional</em>. Title of the audio as defined by the sender or by audio tags
   * @param fileName
-  *   Optional. Original filename as defined by the sender
+  *   <em>Optional</em>. Original filename as defined by the sender
   * @param mimeType
-  *   Optional. MIME type of the file as defined by the sender
+  *   <em>Optional</em>. MIME type of the file as defined by the sender
   * @param fileSize
-  *   Optional. File size in bytes. It can be bigger than 2&#94;31 and some programming languages may have
+  *   <em>Optional</em>. File size in bytes. It can be bigger than 2&#94;31 and some programming languages may have
   *   difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer
   *   or double-precision float type are safe for storing this value.
   * @param thumbnail
-  *   Optional. Thumbnail of the album cover to which the music file belongs
+  *   <em>Optional</em>. Thumbnail of the album cover to which the music file belongs
   */
 final case class Audio(
   fileId: String,

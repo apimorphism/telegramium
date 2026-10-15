@@ -1,7 +1,7 @@
 package telegramium.bots
 
-/** This object contains information about the users whose identifiers were shared with the bot using a
-  * KeyboardButtonRequestUsers button.
+/** This object contains information about the users whose identifiers were shared with the bot using a <a
+  * href="https://core.telegram.org/bots/api#keyboardbuttonrequestusers">KeyboardButtonRequestUsers</a> button.
   *
   * @param requestId
   *   Identifier of the request

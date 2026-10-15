@@ -11,7 +11,7 @@ import telegramium.bots.KeyboardMarkup
 
 /** @param chatId
   *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-  *   &#064;username
+  *   <code>&#064;username</code>
   * @param voice
   *   Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended),
   *   pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using
@@ -29,19 +29,23 @@ import telegramium.bots.KeyboardMarkup
   * @param caption
   *   Voice message caption, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Mode for parsing entities in the voice message caption. See formatting options for more details.
+  *   Mode for parsing entities in the voice message caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
   *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
-  *   parse_mode
+  *   <em>parse_mode</em>
   * @param duration
   *   Duration of the voice message in seconds
   * @param disableNotification
-  *   Sends the message silently. Users will receive a notification with no sound.
+  *   Sends the message <a href="https://telegram.org/blog/channels-2-0#silent-messages">silently</a>. Users will
+  *   receive a notification with no sound.
   * @param protectContent
   *   Protects the contents of the sent message from forwarding and saving
   * @param allowPaidBroadcast
-  *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-  *   per message. The relevant Stars will be withdrawn from the bot's balance.
+  *   Pass <em>True</em> to allow up to 1000 messages per second, ignoring <a
+  *   href="https://core.telegram.org/bots/faq#how-can-i-message-all-of-my-bot-39s-subscribers-at-once">broadcasting
+  *   limits</a> for a fee of 0.1 Telegram Stars per message. The relevant Stars will be withdrawn from the bot's
+  *   balance.
   * @param messageEffectId
   *   Unique identifier of the message effect to be added to the message; for private chats only
   * @param suggestedPostParameters
@@ -50,8 +54,10 @@ import telegramium.bots.KeyboardMarkup
   * @param replyParameters
   *   Description of the message to reply to
   * @param replyMarkup
-  *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove a reply keyboard or to force a reply from the user.
+  *   Additional interface options. A JSON-serialized object for an <a
+  *   href="https://core.telegram.org/bots/features#inline-keyboards">inline keyboard</a>, <a
+  *   href="https://core.telegram.org/bots/features#keyboards">custom reply keyboard</a>, instructions to remove a reply
+  *   keyboard or to force a reply from the user.
   */
 final case class SendVoiceReq(
   chatId: ChatId,

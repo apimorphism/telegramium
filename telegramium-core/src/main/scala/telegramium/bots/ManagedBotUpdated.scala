@@ -6,6 +6,7 @@ package telegramium.bots
   * @param user
   *   User that created the bot
   * @param bot
-  *   Information about the bot. Token of the bot can be fetched using the method getManagedBotToken.
+  *   Information about the bot. Token of the bot can be fetched using the method <a
+  *   href="https://core.telegram.org/bots/api#getmanagedbottoken">getManagedBotToken</a>.
   */
 final case class ManagedBotUpdated(user: User, bot: User)

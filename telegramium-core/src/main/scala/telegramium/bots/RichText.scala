@@ -170,7 +170,9 @@ final case class RichTextStrikethrough(text: iozhik.OpenEnum[RichText]) extends 
 /** A custom emoji.
   *
   * @param customEmojiId
-  *   Unique identifier of the custom emoji. Use getCustomEmojiStickers to get full information about the sticker.
+  *   Unique identifier of the custom emoji. Use <a
+  *   href="https://core.telegram.org/bots/api#getcustomemojistickers">getCustomEmojiStickers</a> to get full
+  *   information about the sticker.
   * @param alternativeText
   *   Alternative emoji for the custom emoji
   */
@@ -199,7 +201,9 @@ final case class RichTextHashtag(text: iozhik.OpenEnum[RichText], hashtag: Strin
   * @param unixTime
   *   The Unix time associated with the entity
   * @param dateTimeFormat
-  *   The string that defines the formatting of the date and time. See date-time entity formatting for more details.
+  *   The string that defines the formatting of the date and time. See <a
+  *   href="https://core.telegram.org/bots/api#date-time-entity-formatting">date-time entity formatting</a> for more
+  *   details.
   */
 final case class RichTextDateTime(text: iozhik.OpenEnum[RichText], unixTime: Long, dateTimeFormat: String)
     extends RichText

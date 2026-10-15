@@ -1,7 +1,7 @@
 package telegramium.bots
 
-/** This object contains information about a user that was shared with the bot using a KeyboardButtonRequestUsers
-  * button.
+/** This object contains information about a user that was shared with the bot using a <a
+  * href="https://core.telegram.org/bots/api#keyboardbuttonrequestusers">KeyboardButtonRequestUsers</a> button.
   *
   * @param userId
   *   Identifier of the shared user. This number may have more than 32 significant bits and some programming languages
@@ -9,13 +9,13 @@ package telegramium.bots
   *   or double-precision float types are safe for storing these identifiers. The bot may not have access to the user
   *   and could be unable to use this identifier, unless the user is already known to the bot by some other means.
   * @param firstName
-  *   Optional. First name of the user, if the name was requested by the bot
+  *   <em>Optional</em>. First name of the user, if the name was requested by the bot
   * @param lastName
-  *   Optional. Last name of the user, if the name was requested by the bot
+  *   <em>Optional</em>. Last name of the user, if the name was requested by the bot
   * @param username
-  *   Optional. Username of the user, if the username was requested by the bot
+  *   <em>Optional</em>. Username of the user, if the username was requested by the bot
   * @param photo
-  *   Optional. Available sizes of the chat photo, if the photo was requested by the bot
+  *   <em>Optional</em>. Available sizes of the chat photo, if the photo was requested by the bot
   */
 final case class SharedUser(
   userId: Long,

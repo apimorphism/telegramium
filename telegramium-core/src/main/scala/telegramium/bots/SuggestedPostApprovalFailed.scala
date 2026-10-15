@@ -6,8 +6,9 @@ package telegramium.bots
   * @param price
   *   Expected price of the post
   * @param suggestedPostMessage
-  *   Optional. Message containing the suggested post whose approval has failed. Note that the Message object in this
-  *   field will not contain the reply_to_message field even if it itself is a reply.
+  *   <em>Optional</em>. Message containing the suggested post whose approval has failed. Note that the <a
+  *   href="https://core.telegram.org/bots/api#message">Message</a> object in this field will not contain the
+  *   <em>reply_to_message</em> field even if it itself is a reply.
   */
 final case class SuggestedPostApprovalFailed(
   price: SuggestedPostPrice,

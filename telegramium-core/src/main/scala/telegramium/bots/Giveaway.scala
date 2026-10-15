@@ -9,20 +9,23 @@ package telegramium.bots
   * @param chats
   *   The list of chats which the user must join to participate in the giveaway
   * @param onlyNewMembers
-  *   Optional. True, if only users who join the chats after the giveaway started should be eligible to win
+  *   <em>Optional</em>. <em>True</em>, if only users who join the chats after the giveaway started should be eligible
+  *   to win
   * @param hasPublicWinners
-  *   Optional. True, if the list of giveaway winners will be visible to everyone
+  *   <em>Optional</em>. <em>True</em>, if the list of giveaway winners will be visible to everyone
   * @param prizeDescription
-  *   Optional. Description of additional giveaway prize
+  *   <em>Optional</em>. Description of additional giveaway prize
   * @param countryCodes
-  *   Optional. A list of two-letter ISO 3166-1 alpha-2 country codes indicating the countries from which eligible users
-  *   for the giveaway must come. If empty, then all users can participate in the giveaway. Users with a phone number
-  *   that was bought on Fragment can always participate in giveaways.
+  *   <em>Optional</em>. A list of two-letter <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1
+  *   alpha-2</a> country codes indicating the countries from which eligible users for the giveaway must come. If empty,
+  *   then all users can participate in the giveaway. Users with a phone number that was bought on Fragment can always
+  *   participate in giveaways.
   * @param prizeStarCount
-  *   Optional. The number of Telegram Stars to be split between giveaway winners; for Telegram Star giveaways only
+  *   <em>Optional</em>. The number of Telegram Stars to be split between giveaway winners; for Telegram Star giveaways
+  *   only
   * @param premiumSubscriptionMonthCount
-  *   Optional. The number of months the Telegram Premium subscription won from the giveaway will be active for; for
-  *   Telegram Premium giveaways only
+  *   <em>Optional</em>. The number of months the Telegram Premium subscription won from the giveaway will be active
+  *   for; for Telegram Premium giveaways only
   */
 final case class Giveaway(
   winnersSelectionDate: Long,

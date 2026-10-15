@@ -3,18 +3,19 @@ package telegramium.bots.client
 /** @param userId
   *   Unique identifier of the user
   * @param excludeUnlimited
-  *   Pass True to exclude gifts that can be purchased an unlimited number of times
+  *   Pass <em>True</em> to exclude gifts that can be purchased an unlimited number of times
   * @param excludeLimitedUpgradable
-  *   Pass True to exclude gifts that can be purchased a limited number of times and can be upgraded to unique
+  *   Pass <em>True</em> to exclude gifts that can be purchased a limited number of times and can be upgraded to unique
   * @param excludeLimitedNonUpgradable
-  *   Pass True to exclude gifts that can be purchased a limited number of times and can't be upgraded to unique
+  *   Pass <em>True</em> to exclude gifts that can be purchased a limited number of times and can't be upgraded to
+  *   unique
   * @param excludeFromBlockchain
-  *   Pass True to exclude gifts that were assigned from the TON blockchain and can't be resold or transferred in
-  *   Telegram
+  *   Pass <em>True</em> to exclude gifts that were assigned from the TON blockchain and can't be resold or transferred
+  *   in Telegram
   * @param excludeUnique
-  *   Pass True to exclude unique gifts
+  *   Pass <em>True</em> to exclude unique gifts
   * @param sortByPrice
-  *   Pass True to sort results by gift price instead of send date. Sorting is applied before pagination.
+  *   Pass <em>True</em> to sort results by gift price instead of send date. Sorting is applied before pagination.
   * @param offset
   *   Offset of the first entry to return as received from the previous request; use an empty string to get the first
   *   chunk of results

@@ -10,26 +10,28 @@ import telegramium.bots.InlineKeyboardMarkup
 /** @param businessConnectionId
   *   Unique identifier of the business connection on behalf of which the message to be edited was sent
   * @param chatId
-  *   Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target
-  *   bot, supergroup or channel in the format &#064;username.
+  *   Required if <em>inline_message_id</em> is not specified. Unique identifier for the target chat or username of the
+  *   target bot, supergroup or channel in the format <code>&#064;username</code>.
   * @param messageId
-  *   Required if inline_message_id is not specified. Identifier of the message to edit.
+  *   Required if <em>inline_message_id</em> is not specified. Identifier of the message to edit.
   * @param inlineMessageId
-  *   Required if chat_id and message_id are not specified. Identifier of the inline message.
+  *   Required if <em>chat_id</em> and <em>message_id</em> are not specified. Identifier of the inline message.
   * @param text
-  *   New text of the message, 1-4096 characters after entity parsing; required if rich_message isn't specified
+  *   New text of the message, 1-4096 characters after entity parsing; required if <em>rich_message</em> isn't specified
   * @param parseMode
-  *   Mode for parsing entities in the message text. See formatting options for more details.
+  *   Mode for parsing entities in the message text. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param entities
   *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
-  *   parse_mode
+  *   <em>parse_mode</em>
   * @param linkPreviewOptions
   *   Link preview generation options for the message
   * @param richMessage
-  *   New rich content of the message; required if text isn't specified. Direct upload of new files and explicit upload
-  *   of files by a URL isn't supported when an inline message is edited.
+  *   New rich content of the message; required if <em>text</em> isn't specified. Direct upload of new files and
+  *   explicit upload of files by a URL isn't supported when an inline message is edited.
   * @param replyMarkup
-  *   A JSON-serialized object for an inline keyboard
+  *   A JSON-serialized object for an <a href="https://core.telegram.org/bots/features#inline-keyboards">inline
+  *   keyboard</a>
   */
 final case class EditMessageTextReq(
   businessConnectionId: Option[String] = Option.empty,

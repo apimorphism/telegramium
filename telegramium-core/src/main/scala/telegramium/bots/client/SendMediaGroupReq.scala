@@ -6,7 +6,7 @@ import telegramium.bots.ReplyParameters
 
 /** @param chatId
   *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-  *   &#064;username
+  *   <code>&#064;username</code>
   * @param businessConnectionId
   *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param messageThreadId
@@ -18,12 +18,15 @@ import telegramium.bots.ReplyParameters
   * @param media
   *   A JSON-serialized Array describing messages to be sent, must include 2-10 items
   * @param disableNotification
-  *   Sends messages silently. Users will receive a notification with no sound.
+  *   Sends messages <a href="https://telegram.org/blog/channels-2-0#silent-messages">silently</a>. Users will receive a
+  *   notification with no sound.
   * @param protectContent
   *   Protects the contents of the sent messages from forwarding and saving
   * @param allowPaidBroadcast
-  *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-  *   per message. The relevant Stars will be withdrawn from the bot's balance.
+  *   Pass <em>True</em> to allow up to 1000 messages per second, ignoring <a
+  *   href="https://core.telegram.org/bots/faq#how-can-i-message-all-of-my-bot-39s-subscribers-at-once">broadcasting
+  *   limits</a> for a fee of 0.1 Telegram Stars per message. The relevant Stars will be withdrawn from the bot's
+  *   balance.
   * @param messageEffectId
   *   Unique identifier of the message effect to be added to the message; for private chats only
   * @param replyParameters

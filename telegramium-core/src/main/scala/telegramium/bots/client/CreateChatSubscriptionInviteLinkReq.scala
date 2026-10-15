@@ -3,7 +3,8 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 
 /** @param chatId
-  *   Unique identifier for the target channel chat or username of the target channel in the format &#064;username
+  *   Unique identifier for the target channel chat or username of the target channel in the format
+  *   <code>&#064;username</code>
   * @param subscriptionPeriod
   *   The number of seconds the subscription will be active for before the next payment. Currently, it must always be
   *   2592000 (30 days).

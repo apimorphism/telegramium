@@ -16,7 +16,7 @@ final case class StoryAreaTypeLink(url: String) extends StoryAreaType
   * @param longitude
   *   Location longitude in degrees
   * @param address
-  *   Optional. Address of the location
+  *   <em>Optional</em>. Address of the location
   */
 final case class StoryAreaTypeLocation(
   latitude: Float,
@@ -48,9 +48,9 @@ final case class StoryAreaTypeUniqueGift(name: String) extends StoryAreaType
   * @param reactionType
   *   Type of the reaction
   * @param isDark
-  *   Optional. Pass True if the reaction area has a dark background
+  *   <em>Optional</em>. Pass <em>True</em> if the reaction area has a dark background
   * @param isFlipped
-  *   Optional. Pass True if reaction area corner is flipped
+  *   <em>Optional</em>. Pass <em>True</em> if reaction area corner is flipped
   */
 final case class StoryAreaTypeSuggestedReaction(
   reactionType: ReactionType,

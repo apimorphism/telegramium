@@ -10,7 +10,7 @@ import telegramium.bots.KeyboardMarkup
 
 /** @param chatId
   *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-  *   &#064;username. Polls can't be sent to channel direct messages chats.
+  *   <code>&#064;username</code>. Polls can't be sent to channel direct messages chats.
   * @param question
   *   Poll question, 1-300 characters
   * @param businessConnectionId
@@ -19,35 +19,38 @@ import telegramium.bots.KeyboardMarkup
   *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
   *   bots with forum topic mode enabled only
   * @param questionParseMode
-  *   Mode for parsing entities in the question. See formatting options for more details. Currently, only custom emoji
-  *   entities are allowed.
+  *   Mode for parsing entities in the question. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details. Currently,
+  *   only custom emoji entities are allowed.
   * @param questionEntities
   *   A JSON-serialized list of special entities that appear in the poll question. It can be specified instead of
-  *   question_parse_mode.
+  *   <em>question_parse_mode</em>.
   * @param options
   *   A JSON-serialized list of 1-12 answer options
   * @param isAnonymous
-  *   True, if the poll needs to be anonymous, defaults to True
+  *   <em>True</em>, if the poll needs to be anonymous, defaults to <em>True</em>
   * @param type
   *   Poll type, “quiz” or “regular”, defaults to “regular”
   * @param allowsMultipleAnswers
-  *   Pass True if the poll allows multiple answers, defaults to False
+  *   Pass <em>True</em> if the poll allows multiple answers, defaults to <em>False</em>
   * @param allowsRevoting
-  *   Pass True if the poll allows to change chosen answer options, defaults to False for quizzes and to True for
-  *   regular polls
+  *   Pass <em>True</em> if the poll allows to change chosen answer options, defaults to <em>False</em> for quizzes and
+  *   to <em>True</em> for regular polls
   * @param shuffleOptions
-  *   Pass True if the poll options must be shown in random order
+  *   Pass <em>True</em> if the poll options must be shown in random order
   * @param allowAddingOptions
-  *   Pass True if answer options can be added to the poll after creation; not supported for anonymous polls and quizzes
+  *   Pass <em>True</em> if answer options can be added to the poll after creation; not supported for anonymous polls
+  *   and quizzes
   * @param hideResultsUntilCloses
-  *   Pass True if poll results must be shown only after the poll closes
+  *   Pass <em>True</em> if poll results must be shown only after the poll closes
   * @param membersOnly
-  *   Pass True if voting is limited to users who have been members of the chat where the poll is being sent for more
-  *   than 24 hours; for channel chats only
+  *   Pass <em>True</em> if voting is limited to users who have been members of the chat where the poll is being sent
+  *   for more than 24 hours; for channel chats only
   * @param countryCodes
-  *   A JSON-serialized list of 0-12 two-letter ISO 3166-1 alpha-2 country codes indicating the countries from which
-  *   users can vote in the poll; for channel chats only. Use “FT” as a country code to allow users with anonymous
-  *   numbers to vote. If omitted or empty, then users from any country can participate in the poll.
+  *   A JSON-serialized list of 0-12 two-letter <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1
+  *   alpha-2</a> country codes indicating the countries from which users can vote in the poll; for channel chats only.
+  *   Use “FT” as a country code to allow users with anonymous numbers to vote. If omitted or empty, then users from any
+  *   country can participate in the poll.
   * @param correctOptionIds
   *   A JSON-serialized list of monotonically increasing 0-based identifiers of the correct answer options, required for
   *   polls in quiz mode
@@ -55,43 +58,50 @@ import telegramium.bots.KeyboardMarkup
   *   Text that is shown when a user chooses an incorrect answer or taps on the lamp icon in a quiz-style poll, 0-200
   *   characters with at most 2 line feeds after entities parsing
   * @param explanationParseMode
-  *   Mode for parsing entities in the explanation. See formatting options for more details.
+  *   Mode for parsing entities in the explanation. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param explanationEntities
   *   A JSON-serialized list of special entities that appear in the poll explanation. It can be specified instead of
-  *   explanation_parse_mode.
+  *   <em>explanation_parse_mode</em>.
   * @param explanationMedia
   *   Media added to the quiz explanation
   * @param openPeriod
   *   Amount of time in seconds the poll will be active after creation, 5-2628000. Can't be used together with
-  *   close_date.
+  *   <em>close_date</em>.
   * @param closeDate
   *   Point in time (Unix timestamp) when the poll will be automatically closed. Must be at least 5 and no more than
-  *   2628000 seconds in the future. Can't be used together with open_period.
+  *   2628000 seconds in the future. Can't be used together with <em>open_period</em>.
   * @param isClosed
-  *   Pass True if the poll needs to be immediately closed. This can be useful for poll preview.
+  *   Pass <em>True</em> if the poll needs to be immediately closed. This can be useful for poll preview.
   * @param description
   *   Description of the poll to be sent, 0-1024 characters after entities parsing
   * @param descriptionParseMode
-  *   Mode for parsing entities in the poll description. See formatting options for more details.
+  *   Mode for parsing entities in the poll description. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param descriptionEntities
   *   A JSON-serialized list of special entities that appear in the poll description, which can be specified instead of
-  *   description_parse_mode
+  *   <em>description_parse_mode</em>
   * @param media
   *   Media added to the poll description
   * @param disableNotification
-  *   Sends the message silently. Users will receive a notification with no sound.
+  *   Sends the message <a href="https://telegram.org/blog/channels-2-0#silent-messages">silently</a>. Users will
+  *   receive a notification with no sound.
   * @param protectContent
   *   Protects the contents of the sent message from forwarding and saving
   * @param allowPaidBroadcast
-  *   Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars
-  *   per message. The relevant Stars will be withdrawn from the bot's balance.
+  *   Pass <em>True</em> to allow up to 1000 messages per second, ignoring <a
+  *   href="https://core.telegram.org/bots/faq#how-can-i-message-all-of-my-bot-39s-subscribers-at-once">broadcasting
+  *   limits</a> for a fee of 0.1 Telegram Stars per message. The relevant Stars will be withdrawn from the bot's
+  *   balance.
   * @param messageEffectId
   *   Unique identifier of the message effect to be added to the message; for private chats only
   * @param replyParameters
   *   Description of the message to reply to
   * @param replyMarkup
-  *   Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions
-  *   to remove a reply keyboard or to force a reply from the user.
+  *   Additional interface options. A JSON-serialized object for an <a
+  *   href="https://core.telegram.org/bots/features#inline-keyboards">inline keyboard</a>, <a
+  *   href="https://core.telegram.org/bots/features#keyboards">custom reply keyboard</a>, instructions to remove a reply
+  *   keyboard or to force a reply from the user.
   */
 final case class SendPollReq(
   chatId: ChatId,

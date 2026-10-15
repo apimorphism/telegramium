@@ -7,40 +7,50 @@ package telegramium.bots
   *   languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a
   *   64-bit integer or double-precision float type are safe for storing this identifier.
   * @param isBot
-  *   True, if this user is a bot
+  *   <em>True</em>, if this user is a bot
   * @param firstName
   *   User's or bot's first name
   * @param lastName
-  *   Optional. User's or bot's last name
+  *   <em>Optional</em>. User's or bot's last name
   * @param username
-  *   Optional. User's or bot's username
+  *   <em>Optional</em>. User's or bot's username
   * @param languageCode
-  *   Optional. IETF language tag of the user's language
+  *   <em>Optional</em>. <a href="https://en.wikipedia.org/wiki/IETF_language_tag">IETF language tag</a> of the user's
+  *   language
   * @param isPremium
-  *   Optional. True, if this user is a Telegram Premium user
+  *   <em>Optional</em>. <em>True</em>, if this user is a Telegram Premium user
   * @param addedToAttachmentMenu
-  *   Optional. True, if this user added the bot to the attachment menu
+  *   <em>Optional</em>. <em>True</em>, if this user added the bot to the attachment menu
   * @param canJoinGroups
-  *   Optional. True, if the bot can be invited to groups. Returned only in getMe.
+  *   <em>Optional</em>. <em>True</em>, if the bot can be invited to groups. Returned only in <a
+  *   href="https://core.telegram.org/bots/api#getme">getMe</a>.
   * @param canReadAllGroupMessages
-  *   Optional. True, if privacy mode is disabled for the bot. Returned only in getMe.
+  *   <em>Optional</em>. <em>True</em>, if <a href="https://core.telegram.org/bots/features#privacy-mode">privacy
+  *   mode</a> is disabled for the bot. Returned only in <a href="https://core.telegram.org/bots/api#getme">getMe</a>.
   * @param supportsGuestQueries
-  *   Optional. True, if the bot supports guest queries from chats it is not a member of. Returned only in getMe.
+  *   <em>Optional</em>. <em>True</em>, if the bot supports guest queries from chats it is not a member of. Returned
+  *   only in <a href="https://core.telegram.org/bots/api#getme">getMe</a>.
   * @param supportsInlineQueries
-  *   Optional. True, if the bot supports inline queries. Returned only in getMe.
+  *   <em>Optional</em>. <em>True</em>, if the bot supports inline queries. Returned only in <a
+  *   href="https://core.telegram.org/bots/api#getme">getMe</a>.
   * @param canConnectToBusiness
-  *   Optional. True, if the bot can be connected to a user account to manage it. Returned only in getMe.
+  *   <em>Optional</em>. <em>True</em>, if the bot can be connected to a user account to manage it. Returned only in <a
+  *   href="https://core.telegram.org/bots/api#getme">getMe</a>.
   * @param hasMainWebApp
-  *   Optional. True, if the bot has a main Web App. Returned only in getMe.
+  *   <em>Optional</em>. <em>True</em>, if the bot has a main Web App. Returned only in <a
+  *   href="https://core.telegram.org/bots/api#getme">getMe</a>.
   * @param hasTopicsEnabled
-  *   Optional. True, if the bot has forum topic mode enabled in private chats. Returned only in getMe.
+  *   <em>Optional</em>. <em>True</em>, if the bot has forum topic mode enabled in private chats. Returned only in <a
+  *   href="https://core.telegram.org/bots/api#getme">getMe</a>.
   * @param allowsUsersToCreateTopics
-  *   Optional. True, if the bot allows users to create and delete topics in private chats. Returned only in getMe.
+  *   <em>Optional</em>. <em>True</em>, if the bot allows users to create and delete topics in private chats. Returned
+  *   only in <a href="https://core.telegram.org/bots/api#getme">getMe</a>.
   * @param canManageBots
-  *   Optional. True, if other bots can be created to be controlled by the bot. Returned only in getMe.
+  *   <em>Optional</em>. <em>True</em>, if other bots can be created to be controlled by the bot. Returned only in <a
+  *   href="https://core.telegram.org/bots/api#getme">getMe</a>.
   * @param supportsJoinRequestQueries
-  *   Optional. True, if the bot supports join request queries and can be assigned to process them. Returned only in
-  *   getMe.
+  *   <em>Optional</em>. <em>True</em>, if the bot supports join request queries and can be assigned to process them.
+  *   Returned only in <a href="https://core.telegram.org/bots/api#getme">getMe</a>.
   */
 final case class User(
   id: Long,

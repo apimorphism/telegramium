@@ -5,12 +5,12 @@ package telegramium.bots
   * @param winnerCount
   *   Number of winners in the giveaway
   * @param unclaimedPrizeCount
-  *   Optional. Number of undistributed prizes
+  *   <em>Optional</em>. Number of undistributed prizes
   * @param giveawayMessage
-  *   Optional. Message with the giveaway that was completed, if it wasn't deleted
+  *   <em>Optional</em>. Message with the giveaway that was completed, if it wasn't deleted
   * @param isStarGiveaway
-  *   Optional. True, if the giveaway is a Telegram Star giveaway. Otherwise, currently, the giveaway is a Telegram
-  *   Premium giveaway.
+  *   <em>Optional</em>. <em>True</em>, if the giveaway is a Telegram Star giveaway. Otherwise, currently, the giveaway
+  *   is a Telegram Premium giveaway.
   */
 final case class GiveawayCompleted(
   winnerCount: Int,

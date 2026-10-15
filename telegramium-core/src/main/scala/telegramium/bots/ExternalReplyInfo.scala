@@ -6,56 +6,58 @@ package telegramium.bots
   * @param origin
   *   Origin of the message replied to by the given message
   * @param chat
-  *   Optional. Chat the original message belongs to. Available only if the chat is a supergroup or a channel.
+  *   <em>Optional</em>. Chat the original message belongs to. Available only if the chat is a supergroup or a channel.
   * @param messageId
-  *   Optional. Unique message identifier inside the original chat. Available only if the original chat is a supergroup
-  *   or a channel.
+  *   <em>Optional</em>. Unique message identifier inside the original chat. Available only if the original chat is a
+  *   supergroup or a channel.
   * @param linkPreviewOptions
-  *   Optional. Options used for link preview generation for the original message, if it is a text message
+  *   <em>Optional</em>. Options used for link preview generation for the original message, if it is a text message
   * @param animation
-  *   Optional. Message is an animation, information about the animation
+  *   <em>Optional</em>. Message is an animation, information about the animation
   * @param audio
-  *   Optional. Message is an audio file, information about the file
+  *   <em>Optional</em>. Message is an audio file, information about the file
   * @param document
-  *   Optional. Message is a general file, information about the file
+  *   <em>Optional</em>. Message is a general file, information about the file
   * @param livePhoto
-  *   Optional. Message is a live photo, information about the live photo
+  *   <em>Optional</em>. Message is a live photo, information about the live photo
   * @param paidMedia
-  *   Optional. Message contains paid media; information about the paid media
+  *   <em>Optional</em>. Message contains paid media; information about the paid media
   * @param photo
-  *   Optional. Message is a photo, available sizes of the photo
+  *   <em>Optional</em>. Message is a photo, available sizes of the photo
   * @param sticker
-  *   Optional. Message is a sticker, information about the sticker
+  *   <em>Optional</em>. Message is a sticker, information about the sticker
   * @param story
-  *   Optional. Message is a forwarded story
+  *   <em>Optional</em>. Message is a forwarded story
   * @param video
-  *   Optional. Message is a video, information about the video
+  *   <em>Optional</em>. Message is a video, information about the video
   * @param videoNote
-  *   Optional. Message is a video note, information about the video message
+  *   <em>Optional</em>. Message is a <a href="https://telegram.org/blog/video-messages-and-telescope">video note</a>,
+  *   information about the video message
   * @param voice
-  *   Optional. Message is a voice message, information about the file
+  *   <em>Optional</em>. Message is a voice message, information about the file
   * @param hasMediaSpoiler
-  *   Optional. True, if the message media is covered by a spoiler animation
+  *   <em>Optional</em>. <em>True</em>, if the message media is covered by a spoiler animation
   * @param checklist
-  *   Optional. Message is a checklist
+  *   <em>Optional</em>. Message is a checklist
   * @param contact
-  *   Optional. Message is a shared contact, information about the contact
+  *   <em>Optional</em>. Message is a shared contact, information about the contact
   * @param dice
-  *   Optional. Message is a dice with random value
+  *   <em>Optional</em>. Message is a dice with random value
   * @param game
-  *   Optional. Message is a game, information about the game.
+  *   <em>Optional</em>. Message is a game, information about the game.
   * @param giveaway
-  *   Optional. Message is a scheduled giveaway, information about the giveaway
+  *   <em>Optional</em>. Message is a scheduled giveaway, information about the giveaway
   * @param giveawayWinners
-  *   Optional. A giveaway with public winners was completed
+  *   <em>Optional</em>. A giveaway with public winners was completed
   * @param invoice
-  *   Optional. Message is an invoice for a payment, information about the invoice.
+  *   <em>Optional</em>. Message is an invoice for a <a href="https://core.telegram.org/bots/api#payments">payment</a>,
+  *   information about the invoice.
   * @param location
-  *   Optional. Message is a shared location, information about the location
+  *   <em>Optional</em>. Message is a shared location, information about the location
   * @param poll
-  *   Optional. Message is a native poll, information about the poll
+  *   <em>Optional</em>. Message is a native poll, information about the poll
   * @param venue
-  *   Optional. Message is a venue, information about the venue
+  *   <em>Optional</em>. Message is a venue, information about the venue
   */
 final case class ExternalReplyInfo(
   origin: iozhik.OpenEnum[MessageOrigin],

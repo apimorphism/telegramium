@@ -14,9 +14,9 @@ package telegramium.bots
   * @param date
   *   Date the connection was established in Unix time
   * @param isEnabled
-  *   True, if the connection is active
+  *   <em>True</em>, if the connection is active
   * @param rights
-  *   Optional. Rights of the business bot
+  *   <em>Optional</em>. Rights of the business bot
   */
 final case class BusinessConnection(
   id: String,

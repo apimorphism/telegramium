@@ -2,7 +2,7 @@ package telegramium.bots
 
 sealed trait PaidMedia {}
 
-/** The paid media is a live photo.
+/** The paid media is a <a href="https://core.telegram.org/bots/api#livephoto">live photo</a>.
   *
   * @param livePhoto
   *   The photo
@@ -26,11 +26,11 @@ final case class PaidMediaPhoto(photo: List[PhotoSize] = List.empty) extends Pai
 /** The paid media isn't available before the payment.
   *
   * @param width
-  *   Optional. Media width as defined by the sender
+  *   <em>Optional</em>. Media width as defined by the sender
   * @param height
-  *   Optional. Media height as defined by the sender
+  *   <em>Optional</em>. Media height as defined by the sender
   * @param duration
-  *   Optional. Duration of the media in seconds as defined by the sender
+  *   <em>Optional</em>. Duration of the media in seconds as defined by the sender
   */
 final case class PaidMediaPreview(
   width: Option[Int] = Option.empty,

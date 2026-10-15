@@ -7,13 +7,13 @@ package telegramium.bots
   * @param valign
   *   Vertical cell content alignment. Currently, must be one of “top”, “middle”, or “bottom”.
   * @param text
-  *   Optional. Text in the cell. If omitted, then the cell is invisible.
+  *   <em>Optional</em>. Text in the cell. If omitted, then the cell is invisible.
   * @param isHeader
-  *   Optional. True, if the cell is a header cell
+  *   <em>Optional</em>. <em>True</em>, if the cell is a header cell
   * @param colspan
-  *   Optional. The number of columns the cell spans if it is bigger than 1
+  *   <em>Optional</em>. The number of columns the cell spans if it is bigger than 1
   * @param rowspan
-  *   Optional. The number of rows the cell spans if it is bigger than 1
+  *   <em>Optional</em>. The number of rows the cell spans if it is bigger than 1
   */
 final case class RichBlockTableCell(
   align: String,

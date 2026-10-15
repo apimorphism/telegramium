@@ -11,7 +11,7 @@ package telegramium.bots
   * @param stickers
   *   List of all set stickers
   * @param thumbnail
-  *   Optional. Sticker set thumbnail in the .WEBP, .TGS, or .WEBM format
+  *   <em>Optional</em>. Sticker set thumbnail in the .WEBP, .TGS, or .WEBM format
   */
 final case class StickerSet(
   name: String,

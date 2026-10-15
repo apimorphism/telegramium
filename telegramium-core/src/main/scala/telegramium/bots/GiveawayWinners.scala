@@ -13,20 +13,22 @@ package telegramium.bots
   * @param winners
   *   List of up to 100 winners of the giveaway
   * @param additionalChatCount
-  *   Optional. The number of other chats the user had to join in order to be eligible for the giveaway
+  *   <em>Optional</em>. The number of other chats the user had to join in order to be eligible for the giveaway
   * @param prizeStarCount
-  *   Optional. The number of Telegram Stars that were split between giveaway winners; for Telegram Star giveaways only
+  *   <em>Optional</em>. The number of Telegram Stars that were split between giveaway winners; for Telegram Star
+  *   giveaways only
   * @param premiumSubscriptionMonthCount
-  *   Optional. The number of months the Telegram Premium subscription won from the giveaway will be active for; for
-  *   Telegram Premium giveaways only
+  *   <em>Optional</em>. The number of months the Telegram Premium subscription won from the giveaway will be active
+  *   for; for Telegram Premium giveaways only
   * @param unclaimedPrizeCount
-  *   Optional. Number of undistributed prizes
+  *   <em>Optional</em>. Number of undistributed prizes
   * @param onlyNewMembers
-  *   Optional. True, if only users who had joined the chats after the giveaway started were eligible to win
+  *   <em>Optional</em>. <em>True</em>, if only users who had joined the chats after the giveaway started were eligible
+  *   to win
   * @param wasRefunded
-  *   Optional. True, if the giveaway was canceled because the payment for it was refunded
+  *   <em>Optional</em>. <em>True</em>, if the giveaway was canceled because the payment for it was refunded
   * @param prizeDescription
-  *   Optional. Description of additional giveaway prize
+  *   <em>Optional</em>. Description of additional giveaway prize
   */
 final case class GiveawayWinners(
   chat: Chat,

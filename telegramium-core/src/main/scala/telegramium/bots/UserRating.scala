@@ -10,7 +10,7 @@ package telegramium.bots
   * @param currentLevelRating
   *   The rating value required to get the current level
   * @param nextLevelRating
-  *   Optional. The rating value required to get to the next level; omitted if the maximum level was reached
+  *   <em>Optional</em>. The rating value required to get to the next level; omitted if the maximum level was reached
   */
 final case class UserRating(
   level: Int,

@@ -5,14 +5,15 @@ package telegramium.bots
   * @param blocks
   *   The content of the item
   * @param hasCheckbox
-  *   Optional. Pass True if the item has a checkbox
+  *   <em>Optional</em>. Pass <em>True</em> if the item has a checkbox
   * @param isChecked
-  *   Optional. Pass True if the item has a checked checkbox
+  *   <em>Optional</em>. Pass <em>True</em> if the item has a checked checkbox
   * @param value
-  *   Optional. For ordered lists, the numeric value of the item label
+  *   <em>Optional</em>. For ordered lists, the numeric value of the item label
   * @param type
-  *   Optional. For ordered lists, the type of the item label; must be one of “a” for lowercase letters, “A” for
-  *   uppercase letters, “i” for lowercase Roman numerals, “I” for uppercase Roman numerals, or “1” for decimal numbers
+  *   <em>Optional</em>. For ordered lists, the type of the item label; must be one of “a” for lowercase letters, “A”
+  *   for uppercase letters, “i” for lowercase Roman numerals, “I” for uppercase Roman numerals, or “1” for decimal
+  *   numbers
   */
 final case class InputRichBlockListItem(
   blocks: List[InputRichBlock] = List.empty,

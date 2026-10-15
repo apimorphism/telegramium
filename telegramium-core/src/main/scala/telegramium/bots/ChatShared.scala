@@ -1,6 +1,7 @@
 package telegramium.bots
 
-/** This object contains information about a chat that was shared with the bot using a KeyboardButtonRequestChat button.
+/** This object contains information about a chat that was shared with the bot using a <a
+  * href="https://core.telegram.org/bots/api#keyboardbuttonrequestchat">KeyboardButtonRequestChat</a> button.
   *
   * @param requestId
   *   Identifier of the request
@@ -10,11 +11,11 @@ package telegramium.bots
   *   or double-precision float type are safe for storing this identifier. The bot may not have access to the chat and
   *   could be unable to use this identifier, unless the chat is already known to the bot by some other means.
   * @param title
-  *   Optional. Title of the chat, if the title was requested by the bot
+  *   <em>Optional</em>. Title of the chat, if the title was requested by the bot
   * @param username
-  *   Optional. Username of the chat, if the username was requested by the bot and available
+  *   <em>Optional</em>. Username of the chat, if the username was requested by the bot and available
   * @param photo
-  *   Optional. Available sizes of the chat photo, if the photo was requested by the bot
+  *   <em>Optional</em>. Available sizes of the chat photo, if the photo was requested by the bot
   */
 final case class ChatShared(
   requestId: Int,

@@ -3,7 +3,7 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 
 /** @param chatId
-  *   Unique identifier for the chat or username of the channel in the format &#064;username
+  *   Unique identifier for the chat or username of the channel in the format <code>&#064;username</code>
   * @param userId
   *   Unique identifier of the target user
   */

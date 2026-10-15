@@ -7,13 +7,13 @@ package telegramium.bots
   * @param text
   *   Text of the task
   * @param textEntities
-  *   Optional. Special entities that appear in the task text
+  *   <em>Optional</em>. Special entities that appear in the task text
   * @param completedByUser
-  *   Optional. User that completed the task; omitted if the task wasn't completed by a user
+  *   <em>Optional</em>. User that completed the task; omitted if the task wasn't completed by a user
   * @param completedByChat
-  *   Optional. Chat that completed the task; omitted if the task wasn't completed by a chat
+  *   <em>Optional</em>. Chat that completed the task; omitted if the task wasn't completed by a chat
   * @param completionDate
-  *   Optional. Point in time (Unix timestamp) when the task was completed; 0 if the task wasn't completed
+  *   <em>Optional</em>. Point in time (Unix timestamp) when the task was completed; 0 if the task wasn't completed
   */
 final case class ChecklistTask(
   id: Int,

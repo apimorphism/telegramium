@@ -20,7 +20,7 @@ final case class MessageOriginUser(date: Long, senderUser: User) extends Message
   * @param messageId
   *   Unique message identifier inside the chat
   * @param authorSignature
-  *   Optional. Signature of the original post author
+  *   <em>Optional</em>. Signature of the original post author
   */
 final case class MessageOriginChannel(
   date: Long,
@@ -45,7 +45,8 @@ final case class MessageOriginHiddenUser(date: Long, senderUserName: String) ext
   * @param senderChat
   *   Chat that sent the message originally
   * @param authorSignature
-  *   Optional. For messages originally sent by an anonymous chat administrator, original message author signature
+  *   <em>Optional</em>. For messages originally sent by an anonymous chat administrator, original message author
+  *   signature
   */
 final case class MessageOriginChat(date: Long, senderChat: Chat, authorSignature: Option[String] = Option.empty)
     extends MessageOrigin

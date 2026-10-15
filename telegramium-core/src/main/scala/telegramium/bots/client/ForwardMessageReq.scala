@@ -5,12 +5,12 @@ import telegramium.bots.SuggestedPostParameters
 
 /** @param chatId
   *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-  *   &#064;username
+  *   <code>&#064;username</code>
   * @param fromChatId
   *   Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup or
-  *   channel in the format &#064;username)
+  *   channel in the format <code>&#064;username</code>)
   * @param messageId
-  *   Message identifier in the chat specified in from_chat_id
+  *   Message identifier in the chat specified in <em>from_chat_id</em>
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
   *   bots with forum topic mode enabled only
@@ -20,7 +20,8 @@ import telegramium.bots.SuggestedPostParameters
   * @param videoStartTimestamp
   *   New start timestamp for the forwarded video in the message
   * @param disableNotification
-  *   Sends the message silently. Users will receive a notification with no sound.
+  *   Sends the message <a href="https://telegram.org/blog/channels-2-0#silent-messages">silently</a>. Users will
+  *   receive a notification with no sound.
   * @param protectContent
   *   Protects the contents of the forwarded message from forwarding and saving
   * @param messageEffectId

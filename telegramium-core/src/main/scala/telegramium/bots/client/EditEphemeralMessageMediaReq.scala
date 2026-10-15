@@ -5,7 +5,8 @@ import telegramium.bots.InputMedia
 import telegramium.bots.InlineKeyboardMarkup
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
+  *   Unique identifier for the target chat or username of the target supergroup in the format
+  *   <code>&#064;username</code>
   * @param receiverUserId
   *   Identifier of the user who received the message
   * @param ephemeralMessageId
@@ -13,7 +14,8 @@ import telegramium.bots.InlineKeyboardMarkup
   * @param media
   *   A JSON-serialized object for the new media content of the message
   * @param replyMarkup
-  *   A JSON-serialized object for an inline keyboard
+  *   A JSON-serialized object for an <a href="https://core.telegram.org/bots/features#inline-keyboards">inline
+  *   keyboard</a>
   */
 final case class EditEphemeralMessageMediaReq(
   chatId: ChatId,

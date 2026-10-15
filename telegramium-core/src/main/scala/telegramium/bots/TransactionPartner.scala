@@ -7,7 +7,7 @@ sealed trait TransactionPartner {}
   * @param chat
   *   Information about the chat
   * @param gift
-  *   Optional. The gift sent to the chat by the bot
+  *   <em>Optional</em>. The gift sent to the chat by the bot
   */
 final case class TransactionPartnerChat(chat: Chat, gift: Option[Gift] = Option.empty) extends TransactionPartner
 
@@ -17,7 +17,7 @@ final case class TransactionPartnerChat(chat: Chat, gift: Option[Gift] = Option.
   *   The number of Telegram Stars received by the bot for each 1000 Telegram Stars received by the affiliate program
   *   sponsor from referred users
   * @param sponsorUser
-  *   Optional. Information about the bot that sponsored the affiliate program
+  *   <em>Optional</em>. Information about the bot that sponsored the affiliate program
   */
 final case class TransactionPartnerAffiliateProgram(commissionPerMille: Int, sponsorUser: Option[User] = Option.empty)
     extends TransactionPartner
@@ -37,21 +37,22 @@ case object TransactionPartnerTelegramAds extends TransactionPartner
   * @param user
   *   Information about the user
   * @param affiliate
-  *   Optional. Information about the affiliate that received a commission via this transaction. Can be available only
-  *   for “invoice_payment” and “paid_media_payment” transactions.
+  *   <em>Optional</em>. Information about the affiliate that received a commission via this transaction. Can be
+  *   available only for “invoice_payment” and “paid_media_payment” transactions.
   * @param invoicePayload
-  *   Optional. Bot-specified invoice payload. Can be available only for “invoice_payment” transactions.
+  *   <em>Optional</em>. Bot-specified invoice payload. Can be available only for “invoice_payment” transactions.
   * @param subscriptionPeriod
-  *   Optional. The duration of the paid subscription. Can be available only for “invoice_payment” transactions.
+  *   <em>Optional</em>. The duration of the paid subscription. Can be available only for “invoice_payment”
+  *   transactions.
   * @param paidMedia
-  *   Optional. Information about the paid media bought by the user; for “paid_media_payment” transactions only
+  *   <em>Optional</em>. Information about the paid media bought by the user; for “paid_media_payment” transactions only
   * @param paidMediaPayload
-  *   Optional. Bot-specified paid media payload. Can be available only for “paid_media_payment” transactions.
+  *   <em>Optional</em>. Bot-specified paid media payload. Can be available only for “paid_media_payment” transactions.
   * @param gift
-  *   Optional. The gift sent to the user by the bot; for “gift_purchase” transactions only
+  *   <em>Optional</em>. The gift sent to the user by the bot; for “gift_purchase” transactions only
   * @param premiumSubscriptionDuration
-  *   Optional. Number of months the gifted Telegram Premium subscription will be active for; for “premium_purchase”
-  *   transactions only
+  *   <em>Optional</em>. Number of months the gifted Telegram Premium subscription will be active for; for
+  *   “premium_purchase” transactions only
   */
 final case class TransactionPartnerUser(
   transactionType: String,
@@ -65,7 +66,8 @@ final case class TransactionPartnerUser(
   premiumSubscriptionDuration: Option[Int] = Option.empty
 ) extends TransactionPartner
 
-/** Describes a transaction with payment for paid broadcasting.
+/** Describes a transaction with payment for <a href="https://core.telegram.org/bots/api#paid-broadcasts">paid
+  * broadcasting</a>.
   *
   * @param requestCount
   *   The number of successful requests that exceeded regular limits and were therefore billed
@@ -75,7 +77,7 @@ final case class TransactionPartnerTelegramApi(requestCount: Int) extends Transa
 /** Describes a withdrawal transaction with Fragment.
   *
   * @param withdrawalState
-  *   Optional. State of the transaction if the transaction is outgoing
+  *   <em>Optional</em>. State of the transaction if the transaction is outgoing
   */
 final case class TransactionPartnerFragment(
   withdrawalState: Option[iozhik.OpenEnum[RevenueWithdrawalState]] = Option.empty

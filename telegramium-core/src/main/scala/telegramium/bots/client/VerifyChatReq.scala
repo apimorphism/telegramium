@@ -4,7 +4,7 @@ import telegramium.bots.ChatId
 
 /** @param chatId
   *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-  *   &#064;username. Channel direct messages chats can't be verified.
+  *   <code>&#064;username</code>. Channel direct messages chats can't be verified.
   * @param customDescription
   *   Custom description for the verification; 0-70 characters. Must be empty if the organization isn't allowed to
   *   provide a custom verification description.

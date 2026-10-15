@@ -5,24 +5,24 @@ package telegramium.bots
   * @param url
   *   Webhook URL, may be empty if webhook is not set up
   * @param hasCustomCertificate
-  *   True, if a custom certificate was provided for webhook certificate checks
+  *   <em>True</em>, if a custom certificate was provided for webhook certificate checks
   * @param pendingUpdateCount
   *   Number of updates awaiting delivery
   * @param ipAddress
-  *   Optional. Currently used webhook IP address
+  *   <em>Optional</em>. Currently used webhook IP address
   * @param lastErrorDate
-  *   Optional. Unix time for the most recent error that happened when trying to deliver an update via webhook
+  *   <em>Optional</em>. Unix time for the most recent error that happened when trying to deliver an update via webhook
   * @param lastErrorMessage
-  *   Optional. Error message in human-readable format for the most recent error that happened when trying to deliver an
-  *   update via webhook
+  *   <em>Optional</em>. Error message in human-readable format for the most recent error that happened when trying to
+  *   deliver an update via webhook
   * @param lastSynchronizationErrorDate
-  *   Optional. Unix time of the most recent error that happened when trying to synchronize available updates with
-  *   Telegram datacenters
+  *   <em>Optional</em>. Unix time of the most recent error that happened when trying to synchronize available updates
+  *   with Telegram datacenters
   * @param maxConnections
-  *   Optional. The maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
+  *   <em>Optional</em>. The maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
   * @param allowedUpdates
-  *   Optional. A list of update types the bot is subscribed to. Defaults to all update types except chat_member,
-  *   message_reaction, and message_reaction_count.
+  *   <em>Optional</em>. A list of update types the bot is subscribed to. Defaults to all update types except
+  *   <em>chat_member</em>, <em>message_reaction</em>, and <em>message_reaction_count</em>.
   */
 final case class WebhookInfo(
   url: String,

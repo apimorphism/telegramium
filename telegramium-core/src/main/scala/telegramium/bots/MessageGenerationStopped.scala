@@ -7,6 +7,6 @@ package telegramium.bots
   * @param draftId
   *   Unique identifier of the message draft which was stopped
   * @param messageThreadId
-  *   Optional. Unique identifier of the message thread in which the message is generated
+  *   <em>Optional</em>. Unique identifier of the message thread in which the message is generated
   */
 final case class MessageGenerationStopped(chat: Chat, draftId: Int, messageThreadId: Option[Int] = Option.empty)

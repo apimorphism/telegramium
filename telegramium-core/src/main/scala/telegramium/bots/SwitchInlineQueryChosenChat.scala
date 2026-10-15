@@ -4,16 +4,16 @@ package telegramium.bots
   * optional default inline query.
   *
   * @param query
-  *   Optional. The default inline query to be inserted in the input field. If left empty, only the bot's username will
-  *   be inserted.
+  *   <em>Optional</em>. The default inline query to be inserted in the input field. If left empty, only the bot's
+  *   username will be inserted.
   * @param allowUserChats
-  *   Optional. True, if private chats with users can be chosen
+  *   <em>Optional</em>. <em>True</em>, if private chats with users can be chosen
   * @param allowBotChats
-  *   Optional. True, if private chats with bots can be chosen
+  *   <em>Optional</em>. <em>True</em>, if private chats with bots can be chosen
   * @param allowGroupChats
-  *   Optional. True, if group and supergroup chats can be chosen
+  *   <em>Optional</em>. <em>True</em>, if group and supergroup chats can be chosen
   * @param allowChannelChats
-  *   Optional. True, if channel chats can be chosen
+  *   <em>Optional</em>. <em>True</em>, if channel chats can be chosen
   */
 final case class SwitchInlineQueryChosenChat(
   query: Option[String] = Option.empty,

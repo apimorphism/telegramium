@@ -5,26 +5,27 @@ package telegramium.bots
   * @param gift
   *   Information about the gift
   * @param ownedGiftId
-  *   Optional. Unique identifier of the received gift for the bot; only present for gifts received on behalf of
-  *   business accounts
+  *   <em>Optional</em>. Unique identifier of the received gift for the bot; only present for gifts received on behalf
+  *   of business accounts
   * @param convertStarCount
-  *   Optional. Number of Telegram Stars that can be claimed by the receiver by converting the gift; omitted if
+  *   <em>Optional</em>. Number of Telegram Stars that can be claimed by the receiver by converting the gift; omitted if
   *   conversion to Telegram Stars is impossible
   * @param prepaidUpgradeStarCount
-  *   Optional. Number of Telegram Stars that were prepaid for the ability to upgrade the gift
+  *   <em>Optional</em>. Number of Telegram Stars that were prepaid for the ability to upgrade the gift
   * @param isUpgradeSeparate
-  *   Optional. True, if the gift's upgrade was purchased after the gift was sent
+  *   <em>Optional</em>. <em>True</em>, if the gift's upgrade was purchased after the gift was sent
   * @param canBeUpgraded
-  *   Optional. True, if the gift can be upgraded to a unique gift
+  *   <em>Optional</em>. <em>True</em>, if the gift can be upgraded to a unique gift
   * @param text
-  *   Optional. Text of the message that was added to the gift
+  *   <em>Optional</em>. Text of the message that was added to the gift
   * @param entities
-  *   Optional. Special entities that appear in the text
+  *   <em>Optional</em>. Special entities that appear in the text
   * @param isPrivate
-  *   Optional. True, if the sender and gift text are shown only to the gift receiver; otherwise, everyone will be able
-  *   to see them
+  *   <em>Optional</em>. <em>True</em>, if the sender and gift text are shown only to the gift receiver; otherwise,
+  *   everyone will be able to see them
   * @param uniqueGiftNumber
-  *   Optional. Unique number reserved for this gift when upgraded. See the number field in UniqueGift.
+  *   <em>Optional</em>. Unique number reserved for this gift when upgraded. See the <em>number</em> field in <a
+  *   href="https://core.telegram.org/bots/api#uniquegift">UniqueGift</a>.
   */
 final case class GiftInfo(
   gift: Gift,

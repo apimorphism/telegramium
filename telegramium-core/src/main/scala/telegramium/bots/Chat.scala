@@ -9,17 +9,18 @@ package telegramium.bots
   * @param type
   *   Type of the chat, can be either “private”, “group”, “supergroup” or “channel”
   * @param title
-  *   Optional. Title, for supergroups, channels and group chats
+  *   <em>Optional</em>. Title, for supergroups, channels and group chats
   * @param username
-  *   Optional. Username, for private chats, supergroups and channels if available
+  *   <em>Optional</em>. Username, for private chats, supergroups and channels if available
   * @param firstName
-  *   Optional. First name of the other party in a private chat
+  *   <em>Optional</em>. First name of the other party in a private chat
   * @param lastName
-  *   Optional. Last name of the other party in a private chat
+  *   <em>Optional</em>. Last name of the other party in a private chat
   * @param isForum
-  *   Optional. True, if the supergroup chat is a forum (has topics enabled)
+  *   <em>Optional</em>. <em>True</em>, if the supergroup chat is a forum (has <a
+  *   href="https://telegram.org/blog/topics-in-groups-collectible-usernames#topics-in-groups">topics</a> enabled)
   * @param isDirectMessages
-  *   Optional. True, if the chat is the direct messages chat of a channel
+  *   <em>Optional</em>. <em>True</em>, if the chat is the direct messages chat of a channel
   */
 final case class Chat(
   id: Long,

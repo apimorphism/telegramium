@@ -7,7 +7,7 @@ import telegramium.bots.InputProfilePhoto
   * @param photo
   *   The new profile photo to set
   * @param isPublic
-  *   Pass True to set the public photo, which will be visible even if the main photo is hidden by the business
+  *   Pass <em>True</em> to set the public photo, which will be visible even if the main photo is hidden by the business
   *   account's privacy settings. An account can have only one public photo.
   */
 final case class SetBusinessAccountProfilePhotoReq(

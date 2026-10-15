@@ -5,7 +5,7 @@ import telegramium.bots.ReactionType
 
 /** @param chatId
   *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-  *   &#064;username
+  *   <code>&#064;username</code>
   * @param messageId
   *   Identifier of the target message. If the message belongs to a media group, the reaction is set to the first
   *   non-deleted message in the group instead.
@@ -14,7 +14,7 @@ import telegramium.bots.ReactionType
   *   to one reaction per message. A custom emoji reaction can be used if it is either already present on the message or
   *   explicitly allowed by chat administrators. Paid reactions can't be used by bots.
   * @param isBig
-  *   Pass True to set the reaction with a big animation
+  *   Pass <em>True</em> to set the reaction with a big animation
   */
 final case class SetMessageReactionReq(
   chatId: ChatId,

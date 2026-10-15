@@ -5,13 +5,13 @@ package telegramium.bots
   * @param title
   *   Title of the checklist
   * @param titleEntities
-  *   Optional. Special entities that appear in the checklist title
+  *   <em>Optional</em>. Special entities that appear in the checklist title
   * @param tasks
   *   List of tasks in the checklist
   * @param othersCanAddTasks
-  *   Optional. True, if users other than the creator of the list can add tasks to the list
+  *   <em>Optional</em>. <em>True</em>, if users other than the creator of the list can add tasks to the list
   * @param othersCanMarkTasksAsDone
-  *   Optional. True, if users other than the creator of the list can mark tasks as done or not done
+  *   <em>Optional</em>. <em>True</em>, if users other than the creator of the list can mark tasks as done or not done
   */
 final case class Checklist(
   title: String,

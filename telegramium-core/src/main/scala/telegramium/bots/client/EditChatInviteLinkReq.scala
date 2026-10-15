@@ -3,7 +3,7 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target channel in the format &#064;username
+  *   Unique identifier for the target chat or username of the target channel in the format <code>&#064;username</code>
   * @param inviteLink
   *   The invite link to edit
   * @param name
@@ -14,8 +14,8 @@ import telegramium.bots.ChatId
   *   The maximum number of users that can be members of the chat simultaneously after joining the chat via this invite
   *   link; 1-99999
   * @param createsJoinRequest
-  *   True, if users joining the chat via the link need to be approved by chat administrators. If True, member_limit
-  *   can't be specified.
+  *   <em>True</em>, if users joining the chat via the link need to be approved by chat administrators. If
+  *   <em>True</em>, <em>member_limit</em> can't be specified.
   */
 final case class EditChatInviteLinkReq(
   chatId: ChatId,

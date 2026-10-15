@@ -8,7 +8,7 @@ import telegramium.bots.InlineKeyboardMarkup
 /** @param businessConnectionId
   *   Unique identifier of the business connection on behalf of which the message will be sent
   * @param chatId
-  *   Unique identifier for the target chat or username of the target bot in the format &#064;username
+  *   Unique identifier for the target chat or username of the target bot in the format <code>&#064;username</code>
   * @param checklist
   *   A JSON-serialized object for the checklist to send
   * @param disableNotification
@@ -20,7 +20,8 @@ import telegramium.bots.InlineKeyboardMarkup
   * @param replyParameters
   *   A JSON-serialized object for description of the message to reply to
   * @param replyMarkup
-  *   A JSON-serialized object for an inline keyboard
+  *   A JSON-serialized object for an <a href="https://core.telegram.org/bots/features#inline-keyboards">inline
+  *   keyboard</a>
   */
 final case class SendChecklistReq(
   businessConnectionId: String,
