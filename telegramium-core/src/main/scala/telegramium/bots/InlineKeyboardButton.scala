@@ -36,10 +36,13 @@ package telegramium.bots
   *   behalf of a business account.
   * @param switchInlineQueryCurrentChat
   *   <em>Optional</em>. If set, pressing the button will insert the bot's username and the specified inline query in
-  *   the current chat's input field. May be empty, in which case only the bot's username will be inserted.<br><br>This
-  *   offers a quick way for the user to open your bot in inline mode in the same chat - good for selecting something
-  *   from multiple options. Not supported in channels and for messages sent in channel direct messages chats and on
-  *   behalf of a business account.
+  *   the current chat's input field. May be empty, in which case only the bot's username will be inserted.<br>
+  *
+  * <br>
+  *
+  * This offers a quick way for the user to open your bot in inline mode in the same chat - good for selecting something
+  * from multiple options. Not supported in channels and for messages sent in channel direct messages chats and on
+  * behalf of a business account.
   * @param switchInlineQueryChosenChat
   *   <em>Optional</em>. If set, pressing the button will prompt the user to select one of their chats of the specified
   *   type, open that chat and insert the bot's username and the specified inline query in the input field. Not
@@ -47,14 +50,19 @@ package telegramium.bots
   * @param copyText
   *   <em>Optional</em>. Description of the button that copies the specified text to the clipboard
   * @param callbackGame
-  *   <em>Optional</em>. Description of the game that will be launched when the user presses the
-  *   button.<br><br><strong>NOTE:</strong> This type of button <strong>must</strong> always be the first button in the
-  *   first row.
+  *   <em>Optional</em>. Description of the game that will be launched when the user presses the button.<br>
+  *
+  * <br>
+  *
+  * <strong>NOTE:</strong> This type of button <strong>must</strong> always be the first button in the first row.
   * @param pay
   *   <em>Optional</em>. Specify <em>True</em>, to send a <a href="https://core.telegram.org/bots/api#payments">Pay
-  *   button</a>. Substrings “⭐” and “XTR” in the buttons's text will be replaced with a Telegram Star
-  *   icon.<br><br><strong>NOTE:</strong> This type of button <strong>must</strong> always be the first button in the
-  *   first row and can only be used in invoice messages.
+  *   button</a>. Substrings “⭐” and “XTR” in the buttons's text will be replaced with a Telegram Star icon.<br>
+  *
+  * <br>
+  *
+  * <strong>NOTE:</strong> This type of button <strong>must</strong> always be the first button in the first row and can
+  * only be used in invoice messages.
   * @param disabled
   *   <em>Optional</em>. If set, then the button is disabled and does nothing
   */

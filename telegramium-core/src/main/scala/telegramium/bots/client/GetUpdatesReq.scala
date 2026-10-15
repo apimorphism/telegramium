@@ -17,9 +17,12 @@ package telegramium.bots.client
   *   "edited_channel_post", "callback_query"]</code> to only receive updates of these types. See <a
   *   href="https://core.telegram.org/bots/api#update">Update</a> for a complete list of available update types. Specify
   *   an empty list to receive all update types except <em>chat_member</em>, <em>message_reaction</em>, and
-  *   <em>message_reaction_count</em> (default). If not specified, the previous setting will be used.<br><br>Please note
-  *   that this parameter doesn't affect updates created before the call to getUpdates, so unwanted updates may be
-  *   received for a short period of time.
+  *   <em>message_reaction_count</em> (default). If not specified, the previous setting will be used.<br>
+  *
+  * <br>
+  *
+  * Please note that this parameter doesn't affect updates created before the call to getUpdates, so unwanted updates
+  * may be received for a short period of time.
   */
 final case class GetUpdatesReq(
   offset: Option[Int] = Option.empty,

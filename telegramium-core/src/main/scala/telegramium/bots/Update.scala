@@ -1,7 +1,8 @@
 package telegramium.bots
 
-/** This <a href="https://core.telegram.org/bots/api#available-types">object</a> represents an incoming update.<br>At
-  * most <strong>one</strong> of the optional fields can be present in any given update.
+/** This <a href="https://core.telegram.org/bots/api#available-types">object</a> represents an incoming update.<br>
+  *
+  * At most <strong>one</strong> of the optional fields can be present in any given update.
   *
   * @param updateId
   *   The update's unique identifier. Update identifiers start from a certain positive number and increase sequentially.

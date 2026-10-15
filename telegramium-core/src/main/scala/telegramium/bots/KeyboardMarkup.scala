@@ -54,9 +54,12 @@ final case class ForceReply(
   *   <em>Optional</em>. Use this parameter if you want to remove the keyboard for specific users only. Targets: 1)
   *   users that are &#064;mentioned in the <em>text</em> of the <a
   *   href="https://core.telegram.org/bots/api#message">Message</a> object; 2) if the bot's message is a reply to a
-  *   message in the same chat and forum topic, sender of the original message.<br><br><em>Example:</em> A user votes in
-  *   a poll, bot returns confirmation message in reply to the vote and removes the keyboard for that user, while still
-  *   showing the keyboard with poll options to users who haven't voted yet.
+  *   message in the same chat and forum topic, sender of the original message.<br>
+  *
+  * <br>
+  *
+  * <em>Example:</em> A user votes in a poll, bot returns confirmation message in reply to the vote and removes the
+  * keyboard for that user, while still showing the keyboard with poll options to users who haven't voted yet.
   */
 final case class ReplyKeyboardRemove(removeKeyboard: Boolean, selective: Option[Boolean] = Option.empty)
     extends KeyboardMarkup
@@ -85,9 +88,12 @@ final case class ReplyKeyboardRemove(removeKeyboard: Boolean, selective: Option[
   *   <em>Optional</em>. Use this parameter if you want to show the keyboard to specific users only. Targets: 1) users
   *   that are &#064;mentioned in the <em>text</em> of the <a
   *   href="https://core.telegram.org/bots/api#message">Message</a> object; 2) if the bot's message is a reply to a
-  *   message in the same chat and forum topic, sender of the original message.<br><br><em>Example:</em> A user requests
-  *   to change the bot's language, bot replies to the request with a keyboard to select the new language. Other users
-  *   in the group don't see the keyboard.
+  *   message in the same chat and forum topic, sender of the original message.<br>
+  *
+  * <br>
+  *
+  * <em>Example:</em> A user requests to change the bot's language, bot replies to the request with a keyboard to select
+  * the new language. Other users in the group don't see the keyboard.
   * @param forceReply
   *   <em>Optional</em>. Pass <em>True</em> if the reply interface must be shown to the user, as if they had manually
   *   selected the bot's message and tapped 'Reply'

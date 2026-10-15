@@ -80,8 +80,11 @@ trait Methods {
     *   href="https://core.telegram.org/bots/api#game">Game</a> and accepted the conditions via <a
     *   href="https://t.me/botfather">&#064;BotFather</a>, specify the URL that opens your game - note that this will
     *   only work if the query comes from a <a
-    *   href="https://core.telegram.org/bots/api#inlinekeyboardbutton">callback_game</a> button.<br><br>Otherwise, you
-    *   may use links like <code>t.me/your_bot?start=XXXX</code> that open your bot with a parameter.
+    *   href="https://core.telegram.org/bots/api#inlinekeyboardbutton">callback_game</a> button.<br>
+    *
+    * <br>
+    *
+    * Otherwise, you may use links like <code>t.me/your_bot?start=XXXX</code> that open your bot with a parameter.
     * @param cacheTime
     *   The maximum amount of time in seconds that the result of the callback query may be cached client-side. Defaults
     *   to 0.
@@ -123,8 +126,9 @@ trait Methods {
     MethodReq[SentGuestMessage]("answerGuestQuery", req.asJson)
   }
 
-  /** Use this method to send answers to an inline query. On success, <em>True</em> is returned.<br>No more than
-    * <strong>50</strong> results per query are allowed.
+  /** Use this method to send answers to an inline query. On success, <em>True</em> is returned.<br>
+    *
+    * No more than <strong>50</strong> results per query are allowed.
     *
     * @param inlineQueryId
     *   Unique identifier for the answered query
@@ -874,15 +878,29 @@ trait Methods {
     MethodReq[Boolean]("deleteForumTopic", req.asJson)
   }
 
-  /** Use this method to delete a message, including service messages, with the following limitations:<br>- A message
-    * can only be deleted if it was sent less than 48 hours ago.<br>- Service messages about a supergroup, channel, or
-    * forum topic creation can't be deleted.<br>- A dice message in a private chat can only be deleted if it was sent
-    * more than 24 hours ago.<br>- Bots can delete outgoing messages in private chats, groups, and supergroups.<br>-
-    * Bots can delete incoming messages in private chats.<br>- Bots granted <em>can_post_messages</em> permissions can
-    * delete outgoing messages in channels.<br>- If the bot is an administrator of a group, it can delete any message
-    * there.<br>- If the bot has <em>can_delete_messages</em> administrator right in a supergroup or a channel, it can
-    * delete any message there.<br>- If the bot has <em>can_manage_direct_messages</em> administrator right in a
-    * channel, it can delete any message in the corresponding direct messages chat.<br>Returns <em>True</em> on success.
+  /** Use this method to delete a message, including service messages, with the following limitations:<br>
+    *
+    *   - A message can only be deleted if it was sent less than 48 hours ago.<br>
+    *
+    *   - Service messages about a supergroup, channel, or forum topic creation can't be deleted.<br>
+    *
+    *   - A dice message in a private chat can only be deleted if it was sent more than 24 hours ago.<br>
+    *
+    *   - Bots can delete outgoing messages in private chats, groups, and supergroups.<br>
+    *
+    *   - Bots can delete incoming messages in private chats.<br>
+    *
+    *   - Bots granted <em>can_post_messages</em> permissions can delete outgoing messages in channels.<br>
+    *
+    *   - If the bot is an administrator of a group, it can delete any message there.<br>
+    *
+    *   - If the bot has <em>can_delete_messages</em> administrator right in a supergroup or a channel, it can delete
+    *     any message there.<br>
+    *
+    *   - If the bot has <em>can_manage_direct_messages</em> administrator right in a channel, it can delete any message
+    *     in the corresponding direct messages chat.<br>
+    *
+    * Returns <em>True</em> on success.
     *
     * @param chatId
     *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
@@ -2106,9 +2124,12 @@ trait Methods {
     *   "edited_channel_post", "callback_query"]</code> to only receive updates of these types. See <a
     *   href="https://core.telegram.org/bots/api#update">Update</a> for a complete list of available update types.
     *   Specify an empty list to receive all update types except <em>chat_member</em>, <em>message_reaction</em>, and
-    *   <em>message_reaction_count</em> (default). If not specified, the previous setting will be used.<br><br>Please
-    *   note that this parameter doesn't affect updates created before the call to getUpdates, so unwanted updates may
-    *   be received for a short period of time.
+    *   <em>message_reaction_count</em> (default). If not specified, the previous setting will be used.<br>
+    *
+    * <br>
+    *
+    * Please note that this parameter doesn't affect updates created before the call to getUpdates, so unwanted updates
+    * may be received for a short period of time.
     */
   def getUpdates(
     offset: Option[Int] = Option.empty,
@@ -5628,9 +5649,10 @@ trait Methods {
     *   "edited_channel_post", "callback_query"]</code> to only receive updates of these types. See <a
     *   href="https://core.telegram.org/bots/api#update">Update</a> for a complete list of available update types.
     *   Specify an empty list to receive all update types except <em>chat_member</em>, <em>message_reaction</em>, and
-    *   <em>message_reaction_count</em> (default). If not specified, the previous setting will be used.<br>Please note
-    *   that this parameter doesn't affect updates created before the call to the setWebhook, so unwanted updates may be
-    *   received for a short period of time.
+    *   <em>message_reaction_count</em> (default). If not specified, the previous setting will be used.<br>
+    *
+    * Please note that this parameter doesn't affect updates created before the call to the setWebhook, so unwanted
+    * updates may be received for a short period of time.
     * @param dropPendingUpdates
     *   Pass <em>True</em> to drop all pending updates
     * @param secretToken

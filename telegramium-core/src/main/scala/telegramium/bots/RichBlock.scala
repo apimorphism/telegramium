@@ -32,8 +32,8 @@ final case class RichBlockDetails(
   isOpen: Option[Boolean] = Option.empty
 ) extends RichBlock
 
-/** A list of blocks, corresponding to the HTML tag <code>&lt;ul&gt;</code> or <code>&lt;ol&gt;</code> with multiple
-  * nested tags <code>&lt;li&gt;</code>.
+/** A list of blocks, corresponding to the HTML tag <code>‹ul›</code> or <code>‹ol›</code> with multiple nested tags
+  * <code>‹li›</code>.
   *
   * @param items
   *   Items of the list
@@ -146,7 +146,7 @@ final case class RichBlockSlideshow(
   caption: Option[RichBlockCaption] = Option.empty
 ) extends RichBlock
 
-/** A text paragraph, corresponding to the HTML tag <code>&lt;p&gt;</code>.
+/** A text paragraph, corresponding to the HTML tag <code>‹p›</code>.
   *
   * @param text
   *   Text of the block
@@ -249,8 +249,8 @@ final case class RichBlockExpandableBlockQuotation(
   credit: Option[iozhik.OpenEnum[RichText]] = Option.empty
 ) extends RichBlock
 
-/** A section heading, corresponding to the HTML tags <code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>,
-  * <code>&lt;h3&gt;</code>, <code>&lt;h4&gt;</code>, <code>&lt;h5&gt;</code>, or <code>&lt;h6&gt;</code>.
+/** A section heading, corresponding to the HTML tags <code>‹h1›</code>, <code>‹h2›</code>, <code>‹h3›</code>,
+  * <code>‹h4›</code>, <code>‹h5›</code>, or <code>‹h6›</code>.
   *
   * @param text
   *   Text of the block

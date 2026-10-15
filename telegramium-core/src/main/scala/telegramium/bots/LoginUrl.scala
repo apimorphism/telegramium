@@ -8,10 +8,13 @@ package telegramium.bots
   *   An HTTPS URL to be opened with user authorization data added to the query string when the button is pressed. If
   *   the user refuses to provide authorization data, the original URL without information about the user will be
   *   opened. The data added is the same as described in <a
-  *   href="https://core.telegram.org/widgets/login#receiving-authorization-data">Receiving authorization
-  *   data</a>.<br><br><strong>NOTE:</strong> You <strong>must</strong> always check the hash of the received data to
-  *   verify the authentication and the integrity of the data as described in <a
-  *   href="https://core.telegram.org/widgets/login#checking-authorization">Checking authorization</a>.
+  *   href="https://core.telegram.org/widgets/login#receiving-authorization-data">Receiving authorization data</a>.<br>
+  *
+  * <br>
+  *
+  * <strong>NOTE:</strong> You <strong>must</strong> always check the hash of the received data to verify the
+  * authentication and the integrity of the data as described in <a
+  * href="https://core.telegram.org/widgets/login#checking-authorization">Checking authorization</a>.
   * @param forwardText
   *   <em>Optional</em>. New text of the button in forwarded messages
   * @param botUsername
