@@ -196,10 +196,11 @@ class EchoBot[F[_]]()(implicit
       |```
       |""".stripMargin
 
-  // A minimal 1x1 red PNG, written out once so /mediagroup has a local file to upload via InputPartFile.
+  // A 64x64 solid-color PNG, written out once so /mediagroup has a local file to upload via InputPartFile.
+  // (A 1x1 pixel is a valid PNG but Telegram rejects it with IMAGE_PROCESS_FAILED - too trivial to process.)
   lazy val sampleImageFile: java.io.File = {
     val bytes = java.util.Base64.getDecoder.decode(
-      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUAAdafFwAAAAAASUVORK5CYII="
+      "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAT0lEQVR42u3PQQkAAAgEsMt0/QMYywi+hcEKLNO+FgEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGBywIThMEPFAwX+gAAAABJRU5ErkJggg=="
     )
     val file = java.nio.file.Files.createTempFile("telegramium-echobot-sample", ".png").toFile
     java.nio.file.Files.write(file.toPath, bytes)
