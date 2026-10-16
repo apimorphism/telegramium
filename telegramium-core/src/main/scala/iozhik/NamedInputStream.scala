@@ -4,8 +4,8 @@ import io.circe.Decoder
 import io.circe.Encoder
 import io.circe.syntax._
 
-/** A file to upload from an input stream, opened lazily and read exactly once per request attempt, without loading the
-  * whole file into memory.
+/** A file to upload from an input stream, without loading the whole file into memory. `openStream` is called each time
+  * the upload is read, so every read gets a fresh stream.
   */
 final case class NamedInputStream(filename: String, openStream: () => java.io.InputStream)
 
