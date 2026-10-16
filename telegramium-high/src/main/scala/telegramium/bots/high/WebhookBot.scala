@@ -38,6 +38,7 @@ import telegramium.bots.ChosenInlineResult
 import telegramium.bots.CirceImplicits.*
 import telegramium.bots.InlineQuery
 import telegramium.bots.InputPartFile
+import telegramium.bots.InputStreamFile
 import telegramium.bots.ManagedBotUpdated
 import telegramium.bots.Message
 import telegramium.bots.MessageGenerationStopped
@@ -53,6 +54,7 @@ import telegramium.bots.client.Method
 import telegramium.bots.client.Methods as ApiMethods
 import telegramium.bots.high.Http4sUtils.toFileDataParts
 import telegramium.bots.high.Http4sUtils.toMultipartWithFormData
+import telegramium.bots.high.Http4sUtils.toStreamDataParts
 
 /** @param url
   *   HTTPS url to send updates to. Use an empty string to remove webhook integration
@@ -255,11 +257,15 @@ abstract class WebhookBot[F[_]: Async](
           val inputPartFiles = m.payload.files.collect { case (filename, InputPartFile(file)) =>
             (filename, file)
           }
-          val attachments = toFileDataParts(inputPartFiles)
+          val inputStreamFiles = m.payload.files.collect { case (filename, InputStreamFile(stream)) =>
+            (filename, stream)
+          }
+          val attachments = toFileDataParts(inputPartFiles) ++ toStreamDataParts(inputStreamFiles)
           if (attachments.isEmpty) Ok(m.payload.json)
           else {
+            val fileFieldNames = inputPartFiles.keys.toList ++ inputStreamFiles.keys.toList
             for {
-              multipart <- toMultipartWithFormData(m.payload.json, inputPartFiles.keys.toList, attachments)
+              multipart <- toMultipartWithFormData(m.payload.json, fileFieldNames, attachments)
               response  <- Ok(multipart)
             } yield response.withHeaders(multipart.headers)
           }

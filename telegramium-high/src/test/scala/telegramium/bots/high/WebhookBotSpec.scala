@@ -1,5 +1,7 @@
 package telegramium.bots.high
 
+import java.io.ByteArrayInputStream
+
 import cats.effect.IO
 import cats.effect.Ref
 import cats.effect.unsafe.implicits.global
@@ -15,9 +17,13 @@ import org.http4s.circe.*
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
+import telegramium.bots.ChatIntId
+import telegramium.bots.InputStreamFile
 import telegramium.bots.Message
+import telegramium.bots.NamedInputStream
 import telegramium.bots.Update
 import telegramium.bots.client.Method
+import telegramium.bots.client.Methods
 
 class WebhookBotSpec extends AnyFreeSpec with Matchers {
 
@@ -84,6 +90,40 @@ class WebhookBotSpec extends AnyFreeSpec with Matchers {
 
     status shouldBe Status.Ok
     messages shouldBe List("hi")
+  }
+
+  "should send an InputStreamFile attachment from an update reply as multipart/form-data" in {
+    val fileContent = "Lorem ipsum"
+    val bot = new WebhookBot[IO](api, url = "localhost") {
+      override def onMessageReply(msg: Message): IO[Option[Method[?]]] =
+        IO.pure(
+          Option(
+            Methods
+              .sendDocument(
+                ChatIntId(0),
+                InputStreamFile(NamedInputStream("document.txt", new ByteArrayInputStream(fileContent.getBytes)))
+              )
+          )
+        )
+    }
+    val (status, contentType, body) = (bot.start(0), BlazeClientBuilder[IO].resource).tupled
+      .use { case (server, client) =>
+        client.run(
+          Request[IO](POST, server.baseUri).withEntity(
+            parse(
+              """{"update_id": 1, "message": {"message_id": 0, "date": 0,
+                |"chat": {"id": 0, "type": "private"}, "text": "hi"}}""".stripMargin
+            ).toOption.get
+          )
+        ).use { response =>
+          response.as[String].map(body => (response.status, response.contentType.map(_.mediaType.toString), body))
+        }
+      }
+      .unsafeRunSync()
+
+    status shouldBe Status.Ok
+    contentType.exists(_.contains("multipart/form-data")) shouldBe true
+    body should include(fileContent)
   }
 
 }
