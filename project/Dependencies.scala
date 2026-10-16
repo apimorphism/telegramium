@@ -3,17 +3,20 @@ import sbt._
 object Dependencies {
 
   object V {
-    val catsCore         = "2.13.0"
-    val catsEffect       = "3.7.1"
-    val circe            = "0.14.17"
-    val http4s           = "0.23.38"
-    val blazeHttp4s      = "0.23.18"
-    val slf4j            = "2.0.7"
-    val logback          = "1.3.7"
-    val scalatest        = "3.2.20"
-    val scalatestplus    = "3.2.20.0"
-    val testcontainers   = "0.44.1"
-    val mockServerClient = "5.14.0"
+    val catsCore           = "2.13.0"
+    val catsEffect         = "3.7.1"
+    val circe              = "0.14.17"
+    val http4s             = "0.23.38"
+    val blazeHttp4s        = "0.23.18"
+    val slf4j              = "2.0.7"
+    val logback            = "1.3.7"
+    val scalatest          = "3.2.20"
+    val scalatestplus      = "3.2.20.0"
+    val testcontainers     = "0.44.1"
+    val mockServerClient   = "5.14.0"
+    val zio                = "2.0.5"
+    val zioInteropRS       = "2.0.2"
+    val fs2ReactiveStreams = "3.14.0"
   }
 
   val catsCore      = "org.typelevel"     %% "cats-core"       % V.catsCore
@@ -31,6 +34,8 @@ object Dependencies {
     "org.http4s" %% "http4s-blaze-client" % V.blazeHttp4s
   )
 
+  val emberClient = "org.http4s" %% "http4s-ember-client" % V.http4s
+
   val http4sServer = Seq(
     "org.http4s" %% "http4s-dsl"          % V.http4s,
     "org.http4s" %% "http4s-blaze-server" % V.blazeHttp4s
@@ -42,12 +47,22 @@ object Dependencies {
     "org.mock-server" % "mockserver-client-java"          % V.mockServerClient % Test
   )
 
+  // Test-only: exercises how a ZIO user bridges a ZStream into an fs2.Stream (via the Reactive
+  // Streams protocol) when handing a file to the library. zio is pinned to the version
+  // zio-interop-reactivestreams 2.0.2 (the latest release) was built against, and
+  // fs2-reactive-streams to the fs2 version http4s already brings in.
+  val zioStreamsInterop = Seq(
+    "dev.zio" %% "zio-streams"                 % V.zio                % Test,
+    "dev.zio" %% "zio-interop-reactivestreams" % V.zioInteropRS       % Test,
+    "co.fs2"  %% "fs2-reactive-streams"        % V.fs2ReactiveStreams % Test
+  )
+
   val common: Seq[ModuleID] = Seq(catsCore) ++ circe
 
   val telegramiumCore: Seq[ModuleID] = common ++ Seq(scalatest, scalatestplus)
 
-  val telegramiumHigh: Seq[ModuleID] = common ++ Seq(catsEffect, scalatest) ++ http4sServer ++
-    http4sClient ++ testcontainers
+  val telegramiumHigh: Seq[ModuleID] = common ++ Seq(catsEffect, scalatest, emberClient % Test) ++ http4sServer ++
+    http4sClient ++ testcontainers ++ zioStreamsInterop
 
-  val telegramiumExam: Seq[ModuleID] = common ++ Seq(catsEffect) ++ http4sClient
+  val telegramiumExam: Seq[ModuleID] = common ++ Seq(catsEffect, emberClient)
 }

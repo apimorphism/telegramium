@@ -7,7 +7,7 @@ import cats.syntax.option.*
 import com.dimafeng.testcontainers.ForAllTestContainer
 import com.dimafeng.testcontainers.MockServerContainer
 import iozhik.OpenEnum
-import org.http4s.blaze.client.BlazeClientBuilder
+import org.http4s.ember.client.EmberClientBuilder
 import org.mockserver.client.MockServerClient
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.OptionValues
@@ -54,7 +54,7 @@ class LongPollBotISpec
   private val mockServer                  = container.container
 
   private lazy val mockServerClient   = new MockServerClient("localhost", mockServer.getServerPort)
-  private val (httpClient, finalizer) = BlazeClientBuilder[IO].resource.allocated.unsafeRunSync()
+  private val (httpClient, finalizer) = EmberClientBuilder.default[IO].build.allocated.unsafeRunSync()
   private lazy val api                = BotApi(httpClient, mockServer.getEndpoint)
   private lazy val bot                = new TestLongPollBot(api)
 

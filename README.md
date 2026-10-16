@@ -24,6 +24,12 @@ libraryDependencies += "io.github.apimorphism" %% "telegramium-core" % "<version
 libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "<version>"
 ```
 
+`BotApi` works with any http4s client. The examples below use [Ember](https://http4s.org/v0.23/docs/client.html):
+
+```
+libraryDependencies += "org.http4s" %% "http4s-ember-client" % "<http4s version>"
+```
+
 Imports:
 ```scala
 import telegramium.bots.high._
@@ -32,7 +38,7 @@ import telegramium.bots.high.implicits._
 
 Use the `Methods` factory to create requests. You will need an instance of the `BotApi` class to execute them:
 ```scala
-BlazeClientBuilder[F].resource.use { httpClient =>
+EmberClientBuilder.default[F].build.use { httpClient =>
   implicit val api: Api[F] = BotApi(httpClient, baseUrl = s"https://api.telegram.org/bot$token")
   val bot = new MyLongPollBot()
   bot.start()
@@ -86,6 +92,31 @@ WebhookBot.compose[IO](
 For details, have a look
 at the [Github Issue](https://github.com/apimorphism/telegramium/issues/143) and
 the related [Pull Request](https://github.com/apimorphism/telegramium/pull/145).
+
+#### Uploading files
+
+Methods that take a file accept an `IFile`:
+
+- `InputPartFile(file)` uploads a `java.io.File` from disk.
+- `InputLinkFile(url)` lets Telegram fetch the file from a URL, or pass a `file_id` to resend a file already on Telegram's servers.
+- `InputStreamFile(NamedInputStream(filename, openStream))` uploads from a `java.io.InputStream`, streaming it into the request without buffering the whole file in memory. `openStream` is called each time the request body is read, so return a new stream from it every time:
+
+```scala
+import iozhik.NamedInputStream
+
+val file = InputStreamFile(NamedInputStream("report.pdf", () => new FileInputStream("/tmp/report.pdf")))
+sendDocument(chatId = ChatIntId(chatId), document = file).exec
+```
+
+To upload an `fs2.Stream[F, Byte]`, use `InputStreamFiles.fromStream`, and send the file within the resource's scope:
+
+```scala
+InputStreamFiles.fromStream("report.pdf", bytes).use { file =>
+  sendDocument(chatId = ChatIntId(chatId), document = file).exec
+}
+```
+
+Each upload attempt runs the stream from the start, and once the upload stops reading it, the stream is interrupted and its finalizers run. Other streaming libraries can be bridged into an `fs2.Stream` first, e.g. a ZIO `ZStream` via [zio-interop-reactivestreams](https://github.com/zio/interop-reactive-streams) and fs2's `fromPublisher`.
 
 #### OpenEnum
 

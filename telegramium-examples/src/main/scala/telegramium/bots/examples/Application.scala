@@ -4,9 +4,9 @@ import cats.effect.ExitCode
 import cats.effect.IO
 import cats.effect.IOApp
 
-import org.http4s.blaze.client.BlazeClientBuilder
 import org.http4s.client.Client
 import org.http4s.client.middleware.Logger
+import org.http4s.ember.client.EmberClientBuilder
 
 import telegramium.bots.high.Api
 import telegramium.bots.high.BotApi
@@ -14,7 +14,9 @@ import telegramium.bots.high.BotApi
 object Application extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] =
-    BlazeClientBuilder[IO].resource
+    EmberClientBuilder
+      .default[IO]
+      .build
       .use { httpClient =>
         val http = Logger(logBody = false, logHeaders = false)(httpClient)
         args match {
