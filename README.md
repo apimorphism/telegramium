@@ -118,8 +118,6 @@ InputStreamFiles.fromStream("report.pdf", bytes).use { file =>
 
 Each upload attempt runs the stream from the start, and once the upload stops reading it, the stream is interrupted and its finalizers run. Other streaming libraries can be bridged into an `fs2.Stream` first, e.g. a ZIO `ZStream` via [zio-interop-reactivestreams](https://github.com/zio/interop-reactive-streams) and fs2's `fromPublisher`.
 
-With blaze-client, canceling a request doesn't stop its upload: blaze keeps sending the body in the background until it ends. Ember stops sending it.
-
 #### OpenEnum
 
 The Telegram Bot API is not versioned, which means bots and libraries must try to be forward-compatible. Specifically for enumerations, this implies that bots should always anticipate new values being added. Handling these values depends on the bot's business logic. Some apps may simply ignore unknown values, while others might respond with "This message is not supported," save the message for manual processing later, or throw a request handling error.
