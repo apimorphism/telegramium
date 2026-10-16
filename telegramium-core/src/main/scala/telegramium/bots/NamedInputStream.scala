@@ -1,3 +1,3 @@
 package telegramium.bots
 
-final case class NamedInputStream(filename: String, stream: java.io.InputStream)
+final case class NamedInputStream(filename: String, openStream: () => java.io.InputStream)

@@ -129,10 +129,14 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
           .withHeader("Content-Type", "multipart/form-data.*")
       )
       .respond(response().withBody(messageResult))
-    val file   = new File(this.getClass.getResource("/document.txt").getFile)
-    val stream = new FileInputStream(file)
+    val file = new File(this.getClass.getResource("/document.txt").getFile)
     api
-      .execute(Methods.sendDocument(ChatIntId(0), InputStreamFile(NamedInputStream("document.txt", stream))))
+      .execute(
+        Methods.sendDocument(
+          ChatIntId(0),
+          InputStreamFile(NamedInputStream("document.txt", () => new FileInputStream(file)))
+        )
+      )
       .unsafeRunSync()
   }
 

@@ -11,12 +11,13 @@ import telegramium.bots.CirceImplicits._
 class IFileCodecSpec extends AnyFlatSpec with Matchers {
 
   "InputStreamFile" should "encode as the stream's filename, like InputPartFile encodes as the file's name" in {
-    val file = InputStreamFile(NamedInputStream("report.pdf", new ByteArrayInputStream(Array.emptyByteArray)))
+    val file = InputStreamFile(NamedInputStream("report.pdf", () => new ByteArrayInputStream(Array.emptyByteArray)))
     file.asJson shouldBe Json.fromString("report.pdf")
   }
 
   it should "encode the same way whether accessed as IFile or as InputStreamFile directly" in {
-    val file: IFile = InputStreamFile(NamedInputStream("report.pdf", new ByteArrayInputStream(Array.emptyByteArray)))
+    val file: IFile =
+      InputStreamFile(NamedInputStream("report.pdf", () => new ByteArrayInputStream(Array.emptyByteArray)))
     file.asJson shouldBe Json.fromString("report.pdf")
   }
 

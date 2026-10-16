@@ -19,7 +19,7 @@ class Http4sUtilsSpec extends AnyFlatSpec with Matchers {
 
   "Http4sUtils.toStreamDataParts" should "stream the exact bytes of the input stream, even across many chunks" in {
     val content = Array.tabulate(20000)(i => (i % 256).toByte) // bigger than the 8192 chunk size
-    val named   = NamedInputStream("report.pdf", new ByteArrayInputStream(content))
+    val named   = NamedInputStream("report.pdf", () => new ByteArrayInputStream(content))
 
     val parts = Http4sUtils.toStreamDataParts[IO](Map("document" -> named))
     parts should have size 1
@@ -33,8 +33,8 @@ class Http4sUtilsSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "build one independent part per field, keyed by the request field name" in {
-    val thumbnail = NamedInputStream("thumb.jpg", new ByteArrayInputStream("THUMB".getBytes))
-    val document  = NamedInputStream("doc.pdf", new ByteArrayInputStream("DOC".getBytes))
+    val thumbnail = NamedInputStream("thumb.jpg", () => new ByteArrayInputStream("THUMB".getBytes))
+    val document  = NamedInputStream("doc.pdf", () => new ByteArrayInputStream("DOC".getBytes))
 
     val parts = Http4sUtils.toStreamDataParts[IO](Map("thumbnail" -> thumbnail, "document" -> document))
     parts should have size 2
@@ -53,11 +53,28 @@ class Http4sUtilsSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "produce an empty part for an empty stream, without raising" in {
-    val named = NamedInputStream("empty.bin", new ByteArrayInputStream(Array.emptyByteArray))
+    val named = NamedInputStream("empty.bin", () => new ByteArrayInputStream(Array.emptyByteArray))
 
     val parts = Http4sUtils.toStreamDataParts[IO](Map("document" -> named))
     val bytes = parts.head.body.compile.to(Array).unsafeRunSync()
     bytes shouldBe Array.emptyByteArray
+  }
+
+  it should "not open the stream until the part's body is actually pulled" in {
+    val opened = new java.util.concurrent.atomic.AtomicBoolean(false)
+    val named  = NamedInputStream(
+      "report.pdf",
+      () => {
+        opened.set(true)
+        new ByteArrayInputStream("content".getBytes)
+      }
+    )
+
+    val parts = Http4sUtils.toStreamDataParts[IO](Map("document" -> named))
+    opened.get() shouldBe false
+
+    parts.head.body.compile.drain.unsafeRunSync()
+    opened.get() shouldBe true
   }
 
 }

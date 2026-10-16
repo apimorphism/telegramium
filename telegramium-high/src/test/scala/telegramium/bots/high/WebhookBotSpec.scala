@@ -101,7 +101,9 @@ class WebhookBotSpec extends AnyFreeSpec with Matchers {
             Methods
               .sendDocument(
                 ChatIntId(0),
-                InputStreamFile(NamedInputStream("document.txt", new ByteArrayInputStream(fileContent.getBytes)))
+                InputStreamFile(
+                  NamedInputStream("document.txt", () => new ByteArrayInputStream(fileContent.getBytes))
+                )
               )
           )
         )
