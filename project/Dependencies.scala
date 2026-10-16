@@ -46,8 +46,9 @@ object Dependencies {
   )
 
   // Test-only: exercises how a ZIO user bridges a ZStream into an fs2.Stream (via the Reactive
-  // Streams protocol) when handing a file to the library. Pinned to the versions
-  // zio-interop-reactivestreams 2.0.2 was built against, to avoid any binary-compat surprises.
+  // Streams protocol) when handing a file to the library. zio is pinned to the version
+  // zio-interop-reactivestreams 2.0.2 (the latest release) was built against, and
+  // fs2-reactive-streams to the fs2 version http4s already brings in.
   val zioStreamsInterop = Seq(
     "dev.zio" %% "zio-streams"                 % V.zio                % Test,
     "dev.zio" %% "zio-interop-reactivestreams" % V.zioInteropRS       % Test,

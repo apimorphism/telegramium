@@ -131,10 +131,13 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
 
   // The scenarios below each represent a different kind of stream a caller might hand to
   // InputStreamFile: a plain java.io.InputStream (no bridging needed), an fs2.Stream[F, Byte]
-  // (bridged via fs2's own toInputStreamResource), and a ZIO ZStream (bridged via the Reactive
-  // Streams protocol: zio-interop-reactivestreams' toPublisher -> fs2's fromPublisher). For each,
-  // we check both halves of the contract: the bytes actually reach Telegram as the request body,
-  // and the caller's resource gets closed once the request completes.
+  // (bridged via NamedInputStreams.fromStream), and a ZIO ZStream (bridged via the Reactive
+  // Streams protocol: zio-interop-reactivestreams' toPublisher -> fs2's fromPublisher, then
+  // NamedInputStreams.fromStream). For each, we check both halves of the contract: the bytes
+  // actually reach Telegram as the request body, and the caller's resource gets released once
+  // the request completes. Releasing the source when an upload stops early is covered in
+  // NamedInputStreamsSpec instead, since blaze-client keeps pulling a request body after the
+  // request is canceled.
 
   private def expectMultipartSendDocument(): Unit =
     new MockServerClient("localhost", mockServer.getServerPort)
@@ -151,6 +154,9 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
       .retrieveRecordedRequests(request().withPath("/sendDocument"))
       .last
       .getBodyAsString
+
+  private def zioPublisher(zstream: ZStream[Any, Throwable, Byte]): IO[Publisher[Byte]] =
+    IO.blocking(Unsafe.unsafe(implicit u => Runtime.default.unsafe.run(zstream.toPublisher).getOrThrowFiberFailure()))
 
   "should send a file from a plain java.io.InputStream and close it once the request completes" in {
     expectMultipartSendDocument()
@@ -170,53 +176,45 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
     closed.get() shouldBe true
   }
 
-  "should send a file from an fs2.Stream[F, Byte], bridged via fs2.io.toInputStreamResource, and close it once the request completes" in {
+  "should send a file from an fs2.Stream[F, Byte] and finalize it once the request completes" in {
     expectMultipartSendDocument()
-    val closed                       = new AtomicBoolean(false)
+    val finalized                    = new AtomicBoolean(false)
     val content                      = "FS2-STREAM-CONTENT"
     val stream: fs2.Stream[IO, Byte] =
-      fs2.Stream.emits(content.getBytes).covary[IO].onFinalize(IO(closed.set(true)))
+      fs2.Stream.emits(content.getBytes).covary[IO].onFinalize(IO(finalized.set(true)))
 
     Dispatcher
       .sequential[IO]
       .use { dispatcher =>
-        val named = NamedInputStream(
-          "fs2.bin",
-          () => dispatcher.unsafeRunSync(fs2.io.toInputStreamResource(stream).allocated.map(_._1))
-        )
+        val named = NamedInputStreams.fromStream("fs2.bin", stream, dispatcher)
         api.execute(Methods.sendDocument(ChatIntId(0), InputStreamFile(named)))
       }
       .unsafeRunSync()
 
     lastSendDocumentBody() should include(content)
-    closed.get() shouldBe true
+    finalized.get() shouldBe true
   }
 
-  "should send a file from a ZIO ZStream, bridged via Reactive Streams interop, and close it once the request completes" in {
+  "should send a file from a ZIO ZStream and finalize it once the request completes" in {
     expectMultipartSendDocument()
-    val closed                                 = new AtomicBoolean(false)
+    val finalized                              = new AtomicBoolean(false)
     val content                                = "ZIO-STREAM-CONTENT"
     val zstream: ZStream[Any, Throwable, Byte] =
-      ZStream.fromIterable(content.getBytes).ensuring(ZIO.succeed(closed.set(true)))
+      ZStream.fromIterable(content.getBytes).ensuring(ZIO.succeed(finalized.set(true)))
 
     Dispatcher
       .sequential[IO]
       .use { dispatcher =>
-        IO {
-          val publisher: Publisher[Byte] =
-            Unsafe.unsafe(implicit u => Runtime.default.unsafe.run(zstream.toPublisher).getOrThrowFiberFailure())
-          val fs2Stream: fs2.Stream[IO, Byte] = fromPublisher[IO, Byte](publisher, bufferSize = 16)
-          val named                           = NamedInputStream(
-            "zio.bin",
-            () => dispatcher.unsafeRunSync(fs2.io.toInputStreamResource(fs2Stream).allocated.map(_._1))
-          )
-          api.execute(Methods.sendDocument(ChatIntId(0), InputStreamFile(named))).unsafeRunSync()
+        zioPublisher(zstream).flatMap { publisher =>
+          val stream = fromPublisher[IO, Byte](publisher, bufferSize = 16)
+          val named  = NamedInputStreams.fromStream("zio.bin", stream, dispatcher)
+          api.execute(Methods.sendDocument(ChatIntId(0), InputStreamFile(named)))
         }
       }
       .unsafeRunSync()
 
     lastSendDocumentBody() should include(content)
-    closed.get() shouldBe true
+    finalized.get() shouldBe true
   }
 
   "should send a file by link as JSON" in {
