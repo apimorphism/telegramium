@@ -4,22 +4,22 @@ package telegramium.bots
   * with the bot when the corresponding button is pressed.
   *
   * @param requestId
-  *   Signed 32-bit identifier of the request that will be received back in the UsersShared object. Must be unique
-  *   within the message.
+  *   Signed 32-bit identifier of the request that will be received back in the <a
+  *   href="https://core.telegram.org/bots/api#usersshared">UsersShared</a> object. Must be unique within the message.
   * @param userIsBot
-  *   Optional. Pass True to request bots, pass False to request regular users. If not specified, no additional
-  *   restrictions are applied.
+  *   <em>Optional</em>. Pass <em>True</em> to request bots, pass <em>False</em> to request regular users. If not
+  *   specified, no additional restrictions are applied.
   * @param userIsPremium
-  *   Optional. Pass True to request premium users, pass False to request non-premium users. If not specified, no
-  *   additional restrictions are applied.
+  *   <em>Optional</em>. Pass <em>True</em> to request premium users, pass <em>False</em> to request non-premium users.
+  *   If not specified, no additional restrictions are applied.
   * @param maxQuantity
-  *   Optional. The maximum number of users to be selected; 1-10. Defaults to 1.
+  *   <em>Optional</em>. The maximum number of users to be selected; 1-10. Defaults to 1.
   * @param requestName
-  *   Optional. Pass True to request the users' first and last names
+  *   <em>Optional</em>. Pass <em>True</em> to request the users' first and last names
   * @param requestUsername
-  *   Optional. Pass True to request the users' usernames
+  *   <em>Optional</em>. Pass <em>True</em> to request the users' usernames
   * @param requestPhoto
-  *   Optional. Pass True to request the users' photos
+  *   <em>Optional</em>. Pass <em>True</em> to request the users' photos
   */
 final case class KeyboardButtonRequestUsers(
   requestId: Int,

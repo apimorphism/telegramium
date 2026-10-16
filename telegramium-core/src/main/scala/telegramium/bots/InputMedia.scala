@@ -9,7 +9,7 @@ sealed trait InputMedia {}
   * @param longitude
   *   Longitude of the location
   * @param horizontalAccuracy
-  *   Optional. The radius of uncertainty for the location, measured in meters; 0-1500
+  *   <em>Optional</em>. The radius of uncertainty for the location, measured in meters; 0-1500
   */
 final case class InputMediaLocation(latitude: Float, longitude: Float, horizontalAccuracy: Option[Float] = Option.empty)
     extends InputMedia
@@ -18,30 +18,32 @@ final case class InputMediaLocation(latitude: Float, longitude: Float, horizonta
   *
   * @param media
   *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
-  *   for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using
-  *   multipart/form-data under <file_attach_name> name.
+  *   for Telegram to get a file from the Internet, or pass “attach://&lt;file_attach_name&gt;” to upload a new one
+  *   using multipart/form-data under &lt;file_attach_name&gt; name.
   * @param thumbnail
-  *   Optional. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported
+  *   <em>Optional</em>. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported
   *   server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height
   *   should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused
-  *   and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was
-  *   uploaded using multipart/form-data under <file_attach_name>.
+  *   and can be only uploaded as a new file, so you can pass “attach://&lt;file_attach_name&gt;” if the thumbnail was
+  *   uploaded using multipart/form-data under &lt;file_attach_name&gt;.
   * @param caption
-  *   Optional. Caption of the animation to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the animation to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the animation caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the animation caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param showCaptionAboveMedia
-  *   Optional. Pass True if the caption must be shown above the message media
+  *   <em>Optional</em>. Pass <em>True</em> if the caption must be shown above the message media
   * @param width
-  *   Optional. Animation width
+  *   <em>Optional</em>. Animation width
   * @param height
-  *   Optional. Animation height
+  *   <em>Optional</em>. Animation height
   * @param duration
-  *   Optional. Animation duration in seconds
+  *   <em>Optional</em>. Animation duration in seconds
   * @param hasSpoiler
-  *   Optional. Pass True if the animation needs to be covered with a spoiler animation
+  *   <em>Optional</em>. Pass <em>True</em> if the animation needs to be covered with a spoiler animation
   */
 final case class InputMediaAnimation(
   media: IFile,
@@ -67,16 +69,18 @@ final case class InputMediaLink(url: String) extends InputMedia
   *
   * @param media
   *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
-  *   for Telegram to get a file from the Internet, or pass "attach://<file_attach_name>" to upload a new one using
-  *   multipart/form-data under <file_attach_name> name.
+  *   for Telegram to get a file from the Internet, or pass "attach://&lt;file_attach_name&gt;" to upload a new one
+  *   using multipart/form-data under &lt;file_attach_name&gt; name.
   * @param caption
-  *   Optional. Caption of the voice message to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the voice message to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the voice message caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the voice message caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param duration
-  *   Optional. Duration of the voice message in seconds
+  *   <em>Optional</em>. Duration of the voice message in seconds
   */
 final case class InputMediaVoiceNote(
   media: IFile,
@@ -90,18 +94,20 @@ final case class InputMediaVoiceNote(
   *
   * @param media
   *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
-  *   for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using
-  *   multipart/form-data under <file_attach_name> name.
+  *   for Telegram to get a file from the Internet, or pass “attach://&lt;file_attach_name&gt;” to upload a new one
+  *   using multipart/form-data under &lt;file_attach_name&gt; name.
   * @param caption
-  *   Optional. Caption of the photo to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the photo to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the photo caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param showCaptionAboveMedia
-  *   Optional. Pass True if the caption must be shown above the message media
+  *   <em>Optional</em>. Pass <em>True</em> if the caption must be shown above the message media
   * @param hasSpoiler
-  *   Optional. Pass True if the photo needs to be covered with a spoiler animation
+  *   <em>Optional</em>. Pass <em>True</em> if the photo needs to be covered with a spoiler animation
   */
 final case class InputMediaPhoto(
   media: IFile,
@@ -116,38 +122,41 @@ final case class InputMediaPhoto(
   *
   * @param media
   *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
-  *   for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using
-  *   multipart/form-data under <file_attach_name> name.
+  *   for Telegram to get a file from the Internet, or pass “attach://&lt;file_attach_name&gt;” to upload a new one
+  *   using multipart/form-data under &lt;file_attach_name&gt; name.
   * @param thumbnail
-  *   Optional. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported
+  *   <em>Optional</em>. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported
   *   server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height
   *   should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused
-  *   and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was
-  *   uploaded using multipart/form-data under <file_attach_name>.
+  *   and can be only uploaded as a new file, so you can pass “attach://&lt;file_attach_name&gt;” if the thumbnail was
+  *   uploaded using multipart/form-data under &lt;file_attach_name&gt;.
   * @param cover
-  *   Optional. Cover for the video in the message. Pass a file_id to send a file that exists on the Telegram servers
-  *   (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass
-  *   “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name.
+  *   <em>Optional</em>. Cover for the video in the message. Pass a file_id to send a file that exists on the Telegram
+  *   servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass
+  *   “attach://&lt;file_attach_name&gt;” to upload a new one using multipart/form-data under &lt;file_attach_name&gt;
+  *   name.
   * @param startTimestamp
-  *   Optional. Start timestamp for the video in the message
+  *   <em>Optional</em>. Start timestamp for the video in the message
   * @param caption
-  *   Optional. Caption of the video to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the video to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the video caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the video caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param showCaptionAboveMedia
-  *   Optional. Pass True if the caption must be shown above the message media
+  *   <em>Optional</em>. Pass <em>True</em> if the caption must be shown above the message media
   * @param width
-  *   Optional. Video width
+  *   <em>Optional</em>. Video width
   * @param height
-  *   Optional. Video height
+  *   <em>Optional</em>. Video height
   * @param duration
-  *   Optional. Video duration in seconds
+  *   <em>Optional</em>. Video duration in seconds
   * @param supportsStreaming
-  *   Optional. Pass True if the uploaded video is suitable for streaming
+  *   <em>Optional</em>. Pass <em>True</em> if the uploaded video is suitable for streaming
   * @param hasSpoiler
-  *   Optional. Pass True if the video needs to be covered with a spoiler animation
+  *   <em>Optional</em>. Pass <em>True</em> if the video needs to be covered with a spoiler animation
   */
 final case class InputMediaVideo(
   media: IFile,
@@ -169,22 +178,24 @@ final case class InputMediaVideo(
   *
   * @param media
   *   Video of the live photo to send. Pass a file_id to send a file that exists on the Telegram servers (recommended)
-  *   or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name.
-  *   Sending live photos by a URL is currently unsupported.
+  *   or pass “attach://&lt;file_attach_name&gt;” to upload a new one using multipart/form-data under
+  *   &lt;file_attach_name&gt; name. Sending live photos by a URL is currently unsupported.
   * @param photo
   *   The static photo to send. Pass a file_id to send a file that exists on the Telegram servers (recommended) or pass
-  *   “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. Sending
-  *   live photos by a URL is currently unsupported.
+  *   “attach://&lt;file_attach_name&gt;” to upload a new one using multipart/form-data under &lt;file_attach_name&gt;
+  *   name. Sending live photos by a URL is currently unsupported.
   * @param caption
-  *   Optional. Caption of the live photo to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the live photo to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the live photo caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the live photo caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param showCaptionAboveMedia
-  *   Optional. Pass True if the caption must be shown above the message media
+  *   <em>Optional</em>. Pass <em>True</em> if the caption must be shown above the message media
   * @param hasSpoiler
-  *   Optional. Pass True if the live photo needs to be covered with a spoiler animation
+  *   <em>Optional</em>. Pass <em>True</em> if the live photo needs to be covered with a spoiler animation
   */
 final case class InputMediaLivePhoto(
   media: IFile,
@@ -207,14 +218,15 @@ final case class InputMediaLivePhoto(
   * @param address
   *   Address of the venue
   * @param foursquareId
-  *   Optional. Foursquare identifier of the venue
+  *   <em>Optional</em>. Foursquare identifier of the venue
   * @param foursquareType
-  *   Optional. Foursquare type of the venue, if known. (For example, “arts_entertainment/default”,
+  *   <em>Optional</em>. Foursquare type of the venue, if known. (For example, “arts_entertainment/default”,
   *   “arts_entertainment/aquarium” or “food/icecream”.)
   * @param googlePlaceId
-  *   Optional. Google Places identifier of the venue
+  *   <em>Optional</em>. Google Places identifier of the venue
   * @param googlePlaceType
-  *   Optional. Google Places type of the venue. (See supported types.)
+  *   <em>Optional</em>. Google Places type of the venue. (See <a
+  *   href="https://developers.google.com/places/web-service/supported_types">supported types</a>.)
   */
 final case class InputMediaVenue(
   latitude: Float,
@@ -231,23 +243,25 @@ final case class InputMediaVenue(
   *
   * @param media
   *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
-  *   for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using
-  *   multipart/form-data under <file_attach_name> name.
+  *   for Telegram to get a file from the Internet, or pass “attach://&lt;file_attach_name&gt;” to upload a new one
+  *   using multipart/form-data under &lt;file_attach_name&gt; name.
   * @param thumbnail
-  *   Optional. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported
+  *   <em>Optional</em>. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported
   *   server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height
   *   should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused
-  *   and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was
-  *   uploaded using multipart/form-data under <file_attach_name>.
+  *   and can be only uploaded as a new file, so you can pass “attach://&lt;file_attach_name&gt;” if the thumbnail was
+  *   uploaded using multipart/form-data under &lt;file_attach_name&gt;.
   * @param caption
-  *   Optional. Caption of the document to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the document to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the document caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the document caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param disableContentTypeDetection
-  *   Optional. Disables automatic server-side content type detection for files uploaded using multipart/form-data.
-  *   Always True, if the document is sent as part of an album.
+  *   <em>Optional</em>. Disables automatic server-side content type detection for files uploaded using
+  *   multipart/form-data. Always <em>True</em>, if the document is sent as part of an album.
   */
 final case class InputMediaDocument(
   media: IFile,
@@ -262,10 +276,10 @@ final case class InputMediaDocument(
   *
   * @param media
   *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
-  *   for Telegram to get a .WEBP sticker from the Internet, or pass “attach://<file_attach_name>” to upload a new
-  *   .WEBP, .TGS, or .WEBM sticker using multipart/form-data under <file_attach_name> name.
+  *   for Telegram to get a .WEBP sticker from the Internet, or pass “attach://&lt;file_attach_name&gt;” to upload a new
+  *   .WEBP, .TGS, or .WEBM sticker using multipart/form-data under &lt;file_attach_name&gt; name.
   * @param emoji
-  *   Optional. Emoji associated with the sticker; only for just uploaded stickers
+  *   <em>Optional</em>. Emoji associated with the sticker; only for just uploaded stickers
   */
 final case class InputMediaSticker(media: IFile, emoji: Option[String] = Option.empty) extends InputMedia
 
@@ -273,26 +287,28 @@ final case class InputMediaSticker(media: IFile, emoji: Option[String] = Option.
   *
   * @param media
   *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
-  *   for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using
-  *   multipart/form-data under <file_attach_name> name.
+  *   for Telegram to get a file from the Internet, or pass “attach://&lt;file_attach_name&gt;” to upload a new one
+  *   using multipart/form-data under &lt;file_attach_name&gt; name.
   * @param thumbnail
-  *   Optional. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported
+  *   <em>Optional</em>. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported
   *   server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height
   *   should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused
-  *   and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was
-  *   uploaded using multipart/form-data under <file_attach_name>.
+  *   and can be only uploaded as a new file, so you can pass “attach://&lt;file_attach_name&gt;” if the thumbnail was
+  *   uploaded using multipart/form-data under &lt;file_attach_name&gt;.
   * @param caption
-  *   Optional. Caption of the audio to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the audio to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the audio caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the audio caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param duration
-  *   Optional. Duration of the audio in seconds
+  *   <em>Optional</em>. Duration of the audio in seconds
   * @param performer
-  *   Optional. Performer of the audio
+  *   <em>Optional</em>. Performer of the audio
   * @param title
-  *   Optional. Title of the audio
+  *   <em>Optional</em>. Title of the audio
   */
 final case class InputMediaAudio(
   media: IFile,

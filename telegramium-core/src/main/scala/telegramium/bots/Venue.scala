@@ -9,14 +9,15 @@ package telegramium.bots
   * @param address
   *   Address of the venue
   * @param foursquareId
-  *   Optional. Foursquare identifier of the venue
+  *   <em>Optional</em>. Foursquare identifier of the venue
   * @param foursquareType
-  *   Optional. Foursquare type of the venue. (For example, “arts_entertainment/default”, “arts_entertainment/aquarium”
-  *   or “food/icecream”.)
+  *   <em>Optional</em>. Foursquare type of the venue. (For example, “arts_entertainment/default”,
+  *   “arts_entertainment/aquarium” or “food/icecream”.)
   * @param googlePlaceId
-  *   Optional. Google Places identifier of the venue
+  *   <em>Optional</em>. Google Places identifier of the venue
   * @param googlePlaceType
-  *   Optional. Google Places type of the venue. (See supported types.)
+  *   <em>Optional</em>. Google Places type of the venue. (See <a
+  *   href="https://developers.google.com/places/web-service/supported_types">supported types</a>.)
   */
 final case class Venue(
   location: Location,

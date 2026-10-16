@@ -7,13 +7,13 @@ import telegramium.bots.InlineQueryResult
   * @param result
   *   A JSON-serialized object describing the message to be sent
   * @param allowUserChats
-  *   Pass True if the message can be sent to private chats with users
+  *   Pass <em>True</em> if the message can be sent to private chats with users
   * @param allowBotChats
-  *   Pass True if the message can be sent to private chats with bots
+  *   Pass <em>True</em> if the message can be sent to private chats with bots
   * @param allowGroupChats
-  *   Pass True if the message can be sent to group and supergroup chats
+  *   Pass <em>True</em> if the message can be sent to group and supergroup chats
   * @param allowChannelChats
-  *   Pass True if the message can be sent to channel chats
+  *   Pass <em>True</em> if the message can be sent to channel chats
   */
 final case class SavePreparedInlineMessageReq(
   userId: Long,

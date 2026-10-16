@@ -7,11 +7,12 @@ package telegramium.bots
   * @param position
   *   Approximate quote position in the original message in UTF-16 code units as specified by the sender
   * @param entities
-  *   Optional. Special entities that appear in the quote. Currently, only bold, italic, underline, strikethrough,
-  *   spoiler, custom_emoji, and date_time entities are kept in quotes.
+  *   <em>Optional</em>. Special entities that appear in the quote. Currently, only <em>bold</em>, <em>italic</em>,
+  *   <em>underline</em>, <em>strikethrough</em>, <em>spoiler</em>, <em>custom_emoji</em>, and <em>date_time</em>
+  *   entities are kept in quotes.
   * @param isManual
-  *   Optional. True, if the quote was chosen manually by the message sender. Otherwise, the quote was added
-  *   automatically by the server.
+  *   <em>Optional</em>. <em>True</em>, if the quote was chosen manually by the message sender. Otherwise, the quote was
+  *   added automatically by the server.
   */
 final case class TextQuote(
   text: String,

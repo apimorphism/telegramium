@@ -14,11 +14,11 @@ package telegramium.bots
   * @param duration
   *   Duration of the video in seconds as defined by the sender
   * @param photo
-  *   Optional. Available sizes of the corresponding static photo
+  *   <em>Optional</em>. Available sizes of the corresponding static photo
   * @param mimeType
-  *   Optional. MIME type of the file as defined by the sender
+  *   <em>Optional</em>. MIME type of the file as defined by the sender
   * @param fileSize
-  *   Optional. File size in bytes. It can be bigger than 2&#94;31 and some programming languages may have
+  *   <em>Optional</em>. File size in bytes. It can be bigger than 2&#94;31 and some programming languages may have
   *   difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer
   *   or double-precision float type are safe for storing this value.
   */

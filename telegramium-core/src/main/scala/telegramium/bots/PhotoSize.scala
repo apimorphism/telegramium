@@ -1,6 +1,7 @@
 package telegramium.bots
 
-/** This object represents one size of a photo or a file / sticker thumbnail.
+/** This object represents one size of a photo or a <a href="https://core.telegram.org/bots/api#document">file</a> / <a
+  * href="https://core.telegram.org/bots/api#sticker">sticker</a> thumbnail.
   *
   * @param fileId
   *   Identifier for this file, which can be used to download or reuse the file
@@ -12,7 +13,7 @@ package telegramium.bots
   * @param height
   *   Photo height
   * @param fileSize
-  *   Optional. File size in bytes
+  *   <em>Optional</em>. File size in bytes
   */
 final case class PhotoSize(
   fileId: String,

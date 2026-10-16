@@ -3,53 +3,53 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target channel in the format &#064;username
+  *   Unique identifier for the target chat or username of the target channel in the format <code>&#064;username</code>
   * @param userId
   *   Unique identifier of the target user
   * @param isAnonymous
-  *   Pass True if the administrator's presence in the chat is hidden
+  *   Pass <em>True</em> if the administrator's presence in the chat is hidden
   * @param canManageChat
-  *   Pass True if the administrator can access the chat event log, get boost list, see hidden supergroup and channel
-  *   members, report spam messages, ignore slow mode, and send messages to the chat without paying Telegram Stars.
-  *   Implied by any other administrator privilege.
+  *   Pass <em>True</em> if the administrator can access the chat event log, get boost list, see hidden supergroup and
+  *   channel members, report spam messages, ignore slow mode, and send messages to the chat without paying Telegram
+  *   Stars. Implied by any other administrator privilege.
   * @param canDeleteMessages
-  *   Pass True if the administrator can delete messages of other users
+  *   Pass <em>True</em> if the administrator can delete messages of other users
   * @param canManageVideoChats
-  *   Pass True if the administrator can manage video chats
+  *   Pass <em>True</em> if the administrator can manage video chats
   * @param canRestrictMembers
-  *   Pass True if the administrator can restrict, ban or unban chat members, or access supergroup statistics. For
-  *   backward compatibility, defaults to True for promotions of channel administrators.
+  *   Pass <em>True</em> if the administrator can restrict, ban or unban chat members, or access supergroup statistics.
+  *   For backward compatibility, defaults to <em>True</em> for promotions of channel administrators.
   * @param canPromoteMembers
-  *   Pass True if the administrator can add new administrators with a subset of their own privileges or demote
+  *   Pass <em>True</em> if the administrator can add new administrators with a subset of their own privileges or demote
   *   administrators that they have promoted, directly or indirectly (promoted by administrators that were appointed by
   *   him)
   * @param canChangeInfo
-  *   Pass True if the administrator can change chat title, photo and other settings
+  *   Pass <em>True</em> if the administrator can change chat title, photo and other settings
   * @param canInviteUsers
-  *   Pass True if the administrator can invite new users to the chat
+  *   Pass <em>True</em> if the administrator can invite new users to the chat
   * @param canPostStories
-  *   Pass True if the administrator can post stories to the chat
+  *   Pass <em>True</em> if the administrator can post stories to the chat
   * @param canEditStories
-  *   Pass True if the administrator can edit stories posted by other users, post stories to the chat page, pin chat
-  *   stories, and access the chat's story archive
+  *   Pass <em>True</em> if the administrator can edit stories posted by other users, post stories to the chat page, pin
+  *   chat stories, and access the chat's story archive
   * @param canDeleteStories
-  *   Pass True if the administrator can delete stories posted by other users
+  *   Pass <em>True</em> if the administrator can delete stories posted by other users
   * @param canPostMessages
-  *   Pass True if the administrator can post messages in the channel, approve suggested posts, or access channel
-  *   statistics; for channels only
+  *   Pass <em>True</em> if the administrator can post messages in the channel, approve suggested posts, or access
+  *   channel statistics; for channels only
   * @param canEditMessages
-  *   Pass True if the administrator can edit messages of other users and can pin messages; for channels only
+  *   Pass <em>True</em> if the administrator can edit messages of other users and can pin messages; for channels only
   * @param canPinMessages
-  *   Pass True if the administrator can pin messages; for supergroups only
+  *   Pass <em>True</em> if the administrator can pin messages; for supergroups only
   * @param canManageTopics
-  *   Pass True if the user is allowed to create, rename, close, and reopen forum topics; for supergroups only
+  *   Pass <em>True</em> if the user is allowed to create, rename, close, and reopen forum topics; for supergroups only
   * @param canManageDirectMessages
-  *   Pass True if the administrator can manage direct messages within the channel and decline suggested posts; for
-  *   channels only
+  *   Pass <em>True</em> if the administrator can manage direct messages within the channel and decline suggested posts;
+  *   for channels only
   * @param canManageTags
-  *   Pass True if the administrator can edit the tags of regular members; for groups and supergroups only
+  *   Pass <em>True</em> if the administrator can edit the tags of regular members; for groups and supergroups only
   * @param canSendWelcomeMessages
-  *   Pass True if the administrator can manage chat welcome messages or directly send them in the case of bots
+  *   Pass <em>True</em> if the administrator can manage chat welcome messages or directly send them in the case of bots
   */
 final case class PromoteChatMemberReq(
   chatId: ChatId,

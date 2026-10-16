@@ -3,7 +3,7 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 
 /** @param chatId
-  *   Unique identifier of the target chat or username of the target channel in the format &#064;username
+  *   Unique identifier of the target chat or username of the target channel in the format <code>&#064;username</code>
   * @param inviteLink
   *   The invite link to revoke
   */

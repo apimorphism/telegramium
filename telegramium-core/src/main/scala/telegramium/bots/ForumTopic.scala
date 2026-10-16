@@ -9,10 +9,10 @@ package telegramium.bots
   * @param iconColor
   *   Color of the topic icon in RGB format
   * @param iconCustomEmojiId
-  *   Optional. Unique identifier of the custom emoji shown as the topic icon
+  *   <em>Optional</em>. Unique identifier of the custom emoji shown as the topic icon
   * @param isNameImplicit
-  *   Optional. True, if the name of the topic wasn't specified explicitly by its creator and likely needs to be changed
-  *   by the bot
+  *   <em>Optional</em>. <em>True</em>, if the name of the topic wasn't specified explicitly by its creator and likely
+  *   needs to be changed by the bot
   */
 final case class ForumTopic(
   messageThreadId: Int,

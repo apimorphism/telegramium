@@ -9,26 +9,27 @@ package telegramium.bots
   *   transferred from other users or channels, “resale” for gifts bought from other users, “gifted_upgrade” for
   *   upgrades purchased after the gift was sent, or “offer” for gifts bought or sold through gift purchase offers.
   * @param text
-  *   Optional. Text of the message that was added to the gift
+  *   <em>Optional</em>. Text of the message that was added to the gift
   * @param entities
-  *   Optional. Special entities that appear in the text
+  *   <em>Optional</em>. Special entities that appear in the text
   * @param isPrivate
-  *   Optional. True, if the sender and gift text are shown only to the gift receiver; otherwise, everyone will be able
-  *   to see them
+  *   <em>Optional</em>. <em>True</em>, if the sender and gift text are shown only to the gift receiver; otherwise,
+  *   everyone will be able to see them
   * @param lastResaleCurrency
-  *   Optional. For gifts bought from other users, the currency in which the payment for the gift was done. Currently,
-  *   one of “XTR” for Telegram Stars or “TON” for TON grams.
+  *   <em>Optional</em>. For gifts bought from other users, the currency in which the payment for the gift was done.
+  *   Currently, one of “XTR” for Telegram Stars or “TON” for TON grams.
   * @param lastResaleAmount
-  *   Optional. For gifts bought from other users, the price paid for the gift in either Telegram Stars or nanograms
+  *   <em>Optional</em>. For gifts bought from other users, the price paid for the gift in either Telegram Stars or
+  *   nanograms
   * @param ownedGiftId
-  *   Optional. Unique identifier of the received gift for the bot; only present for gifts received on behalf of
-  *   business accounts
+  *   <em>Optional</em>. Unique identifier of the received gift for the bot; only present for gifts received on behalf
+  *   of business accounts
   * @param transferStarCount
-  *   Optional. Number of Telegram Stars that must be paid to transfer the gift; omitted if the bot cannot transfer the
-  *   gift
+  *   <em>Optional</em>. Number of Telegram Stars that must be paid to transfer the gift; omitted if the bot cannot
+  *   transfer the gift
   * @param nextTransferDate
-  *   Optional. Point in time (Unix timestamp) when the gift can be transferred. If it is in the past, then the gift can
-  *   be transferred now.
+  *   <em>Optional</em>. Point in time (Unix timestamp) when the gift can be transferred. If it is in the past, then the
+  *   gift can be transferred now.
   */
 final case class UniqueGiftInfo(
   gift: UniqueGift,

@@ -5,10 +5,11 @@ package telegramium.bots
   * @param sendDate
   *   Date when the post will be published
   * @param suggestedPostMessage
-  *   Optional. Message containing the suggested post. Note that the Message object in this field will not contain the
-  *   reply_to_message field even if it itself is a reply.
+  *   <em>Optional</em>. Message containing the suggested post. Note that the <a
+  *   href="https://core.telegram.org/bots/api#message">Message</a> object in this field will not contain the
+  *   <em>reply_to_message</em> field even if it itself is a reply.
   * @param price
-  *   Optional. Amount paid for the post
+  *   <em>Optional</em>. Amount paid for the post
   */
 final case class SuggestedPostApproved(
   sendDate: Long,

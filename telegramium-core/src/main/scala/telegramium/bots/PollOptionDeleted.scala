@@ -7,10 +7,11 @@ package telegramium.bots
   * @param optionText
   *   Option text
   * @param pollMessage
-  *   Optional. Message containing the poll from which the option was deleted, if known. Note that the Message object in
-  *   this field will not contain the reply_to_message field even if it itself is a reply.
+  *   <em>Optional</em>. Message containing the poll from which the option was deleted, if known. Note that the <a
+  *   href="https://core.telegram.org/bots/api#message">Message</a> object in this field will not contain the
+  *   <em>reply_to_message</em> field even if it itself is a reply.
   * @param optionTextEntities
-  *   Optional. Special entities that appear in the option_text
+  *   <em>Optional</em>. Special entities that appear in the <em>option_text</em>
   */
 final case class PollOptionDeleted(
   optionPersistentId: String,

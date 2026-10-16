@@ -9,9 +9,10 @@ sealed trait BackgroundType {}
   * @param darkThemeDimming
   *   Dimming of the background in dark themes, as a percentage; 0-100
   * @param isBlurred
-  *   Optional. True, if the wallpaper is downscaled to fit in a 450x450 square and then box-blurred with radius 12
+  *   <em>Optional</em>. <em>True</em>, if the wallpaper is downscaled to fit in a 450x450 square and then box-blurred
+  *   with radius 12
   * @param isMoving
-  *   Optional. True, if the background moves slightly when the device is tilted
+  *   <em>Optional</em>. <em>True</em>, if the background moves slightly when the device is tilted
   */
 final case class BackgroundTypeWallpaper(
   document: Document,
@@ -30,10 +31,10 @@ final case class BackgroundTypeWallpaper(
   * @param intensity
   *   Intensity of the pattern when it is shown above the filled background; 0-100
   * @param isInverted
-  *   Optional. True, if the background fill must be applied only to the pattern itself. All other pixels are black in
-  *   this case. For dark themes only.
+  *   <em>Optional</em>. <em>True</em>, if the background fill must be applied only to the pattern itself. All other
+  *   pixels are black in this case. For dark themes only.
   * @param isMoving
-  *   Optional. True, if the background moves slightly when the device is tilted
+  *   <em>Optional</em>. <em>True</em>, if the background moves slightly when the device is tilted
   */
 final case class BackgroundTypePattern(
   document: Document,

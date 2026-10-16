@@ -15,12 +15,15 @@ package telegramium.bots
   * @param date
   *   Date the request was sent in Unix time
   * @param bio
-  *   Optional. Bio of the user
+  *   <em>Optional</em>. Bio of the user
   * @param inviteLink
-  *   Optional. Chat invite link that was used by the user to send the join request
+  *   <em>Optional</em>. Chat invite link that was used by the user to send the join request
   * @param queryId
-  *   Optional. Identifier of the join request query; for bots assigned to process join requests only. If present, then
-  *   the bot must call sendChatJoinRequestWebApp or directly call answerChatJoinRequestQuery within 10 seconds.
+  *   <em>Optional</em>. Identifier of the join request query; for bots assigned to process join requests only. If
+  *   present, then the bot must call <a
+  *   href="https://core.telegram.org/bots/api#sendchatjoinrequestwebapp">sendChatJoinRequestWebApp</a> or directly call
+  *   <a href="https://core.telegram.org/bots/api#answerchatjoinrequestquery">answerChatJoinRequestQuery</a> within 10
+  *   seconds.
   */
 final case class ChatJoinRequest(
   chat: Chat,

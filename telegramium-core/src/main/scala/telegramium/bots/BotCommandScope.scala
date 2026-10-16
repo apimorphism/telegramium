@@ -2,43 +2,53 @@ package telegramium.bots
 
 sealed trait BotCommandScope {}
 
-/** Represents the scope of bot commands, covering all group and supergroup chat administrators.
+/** Represents the <a href="https://core.telegram.org/bots/api#botcommandscope">scope</a> of bot commands, covering all
+  * group and supergroup chat administrators.
   */
 case object BotCommandScopeAllChatAdministrators extends BotCommandScope
 
-/** Represents the scope of bot commands, covering all group and supergroup chats. */
+/** Represents the <a href="https://core.telegram.org/bots/api#botcommandscope">scope</a> of bot commands, covering all
+  * group and supergroup chats.
+  */
 case object BotCommandScopeAllGroupChats extends BotCommandScope
 
-/** Represents the default scope of bot commands. Default commands are used if no commands with a narrower scope are
-  * specified for the user.
+/** Represents the default <a href="https://core.telegram.org/bots/api#botcommandscope">scope</a> of bot commands.
+  * Default commands are used if no commands with a <a
+  * href="https://core.telegram.org/bots/api#determining-list-of-commands">narrower scope</a> are specified for the
+  * user.
   */
 case object BotCommandScopeDefault extends BotCommandScope
 
-/** Represents the scope of bot commands, covering all administrators of a specific group or supergroup chat.
+/** Represents the <a href="https://core.telegram.org/bots/api#botcommandscope">scope</a> of bot commands, covering all
+  * administrators of a specific group or supergroup chat.
   *
   * @param chatId
-  *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username. Channel
-  *   direct messages chats and channel chats aren't supported.
+  *   Unique identifier for the target chat or username of the target supergroup in the format
+  *   <code>&#064;username</code>. Channel direct messages chats and channel chats aren't supported.
   */
 final case class BotCommandScopeChatAdministrators(chatId: ChatId) extends BotCommandScope
 
-/** Represents the scope of bot commands, covering a specific member of a group or supergroup chat.
+/** Represents the <a href="https://core.telegram.org/bots/api#botcommandscope">scope</a> of bot commands, covering a
+  * specific member of a group or supergroup chat.
   *
   * @param chatId
-  *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username. Channel
-  *   direct messages chats and channel chats aren't supported.
+  *   Unique identifier for the target chat or username of the target supergroup in the format
+  *   <code>&#064;username</code>. Channel direct messages chats and channel chats aren't supported.
   * @param userId
   *   Unique identifier of the target user
   */
 final case class BotCommandScopeChatMember(chatId: ChatId, userId: Long) extends BotCommandScope
 
-/** Represents the scope of bot commands, covering a specific chat.
+/** Represents the <a href="https://core.telegram.org/bots/api#botcommandscope">scope</a> of bot commands, covering a
+  * specific chat.
   *
   * @param chatId
-  *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username. Channel
-  *   direct messages chats and channel chats aren't supported.
+  *   Unique identifier for the target chat or username of the target supergroup in the format
+  *   <code>&#064;username</code>. Channel direct messages chats and channel chats aren't supported.
   */
 final case class BotCommandScopeChat(chatId: ChatId) extends BotCommandScope
 
-/** Represents the scope of bot commands, covering all private chats. */
+/** Represents the <a href="https://core.telegram.org/bots/api#botcommandscope">scope</a> of bot commands, covering all
+  * private chats.
+  */
 case object BotCommandScopeAllPrivateChats extends BotCommandScope

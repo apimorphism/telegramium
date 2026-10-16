@@ -3,42 +3,42 @@ package telegramium.bots
 /** Describes actions that a non-administrator user is allowed to take in a chat.
   *
   * @param canSendMessages
-  *   Optional. True, if the user is allowed to send text messages, rich messages, contacts, giveaways, giveaway
-  *   winners, invoices, locations and venues
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to send text messages, rich messages, contacts,
+  *   giveaways, giveaway winners, invoices, locations and venues
   * @param canSendAudios
-  *   Optional. True, if the user is allowed to send audios
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to send audios
   * @param canSendDocuments
-  *   Optional. True, if the user is allowed to send documents
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to send documents
   * @param canSendPhotos
-  *   Optional. True, if the user is allowed to send photos
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to send photos
   * @param canSendVideos
-  *   Optional. True, if the user is allowed to send videos
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to send videos
   * @param canSendVideoNotes
-  *   Optional. True, if the user is allowed to send video notes
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to send video notes
   * @param canSendVoiceNotes
-  *   Optional. True, if the user is allowed to send voice notes
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to send voice notes
   * @param canSendPolls
-  *   Optional. True, if the user is allowed to send polls and checklists
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to send polls and checklists
   * @param canSendOtherMessages
-  *   Optional. True, if the user is allowed to send animations, games, stickers and use inline bots
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to send animations, games, stickers and use inline bots
   * @param canAddWebPagePreviews
-  *   Optional. True, if the user is allowed to add web page previews to their messages
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to add web page previews to their messages
   * @param canReactToMessages
-  *   Optional. True, if the user is allowed to react to messages. If omitted, defaults to the value of
-  *   can_send_messages.
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to react to messages. If omitted, defaults to the value
+  *   of <em>can_send_messages</em>.
   * @param canEditTag
-  *   Optional. True, if the user is allowed to edit their own tag. If omitted, defaults to the value of
-  *   can_pin_messages.
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to edit their own tag. If omitted, defaults to the value
+  *   of <em>can_pin_messages</em>.
   * @param canChangeInfo
-  *   Optional. True, if the user is allowed to change the chat title, photo and other settings. Ignored in public
-  *   supergroups.
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to change the chat title, photo and other settings.
+  *   Ignored in public supergroups.
   * @param canInviteUsers
-  *   Optional. True, if the user is allowed to invite new users to the chat
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to invite new users to the chat
   * @param canPinMessages
-  *   Optional. True, if the user is allowed to pin messages. Ignored in public supergroups.
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to pin messages. Ignored in public supergroups.
   * @param canManageTopics
-  *   Optional. True, if the user is allowed to create forum topics. If omitted, defaults to the value of
-  *   can_pin_messages.
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to create forum topics. If omitted, defaults to the value
+  *   of can_pin_messages.
   */
 final case class ChatPermissions(
   canSendMessages: Option[Boolean] = Option.empty,

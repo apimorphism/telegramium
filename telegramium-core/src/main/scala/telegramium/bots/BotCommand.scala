@@ -7,7 +7,7 @@ package telegramium.bots
   * @param description
   *   Description of the command; 1-256 characters
   * @param isEphemeral
-  *   Optional. True, if the command sends an ephemeral message, which can be seen only by the sender of the message and
-  *   the bot
+  *   <em>Optional</em>. <em>True</em>, if the command sends an ephemeral message, which can be seen only by the sender
+  *   of the message and the bot
   */
 final case class BotCommand(command: String, description: String, isEphemeral: Option[Boolean] = Option.empty)

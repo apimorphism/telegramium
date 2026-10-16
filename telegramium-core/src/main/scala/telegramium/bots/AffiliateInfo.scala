@@ -9,12 +9,12 @@ package telegramium.bots
   *   Integer amount of Telegram Stars received by the affiliate from the transaction, rounded to 0; can be negative for
   *   refunds
   * @param affiliateUser
-  *   Optional. The bot or the user that received an affiliate commission if it was received by a bot or a user
+  *   <em>Optional</em>. The bot or the user that received an affiliate commission if it was received by a bot or a user
   * @param affiliateChat
-  *   Optional. The chat that received an affiliate commission if it was received by a chat
+  *   <em>Optional</em>. The chat that received an affiliate commission if it was received by a chat
   * @param nanostarAmount
-  *   Optional. The number of 1/1000000000 shares of Telegram Stars received by the affiliate; from -999999999 to
-  *   999999999; can be negative for refunds
+  *   <em>Optional</em>. The number of 1/1000000000 shares of Telegram Stars received by the affiliate; from -999999999
+  *   to 999999999; can be negative for refunds
   */
 final case class AffiliateInfo(
   commissionPerMille: Int,

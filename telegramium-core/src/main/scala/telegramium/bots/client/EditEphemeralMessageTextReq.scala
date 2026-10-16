@@ -8,24 +8,27 @@ import telegramium.bots.LinkPreviewOptions
 import telegramium.bots.InlineKeyboardMarkup
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
+  *   Unique identifier for the target chat or username of the target supergroup in the format
+  *   <code>&#064;username</code>
   * @param receiverUserId
   *   Identifier of the user who received the message
   * @param ephemeralMessageId
   *   Identifier of the ephemeral message to edit
   * @param text
-  *   New text of the message, 1-4096 characters after entity parsing; required if rich_message isn't specified
+  *   New text of the message, 1-4096 characters after entity parsing; required if <em>rich_message</em> isn't specified
   * @param parseMode
-  *   Mode for parsing entities in the message text. See formatting options for more details.
+  *   Mode for parsing entities in the message text. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param entities
   *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
-  *   parse_mode
+  *   <em>parse_mode</em>
   * @param richMessage
-  *   New rich content of the message; required if text isn't specified
+  *   New rich content of the message; required if <em>text</em> isn't specified
   * @param linkPreviewOptions
   *   Link preview generation options for the message
   * @param replyMarkup
-  *   A JSON-serialized object for an inline keyboard
+  *   A JSON-serialized object for an <a href="https://core.telegram.org/bots/features#inline-keyboards">inline
+  *   keyboard</a>
   */
 final case class EditEphemeralMessageTextReq(
   chatId: ChatId,

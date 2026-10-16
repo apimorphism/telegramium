@@ -8,7 +8,7 @@ package telegramium.bots.client
   *   Unique identifier of the chat which will own the gift. The chat must be active in the last 24 hours.
   * @param starCount
   *   The amount of Telegram Stars that will be paid for the transfer from the business account balance. If positive,
-  *   then the can_transfer_stars business bot right is required.
+  *   then the <em>can_transfer_stars</em> business bot right is required.
   */
 final case class TransferGiftReq(
   businessConnectionId: String,

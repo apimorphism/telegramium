@@ -6,7 +6,8 @@ import telegramium.bots.MessageEntity
 import telegramium.bots.InlineKeyboardMarkup
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target supergroup in the format &#064;username
+  *   Unique identifier for the target chat or username of the target supergroup in the format
+  *   <code>&#064;username</code>
   * @param receiverUserId
   *   Identifier of the user who received the message
   * @param ephemeralMessageId
@@ -14,15 +15,17 @@ import telegramium.bots.InlineKeyboardMarkup
   * @param caption
   *   New caption of the message, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Mode for parsing entities in the message caption. See formatting options for more details.
+  *   Mode for parsing entities in the message caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
   *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
-  *   parse_mode
+  *   <em>parse_mode</em>
   * @param showCaptionAboveMedia
-  *   Pass True if the caption must be shown above the message media. Supported only for animation, photo and video
-  *   messages.
+  *   Pass <em>True</em> if the caption must be shown above the message media. Supported only for animation, photo and
+  *   video messages.
   * @param replyMarkup
-  *   A JSON-serialized object for an inline keyboard
+  *   A JSON-serialized object for an <a href="https://core.telegram.org/bots/features#inline-keyboards">inline
+  *   keyboard</a>
   */
 final case class EditEphemeralMessageCaptionReq(
   chatId: ChatId,

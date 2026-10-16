@@ -3,8 +3,8 @@ package telegramium.bots
 sealed trait InlineQueryResult {}
 
 /** Represents a link to an animated GIF file. By default, this animated GIF file will be sent by the user with optional
-  * caption. Alternatively, you can use input_message_content to send a message with the specified content instead of
-  * the animation.
+  * caption. Alternatively, you can use <em>input_message_content</em> to send a message with the specified content
+  * instead of the animation.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
@@ -13,28 +13,31 @@ sealed trait InlineQueryResult {}
   * @param thumbnailUrl
   *   URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
   * @param gifWidth
-  *   Optional. Width of the GIF
+  *   <em>Optional</em>. Width of the GIF
   * @param gifHeight
-  *   Optional. Height of the GIF
+  *   <em>Optional</em>. Height of the GIF
   * @param gifDuration
-  *   Optional. Duration of the GIF in seconds
+  *   <em>Optional</em>. Duration of the GIF in seconds
   * @param thumbnailMimeType
-  *   Optional. MIME type of the thumbnail, must be one of “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to
-  *   “image/jpeg”.
+  *   <em>Optional</em>. MIME type of the thumbnail, must be one of “image/jpeg”, “image/gif”, or “video/mp4”. Defaults
+  *   to “image/jpeg”.
   * @param title
-  *   Optional. Title for the result
+  *   <em>Optional</em>. Title for the result
   * @param caption
-  *   Optional. Caption of the GIF file to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the GIF file to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param showCaptionAboveMedia
-  *   Optional. Pass True if the caption must be shown above the message media
+  *   <em>Optional</em>. Pass <em>True</em> if the caption must be shown above the message media
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the GIF animation
+  *   <em>Optional</em>. Content of the message to be sent instead of the GIF animation
   */
 final case class InlineQueryResultGif(
   id: String,
@@ -53,8 +56,8 @@ final case class InlineQueryResultGif(
   inputMessageContent: Option[InputMessageContent] = Option.empty
 ) extends InlineQueryResult
 
-/** Represents a venue. By default, the venue will be sent by the user. Alternatively, you can use input_message_content
-  * to send a message with the specified content instead of the venue.
+/** Represents a venue. By default, the venue will be sent by the user. Alternatively, you can use
+  * <em>input_message_content</em> to send a message with the specified content instead of the venue.
   *
   * @param id
   *   Unique identifier for this result, 1-64 Bytes
@@ -67,24 +70,26 @@ final case class InlineQueryResultGif(
   * @param address
   *   Address of the venue
   * @param foursquareId
-  *   Optional. Foursquare identifier of the venue if known
+  *   <em>Optional</em>. Foursquare identifier of the venue if known
   * @param foursquareType
-  *   Optional. Foursquare type of the venue, if known. (For example, “arts_entertainment/default”,
+  *   <em>Optional</em>. Foursquare type of the venue, if known. (For example, “arts_entertainment/default”,
   *   “arts_entertainment/aquarium” or “food/icecream”.)
   * @param googlePlaceId
-  *   Optional. Google Places identifier of the venue
+  *   <em>Optional</em>. Google Places identifier of the venue
   * @param googlePlaceType
-  *   Optional. Google Places type of the venue. (See supported types.)
+  *   <em>Optional</em>. Google Places type of the venue. (See <a
+  *   href="https://developers.google.com/places/web-service/supported_types">supported types</a>.)
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the venue
+  *   <em>Optional</em>. Content of the message to be sent instead of the venue
   * @param thumbnailUrl
-  *   Optional. Url of the thumbnail for the result
+  *   <em>Optional</em>. Url of the thumbnail for the result
   * @param thumbnailWidth
-  *   Optional. Thumbnail width
+  *   <em>Optional</em>. Thumbnail width
   * @param thumbnailHeight
-  *   Optional. Thumbnail height
+  *   <em>Optional</em>. Thumbnail height
   */
 final case class InlineQueryResultVenue(
   id: String,
@@ -104,7 +109,7 @@ final case class InlineQueryResultVenue(
 ) extends InlineQueryResult
 
 /** Represents a contact with a phone number. By default, this contact will be sent by the user. Alternatively, you can
-  * use input_message_content to send a message with the specified content instead of the contact.
+  * use <em>input_message_content</em> to send a message with the specified content instead of the contact.
   *
   * @param id
   *   Unique identifier for this result, 1-64 Bytes
@@ -113,19 +118,21 @@ final case class InlineQueryResultVenue(
   * @param firstName
   *   Contact's first name
   * @param lastName
-  *   Optional. Contact's last name
+  *   <em>Optional</em>. Contact's last name
   * @param vcard
-  *   Optional. Additional data about the contact in the form of a vCard, 0-2048 bytes
+  *   <em>Optional</em>. Additional data about the contact in the form of a <a
+  *   href="https://en.wikipedia.org/wiki/VCard">vCard</a>, 0-2048 bytes
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the contact
+  *   <em>Optional</em>. Content of the message to be sent instead of the contact
   * @param thumbnailUrl
-  *   Optional. Url of the thumbnail for the result
+  *   <em>Optional</em>. Url of the thumbnail for the result
   * @param thumbnailWidth
-  *   Optional. Thumbnail width
+  *   <em>Optional</em>. Thumbnail width
   * @param thumbnailHeight
-  *   Optional. Thumbnail height
+  *   <em>Optional</em>. Thumbnail height
   */
 final case class InlineQueryResultContact(
   id: String,
@@ -141,34 +148,37 @@ final case class InlineQueryResultContact(
 ) extends InlineQueryResult
 
 /** Represents a link to a photo. By default, this photo will be sent by the user with optional caption. Alternatively,
-  * you can use input_message_content to send a message with the specified content instead of the photo.
+  * you can use <em>input_message_content</em> to send a message with the specified content instead of the photo.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
   * @param photoUrl
-  *   A valid URL of the photo. Photo must be in JPEG format. Photo size must not exceed 5MB.
+  *   A valid URL of the photo. Photo must be in <strong>JPEG</strong> format. Photo size must not exceed 5MB.
   * @param thumbnailUrl
   *   URL of the thumbnail for the photo
   * @param photoWidth
-  *   Optional. Width of the photo
+  *   <em>Optional</em>. Width of the photo
   * @param photoHeight
-  *   Optional. Height of the photo
+  *   <em>Optional</em>. Height of the photo
   * @param title
-  *   Optional. Title for the result
+  *   <em>Optional</em>. Title for the result
   * @param description
-  *   Optional. Short description of the result
+  *   <em>Optional</em>. Short description of the result
   * @param caption
-  *   Optional. Caption of the photo to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the photo to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the photo caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param showCaptionAboveMedia
-  *   Optional. Pass True if the caption must be shown above the message media
+  *   <em>Optional</em>. Pass <em>True</em> if the caption must be shown above the message media
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the photo
+  *   <em>Optional</em>. Content of the message to be sent instead of the photo
   */
 final case class InlineQueryResultPhoto(
   id: String,
@@ -187,8 +197,8 @@ final case class InlineQueryResultPhoto(
 ) extends InlineQueryResult
 
 /** Represents a link to a file. By default, this file will be sent by the user with an optional caption. Alternatively,
-  * you can use input_message_content to send a message with the specified content instead of the file. Currently, only
-  * .PDF and .ZIP files can be sent using this method.
+  * you can use <em>input_message_content</em> to send a message with the specified content instead of the file.
+  * Currently, only <strong>.PDF</strong> and <strong>.ZIP</strong> files can be sent using this method.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
@@ -199,23 +209,26 @@ final case class InlineQueryResultPhoto(
   * @param mimeType
   *   MIME type of the content of the file, either “application/pdf” or “application/zip”
   * @param caption
-  *   Optional. Caption of the document to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the document to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the document caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the document caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param description
-  *   Optional. Short description of the result
+  *   <em>Optional</em>. Short description of the result
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the file
+  *   <em>Optional</em>. Content of the message to be sent instead of the file
   * @param thumbnailUrl
-  *   Optional. URL of the thumbnail (JPEG only) for the file
+  *   <em>Optional</em>. URL of the thumbnail (JPEG only) for the file
   * @param thumbnailWidth
-  *   Optional. Thumbnail width
+  *   <em>Optional</em>. Thumbnail width
   * @param thumbnailHeight
-  *   Optional. Thumbnail height
+  *   <em>Optional</em>. Thumbnail height
   */
 final case class InlineQueryResultDocument(
   id: String,
@@ -234,8 +247,8 @@ final case class InlineQueryResultDocument(
 ) extends InlineQueryResult
 
 /** Represents a link to a voice message stored on the Telegram servers. By default, this voice message will be sent by
-  * the user. Alternatively, you can use input_message_content to send a message with the specified content instead of
-  * the voice message.
+  * the user. Alternatively, you can use <em>input_message_content</em> to send a message with the specified content
+  * instead of the voice message.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
@@ -244,15 +257,18 @@ final case class InlineQueryResultDocument(
   * @param title
   *   Voice message title
   * @param caption
-  *   Optional. Caption, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the voice message caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the voice message caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the voice message
+  *   <em>Optional</em>. Content of the message to be sent instead of the voice message
   */
 final case class InlineQueryResultCachedVoice(
   id: String,
@@ -274,17 +290,18 @@ final case class InlineQueryResultCachedVoice(
   * @param inputMessageContent
   *   Content of the message to be sent
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param url
-  *   Optional. URL of the result
+  *   <em>Optional</em>. URL of the result
   * @param description
-  *   Optional. Short description of the result
+  *   <em>Optional</em>. Short description of the result
   * @param thumbnailUrl
-  *   Optional. Url of the thumbnail for the result
+  *   <em>Optional</em>. Url of the thumbnail for the result
   * @param thumbnailWidth
-  *   Optional. Thumbnail width
+  *   <em>Optional</em>. Thumbnail width
   * @param thumbnailHeight
-  *   Optional. Thumbnail height
+  *   <em>Optional</em>. Thumbnail height
   */
 final case class InlineQueryResultArticle(
   id: String,
@@ -299,7 +316,7 @@ final case class InlineQueryResultArticle(
 ) extends InlineQueryResult
 
 /** Represents a link to an MP3 audio file. By default, this audio file will be sent by the user. Alternatively, you can
-  * use input_message_content to send a message with the specified content instead of the audio.
+  * use <em>input_message_content</em> to send a message with the specified content instead of the audio.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
@@ -308,19 +325,22 @@ final case class InlineQueryResultArticle(
   * @param title
   *   Title
   * @param caption
-  *   Optional. Caption, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the audio caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the audio caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param performer
-  *   Optional. Performer
+  *   <em>Optional</em>. Performer
   * @param audioDuration
-  *   Optional. Audio duration in seconds
+  *   <em>Optional</em>. Audio duration in seconds
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the audio
+  *   <em>Optional</em>. Content of the message to be sent instead of the audio
   */
 final case class InlineQueryResultAudio(
   id: String,
@@ -336,8 +356,8 @@ final case class InlineQueryResultAudio(
 ) extends InlineQueryResult
 
 /** Represents a link to a video animation (H.264/MPEG-4 AVC video without sound). By default, this animated MPEG-4 file
-  * will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message
-  * with the specified content instead of the animation.
+  * will be sent by the user with optional caption. Alternatively, you can use <em>input_message_content</em> to send a
+  * message with the specified content instead of the animation.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
@@ -346,28 +366,31 @@ final case class InlineQueryResultAudio(
   * @param thumbnailUrl
   *   URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
   * @param mpeg4Width
-  *   Optional. Video width
+  *   <em>Optional</em>. Video width
   * @param mpeg4Height
-  *   Optional. Video height
+  *   <em>Optional</em>. Video height
   * @param mpeg4Duration
-  *   Optional. Video duration in seconds
+  *   <em>Optional</em>. Video duration in seconds
   * @param thumbnailMimeType
-  *   Optional. MIME type of the thumbnail, must be one of “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to
-  *   “image/jpeg”.
+  *   <em>Optional</em>. MIME type of the thumbnail, must be one of “image/jpeg”, “image/gif”, or “video/mp4”. Defaults
+  *   to “image/jpeg”.
   * @param title
-  *   Optional. Title for the result
+  *   <em>Optional</em>. Title for the result
   * @param caption
-  *   Optional. Caption of the MPEG-4 file to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the MPEG-4 file to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param showCaptionAboveMedia
-  *   Optional. Pass True if the caption must be shown above the message media
+  *   <em>Optional</em>. Pass <em>True</em> if the caption must be shown above the message media
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the video animation
+  *   <em>Optional</em>. Content of the message to be sent instead of the video animation
   */
 final case class InlineQueryResultMpeg4Gif(
   id: String,
@@ -388,26 +411,29 @@ final case class InlineQueryResultMpeg4Gif(
 
 /** Represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers. By
   * default, this animated MPEG-4 file will be sent by the user with an optional caption. Alternatively, you can use
-  * input_message_content to send a message with the specified content instead of the animation.
+  * <em>input_message_content</em> to send a message with the specified content instead of the animation.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
   * @param mpeg4FileId
   *   A valid file identifier for the MPEG4 file
   * @param title
-  *   Optional. Title for the result
+  *   <em>Optional</em>. Title for the result
   * @param caption
-  *   Optional. Caption of the MPEG-4 file to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the MPEG-4 file to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param showCaptionAboveMedia
-  *   Optional. Pass True if the caption must be shown above the message media
+  *   <em>Optional</em>. Pass <em>True</em> if the caption must be shown above the message media
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the video animation
+  *   <em>Optional</em>. Content of the message to be sent instead of the video animation
   */
 final case class InlineQueryResultCachedMpeg4Gif(
   id: String,
@@ -422,8 +448,8 @@ final case class InlineQueryResultCachedMpeg4Gif(
 ) extends InlineQueryResult
 
 /** Represents a link to a file stored on the Telegram servers. By default, this file will be sent by the user with an
-  * optional caption. Alternatively, you can use input_message_content to send a message with the specified content
-  * instead of the file.
+  * optional caption. Alternatively, you can use <em>input_message_content</em> to send a message with the specified
+  * content instead of the file.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
@@ -432,17 +458,20 @@ final case class InlineQueryResultCachedMpeg4Gif(
   * @param documentFileId
   *   A valid file identifier for the file
   * @param description
-  *   Optional. Short description of the result
+  *   <em>Optional</em>. Short description of the result
   * @param caption
-  *   Optional. Caption of the document to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the document to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the document caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the document caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the file
+  *   <em>Optional</em>. Content of the message to be sent instead of the file
   */
 final case class InlineQueryResultCachedDocument(
   id: String,
@@ -457,8 +486,8 @@ final case class InlineQueryResultCachedDocument(
 ) extends InlineQueryResult
 
 /** Represents a link to a video file stored on the Telegram servers. By default, this video file will be sent by the
-  * user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified
-  * content instead of the video.
+  * user with an optional caption. Alternatively, you can use <em>input_message_content</em> to send a message with the
+  * specified content instead of the video.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
@@ -467,19 +496,22 @@ final case class InlineQueryResultCachedDocument(
   * @param title
   *   Title for the result
   * @param description
-  *   Optional. Short description of the result
+  *   <em>Optional</em>. Short description of the result
   * @param caption
-  *   Optional. Caption of the video to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the video to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the video caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the video caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param showCaptionAboveMedia
-  *   Optional. Pass True if the caption must be shown above the message media
+  *   <em>Optional</em>. Pass <em>True</em> if the caption must be shown above the message media
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the video
+  *   <em>Optional</em>. Content of the message to be sent instead of the video
   */
 final case class InlineQueryResultCachedVideo(
   id: String,
@@ -494,14 +526,15 @@ final case class InlineQueryResultCachedVideo(
   inputMessageContent: Option[InputMessageContent] = Option.empty
 ) extends InlineQueryResult
 
-/** Represents a Game.
+/** Represents a <a href="https://core.telegram.org/bots/api#game">Game</a>.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
   * @param gameShortName
   *   Short name of the game
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   */
 final case class InlineQueryResultGame(
   id: String,
@@ -510,29 +543,32 @@ final case class InlineQueryResultGame(
 ) extends InlineQueryResult
 
 /** Represents a link to a photo stored on the Telegram servers. By default, this photo will be sent by the user with an
-  * optional caption. Alternatively, you can use input_message_content to send a message with the specified content
-  * instead of the photo.
+  * optional caption. Alternatively, you can use <em>input_message_content</em> to send a message with the specified
+  * content instead of the photo.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
   * @param photoFileId
   *   A valid file identifier of the photo
   * @param title
-  *   Optional. Title for the result
+  *   <em>Optional</em>. Title for the result
   * @param description
-  *   Optional. Short description of the result
+  *   <em>Optional</em>. Short description of the result
   * @param caption
-  *   Optional. Caption of the photo to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the photo to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the photo caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param showCaptionAboveMedia
-  *   Optional. Pass True if the caption must be shown above the message media
+  *   <em>Optional</em>. Pass <em>True</em> if the caption must be shown above the message media
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the photo
+  *   <em>Optional</em>. Content of the message to be sent instead of the photo
   */
 final case class InlineQueryResultCachedPhoto(
   id: String,
@@ -548,17 +584,18 @@ final case class InlineQueryResultCachedPhoto(
 ) extends InlineQueryResult
 
 /** Represents a link to a sticker stored on the Telegram servers. By default, this sticker will be sent by the user.
-  * Alternatively, you can use input_message_content to send a message with the specified content instead of the
-  * sticker.
+  * Alternatively, you can use <em>input_message_content</em> to send a message with the specified content instead of
+  * the sticker.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
   * @param stickerFileId
   *   A valid file identifier of the sticker
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the sticker
+  *   <em>Optional</em>. Content of the message to be sent instead of the sticker
   */
 final case class InlineQueryResultCachedSticker(
   id: String,
@@ -568,8 +605,8 @@ final case class InlineQueryResultCachedSticker(
 ) extends InlineQueryResult
 
 /** Represents a link to a page containing an embedded video player or a video file. By default, this video file will be
-  * sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with
-  * the specified content instead of the video.
+  * sent by the user with an optional caption. Alternatively, you can use <em>input_message_content</em> to send a
+  * message with the specified content instead of the video.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
@@ -582,26 +619,29 @@ final case class InlineQueryResultCachedSticker(
   * @param title
   *   Title for the result
   * @param caption
-  *   Optional. Caption of the video to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the video to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the video caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the video caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param showCaptionAboveMedia
-  *   Optional. Pass True if the caption must be shown above the message media
+  *   <em>Optional</em>. Pass <em>True</em> if the caption must be shown above the message media
   * @param videoWidth
-  *   Optional. Video width
+  *   <em>Optional</em>. Video width
   * @param videoHeight
-  *   Optional. Video height
+  *   <em>Optional</em>. Video height
   * @param videoDuration
-  *   Optional. Video duration in seconds
+  *   <em>Optional</em>. Video duration in seconds
   * @param description
-  *   Optional. Short description of the result
+  *   <em>Optional</em>. Short description of the result
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the video. This field is required if InlineQueryResultVideo
-  *   is used to send an HTML-page as a result (e.g., a YouTube video).
+  *   <em>Optional</em>. Content of the message to be sent instead of the video. This field is <strong>required</strong>
+  *   if InlineQueryResultVideo is used to send an HTML-page as a result (e.g., a YouTube video).
   */
 final case class InlineQueryResultVideo(
   id: String,
@@ -622,23 +662,26 @@ final case class InlineQueryResultVideo(
 ) extends InlineQueryResult
 
 /** Represents a link to an MP3 audio file stored on the Telegram servers. By default, this audio file will be sent by
-  * the user. Alternatively, you can use input_message_content to send a message with the specified content instead of
-  * the audio.
+  * the user. Alternatively, you can use <em>input_message_content</em> to send a message with the specified content
+  * instead of the audio.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
   * @param audioFileId
   *   A valid file identifier for the audio file
   * @param caption
-  *   Optional. Caption, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the audio caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the audio caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the audio
+  *   <em>Optional</em>. Content of the message to be sent instead of the audio
   */
 final case class InlineQueryResultCachedAudio(
   id: String,
@@ -651,27 +694,30 @@ final case class InlineQueryResultCachedAudio(
 ) extends InlineQueryResult
 
 /** Represents a link to an animated GIF file stored on the Telegram servers. By default, this animated GIF file will be
-  * sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with
-  * specified content instead of the animation.
+  * sent by the user with an optional caption. Alternatively, you can use <em>input_message_content</em> to send a
+  * message with specified content instead of the animation.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
   * @param gifFileId
   *   A valid file identifier for the GIF file
   * @param title
-  *   Optional. Title for the result
+  *   <em>Optional</em>. Title for the result
   * @param caption
-  *   Optional. Caption of the GIF file to be sent, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption of the GIF file to be sent, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param showCaptionAboveMedia
-  *   Optional. Pass True if the caption must be shown above the message media
+  *   <em>Optional</em>. Pass <em>True</em> if the caption must be shown above the message media
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the GIF animation
+  *   <em>Optional</em>. Content of the message to be sent instead of the GIF animation
   */
 final case class InlineQueryResultCachedGif(
   id: String,
@@ -686,7 +732,7 @@ final case class InlineQueryResultCachedGif(
 ) extends InlineQueryResult
 
 /** Represents a location on a map. By default, the location will be sent by the user. Alternatively, you can use
-  * input_message_content to send a message with the specified content instead of the location.
+  * <em>input_message_content</em> to send a message with the specified content instead of the location.
   *
   * @param id
   *   Unique identifier for this result, 1-64 Bytes
@@ -697,26 +743,27 @@ final case class InlineQueryResultCachedGif(
   * @param title
   *   Location title
   * @param horizontalAccuracy
-  *   Optional. The radius of uncertainty for the location, measured in meters; 0-1500
+  *   <em>Optional</em>. The radius of uncertainty for the location, measured in meters; 0-1500
   * @param livePeriod
-  *   Optional. Period in seconds during which the location can be updated, must be between 60 and 86400, or 0x7FFFFFFF
-  *   for live locations that can be edited indefinitely
+  *   <em>Optional</em>. Period in seconds during which the location can be updated, must be between 60 and 86400, or
+  *   0x7FFFFFFF for live locations that can be edited indefinitely
   * @param heading
-  *   Optional. For live locations, a direction in which the user is moving, in degrees. Must be between 1 and 360 if
-  *   specified.
+  *   <em>Optional</em>. For live locations, a direction in which the user is moving, in degrees. Must be between 1 and
+  *   360 if specified.
   * @param proximityAlertRadius
-  *   Optional. For live locations, a maximum distance for proximity alerts about approaching another chat member, in
-  *   meters. Must be between 1 and 100000 if specified.
+  *   <em>Optional</em>. For live locations, a maximum distance for proximity alerts about approaching another chat
+  *   member, in meters. Must be between 1 and 100000 if specified.
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the location
+  *   <em>Optional</em>. Content of the message to be sent instead of the location
   * @param thumbnailUrl
-  *   Optional. Url of the thumbnail for the result
+  *   <em>Optional</em>. Url of the thumbnail for the result
   * @param thumbnailWidth
-  *   Optional. Thumbnail width
+  *   <em>Optional</em>. Thumbnail width
   * @param thumbnailHeight
-  *   Optional. Thumbnail height
+  *   <em>Optional</em>. Thumbnail height
   */
 final case class InlineQueryResultLocation(
   id: String,
@@ -735,8 +782,8 @@ final case class InlineQueryResultLocation(
 ) extends InlineQueryResult
 
 /** Represents a link to a voice recording in an .OGG container encoded with OPUS. By default, this voice recording will
-  * be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content
-  * instead of the the voice message.
+  * be sent by the user. Alternatively, you can use <em>input_message_content</em> to send a message with the specified
+  * content instead of the the voice message.
   *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
@@ -745,17 +792,20 @@ final case class InlineQueryResultLocation(
   * @param title
   *   Recording title
   * @param caption
-  *   Optional. Caption, 0-1024 characters after entities parsing
+  *   <em>Optional</em>. Caption, 0-1024 characters after entities parsing
   * @param parseMode
-  *   Optional. Mode for parsing entities in the voice message caption. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the voice message caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param captionEntities
-  *   Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
   * @param voiceDuration
-  *   Optional. Recording duration in seconds
+  *   <em>Optional</em>. Recording duration in seconds
   * @param replyMarkup
-  *   Optional. Inline keyboard attached to the message
+  *   <em>Optional</em>. <a href="https://core.telegram.org/bots/features#inline-keyboards">Inline keyboard</a> attached
+  *   to the message
   * @param inputMessageContent
-  *   Optional. Content of the message to be sent instead of the voice recording
+  *   <em>Optional</em>. Content of the message to be sent instead of the voice recording
   */
 final case class InlineQueryResultVoice(
   id: String,

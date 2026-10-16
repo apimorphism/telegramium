@@ -3,13 +3,13 @@ package telegramium.bots
 /** This object represents information about an order.
   *
   * @param name
-  *   Optional. User name
+  *   <em>Optional</em>. User name
   * @param phoneNumber
-  *   Optional. User's phone number
+  *   <em>Optional</em>. User's phone number
   * @param email
-  *   Optional. User email
+  *   <em>Optional</em>. User email
   * @param shippingAddress
-  *   Optional. User shipping address
+  *   <em>Optional</em>. User shipping address
   */
 final case class OrderInfo(
   name: Option[String] = Option.empty,

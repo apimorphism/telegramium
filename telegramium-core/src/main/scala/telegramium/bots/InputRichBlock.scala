@@ -2,18 +2,18 @@ package telegramium.bots
 
 sealed trait InputRichBlock {}
 
-/** A table, corresponding to the HTML tag <table>.
+/** A table, corresponding to the HTML tag <code>ᐸtableᐳ</code>.
   *
   * @param cells
   *   Cells of the table
   * @param isBordered
-  *   Optional. Pass True if the table has borders
+  *   <em>Optional</em>. Pass <em>True</em> if the table has borders
   * @param isStriped
-  *   Optional. Pass True if the table is striped
+  *   <em>Optional</em>. Pass <em>True</em> if the table is striped
   * @param isCompact
-  *   Optional. Pass True if table cells must have smaller indents
+  *   <em>Optional</em>. Pass <em>True</em> if table cells must have smaller indents
   * @param caption
-  *   Optional. Caption of the table
+  *   <em>Optional</em>. Caption of the table
   */
 final case class InputRichBlockTable(
   cells: List[List[RichBlockTableCell]] = List.empty,
@@ -23,143 +23,149 @@ final case class InputRichBlockTable(
   caption: Option[RichText] = Option.empty
 ) extends InputRichBlock
 
-/** A block with an anchor, corresponding to the HTML tag <a> with the attribute name.
+/** A block with an anchor, corresponding to the HTML tag <code>ᐸaᐳ</code> with the attribute <code>name</code>.
   *
   * @param name
   *   The name of the anchor
   */
 final case class InputRichBlockAnchor(name: String) extends InputRichBlock
 
-/** A block with a voice note, corresponding to the HTML tag <audio>.
+/** A block with a voice note, corresponding to the HTML tag <code>ᐸaudioᐳ</code>.
   *
   * @param voiceNote
   *   The voice note. Caption is ignored.
   * @param caption
-  *   Optional. Caption of the block
+  *   <em>Optional</em>. Caption of the block
   */
 final case class InputRichBlockVoiceNote(
   voiceNote: InputMediaVoiceNote,
   caption: Option[RichBlockCaption] = Option.empty
 ) extends InputRichBlock
 
-/** A list of blocks, corresponding to the HTML tag <ul> or <ol> with multiple nested tags <li>.
+/** A list of blocks, corresponding to the HTML tag <code>ᐸulᐳ</code> or <code>ᐸolᐳ</code> with multiple nested tags
+  * <code>ᐸliᐳ</code>.
   *
   * @param items
   *   Items of the list
   */
 final case class InputRichBlockList(items: List[InputRichBlockListItem] = List.empty) extends InputRichBlock
 
-/** A text paragraph, corresponding to the HTML tag <p>.
+/** A text paragraph, corresponding to the HTML tag <code>ᐸpᐳ</code>.
   *
   * @param text
   *   Text of the block
   */
 final case class InputRichBlockParagraph(text: RichText) extends InputRichBlock
 
-/** A preformatted text block, corresponding to the nested HTML tags <pre> and <code>.
+/** A preformatted text block, corresponding to the nested HTML tags <code>ᐸpreᐳ</code> and <code>ᐸcodeᐳ</code>.
   *
   * @param text
   *   Text of the block
   * @param language
-  *   Optional. The programming language of the text
+  *   <em>Optional</em>. The programming language of the text
   */
 final case class InputRichBlockPreformatted(text: RichText, language: Option[String] = Option.empty)
     extends InputRichBlock
 
-/** A block with a music file, corresponding to the HTML tag <audio>.
+/** A block with a music file, corresponding to the HTML tag <code>ᐸaudioᐳ</code>.
   *
   * @param audio
   *   The audio. Caption is ignored.
   * @param caption
-  *   Optional. Caption of the block
+  *   <em>Optional</em>. Caption of the block
   */
 final case class InputRichBlockAudio(audio: InputMediaAudio, caption: Option[RichBlockCaption] = Option.empty)
     extends InputRichBlock
 
-/** A block quotation, corresponding to the HTML tag <blockquote> with custom attribute "expandable".
+/** A block quotation, corresponding to the HTML tag <code>ᐸblockquoteᐳ</code> with custom attribute
+  * <code>"expandable"</code>.
   *
   * @param text
   *   Content of the block
   * @param credit
-  *   Optional. Credit of the block
+  *   <em>Optional</em>. Credit of the block
   */
 final case class InputRichBlockExpandableBlockQuotation(text: RichText, credit: Option[RichText] = Option.empty)
     extends InputRichBlock
 
-/** A collage, corresponding to the custom HTML tag <tg-collage>.
+/** A collage, corresponding to the custom HTML tag <code>ᐸtg-collageᐳ</code>.
   *
   * @param blocks
   *   Elements of the collage
   * @param caption
-  *   Optional. Caption of the block
+  *   <em>Optional</em>. Caption of the block
   */
 final case class InputRichBlockCollage(
   blocks: List[InputRichBlock] = List.empty,
   caption: Option[RichBlockCaption] = Option.empty
 ) extends InputRichBlock
 
-/** A footer, corresponding to the HTML tag <footer>.
+/** A footer, corresponding to the HTML tag <code>ᐸfooterᐳ</code>.
   *
   * @param text
   *   Text of the block
   */
 final case class InputRichBlockFooter(text: RichText) extends InputRichBlock
 
-/** A block with a general file, corresponding to the custom HTML tag <tg-document>.
+/** A block with a general file, corresponding to the custom HTML tag <code>ᐸtg-documentᐳ</code>.
   *
   * @param document
   *   The document. Caption is ignored.
   * @param caption
-  *   Optional. Caption of the block
+  *   <em>Optional</em>. Caption of the block
   */
 final case class InputRichBlockDocument(document: InputMediaDocument, caption: Option[RichBlockCaption] = Option.empty)
     extends InputRichBlock
 
-/** A block with a mathematical expression in LaTeX format, corresponding to the custom HTML tag <tg-math-block>.
+/** A block with a mathematical expression in LaTeX format, corresponding to the custom HTML tag
+  * <code>ᐸtg-math-blockᐳ</code>.
   *
   * @param expression
   *   The mathematical expression in LaTeX format
   */
 final case class InputRichBlockMathematicalExpression(expression: String) extends InputRichBlock
 
-/** A divider, corresponding to the HTML tag <hr/>. */
+/** A divider, corresponding to the HTML tag <code>&lt;hr/&gt;</code>. */
 case object InputRichBlockDivider extends InputRichBlock
 
-/** A block quotation, corresponding to the HTML tag <blockquote>.
+/** A block quotation, corresponding to the HTML tag <code>ᐸblockquoteᐳ</code>.
   *
   * @param blocks
   *   Content of the block
   * @param credit
-  *   Optional. Credit of the block
+  *   <em>Optional</em>. Credit of the block
   */
 final case class InputRichBlockBlockQuotation(
   blocks: List[InputRichBlock] = List.empty,
   credit: Option[RichText] = Option.empty
 ) extends InputRichBlock
 
-/** A block with a “Thinking…” placeholder, corresponding to the custom HTML tag <tg-thinking>. The block may be used
-  * only in sendRichMessageDraft, therefore it can't be received in messages. See https://t.me/addemoji/AIActions for
-  * examples of custom emoji that are recommended for usage in the block.
+/** A block with a “Thinking…” placeholder, corresponding to the custom HTML tag <code>ᐸtg-thinkingᐳ</code>. The block
+  * may be used only in <a href="https://core.telegram.org/bots/api#sendrichmessagedraft">sendRichMessageDraft</a>,
+  * therefore it can't be received in messages. See <a href="https://t.me/addemoji/AIActions"></a><a
+  * href="https://t.me/addemoji/AIActions">https://t.me/addemoji/AIActions</a> for examples of custom emoji that are
+  * recommended for usage in the block.
   *
   * @param text
-  *   Text of the block. See https://t.me/addemoji/AIActions for examples of custom emoji that are recommended for usage
-  *   in the block.
+  *   Text of the block. See <a href="https://t.me/addemoji/AIActions"></a><a
+  *   href="https://t.me/addemoji/AIActions">https://t.me/addemoji/AIActions</a> for examples of custom emoji that are
+  *   recommended for usage in the block.
   */
 final case class InputRichBlockThinking(text: RichText) extends InputRichBlock
 
-/** A block with a map, corresponding to the custom HTML tag <tg-map>. The map's width and height must not exceed 10000
-  * in total. The width and height ratio must be at most 20.
+/** A block with a map, corresponding to the custom HTML tag <code>ᐸtg-mapᐳ</code>. The map's width and height must not
+  * exceed 10000 in total. The width and height ratio must be at most 20.
   *
   * @param location
   *   Location of the center of the map
   * @param zoom
-  *   Optional. Map zoom level; 0-24
+  *   <em>Optional</em>. Map zoom level; 0-24
   * @param width
-  *   Optional. Map width; 0-10000
+  *   <em>Optional</em>. Map width; 0-10000
   * @param height
-  *   Optional. Map height; 0-10000
+  *   <em>Optional</em>. Map height; 0-10000
   * @param caption
-  *   Optional. Caption of the block
+  *   <em>Optional</em>. Caption of the block
   */
 final case class InputRichBlockMap(
   location: Location,
@@ -169,41 +175,42 @@ final case class InputRichBlockMap(
   caption: Option[RichBlockCaption] = Option.empty
 ) extends InputRichBlock
 
-/** A slideshow, corresponding to the custom HTML tag <tg-slideshow>.
+/** A slideshow, corresponding to the custom HTML tag <code>ᐸtg-slideshowᐳ</code>.
   *
   * @param blocks
   *   Elements of the slideshow
   * @param caption
-  *   Optional. Caption of the block
+  *   <em>Optional</em>. Caption of the block
   */
 final case class InputRichBlockSlideshow(
   blocks: List[InputRichBlock] = List.empty,
   caption: Option[RichBlockCaption] = Option.empty
 ) extends InputRichBlock
 
-/** A block with a photo, corresponding to the HTML tag <img>.
+/** A block with a photo, corresponding to the HTML tag <code>ᐸimgᐳ</code>.
   *
   * @param photo
   *   The photo. Caption is ignored.
   * @param caption
-  *   Optional. Caption of the block
+  *   <em>Optional</em>. Caption of the block
   */
 final case class InputRichBlockPhoto(photo: InputMediaPhoto, caption: Option[RichBlockCaption] = Option.empty)
     extends InputRichBlock
 
-/** A block with an animation, corresponding to the HTML tag <video>.
+/** A block with an animation, corresponding to the HTML tag <code>ᐸvideoᐳ</code>.
   *
   * @param animation
   *   The animation. Caption is ignored.
   * @param caption
-  *   Optional. Caption of the block
+  *   <em>Optional</em>. Caption of the block
   */
 final case class InputRichBlockAnimation(
   animation: InputMediaAnimation,
   caption: Option[RichBlockCaption] = Option.empty
 ) extends InputRichBlock
 
-/** A section heading, corresponding to the HTML tags <h1>, <h2>, <h3>, <h4>, <h5>, or <h6>.
+/** A section heading, corresponding to the HTML tags <code>ᐸh1ᐳ</code>, <code>ᐸh2ᐳ</code>, <code>ᐸh3ᐳ</code>,
+  * <code>ᐸh4ᐳ</code>, <code>ᐸh5ᐳ</code>, or <code>ᐸh6ᐳ</code>.
   *
   * @param text
   *   Text of the block
@@ -212,14 +219,14 @@ final case class InputRichBlockAnimation(
   */
 final case class InputRichBlockSectionHeading(text: RichText, size: Int) extends InputRichBlock
 
-/** An expandable block for details disclosure, corresponding to the HTML tag <details>.
+/** An expandable block for details disclosure, corresponding to the HTML tag <code>ᐸdetailsᐳ</code>.
   *
   * @param summary
   *   Always shown summary of the block
   * @param blocks
   *   Content of the block
   * @param isOpen
-  *   Optional. Pass True if the content of the block is visible by default
+  *   <em>Optional</em>. Pass <em>True</em> if the content of the block is visible by default
   */
 final case class InputRichBlockDetails(
   summary: RichText,
@@ -228,34 +235,34 @@ final case class InputRichBlockDetails(
 ) extends InputRichBlock
 
 /** A block containing a list of buttons that are shown in one row, corresponding to the custom HTML tag
-  * <tg-button-row>.
+  * <code>ᐸtg-button-rowᐳ</code>.
   *
   * @param buttons
   *   List of 1-8 buttons to send
   * @param align
-  *   Optional. Horizontal alignment of the buttons. Currently, must be one of “left”, “center”, or “right”.
+  *   <em>Optional</em>. Horizontal alignment of the buttons. Currently, must be one of “left”, “center”, or “right”.
   */
 final case class InputRichBlockButtons(
   buttons: List[RichMessageButton] = List.empty,
   align: Option[String] = Option.empty
 ) extends InputRichBlock
 
-/** A block with a video, corresponding to the HTML tag <video>.
+/** A block with a video, corresponding to the HTML tag <code>ᐸvideoᐳ</code>.
   *
   * @param video
   *   The video. Caption is ignored.
   * @param caption
-  *   Optional. Caption of the block
+  *   <em>Optional</em>. Caption of the block
   */
 final case class InputRichBlockVideo(video: InputMediaVideo, caption: Option[RichBlockCaption] = Option.empty)
     extends InputRichBlock
 
-/** A quotation with centered text, loosely corresponding to the HTML tag <aside>.
+/** A quotation with centered text, loosely corresponding to the HTML tag <code>ᐸasideᐳ</code>.
   *
   * @param text
   *   Text of the block
   * @param credit
-  *   Optional. Credit of the block
+  *   <em>Optional</em>. Credit of the block
   */
 final case class InputRichBlockPullQuotation(text: RichText, credit: Option[RichText] = Option.empty)
     extends InputRichBlock

@@ -1,23 +1,27 @@
 package telegramium.bots
 
-/** Describes a rich message to be sent. Exactly one of the fields html, markdown, or blocks must be used.
+/** Describes a rich message to be sent. Exactly <strong>one</strong> of the fields <em>html</em>, <em>markdown</em>, or
+  * <em>blocks</em> must be used.
   *
   * @param blocks
-  *   Optional. Content of the rich message to send described as a list of blocks
+  *   <em>Optional</em>. Content of the rich message to send described as a list of blocks
   * @param html
-  *   Optional. Content of the rich message to send described using HTML formatting. See rich message formatting options
-  *   for more details. Use media field to specify the media used in the message.
+  *   <em>Optional</em>. Content of the rich message to send described using HTML formatting. See <a
+  *   href="https://core.telegram.org/bots/api#rich-message-formatting-options">rich message formatting options</a> for
+  *   more details. Use <em>media</em> field to specify the media used in the message.
   * @param markdown
-  *   Optional. Content of the rich message to send described using Markdown formatting. See rich message formatting
-  *   options for more details. Use media field to specify the media used in the message.
+  *   <em>Optional</em>. Content of the rich message to send described using Markdown formatting. See <a
+  *   href="https://core.telegram.org/bots/api#rich-message-formatting-options">rich message formatting options</a> for
+  *   more details. Use <em>media</em> field to specify the media used in the message.
   * @param media
-  *   Optional. List of media that are specified in the markdown or html fields using tg://photo?id=, tg://video?id=,
-  *   tg://document?id=, and tg://audio?id= links
+  *   <em>Optional</em>. List of media that are specified in the <em>markdown</em> or <em>html</em> fields using
+  *   <code>tg://photo?id=</code>, <code>tg://video?id=</code>, <code>tg://document?id=</code>, and
+  *   <code>tg://audio?id=</code> links
   * @param isRtl
-  *   Optional. Pass True if the rich message must be shown right-to-left
+  *   <em>Optional</em>. Pass <em>True</em> if the rich message must be shown right-to-left
   * @param skipEntityDetection
-  *   Optional. Pass True to skip automatic detection of entities (e.g., URLs, email addresses, username mentions,
-  *   hashtags, cashtags, bot commands, or phone numbers) in the text
+  *   <em>Optional</em>. Pass <em>True</em> to skip automatic detection of entities (e.g., URLs, email addresses,
+  *   username mentions, hashtags, cashtags, bot commands, or phone numbers) in the text
   */
 final case class InputRichMessage(
   blocks: List[InputRichBlock] = List.empty,

@@ -14,16 +14,19 @@ import telegramium.bots.MessageEntity
   *   Text of the message to be sent, 0-4096 characters after entities parsing. Pass an empty text to show a “Thinking…”
   *   placeholder.
   * @param parseMode
-  *   Mode for parsing entities in the message text. See formatting options for more details.
+  *   Mode for parsing entities in the message text. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param entities
   *   A JSON-serialized list of special entities that appear in message text, which can be specified instead of
-  *   parse_mode
+  *   <em>parse_mode</em>
   * @param canStop
-  *   Pass True to show the user a button to stop further drafts. The bot will receive an Update
-  *   “stopped_message_generation” if the user presses the button.
+  *   Pass <em>True</em> to show the user a button to stop further drafts. The bot will receive an <a
+  *   href="https://core.telegram.org/bots/api#update">Update</a> “stopped_message_generation” if the user presses the
+  *   button.
   * @param keepOnStop
-  *   Pass True to keep the draft in the chat when the button is pressed. The draft will still disappear after a short
-  *   time or if the bot sends a message. To fully preserve the partial draft, the bot should send it as a new message.
+  *   Pass <em>True</em> to keep the draft in the chat when the button is pressed. The draft will still disappear after
+  *   a short time or if the bot sends a message. To fully preserve the partial draft, the bot should send it as a new
+  *   message.
   */
 final case class SendMessageDraftReq(
   chatId: Long,

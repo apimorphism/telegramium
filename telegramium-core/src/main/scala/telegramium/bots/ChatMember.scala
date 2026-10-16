@@ -2,76 +2,82 @@ package telegramium.bots
 
 sealed trait ChatMember {}
 
-/** Represents a chat member that owns the chat and has all administrator privileges.
+/** Represents a <a href="https://core.telegram.org/bots/api#chatmember">chat member</a> that owns the chat and has all
+  * administrator privileges.
   *
   * @param user
   *   Information about the user
   * @param isAnonymous
-  *   True, if the user's presence in the chat is hidden
+  *   <em>True</em>, if the user's presence in the chat is hidden
   * @param customTitle
-  *   Optional. Custom title for this user
+  *   <em>Optional</em>. Custom title for this user
   */
 final case class ChatMemberOwner(user: User, isAnonymous: Boolean, customTitle: Option[String] = Option.empty)
     extends ChatMember
 
-/** Represents a chat member that isn't currently a member of the chat, but may join it themselves.
+/** Represents a <a href="https://core.telegram.org/bots/api#chatmember">chat member</a> that isn't currently a member
+  * of the chat, but may join it themselves.
   *
   * @param user
   *   Information about the user
   */
 final case class ChatMemberLeft(user: User) extends ChatMember
 
-/** Represents a chat member that has some additional privileges.
+/** Represents a <a href="https://core.telegram.org/bots/api#chatmember">chat member</a> that has some additional
+  * privileges.
   *
   * @param user
   *   Information about the user
   * @param canBeEdited
-  *   True, if the bot is allowed to edit administrator privileges of that user
+  *   <em>True</em>, if the bot is allowed to edit administrator privileges of that user
   * @param isAnonymous
-  *   True, if the user's presence in the chat is hidden
+  *   <em>True</em>, if the user's presence in the chat is hidden
   * @param canManageChat
-  *   True, if the administrator can access the chat event log, get boost list, see hidden supergroup and channel
-  *   members, report spam messages, ignore slow mode, and send messages to the chat without paying Telegram Stars.
-  *   Implied by any other administrator privilege.
+  *   <em>True</em>, if the administrator can access the chat event log, get boost list, see hidden supergroup and
+  *   channel members, report spam messages, ignore slow mode, and send messages to the chat without paying Telegram
+  *   Stars. Implied by any other administrator privilege.
   * @param canDeleteMessages
-  *   True, if the administrator can delete messages of other users
+  *   <em>True</em>, if the administrator can delete messages of other users
   * @param canManageVideoChats
-  *   True, if the administrator can manage video chats
+  *   <em>True</em>, if the administrator can manage video chats
   * @param canRestrictMembers
-  *   True, if the administrator can restrict, ban or unban chat members, or access supergroup statistics
+  *   <em>True</em>, if the administrator can restrict, ban or unban chat members, or access supergroup statistics
   * @param canPromoteMembers
-  *   True, if the administrator can add new administrators with a subset of their own privileges or demote
+  *   <em>True</em>, if the administrator can add new administrators with a subset of their own privileges or demote
   *   administrators that they have promoted, directly or indirectly (promoted by administrators that were appointed by
   *   the user)
   * @param canChangeInfo
-  *   True, if the user is allowed to change the chat title, photo and other settings
+  *   <em>True</em>, if the user is allowed to change the chat title, photo and other settings
   * @param canInviteUsers
-  *   True, if the user is allowed to invite new users to the chat
+  *   <em>True</em>, if the user is allowed to invite new users to the chat
   * @param canPostStories
-  *   True, if the administrator can post stories to the chat
+  *   <em>True</em>, if the administrator can post stories to the chat
   * @param canEditStories
-  *   True, if the administrator can edit stories posted by other users, post stories to the chat page, pin chat
-  *   stories, and access the chat's story archive
+  *   <em>True</em>, if the administrator can edit stories posted by other users, post stories to the chat page, pin
+  *   chat stories, and access the chat's story archive
   * @param canDeleteStories
-  *   True, if the administrator can delete stories posted by other users
+  *   <em>True</em>, if the administrator can delete stories posted by other users
   * @param canSendWelcomeMessages
-  *   True, if the administrator can manage chat welcome messages or directly send them in the case of bots
+  *   <em>True</em>, if the administrator can manage chat welcome messages or directly send them in the case of bots
   * @param canPostMessages
-  *   Optional. True, if the administrator can post messages in the channel, approve suggested posts, or access channel
-  *   statistics; for channels only
+  *   <em>Optional</em>. <em>True</em>, if the administrator can post messages in the channel, approve suggested posts,
+  *   or access channel statistics; for channels only
   * @param canEditMessages
-  *   Optional. True, if the administrator can edit messages of other users and can pin messages; for channels only
-  * @param canPinMessages
-  *   Optional. True, if the user is allowed to pin messages; for groups and supergroups only
-  * @param canManageTopics
-  *   Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; for supergroups only
-  * @param canManageDirectMessages
-  *   Optional. True, if the administrator can manage direct messages of the channel and decline suggested posts; for
+  *   <em>Optional</em>. <em>True</em>, if the administrator can edit messages of other users and can pin messages; for
   *   channels only
+  * @param canPinMessages
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to pin messages; for groups and supergroups only
+  * @param canManageTopics
+  *   <em>Optional</em>. <em>True</em>, if the user is allowed to create, rename, close, and reopen forum topics; for
+  *   supergroups only
+  * @param canManageDirectMessages
+  *   <em>Optional</em>. <em>True</em>, if the administrator can manage direct messages of the channel and decline
+  *   suggested posts; for channels only
   * @param canManageTags
-  *   Optional. True, if the administrator can edit the tags of regular members; for groups and supergroups only
+  *   <em>Optional</em>. <em>True</em>, if the administrator can edit the tags of regular members; for groups and
+  *   supergroups only
   * @param customTitle
-  *   Optional. Custom title for this user
+  *   <em>Optional</em>. Custom title for this user
   */
 final case class ChatMemberAdministrator(
   user: User,
@@ -97,14 +103,15 @@ final case class ChatMemberAdministrator(
   customTitle: Option[String] = Option.empty
 ) extends ChatMember
 
-/** Represents a chat member that has no additional privileges or restrictions.
+/** Represents a <a href="https://core.telegram.org/bots/api#chatmember">chat member</a> that has no additional
+  * privileges or restrictions.
   *
   * @param user
   *   Information about the user
   * @param tag
-  *   Optional. Tag of the member
+  *   <em>Optional</em>. Tag of the member
   * @param untilDate
-  *   Optional. Date when the user's subscription will expire; Unix time
+  *   <em>Optional</em>. Date when the user's subscription will expire; Unix time
   */
 final case class ChatMemberMember(
   user: User,
@@ -112,7 +119,8 @@ final case class ChatMemberMember(
   untilDate: Option[Long] = Option.empty
 ) extends ChatMember
 
-/** Represents a chat member that was banned in the chat and can't return to the chat or view chat messages.
+/** Represents a <a href="https://core.telegram.org/bots/api#chatmember">chat member</a> that was banned in the chat and
+  * can't return to the chat or view chat messages.
   *
   * @param user
   *   Information about the user
@@ -121,49 +129,50 @@ final case class ChatMemberMember(
   */
 final case class ChatMemberBanned(user: User, untilDate: Long) extends ChatMember
 
-/** Represents a chat member that is under certain restrictions in the chat. Supergroups only.
+/** Represents a <a href="https://core.telegram.org/bots/api#chatmember">chat member</a> that is under certain
+  * restrictions in the chat. Supergroups only.
   *
   * @param user
   *   Information about the user
   * @param isMember
-  *   True, if the user is a member of the chat at the moment of the request
+  *   <em>True</em>, if the user is a member of the chat at the moment of the request
   * @param canSendMessages
-  *   True, if the user is allowed to send text messages, rich messages, contacts, giveaways, giveaway winners,
+  *   <em>True</em>, if the user is allowed to send text messages, rich messages, contacts, giveaways, giveaway winners,
   *   invoices, locations and venues
   * @param canSendAudios
-  *   True, if the user is allowed to send audios
+  *   <em>True</em>, if the user is allowed to send audios
   * @param canSendDocuments
-  *   True, if the user is allowed to send documents
+  *   <em>True</em>, if the user is allowed to send documents
   * @param canSendPhotos
-  *   True, if the user is allowed to send photos
+  *   <em>True</em>, if the user is allowed to send photos
   * @param canSendVideos
-  *   True, if the user is allowed to send videos
+  *   <em>True</em>, if the user is allowed to send videos
   * @param canSendVideoNotes
-  *   True, if the user is allowed to send video notes
+  *   <em>True</em>, if the user is allowed to send video notes
   * @param canSendVoiceNotes
-  *   True, if the user is allowed to send voice notes
+  *   <em>True</em>, if the user is allowed to send voice notes
   * @param canSendPolls
-  *   True, if the user is allowed to send polls and checklists
+  *   <em>True</em>, if the user is allowed to send polls and checklists
   * @param canSendOtherMessages
-  *   True, if the user is allowed to send animations, games, stickers and use inline bots
+  *   <em>True</em>, if the user is allowed to send animations, games, stickers and use inline bots
   * @param canAddWebPagePreviews
-  *   True, if the user is allowed to add web page previews to their messages
+  *   <em>True</em>, if the user is allowed to add web page previews to their messages
   * @param canReactToMessages
-  *   True, if the user is allowed to react to messages
+  *   <em>True</em>, if the user is allowed to react to messages
   * @param canEditTag
-  *   True, if the user is allowed to edit their own tag
+  *   <em>True</em>, if the user is allowed to edit their own tag
   * @param canChangeInfo
-  *   True, if the user is allowed to change the chat title, photo and other settings
+  *   <em>True</em>, if the user is allowed to change the chat title, photo and other settings
   * @param canInviteUsers
-  *   True, if the user is allowed to invite new users to the chat
+  *   <em>True</em>, if the user is allowed to invite new users to the chat
   * @param canPinMessages
-  *   True, if the user is allowed to pin messages
+  *   <em>True</em>, if the user is allowed to pin messages
   * @param canManageTopics
-  *   True, if the user is allowed to create forum topics
+  *   <em>True</em>, if the user is allowed to create forum topics
   * @param untilDate
   *   Date when restrictions will be lifted for this user; Unix time. If 0, then the user is restricted forever.
   * @param tag
-  *   Optional. Tag of the member
+  *   <em>Optional</em>. Tag of the member
   */
 final case class ChatMemberRestricted(
   user: User,

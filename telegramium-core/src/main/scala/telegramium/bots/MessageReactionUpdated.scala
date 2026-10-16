@@ -9,9 +9,9 @@ package telegramium.bots
   * @param date
   *   Date of the change in Unix time
   * @param user
-  *   Optional. The user that changed the reaction, if the user isn't anonymous
+  *   <em>Optional</em>. The user that changed the reaction, if the user isn't anonymous
   * @param actorChat
-  *   Optional. The chat on behalf of which the reaction was changed, if the user is anonymous
+  *   <em>Optional</em>. The chat on behalf of which the reaction was changed, if the user is anonymous
   * @param oldReaction
   *   Previous list of reaction types that were set by the user
   * @param newReaction

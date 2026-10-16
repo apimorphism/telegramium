@@ -3,36 +3,38 @@ package telegramium.bots
 /** Describes reply parameters for the message that is being sent.
   *
   * @param messageId
-  *   Optional. Identifier of the message that will be replied to in the current chat, or in the chat chat_id if it is
-  *   specified. Required if ephemeral_message_id isn't specified.
+  *   <em>Optional</em>. Identifier of the message that will be replied to in the current chat, or in the chat
+  *   <em>chat_id</em> if it is specified. Required if <em>ephemeral_message_id</em> isn't specified.
   * @param chatId
-  *   Optional. If the message to be replied to is from a different chat, unique identifier for the chat or username of
-  *   the bot, supergroup or channel in the format &#064;username. Not supported for messages sent on behalf of a
-  *   business account, messages from channel direct messages chats and ephemeral messages.
+  *   <em>Optional</em>. If the message to be replied to is from a different chat, unique identifier for the chat or
+  *   username of the bot, supergroup or channel in the format <code>&#064;username</code>. Not supported for messages
+  *   sent on behalf of a business account, messages from channel direct messages chats and ephemeral messages.
   * @param ephemeralMessageId
-  *   Optional. Identifier of the incoming ephemeral message that will be replied to in the current chat. A reply to an
-  *   ephemeral message must itself be an ephemeral message. An ephemeral message may only be replied to within 15
-  *   seconds of being sent. Required if message_id isn't specified.
+  *   <em>Optional</em>. Identifier of the incoming ephemeral message that will be replied to in the current chat. A
+  *   reply to an ephemeral message must itself be an ephemeral message. An ephemeral message may only be replied to
+  *   within 15 seconds of being sent. Required if <em>message_id</em> isn't specified.
   * @param allowSendingWithoutReply
-  *   Optional. Pass True if the message should be sent even if the specified message to be replied to is not found.
-  *   Always False for replies in another chat or forum topic, and sent ephemeral messages. Always True for messages
-  *   sent on behalf of a business account.
+  *   <em>Optional</em>. Pass <em>True</em> if the message should be sent even if the specified message to be replied to
+  *   is not found. Always <em>False</em> for replies in another chat or forum topic, and sent ephemeral messages.
+  *   Always <em>True</em> for messages sent on behalf of a business account.
   * @param quote
-  *   Optional. Quoted part of the message to be replied to; 0-1024 characters after entities parsing. The quote must be
-  *   an exact substring of the message to be replied to, including bold, italic, underline, strikethrough, spoiler,
-  *   custom_emoji, and date_time entities. The message will fail to send if the quote isn't found in the original
-  *   message. Ignored for ephemeral messages.
+  *   <em>Optional</em>. Quoted part of the message to be replied to; 0-1024 characters after entities parsing. The
+  *   quote must be an exact substring of the message to be replied to, including <em>bold</em>, <em>italic</em>,
+  *   <em>underline</em>, <em>strikethrough</em>, <em>spoiler</em>, <em>custom_emoji</em>, and <em>date_time</em>
+  *   entities. The message will fail to send if the quote isn't found in the original message. Ignored for ephemeral
+  *   messages.
   * @param quoteParseMode
-  *   Optional. Mode for parsing entities in the quote. See formatting options for more details.
+  *   <em>Optional</em>. Mode for parsing entities in the quote. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
   * @param quoteEntities
-  *   Optional. A JSON-serialized list of special entities that appear in the quote. It can be specified instead of
-  *   quote_parse_mode.
+  *   <em>Optional</em>. A JSON-serialized list of special entities that appear in the quote. It can be specified
+  *   instead of <em>quote_parse_mode</em>.
   * @param quotePosition
-  *   Optional. Position of the quote in the original message in UTF-16 code units
+  *   <em>Optional</em>. Position of the quote in the original message in UTF-16 code units
   * @param checklistTaskId
-  *   Optional. Identifier of the specific checklist task to be replied to
+  *   <em>Optional</em>. Identifier of the specific checklist task to be replied to
   * @param pollOptionId
-  *   Optional. Persistent identifier of the specific poll option to be replied to
+  *   <em>Optional</em>. Persistent identifier of the specific poll option to be replied to
   */
 final case class ReplyParameters(
   messageId: Option[Int] = Option.empty,

@@ -1,6 +1,6 @@
 package telegramium.bots
 
-/** This object represents a video message.
+/** This object represents a <a href="https://telegram.org/blog/video-messages-and-telescope">video message</a>.
   *
   * @param fileId
   *   Identifier for this file, which can be used to download or reuse the file
@@ -12,9 +12,9 @@ package telegramium.bots
   * @param duration
   *   Duration of the video in seconds as defined by the sender
   * @param thumbnail
-  *   Optional. Video thumbnail
+  *   <em>Optional</em>. Video thumbnail
   * @param fileSize
-  *   Optional. File size in bytes
+  *   <em>Optional</em>. File size in bytes
   */
 final case class VideoNote(
   fileId: String,

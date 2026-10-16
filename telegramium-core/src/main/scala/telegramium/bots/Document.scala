@@ -1,6 +1,9 @@
 package telegramium.bots
 
-/** This object represents a general file (as opposed to photos, voice messages and audio files).
+/** This object represents a general file (as opposed to <a
+  * href="https://core.telegram.org/bots/api#photosize">photos</a>, <a
+  * href="https://core.telegram.org/bots/api#voice">voice messages</a> and <a
+  * href="https://core.telegram.org/bots/api#audio">audio files</a>).
   *
   * @param fileId
   *   Identifier for this file, which can be used to download or reuse the file
@@ -8,13 +11,13 @@ package telegramium.bots
   *   Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used
   *   to download or reuse the file.
   * @param thumbnail
-  *   Optional. Document thumbnail as defined by the sender
+  *   <em>Optional</em>. Document thumbnail as defined by the sender
   * @param fileName
-  *   Optional. Original filename as defined by the sender
+  *   <em>Optional</em>. Original filename as defined by the sender
   * @param mimeType
-  *   Optional. MIME type of the file as defined by the sender
+  *   <em>Optional</em>. MIME type of the file as defined by the sender
   * @param fileSize
-  *   Optional. File size in bytes. It can be bigger than 2&#94;31 and some programming languages may have
+  *   <em>Optional</em>. File size in bytes. It can be bigger than 2&#94;31 and some programming languages may have
   *   difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer
   *   or double-precision float type are safe for storing this value.
   */
