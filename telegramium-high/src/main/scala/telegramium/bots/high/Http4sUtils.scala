@@ -24,7 +24,7 @@ private[high] object Http4sUtils {
 
   def toStreamDataParts[F[_]: Async](files: Map[String, NamedInputStream]): Vector[Part[F]] =
     files.map { case (fieldName, NamedInputStream(filename, stream)) =>
-      Part.fileData[F](fieldName, filename, fs2.io.readInputStream(Async[F].blocking(stream), chunkSize = 8192))
+      Part.fileData[F](fieldName, filename, fs2.io.readInputStream(Async[F].pure(stream), chunkSize = 8192))
     }.toVector
 
   def toMultipartWithFormData[F[_]: Sync](
