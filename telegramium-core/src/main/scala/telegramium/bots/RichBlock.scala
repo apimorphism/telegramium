@@ -2,7 +2,7 @@ package telegramium.bots
 
 sealed trait RichBlock {}
 
-/** A block with a video, corresponding to the HTML tag <code>&lt;video&gt;</code>.
+/** A block with a video, corresponding to the HTML tag <code>ᐸvideoᐳ</code>.
   *
   * @param video
   *   The video
@@ -17,7 +17,7 @@ final case class RichBlockVideo(
   caption: Option[RichBlockCaption] = Option.empty
 ) extends RichBlock
 
-/** An expandable block for details disclosure, corresponding to the HTML tag <code>&lt;details&gt;</code>.
+/** An expandable block for details disclosure, corresponding to the HTML tag <code>ᐸdetailsᐳ</code>.
   *
   * @param summary
   *   Always shown summary of the block
@@ -32,15 +32,15 @@ final case class RichBlockDetails(
   isOpen: Option[Boolean] = Option.empty
 ) extends RichBlock
 
-/** A list of blocks, corresponding to the HTML tag <code>‹ul›</code> or <code>‹ol›</code> with multiple nested tags
-  * <code>‹li›</code>.
+/** A list of blocks, corresponding to the HTML tag <code>ᐸulᐳ</code> or <code>ᐸolᐳ</code> with multiple nested tags
+  * <code>ᐸliᐳ</code>.
   *
   * @param items
   *   Items of the list
   */
 final case class RichBlockList(items: List[RichBlockListItem] = List.empty) extends RichBlock
 
-/** A block with a photo, corresponding to the HTML tag <code>&lt;img&gt;</code>.
+/** A block with a photo, corresponding to the HTML tag <code>ᐸimgᐳ</code>.
   *
   * @param photo
   *   Available sizes of the photo
@@ -55,10 +55,9 @@ final case class RichBlockPhoto(
   caption: Option[RichBlockCaption] = Option.empty
 ) extends RichBlock
 
-/** A block with a “Thinking…” placeholder, corresponding to the custom HTML tag <code>&lt;tg-thinking&gt;</code>. The
-  * block may be used only in <a
-  * href="https://core.telegram.org/bots/api#sendrichmessagedraft">sendRichMessageDraft</a>, therefore it can't be
-  * received in messages. See <a href="https://t.me/addemoji/AIActions"></a><a
+/** A block with a “Thinking…” placeholder, corresponding to the custom HTML tag <code>ᐸtg-thinkingᐳ</code>. The block
+  * may be used only in <a href="https://core.telegram.org/bots/api#sendrichmessagedraft">sendRichMessageDraft</a>,
+  * therefore it can't be received in messages. See <a href="https://t.me/addemoji/AIActions"></a><a
   * href="https://t.me/addemoji/AIActions">https://t.me/addemoji/AIActions</a> for examples of custom emoji that are
   * recommended for usage in the block.
   *
@@ -69,21 +68,21 @@ final case class RichBlockPhoto(
   */
 final case class RichBlockThinking(text: iozhik.OpenEnum[RichText]) extends RichBlock
 
-/** A footer, corresponding to the HTML tag <code>&lt;footer&gt;</code>.
+/** A footer, corresponding to the HTML tag <code>ᐸfooterᐳ</code>.
   *
   * @param text
   *   Text of the block
   */
 final case class RichBlockFooter(text: iozhik.OpenEnum[RichText]) extends RichBlock
 
-/** A block with an anchor, corresponding to the HTML tag <code>&lt;a&gt;</code> with the attribute <code>name</code>.
+/** A block with an anchor, corresponding to the HTML tag <code>ᐸaᐳ</code> with the attribute <code>name</code>.
   *
   * @param name
   *   The name of the anchor
   */
 final case class RichBlockAnchor(name: String) extends RichBlock
 
-/** A block with a general file, corresponding to the custom HTML tag <code>&lt;tg-document&gt;</code>.
+/** A block with a general file, corresponding to the custom HTML tag <code>ᐸtg-documentᐳ</code>.
   *
   * @param document
   *   The document
@@ -94,14 +93,14 @@ final case class RichBlockDocument(document: Document, caption: Option[RichBlock
     extends RichBlock
 
 /** A block with a mathematical expression in LaTeX format, corresponding to the custom HTML tag
-  * <code>&lt;tg-math-block&gt;</code>.
+  * <code>ᐸtg-math-blockᐳ</code>.
   *
   * @param expression
   *   The mathematical expression in LaTeX format
   */
 final case class RichBlockMathematicalExpression(expression: String) extends RichBlock
 
-/** A block quotation, corresponding to the HTML tag <code>&lt;blockquote&gt;</code>.
+/** A block quotation, corresponding to the HTML tag <code>ᐸblockquoteᐳ</code>.
   *
   * @param blocks
   *   Content of the block
@@ -113,7 +112,7 @@ final case class RichBlockBlockQuotation(
   credit: Option[iozhik.OpenEnum[RichText]] = Option.empty
 ) extends RichBlock
 
-/** A block with a map, corresponding to the custom HTML tag <code>&lt;tg-map&gt;</code>.
+/** A block with a map, corresponding to the custom HTML tag <code>ᐸtg-mapᐳ</code>.
   *
   * @param location
   *   Location of the center of the map
@@ -134,7 +133,7 @@ final case class RichBlockMap(
   caption: Option[RichBlockCaption] = Option.empty
 ) extends RichBlock
 
-/** A slideshow, corresponding to the custom HTML tag <code>&lt;tg-slideshow&gt;</code>.
+/** A slideshow, corresponding to the custom HTML tag <code>ᐸtg-slideshowᐳ</code>.
   *
   * @param blocks
   *   Elements of the slideshow
@@ -146,14 +145,14 @@ final case class RichBlockSlideshow(
   caption: Option[RichBlockCaption] = Option.empty
 ) extends RichBlock
 
-/** A text paragraph, corresponding to the HTML tag <code>‹p›</code>.
+/** A text paragraph, corresponding to the HTML tag <code>ᐸpᐳ</code>.
   *
   * @param text
   *   Text of the block
   */
 final case class RichBlockParagraph(text: iozhik.OpenEnum[RichText]) extends RichBlock
 
-/** A quotation with centered text, loosely corresponding to the HTML tag <code>&lt;aside&gt;</code>.
+/** A quotation with centered text, loosely corresponding to the HTML tag <code>ᐸasideᐳ</code>.
   *
   * @param text
   *   Text of the block
@@ -165,8 +164,7 @@ final case class RichBlockPullQuotation(
   credit: Option[iozhik.OpenEnum[RichText]] = Option.empty
 ) extends RichBlock
 
-/** A preformatted text block, corresponding to the nested HTML tags <code>&lt;pre&gt;</code> and
-  * <code>&lt;code&gt;</code>.
+/** A preformatted text block, corresponding to the nested HTML tags <code>ᐸpreᐳ</code> and <code>ᐸcodeᐳ</code>.
   *
   * @param text
   *   Text of the block
@@ -176,7 +174,7 @@ final case class RichBlockPullQuotation(
 final case class RichBlockPreformatted(text: iozhik.OpenEnum[RichText], language: Option[String] = Option.empty)
     extends RichBlock
 
-/** A table, corresponding to the HTML tag <code>&lt;table&gt;</code>.
+/** A table, corresponding to the HTML tag <code>ᐸtableᐳ</code>.
   *
   * @param cells
   *   Cells of the table
@@ -197,7 +195,7 @@ final case class RichBlockTable(
   caption: Option[iozhik.OpenEnum[RichText]] = Option.empty
 ) extends RichBlock
 
-/** A collage, corresponding to the custom HTML tag <code>&lt;tg-collage&gt;</code>.
+/** A collage, corresponding to the custom HTML tag <code>ᐸtg-collageᐳ</code>.
   *
   * @param blocks
   *   Elements of the collage
@@ -209,7 +207,7 @@ final case class RichBlockCollage(
   caption: Option[RichBlockCaption] = Option.empty
 ) extends RichBlock
 
-/** A block with a music file, corresponding to the HTML tag <code>&lt;audio&gt;</code>.
+/** A block with a music file, corresponding to the HTML tag <code>ᐸaudioᐳ</code>.
   *
   * @param audio
   *   The audio
@@ -221,7 +219,7 @@ final case class RichBlockAudio(audio: Audio, caption: Option[RichBlockCaption] 
 /** A divider, corresponding to the HTML tag <code>&lt;hr/&gt;</code>. */
 case object RichBlockDivider extends RichBlock
 
-/** A block with an animation, corresponding to the HTML tag <code>&lt;video&gt;</code>.
+/** A block with an animation, corresponding to the HTML tag <code>ᐸvideoᐳ</code>.
   *
   * @param animation
   *   The animation
@@ -236,7 +234,7 @@ final case class RichBlockAnimation(
   caption: Option[RichBlockCaption] = Option.empty
 ) extends RichBlock
 
-/** A block quotation, corresponding to the HTML tag <code>&lt;blockquote&gt;</code> with custom attribute
+/** A block quotation, corresponding to the HTML tag <code>ᐸblockquoteᐳ</code> with custom attribute
   * <code>"expandable"</code>.
   *
   * @param text
@@ -249,8 +247,8 @@ final case class RichBlockExpandableBlockQuotation(
   credit: Option[iozhik.OpenEnum[RichText]] = Option.empty
 ) extends RichBlock
 
-/** A section heading, corresponding to the HTML tags <code>‹h1›</code>, <code>‹h2›</code>, <code>‹h3›</code>,
-  * <code>‹h4›</code>, <code>‹h5›</code>, or <code>‹h6›</code>.
+/** A section heading, corresponding to the HTML tags <code>ᐸh1ᐳ</code>, <code>ᐸh2ᐳ</code>, <code>ᐸh3ᐳ</code>,
+  * <code>ᐸh4ᐳ</code>, <code>ᐸh5ᐳ</code>, or <code>ᐸh6ᐳ</code>.
   *
   * @param text
   *   Text of the block
@@ -260,7 +258,7 @@ final case class RichBlockExpandableBlockQuotation(
 final case class RichBlockSectionHeading(text: iozhik.OpenEnum[RichText], size: Int) extends RichBlock
 
 /** A block containing a list of buttons that are shown in one row, corresponding to the custom HTML tag
-  * <code>&lt;tg-button-row&gt;</code>.
+  * <code>ᐸtg-button-rowᐳ</code>.
   *
   * @param buttons
   *   The buttons
@@ -270,7 +268,7 @@ final case class RichBlockSectionHeading(text: iozhik.OpenEnum[RichText], size: 
 final case class RichBlockButtons(buttons: List[RichMessageButton] = List.empty, align: Option[String] = Option.empty)
     extends RichBlock
 
-/** A block with a voice note, corresponding to the HTML tag <code>&lt;audio&gt;</code>.
+/** A block with a voice note, corresponding to the HTML tag <code>ᐸaudioᐳ</code>.
   *
   * @param voiceNote
   *   The voice note
