@@ -3,6 +3,8 @@ package telegramium.bots.high
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
+import scala.concurrent.duration.*
+
 import cats.effect.IO
 import cats.effect.std.Dispatcher
 import cats.effect.unsafe.implicits.global
@@ -30,7 +32,9 @@ class NamedInputStreamsSpec extends AnyFlatSpec with Matchers with Eventually {
 
   "NamedInputStreams.fromStream" should "finalize an fs2.Stream before the upload completes, if the upload stops early" in {
     val finalized = new AtomicBoolean(false)
-    val stream    = fs2.Stream.constant[IO, Byte]('x'.toByte).onFinalize(IO(finalized.set(true)))
+    // A slow finalizer, so this only passes if stopping the upload waits for it rather than just triggering it.
+    val stream =
+      fs2.Stream.constant[IO, Byte]('x'.toByte).onFinalize(IO.sleep(200.millis) >> IO(finalized.set(true)))
 
     Dispatcher.sequential[IO].use(readPartially(_, stream)).unsafeRunSync()
 
@@ -61,8 +65,9 @@ class NamedInputStreamsSpec extends AnyFlatSpec with Matchers with Eventually {
     Dispatcher
       .sequential[IO]
       .use { dispatcher =>
-        IO.blocking(Unsafe.unsafe(implicit u => Runtime.default.unsafe.run(zstream.toPublisher).getOrThrowFiberFailure()))
-          .flatMap(publisher => readPartially(dispatcher, fromPublisher[IO, Byte](publisher, bufferSize = 16)))
+        IO.blocking(
+          Unsafe.unsafe(implicit u => Runtime.default.unsafe.run(zstream.toPublisher).getOrThrowFiberFailure())
+        ).flatMap(publisher => readPartially(dispatcher, fromPublisher[IO, Byte](publisher, bufferSize = 16)))
       }
       .unsafeRunSync()
 
