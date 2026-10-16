@@ -24,6 +24,12 @@ libraryDependencies += "io.github.apimorphism" %% "telegramium-core" % "<version
 libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "<version>"
 ```
 
+`BotApi` works with any http4s client. The examples below use [Ember](https://http4s.org/v0.23/docs/client.html):
+
+```
+libraryDependencies += "org.http4s" %% "http4s-ember-client" % "<http4s version>"
+```
+
 Imports:
 ```scala
 import telegramium.bots.high._
@@ -32,7 +38,7 @@ import telegramium.bots.high.implicits._
 
 Use the `Methods` factory to create requests. You will need an instance of the `BotApi` class to execute them:
 ```scala
-BlazeClientBuilder[F].resource.use { httpClient =>
+EmberClientBuilder.default[F].build.use { httpClient =>
   implicit val api: Api[F] = BotApi(httpClient, baseUrl = s"https://api.telegram.org/bot$token")
   val bot = new MyLongPollBot()
   bot.start()
