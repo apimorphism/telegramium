@@ -1,10 +1,12 @@
-enablePlugins(GitPlugin)
-
+// sbt-git's default settings (gitCurrentBranch, gitDescribedVersion, gitUncommittedChanges, gitHeadCommit)
+// read the repo through JGit, which throws NoWorkTreeException when sbt is run from a `git worktree`
+// checkout (it doesn't resolve the linked .git file / commondir layout). Shell out to the git binary for
+// these instead - it handles worktrees the same as a regular clone, so this works in both.
 ThisBuild / version := Version.mkVersion(
   "10.1003.0",
-  git.gitCurrentBranch.value,
-  git.gitDescribedVersion.value,
-  git.gitUncommittedChanges.value
+  GitCli.currentBranch,
+  GitCli.describedVersion,
+  GitCli.hasUncommittedChanges
 )
 
 lazy val scala3   = "3.3.8"
@@ -16,7 +18,7 @@ ThisBuild / scalaVersion := scala3
 val buildCommit    = settingKey[String]("Build info: commit")
 val buildTimestamp = settingKey[String]("Build info: timestamp")
 
-ThisBuild / buildCommit    := Version.commit(git.gitHeadCommit.value)
+ThisBuild / buildCommit    := Version.commit(GitCli.headCommit)
 ThisBuild / buildTimestamp := Version.timestamp
 
 ThisBuild / name         := "telegramium"
