@@ -2,7 +2,6 @@ package telegramium.bots.high
 
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
-
 import scala.concurrent.duration.*
 
 import cats.effect.IO
