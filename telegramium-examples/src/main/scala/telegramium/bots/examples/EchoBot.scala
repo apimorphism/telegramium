@@ -26,8 +26,7 @@ class EchoBot[F[_]]()(implicit
         ).exec.void
       // Demo for https://github.com/apimorphism/telegramium/issues/666: the `media` list's second element
       // is uploaded as multipart, embedded inside InputMediaPhoto rather than passed as a top-level IFile
-      // param. Until #666 is fixed, its InputPartFile is silently dropped (the `files` map stays empty), so
-      // Telegram receives a raw "attach://sample.png" it never gets an upload for and rejects the request.
+      // param, and referenced from the JSON body as "attach://<name>".
       case Some("/mediagroup") =>
         sendMediaGroup(
           chatId = ChatIntId(msg.chat.id),
@@ -38,7 +37,7 @@ class EchoBot[F[_]]()(implicit
             ),
             InputMediaPhoto(
               media = InputPartFile(sampleImageFile),
-              caption = Some("2/2: uploaded locally (InputPartFile) - reproduces #666")
+              caption = Some("2/2: uploaded locally (InputPartFile), embedded in InputMediaPhoto")
             )
           )
         ).exec.void
