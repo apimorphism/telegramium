@@ -94,7 +94,7 @@ class WebhookBotSpec extends AnyFreeSpec with Matchers {
 
   "should send an InputStreamFile attachment from an update reply as multipart/form-data" in {
     val fileContent = "Lorem ipsum"
-    val bot = new WebhookBot[IO](api, url = "localhost") {
+    val bot         = new WebhookBot[IO](api, url = "localhost") {
       override def onMessageReply(msg: Message): IO[Option[Method[?]]] =
         IO.pure(
           Option(
@@ -108,16 +108,18 @@ class WebhookBotSpec extends AnyFreeSpec with Matchers {
     }
     val (status, contentType, body) = (bot.start(0), BlazeClientBuilder[IO].resource).tupled
       .use { case (server, client) =>
-        client.run(
-          Request[IO](POST, server.baseUri).withEntity(
-            parse(
-              """{"update_id": 1, "message": {"message_id": 0, "date": 0,
-                |"chat": {"id": 0, "type": "private"}, "text": "hi"}}""".stripMargin
-            ).toOption.get
+        client
+          .run(
+            Request[IO](POST, server.baseUri).withEntity(
+              parse(
+                """{"update_id": 1, "message": {"message_id": 0, "date": 0,
+                  |"chat": {"id": 0, "type": "private"}, "text": "hi"}}""".stripMargin
+              ).toOption.get
+            )
           )
-        ).use { response =>
-          response.as[String].map(body => (response.status, response.contentType.map(_.mediaType.toString), body))
-        }
+          .use { response =>
+            response.as[String].map(body => (response.status, response.contentType.map(_.mediaType.toString), body))
+          }
       }
       .unsafeRunSync()
 
