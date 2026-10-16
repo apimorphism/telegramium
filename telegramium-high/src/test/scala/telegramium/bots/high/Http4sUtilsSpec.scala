@@ -77,4 +77,61 @@ class Http4sUtilsSpec extends AnyFlatSpec with Matchers {
     opened.get() shouldBe true
   }
 
+  it should "close the stream once the part's body has been fully consumed" in {
+    val closed = new java.util.concurrent.atomic.AtomicBoolean(false)
+    val named  = NamedInputStream(
+      "report.pdf",
+      () =>
+        new ByteArrayInputStream("content".getBytes) {
+          override def close(): Unit = closed.set(true)
+        }
+    )
+
+    val parts = Http4sUtils.toStreamDataParts[IO](Map("document" -> named))
+    closed.get() shouldBe false
+
+    parts.head.body.compile.drain.unsafeRunSync()
+    closed.get() shouldBe true
+  }
+
+  it should "still close the stream if reading from it fails" in {
+    val closed = new java.util.concurrent.atomic.AtomicBoolean(false)
+    val boom   = new RuntimeException("read failed")
+    val named  = NamedInputStream(
+      "report.pdf",
+      () =>
+        new java.io.InputStream {
+          override def read(): Int                                   = throw boom
+          override def read(b: Array[Byte], off: Int, len: Int): Int = throw boom
+          override def close(): Unit                                 = closed.set(true)
+        }
+    )
+
+    val parts  = Http4sUtils.toStreamDataParts[IO](Map("document" -> named))
+    val result = parts.head.body.compile.drain.attempt.unsafeRunSync()
+
+    result.left.map(_.getMessage) shouldBe Left(boom.getMessage)
+    closed.get() shouldBe true
+  }
+
+  it should "re-invoke openStream on every separate pull, so a retried request gets an independent stream" in {
+    val openCount = new java.util.concurrent.atomic.AtomicInteger(0)
+    val named     = NamedInputStream(
+      "report.pdf",
+      () => {
+        openCount.incrementAndGet()
+        new ByteArrayInputStream("content".getBytes)
+      }
+    )
+
+    val parts = Http4sUtils.toStreamDataParts[IO](Map("document" -> named))
+
+    val firstRead  = parts.head.body.compile.to(Array).unsafeRunSync()
+    val secondRead = parts.head.body.compile.to(Array).unsafeRunSync()
+
+    openCount.get() shouldBe 2
+    firstRead shouldBe "content".getBytes
+    secondRead shouldBe "content".getBytes
+  }
+
 }
