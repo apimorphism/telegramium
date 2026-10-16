@@ -24,6 +24,24 @@ class EchoBot[F[_]]()(implicit
           chatId = ChatIntId(msg.chat.id),
           richMessage = InputRichMessage(html = Some(richHtmlText))
         ).exec.void
+      // Demo for https://github.com/apimorphism/telegramium/issues/666: the `media` list's second element
+      // is uploaded as multipart, embedded inside InputMediaPhoto rather than passed as a top-level IFile
+      // param. Until #666 is fixed, its InputPartFile is silently dropped (the `files` map stays empty), so
+      // Telegram receives a raw "attach://sample.png" it never gets an upload for and rejects the request.
+      case Some("/mediagroup") =>
+        sendMediaGroup(
+          chatId = ChatIntId(msg.chat.id),
+          media = List(
+            InputMediaPhoto(
+              media = InputLinkFile("https://picsum.photos/seed/telegramium/400"),
+              caption = Some("1/2: fetched by URL (InputLinkFile) - unaffected by #666")
+            ),
+            InputMediaPhoto(
+              media = InputPartFile(sampleImageFile),
+              caption = Some("2/2: uploaded locally (InputPartFile) - reproduces #666")
+            )
+          )
+        ).exec.void
       case _ =>
         sendMessage(
           chatId = ChatIntId(msg.chat.id),
@@ -177,6 +195,17 @@ class EchoBot[F[_]]()(implicit
       |pre-formatted fixed-width code block written in the Python programming language
       |```
       |""".stripMargin
+
+  // A minimal 1x1 red PNG, written out once so /mediagroup has a local file to upload via InputPartFile.
+  lazy val sampleImageFile: java.io.File = {
+    val bytes = java.util.Base64.getDecoder.decode(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUAAdafFwAAAAAASUVORK5CYII="
+    )
+    val file = java.nio.file.Files.createTempFile("telegramium-echobot-sample", ".png").toFile
+    java.nio.file.Files.write(file.toPath, bytes)
+    file.deleteOnExit()
+    file
+  }
 
   val richHtmlText: String =
     """<h2>Rich Message Demo</h2>
