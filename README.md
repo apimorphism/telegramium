@@ -93,6 +93,33 @@ For details, have a look
 at the [Github Issue](https://github.com/apimorphism/telegramium/issues/143) and
 the related [Pull Request](https://github.com/apimorphism/telegramium/pull/145).
 
+#### Uploading files
+
+Methods that take a file accept an `IFile`:
+
+- `InputPartFile(file)` uploads a `java.io.File` from disk.
+- `InputLinkFile(url)` lets Telegram fetch the file from a URL, or pass a `file_id` to resend a file already on Telegram's servers.
+- `InputStreamFile(NamedInputStream(filename, openStream))` uploads from a `java.io.InputStream`, streaming it into the request without buffering the whole file in memory. `openStream` is called each time the request body is read, so return a new stream from it every time:
+
+```scala
+import iozhik.NamedInputStream
+
+val file = InputStreamFile(NamedInputStream("report.pdf", () => new FileInputStream("/tmp/report.pdf")))
+sendDocument(chatId = ChatIntId(chatId), document = file).exec
+```
+
+To upload an `fs2.Stream[F, Byte]`, use `InputStreamFiles.fromStream`, and send the file within the resource's scope:
+
+```scala
+InputStreamFiles.fromStream("report.pdf", bytes).use { file =>
+  sendDocument(chatId = ChatIntId(chatId), document = file).exec
+}
+```
+
+Each upload attempt runs the stream from the start, and once the upload stops reading it, the stream is interrupted and its finalizers run. Other streaming libraries can be bridged into an `fs2.Stream` first, e.g. a ZIO `ZStream` via [zio-interop-reactivestreams](https://github.com/zio/interop-reactive-streams) and fs2's `fromPublisher`.
+
+With blaze-client, canceling a request doesn't stop its upload: blaze keeps sending the body in the background until it ends. Ember stops sending it.
+
 #### OpenEnum
 
 The Telegram Bot API is not versioned, which means bots and libraries must try to be forward-compatible. Specifically for enumerations, this implies that bots should always anticipate new values being added. Handling these values depends on the bot's business logic. Some apps may simply ignore unknown values, while others might respond with "This message is not supported," save the message for manual processing later, or throw a request handling error.
