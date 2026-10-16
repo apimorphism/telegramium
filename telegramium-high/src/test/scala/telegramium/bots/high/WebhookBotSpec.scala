@@ -13,8 +13,8 @@ import iozhik.NamedInputStream
 import org.http4s.Method.POST
 import org.http4s.Request
 import org.http4s.Status
-import org.http4s.blaze.client.BlazeClientBuilder
 import org.http4s.circe.*
+import org.http4s.ember.client.EmberClientBuilder
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -37,7 +37,7 @@ class WebhookBotSpec extends AnyFreeSpec with Matchers {
       override def onUnknownUpdate(update: Update, unknownFields: List[String], json: Json): IO[Unit] =
         unknownUpdates.update((update.updateId, unknownFields) :: _)
     }
-    (bot.start(0), BlazeClientBuilder[IO].resource).tupled.use { case (server, client) =>
+    (bot.start(0), EmberClientBuilder.default[IO].build).tupled.use { case (server, client) =>
       client.status(Request[IO](POST, server.baseUri).withEntity(parse(update).toOption.get))
     }
   }
@@ -75,7 +75,7 @@ class WebhookBotSpec extends AnyFreeSpec with Matchers {
           IO.raiseError(new RuntimeException("reporting failed"))
         override def onMessage(msg: Message): IO[Unit] = messages.update(msg.text.mkString :: _)
       }
-      status <- (bot.start(0), BlazeClientBuilder[IO].resource).tupled.use { case (server, client) =>
+      status <- (bot.start(0), EmberClientBuilder.default[IO].build).tupled.use { case (server, client) =>
         client.status(
           Request[IO](POST, server.baseUri).withEntity(
             parse(
@@ -108,7 +108,7 @@ class WebhookBotSpec extends AnyFreeSpec with Matchers {
           )
         )
     }
-    val (status, contentType, body) = (bot.start(0), BlazeClientBuilder[IO].resource).tupled
+    val (status, contentType, body) = (bot.start(0), EmberClientBuilder.default[IO].build).tupled
       .use { case (server, client) =>
         client
           .run(
@@ -128,6 +128,7 @@ class WebhookBotSpec extends AnyFreeSpec with Matchers {
     status shouldBe Status.Ok
     contentType.exists(_.contains("multipart/form-data")) shouldBe true
     body should include(fileContent)
+    """name="document"""".r.findAllMatchIn(body).size shouldBe 1
   }
 
 }

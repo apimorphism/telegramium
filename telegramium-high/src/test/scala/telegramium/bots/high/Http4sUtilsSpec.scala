@@ -113,6 +113,16 @@ class Http4sUtilsSpec extends AnyFlatSpec with Matchers {
     closed.get() shouldBe true
   }
 
+  it should "fail the part's body if openStream itself throws" in {
+    val boom  = new RuntimeException("open failed")
+    val named = NamedInputStream("report.pdf", () => throw boom)
+
+    val parts  = Http4sUtils.toStreamDataParts[IO](Map("document" -> named))
+    val result = parts.head.body.compile.drain.attempt.unsafeRunSync()
+
+    result shouldBe Left(boom)
+  }
+
   it should "re-invoke openStream on every separate pull, so a retried request gets an independent stream" in {
     val openCount = new java.util.concurrent.atomic.AtomicInteger(0)
     val named     = NamedInputStream(

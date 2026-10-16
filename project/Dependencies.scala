@@ -34,6 +34,8 @@ object Dependencies {
     "org.http4s" %% "http4s-blaze-client" % V.blazeHttp4s
   )
 
+  val emberClient = "org.http4s" %% "http4s-ember-client" % V.http4s
+
   val http4sServer = Seq(
     "org.http4s" %% "http4s-dsl"          % V.http4s,
     "org.http4s" %% "http4s-blaze-server" % V.blazeHttp4s
@@ -59,8 +61,8 @@ object Dependencies {
 
   val telegramiumCore: Seq[ModuleID] = common ++ Seq(scalatest, scalatestplus)
 
-  val telegramiumHigh: Seq[ModuleID] = common ++ Seq(catsEffect, scalatest) ++ http4sServer ++
+  val telegramiumHigh: Seq[ModuleID] = common ++ Seq(catsEffect, scalatest, emberClient % Test) ++ http4sServer ++
     http4sClient ++ testcontainers ++ zioStreamsInterop
 
-  val telegramiumExam: Seq[ModuleID] = common ++ Seq(catsEffect) ++ http4sClient
+  val telegramiumExam: Seq[ModuleID] = common ++ Seq(catsEffect, emberClient)
 }

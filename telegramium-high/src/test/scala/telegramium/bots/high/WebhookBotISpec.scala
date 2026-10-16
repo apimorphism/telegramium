@@ -12,9 +12,9 @@ import io.circe.parser.parse
 import io.circe.syntax.*
 import iozhik.OpenEnum
 import org.http4s.Request
-import org.http4s.blaze.client.BlazeClientBuilder
 import org.http4s.circe.*
 import org.http4s.dsl.io.*
+import org.http4s.ember.client.EmberClientBuilder
 import org.mockserver.client.MockServerClient
 import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
@@ -67,7 +67,7 @@ class WebhookBotISpec
   lazy val container: MockServerContainer = MockServerContainer(MockServerContainerVersion)
   private val mockServer                  = container.container
 
-  private val (httpClient, finalizer) = BlazeClientBuilder[IO].resource.allocated.unsafeRunSync()
+  private val (httpClient, finalizer) = EmberClientBuilder.default[IO].build.allocated.unsafeRunSync()
   private lazy val mockServerClient   = new MockServerClient("localhost", mockServer.getServerPort)
   private lazy val api                = BotApi(httpClient, mockServer.getEndpoint)
   private lazy val bot1               = new TestWebhookBot(api, "/bot1")
