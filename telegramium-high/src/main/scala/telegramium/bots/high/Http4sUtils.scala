@@ -9,11 +9,10 @@ import cats.syntax.flatMap.*
 import fs2.io.file.Files.forAsync
 import fs2.io.file.Path
 import io.circe.Json
+import iozhik.NamedInputStream
 import org.http4s.multipart.Multipart
 import org.http4s.multipart.Multiparts
 import org.http4s.multipart.Part
-
-import telegramium.bots.NamedInputStream
 
 private[high] object Http4sUtils {
 

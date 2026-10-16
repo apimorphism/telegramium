@@ -5,12 +5,11 @@ import java.io.ByteArrayInputStream
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 
+import iozhik.NamedInputStream
 import org.http4s.headers.`Content-Disposition`
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.typelevel.ci.CIString
-
-import telegramium.bots.NamedInputStream
 
 class Http4sUtilsSpec extends AnyFlatSpec with Matchers {
 

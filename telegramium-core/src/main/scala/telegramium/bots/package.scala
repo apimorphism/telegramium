@@ -153,10 +153,10 @@ object CirceImplicits {
 
   implicit lazy val inputlinkfileEncoder: Encoder[InputLinkFile]     = (x: InputLinkFile) => x.file.asJson
   implicit lazy val inputlinkfileDecoder: Decoder[InputLinkFile]     = Decoder[String].map(InputLinkFile.apply)
-  implicit lazy val inputstreamfileEncoder: Encoder[InputStreamFile] = (x: InputStreamFile) => x.file.filename.asJson
+  implicit lazy val inputstreamfileEncoder: Encoder[InputStreamFile] = (x: InputStreamFile) => x.file.asJson
 
   implicit lazy val inputstreamfileDecoder: Decoder[InputStreamFile] =
-    Decoder.failedWithMessage[InputStreamFile](s"InputStreamFile cannot be decoded")
+    Decoder[iozhik.NamedInputStream].map(InputStreamFile.apply)
 
   implicit lazy val backgroundfillEncoder: Encoder[BackgroundFill] = {
     case freeform_gradient: BackgroundFillFreeformGradient =>

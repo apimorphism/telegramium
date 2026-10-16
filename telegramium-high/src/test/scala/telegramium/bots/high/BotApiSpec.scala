@@ -11,6 +11,7 @@ import cats.effect.unsafe.implicits.global
 import com.dimafeng.testcontainers.ForAllTestContainer
 import com.dimafeng.testcontainers.MockServerContainer
 import fs2.interop.reactivestreams.fromPublisher
+import iozhik.NamedInputStream
 import org.http4s.blaze.client.BlazeClientBuilder
 import org.mockserver.client.MockServerClient
 import org.mockserver.model.HttpRequest.request
@@ -31,7 +32,6 @@ import telegramium.bots.InputLinkFile
 import telegramium.bots.InputPartFile
 import telegramium.bots.InputStreamFile
 import telegramium.bots.Message
-import telegramium.bots.NamedInputStream
 
 class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfterAll with Matchers {
   lazy val container: MockServerContainer = MockServerContainer(MockServerContainerVersion)

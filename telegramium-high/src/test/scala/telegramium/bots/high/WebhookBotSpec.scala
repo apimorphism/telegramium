@@ -9,6 +9,7 @@ import cats.syntax.all.*
 
 import io.circe.Json
 import io.circe.parser.parse
+import iozhik.NamedInputStream
 import org.http4s.Method.POST
 import org.http4s.Request
 import org.http4s.Status
@@ -20,7 +21,6 @@ import org.scalatest.matchers.should.Matchers
 import telegramium.bots.ChatIntId
 import telegramium.bots.InputStreamFile
 import telegramium.bots.Message
-import telegramium.bots.NamedInputStream
 import telegramium.bots.Update
 import telegramium.bots.client.Method
 import telegramium.bots.client.Methods

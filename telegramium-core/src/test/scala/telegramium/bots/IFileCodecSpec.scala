@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream
 
 import io.circe._
 import io.circe.syntax._
+import iozhik.NamedInputStream
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import telegramium.bots.CirceImplicits._
