@@ -12,12 +12,19 @@ import org.http4s.Request
 import org.http4s.Status
 import org.http4s.blaze.client.BlazeClientBuilder
 import org.http4s.circe.*
+import org.http4s.multipart.Multipart
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
+import java.io.File
+
+import telegramium.bots.ChatIntId
+import telegramium.bots.InputPartFile
 import telegramium.bots.Message
 import telegramium.bots.Update
 import telegramium.bots.client.Method
+import telegramium.bots.high.keyboards.InlineKeyboardButtons
+import telegramium.bots.high.keyboards.InlineKeyboardMarkups
 
 class WebhookBotSpec extends AnyFreeSpec with Matchers {
 
@@ -84,6 +91,42 @@ class WebhookBotSpec extends AnyFreeSpec with Matchers {
 
     status shouldBe Status.Ok
     messages shouldBe List("hi")
+  }
+
+  "should keep object-valued fields of a file upload in a multipart reply" in {
+    val file = new File(this.getClass.getResource("/document.txt").getFile)
+    val bot  = new WebhookBot[IO](api, url = "localhost") {
+      override def onMessageReply(msg: Message): IO[Option[Method[?]]] =
+        IO.pure(
+          Some(
+            sendDocument(
+              ChatIntId(0),
+              InputPartFile(file),
+              replyMarkup =
+                Some(InlineKeyboardMarkups.singleButton(InlineKeyboardButtons.callbackData("Press", "pressed")))
+            )
+          )
+        )
+    }
+    val (files, fields) = (bot.start(0), BlazeClientBuilder[IO].resource).tupled
+      .use { case (server, client) =>
+        client
+          .expect[Multipart[IO]](
+            Request[IO](POST, server.baseUri).withEntity(
+              parse(
+                """{"update_id": 1, "message": {"message_id": 0, "date": 0, "chat": {"id": 0, "type": "private"}}}"""
+              ).toOption.get
+            )
+          )
+          .flatMap(multipart => MultipartFields.formFields(multipart).map(MultipartFields.fileParts(multipart) -> _))
+      }
+      .unsafeRunSync()
+
+    files shouldBe Vector("document" -> "document.txt")
+    fields("method") shouldBe "sendDocument"
+    parse(fields("reply_markup")) shouldBe parse(
+      """{"inline_keyboard": [[{"text": "Press", "callback_data": "pressed"}]]}"""
+    )
   }
 
 }
