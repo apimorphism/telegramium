@@ -12,7 +12,10 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
 import telegramium.bots.ChatIntId
+import telegramium.bots.InputLinkFile
+import telegramium.bots.InputMediaDocument
 import telegramium.bots.InputPartFile
+import telegramium.bots.InputSticker
 import telegramium.bots.ReplyParameters
 import telegramium.bots.client.Method
 import telegramium.bots.high.keyboards.InlineKeyboardButtons
@@ -71,6 +74,43 @@ class Http4sUtilsSpec extends AnyFreeSpec with Matchers {
         parse(formFields(toMultipart(method))("reply_markup")) shouldBe Right(keyboardJson)
       }
     }
+  }
+
+  // https://github.com/apimorphism/telegramium/issues/666
+  "should send a file embedded in an object param together with the object referencing it" in {
+    val multipart = toMultipart(
+      Methods.addStickerToSet(1L, "set", InputSticker(InputPartFile(file), "static", emojiList = List("🙂")))
+    )
+    val fields = formFields(multipart)
+
+    fields.keySet shouldBe Set("user_id", "name", "sticker", "method")
+    parse(fields("sticker")).map(_.hcursor.get[String]("sticker")) shouldBe Right(Right("attach://sticker_sticker"))
+    MultipartFields.fileParts(multipart) shouldBe Vector("sticker_sticker" -> "document.txt")
+  }
+
+  "should send a file embedded in an object param of editMessageMedia" in {
+    val multipart = toMultipart(
+      Methods.editMessageMedia(InputMediaDocument(InputPartFile(file)), chatId = Some(ChatIntId(0)), messageId = Some(1))
+    )
+
+    parse(formFields(multipart)("media")).map(_.hcursor.get[String]("media")) shouldBe Right(
+      Right("attach://media_media")
+    )
+    MultipartFields.fileParts(multipart) shouldBe Vector("media_media" -> "document.txt")
+  }
+
+  "should send files embedded in a list param under indexed names" in {
+    val multipart = toMultipart(
+      Methods.sendMediaGroup(
+        ChatIntId(0),
+        media = List(InputMediaDocument(InputPartFile(file)), InputMediaDocument(InputLinkFile("file_id")))
+      )
+    )
+    val media = parse(formFields(multipart)("media")).map(_.hcursor)
+
+    media.map(_.downN(0).get[String]("media")) shouldBe Right(Right("attach://media0_media"))
+    media.map(_.downN(1).get[String]("media")) shouldBe Right(Right("file_id"))
+    MultipartFields.fileParts(multipart) shouldBe Vector("media0_media" -> "document.txt")
   }
 
   "should skip null fields and the fields of uploaded files" in {
