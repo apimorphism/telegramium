@@ -1,6 +1,5 @@
 package telegramium.bots.high
 
-import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.util.concurrent.TimeoutException
@@ -13,7 +12,7 @@ import cats.effect.unsafe.implicits.global
 import com.dimafeng.testcontainers.ForAllTestContainer
 import com.dimafeng.testcontainers.MockServerContainer
 import fs2.interop.reactivestreams.fromPublisher
-import iozhik.NamedInputStream
+import iozhik.UploadSource
 import org.http4s.ember.client.EmberClientBuilder
 import org.mockserver.client.MockServerClient
 import org.mockserver.model.HttpRequest.request
@@ -134,12 +133,11 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
     api.execute(Methods.sendDocument(ChatIntId(0), InputPartFile(file))).unsafeRunSync()
   }
 
-  // The scenarios below each represent a different kind of stream a caller might hand to
-  // InputStreamFile: a plain java.io.InputStream (no bridging needed), an fs2.Stream[F, Byte]
-  // (bridged via InputStreamFiles.fromStream), and a ZIO ZStream (bridged via the Reactive
-  // Streams protocol: zio-interop-reactivestreams' toPublisher -> fs2's fromPublisher, then
-  // InputStreamFiles.fromStream). They check that the bytes actually reach Telegram as the
-  // request body, and that canceling the request midway releases the caller's source.
+  // The scenarios below each represent a different kind of source a caller might hand to
+  // StreamUpload: a java.io.InputStream (via fs2.io.readInputStream), an fs2.Stream[IO, Byte], and a
+  // ZIO ZStream (via the Reactive Streams protocol: zio-interop-reactivestreams' toPublisher -> fs2's
+  // fromPublisher). They check that the bytes actually reach Telegram as the request body, and that
+  // canceling the request midway releases the caller's source.
 
   private val documentContent = "Lorem ipsum dolor sit amet"
 
@@ -177,15 +175,17 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
     expectMultipartSendDocument()
     val closed = new AtomicBoolean(false)
     val file   = new File(this.getClass.getResource("/document.txt").getFile)
-    val named  = NamedInputStream(
+    val upload = StreamUpload(
       "document.txt",
-      () =>
-        new FileInputStream(file) {
+      fs2.io.readInputStream(
+        IO.blocking[java.io.InputStream](new FileInputStream(file) {
           override def close(): Unit = { super.close(); closed.set(true) }
-        }
+        }),
+        chunkSize = 8192
+      )
     )
 
-    api.execute(Methods.sendDocument(ChatIntId(0), InputStreamFile(named))).unsafeRunSync()
+    api.execute(Methods.sendDocument(ChatIntId(0), InputStreamFile(upload))).unsafeRunSync()
 
     val body = onlySendDocumentBody()
     body should include(documentContent)
@@ -196,7 +196,7 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
   "should send an InputPartFile and an InputStreamFile in the same request" in {
     expectMultipartSendDocument()
     val thumbnail = new File(this.getClass.getResource("/document.txt").getFile)
-    val document  = NamedInputStream("stream.bin", () => new ByteArrayInputStream("STREAM-CONTENT".getBytes))
+    val document  = StreamUpload("stream.bin", fs2.Stream.emits("STREAM-CONTENT".getBytes))
 
     api
       .execute(
@@ -211,30 +211,50 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
     partsNamed(body, "thumbnail") shouldBe 1
   }
 
-  "should send a file from an fs2.Stream[F, Byte]" in {
+  "should send a file from an fs2.Stream[IO, Byte]" in {
     expectMultipartSendDocument()
     val content = "FS2-STREAM-CONTENT"
 
-    InputStreamFiles
-      .fromStream("fs2.bin", fs2.Stream.emits(content.getBytes).covary[IO])
-      .use(file => api.execute(Methods.sendDocument(ChatIntId(0), file)))
+    api
+      .execute(
+        Methods.sendDocument(ChatIntId(0), InputStreamFile(StreamUpload("fs2.bin", fs2.Stream.emits(content.getBytes))))
+      )
       .unsafeRunSync()
 
     onlySendDocumentBody() should include(content)
   }
 
-  "should finalize an fs2.Stream[F, Byte] before returning, if the request is canceled mid-upload" in {
+  "should finalize an fs2.Stream[IO, Byte] before returning, if the request is canceled mid-upload" in {
     expectMultipartSendDocument()
     val finalized = new AtomicBoolean(false)
     // A slow finalizer, so this only passes if canceling waits for it rather than just triggering it.
     val stream = endless('x'.toByte).onFinalize(IO.sleep(200.millis) >> IO(finalized.set(true)))
 
-    val result = InputStreamFiles
-      .fromStream("endless.bin", stream)
-      .use(file => api.execute(Methods.sendDocument(ChatIntId(0), file)).timeout(1.second).attempt)
+    val result = api
+      .execute(Methods.sendDocument(ChatIntId(0), InputStreamFile(StreamUpload("endless.bin", stream))))
+      .timeout(1.second)
+      .attempt
       .unsafeRunSync()
 
     result.left.map(_.getClass) shouldBe Left(classOf[TimeoutException])
+    finalized.get() shouldBe true
+  }
+
+  "should return promptly and finalize the source, if the request is canceled while the source is stalled" in {
+    expectMultipartSendDocument()
+    val finalized = new AtomicBoolean(false)
+    val stalled   = (fs2.Stream.emits("abc".getBytes) ++ fs2.Stream.never[IO]).onFinalize(IO(finalized.set(true)))
+
+    val (elapsed, result) = api
+      .execute(Methods.sendDocument(ChatIntId(0), InputStreamFile(StreamUpload("stalled.bin", stalled))))
+      .timeout(1.second)
+      .attempt
+      .timed
+      .timeout(10.seconds)
+      .unsafeRunSync()
+
+    result.left.map(_.getClass) shouldBe Left(classOf[TimeoutException])
+    elapsed should be < 3.seconds
     finalized.get() shouldBe true
   }
 
@@ -244,9 +264,8 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
 
     zioPublisher(ZStream.fromIterable(content.getBytes))
       .flatMap { publisher =>
-        InputStreamFiles
-          .fromStream("zio.bin", fromPublisher[IO, Byte](publisher, bufferSize = 16))
-          .use(file => api.execute(Methods.sendDocument(ChatIntId(0), file)))
+        val upload = StreamUpload("zio.bin", fromPublisher[IO, Byte](publisher, bufferSize = 16))
+        api.execute(Methods.sendDocument(ChatIntId(0), InputStreamFile(upload)))
       }
       .unsafeRunSync()
 
@@ -263,15 +282,25 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
 
     val result = zioPublisher(zstream)
       .flatMap { publisher =>
-        InputStreamFiles
-          .fromStream("endless.bin", fromPublisher[IO, Byte](publisher, bufferSize = 16))
-          .use(file => api.execute(Methods.sendDocument(ChatIntId(0), file)).timeout(1.second).attempt)
+        val upload = StreamUpload("endless.bin", fromPublisher[IO, Byte](publisher, bufferSize = 16))
+        api.execute(Methods.sendDocument(ChatIntId(0), InputStreamFile(upload))).timeout(1.second).attempt
       }
       .unsafeRunSync()
 
     result.left.map(_.getClass) shouldBe Left(classOf[TimeoutException])
     // Reactive Streams cancellation is only a signal: ZIO interrupts the producing fiber asynchronously.
     eventually(timeout(Span(5, Seconds)))(finalized.get() shouldBe true)
+  }
+
+  "should fail before sending anything, if an InputStreamFile holds an unsupported source" in {
+    expectMultipartSendDocument()
+    val custom = new UploadSource { val filename = "custom.bin" }
+
+    val result = api.execute(Methods.sendDocument(ChatIntId(0), InputStreamFile(custom))).attempt.unsafeRunSync()
+
+    result.left.map(_.getClass) shouldBe Left(classOf[UnsupportedUploadSource])
+    new MockServerClient("localhost", mockServer.getServerPort)
+      .retrieveRecordedRequests(request().withPath("/sendDocument")) shouldBe empty
   }
 
   "should send a file by link as JSON" in {

@@ -1,6 +1,7 @@
 package telegramium.bots.high
 
 import cats.effect.Async
+import cats.effect.LiftIO
 import cats.effect.Sync
 import cats.syntax.all.*
 
@@ -24,23 +25,23 @@ import telegramium.bots.high.Http4sUtils.toStreamDataParts
 class BotApi[F[_]](
   http: Client[F],
   baseUrl: String
-)(implicit F: Async[F])
+)(implicit F: Async[F], L: LiftIO[F])
     extends Api[F] {
 
   override def execute[Res](method: Method[Res]): F[Res] = {
     val inputPartFiles = method.payload.files.collect { case (filename, InputPartFile(file)) =>
       (filename, file)
     }
-    val inputStreamFiles = method.payload.files.collect { case (filename, InputStreamFile(namedStream)) =>
-      (filename, namedStream)
+    val inputStreamFiles = method.payload.files.collect { case (filename, InputStreamFile(source)) =>
+      (filename, source)
     }
-    val attachments    = toFileDataParts(inputPartFiles) ++ toStreamDataParts(inputStreamFiles)
     val fileFieldNames = inputPartFiles.keys.toList ++ inputStreamFiles.keys.toList
 
     for {
-      uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/${method.payload.name}"))
-      req <- mkRequest(uri, method.payload.json, fileFieldNames, attachments)
-      res <- handleResponse[Res](method, req)(using method.decoder)
+      uri         <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/${method.payload.name}"))
+      streamParts <- toStreamDataParts(inputStreamFiles)
+      req         <- mkRequest(uri, method.payload.json, fileFieldNames, toFileDataParts(inputPartFiles) ++ streamParts)
+      res         <- handleResponse[Res](method, req)(using method.decoder)
     } yield res
   }
 
@@ -94,7 +95,7 @@ class BotApi[F[_]](
 
 object BotApi {
 
-  def apply[F[_]: Async](http: Client[F], baseUrl: String): BotApi[F] =
+  def apply[F[_]: Async: LiftIO](http: Client[F], baseUrl: String): BotApi[F] =
     new BotApi[F](http, baseUrl)
 
 }
