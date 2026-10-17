@@ -31,10 +31,10 @@ private[high] object Http4sUtils {
           .map {
             _.toIterable
               .filterNot { case (n, v) =>
-                fileFieldNames.contains(n) || v.isNull || v.isObject
+                fileFieldNames.contains(n) || v.isNull
               }
               .map { case (n, v) =>
-                Part.formData[F](n, v.asString.getOrElse(v.toString))
+                Part.formData[F](n, v.asString.getOrElse(v.noSpaces))
               }
               .toVector
           }
