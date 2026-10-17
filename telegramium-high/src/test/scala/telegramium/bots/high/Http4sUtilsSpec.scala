@@ -90,7 +90,11 @@ class Http4sUtilsSpec extends AnyFreeSpec with Matchers {
 
   "should send a file embedded in an object param of editMessageMedia" in {
     val multipart = toMultipart(
-      Methods.editMessageMedia(InputMediaDocument(InputPartFile(file)), chatId = Some(ChatIntId(0)), messageId = Some(1))
+      Methods.editMessageMedia(
+        InputMediaDocument(InputPartFile(file)),
+        chatId = Some(ChatIntId(0)),
+        messageId = Some(1)
+      )
     )
 
     parse(formFields(multipart)("media")).map(_.hcursor.get[String]("media")) shouldBe Right(
