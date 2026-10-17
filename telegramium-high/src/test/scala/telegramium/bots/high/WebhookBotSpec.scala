@@ -1,5 +1,7 @@
 package telegramium.bots.high
 
+import java.io.File
+
 import cats.effect.IO
 import cats.effect.Ref
 import cats.effect.unsafe.implicits.global
@@ -15,8 +17,6 @@ import org.http4s.circe.*
 import org.http4s.multipart.Multipart
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
-
-import java.io.File
 
 import telegramium.bots.ChatIntId
 import telegramium.bots.InputPartFile

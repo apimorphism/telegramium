@@ -20,9 +20,11 @@ import telegramium.bots.high.keyboards.InlineKeyboardMarkups
 
 class Http4sUtilsSpec extends AnyFreeSpec with Matchers {
 
-  private val file          = new File(this.getClass.getResource("/document.txt").getFile)
-  private val keyboard      = InlineKeyboardMarkups.singleButton(InlineKeyboardButtons.callbackData("Press", "pressed"))
-  private val keyboardJson  = parse("""{"inline_keyboard":[[{"text":"Press","callback_data":"pressed"}]]}""").toOption.get
+  private val file         = new File(this.getClass.getResource("/document.txt").getFile)
+  private val keyboard     = InlineKeyboardMarkups.singleButton(InlineKeyboardButtons.callbackData("Press", "pressed"))
+  private val keyboardJson = parse(
+    """{"inline_keyboard":[[{"text":"Press","callback_data":"pressed"}]]}"""
+  ).toOption.get
   private val replyParamsJs = parse("""{"message_id":1,"quote_entities":[]}""").toOption.get
 
   private def toMultipart(method: Method[?]): Multipart[IO] = {
