@@ -25,7 +25,7 @@ class UploadsSpec extends AnyFlatSpec with Matchers {
   private def field(json: Json, name: String): Option[Json] = json.asObject.flatMap(_(name))
 
   "Uploads" should "reference each stream with attach:// and a generated part name" in {
-    var refs = List.empty[Any]
+    var refs    = List.empty[Any]
     val request = Uploads[IO] { attach =>
       val document  = attach("report.pdf", bytes)
       val thumbnail = attach("thumb.jpg", bytes)
@@ -34,7 +34,10 @@ class UploadsSpec extends AnyFlatSpec with Matchers {
     }
 
     refs shouldBe List(InputLinkFile("attach://upload0"), InputLinkFile("attach://upload1"))
-    request.uploads.map { case (k, v) => k -> v.filename } shouldBe Map("upload0" -> "report.pdf", "upload1" -> "thumb.jpg")
+    request.uploads.map { case (k, v) => k -> v.filename } shouldBe Map(
+      "upload0" -> "report.pdf",
+      "upload1" -> "thumb.jpg"
+    )
     field(request.method.payload.json, "document") shouldBe Some(Json.fromString("attach://upload0"))
     field(request.method.payload.json, "thumbnail") shouldBe Some(Json.fromString("attach://upload1"))
     // The method only holds references, which BotApi sends as form fields; the streams go as their own parts.
@@ -47,13 +50,16 @@ class UploadsSpec extends AnyFlatSpec with Matchers {
   it should "work for files nested in other values, such as a media group" in {
     val request = Uploads[IO] { attach =>
       Methods.sendMediaGroup(
-          ChatIntId(0),
-          media = List(InputMediaDocument(attach("a.csv", bytes)), InputMediaDocument(attach("b.csv", bytes)))
+        ChatIntId(0),
+        media = List(InputMediaDocument(attach("a.csv", bytes)), InputMediaDocument(attach("b.csv", bytes)))
       )
     }
 
     val media = field(request.method.payload.json, "media").flatMap(_.asArray).getOrElse(Vector.empty)
-    media.flatMap(field(_, "media")) shouldBe Vector(Json.fromString("attach://upload0"), Json.fromString("attach://upload1"))
+    media.flatMap(field(_, "media")) shouldBe Vector(
+      Json.fromString("attach://upload0"),
+      Json.fromString("attach://upload1")
+    )
     request.uploads.keySet shouldBe Set("upload0", "upload1")
   }
 
