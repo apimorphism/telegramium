@@ -1,146 +1,82 @@
 package telegramium.bots.high
 
-import java.io.ByteArrayInputStream
+import java.util.concurrent.atomic.AtomicInteger
 
+import cats.data.Kleisli
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 
-import iozhik.NamedInputStream
+import iozhik.UploadSource
 import org.http4s.headers.`Content-Disposition`
+import org.http4s.multipart.Part
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.typelevel.ci.CIString
 
 class Http4sUtilsSpec extends AnyFlatSpec with Matchers {
 
-  private def contentDisposition(part: org.http4s.multipart.Part[IO]) =
-    part.headers.get[`Content-Disposition`]
+  private def parts(files: Map[String, UploadSource]): Vector[Part[IO]] =
+    Http4sUtils.toStreamDataParts[IO](files).unsafeRunSync()
 
-  "Http4sUtils.toStreamDataParts" should "stream the exact bytes of the input stream, even across many chunks" in {
-    val content = Array.tabulate(20000)(i => (i % 256).toByte) // bigger than the 8192 chunk size
-    val named   = NamedInputStream("report.pdf", () => new ByteArrayInputStream(content))
+  private def param(part: Part[IO], name: String) =
+    part.headers.get[`Content-Disposition`].flatMap(_.parameters.get(CIString(name)))
 
-    val parts = Http4sUtils.toStreamDataParts[IO](Map("document" -> named))
-    parts should have size 1
+  private def bytes(part: Part[IO]) = part.body.compile.to(Array).unsafeRunSync()
 
-    val part = parts.head
-    contentDisposition(part).flatMap(_.parameters.get(CIString("name"))) shouldBe Some("document")
-    contentDisposition(part).flatMap(_.parameters.get(CIString("filename"))) shouldBe Some("report.pdf")
+  "Http4sUtils.toStreamDataParts" should "stream the exact bytes of the upload, even across many chunks" in {
+    val content = Array.tabulate(20000)(i => (i % 256).toByte)
+    val upload  = StreamUpload("report.pdf", fs2.Stream.emits(content).chunkN(4096).unchunks)
 
-    val bytes = part.body.compile.to(Array).unsafeRunSync()
-    bytes shouldBe content
+    val result = parts(Map("document" -> upload))
+    result should have size 1
+    param(result.head, "name") shouldBe Some("document")
+    param(result.head, "filename") shouldBe Some("report.pdf")
+    bytes(result.head) shouldBe content
   }
 
-  it should "build one independent part per field, keyed by the request field name" in {
-    val thumbnail = NamedInputStream("thumb.jpg", () => new ByteArrayInputStream("THUMB".getBytes))
-    val document  = NamedInputStream("doc.pdf", () => new ByteArrayInputStream("DOC".getBytes))
+  it should "build one part per field, keyed by the request field name" in {
+    val result = parts(
+      Map(
+        "thumbnail" -> StreamUpload("thumb.jpg", fs2.Stream.emits("THUMB".getBytes)),
+        "document"  -> StreamUpload("doc.pdf", fs2.Stream.emits("DOC".getBytes))
+      )
+    )
 
-    val parts = Http4sUtils.toStreamDataParts[IO](Map("thumbnail" -> thumbnail, "document" -> document))
-    parts should have size 2
-
-    val decoded = parts.map { part =>
-      val name     = contentDisposition(part).flatMap(_.parameters.get(CIString("name")))
-      val filename = contentDisposition(part).flatMap(_.parameters.get(CIString("filename")))
-      val bytes    = new String(part.body.compile.to(Array).unsafeRunSync())
-      (name, filename, bytes)
-    }.toSet
-
-    decoded shouldBe Set(
+    result.map(p => (param(p, "name"), param(p, "filename"), new String(bytes(p)))).toSet shouldBe Set(
       (Some("thumbnail"), Some("thumb.jpg"), "THUMB"),
       (Some("document"), Some("doc.pdf"), "DOC")
     )
   }
 
-  it should "produce an empty part for an empty stream, without raising" in {
-    val named = NamedInputStream("empty.bin", () => new ByteArrayInputStream(Array.emptyByteArray))
+  it should "run the stream anew on every pull, so a retried request sends the whole content again" in {
+    val runs   = new AtomicInteger(0)
+    val upload =
+      StreamUpload("report.pdf", fs2.Stream.eval(IO(runs.incrementAndGet())) >> fs2.Stream.emits("x".getBytes))
+    val part = parts(Map("document" -> upload)).head
 
-    val parts = Http4sUtils.toStreamDataParts[IO](Map("document" -> named))
-    val bytes = parts.head.body.compile.to(Array).unsafeRunSync()
-    bytes shouldBe Array.emptyByteArray
+    bytes(part) shouldBe "x".getBytes
+    bytes(part) shouldBe "x".getBytes
+    runs.get() shouldBe 2
   }
 
-  it should "not open the stream until the part's body is actually pulled" in {
-    val opened = new java.util.concurrent.atomic.AtomicBoolean(false)
-    val named  = NamedInputStream(
-      "report.pdf",
-      () => {
-        opened.set(true)
-        new ByteArrayInputStream("content".getBytes)
-      }
-    )
+  it should "lift the stream into an API effect other than IO" in {
+    type K[A] = Kleisli[IO, Unit, A]
+    val upload = StreamUpload("report.pdf", fs2.Stream.emits("CONTENT".getBytes))
 
-    val parts = Http4sUtils.toStreamDataParts[IO](Map("document" -> named))
-    opened.get() shouldBe false
+    val read: K[Array[Byte]] = Http4sUtils
+      .toStreamDataParts[K](Map("document" -> upload))
+      .flatMap(parts => parts.head.body.compile.to(Array))
+    val body = read.run(()).unsafeRunSync()
 
-    parts.head.body.compile.drain.unsafeRunSync()
-    opened.get() shouldBe true
+    new String(body) shouldBe "CONTENT"
   }
 
-  it should "close the stream once the part's body has been fully consumed" in {
-    val closed = new java.util.concurrent.atomic.AtomicBoolean(false)
-    val named  = NamedInputStream(
-      "report.pdf",
-      () =>
-        new ByteArrayInputStream("content".getBytes) {
-          override def close(): Unit = closed.set(true)
-        }
-    )
+  it should "fail with UnsupportedUploadSource for a source it doesn't know" in {
+    val custom = new UploadSource { val filename = "custom.bin" }
 
-    val parts = Http4sUtils.toStreamDataParts[IO](Map("document" -> named))
-    closed.get() shouldBe false
+    val result = Http4sUtils.toStreamDataParts[IO](Map("document" -> custom)).attempt.unsafeRunSync()
 
-    parts.head.body.compile.drain.unsafeRunSync()
-    closed.get() shouldBe true
-  }
-
-  it should "still close the stream if reading from it fails" in {
-    val closed = new java.util.concurrent.atomic.AtomicBoolean(false)
-    val boom   = new RuntimeException("read failed")
-    val named  = NamedInputStream(
-      "report.pdf",
-      () =>
-        new java.io.InputStream {
-          override def read(): Int                                   = throw boom
-          override def read(b: Array[Byte], off: Int, len: Int): Int = throw boom
-          override def close(): Unit                                 = closed.set(true)
-        }
-    )
-
-    val parts  = Http4sUtils.toStreamDataParts[IO](Map("document" -> named))
-    val result = parts.head.body.compile.drain.attempt.unsafeRunSync()
-
-    result.left.map(_.getMessage) shouldBe Left(boom.getMessage)
-    closed.get() shouldBe true
-  }
-
-  it should "fail the part's body if openStream itself throws" in {
-    val boom  = new RuntimeException("open failed")
-    val named = NamedInputStream("report.pdf", () => throw boom)
-
-    val parts  = Http4sUtils.toStreamDataParts[IO](Map("document" -> named))
-    val result = parts.head.body.compile.drain.attempt.unsafeRunSync()
-
-    result shouldBe Left(boom)
-  }
-
-  it should "re-invoke openStream on every separate pull, so a retried request gets an independent stream" in {
-    val openCount = new java.util.concurrent.atomic.AtomicInteger(0)
-    val named     = NamedInputStream(
-      "report.pdf",
-      () => {
-        openCount.incrementAndGet()
-        new ByteArrayInputStream("content".getBytes)
-      }
-    )
-
-    val parts = Http4sUtils.toStreamDataParts[IO](Map("document" -> named))
-
-    val firstRead  = parts.head.body.compile.to(Array).unsafeRunSync()
-    val secondRead = parts.head.body.compile.to(Array).unsafeRunSync()
-
-    openCount.get() shouldBe 2
-    firstRead shouldBe "content".getBytes
-    secondRead shouldBe "content".getBytes
+    result.left.map(_.getClass) shouldBe Left(classOf[UnsupportedUploadSource])
   }
 
 }

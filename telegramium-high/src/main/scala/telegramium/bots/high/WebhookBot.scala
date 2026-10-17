@@ -10,6 +10,7 @@ import scala.util.control.NonFatal
 
 import cats.Monad
 import cats.effect.Async
+import cats.effect.LiftIO
 import cats.effect.Resource
 import cats.syntax.all.*
 
@@ -76,7 +77,7 @@ import telegramium.bots.high.Http4sUtils.toStreamDataParts
   *   setting will be used. Please note that this parameter doesn't affect updates created before the call to the
   *   setWebhook, so unwanted updates may be received for a short period of time.
   */
-abstract class WebhookBot[F[_]: Async](
+abstract class WebhookBot[F[_]: Async: LiftIO](
   bot: Api[F],
   url: String,
   path: String = "/",
@@ -257,17 +258,26 @@ abstract class WebhookBot[F[_]: Async](
           val inputPartFiles = m.payload.files.collect { case (filename, InputPartFile(file)) =>
             (filename, file)
           }
-          val inputStreamFiles = m.payload.files.collect { case (filename, InputStreamFile(stream)) =>
-            (filename, stream)
+          val inputStreamFiles = m.payload.files.collect { case (filename, InputStreamFile(source)) =>
+            (filename, source)
           }
-          val attachments = toFileDataParts(inputPartFiles) ++ toStreamDataParts(inputStreamFiles)
-          if (attachments.isEmpty) Ok(m.payload.json)
+          if (inputPartFiles.isEmpty && inputStreamFiles.isEmpty) Ok(m.payload.json)
           else {
             val fileFieldNames = inputPartFiles.keys.toList ++ inputStreamFiles.keys.toList
-            for {
-              multipart <- toMultipartWithFormData(m.payload.json, fileFieldNames, attachments)
-              response  <- Ok(multipart)
-            } yield response.withHeaders(multipart.headers)
+            // The update was handled: if the reply can't be built (e.g. an unsupported upload source), log it and still
+            // answer 200, or Telegram redelivers the update and the handler runs again.
+            val reply = for {
+              streamParts <- toStreamDataParts(inputStreamFiles)
+              multipart   <- toMultipartWithFormData(
+                m.payload.json,
+                fileFieldNames,
+                toFileDataParts(inputPartFiles) ++ streamParts
+              )
+            } yield multipart
+            reply.attempt.flatMap {
+              case Right(multipart) => Ok(multipart).map(_.withHeaders(multipart.headers))
+              case Left(e)          => Async[F].delay(e.printStackTrace()) >> Ok()
+            }
           }
         }
       }

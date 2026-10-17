@@ -99,24 +99,18 @@ Methods that take a file accept an `IFile`:
 
 - `InputPartFile(file)` uploads a `java.io.File` from disk.
 - `InputLinkFile(url)` lets Telegram fetch the file from a URL, or pass a `file_id` to resend a file already on Telegram's servers.
-- `InputStreamFile(NamedInputStream(filename, openStream))` uploads from a `java.io.InputStream`, streaming it into the request without buffering the whole file in memory. `openStream` is called each time the request body is read, so return a new stream from it every time:
+- `InputStreamFile(StreamUpload(filename, stream))` uploads an `fs2.Stream[IO, Byte]`, streaming it into the request without buffering the whole file in memory:
 
 ```scala
-import iozhik.NamedInputStream
+import fs2.io.file.{Files, Path}
 
-val file = InputStreamFile(NamedInputStream("report.pdf", () => new FileInputStream("/tmp/report.pdf")))
+val file = InputStreamFile(StreamUpload("report.pdf", Files[IO].readAll(Path("/tmp/report.pdf"))))
 sendDocument(chatId = ChatIntId(chatId), document = file).exec
 ```
 
-To upload an `fs2.Stream[F, Byte]`, use `InputStreamFiles.fromStream`, and send the file within the resource's scope:
+The stream runs anew for every request that sends it, and its finalizers run once the upload stops, whether it finished, failed or was canceled. Any source fs2 can read works: `fs2.Stream.emits(bytes)` for bytes in memory, `fs2.io.readInputStream(IO.blocking(openStream()), 8192)` for a `java.io.InputStream`, or a ZIO `ZStream` bridged with [zio-interop-reactivestreams](https://github.com/zio/interop-reactive-streams) and fs2's `fromPublisher`.
 
-```scala
-InputStreamFiles.fromStream("report.pdf", bytes).use { file =>
-  sendDocument(chatId = ChatIntId(chatId), document = file).exec
-}
-```
-
-Each upload attempt runs the stream from the start, and once the upload stops reading it, the stream is interrupted and its finalizers run. Other streaming libraries can be bridged into an `fs2.Stream` first, e.g. a ZIO `ZStream` via [zio-interop-reactivestreams](https://github.com/zio/interop-reactive-streams) and fs2's `fromPublisher`.
+The stream is lifted into the API's effect with cats-effect's `LiftIO`, so `BotApi` and `WebhookBot` require a `LiftIO[F]` alongside `Async[F]`. `IO` and monad transformers over it (`Kleisli`, `EitherT`, …) have one; for ZIO's `Task`, zio-interop-cats provides it given an implicit `IORuntime`.
 
 #### OpenEnum
 
