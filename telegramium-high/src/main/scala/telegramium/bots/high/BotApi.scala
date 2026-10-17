@@ -18,18 +18,23 @@ import telegramium.bots.InputPartFile
 import telegramium.bots.client.Method
 import telegramium.bots.high.Http4sUtils.toFileDataParts
 import telegramium.bots.high.Http4sUtils.toMultipartWithFormData
+import telegramium.bots.high.Http4sUtils.toUploadParts
 
 class BotApi[F[_]](
   http: Client[F],
   baseUrl: String
 )(implicit F: Async[F])
-    extends Api[F] {
+    extends UploadApi[F] {
 
-  override def execute[Res](method: Method[Res]): F[Res] = {
+  override def execute[Res](method: Method[Res]): F[Res] = send(method, Map.empty)
+
+  override def execute[Res](request: WithUploads[F, Res]): F[Res] = send(request.method, request.uploads)
+
+  private def send[Res](method: Method[Res], uploads: Map[String, Upload[F]]): F[Res] = {
     val inputPartFiles = method.payload.files.collect { case (filename, InputPartFile(file)) =>
       (filename, file)
     }
-    val attachments = toFileDataParts(inputPartFiles)
+    val attachments = toFileDataParts(inputPartFiles) ++ toUploadParts(uploads)
 
     for {
       uri <- F.fromEither[Uri](Uri.fromString(s"$baseUrl/${method.payload.name}"))

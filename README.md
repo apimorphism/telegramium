@@ -87,6 +87,20 @@ For details, have a look
 at the [Github Issue](https://github.com/apimorphism/telegramium/issues/143) and
 the related [Pull Request](https://github.com/apimorphism/telegramium/pull/145).
 
+#### Uploading files
+
+Methods that take a file accept an `IFile`: `InputPartFile(file)` uploads a `java.io.File`, and `InputLinkFile(url)` lets Telegram fetch a URL or resend a `file_id`.
+
+To upload an `fs2.Stream[F, Byte]` without buffering it, build the request with `Uploads[F]`. Its `attach` function turns a stream into a file reference you can pass anywhere an `IFile` is expected, including files nested in `InputMedia*` values; each stream is sent as its own part of the request:
+
+```scala
+api.execute(Uploads[F] { attach =>
+  Methods.sendDocument(chatId, attach("report.pdf", Files[F].readAll(path)), thumbnail = Some(attach("thumb.jpg", thumb)))
+})
+```
+
+The streams run when the request is sent, and again each time it's sent. Sending uploads needs an `UploadApi[F]`, which `BotApi` is; a request built with `Uploads[F]` can only be sent by an API in the same `F`. Webhook replies can't carry uploads: to send a streamed file while handling an update, execute the request with the API and reply with `None`.
+
 #### OpenEnum
 
 The Telegram Bot API is not versioned, which means bots and libraries must try to be forward-compatible. Specifically for enumerations, this implies that bots should always anticipate new values being added. Handling these values depends on the bot's business logic. Some apps may simply ignore unknown values, while others might respond with "This message is not supported," save the message for manual processing later, or throw a request handling error.

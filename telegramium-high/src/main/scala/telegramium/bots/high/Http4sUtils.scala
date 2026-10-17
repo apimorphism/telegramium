@@ -20,6 +20,11 @@ private[high] object Http4sUtils {
       Part.fileData[F](filename, Path.fromNioPath(file.toPath))(using forAsync)
     }.toVector
 
+  def toUploadParts[F[_]](uploads: Map[String, Upload[F]]): Vector[Part[F]] =
+    uploads.map { case (name, Upload(filename, stream)) =>
+      Part.fileData[F](name, filename, stream)
+    }.toVector
+
   def toMultipartWithFormData[F[_]: Sync](
     json: Json,
     fileFieldNames: List[String],
