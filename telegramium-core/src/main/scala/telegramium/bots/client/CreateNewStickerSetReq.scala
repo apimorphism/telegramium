@@ -7,8 +7,7 @@ import telegramium.bots.InputSticker
   * @param name
   *   Short name of sticker set, to be used in <code>t.me/addstickers/</code> URLs (e.g., <em>animals</em>). Can contain
   *   only English letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and
-  *   must end in <code>"_by_&lt;bot_username&gt;"</code>. <code>&lt;bot_username&gt;</code> is case insensitive. 1-64
-  *   characters.
+  *   must end in <code>"_by_ᐸbot_usernameᐳ"</code>. <code>ᐸbot_usernameᐳ</code> is case insensitive. 1-64 characters.
   * @param title
   *   Sticker set title, 1-64 characters
   * @param stickers

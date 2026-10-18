@@ -5,7 +5,7 @@ package telegramium.bots
   * @param text
   *   Block caption
   * @param credit
-  *   <em>Optional</em>. Block credit which corresponds to the HTML tag &lt;cite&gt;
+  *   <em>Optional</em>. Block credit which corresponds to the HTML tag ᐸciteᐳ
   */
 final case class RichBlockCaption(
   text: iozhik.OpenEnum[RichText],
