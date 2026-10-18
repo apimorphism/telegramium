@@ -21,5 +21,12 @@ next time it's regenerated. Instead:
 
 ## Code style
 
-Before you submit a PR, ensure that you've formatted your code by running
-`sbt fmtAll` (`core-fmt` in the dev shell).
+Before you submit a PR, ensure that you've formatted your code by running:
+
+```
+sbt fmtAll
+```
+
+(Optional: `nix develop` / `direnv allow` loads a dev shell with this as the
+`core-fmt` alias. Not required; the raw command above works the same without
+Nix.)
