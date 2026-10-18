@@ -3,13 +3,6 @@ package telegramium.bots.client
 import io.circe.syntax._
 import CirceImplicits._
 import telegramium.bots.InputSticker
-import telegramium.bots._
-import telegramium.bots.CirceImplicits._
-import telegramium.bots.SentGuestMessage
-import telegramium.bots.SentWebAppMessage
-import telegramium.bots.MessageId
-import telegramium.bots.ChatInviteLink
-import telegramium.bots.ForumTopic
 import telegramium.bots.InputMedia
 import telegramium.bots.InputMediaLocation
 import telegramium.bots.InputMediaAnimation
@@ -22,11 +15,25 @@ import telegramium.bots.InputMediaVenue
 import telegramium.bots.InputMediaDocument
 import telegramium.bots.InputMediaSticker
 import telegramium.bots.InputMediaAudio
-import telegramium.bots.Message
-import telegramium.bots.Story
 import telegramium.bots.InputStoryContent
 import telegramium.bots.InputStoryContentPhoto
 import telegramium.bots.InputStoryContentVideo
+import telegramium.bots.InputPaidMedia
+import telegramium.bots.InputPaidMediaPhoto
+import telegramium.bots.InputPaidMediaLivePhoto
+import telegramium.bots.InputPaidMediaVideo
+import telegramium.bots.InputProfilePhoto
+import telegramium.bots.InputProfilePhotoAnimated
+import telegramium.bots.InputProfilePhotoStatic
+import telegramium.bots._
+import telegramium.bots.CirceImplicits._
+import telegramium.bots.SentGuestMessage
+import telegramium.bots.SentWebAppMessage
+import telegramium.bots.MessageId
+import telegramium.bots.ChatInviteLink
+import telegramium.bots.ForumTopic
+import telegramium.bots.Message
+import telegramium.bots.Story
 import telegramium.bots.Gifts
 import telegramium.bots.OwnedGifts
 import telegramium.bots.StarAmount
@@ -53,13 +60,6 @@ import telegramium.bots.UserProfilePhotos
 import telegramium.bots.WebhookInfo
 import telegramium.bots.PreparedInlineMessage
 import telegramium.bots.PreparedKeyboardButton
-import telegramium.bots.InputPaidMedia
-import telegramium.bots.InputPaidMediaPhoto
-import telegramium.bots.InputPaidMediaLivePhoto
-import telegramium.bots.InputPaidMediaVideo
-import telegramium.bots.InputProfilePhoto
-import telegramium.bots.InputProfilePhotoAnimated
-import telegramium.bots.InputProfilePhotoStatic
 import telegramium.bots.Poll
 
 trait Methods {
@@ -77,6 +77,82 @@ trait Methods {
         val (sticker1, stickerFiles) = MethodReq.attachFile(name + "_sticker", v.sticker)
         (v.copy(sticker = sticker1), stickerFiles)
     }
+
+  private def attachFiles_InputMedia(name: String, value: InputMedia): (InputMedia, Map[String, IFile]) = value match {
+    case v: InputMediaLocation => (v, Map.empty[String, IFile])
+    case v: InputMediaAnimation =>
+      val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
+      val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
+      (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
+    case v: InputMediaLink => (v, Map.empty[String, IFile])
+    case v: InputMediaVoiceNote =>
+      val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
+      (v.copy(media = media1), mediaFiles)
+    case v: InputMediaPhoto =>
+      val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
+      (v.copy(media = media1), mediaFiles)
+    case v: InputMediaVideo =>
+      val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
+      val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
+      val (cover1, coverFiles)         = MethodReq.attachFile(name + "_cover", v.cover)
+      (v.copy(media = media1, thumbnail = thumbnail1, cover = cover1), mediaFiles ++ thumbnailFiles ++ coverFiles)
+    case v: InputMediaLivePhoto =>
+      val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
+      val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
+      (v.copy(media = media1, photo = photo1), mediaFiles ++ photoFiles)
+    case v: InputMediaVenue => (v, Map.empty[String, IFile])
+    case v: InputMediaDocument =>
+      val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
+      val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
+      (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
+    case v: InputMediaSticker =>
+      val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
+      (v.copy(media = media1), mediaFiles)
+    case v: InputMediaAudio =>
+      val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
+      val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
+      (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
+  }
+
+  private def attachFiles_InputStoryContent(
+    name: String,
+    value: InputStoryContent
+  ): (InputStoryContent, Map[String, IFile]) = value match {
+    case v: InputStoryContentPhoto =>
+      val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
+      (v.copy(photo = photo1), photoFiles)
+    case v: InputStoryContentVideo =>
+      val (video1, videoFiles) = MethodReq.attachFile(name + "_video", v.video)
+      (v.copy(video = video1), videoFiles)
+  }
+
+  private def attachFiles_InputPaidMedia(name: String, value: InputPaidMedia): (InputPaidMedia, Map[String, IFile]) =
+    value match {
+      case v: InputPaidMediaPhoto =>
+        val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
+        (v.copy(media = media1), mediaFiles)
+      case v: InputPaidMediaLivePhoto =>
+        val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
+        val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
+        (v.copy(media = media1, photo = photo1), mediaFiles ++ photoFiles)
+      case v: InputPaidMediaVideo =>
+        val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
+        val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
+        val (cover1, coverFiles)         = MethodReq.attachFile(name + "_cover", v.cover)
+        (v.copy(media = media1, thumbnail = thumbnail1, cover = cover1), mediaFiles ++ thumbnailFiles ++ coverFiles)
+    }
+
+  private def attachFiles_InputProfilePhoto(
+    name: String,
+    value: InputProfilePhoto
+  ): (InputProfilePhoto, Map[String, IFile]) = value match {
+    case v: InputProfilePhotoAnimated =>
+      val (animation1, animationFiles) = MethodReq.attachFile(name + "_animation", v.animation)
+      (v.copy(animation = animation1), animationFiles)
+    case v: InputProfilePhotoStatic =>
+      val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
+      (v.copy(photo = photo1), photoFiles)
+  }
 
   /** Use this method to add a new sticker to a set created by the bot. Emoji sticker sets can have up to 200 stickers.
     * Other sticker sets can have up to 120 stickers. Returns <em>True</em> on success.
@@ -1150,42 +1226,6 @@ trait Methods {
     MethodReq[Boolean]("editEphemeralMessageCaption", req.asJson)
   }
 
-  private def attachFiles_InputMedia(name: String, value: InputMedia): (InputMedia, Map[String, IFile]) = value match {
-    case v: InputMediaLocation => (v, Map.empty[String, IFile])
-    case v: InputMediaAnimation =>
-      val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
-      val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
-      (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
-    case v: InputMediaLink => (v, Map.empty[String, IFile])
-    case v: InputMediaVoiceNote =>
-      val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
-      (v.copy(media = media1), mediaFiles)
-    case v: InputMediaPhoto =>
-      val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
-      (v.copy(media = media1), mediaFiles)
-    case v: InputMediaVideo =>
-      val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
-      val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
-      val (cover1, coverFiles)         = MethodReq.attachFile(name + "_cover", v.cover)
-      (v.copy(media = media1, thumbnail = thumbnail1, cover = cover1), mediaFiles ++ thumbnailFiles ++ coverFiles)
-    case v: InputMediaLivePhoto =>
-      val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
-      val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
-      (v.copy(media = media1, photo = photo1), mediaFiles ++ photoFiles)
-    case v: InputMediaVenue => (v, Map.empty[String, IFile])
-    case v: InputMediaDocument =>
-      val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
-      val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
-      (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
-    case v: InputMediaSticker =>
-      val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
-      (v.copy(media = media1), mediaFiles)
-    case v: InputMediaAudio =>
-      val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
-      val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
-      (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
-  }
-
   /** Use this method to edit the media of an ephemeral message. Note that it is not guaranteed that the user will
     * receive the message edit event, especially if they are offline. On success, <em>True</em> is returned.
     *
@@ -1601,18 +1641,6 @@ trait Methods {
       replyMarkup
     )
     MethodReq[Either[Boolean, Message]]("editMessageText", req.asJson)
-  }
-
-  private def attachFiles_InputStoryContent(
-    name: String,
-    value: InputStoryContent
-  ): (InputStoryContent, Map[String, IFile]) = value match {
-    case v: InputStoryContentPhoto =>
-      val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
-      (v.copy(photo = photo1), photoFiles)
-    case v: InputStoryContentVideo =>
-      val (video1, videoFiles) = MethodReq.attachFile(name + "_video", v.video)
-      (v.copy(video = video1), videoFiles)
   }
 
   /** Edits a story previously posted by the bot on behalf of a managed business account. Requires the
@@ -4142,22 +4170,6 @@ trait Methods {
     MethodReq[Boolean]("sendMessageDraft", req.asJson)
   }
 
-  private def attachFiles_InputPaidMedia(name: String, value: InputPaidMedia): (InputPaidMedia, Map[String, IFile]) =
-    value match {
-      case v: InputPaidMediaPhoto =>
-        val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
-        (v.copy(media = media1), mediaFiles)
-      case v: InputPaidMediaLivePhoto =>
-        val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
-        val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
-        (v.copy(media = media1, photo = photo1), mediaFiles ++ photoFiles)
-      case v: InputPaidMediaVideo =>
-        val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
-        val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
-        val (cover1, coverFiles)         = MethodReq.attachFile(name + "_cover", v.cover)
-        (v.copy(media = media1, thumbnail = thumbnail1, cover = cover1), mediaFiles ++ thumbnailFiles ++ coverFiles)
-    }
-
   /** Use this method to send paid media. On success, the sent <a
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
@@ -5221,18 +5233,6 @@ trait Methods {
   ): Method[Boolean] = {
     val req = SetBusinessAccountNameReq(businessConnectionId, firstName, lastName)
     MethodReq[Boolean]("setBusinessAccountName", req.asJson)
-  }
-
-  private def attachFiles_InputProfilePhoto(
-    name: String,
-    value: InputProfilePhoto
-  ): (InputProfilePhoto, Map[String, IFile]) = value match {
-    case v: InputProfilePhotoAnimated =>
-      val (animation1, animationFiles) = MethodReq.attachFile(name + "_animation", v.animation)
-      (v.copy(animation = animation1), animationFiles)
-    case v: InputProfilePhotoStatic =>
-      val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
-      (v.copy(photo = photo1), photoFiles)
   }
 
   /** Changes the profile photo of a managed business account. Requires the <em>can_edit_profile_photo</em> business bot
