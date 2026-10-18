@@ -7,6 +7,12 @@ package telegramium.bots
   * mode</a>), the field <em>inline_message_id</em> will be present. Exactly one of the fields <em>data</em> or
   * <em>game_short_name</em> will be present.
   *
+  * <strong>NOTE:</strong> After the user presses a callback button, Telegram clients will display a progress bar until
+  * you call <a href="https://core.telegram.org/bots/api#answercallbackquery">answerCallbackQuery</a>. It is, therefore,
+  * necessary to react by calling <a
+  * href="https://core.telegram.org/bots/api#answercallbackquery">answerCallbackQuery</a> even if no notification to the
+  * user is needed (e.g., without specifying any of the optional parameters).
+  *
   * @param id
   *   Unique identifier for this query
   * @param from

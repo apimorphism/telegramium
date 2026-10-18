@@ -5,6 +5,8 @@ package telegramium.bots
   * at least 1 hour. When the link expires, a new one can be requested by calling <a
   * href="https://core.telegram.org/bots/api#getfile">getFile</a>.
   *
+  * The maximum file size to download is 20 MB
+  *
   * @param fileId
   *   Identifier for this file, which can be used to download or reuse the file
   * @param fileUniqueId

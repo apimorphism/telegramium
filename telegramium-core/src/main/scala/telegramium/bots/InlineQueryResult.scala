@@ -608,6 +608,9 @@ final case class InlineQueryResultCachedSticker(
   * sent by the user with an optional caption. Alternatively, you can use <em>input_message_content</em> to send a
   * message with the specified content instead of the video.
   *
+  * If an InlineQueryResultVideo message contains an embedded video (e.g., YouTube), you <strong>must</strong> replace
+  * its content using <em>input_message_content</em>.
+  *
   * @param id
   *   Unique identifier for this result, 1-64 bytes
   * @param videoUrl
