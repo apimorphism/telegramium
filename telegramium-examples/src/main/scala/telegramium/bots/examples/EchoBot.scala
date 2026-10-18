@@ -24,6 +24,23 @@ class EchoBot[F[_]]()(implicit
           chatId = ChatIntId(msg.chat.id),
           richMessage = InputRichMessage(html = Some(richHtmlText))
         ).exec.void
+      // Demo for https://github.com/apimorphism/telegramium/issues/666: the `media` list's second element
+      // is uploaded as multipart, embedded inside InputMediaPhoto rather than passed as a top-level IFile
+      // param, and referenced from the JSON body as "attach://<name>".
+      case Some("/mediagroup") =>
+        sendMediaGroup(
+          chatId = ChatIntId(msg.chat.id),
+          media = List(
+            InputMediaPhoto(
+              media = InputLinkFile("https://picsum.photos/seed/telegramium/400"),
+              caption = Some("1/2: fetched by URL (InputLinkFile) - unaffected by #666")
+            ),
+            InputMediaPhoto(
+              media = InputPartFile(sampleImageFile),
+              caption = Some("2/2: uploaded locally (InputPartFile), embedded in InputMediaPhoto")
+            )
+          )
+        ).exec.void
       case _ =>
         sendMessage(
           chatId = ChatIntId(msg.chat.id),
@@ -177,6 +194,18 @@ class EchoBot[F[_]]()(implicit
       |pre-formatted fixed-width code block written in the Python programming language
       |```
       |""".stripMargin
+
+  // A 64x64 solid-color PNG, written out once so /mediagroup has a local file to upload via InputPartFile.
+  // (A 1x1 pixel is a valid PNG but Telegram rejects it with IMAGE_PROCESS_FAILED - too trivial to process.)
+  lazy val sampleImageFile: java.io.File = {
+    val bytes = java.util.Base64.getDecoder.decode(
+      "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAT0lEQVR42u3PQQkAAAgEsMt0/QMYywi+hcEKLNO+FgEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGBywIThMEPFAwX+gAAAABJRU5ErkJggg=="
+    )
+    val file = java.nio.file.Files.createTempFile("telegramium-echobot-sample", ".png").toFile
+    java.nio.file.Files.write(file.toPath, bytes)
+    file.deleteOnExit()
+    file
+  }
 
   val richHtmlText: String =
     """<h2>Rich Message Demo</h2>
