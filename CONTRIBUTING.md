@@ -30,3 +30,17 @@ sbt fmtAll
 (Optional: `nix develop` / `direnv allow` loads a dev shell with this as the
 `core-fmt` alias. Not required; the raw command above works the same without
 Nix.)
+
+## Releasing (maintainers)
+
+The version comes from the git tag on `HEAD` (via sbt-dynver, see `build.sbt`)
+- no separate version to bump by hand. To cut a release:
+
+1. Tag the commit: `core-tag X.Y.Z` (dev shell; checks the tree is clean and
+   the tag doesn't already exist) or plain `git tag -a X.Y.Z -m "Release X.Y.Z"`.
+2. Push the tag: `git push origin X.Y.Z`.
+3. Build and publish from that tag (`sbt publishSigned`, then release via
+   Central Portal).
+4. Create the GitHub Release against that already-existing tag, rather than
+   letting the Release UI create a new one - this keeps the published version
+   and the release tag identical by construction.

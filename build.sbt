@@ -1,11 +1,7 @@
-enablePlugins(GitPlugin)
-
-ThisBuild / version := Version.mkVersion(
-  "10.1003.0",
-  git.gitCurrentBranch.value,
-  git.gitDescribedVersion.value,
-  git.gitUncommittedChanges.value
-)
+// Tags are bare X.Y.Z (no "v" prefix); -SNAPSHOT keeps untagged/dirty builds routed to the
+// snapshot repo below instead of Central.
+ThisBuild / dynverVTagPrefix        := false
+ThisBuild / dynverSonatypeSnapshots := true
 
 lazy val scala3   = "3.3.8"
 lazy val scala213 = "2.13.18"
@@ -16,7 +12,7 @@ ThisBuild / scalaVersion := scala3
 val buildCommit    = settingKey[String]("Build info: commit")
 val buildTimestamp = settingKey[String]("Build info: timestamp")
 
-ThisBuild / buildCommit    := Version.commit(git.gitHeadCommit.value)
+ThisBuild / buildCommit    := Version.commit(GitCli.headCommit)
 ThisBuild / buildTimestamp := Version.timestamp
 
 ThisBuild / name         := "telegramium"
