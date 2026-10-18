@@ -4,6 +4,8 @@ package telegramium.bots
   * as a great replacement for the <a href="https://core.telegram.org/widgets/login">Telegram Login Widget</a> when the
   * user is coming from Telegram. All the user needs to do is tap/click a button and confirm that they want to log in:
   *
+  * Sample bot: <a href="https://t.me/discussbot">&#064;DiscussBot</a>
+  *
   * @param url
   *   An HTTPS URL to be opened with user authorization data added to the query string when the button is pressed. If
   *   the user refuses to provide authorization data, the original URL without information about the user will be
