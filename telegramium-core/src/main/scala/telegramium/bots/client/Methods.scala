@@ -834,8 +834,8 @@ trait Methods {
     * @param name
     *   Short name of sticker set, to be used in <code>t.me/addstickers/</code> URLs (e.g., <em>animals</em>). Can
     *   contain only English letters, digits and underscores. Must begin with a letter, can't contain consecutive
-    *   underscores and must end in <code>"_by_&lt;bot_username&gt;"</code>. <code>&lt;bot_username&gt;</code> is case
-    *   insensitive. 1-64 characters.
+    *   underscores and must end in <code>"_by_ᐸbot_usernameᐳ"</code>. <code>ᐸbot_usernameᐳ</code> is case insensitive.
+    *   1-64 characters.
     * @param title
     *   Sticker set title, 1-64 characters
     * @param stickers
@@ -2045,10 +2045,9 @@ trait Methods {
   /** Use this method to get basic information about a file and prepare it for downloading. For the moment, bots can
     * download files of up to 20MB in size. On success, a <a href="https://core.telegram.org/bots/api#file">File</a>
     * object is returned. The file can then be downloaded via the link
-    * <code>https://api.telegram.org/file/bot&lt;token&gt;/&lt;file_path&gt;</code>, where
-    * <code>&lt;file_path&gt;</code> is taken from the response. It is guaranteed that the link will be valid for at
-    * least 1 hour. When the link expires, a new one can be requested by calling <a
-    * href="https://core.telegram.org/bots/api#getfile">getFile</a> again.
+    * <code>https://api.telegram.org/file/botᐸtokenᐳ/ᐸfile_pathᐳ</code>, where <code>ᐸfile_pathᐳ</code> is taken from
+    * the response. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one
+    * can be requested by calling <a href="https://core.telegram.org/bots/api#getfile">getFile</a> again.
     *
     * @param fileId
     *   File identifier to get information about
@@ -2921,8 +2920,8 @@ trait Methods {
     *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
     *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not
     *   exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be
-    *   only uploaded as a new file, so you can pass “attach://&lt;file_attach_name&gt;” if the thumbnail was uploaded
-    *   using multipart/form-data under &lt;file_attach_name&gt;.
+    *   only uploaded as a new file, so you can pass “attach://ᐸfile_attach_nameᐳ” if the thumbnail was uploaded using
+    *   multipart/form-data under ᐸfile_attach_nameᐳ.
     * @param caption
     *   Animation caption (may also be used when resending animation by <em>file_id</em>), 0-1024 characters after
     *   entities parsing
@@ -3056,8 +3055,8 @@ trait Methods {
     *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
     *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not
     *   exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be
-    *   only uploaded as a new file, so you can pass “attach://&lt;file_attach_name&gt;” if the thumbnail was uploaded
-    *   using multipart/form-data under &lt;file_attach_name&gt;.
+    *   only uploaded as a new file, so you can pass “attach://ᐸfile_attach_nameᐳ” if the thumbnail was uploaded using
+    *   multipart/form-data under ᐸfile_attach_nameᐳ.
     * @param disableNotification
     *   Sends the message <a href="https://telegram.org/blog/channels-2-0#silent-messages">silently</a>. Users will
     *   receive a notification with no sound.
@@ -3414,8 +3413,8 @@ trait Methods {
     *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
     *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not
     *   exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be
-    *   only uploaded as a new file, so you can pass “attach://&lt;file_attach_name&gt;” if the thumbnail was uploaded
-    *   using multipart/form-data under &lt;file_attach_name&gt;.
+    *   only uploaded as a new file, so you can pass “attach://ᐸfile_attach_nameᐳ” if the thumbnail was uploaded using
+    *   multipart/form-data under ᐸfile_attach_nameᐳ.
     * @param caption
     *   Document caption (may also be used when resending documents by <em>file_id</em>), 0-1024 characters after
     *   entities parsing
@@ -4878,13 +4877,12 @@ trait Methods {
     *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
     *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not
     *   exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be
-    *   only uploaded as a new file, so you can pass “attach://&lt;file_attach_name&gt;” if the thumbnail was uploaded
-    *   using multipart/form-data under &lt;file_attach_name&gt;.
+    *   only uploaded as a new file, so you can pass “attach://ᐸfile_attach_nameᐳ” if the thumbnail was uploaded using
+    *   multipart/form-data under ᐸfile_attach_nameᐳ.
     * @param cover
     *   Cover for the video in the message. Pass a file_id to send a file that exists on the Telegram servers
     *   (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass
-    *   “attach://&lt;file_attach_name&gt;” to upload a new one using multipart/form-data under &lt;file_attach_name&gt;
-    *   name.
+    *   “attach://ᐸfile_attach_nameᐳ” to upload a new one using multipart/form-data under ᐸfile_attach_nameᐳ name.
     * @param startTimestamp
     *   Start timestamp for the video in the message
     * @param caption
@@ -5015,8 +5013,8 @@ trait Methods {
     *   Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The
     *   thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not
     *   exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be
-    *   only uploaded as a new file, so you can pass “attach://&lt;file_attach_name&gt;” if the thumbnail was uploaded
-    *   using multipart/form-data under &lt;file_attach_name&gt;.
+    *   only uploaded as a new file, so you can pass “attach://ᐸfile_attach_nameᐳ” if the thumbnail was uploaded using
+    *   multipart/form-data under ᐸfile_attach_nameᐳ.
     * @param disableNotification
     *   Sends the message <a href="https://telegram.org/blog/channels-2-0#silent-messages">silently</a>. Users will
     *   receive a notification with no sound.

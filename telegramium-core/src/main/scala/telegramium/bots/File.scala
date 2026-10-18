@@ -1,8 +1,8 @@
 package telegramium.bots
 
 /** This object represents a file ready to be downloaded. The file can be downloaded via the link
-  * <code>https://api.telegram.org/file/bot&lt;token&gt;/&lt;file_path&gt;</code>. It is guaranteed that the link will
-  * be valid for at least 1 hour. When the link expires, a new one can be requested by calling <a
+  * <code>https://api.telegram.org/file/botᐸtokenᐳ/ᐸfile_pathᐳ</code>. It is guaranteed that the link will be valid for
+  * at least 1 hour. When the link expires, a new one can be requested by calling <a
   * href="https://core.telegram.org/bots/api#getfile">getFile</a>.
   *
   * @param fileId
@@ -15,8 +15,8 @@ package telegramium.bots
   *   difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer
   *   or double-precision float type are safe for storing this value.
   * @param filePath
-  *   <em>Optional</em>. File path. Use <code>https://api.telegram.org/file/bot&lt;token&gt;/&lt;file_path&gt;</code> to
-  *   get the file.
+  *   <em>Optional</em>. File path. Use <code>https://api.telegram.org/file/botᐸtokenᐳ/ᐸfile_pathᐳ</code> to get the
+  *   file.
   */
 final case class File(
   fileId: String,

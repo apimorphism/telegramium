@@ -66,7 +66,7 @@ package telegramium.bots
   *   <em>Optional</em>. Bio of the other party in a private chat
   * @param hasPrivateForwards
   *   <em>Optional</em>. <em>True</em>, if privacy settings of the other party in the private chat allows to use
-  *   <code>tg://user?id=&lt;user_id&gt;</code> links only in chats with the user
+  *   <code>tg://user?id=ᐸuser_idᐳ</code> links only in chats with the user
   * @param hasRestrictedVoiceAndVideoMessages
   *   <em>Optional</em>. <em>True</em>, if the privacy settings of the other party restrict sending voice and video note
   *   messages in the private chat

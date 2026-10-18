@@ -6,8 +6,8 @@ sealed trait InputPaidMedia {}
   *
   * @param media
   *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
-  *   for Telegram to get a file from the Internet, or pass “attach://&lt;file_attach_name&gt;” to upload a new one
-  *   using multipart/form-data under &lt;file_attach_name&gt; name.
+  *   for Telegram to get a file from the Internet, or pass “attach://ᐸfile_attach_nameᐳ” to upload a new one using
+  *   multipart/form-data under ᐸfile_attach_nameᐳ name.
   */
 final case class InputPaidMediaPhoto(media: IFile) extends InputPaidMedia
 
@@ -15,12 +15,12 @@ final case class InputPaidMediaPhoto(media: IFile) extends InputPaidMedia
   *
   * @param media
   *   Video of the live photo to send. Pass a file_id to send a file that exists on the Telegram servers (recommended)
-  *   or pass “attach://&lt;file_attach_name&gt;” to upload a new one using multipart/form-data under
-  *   &lt;file_attach_name&gt; name. Sending live photos by a URL is currently unsupported.
+  *   or pass “attach://ᐸfile_attach_nameᐳ” to upload a new one using multipart/form-data under ᐸfile_attach_nameᐳ name.
+  *   Sending live photos by a URL is currently unsupported.
   * @param photo
   *   The static photo to send. Pass a file_id to send a file that exists on the Telegram servers (recommended) or pass
-  *   “attach://&lt;file_attach_name&gt;” to upload a new one using multipart/form-data under &lt;file_attach_name&gt;
-  *   name. Sending live photos by a URL is currently unsupported.
+  *   “attach://ᐸfile_attach_nameᐳ” to upload a new one using multipart/form-data under ᐸfile_attach_nameᐳ name. Sending
+  *   live photos by a URL is currently unsupported.
   */
 final case class InputPaidMediaLivePhoto(media: IFile, photo: IFile) extends InputPaidMedia
 
@@ -28,19 +28,18 @@ final case class InputPaidMediaLivePhoto(media: IFile, photo: IFile) extends Inp
   *
   * @param media
   *   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL
-  *   for Telegram to get a file from the Internet, or pass “attach://&lt;file_attach_name&gt;” to upload a new one
-  *   using multipart/form-data under &lt;file_attach_name&gt; name.
+  *   for Telegram to get a file from the Internet, or pass “attach://ᐸfile_attach_nameᐳ” to upload a new one using
+  *   multipart/form-data under ᐸfile_attach_nameᐳ name.
   * @param thumbnail
   *   <em>Optional</em>. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported
   *   server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height
   *   should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused
-  *   and can be only uploaded as a new file, so you can pass “attach://&lt;file_attach_name&gt;” if the thumbnail was
-  *   uploaded using multipart/form-data under &lt;file_attach_name&gt;.
+  *   and can be only uploaded as a new file, so you can pass “attach://ᐸfile_attach_nameᐳ” if the thumbnail was
+  *   uploaded using multipart/form-data under ᐸfile_attach_nameᐳ.
   * @param cover
   *   <em>Optional</em>. Cover for the video in the message. Pass a file_id to send a file that exists on the Telegram
   *   servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass
-  *   “attach://&lt;file_attach_name&gt;” to upload a new one using multipart/form-data under &lt;file_attach_name&gt;
-  *   name.
+  *   “attach://ᐸfile_attach_nameᐳ” to upload a new one using multipart/form-data under ᐸfile_attach_nameᐳ name.
   * @param startTimestamp
   *   <em>Optional</em>. Start timestamp for the video in the message
   * @param width

@@ -216,7 +216,7 @@ final case class RichBlockCollage(
   */
 final case class RichBlockAudio(audio: Audio, caption: Option[RichBlockCaption] = Option.empty) extends RichBlock
 
-/** A divider, corresponding to the HTML tag <code>&lt;hr/&gt;</code>. */
+/** A divider, corresponding to the HTML tag <code>ᐸhr/ᐳ</code>. */
 case object RichBlockDivider extends RichBlock
 
 /** A block with an animation, corresponding to the HTML tag <code>ᐸvideoᐳ</code>.

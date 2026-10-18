@@ -6,8 +6,7 @@ sealed trait InputProfilePhoto {}
   *
   * @param animation
   *   The animated profile photo. Profile photos can't be reused and can only be uploaded as a new file, so you can pass
-  *   “attach://&lt;file_attach_name&gt;” if the photo was uploaded using multipart/form-data under
-  *   &lt;file_attach_name&gt;.
+  *   “attach://ᐸfile_attach_nameᐳ” if the photo was uploaded using multipart/form-data under ᐸfile_attach_nameᐳ.
   * @param mainFrameTimestamp
   *   <em>Optional</em>. Timestamp in seconds of the frame that will be used as the static profile photo. Defaults to
   *   0.0.
@@ -19,7 +18,6 @@ final case class InputProfilePhotoAnimated(animation: IFile, mainFrameTimestamp:
   *
   * @param photo
   *   The static profile photo. Profile photos can't be reused and can only be uploaded as a new file, so you can pass
-  *   “attach://&lt;file_attach_name&gt;” if the photo was uploaded using multipart/form-data under
-  *   &lt;file_attach_name&gt;.
+  *   “attach://ᐸfile_attach_nameᐳ” if the photo was uploaded using multipart/form-data under ᐸfile_attach_nameᐳ.
   */
 final case class InputProfilePhotoStatic(photo: IFile) extends InputProfilePhoto

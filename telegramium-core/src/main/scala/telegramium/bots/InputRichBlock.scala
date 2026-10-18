@@ -125,7 +125,7 @@ final case class InputRichBlockDocument(document: InputMediaDocument, caption: O
   */
 final case class InputRichBlockMathematicalExpression(expression: String) extends InputRichBlock
 
-/** A divider, corresponding to the HTML tag <code>&lt;hr/&gt;</code>. */
+/** A divider, corresponding to the HTML tag <code>ᐸhr/ᐳ</code>. */
 case object InputRichBlockDivider extends InputRichBlock
 
 /** A block quotation, corresponding to the HTML tag <code>ᐸblockquoteᐳ</code>.

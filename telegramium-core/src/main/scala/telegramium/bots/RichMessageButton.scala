@@ -14,8 +14,8 @@ package telegramium.bots
   *   based on the style. The style “link” is allowed only for callback buttons.
   * @param url
   *   <em>Optional</em>. HTTP or tg:// URL to be opened when the button is pressed. Links
-  *   <code>tg://user?id=&lt;user_id&gt;</code> can be used to mention a user by their identifier without using a
-  *   username, if this is allowed by their privacy settings.
+  *   <code>tg://user?id=ᐸuser_idᐳ</code> can be used to mention a user by their identifier without using a username, if
+  *   this is allowed by their privacy settings.
   * @param callbackData
   *   <em>Optional</em>. Data to be sent in a <a href="https://core.telegram.org/bots/api#callbackquery">callback
   *   query</a> to the bot when the button is pressed, 1-64 bytes
