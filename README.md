@@ -154,14 +154,7 @@ Please, note, that this versioning scheme is started from version `1.48.0`.
 
 ### Contribution
 
-I'd love to have more testing and more example bots. Ideas and PRs on telegramium-high -
-high level interface for the bot API are also highly encouraged.
-
-If you want to change something in telegramium-core or found a bug in it, please create an issue.
-Do not create pull requests with changes on telegramium-core as we use semi-automatic way to work with it.
-Except that any PR-s are welcome.
-
-Before you submit the PR, ensure that you've formatted your code by running the `sbt fmtAll` command.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### Alternatives
 

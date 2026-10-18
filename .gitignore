@@ -13,3 +13,4 @@ project/metals.sbt
 project/.sbt
 project/project/
 .vscode/
+.direnv/
