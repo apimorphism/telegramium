@@ -41,10 +41,9 @@
       devShells = forEachSupportedSystem (
         { pkgs, system }:
         {
-          # Aliases below implement the flow documented in CONTRIBUTING.md and
-          # AGENTS.md: formatting, and opening PRs against apimorphism/telegramium
-          # directly with the org-scoped token. The core-regeneration commands
-          # themselves live in apimorphism/iozhik's dev shell.
+          # core-fmt implements the code-style step documented in
+          # CONTRIBUTING.md. The core-regeneration commands themselves live
+          # in apimorphism/iozhik's dev shell.
           default = pkgs.mkShellNoCC {
             packages = with pkgs; [
               scala
@@ -58,17 +57,9 @@
                 sbt fmtAll
               }
 
-              core-push() {
-                GH_TOKEN="$GH_TOKEN_APIMORPHISM" git push -u origin "$(git branch --show-current)"
-              }
+              export -f core-fmt
 
-              core-pr-draft() {
-                GH_TOKEN="$GH_TOKEN_APIMORPHISM" gh pr create --repo apimorphism/telegramium --draft --fill
-              }
-
-              export -f core-fmt core-push core-pr-draft
-
-              echo "telegramium dev shell: core-fmt, core-push, core-pr-draft"
+              echo "telegramium dev shell: core-fmt"
             '';
           };
         }

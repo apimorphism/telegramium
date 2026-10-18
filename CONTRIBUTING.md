@@ -19,9 +19,6 @@ next time it's regenerated. Instead:
   here. See that repo's CONTRIBUTING.md for the regeneration flow, then come
   back here with the regenerated `telegramium-core` as part of your PR.
 
-See [AGENTS.md](AGENTS.md) for how automated agents should push branches and
-open PRs against this repo.
-
 ## Code style
 
 Before you submit a PR, ensure that you've formatted your code by running
