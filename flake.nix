@@ -41,12 +41,26 @@
       devShells = forEachSupportedSystem (
         { pkgs, system }:
         {
+          # core-fmt implements the code-style step documented in
+          # CONTRIBUTING.md. The core-regeneration commands themselves live
+          # in apimorphism/iozhik's dev shell.
           default = pkgs.mkShellNoCC {
             packages = with pkgs; [
               scala
               sbt
               coursier
+              gh
             ];
+
+            shellHook = ''
+              core-fmt() {
+                sbt fmtAll
+              }
+
+              export -f core-fmt
+
+              echo "telegramium dev shell: core-fmt"
+            '';
           };
         }
       );
