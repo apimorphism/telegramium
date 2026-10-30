@@ -28,5 +28,5 @@ final case class GetUpdatesReq(
   offset: Option[Int] = Option.empty,
   limit: Option[Int] = Option.empty,
   timeout: Option[Int] = Option.empty,
-  allowedUpdates: List[String] = List.empty
+  allowedUpdates: Option[List[String]] = Option.empty
 )

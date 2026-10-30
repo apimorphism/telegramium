@@ -2269,7 +2269,7 @@ trait Methods {
     offset: Option[Int] = Option.empty,
     limit: Option[Int] = Option.empty,
     timeout: Option[Int] = Option.empty,
-    allowedUpdates: List[String] = List.empty
+    allowedUpdates: Option[List[String]] = Option.empty
   ): Method[List[Update]] = {
     val req = GetUpdatesReq(offset, limit, timeout, allowedUpdates)
     MethodReq[List[Update]]("getUpdates", req.asJson)
@@ -5830,7 +5830,7 @@ trait Methods {
     certificate: Option[IFile] = Option.empty,
     ipAddress: Option[String] = Option.empty,
     maxConnections: Option[Int] = Option.empty,
-    allowedUpdates: List[String] = List.empty,
+    allowedUpdates: Option[List[String]] = Option.empty,
     dropPendingUpdates: Option[Boolean] = Option.empty,
     secretToken: Option[String] = Option.empty
   ): Method[Boolean] = {
