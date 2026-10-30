@@ -24,8 +24,6 @@ class EchoBot[F[_]]()(implicit
           chatId = ChatIntId(msg.chat.id),
           richMessage = InputRichMessage(html = Some(richHtmlText))
         ).exec.void
-      // Demo for https://github.com/apimorphism/telegramium/issues/686: a markdown-only rich message used to
-      // be sent with an empty "blocks" array next to "markdown", which Telegram rejected with RICH_MESSAGE_EMPTY.
       case Some("/richmd") =>
         sendRichMessage(
           chatId = ChatIntId(msg.chat.id),
