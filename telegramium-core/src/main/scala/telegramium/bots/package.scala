@@ -783,7 +783,7 @@ object CirceImplicits {
           "title"                    -> x.title.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
-          "caption_entities"         -> x.captionEntities.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
           "input_message_content"    -> x.inputMessageContent.asJson
@@ -844,7 +844,7 @@ object CirceImplicits {
           "description"              -> x.description.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
-          "caption_entities"         -> x.captionEntities.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
           "input_message_content"    -> x.inputMessageContent.asJson
@@ -860,7 +860,7 @@ object CirceImplicits {
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
-          "caption_entities"      -> x.captionEntities.asJson,
+          "caption_entities"      -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "document_url"          -> x.documentUrl.asJson,
           "mime_type"             -> x.mimeType.asJson,
           "description"           -> x.description.asJson,
@@ -882,7 +882,7 @@ object CirceImplicits {
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
-          "caption_entities"      -> x.captionEntities.asJson,
+          "caption_entities"      -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
@@ -915,7 +915,7 @@ object CirceImplicits {
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
-          "caption_entities"      -> x.captionEntities.asJson,
+          "caption_entities"      -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "performer"             -> x.performer.asJson,
           "audio_duration"        -> x.audioDuration.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
@@ -938,7 +938,7 @@ object CirceImplicits {
           "title"                    -> x.title.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
-          "caption_entities"         -> x.captionEntities.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
           "input_message_content"    -> x.inputMessageContent.asJson
@@ -955,7 +955,7 @@ object CirceImplicits {
           "title"                    -> x.title.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
-          "caption_entities"         -> x.captionEntities.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
           "input_message_content"    -> x.inputMessageContent.asJson
@@ -973,7 +973,7 @@ object CirceImplicits {
           "description"           -> x.description.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
-          "caption_entities"      -> x.captionEntities.asJson,
+          "caption_entities"      -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
@@ -990,7 +990,7 @@ object CirceImplicits {
           "description"              -> x.description.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
-          "caption_entities"         -> x.captionEntities.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
           "input_message_content"    -> x.inputMessageContent.asJson
@@ -1019,7 +1019,7 @@ object CirceImplicits {
           "description"              -> x.description.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
-          "caption_entities"         -> x.captionEntities.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
           "input_message_content"    -> x.inputMessageContent.asJson
@@ -1050,7 +1050,7 @@ object CirceImplicits {
           "title"                    -> x.title.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
-          "caption_entities"         -> x.captionEntities.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "video_width"              -> x.videoWidth.asJson,
           "video_height"             -> x.videoHeight.asJson,
@@ -1070,7 +1070,7 @@ object CirceImplicits {
           "audio_file_id"         -> x.audioFileId.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
-          "caption_entities"      -> x.captionEntities.asJson,
+          "caption_entities"      -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
         ).filter(!_._2.isNull)
@@ -1086,7 +1086,7 @@ object CirceImplicits {
           "title"                    -> x.title.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
-          "caption_entities"         -> x.captionEntities.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
           "input_message_content"    -> x.inputMessageContent.asJson
@@ -1124,7 +1124,7 @@ object CirceImplicits {
           "title"                 -> x.title.asJson,
           "caption"               -> x.caption.asJson,
           "parse_mode"            -> x.parseMode.asJson,
-          "caption_entities"      -> x.captionEntities.asJson,
+          "caption_entities"      -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "voice_duration"        -> x.voiceDuration.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
           "input_message_content" -> x.inputMessageContent.asJson
@@ -1165,7 +1165,7 @@ object CirceImplicits {
           "thumbnail"                -> x.thumbnail.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
-          "caption_entities"         -> x.captionEntities.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "width"                    -> x.width.asJson,
           "height"                   -> x.height.asJson,
@@ -1191,7 +1191,7 @@ object CirceImplicits {
           "media"            -> x.media.asJson,
           "caption"          -> x.caption.asJson,
           "parse_mode"       -> x.parseMode.asJson,
-          "caption_entities" -> x.captionEntities.asJson,
+          "caption_entities" -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "duration"         -> x.duration.asJson
         ).filter(!_._2.isNull)
       )
@@ -1204,7 +1204,7 @@ object CirceImplicits {
           "media"                    -> x.media.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
-          "caption_entities"         -> x.captionEntities.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "has_spoiler"              -> x.hasSpoiler.asJson
         ).filter(!_._2.isNull)
@@ -1221,7 +1221,7 @@ object CirceImplicits {
           "start_timestamp"          -> x.startTimestamp.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
-          "caption_entities"         -> x.captionEntities.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "width"                    -> x.width.asJson,
           "height"                   -> x.height.asJson,
@@ -1240,7 +1240,7 @@ object CirceImplicits {
           "photo"                    -> x.photo.asJson,
           "caption"                  -> x.caption.asJson,
           "parse_mode"               -> x.parseMode.asJson,
-          "caption_entities"         -> x.captionEntities.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "has_spoiler"              -> x.hasSpoiler.asJson
         ).filter(!_._2.isNull)
@@ -1271,7 +1271,7 @@ object CirceImplicits {
           "thumbnail"                      -> x.thumbnail.asJson,
           "caption"                        -> x.caption.asJson,
           "parse_mode"                     -> x.parseMode.asJson,
-          "caption_entities"               -> x.captionEntities.asJson,
+          "caption_entities"               -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "disable_content_type_detection" -> x.disableContentTypeDetection.asJson
         ).filter(!_._2.isNull)
       )
@@ -1295,7 +1295,7 @@ object CirceImplicits {
           "thumbnail"        -> x.thumbnail.asJson,
           "caption"          -> x.caption.asJson,
           "parse_mode"       -> x.parseMode.asJson,
-          "caption_entities" -> x.captionEntities.asJson,
+          "caption_entities" -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "duration"         -> x.duration.asJson,
           "performer"        -> x.performer.asJson,
           "title"            -> x.title.asJson
@@ -1332,23 +1332,23 @@ object CirceImplicits {
     (x: InputInvoiceMessageContent) => {
       Json.fromFields(
         List(
-          "title"                         -> x.title.asJson,
-          "description"                   -> x.description.asJson,
-          "payload"                       -> x.payload.asJson,
-          "provider_token"                -> x.providerToken.asJson,
-          "currency"                      -> x.currency.asJson,
-          "prices"                        -> x.prices.asJson,
-          "max_tip_amount"                -> x.maxTipAmount.asJson,
-          "suggested_tip_amounts"         -> x.suggestedTipAmounts.asJson,
-          "provider_data"                 -> x.providerData.asJson,
-          "photo_url"                     -> x.photoUrl.asJson,
-          "photo_size"                    -> x.photoSize.asJson,
-          "photo_width"                   -> x.photoWidth.asJson,
-          "photo_height"                  -> x.photoHeight.asJson,
-          "need_name"                     -> x.needName.asJson,
-          "need_phone_number"             -> x.needPhoneNumber.asJson,
-          "need_email"                    -> x.needEmail.asJson,
-          "need_shipping_address"         -> x.needShippingAddress.asJson,
+          "title"                 -> x.title.asJson,
+          "description"           -> x.description.asJson,
+          "payload"               -> x.payload.asJson,
+          "provider_token"        -> x.providerToken.asJson,
+          "currency"              -> x.currency.asJson,
+          "prices"                -> x.prices.asJson,
+          "max_tip_amount"        -> x.maxTipAmount.asJson,
+          "suggested_tip_amounts" -> (if (x.suggestedTipAmounts.isEmpty) Json.Null else x.suggestedTipAmounts.asJson),
+          "provider_data"         -> x.providerData.asJson,
+          "photo_url"             -> x.photoUrl.asJson,
+          "photo_size"            -> x.photoSize.asJson,
+          "photo_width"           -> x.photoWidth.asJson,
+          "photo_height"          -> x.photoHeight.asJson,
+          "need_name"             -> x.needName.asJson,
+          "need_phone_number"     -> x.needPhoneNumber.asJson,
+          "need_email"            -> x.needEmail.asJson,
+          "need_shipping_address" -> x.needShippingAddress.asJson,
           "send_phone_number_to_provider" -> x.sendPhoneNumberToProvider.asJson,
           "send_email_to_provider"        -> x.sendEmailToProvider.asJson,
           "is_flexible"                   -> x.isFlexible.asJson
@@ -1388,7 +1388,7 @@ object CirceImplicits {
         List(
           "message_text"         -> x.messageText.asJson,
           "parse_mode"           -> x.parseMode.asJson,
-          "entities"             -> x.entities.asJson,
+          "entities"             -> (if (x.entities.isEmpty) Json.Null else x.entities.asJson),
           "link_preview_options" -> x.linkPreviewOptions.asJson
         ).filter(!_._2.isNull)
       )
@@ -1780,77 +1780,77 @@ object CirceImplicits {
     (x: Message) => {
       Json.fromFields(
         List(
-          "message_id"                        -> x.messageId.asJson,
-          "message_thread_id"                 -> x.messageThreadId.asJson,
-          "direct_messages_topic"             -> x.directMessagesTopic.asJson,
-          "from"                              -> x.from.asJson,
-          "sender_chat"                       -> x.senderChat.asJson,
-          "sender_boost_count"                -> x.senderBoostCount.asJson,
-          "sender_business_bot"               -> x.senderBusinessBot.asJson,
-          "sender_tag"                        -> x.senderTag.asJson,
-          "receiver_user"                     -> x.receiverUser.asJson,
-          "ephemeral_message_id"              -> x.ephemeralMessageId.asJson,
-          "date"                              -> x.date.asJson,
-          "guest_query_id"                    -> x.guestQueryId.asJson,
-          "business_connection_id"            -> x.businessConnectionId.asJson,
-          "chat"                              -> x.chat.asJson,
-          "forward_origin"                    -> x.forwardOrigin.asJson,
-          "is_topic_message"                  -> x.isTopicMessage.asJson,
-          "is_automatic_forward"              -> x.isAutomaticForward.asJson,
-          "reply_to_message"                  -> x.replyToMessage.asJson,
-          "external_reply"                    -> x.externalReply.asJson,
-          "quote"                             -> x.quote.asJson,
-          "reply_to_story"                    -> x.replyToStory.asJson,
-          "reply_to_checklist_task_id"        -> x.replyToChecklistTaskId.asJson,
-          "reply_to_poll_option_id"           -> x.replyToPollOptionId.asJson,
-          "via_bot"                           -> x.viaBot.asJson,
-          "guest_bot_caller_user"             -> x.guestBotCallerUser.asJson,
-          "guest_bot_caller_chat"             -> x.guestBotCallerChat.asJson,
-          "edit_date"                         -> x.editDate.asJson,
-          "has_protected_content"             -> x.hasProtectedContent.asJson,
-          "is_from_offline"                   -> x.isFromOffline.asJson,
-          "is_paid_post"                      -> x.isPaidPost.asJson,
-          "media_group_id"                    -> x.mediaGroupId.asJson,
-          "author_signature"                  -> x.authorSignature.asJson,
-          "paid_star_count"                   -> x.paidStarCount.asJson,
-          "text"                              -> x.text.asJson,
-          "entities"                          -> x.entities.asJson,
-          "link_preview_options"              -> x.linkPreviewOptions.asJson,
-          "suggested_post_info"               -> x.suggestedPostInfo.asJson,
-          "effect_id"                         -> x.effectId.asJson,
-          "rich_message"                      -> x.richMessage.asJson,
-          "animation"                         -> x.animation.asJson,
-          "audio"                             -> x.audio.asJson,
-          "document"                          -> x.document.asJson,
-          "live_photo"                        -> x.livePhoto.asJson,
-          "paid_media"                        -> x.paidMedia.asJson,
-          "photo"                             -> x.photo.asJson,
-          "sticker"                           -> x.sticker.asJson,
-          "story"                             -> x.story.asJson,
-          "video"                             -> x.video.asJson,
-          "video_note"                        -> x.videoNote.asJson,
-          "voice"                             -> x.voice.asJson,
-          "caption"                           -> x.caption.asJson,
-          "caption_entities"                  -> x.captionEntities.asJson,
-          "show_caption_above_media"          -> x.showCaptionAboveMedia.asJson,
-          "has_media_spoiler"                 -> x.hasMediaSpoiler.asJson,
-          "checklist"                         -> x.checklist.asJson,
-          "contact"                           -> x.contact.asJson,
-          "dice"                              -> x.dice.asJson,
-          "game"                              -> x.game.asJson,
-          "poll"                              -> x.poll.asJson,
-          "venue"                             -> x.venue.asJson,
-          "location"                          -> x.location.asJson,
-          "new_chat_members"                  -> x.newChatMembers.asJson,
-          "left_chat_member"                  -> x.leftChatMember.asJson,
-          "chat_owner_left"                   -> x.chatOwnerLeft.asJson,
-          "chat_owner_changed"                -> x.chatOwnerChanged.asJson,
-          "new_chat_title"                    -> x.newChatTitle.asJson,
-          "new_chat_photo"                    -> x.newChatPhoto.asJson,
-          "delete_chat_photo"                 -> x.deleteChatPhoto.asJson,
-          "group_chat_created"                -> x.groupChatCreated.asJson,
-          "supergroup_chat_created"           -> x.supergroupChatCreated.asJson,
-          "channel_chat_created"              -> x.channelChatCreated.asJson,
+          "message_id"                 -> x.messageId.asJson,
+          "message_thread_id"          -> x.messageThreadId.asJson,
+          "direct_messages_topic"      -> x.directMessagesTopic.asJson,
+          "from"                       -> x.from.asJson,
+          "sender_chat"                -> x.senderChat.asJson,
+          "sender_boost_count"         -> x.senderBoostCount.asJson,
+          "sender_business_bot"        -> x.senderBusinessBot.asJson,
+          "sender_tag"                 -> x.senderTag.asJson,
+          "receiver_user"              -> x.receiverUser.asJson,
+          "ephemeral_message_id"       -> x.ephemeralMessageId.asJson,
+          "date"                       -> x.date.asJson,
+          "guest_query_id"             -> x.guestQueryId.asJson,
+          "business_connection_id"     -> x.businessConnectionId.asJson,
+          "chat"                       -> x.chat.asJson,
+          "forward_origin"             -> x.forwardOrigin.asJson,
+          "is_topic_message"           -> x.isTopicMessage.asJson,
+          "is_automatic_forward"       -> x.isAutomaticForward.asJson,
+          "reply_to_message"           -> x.replyToMessage.asJson,
+          "external_reply"             -> x.externalReply.asJson,
+          "quote"                      -> x.quote.asJson,
+          "reply_to_story"             -> x.replyToStory.asJson,
+          "reply_to_checklist_task_id" -> x.replyToChecklistTaskId.asJson,
+          "reply_to_poll_option_id"    -> x.replyToPollOptionId.asJson,
+          "via_bot"                    -> x.viaBot.asJson,
+          "guest_bot_caller_user"      -> x.guestBotCallerUser.asJson,
+          "guest_bot_caller_chat"      -> x.guestBotCallerChat.asJson,
+          "edit_date"                  -> x.editDate.asJson,
+          "has_protected_content"      -> x.hasProtectedContent.asJson,
+          "is_from_offline"            -> x.isFromOffline.asJson,
+          "is_paid_post"               -> x.isPaidPost.asJson,
+          "media_group_id"             -> x.mediaGroupId.asJson,
+          "author_signature"           -> x.authorSignature.asJson,
+          "paid_star_count"            -> x.paidStarCount.asJson,
+          "text"                       -> x.text.asJson,
+          "entities"                   -> (if (x.entities.isEmpty) Json.Null else x.entities.asJson),
+          "link_preview_options"       -> x.linkPreviewOptions.asJson,
+          "suggested_post_info"        -> x.suggestedPostInfo.asJson,
+          "effect_id"                  -> x.effectId.asJson,
+          "rich_message"               -> x.richMessage.asJson,
+          "animation"                  -> x.animation.asJson,
+          "audio"                      -> x.audio.asJson,
+          "document"                   -> x.document.asJson,
+          "live_photo"                 -> x.livePhoto.asJson,
+          "paid_media"                 -> x.paidMedia.asJson,
+          "photo"                      -> (if (x.photo.isEmpty) Json.Null else x.photo.asJson),
+          "sticker"                    -> x.sticker.asJson,
+          "story"                      -> x.story.asJson,
+          "video"                      -> x.video.asJson,
+          "video_note"                 -> x.videoNote.asJson,
+          "voice"                      -> x.voice.asJson,
+          "caption"                    -> x.caption.asJson,
+          "caption_entities"           -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
+          "show_caption_above_media"   -> x.showCaptionAboveMedia.asJson,
+          "has_media_spoiler"          -> x.hasMediaSpoiler.asJson,
+          "checklist"                  -> x.checklist.asJson,
+          "contact"                    -> x.contact.asJson,
+          "dice"                       -> x.dice.asJson,
+          "game"                       -> x.game.asJson,
+          "poll"                       -> x.poll.asJson,
+          "venue"                      -> x.venue.asJson,
+          "location"                   -> x.location.asJson,
+          "new_chat_members"           -> (if (x.newChatMembers.isEmpty) Json.Null else x.newChatMembers.asJson),
+          "left_chat_member"           -> x.leftChatMember.asJson,
+          "chat_owner_left"            -> x.chatOwnerLeft.asJson,
+          "chat_owner_changed"         -> x.chatOwnerChanged.asJson,
+          "new_chat_title"             -> x.newChatTitle.asJson,
+          "new_chat_photo"             -> (if (x.newChatPhoto.isEmpty) Json.Null else x.newChatPhoto.asJson),
+          "delete_chat_photo"          -> x.deleteChatPhoto.asJson,
+          "group_chat_created"         -> x.groupChatCreated.asJson,
+          "supergroup_chat_created"    -> x.supergroupChatCreated.asJson,
+          "channel_chat_created"       -> x.channelChatCreated.asJson,
           "message_auto_delete_timer_changed" -> x.messageAutoDeleteTimerChanged.asJson,
           "migrate_to_chat_id"                -> x.migrateToChatId.asJson,
           "migrate_from_chat_id"              -> x.migrateFromChatId.asJson,
@@ -2865,7 +2865,7 @@ object CirceImplicits {
           "sender_user"                -> x.senderUser.asJson,
           "send_date"                  -> x.sendDate.asJson,
           "text"                       -> x.text.asJson,
-          "entities"                   -> x.entities.asJson,
+          "entities"                   -> (if (x.entities.isEmpty) Json.Null else x.entities.asJson),
           "is_private"                 -> x.isPrivate.asJson,
           "is_saved"                   -> x.isSaved.asJson,
           "can_be_upgraded"            -> x.canBeUpgraded.asJson,
@@ -4542,7 +4542,7 @@ object CirceImplicits {
           "affiliate"                     -> x.affiliate.asJson,
           "invoice_payload"               -> x.invoicePayload.asJson,
           "subscription_period"           -> x.subscriptionPeriod.asJson,
-          "paid_media"                    -> x.paidMedia.asJson,
+          "paid_media"                    -> (if (x.paidMedia.isEmpty) Json.Null else x.paidMedia.asJson),
           "paid_media_payload"            -> x.paidMediaPayload.asJson,
           "gift"                          -> x.gift.asJson,
           "premium_subscription_duration" -> x.premiumSubscriptionDuration.asJson
@@ -4792,7 +4792,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "is_access_restricted" -> x.isAccessRestricted.asJson,
-          "added_users"          -> x.addedUsers.asJson
+          "added_users"          -> (if (x.addedUsers.isEmpty) Json.Null else x.addedUsers.asJson)
         ).filter(!_._2.isNull)
       )
     }
@@ -5364,27 +5364,27 @@ object CirceImplicits {
     (x: ChatFullInfo) => {
       Json.fromFields(
         List(
-          "id"                                      -> x.id.asJson,
-          "type"                                    -> x.`type`.asJson,
-          "title"                                   -> x.title.asJson,
-          "username"                                -> x.username.asJson,
-          "first_name"                              -> x.firstName.asJson,
-          "last_name"                               -> x.lastName.asJson,
-          "is_forum"                                -> x.isForum.asJson,
-          "is_direct_messages"                      -> x.isDirectMessages.asJson,
-          "accent_color_id"                         -> x.accentColorId.asJson,
-          "max_reaction_count"                      -> x.maxReactionCount.asJson,
-          "photo"                                   -> x.photo.asJson,
-          "active_usernames"                        -> x.activeUsernames.asJson,
-          "birthdate"                               -> x.birthdate.asJson,
-          "business_intro"                          -> x.businessIntro.asJson,
-          "business_location"                       -> x.businessLocation.asJson,
-          "business_opening_hours"                  -> x.businessOpeningHours.asJson,
-          "personal_chat"                           -> x.personalChat.asJson,
-          "parent_chat"                             -> x.parentChat.asJson,
-          "available_reactions"                     -> x.availableReactions.asJson,
-          "background_custom_emoji_id"              -> x.backgroundCustomEmojiId.asJson,
-          "profile_accent_color_id"                 -> x.profileAccentColorId.asJson,
+          "id"                         -> x.id.asJson,
+          "type"                       -> x.`type`.asJson,
+          "title"                      -> x.title.asJson,
+          "username"                   -> x.username.asJson,
+          "first_name"                 -> x.firstName.asJson,
+          "last_name"                  -> x.lastName.asJson,
+          "is_forum"                   -> x.isForum.asJson,
+          "is_direct_messages"         -> x.isDirectMessages.asJson,
+          "accent_color_id"            -> x.accentColorId.asJson,
+          "max_reaction_count"         -> x.maxReactionCount.asJson,
+          "photo"                      -> x.photo.asJson,
+          "active_usernames"           -> (if (x.activeUsernames.isEmpty) Json.Null else x.activeUsernames.asJson),
+          "birthdate"                  -> x.birthdate.asJson,
+          "business_intro"             -> x.businessIntro.asJson,
+          "business_location"          -> x.businessLocation.asJson,
+          "business_opening_hours"     -> x.businessOpeningHours.asJson,
+          "personal_chat"              -> x.personalChat.asJson,
+          "parent_chat"                -> x.parentChat.asJson,
+          "available_reactions"        -> x.availableReactions.asJson,
+          "background_custom_emoji_id" -> x.backgroundCustomEmojiId.asJson,
+          "profile_accent_color_id"    -> x.profileAccentColorId.asJson,
           "profile_background_custom_emoji_id"      -> x.profileBackgroundCustomEmojiId.asJson,
           "emoji_status_custom_emoji_id"            -> x.emojiStatusCustomEmojiId.asJson,
           "emoji_status_expiration_date"            -> x.emojiStatusExpirationDate.asJson,
@@ -5424,27 +5424,27 @@ object CirceImplicits {
   implicit lazy val chatfullinfoDecoder: Decoder[ChatFullInfo] =
     Decoder.instance { h =>
       for {
-        _id                      <- h.get[Long]("id")
-        _type                    <- h.get[String]("type")
-        _title                   <- h.get[Option[String]]("title")
-        _username                <- h.get[Option[String]]("username")
-        _firstName               <- h.get[Option[String]]("first_name")
-        _lastName                <- h.get[Option[String]]("last_name")
-        _isForum                 <- h.get[Option[Boolean]]("is_forum")
-        _isDirectMessages        <- h.get[Option[Boolean]]("is_direct_messages")
-        _accentColorId           <- h.get[Int]("accent_color_id")
-        _maxReactionCount        <- h.get[Int]("max_reaction_count")
-        _photo                   <- h.get[Option[ChatPhoto]]("photo")
-        _activeUsernames         <- h.getOrElse[List[String]]("active_usernames")(List.empty)
-        _birthdate               <- h.get[Option[Birthdate]]("birthdate")
-        _businessIntro           <- h.get[Option[BusinessIntro]]("business_intro")
-        _businessLocation        <- h.get[Option[BusinessLocation]]("business_location")
-        _businessOpeningHours    <- h.get[Option[BusinessOpeningHours]]("business_opening_hours")
-        _personalChat            <- h.get[Option[Chat]]("personal_chat")
-        _parentChat              <- h.get[Option[Chat]]("parent_chat")
-        _availableReactions      <- h.getOrElse[List[iozhik.OpenEnum[ReactionType]]]("available_reactions")(List.empty)
-        _backgroundCustomEmojiId <- h.get[Option[String]]("background_custom_emoji_id")
-        _profileAccentColorId    <- h.get[Option[Int]]("profile_accent_color_id")
+        _id                                 <- h.get[Long]("id")
+        _type                               <- h.get[String]("type")
+        _title                              <- h.get[Option[String]]("title")
+        _username                           <- h.get[Option[String]]("username")
+        _firstName                          <- h.get[Option[String]]("first_name")
+        _lastName                           <- h.get[Option[String]]("last_name")
+        _isForum                            <- h.get[Option[Boolean]]("is_forum")
+        _isDirectMessages                   <- h.get[Option[Boolean]]("is_direct_messages")
+        _accentColorId                      <- h.get[Int]("accent_color_id")
+        _maxReactionCount                   <- h.get[Int]("max_reaction_count")
+        _photo                              <- h.get[Option[ChatPhoto]]("photo")
+        _activeUsernames                    <- h.getOrElse[List[String]]("active_usernames")(List.empty)
+        _birthdate                          <- h.get[Option[Birthdate]]("birthdate")
+        _businessIntro                      <- h.get[Option[BusinessIntro]]("business_intro")
+        _businessLocation                   <- h.get[Option[BusinessLocation]]("business_location")
+        _businessOpeningHours               <- h.get[Option[BusinessOpeningHours]]("business_opening_hours")
+        _personalChat                       <- h.get[Option[Chat]]("personal_chat")
+        _parentChat                         <- h.get[Option[Chat]]("parent_chat")
+        _availableReactions                 <- h.get[Option[List[iozhik.OpenEnum[ReactionType]]]]("available_reactions")
+        _backgroundCustomEmojiId            <- h.get[Option[String]]("background_custom_emoji_id")
+        _profileAccentColorId               <- h.get[Option[Int]]("profile_accent_color_id")
         _profileBackgroundCustomEmojiId     <- h.get[Option[String]]("profile_background_custom_emoji_id")
         _emojiStatusCustomEmojiId           <- h.get[Option[String]]("emoji_status_custom_emoji_id")
         _emojiStatusExpirationDate          <- h.get[Option[Long]]("emoji_status_expiration_date")
@@ -5823,7 +5823,7 @@ object CirceImplicits {
           "chat_id"    -> x.chatId.asJson,
           "title"      -> x.title.asJson,
           "username"   -> x.username.asJson,
-          "photo"      -> x.photo.asJson
+          "photo"      -> (if (x.photo.isEmpty) Json.Null else x.photo.asJson)
         ).filter(!_._2.isNull)
       )
     }
@@ -5846,7 +5846,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "title"                         -> x.title.asJson,
-          "title_entities"                -> x.titleEntities.asJson,
+          "title_entities"                -> (if (x.titleEntities.isEmpty) Json.Null else x.titleEntities.asJson),
           "tasks"                         -> x.tasks.asJson,
           "others_can_add_tasks"          -> x.othersCanAddTasks.asJson,
           "others_can_mark_tasks_as_done" -> x.othersCanMarkTasksAsDone.asJson
@@ -5879,7 +5879,7 @@ object CirceImplicits {
         List(
           "id"                -> x.id.asJson,
           "text"              -> x.text.asJson,
-          "text_entities"     -> x.textEntities.asJson,
+          "text_entities"     -> (if (x.textEntities.isEmpty) Json.Null else x.textEntities.asJson),
           "completed_by_user" -> x.completedByUser.asJson,
           "completed_by_chat" -> x.completedByChat.asJson,
           "completion_date"   -> x.completionDate.asJson
@@ -5932,9 +5932,10 @@ object CirceImplicits {
     (x: ChecklistTasksDone) => {
       Json.fromFields(
         List(
-          "checklist_message"           -> x.checklistMessage.asJson,
-          "marked_as_done_task_ids"     -> x.markedAsDoneTaskIds.asJson,
-          "marked_as_not_done_task_ids" -> x.markedAsNotDoneTaskIds.asJson
+          "checklist_message"       -> x.checklistMessage.asJson,
+          "marked_as_done_task_ids" -> (if (x.markedAsDoneTaskIds.isEmpty) Json.Null else x.markedAsDoneTaskIds.asJson),
+          "marked_as_not_done_task_ids" -> (if (x.markedAsNotDoneTaskIds.isEmpty) Json.Null
+                                            else x.markedAsNotDoneTaskIds.asJson)
         ).filter(!_._2.isNull)
       )
     }
@@ -6229,11 +6230,11 @@ object CirceImplicits {
           "data"         -> x.data.asJson,
           "phone_number" -> x.phoneNumber.asJson,
           "email"        -> x.email.asJson,
-          "files"        -> x.files.asJson,
+          "files"        -> (if (x.files.isEmpty) Json.Null else x.files.asJson),
           "front_side"   -> x.frontSide.asJson,
           "reverse_side" -> x.reverseSide.asJson,
           "selfie"       -> x.selfie.asJson,
-          "translation"  -> x.translation.asJson,
+          "translation"  -> (if (x.translation.isEmpty) Json.Null else x.translation.asJson),
           "hash"         -> x.hash.asJson
         ).filter(!_._2.isNull)
       )
@@ -6292,7 +6293,7 @@ object CirceImplicits {
           "document"             -> x.document.asJson,
           "live_photo"           -> x.livePhoto.asJson,
           "paid_media"           -> x.paidMedia.asJson,
-          "photo"                -> x.photo.asJson,
+          "photo"                -> (if (x.photo.isEmpty) Json.Null else x.photo.asJson),
           "sticker"              -> x.sticker.asJson,
           "story"                -> x.story.asJson,
           "video"                -> x.video.asJson,
@@ -6496,7 +6497,7 @@ object CirceImplicits {
           "description"   -> x.description.asJson,
           "photo"         -> x.photo.asJson,
           "text"          -> x.text.asJson,
-          "text_entities" -> x.textEntities.asJson,
+          "text_entities" -> (if (x.textEntities.isEmpty) Json.Null else x.textEntities.asJson),
           "animation"     -> x.animation.asJson
         ).filter(!_._2.isNull)
       )
@@ -6646,7 +6647,7 @@ object CirceImplicits {
           "is_upgrade_separate"        -> x.isUpgradeSeparate.asJson,
           "can_be_upgraded"            -> x.canBeUpgraded.asJson,
           "text"                       -> x.text.asJson,
-          "entities"                   -> x.entities.asJson,
+          "entities"                   -> (if (x.entities.isEmpty) Json.Null else x.entities.asJson),
           "is_private"                 -> x.isPrivate.asJson,
           "unique_gift_number"         -> x.uniqueGiftNumber.asJson
         ).filter(!_._2.isNull)
@@ -6710,7 +6711,7 @@ object CirceImplicits {
           "only_new_members"                 -> x.onlyNewMembers.asJson,
           "has_public_winners"               -> x.hasPublicWinners.asJson,
           "prize_description"                -> x.prizeDescription.asJson,
-          "country_codes"                    -> x.countryCodes.asJson,
+          "country_codes"                    -> (if (x.countryCodes.isEmpty) Json.Null else x.countryCodes.asJson),
           "prize_star_count"                 -> x.prizeStarCount.asJson,
           "premium_subscription_month_count" -> x.premiumSubscriptionMonthCount.asJson
         ).filter(!_._2.isNull)
@@ -6955,7 +6956,7 @@ object CirceImplicits {
         List(
           "title"                         -> x.title.asJson,
           "parse_mode"                    -> x.parseMode.asJson,
-          "title_entities"                -> x.titleEntities.asJson,
+          "title_entities"                -> (if (x.titleEntities.isEmpty) Json.Null else x.titleEntities.asJson),
           "tasks"                         -> x.tasks.asJson,
           "others_can_add_tasks"          -> x.othersCanAddTasks.asJson,
           "others_can_mark_tasks_as_done" -> x.othersCanMarkTasksAsDone.asJson
@@ -6970,7 +6971,7 @@ object CirceImplicits {
           "id"            -> x.id.asJson,
           "text"          -> x.text.asJson,
           "parse_mode"    -> x.parseMode.asJson,
-          "text_entities" -> x.textEntities.asJson
+          "text_entities" -> (if (x.textEntities.isEmpty) Json.Null else x.textEntities.asJson)
         ).filter(!_._2.isNull)
       )
     }
@@ -6983,7 +6984,7 @@ object CirceImplicits {
         List(
           "text"            -> x.text.asJson,
           "text_parse_mode" -> x.textParseMode.asJson,
-          "text_entities"   -> x.textEntities.asJson,
+          "text_entities"   -> (if (x.textEntities.isEmpty) Json.Null else x.textEntities.asJson),
           "media"           -> x.media.asJson
         ).filter(!_._2.isNull)
       )
@@ -7006,10 +7007,10 @@ object CirceImplicits {
     (x: InputRichMessage) => {
       Json.fromFields(
         List(
-          "blocks"                -> x.blocks.asJson,
+          "blocks"                -> (if (x.blocks.isEmpty) Json.Null else x.blocks.asJson),
           "html"                  -> x.html.asJson,
           "markdown"              -> x.markdown.asJson,
-          "media"                 -> x.media.asJson,
+          "media"                 -> (if (x.media.isEmpty) Json.Null else x.media.asJson),
           "is_rtl"                -> x.isRtl.asJson,
           "skip_entity_detection" -> x.skipEntityDetection.asJson
         ).filter(!_._2.isNull)
@@ -7034,7 +7035,7 @@ object CirceImplicits {
           "format"        -> x.format.asJson,
           "emoji_list"    -> x.emojiList.asJson,
           "mask_position" -> x.maskPosition.asJson,
-          "keywords"      -> x.keywords.asJson
+          "keywords"      -> (if (x.keywords.isEmpty) Json.Null else x.keywords.asJson)
         ).filter(!_._2.isNull)
       )
     }
@@ -7207,7 +7208,7 @@ object CirceImplicits {
     (x: LivePhoto) => {
       Json.fromFields(
         List(
-          "photo"          -> x.photo.asJson,
+          "photo"          -> (if (x.photo.isEmpty) Json.Null else x.photo.asJson),
           "file_id"        -> x.fileId.asJson,
           "file_unique_id" -> x.fileUniqueId.asJson,
           "width"          -> x.width.asJson,
@@ -7688,7 +7689,7 @@ object CirceImplicits {
         List(
           "id"                      -> x.id.asJson,
           "question"                -> x.question.asJson,
-          "question_entities"       -> x.questionEntities.asJson,
+          "question_entities"       -> (if (x.questionEntities.isEmpty) Json.Null else x.questionEntities.asJson),
           "options"                 -> x.options.asJson,
           "total_voter_count"       -> x.totalVoterCount.asJson,
           "is_closed"               -> x.isClosed.asJson,
@@ -7697,15 +7698,15 @@ object CirceImplicits {
           "allows_multiple_answers" -> x.allowsMultipleAnswers.asJson,
           "allows_revoting"         -> x.allowsRevoting.asJson,
           "members_only"            -> x.membersOnly.asJson,
-          "country_codes"           -> x.countryCodes.asJson,
-          "correct_option_ids"      -> x.correctOptionIds.asJson,
+          "country_codes"           -> (if (x.countryCodes.isEmpty) Json.Null else x.countryCodes.asJson),
+          "correct_option_ids"      -> (if (x.correctOptionIds.isEmpty) Json.Null else x.correctOptionIds.asJson),
           "explanation"             -> x.explanation.asJson,
-          "explanation_entities"    -> x.explanationEntities.asJson,
+          "explanation_entities"    -> (if (x.explanationEntities.isEmpty) Json.Null else x.explanationEntities.asJson),
           "explanation_media"       -> x.explanationMedia.asJson,
           "open_period"             -> x.openPeriod.asJson,
           "close_date"              -> x.closeDate.asJson,
           "description"             -> x.description.asJson,
-          "description_entities"    -> x.descriptionEntities.asJson,
+          "description_entities"    -> (if (x.descriptionEntities.isEmpty) Json.Null else x.descriptionEntities.asJson),
           "media"                   -> x.media.asJson
         ).filter(!_._2.isNull)
       )
@@ -7804,7 +7805,7 @@ object CirceImplicits {
           "link"       -> x.link.asJson,
           "live_photo" -> x.livePhoto.asJson,
           "location"   -> x.location.asJson,
-          "photo"      -> x.photo.asJson,
+          "photo"      -> (if (x.photo.isEmpty) Json.Null else x.photo.asJson),
           "sticker"    -> x.sticker.asJson,
           "venue"      -> x.venue.asJson,
           "video"      -> x.video.asJson
@@ -7847,7 +7848,7 @@ object CirceImplicits {
         List(
           "persistent_id" -> x.persistentId.asJson,
           "text"          -> x.text.asJson,
-          "text_entities" -> x.textEntities.asJson,
+          "text_entities" -> (if (x.textEntities.isEmpty) Json.Null else x.textEntities.asJson),
           "media"         -> x.media.asJson,
           "voter_count"   -> x.voterCount.asJson,
           "added_by_user" -> x.addedByUser.asJson,
@@ -7889,7 +7890,7 @@ object CirceImplicits {
           "poll_message"         -> x.pollMessage.asJson,
           "option_persistent_id" -> x.optionPersistentId.asJson,
           "option_text"          -> x.optionText.asJson,
-          "option_text_entities" -> x.optionTextEntities.asJson
+          "option_text_entities" -> (if (x.optionTextEntities.isEmpty) Json.Null else x.optionTextEntities.asJson)
         ).filter(!_._2.isNull)
       )
     }
@@ -7918,7 +7919,7 @@ object CirceImplicits {
           "poll_message"         -> x.pollMessage.asJson,
           "option_persistent_id" -> x.optionPersistentId.asJson,
           "option_text"          -> x.optionText.asJson,
-          "option_text_entities" -> x.optionTextEntities.asJson
+          "option_text_entities" -> (if (x.optionTextEntities.isEmpty) Json.Null else x.optionTextEntities.asJson)
         ).filter(!_._2.isNull)
       )
     }
@@ -8100,7 +8101,7 @@ object CirceImplicits {
           "allow_sending_without_reply" -> x.allowSendingWithoutReply.asJson,
           "quote"                       -> x.quote.asJson,
           "quote_parse_mode"            -> x.quoteParseMode.asJson,
-          "quote_entities"              -> x.quoteEntities.asJson,
+          "quote_entities"              -> (if (x.quoteEntities.isEmpty) Json.Null else x.quoteEntities.asJson),
           "quote_position"              -> x.quotePosition.asJson,
           "checklist_task_id"           -> x.checklistTaskId.asJson,
           "poll_option_id"              -> x.pollOptionId.asJson
@@ -8322,7 +8323,7 @@ object CirceImplicits {
           "first_name" -> x.firstName.asJson,
           "last_name"  -> x.lastName.asJson,
           "username"   -> x.username.asJson,
-          "photo"      -> x.photo.asJson
+          "photo"      -> (if (x.photo.isEmpty) Json.Null else x.photo.asJson)
         ).filter(!_._2.isNull)
       )
     }
@@ -8868,7 +8869,7 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"      -> x.text.asJson,
-          "entities"  -> x.entities.asJson,
+          "entities"  -> (if (x.entities.isEmpty) Json.Null else x.entities.asJson),
           "position"  -> x.position.asJson,
           "is_manual" -> x.isManual.asJson
         ).filter(!_._2.isNull)
@@ -9033,7 +9034,7 @@ object CirceImplicits {
           "gift"                 -> x.gift.asJson,
           "origin"               -> x.origin.asJson,
           "text"                 -> x.text.asJson,
-          "entities"             -> x.entities.asJson,
+          "entities"             -> (if (x.entities.isEmpty) Json.Null else x.entities.asJson),
           "is_private"           -> x.isPrivate.asJson,
           "last_resale_currency" -> x.lastResaleCurrency.asJson,
           "last_resale_amount"   -> x.lastResaleAmount.asJson,
@@ -9446,9 +9447,9 @@ object CirceImplicits {
           "height"          -> x.height.asJson,
           "duration"        -> x.duration.asJson,
           "thumbnail"       -> x.thumbnail.asJson,
-          "cover"           -> x.cover.asJson,
+          "cover"           -> (if (x.cover.isEmpty) Json.Null else x.cover.asJson),
           "start_timestamp" -> x.startTimestamp.asJson,
-          "qualities"       -> x.qualities.asJson,
+          "qualities"       -> (if (x.qualities.isEmpty) Json.Null else x.qualities.asJson),
           "file_name"       -> x.fileName.asJson,
           "mime_type"       -> x.mimeType.asJson,
           "file_size"       -> x.fileSize.asJson
@@ -9698,7 +9699,7 @@ object CirceImplicits {
           "last_error_message"              -> x.lastErrorMessage.asJson,
           "last_synchronization_error_date" -> x.lastSynchronizationErrorDate.asJson,
           "max_connections"                 -> x.maxConnections.asJson,
-          "allowed_updates"                 -> x.allowedUpdates.asJson
+          "allowed_updates"                 -> (if (x.allowedUpdates.isEmpty) Json.Null else x.allowedUpdates.asJson)
         ).filter(!_._2.isNull)
       )
     }

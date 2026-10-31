@@ -120,7 +120,10 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods w
 
   /* Updates are decoded one by one, so that an update which can't be decoded doesn't block the others */
   private def getRawUpdates(offset: Int, timeout: Int): Method[List[Json]] =
-    MethodReq[List[Json]](getUpdates(offset = Some(offset), timeout = Some(timeout)).payload, Decoder[List[Json]])
+    MethodReq[List[Json]](
+      getUpdates(offset = Some(offset), timeout = Some(timeout), allowedUpdates = allowedUpdates).payload,
+      Decoder[List[Json]]
+    )
 
   private def handleRawUpdate(json: Json): F[Unit] =
     for {
@@ -147,6 +150,10 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods w
   }
 
   def pollInterval: Duration = 10.seconds
+
+  /* The update types to receive, e.g. Some(List("message", "chat_member")). None keeps the previous setting;
+   * Some(List.empty) resets it to Telegram's default, which leaves out chat_member and reaction updates. */
+  def allowedUpdates: Option[List[String]] = None
 
   /* Use effectful override to implement different backoff strategies */
   def onErrorDelay: F[FiniteDuration] = {

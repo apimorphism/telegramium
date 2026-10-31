@@ -29,5 +29,5 @@ final case class EditStoryReq(
   caption: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,
   captionEntities: List[MessageEntity] = List.empty,
-  areas: List[StoryArea] = List.empty
+  areas: Option[List[StoryArea]] = Option.empty
 )

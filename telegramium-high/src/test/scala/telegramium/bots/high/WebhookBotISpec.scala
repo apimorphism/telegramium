@@ -126,7 +126,6 @@ class WebhookBotISpec
             {
               "chat_id": 0,
               "text": "onMessageReply",
-              "entities": [],
               "method": "sendMessage"
             }
           """
@@ -167,7 +166,6 @@ class WebhookBotISpec
             {
               "chat_id": 0,
               "text": "onMessageReply",
-              "entities": [],
               "method": "sendMessage"
             }
           """
@@ -198,7 +196,6 @@ class WebhookBotISpec
             {
               "chat_id": 0,
               "text": "onMessageReply",
-              "entities": [],
               "method": "sendMessage"
             }
           """

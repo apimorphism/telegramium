@@ -28,7 +28,7 @@ class Http4sUtilsSpec extends AnyFreeSpec with Matchers {
   private val keyboardJson = parse(
     """{"inline_keyboard":[[{"text":"Press","callback_data":"pressed"}]]}"""
   ).toOption.get
-  private val replyParamsJs = parse("""{"message_id":1,"quote_entities":[]}""").toOption.get
+  private val replyParamsJs = parse("""{"message_id":1}""").toOption.get
 
   private def toMultipart(method: Method[?]): Multipart[IO] = {
     val files = method.payload.files.collect { case (name, InputPartFile(f)) => (name, f) }
@@ -52,10 +52,9 @@ class Http4sUtilsSpec extends AnyFreeSpec with Matchers {
     )
     val fields = formFields(multipart)
 
-    fields.keySet shouldBe Set("chat_id", "caption", "caption_entities", "reply_parameters", "reply_markup", "method")
+    fields.keySet shouldBe Set("chat_id", "caption", "reply_parameters", "reply_markup", "method")
     fields("chat_id") shouldBe "0"
     fields("caption") shouldBe "hi"
-    fields("caption_entities") shouldBe "[]"
     fields("method") shouldBe "sendDocument"
     fields("reply_markup") shouldBe keyboardJson.noSpaces
     fields("reply_parameters") shouldBe replyParamsJs.noSpaces

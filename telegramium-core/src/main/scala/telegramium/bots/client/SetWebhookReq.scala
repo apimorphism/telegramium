@@ -34,7 +34,7 @@ final case class SetWebhookReq(
   certificate: Option[IFile] = Option.empty,
   ipAddress: Option[String] = Option.empty,
   maxConnections: Option[Int] = Option.empty,
-  allowedUpdates: List[String] = List.empty,
+  allowedUpdates: Option[List[String]] = Option.empty,
   dropPendingUpdates: Option[Boolean] = Option.empty,
   secretToken: Option[String] = Option.empty
 )

@@ -153,7 +153,7 @@ class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfte
     multipart.map(MultipartFields.fileParts) shouldBe List(Vector("photo" -> "document.txt"))
     val fields = MultipartFields.formFields(multipart.head).unsafeRunSync()
     fields("caption") shouldBe "hi"
-    parse(fields("reply_parameters")) shouldBe parse("""{"message_id": 1, "quote_entities": []}""")
+    parse(fields("reply_parameters")) shouldBe parse("""{"message_id": 1}""")
     parse(fields("reply_markup")) shouldBe parse(
       """{"inline_keyboard": [[{"text": "Press", "callback_data": "pressed"}]]}"""
     )
