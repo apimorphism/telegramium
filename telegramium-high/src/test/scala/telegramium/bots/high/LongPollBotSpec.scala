@@ -109,4 +109,30 @@ class LongPollBotSpec extends AnyFreeSpec with Matchers {
     )
   }
 
+  // Returns the "allowed_updates" field of the first getUpdates request the bot sends
+  private def firstAllowedUpdates(mkBot: Api[IO] => LongPollBot[IO]): Option[Json] =
+    (for {
+      request <- Deferred[IO, Json]
+      api = new Api[IO] {
+        override def execute[Res](method: Method[Res]): IO[Res] =
+          if (method.payload.name == "getUpdates") request.complete(method.payload.json) *> IO.never
+          else IO.fromEither(method.decoder.decodeJson(Json.True))
+      }
+      json <- IO.race(mkBot(api).start(), request.get).timeout(10.seconds)
+    } yield json.toOption.get.hcursor.downField("allowed_updates").focus).unsafeRunSync()
+
+  // https://github.com/apimorphism/telegramium/issues/686: an empty allowed_updates resets Telegram's
+  // filter to the default, which leaves out chat_member and reaction updates, on every poll
+  "getUpdates should leave out allowed_updates by default, so Telegram keeps the previous setting" in {
+    firstAllowedUpdates(api => new LongPollBot[IO](api) {}) shouldBe None
+  }
+
+  "getUpdates should send allowedUpdates when overridden" in {
+    firstAllowedUpdates { api =>
+      new LongPollBot[IO](api) {
+        override def allowedUpdates: Option[List[String]] = Some(List("message", "chat_member"))
+      }
+    } shouldBe Some(Json.arr(Json.fromString("message"), Json.fromString("chat_member")))
+  }
+
 }
