@@ -6,6 +6,7 @@ import io.circe.syntax._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import telegramium.bots.CirceImplicits._
+import telegramium.bots.client.EditStoryReq
 import telegramium.bots.client.GetUpdatesReq
 import telegramium.bots.client.CirceImplicits._
 
@@ -33,6 +34,19 @@ class OptionalArraysCodecSpec extends AnyFlatSpec with Matchers {
   it should "be sent when an empty list, so Telegram resets it to the default" in {
     GetUpdatesReq(allowedUpdates = Some(List.empty)).asJson.hcursor.downField("allowed_updates").focus shouldBe
       Some(Json.arr())
+  }
+
+  private def editStoryAreas(areas: Option[List[StoryArea]]) =
+    EditStoryReq("bc", 1, InputStoryContentPhoto(InputLinkFile("photo")), areas = areas).asJson.hcursor
+      .downField("areas")
+      .focus
+
+  "editStory areas" should "be left out when None, so Telegram keeps the story's current areas" in {
+    editStoryAreas(None) shouldBe None
+  }
+
+  it should "be sent when an empty list, so Telegram removes them" in {
+    editStoryAreas(Some(List.empty)) shouldBe Some(Json.arr())
   }
 
   private def chatFullInfo(availableReactions: String) = parse(

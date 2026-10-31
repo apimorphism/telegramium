@@ -1675,7 +1675,7 @@ trait Methods {
     caption: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
     captionEntities: List[MessageEntity] = List.empty,
-    areas: List[StoryArea] = List.empty
+    areas: Option[List[StoryArea]] = Option.empty
   ): Method[Story] = {
     val (contentAttached, contentFiles) = attachFiles_InputStoryContent("content", content)
     val req = EditStoryReq(businessConnectionId, storyId, contentAttached, caption, parseMode, captionEntities, areas)

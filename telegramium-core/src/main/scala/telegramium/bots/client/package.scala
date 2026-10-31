@@ -748,7 +748,7 @@ object CirceImplicits {
           "caption"                -> x.caption.asJson,
           "parse_mode"             -> x.parseMode.asJson,
           "caption_entities"       -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
-          "areas"                  -> (if (x.areas.isEmpty) Json.Null else x.areas.asJson),
+          "areas"                  -> x.areas.asJson,
           "method"                 -> "editStory".asJson
         ).filter(!_._2.isNull)
       )
