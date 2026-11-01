@@ -14,7 +14,7 @@ class MaybeInaccessibleMessageCodecSpec extends AnyFlatSpec with Matchers {
   // https://github.com/apimorphism/telegramium/issues/691
   "MaybeInaccessibleMessage decoder" should "decode a pinned_message whose date is above 2^31" in {
     val pinnedDate = Int.MaxValue.toLong + 1
-    val json =
+    val json       =
       s"""{
         "message_id": 2, "date": 1, "chat": {"id": 1, "type": "private"},
         "pinned_message": {"message_id": 1, "date": $pinnedDate, "chat": {"id": 1, "type": "private"}}
