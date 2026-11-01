@@ -7417,7 +7417,7 @@ object CirceImplicits {
       for {
         _chat            <- h.get[Chat]("chat")
         _messageThreadId <- h.get[Option[Int]]("message_thread_id")
-        _draftId         <- h.get[Int]("draft_id")
+        _draftId         <- h.get[Long]("draft_id")
       } yield {
         MessageGenerationStopped(chat = _chat, messageThreadId = _messageThreadId, draftId = _draftId)
       }
