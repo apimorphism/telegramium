@@ -9,4 +9,4 @@ package telegramium.bots
   * @param messageThreadId
   *   <em>Optional</em>. Unique identifier of the message thread in which the message is generated
   */
-final case class MessageGenerationStopped(chat: Chat, draftId: Int, messageThreadId: Option[Int] = Option.empty)
+final case class MessageGenerationStopped(chat: Chat, draftId: Long, messageThreadId: Option[Int] = Option.empty)

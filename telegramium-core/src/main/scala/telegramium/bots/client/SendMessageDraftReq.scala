@@ -30,7 +30,7 @@ import telegramium.bots.MessageEntity
   */
 final case class SendMessageDraftReq(
   chatId: Long,
-  draftId: Int,
+  draftId: Long,
   messageThreadId: Option[Int] = Option.empty,
   text: Option[String] = Option.empty,
   parseMode: Option[ParseMode] = Option.empty,

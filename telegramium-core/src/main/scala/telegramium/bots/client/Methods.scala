@@ -4186,7 +4186,7 @@ trait Methods {
     */
   def sendMessageDraft(
     chatId: Long,
-    draftId: Int,
+    draftId: Long,
     messageThreadId: Option[Int] = Option.empty,
     text: Option[String] = Option.empty,
     parseMode: Option[ParseMode] = Option.empty,
@@ -4673,7 +4673,7 @@ trait Methods {
     */
   def sendRichMessageDraft(
     chatId: Long,
-    draftId: Int,
+    draftId: Long,
     richMessage: InputRichMessage,
     messageThreadId: Option[Int] = Option.empty,
     canStop: Option[Boolean] = Option.empty,

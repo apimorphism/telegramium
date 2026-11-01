@@ -23,7 +23,7 @@ import telegramium.bots.InputRichMessage
   */
 final case class SendRichMessageDraftReq(
   chatId: Long,
-  draftId: Int,
+  draftId: Long,
   richMessage: InputRichMessage,
   messageThreadId: Option[Int] = Option.empty,
   canStop: Option[Boolean] = Option.empty,
