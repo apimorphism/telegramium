@@ -1768,7 +1768,7 @@ object CirceImplicits {
 
   implicit lazy val maybeinaccessiblemessageDecoder: Decoder[MaybeInaccessibleMessage] = {
     for {
-      fDate <- Decoder[Int].prepare(_.downField("date"))
+      fDate <- Decoder[Long].prepare(_.downField("date"))
       value <- fDate match {
         case 0 => Decoder[InaccessibleMessage]
         case _ => Decoder[Message]
