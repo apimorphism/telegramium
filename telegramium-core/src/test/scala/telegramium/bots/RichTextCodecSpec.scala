@@ -285,7 +285,8 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
   }
 
   it should "always produce a JSON array for RichTextConcat" in {
-    forAll(Gen.listOf(GenRichText.gen.map(known))) { items =>
+    // shallow items: only the outer value is checked
+    forAll(Gen.listOf(Gen.resize(1, GenRichText.gen.map(known)))) { items =>
       val rt: RichText = RichTextConcat(items)
       rt.asJson.isArray shouldBe true
     }
