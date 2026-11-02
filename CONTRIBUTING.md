@@ -19,8 +19,9 @@ next time it's regenerated. Instead:
   here. See that repo's CONTRIBUTING.md for the regeneration flow, then come
   back here with the regenerated `telegramium-core` as part of your PR.
 
-The test-scope generators are generated too: `GenPrims.scala`, `GenTypes.scala`,
-`Gens.scala` and `RoundTrips.scala` in `telegramium-core/src/test/scala`. They
+The test-scope generators are generated too, into
+`telegramium-core/src/test/scala-generated` (wiped on every regen, like
+`src/main/scala`). They
 feed `CodecRoundTripSpec`, which checks that every type with both an encoder and
 a decoder survives encode → decode. A restriction on a generator belongs in
 iozhik's `custom-gens` config, with a comment explaining it.
