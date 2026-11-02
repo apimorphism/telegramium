@@ -307,7 +307,7 @@ trait Methods {
       }
       val files = inputMessageContentFiles
       if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
-    case v: InlineQueryResultGame => (v, Map.empty[String, IFile])
+    case v @ (_: InlineQueryResultGame) => (v, Map.empty[String, IFile])
   }
 
   private def attachFiles_InputMedia(name: String, value: InputMedia): (InputMedia, Map[String, IFile]) = value match {
@@ -349,9 +349,7 @@ trait Methods {
       val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + ".thumbnail", v.thumbnail)
       val files                        = mediaFiles ++ thumbnailFiles
       if (files.isEmpty) (v, files) else (v.copy(media = media1, thumbnail = thumbnail1), files)
-    case v: InputMediaLocation => (v, Map.empty[String, IFile])
-    case v: InputMediaLink     => (v, Map.empty[String, IFile])
-    case v: InputMediaVenue    => (v, Map.empty[String, IFile])
+    case v @ (_: InputMediaLocation | _: InputMediaLink | _: InputMediaVenue) => (v, Map.empty[String, IFile])
   }
 
   private def attachFiles_InputRichMessage(
@@ -445,11 +443,9 @@ trait Methods {
       val (richMessage1, richMessageFiles) = attachFiles_InputRichMessage(name + ".rich_message", v.richMessage)
       val files                            = richMessageFiles
       if (files.isEmpty) (v, files) else (v.copy(richMessage = richMessage1), files)
-    case v: InputVenueMessageContent    => (v, Map.empty[String, IFile])
-    case v: InputInvoiceMessageContent  => (v, Map.empty[String, IFile])
-    case v: InputContactMessageContent  => (v, Map.empty[String, IFile])
-    case v: InputLocationMessageContent => (v, Map.empty[String, IFile])
-    case v: InputTextMessageContent     => (v, Map.empty[String, IFile])
+    case v @ (_: InputVenueMessageContent | _: InputInvoiceMessageContent | _: InputContactMessageContent |
+        _: InputLocationMessageContent | _: InputTextMessageContent) =>
+      (v, Map.empty[String, IFile])
   }
 
   private def attachFiles_InputRichBlock(name: String, value: InputRichBlock): (InputRichBlock, Map[String, IFile]) =
@@ -528,19 +524,12 @@ trait Methods {
         val (video1, videoFiles) = attachFiles_InputMediaVideo(name + ".video", v.video)
         val files                = videoFiles
         if (files.isEmpty) (v, files) else (v.copy(video = video1), files)
-      case v: InputRichBlockTable                    => (v, Map.empty[String, IFile])
-      case v: InputRichBlockAnchor                   => (v, Map.empty[String, IFile])
-      case v: InputRichBlockParagraph                => (v, Map.empty[String, IFile])
-      case v: InputRichBlockPreformatted             => (v, Map.empty[String, IFile])
-      case v: InputRichBlockExpandableBlockQuotation => (v, Map.empty[String, IFile])
-      case v: InputRichBlockFooter                   => (v, Map.empty[String, IFile])
-      case v: InputRichBlockMathematicalExpression   => (v, Map.empty[String, IFile])
-      case InputRichBlockDivider                     => (InputRichBlockDivider, Map.empty[String, IFile])
-      case v: InputRichBlockThinking                 => (v, Map.empty[String, IFile])
-      case v: InputRichBlockMap                      => (v, Map.empty[String, IFile])
-      case v: InputRichBlockSectionHeading           => (v, Map.empty[String, IFile])
-      case v: InputRichBlockButtons                  => (v, Map.empty[String, IFile])
-      case v: InputRichBlockPullQuotation            => (v, Map.empty[String, IFile])
+      case v @ (_: InputRichBlockTable | _: InputRichBlockAnchor | _: InputRichBlockParagraph |
+          _: InputRichBlockPreformatted | _: InputRichBlockExpandableBlockQuotation | _: InputRichBlockFooter |
+          _: InputRichBlockMathematicalExpression | InputRichBlockDivider | _: InputRichBlockThinking |
+          _: InputRichBlockMap | _: InputRichBlockSectionHeading | _: InputRichBlockButtons |
+          _: InputRichBlockPullQuotation) =>
+        (v, Map.empty[String, IFile])
     }
 
   private def attachFiles_InputRichMessageMedia(
