@@ -1,5 +1,6 @@
 package telegramium.bots
 
+import io.circe.parser.decode
 import org.scalacheck.{Prop, Test}
 import org.scalacheck.util.Pretty
 import org.scalatest.flatspec.AnyFlatSpec
@@ -12,11 +13,12 @@ class CodecRoundTripSpec extends AnyFlatSpec with Matchers {
 
   private def roundTrips[A](c: RoundTripCase[A]): Unit =
     c.name should "survive encode → decode" in {
+      // through the JSON text, as it goes over the wire
       val prop = Prop.forAllShrink(c.gen, c.shrink.shrink) { a =>
-        val json = c.encoder(a)
-        c.decoder.decodeJson(json) match {
+        val json = c.encoder(a).noSpaces
+        decode(json)(c.decoder) match {
           case Right(decoded) => Prop(decoded == a) :| s"decoded to a different value: $decoded"
-          case Left(error)    => Prop.falsified :| s"failed to decode ${json.noSpaces}: $error"
+          case Left(error)    => Prop.falsified :| s"failed to decode $json: $error"
         }
       }
       val result = Test.check(Test.Parameters.default.withMinSuccessfulTests(samples), prop)
