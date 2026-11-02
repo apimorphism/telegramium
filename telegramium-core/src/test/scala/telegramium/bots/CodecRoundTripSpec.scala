@@ -2,6 +2,7 @@ package telegramium.bots
 
 import io.circe.parser.decode
 import org.scalacheck.{Prop, Test}
+import org.scalacheck.rng.Seed
 import org.scalacheck.util.Pretty
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -10,6 +11,9 @@ import telegramium.bots.GenPrims.RoundTripCase
 class CodecRoundTripSpec extends AnyFlatSpec with Matchers {
 
   private val samples = 100
+
+  // A run's samples are random, so a failure prints its seed; ROUNDTRIP_SEED=<seed> replays that run
+  private val seed = sys.env.get("ROUNDTRIP_SEED").fold(Seed.random())(Seed.fromBase64(_).get)
 
   private def roundTrips[A](c: RoundTripCase[A]): Unit =
     c.name should "survive encode → decode" in {
@@ -21,18 +25,19 @@ class CodecRoundTripSpec extends AnyFlatSpec with Matchers {
           case Left(error)    => Prop.falsified :| s"failed to decode $json: $error"
         }
       }
-      val result = Test.check(Test.Parameters.default.withMinSuccessfulTests(samples), prop)
+      val result = Test.check(Test.Parameters.default.withMinSuccessfulTests(samples).withInitialSeed(seed), prop)
       // ScalaTest's own ScalaCheck integration prints the original example; print the shrunk one
       result.status match {
         case Test.Failed(args, labels) =>
           fail(
-            s"${c.name} failed after ${result.succeeded} successful samples.\n" +
+            s"${c.name} failed after ${result.succeeded} successful samples (ROUNDTRIP_SEED=${seed.toBase64}).\n" +
               s"Shrunk example (${args.head.shrinks} shrinks), as JSON: ${c.encoder(args.head.arg.asInstanceOf[A]).noSpaces}\n" +
               s"Shrunk example: ${args.head.arg}\n" +
               labels.mkString("\n")
           )
-        case _ if !result.passed => fail(s"${c.name}: ${Pretty.pretty(result, Pretty.Params(0))}")
-        case _                   => succeed
+        case _ if !result.passed =>
+          fail(s"${c.name} (ROUNDTRIP_SEED=${seed.toBase64}): ${Pretty.pretty(result, Pretty.Params(0))}")
+        case _ => succeed
       }
     }
 
