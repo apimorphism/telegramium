@@ -3,18 +3,36 @@ package telegramium.bots.client
 import io.circe.syntax._
 import CirceImplicits._
 import telegramium.bots.InputSticker
+import telegramium.bots.InlineQueryResult
+import telegramium.bots.InlineQueryResultGif
+import telegramium.bots.InlineQueryResultVenue
+import telegramium.bots.InlineQueryResultContact
+import telegramium.bots.InlineQueryResultPhoto
+import telegramium.bots.InlineQueryResultDocument
+import telegramium.bots.InlineQueryResultCachedVoice
+import telegramium.bots.InlineQueryResultArticle
+import telegramium.bots.InlineQueryResultAudio
+import telegramium.bots.InlineQueryResultMpeg4Gif
+import telegramium.bots.InlineQueryResultCachedMpeg4Gif
+import telegramium.bots.InlineQueryResultCachedDocument
+import telegramium.bots.InlineQueryResultCachedVideo
+import telegramium.bots.InlineQueryResultCachedPhoto
+import telegramium.bots.InlineQueryResultCachedSticker
+import telegramium.bots.InlineQueryResultVideo
+import telegramium.bots.InlineQueryResultCachedAudio
+import telegramium.bots.InlineQueryResultCachedGif
+import telegramium.bots.InlineQueryResultLocation
+import telegramium.bots.InlineQueryResultVoice
 import telegramium.bots.InputMedia
-import telegramium.bots.InputMediaLocation
 import telegramium.bots.InputMediaAnimation
-import telegramium.bots.InputMediaLink
 import telegramium.bots.InputMediaVoiceNote
 import telegramium.bots.InputMediaPhoto
 import telegramium.bots.InputMediaVideo
 import telegramium.bots.InputMediaLivePhoto
-import telegramium.bots.InputMediaVenue
 import telegramium.bots.InputMediaDocument
 import telegramium.bots.InputMediaSticker
 import telegramium.bots.InputMediaAudio
+import telegramium.bots.InputRichMessage
 import telegramium.bots.InputStoryContent
 import telegramium.bots.InputStoryContentPhoto
 import telegramium.bots.InputStoryContentVideo
@@ -22,9 +40,26 @@ import telegramium.bots.InputPaidMedia
 import telegramium.bots.InputPaidMediaPhoto
 import telegramium.bots.InputPaidMediaLivePhoto
 import telegramium.bots.InputPaidMediaVideo
+import telegramium.bots.InputPollOption
 import telegramium.bots.InputProfilePhoto
 import telegramium.bots.InputProfilePhotoAnimated
 import telegramium.bots.InputProfilePhotoStatic
+import telegramium.bots.InputMessageContent
+import telegramium.bots.InputRichMessageContent
+import telegramium.bots.InputRichBlock
+import telegramium.bots.InputRichBlockVoiceNote
+import telegramium.bots.InputRichBlockList
+import telegramium.bots.InputRichBlockAudio
+import telegramium.bots.InputRichBlockCollage
+import telegramium.bots.InputRichBlockDocument
+import telegramium.bots.InputRichBlockBlockQuotation
+import telegramium.bots.InputRichBlockSlideshow
+import telegramium.bots.InputRichBlockPhoto
+import telegramium.bots.InputRichBlockAnimation
+import telegramium.bots.InputRichBlockDetails
+import telegramium.bots.InputRichBlockVideo
+import telegramium.bots.InputRichMessageMedia
+import telegramium.bots.InputRichBlockListItem
 import telegramium.bots._
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.SentGuestMessage
@@ -78,13 +113,166 @@ trait Methods {
         (v.copy(sticker = sticker1), stickerFiles)
     }
 
+  private def attachFiles_InlineQueryResult(
+    name: String,
+    value: InlineQueryResult
+  ): (InlineQueryResult, Map[String, IFile]) = value match {
+    case v: InlineQueryResultGif =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultVenue =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultContact =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultPhoto =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultDocument =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultCachedVoice =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultArticle =>
+      val (inputMessageContent1, inputMessageContentFiles) =
+        attachFiles_InputMessageContent(name + "_input_message_content", v.inputMessageContent)
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultAudio =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultMpeg4Gif =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultCachedMpeg4Gif =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultCachedDocument =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultCachedVideo =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultCachedPhoto =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultCachedSticker =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultVideo =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultCachedAudio =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultCachedGif =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultLocation =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v: InlineQueryResultVoice =>
+      val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
+        case Some(x0) =>
+          val (a0, f0) = attachFiles_InputMessageContent(name + "_input_message_content", x0)
+          (Some(a0), f0)
+        case None => (None, Map.empty[String, IFile])
+      }
+      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+    case v => (v, Map.empty[String, IFile])
+  }
+
   private def attachFiles_InputMedia(name: String, value: InputMedia): (InputMedia, Map[String, IFile]) = value match {
-    case v: InputMediaLocation  => (v, Map.empty[String, IFile])
     case v: InputMediaAnimation =>
       val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
       val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
       (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
-    case v: InputMediaLink      => (v, Map.empty[String, IFile])
     case v: InputMediaVoiceNote =>
       val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
       (v.copy(media = media1), mediaFiles)
@@ -100,7 +288,6 @@ trait Methods {
       val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
       val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
       (v.copy(media = media1, photo = photo1), mediaFiles ++ photoFiles)
-    case v: InputMediaVenue    => (v, Map.empty[String, IFile])
     case v: InputMediaDocument =>
       val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
       val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
@@ -112,6 +299,27 @@ trait Methods {
       val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
       val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
       (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
+    case v => (v, Map.empty[String, IFile])
+  }
+
+  private def attachFiles_InputRichMessage(
+    name: String,
+    value: InputRichMessage
+  ): (InputRichMessage, Map[String, IFile]) = value match {
+    case v: InputRichMessage =>
+      val (blocks1, blocksFiles) = {
+        val (a0, f0) = v.blocks.zipWithIndex.map { case (x0, i0) =>
+          attachFiles_InputRichBlock(name + "_blocks" + i0, x0)
+        }.unzip
+        (a0, f0.flatten.toMap)
+      }
+      val (media1, mediaFiles) = {
+        val (a0, f0) = v.media.zipWithIndex.map { case (x0, i0) =>
+          attachFiles_InputRichMessageMedia(name + "_media" + i0, x0)
+        }.unzip
+        (a0, f0.flatten.toMap)
+      }
+      (v.copy(blocks = blocks1, media = media1), blocksFiles ++ mediaFiles)
   }
 
   private def attachFiles_InputStoryContent(
@@ -142,6 +350,18 @@ trait Methods {
         (v.copy(media = media1, thumbnail = thumbnail1, cover = cover1), mediaFiles ++ thumbnailFiles ++ coverFiles)
     }
 
+  private def attachFiles_InputPollOption(name: String, value: InputPollOption): (InputPollOption, Map[String, IFile]) =
+    value match {
+      case v: InputPollOption =>
+        val (media1, mediaFiles) = v.media match {
+          case Some(x0) =>
+            val (a0, f0) = attachFiles_InputMedia(name + "_media", x0)
+            (Some(a0), f0)
+          case None => (None, Map.empty[String, IFile])
+        }
+        (v.copy(media = media1), mediaFiles)
+    }
+
   private def attachFiles_InputProfilePhoto(
     name: String,
     value: InputProfilePhoto
@@ -153,6 +373,155 @@ trait Methods {
       val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
       (v.copy(photo = photo1), photoFiles)
   }
+
+  private def attachFiles_InputMessageContent(
+    name: String,
+    value: InputMessageContent
+  ): (InputMessageContent, Map[String, IFile]) = value match {
+    case v: InputRichMessageContent =>
+      val (richMessage1, richMessageFiles) = attachFiles_InputRichMessage(name + "_rich_message", v.richMessage)
+      (v.copy(richMessage = richMessage1), richMessageFiles)
+    case v => (v, Map.empty[String, IFile])
+  }
+
+  private def attachFiles_InputRichBlock(name: String, value: InputRichBlock): (InputRichBlock, Map[String, IFile]) =
+    value match {
+      case v: InputRichBlockVoiceNote =>
+        val (voiceNote1, voiceNoteFiles) = attachFiles_InputMediaVoiceNote(name + "_voice_note", v.voiceNote)
+        (v.copy(voiceNote = voiceNote1), voiceNoteFiles)
+      case v: InputRichBlockList =>
+        val (items1, itemsFiles) = {
+          val (a0, f0) = v.items.zipWithIndex.map { case (x0, i0) =>
+            attachFiles_InputRichBlockListItem(name + "_items" + i0, x0)
+          }.unzip
+          (a0, f0.flatten.toMap)
+        }
+        (v.copy(items = items1), itemsFiles)
+      case v: InputRichBlockAudio =>
+        val (audio1, audioFiles) = attachFiles_InputMediaAudio(name + "_audio", v.audio)
+        (v.copy(audio = audio1), audioFiles)
+      case v: InputRichBlockCollage =>
+        val (blocks1, blocksFiles) = {
+          val (a0, f0) = v.blocks.zipWithIndex.map { case (x0, i0) =>
+            attachFiles_InputRichBlock(name + "_blocks" + i0, x0)
+          }.unzip
+          (a0, f0.flatten.toMap)
+        }
+        (v.copy(blocks = blocks1), blocksFiles)
+      case v: InputRichBlockDocument =>
+        val (document1, documentFiles) = attachFiles_InputMediaDocument(name + "_document", v.document)
+        (v.copy(document = document1), documentFiles)
+      case v: InputRichBlockBlockQuotation =>
+        val (blocks1, blocksFiles) = {
+          val (a0, f0) = v.blocks.zipWithIndex.map { case (x0, i0) =>
+            attachFiles_InputRichBlock(name + "_blocks" + i0, x0)
+          }.unzip
+          (a0, f0.flatten.toMap)
+        }
+        (v.copy(blocks = blocks1), blocksFiles)
+      case v: InputRichBlockSlideshow =>
+        val (blocks1, blocksFiles) = {
+          val (a0, f0) = v.blocks.zipWithIndex.map { case (x0, i0) =>
+            attachFiles_InputRichBlock(name + "_blocks" + i0, x0)
+          }.unzip
+          (a0, f0.flatten.toMap)
+        }
+        (v.copy(blocks = blocks1), blocksFiles)
+      case v: InputRichBlockPhoto =>
+        val (photo1, photoFiles) = attachFiles_InputMediaPhoto(name + "_photo", v.photo)
+        (v.copy(photo = photo1), photoFiles)
+      case v: InputRichBlockAnimation =>
+        val (animation1, animationFiles) = attachFiles_InputMediaAnimation(name + "_animation", v.animation)
+        (v.copy(animation = animation1), animationFiles)
+      case v: InputRichBlockDetails =>
+        val (blocks1, blocksFiles) = {
+          val (a0, f0) = v.blocks.zipWithIndex.map { case (x0, i0) =>
+            attachFiles_InputRichBlock(name + "_blocks" + i0, x0)
+          }.unzip
+          (a0, f0.flatten.toMap)
+        }
+        (v.copy(blocks = blocks1), blocksFiles)
+      case v: InputRichBlockVideo =>
+        val (video1, videoFiles) = attachFiles_InputMediaVideo(name + "_video", v.video)
+        (v.copy(video = video1), videoFiles)
+      case v => (v, Map.empty[String, IFile])
+    }
+
+  private def attachFiles_InputRichMessageMedia(
+    name: String,
+    value: InputRichMessageMedia
+  ): (InputRichMessageMedia, Map[String, IFile]) = value match {
+    case v: InputRichMessageMedia =>
+      val (media1, mediaFiles) = attachFiles_InputMedia(name + "_media", v.media)
+      (v.copy(media = media1), mediaFiles)
+  }
+
+  private def attachFiles_InputMediaVoiceNote(
+    name: String,
+    value: InputMediaVoiceNote
+  ): (InputMediaVoiceNote, Map[String, IFile]) = value match {
+    case v: InputMediaVoiceNote =>
+      val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
+      (v.copy(media = media1), mediaFiles)
+  }
+
+  private def attachFiles_InputRichBlockListItem(
+    name: String,
+    value: InputRichBlockListItem
+  ): (InputRichBlockListItem, Map[String, IFile]) = value match {
+    case v: InputRichBlockListItem =>
+      val (blocks1, blocksFiles) = {
+        val (a0, f0) = v.blocks.zipWithIndex.map { case (x0, i0) =>
+          attachFiles_InputRichBlock(name + "_blocks" + i0, x0)
+        }.unzip
+        (a0, f0.flatten.toMap)
+      }
+      (v.copy(blocks = blocks1), blocksFiles)
+  }
+
+  private def attachFiles_InputMediaAudio(name: String, value: InputMediaAudio): (InputMediaAudio, Map[String, IFile]) =
+    value match {
+      case v: InputMediaAudio =>
+        val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
+        val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
+        (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
+    }
+
+  private def attachFiles_InputMediaDocument(
+    name: String,
+    value: InputMediaDocument
+  ): (InputMediaDocument, Map[String, IFile]) = value match {
+    case v: InputMediaDocument =>
+      val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
+      val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
+      (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
+  }
+
+  private def attachFiles_InputMediaPhoto(name: String, value: InputMediaPhoto): (InputMediaPhoto, Map[String, IFile]) =
+    value match {
+      case v: InputMediaPhoto =>
+        val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
+        (v.copy(media = media1), mediaFiles)
+    }
+
+  private def attachFiles_InputMediaAnimation(
+    name: String,
+    value: InputMediaAnimation
+  ): (InputMediaAnimation, Map[String, IFile]) = value match {
+    case v: InputMediaAnimation =>
+      val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
+      val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
+      (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
+  }
+
+  private def attachFiles_InputMediaVideo(name: String, value: InputMediaVideo): (InputMediaVideo, Map[String, IFile]) =
+    value match {
+      case v: InputMediaVideo =>
+        val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
+        val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
+        val (cover1, coverFiles)         = MethodReq.attachFile(name + "_cover", v.cover)
+        (v.copy(media = media1, thumbnail = thumbnail1, cover = cover1), mediaFiles ++ thumbnailFiles ++ coverFiles)
+    }
 
   /** Use this method to add a new sticker to a set created by the bot. Emoji sticker sets can have up to 200 stickers.
     * Other sticker sets can have up to 120 stickers. Returns <em>True</em> on success.
@@ -233,8 +602,9 @@ trait Methods {
     *   A JSON-serialized object describing the message to be sent
     */
   def answerGuestQuery(guestQueryId: String, result: InlineQueryResult): Method[SentGuestMessage] = {
-    val req = AnswerGuestQueryReq(guestQueryId, result)
-    MethodReq[SentGuestMessage]("answerGuestQuery", req.asJson)
+    val (resultAttached, resultFiles) = attachFiles_InlineQueryResult("result", result)
+    val req                           = AnswerGuestQueryReq(guestQueryId, resultAttached)
+    MethodReq[SentGuestMessage]("answerGuestQuery", req.asJson, resultFiles)
   }
 
   /** Use this method to send answers to an inline query. On success, <em>True</em> is returned.<br>
@@ -266,8 +636,14 @@ trait Methods {
     nextOffset: Option[String] = Option.empty,
     button: Option[InlineQueryResultsButton] = Option.empty
   ): Method[Boolean] = {
-    val req = AnswerInlineQueryReq(inlineQueryId, results, cacheTime, isPersonal, nextOffset, button)
-    MethodReq[Boolean]("answerInlineQuery", req.asJson)
+    val (resultsAttached, resultsFiles) = {
+      val (a0, f0) = results.zipWithIndex.map { case (x0, i0) =>
+        attachFiles_InlineQueryResult("results" + i0, x0)
+      }.unzip
+      (a0, f0.flatten.toMap)
+    }
+    val req = AnswerInlineQueryReq(inlineQueryId, resultsAttached, cacheTime, isPersonal, nextOffset, button)
+    MethodReq[Boolean]("answerInlineQuery", req.asJson, resultsFiles)
   }
 
   /** Once the user has confirmed their payment and shipping details, the Bot API sends the final confirmation in the
@@ -333,8 +709,9 @@ trait Methods {
     *   A JSON-serialized object describing the message to be sent
     */
   def answerWebAppQuery(webAppQueryId: String, result: InlineQueryResult): Method[SentWebAppMessage] = {
-    val req = AnswerWebAppQueryReq(webAppQueryId, result)
-    MethodReq[SentWebAppMessage]("answerWebAppQuery", req.asJson)
+    val (resultAttached, resultFiles) = attachFiles_InlineQueryResult("result", result)
+    val req                           = AnswerWebAppQueryReq(webAppQueryId, resultAttached)
+    MethodReq[SentWebAppMessage]("answerWebAppQuery", req.asJson, resultFiles)
   }
 
   /** Use this method to approve a chat join request. The bot must be an administrator in the chat for this to work and
@@ -860,11 +1237,12 @@ trait Methods {
     stickerType: Option[String] = Option.empty,
     needsRepainting: Option[Boolean] = Option.empty
   ): Method[Boolean] = {
-    val (stickersAttached, stickersFiles) = stickers.zipWithIndex.map { case (v, idx) =>
-      attachFiles_InputSticker(s"stickers$idx", v)
-    }.unzip
+    val (stickersAttached, stickersFiles) = {
+      val (a0, f0) = stickers.zipWithIndex.map { case (x0, i0) => attachFiles_InputSticker("stickers" + i0, x0) }.unzip
+      (a0, f0.flatten.toMap)
+    }
     val req = CreateNewStickerSetReq(userId, name, title, stickersAttached, stickerType, needsRepainting)
-    MethodReq[Boolean]("createNewStickerSet", req.asJson, stickersFiles.flatten.toMap)
+    MethodReq[Boolean]("createNewStickerSet", req.asJson, stickersFiles)
   }
 
   /** Use this method to decline a chat join request. The bot must be an administrator in the chat for this to work and
@@ -1312,6 +1690,12 @@ trait Methods {
     linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Boolean] = {
+    val (richMessageAttached, richMessageFiles) = richMessage match {
+      case Some(x0) =>
+        val (a0, f0) = attachFiles_InputRichMessage("rich_message", x0)
+        (Some(a0), f0)
+      case None => (None, Map.empty[String, IFile])
+    }
     val req = EditEphemeralMessageTextReq(
       chatId,
       receiverUserId,
@@ -1319,11 +1703,11 @@ trait Methods {
       text,
       parseMode,
       entities,
-      richMessage,
+      richMessageAttached,
       linkPreviewOptions,
       replyMarkup
     )
-    MethodReq[Boolean]("editEphemeralMessageText", req.asJson)
+    MethodReq[Boolean]("editEphemeralMessageText", req.asJson, richMessageFiles)
   }
 
   /** Use this method to edit name and icon of a topic in a forum supergroup chat or a private chat with a user. In the
@@ -1624,6 +2008,12 @@ trait Methods {
     richMessage: Option[InputRichMessage] = Option.empty,
     replyMarkup: Option[InlineKeyboardMarkup] = Option.empty
   ): Method[Either[Boolean, Message]] = {
+    val (richMessageAttached, richMessageFiles) = richMessage match {
+      case Some(x0) =>
+        val (a0, f0) = attachFiles_InputRichMessage("rich_message", x0)
+        (Some(a0), f0)
+      case None => (None, Map.empty[String, IFile])
+    }
     val req = EditMessageTextReq(
       businessConnectionId,
       chatId,
@@ -1633,10 +2023,10 @@ trait Methods {
       parseMode,
       entities,
       linkPreviewOptions,
-      richMessage,
+      richMessageAttached,
       replyMarkup
     )
-    MethodReq[Either[Boolean, Message]]("editMessageText", req.asJson)
+    MethodReq[Either[Boolean, Message]]("editMessageText", req.asJson, richMessageFiles)
   }
 
   /** Edits a story previously posted by the bot on behalf of a managed business account. Requires the
@@ -2884,9 +3274,16 @@ trait Methods {
     allowGroupChats: Option[Boolean] = Option.empty,
     allowChannelChats: Option[Boolean] = Option.empty
   ): Method[PreparedInlineMessage] = {
-    val req =
-      SavePreparedInlineMessageReq(userId, result, allowUserChats, allowBotChats, allowGroupChats, allowChannelChats)
-    MethodReq[PreparedInlineMessage]("savePreparedInlineMessage", req.asJson)
+    val (resultAttached, resultFiles) = attachFiles_InlineQueryResult("result", result)
+    val req                           = SavePreparedInlineMessageReq(
+      userId,
+      resultAttached,
+      allowUserChats,
+      allowBotChats,
+      allowGroupChats,
+      allowChannelChats
+    )
+    MethodReq[PreparedInlineMessage]("savePreparedInlineMessage", req.asJson, resultFiles)
   }
 
   /** Stores a keyboard button that can be used by a user within a Mini App. Returns a <a
@@ -4039,9 +4436,10 @@ trait Methods {
     messageEffectId: Option[String] = Option.empty,
     replyParameters: Option[ReplyParameters] = Option.empty
   ): Method[List[Message]] = {
-    val (mediaAttached, mediaFiles) = media.zipWithIndex.map { case (v, idx) =>
-      attachFiles_InputMedia(s"media$idx", v)
-    }.unzip
+    val (mediaAttached, mediaFiles) = {
+      val (a0, f0) = media.zipWithIndex.map { case (x0, i0) => attachFiles_InputMedia("media" + i0, x0) }.unzip
+      (a0, f0.flatten.toMap)
+    }
     val req = SendMediaGroupReq(
       chatId,
       businessConnectionId,
@@ -4054,7 +4452,7 @@ trait Methods {
       messageEffectId,
       replyParameters
     )
-    MethodReq[List[Message]]("sendMediaGroup", req.asJson, mediaFiles.flatten.toMap)
+    MethodReq[List[Message]]("sendMediaGroup", req.asJson, mediaFiles)
   }
 
   /** Use this method to send text messages. On success, the sent <a
@@ -4263,9 +4661,10 @@ trait Methods {
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
-    val (mediaAttached, mediaFiles) = media.zipWithIndex.map { case (v, idx) =>
-      attachFiles_InputPaidMedia(s"media$idx", v)
-    }.unzip
+    val (mediaAttached, mediaFiles) = {
+      val (a0, f0) = media.zipWithIndex.map { case (x0, i0) => attachFiles_InputPaidMedia("media" + i0, x0) }.unzip
+      (a0, f0.flatten.toMap)
+    }
     val req = SendPaidMediaReq(
       chatId,
       starCount,
@@ -4285,7 +4684,7 @@ trait Methods {
       replyParameters,
       replyMarkup
     )
-    MethodReq[Message]("sendPaidMedia", req.asJson, mediaFiles.flatten.toMap)
+    MethodReq[Message]("sendPaidMedia", req.asJson, mediaFiles)
   }
 
   /** Use this method to send photos. On success, the sent <a
@@ -4523,6 +4922,22 @@ trait Methods {
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
+    val (optionsAttached, optionsFiles) = {
+      val (a0, f0) = options.zipWithIndex.map { case (x0, i0) => attachFiles_InputPollOption("options" + i0, x0) }.unzip
+      (a0, f0.flatten.toMap)
+    }
+    val (explanationMediaAttached, explanationMediaFiles) = explanationMedia match {
+      case Some(x0) =>
+        val (a0, f0) = attachFiles_InputMedia("explanation_media", x0)
+        (Some(a0), f0)
+      case None => (None, Map.empty[String, IFile])
+    }
+    val (mediaAttached, mediaFiles) = media match {
+      case Some(x0) =>
+        val (a0, f0) = attachFiles_InputMedia("media", x0)
+        (Some(a0), f0)
+      case None => (None, Map.empty[String, IFile])
+    }
     val req = SendPollReq(
       chatId,
       question,
@@ -4530,7 +4945,7 @@ trait Methods {
       messageThreadId,
       questionParseMode,
       questionEntities,
-      options,
+      optionsAttached,
       isAnonymous,
       `type`,
       allowsMultipleAnswers,
@@ -4544,14 +4959,14 @@ trait Methods {
       explanation,
       explanationParseMode,
       explanationEntities,
-      explanationMedia,
+      explanationMediaAttached,
       openPeriod,
       closeDate,
       isClosed,
       description,
       descriptionParseMode,
       descriptionEntities,
-      media,
+      mediaAttached,
       disableNotification,
       protectContent,
       allowPaidBroadcast,
@@ -4559,7 +4974,7 @@ trait Methods {
       replyParameters,
       replyMarkup
     )
-    MethodReq[Message]("sendPoll", req.asJson)
+    MethodReq[Message]("sendPoll", req.asJson, optionsFiles ++ explanationMediaFiles ++ mediaFiles)
   }
 
   /** Use this method to send rich messages. If the message contains a block with a media element, then the bot must
@@ -4621,9 +5036,10 @@ trait Methods {
     replyParameters: Option[ReplyParameters] = Option.empty,
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
-    val req = SendRichMessageReq(
+    val (richMessageAttached, richMessageFiles) = attachFiles_InputRichMessage("rich_message", richMessage)
+    val req                                     = SendRichMessageReq(
       chatId,
-      richMessage,
+      richMessageAttached,
       businessConnectionId,
       messageThreadId,
       directMessagesTopicId,
@@ -4636,7 +5052,7 @@ trait Methods {
       replyParameters,
       replyMarkup
     )
-    MethodReq[Message]("sendRichMessage", req.asJson)
+    MethodReq[Message]("sendRichMessage", req.asJson, richMessageFiles)
   }
 
   /** Use this method to stream a partial rich message to a user while the message is being generated. Note that the
@@ -4671,8 +5087,9 @@ trait Methods {
     canStop: Option[Boolean] = Option.empty,
     keepOnStop: Option[Boolean] = Option.empty
   ): Method[Boolean] = {
-    val req = SendRichMessageDraftReq(chatId, draftId, richMessage, messageThreadId, canStop, keepOnStop)
-    MethodReq[Boolean]("sendRichMessageDraft", req.asJson)
+    val (richMessageAttached, richMessageFiles) = attachFiles_InputRichMessage("rich_message", richMessage)
+    val req = SendRichMessageDraftReq(chatId, draftId, richMessageAttached, messageThreadId, canStop, keepOnStop)
+    MethodReq[Boolean]("sendRichMessageDraft", req.asJson, richMessageFiles)
   }
 
   /** Use this method to send static .WEBP, <a href="https://telegram.org/blog/animated-stickers">animated</a> .TGS, or

@@ -29,7 +29,7 @@ object MethodReq {
   )(implicit decoder: Decoder[Res]): MethodReq[Res] =
     new MethodReq(MethodPayload(name, json, files), decoder)
 
-  // A file embedded one level inside a compound parameter (e.g. InputMedia) can't be attached by name
+  // A file embedded inside a compound parameter (e.g. InputMedia), at any depth, can't be attached by name
   // directly, since Telegram only recognizes "attach://<name>" references nested inside the JSON body.
   // These rewrite such a field to that placeholder and collect the real IFile for multipart upload,
   // leaving file_id/URL/already-"attach://" references (InputLinkFile) untouched.
