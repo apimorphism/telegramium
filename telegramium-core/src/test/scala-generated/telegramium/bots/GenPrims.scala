@@ -67,7 +67,7 @@ object GenPrims {
   def shrinkOpt[A](s: => Shrink[A]): Shrink[Option[A]] =
     Shrink {
       case Some(a) => None #:: s.shrink(a).map(Some(_))
-      case None => Stream.empty
+      case None    => Stream.empty
     }
   def shrinkList[A](s: => Shrink[A]): Shrink[List[A]] =
     Shrink { l =>
@@ -76,13 +76,13 @@ object GenPrims {
     }
   def shrinkEither[A, B](sa: => Shrink[A], sb: => Shrink[B]): Shrink[Either[A, B]] =
     Shrink {
-      case Left(a) => sa.shrink(a).map(Left(_))
+      case Left(a)  => sa.shrink(a).map(Left(_))
       case Right(b) => sb.shrink(b).map(Right(_))
     }
   def shrinkOpenEnum[A](s: => Shrink[A]): Shrink[iozhik.OpenEnum[A]] =
     Shrink {
       case iozhik.OpenEnum.Known(a) => s.shrink(a).map(iozhik.OpenEnum.Known(_))
-      case _ => Stream.empty
+      case _                        => Stream.empty
     }
   // a sum type shrinks as the variant it is; case objects have nothing to shrink, and can't be matched by type
   def shrinkSum[A](variants: PartialFunction[A, Stream[A]]*): Shrink[A] =
@@ -96,24 +96,22 @@ object GenPrims {
 
   /** A type with both an encoder and a decoder, with the generator to feed it. */
   final class RoundTripCase[A](
-    val name: String,
-    val gen: Gen[A],
-    val shrink: Shrink[A],
-    val encoder: Encoder[A],
-    val decoder: Decoder[A]
+      val name: String, val gen: Gen[A], val shrink: Shrink[A], val encoder: Encoder[A], val decoder: Decoder[A]
   )
 
   object RoundTripCase {
-    def apply[A](name: String, gen: Gen[A], shrink: Shrink[A])(implicit e: Encoder[A], d: Decoder[A])
-      : RoundTripCase[A] =
+    def apply[A](name: String, gen: Gen[A], shrink: Shrink[A])(
+        implicit e: Encoder[A], d: Decoder[A]
+    ): RoundTripCase[A] =
       new RoundTripCase(name, gen, shrink, e, d)
 
     // decoded as an OpenEnum; generators only produce the Known values
-    def open[A](name: String, gen: Gen[A], shrink: Shrink[A])(implicit e: Encoder[A], d: Decoder[iozhik.OpenEnum[A]])
-      : RoundTripCase[A] =
+    def open[A](
+        name: String, gen: Gen[A], shrink: Shrink[A]
+    )(implicit e: Encoder[A], d: Decoder[iozhik.OpenEnum[A]]): RoundTripCase[A] =
       new RoundTripCase(name, gen, shrink, e,
         d.emap {
-          case iozhik.OpenEnum.Known(a) => Right(a)
+          case iozhik.OpenEnum.Known(a)   => Right(a)
           case iozhik.OpenEnum.Unknown(v) => Left("unknown value: " + v)
         })
   }
