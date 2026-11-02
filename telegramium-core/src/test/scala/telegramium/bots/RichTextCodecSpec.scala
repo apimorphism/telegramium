@@ -6,7 +6,7 @@ import io.circe.syntax._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import org.scalacheck.{Arbitrary, Gen}
+import org.scalacheck.Gen
 import telegramium.bots.CirceImplicits._
 
 class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropertyChecks {
@@ -276,76 +276,23 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
 
   // --- Property-based tests ---
 
-  private val genPlainText: Gen[String] = Gen.alphaNumStr.map(_.take(20))
-
-  private def genRichText(depth: Int): Gen[RichText] = {
-    val leaf: Gen[RichText] = Gen.frequency(
-      5 -> genPlainText.map(RichTextPlain.apply),
-      1 -> genPlainText.map(RichTextMathematicalExpression.apply),
-      1 -> genPlainText.map(RichTextAnchor.apply),
-      1 -> Gen.zip(genPlainText, genPlainText).map { case (id, alt) => RichTextCustomEmoji(id, alt) }
-    )
-
-    if (depth <= 0) leaf
-    else {
-      val recursive = genRichText(depth - 1).map(known)
-      Gen.frequency(
-        4 -> leaf,
-        2 -> recursive.map(RichTextBold.apply),
-        2 -> recursive.map(RichTextItalic.apply),
-        1 -> recursive.map(RichTextUnderline.apply),
-        1 -> recursive.map(RichTextStrikethrough.apply),
-        1 -> recursive.map(RichTextSpoiler.apply),
-        1 -> recursive.map(RichTextCode.apply),
-        1 -> recursive.map(RichTextSubscript.apply),
-        1 -> recursive.map(RichTextSuperscript.apply),
-        1 -> recursive.map(RichTextMarked.apply),
-        2 -> Gen.zip(recursive, genPlainText).map { case (t, u) => RichTextUrl(t, u) },
-        1 -> Gen.zip(recursive, genPlainText).map { case (t, e) => RichTextEmailAddress(t, e) },
-        1 -> Gen.zip(recursive, genPlainText).map { case (t, p) => RichTextPhoneNumber(t, p) },
-        1 -> Gen.zip(recursive, genPlainText).map { case (t, h) => RichTextHashtag(t, h) },
-        1 -> Gen.zip(recursive, genPlainText).map { case (t, c) => RichTextCashtag(t, c) },
-        1 -> Gen.zip(recursive, genPlainText).map { case (t, b) => RichTextBotCommand(t, b) },
-        1 -> Gen.zip(recursive, genPlainText).map { case (t, a) => RichTextAnchorLink(t, a) },
-        1 -> Gen.zip(recursive, genPlainText).map { case (t, r) => RichTextReference(t, r) },
-        1 -> Gen.zip(recursive, genPlainText).map { case (t, r) => RichTextReferenceLink(t, r) },
-        1 -> Gen.zip(recursive, genPlainText).map { case (t, m) => RichTextMention(t, m) },
-        1 -> Gen.zip(recursive, genPlainText).map { case (t, u) =>
-          RichTextButton(RichMessageButton(text = t, url = Some(u)))
-        },
-        1 -> Gen.zip(recursive, genPlainText).map { case (t, b) => RichTextBankCardNumber(t, b) },
-        1 -> Gen.zip(recursive, Gen.posNum[Long], genPlainText).map { case (t, u, f) => RichTextDateTime(t, u, f) },
-        3 -> Gen.listOfN(3, genRichText(depth - 1).map(known)).map(RichTextConcat.apply)
-      )
-    }
-  }
-
-  private implicit val arbRichText: Arbitrary[RichText] = Arbitrary(genRichText(3))
-
-  "RichText property-based" should "round-trip encode/decode for arbitrary RichText" in {
-    forAll { (rt: RichText) =>
-      val encoded = rt.asJson
-      val decoded = encoded.as[iozhik.OpenEnum[RichText]]
-      decoded shouldBe Right(known(rt))
-    }
-  }
-
-  it should "always produce a JSON string for RichTextPlain" in {
-    forAll(genPlainText) { text =>
+  // The generated generators cover every variant; CodecRoundTripSpec checks that RichText round-trips.
+  "RichText property-based" should "always produce a JSON string for RichTextPlain" in {
+    forAll(GenPrims.genString) { text =>
       val rt: RichText = RichTextPlain(text)
       rt.asJson.isString shouldBe true
     }
   }
 
   it should "always produce a JSON array for RichTextConcat" in {
-    forAll(Gen.listOf(genRichText(1).map(known))) { items =>
+    forAll(Gen.listOf(GenRichText.gen.map(known))) { items =>
       val rt: RichText = RichTextConcat(items)
       rt.asJson.isArray shouldBe true
     }
   }
 
   it should "always produce a JSON object with type field for typed RichText" in {
-    val genTyped = genRichText(2).suchThat {
+    val genTyped = GenRichText.gen.suchThat {
       case _: RichTextPlain  => false
       case _: RichTextConcat => false
       case _                 => true
