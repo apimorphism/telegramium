@@ -79,12 +79,12 @@ trait Methods {
     }
 
   private def attachFiles_InputMedia(name: String, value: InputMedia): (InputMedia, Map[String, IFile]) = value match {
-    case v: InputMediaLocation => (v, Map.empty[String, IFile])
+    case v: InputMediaLocation  => (v, Map.empty[String, IFile])
     case v: InputMediaAnimation =>
       val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
       val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
       (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
-    case v: InputMediaLink => (v, Map.empty[String, IFile])
+    case v: InputMediaLink      => (v, Map.empty[String, IFile])
     case v: InputMediaVoiceNote =>
       val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
       (v.copy(media = media1), mediaFiles)
@@ -100,7 +100,7 @@ trait Methods {
       val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
       val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
       (v.copy(media = media1, photo = photo1), mediaFiles ++ photoFiles)
-    case v: InputMediaVenue => (v, Map.empty[String, IFile])
+    case v: InputMediaVenue    => (v, Map.empty[String, IFile])
     case v: InputMediaDocument =>
       val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
       val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
@@ -737,11 +737,11 @@ trait Methods {
     *   subscriptions from the same user. Subscription price must no exceed 10000 Telegram Stars.
     * @param maxTipAmount
     *   The maximum accepted amount for tips in the <em>smallest units</em> of the currency (integer,
-    *   <strong>not</strong> float/double). For example, for a maximum tip of <code>US$
-    * 1.45</code> pass <code>max_tip_amount = 145</code>. See the <em>exp</em> parameter in <a
-    * href="https://core.telegram.org/bots/payments/currencies.json">currencies.json</a>, it shows the number of digits
-    * past the decimal point for each currency (2 for the majority of currencies). Defaults to 0. Not supported for
-    * payments in <a href="https://t.me/BotNews/90">Telegram Stars</a>.
+    *   <strong>not</strong> float/double). For example, for a maximum tip of <code>US$ 1.45</code> pass
+    *   <code>max_tip_amount = 145</code>. See the <em>exp</em> parameter in <a
+    *   href="https://core.telegram.org/bots/payments/currencies.json">currencies.json</a>, it shows the number of
+    *   digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0. Not supported
+    *   for payments in <a href="https://t.me/BotNews/90">Telegram Stars</a>.
     * @param suggestedTipAmounts
     *   A JSON-serialized Array of suggested amounts of tips in the <em>smallest units</em> of the currency (integer,
     *   <strong>not</strong> float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts
@@ -995,22 +995,14 @@ trait Methods {
   /** Use this method to delete a message, including service messages, with the following limitations:<br>
     *
     *   - A message can only be deleted if it was sent less than 48 hours ago.<br>
-    *
     *   - Service messages about a supergroup, channel, or forum topic creation can't be deleted.<br>
-    *
     *   - A dice message in a private chat can only be deleted if it was sent more than 24 hours ago.<br>
-    *
     *   - Bots can delete outgoing messages in private chats, groups, and supergroups.<br>
-    *
     *   - Bots can delete incoming messages in private chats.<br>
-    *
     *   - Bots granted <em>can_post_messages</em> permissions can delete outgoing messages in channels.<br>
-    *
     *   - If the bot is an administrator of a group, it can delete any message there.<br>
-    *
     *   - If the bot has <em>can_delete_messages</em> administrator right in a supergroup or a channel, it can delete
     *     any message there.<br>
-    *
     *   - If the bot has <em>can_manage_direct_messages</em> administrator right in a channel, it can delete any message
     *     in the corresponding direct messages chat.<br>
     *
@@ -2532,7 +2524,7 @@ trait Methods {
     protectContent: Option[Boolean] = Option.empty
   ): Method[Story] = {
     val (contentAttached, contentFiles) = attachFiles_InputStoryContent("content", content)
-    val req = PostStoryReq(
+    val req                             = PostStoryReq(
       businessConnectionId,
       contentAttached,
       activePeriod,
@@ -3656,11 +3648,11 @@ trait Methods {
     *   href="https://t.me/BotNews/90">Telegram Stars</a>.
     * @param maxTipAmount
     *   The maximum accepted amount for tips in the <em>smallest units</em> of the currency (integer,
-    *   <strong>not</strong> float/double). For example, for a maximum tip of <code>US$
-    * 1.45</code> pass <code>max_tip_amount = 145</code>. See the <em>exp</em> parameter in <a
-    * href="https://core.telegram.org/bots/payments/currencies.json">currencies.json</a>, it shows the number of digits
-    * past the decimal point for each currency (2 for the majority of currencies). Defaults to 0. Not supported for
-    * payments in <a href="https://t.me/BotNews/90">Telegram Stars</a>.
+    *   <strong>not</strong> float/double). For example, for a maximum tip of <code>US$ 1.45</code> pass
+    *   <code>max_tip_amount = 145</code>. See the <em>exp</em> parameter in <a
+    *   href="https://core.telegram.org/bots/payments/currencies.json">currencies.json</a>, it shows the number of
+    *   digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0. Not supported
+    *   for payments in <a href="https://t.me/BotNews/90">Telegram Stars</a>.
     * @param suggestedTipAmounts
     *   A JSON-serialized Array of suggested amounts of tips in the <em>smallest units</em> of the currency (integer,
     *   <strong>not</strong> float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts

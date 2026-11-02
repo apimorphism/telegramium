@@ -29,7 +29,6 @@ final case class InlineKeyboardMarkup(
   *
   *   - Explain the user how to send a command with parameters (e.g. /newpoll question answer1 answer2). May be
   *     appealing for hardcore users but lacks modern day polish.
-  *
   *   - Guide the user through a step-by-step process. 'Please send me your question', 'Cool, now let's add the first
   *     answer option', 'Great. Keep adding answer options, then send /done when you're ready'.
   *

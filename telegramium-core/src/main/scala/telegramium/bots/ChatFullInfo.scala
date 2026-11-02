@@ -113,11 +113,10 @@ package telegramium.bots
   *   <em>Optional</em>. For supergroups, the name of the group's custom emoji sticker set. Custom emoji from this set
   *   can be used by all users and bots in the group.
   * @param linkedChatId
-  *   <em>Optional</em>. Unique identifier for the linked chat,
-  * i.e. the discussion group identifier for a channel and vice versa; for supergroups and channel chats. This
-  * identifier may be greater than 32 bits and some programming languages may have difficulty/silent defects in
-  * interpreting it. But it is smaller than 52 bits, so a signed 64 bit integer or double-precision float type are safe
-  * for storing this identifier.
+  *   <em>Optional</em>. Unique identifier for the linked chat, i.e. the discussion group identifier for a channel and
+  *   vice versa; for supergroups and channel chats. This identifier may be greater than 32 bits and some programming
+  *   languages may have difficulty/silent defects in interpreting it. But it is smaller than 52 bits, so a signed 64
+  *   bit integer or double-precision float type are safe for storing this identifier.
   * @param location
   *   <em>Optional</em>. For supergroups, the location to which the supergroup is connected
   * @param rating
