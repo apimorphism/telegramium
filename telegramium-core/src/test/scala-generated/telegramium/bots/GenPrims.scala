@@ -30,10 +30,8 @@ object GenPrims {
 
   private val edgeStrings =
     Seq("Привет", "日本語のテキスト", "😀🎲", "naïve café", "line1\nline2", "quote\"and\\slash", "")
-  val genString: Gen[String] = Gen.frequency(
-    1 -> Gen.oneOf(edgeStrings),
-    4 -> Gen.listOfN(8, Gen.alphaNumChar).map(_.mkString)
-  )
+  val genString: Gen[String] =
+    Gen.frequency(1 -> Gen.oneOf(edgeStrings), 4 -> Gen.listOfN(8, Gen.alphaNumChar).map(_.mkString))
 
   // a plain file name; checks that build wire requests create the matching temporary files themselves
   val genJavaFile: Gen[java.io.File] = Gen.alphaNumStr.map(s => new java.io.File(s + ".bin"))
@@ -106,15 +104,18 @@ object GenPrims {
   )
 
   object RoundTripCase {
-    def apply[A](name: String, gen: Gen[A], shrink: Shrink[A])(implicit e: Encoder[A], d: Decoder[A]): RoundTripCase[A] =
+    def apply[A](name: String, gen: Gen[A], shrink: Shrink[A])(implicit e: Encoder[A], d: Decoder[A])
+      : RoundTripCase[A] =
       new RoundTripCase(name, gen, shrink, e, d)
 
     // decoded as an OpenEnum; generators only produce the Known values
-    def open[A](name: String, gen: Gen[A], shrink: Shrink[A])(implicit e: Encoder[A], d: Decoder[iozhik.OpenEnum[A]]): RoundTripCase[A] =
-      new RoundTripCase(name, gen, shrink, e, d.emap {
-        case iozhik.OpenEnum.Known(a) => Right(a)
-        case iozhik.OpenEnum.Unknown(v) => Left("unknown value: " + v)
-      })
+    def open[A](name: String, gen: Gen[A], shrink: Shrink[A])(implicit e: Encoder[A], d: Decoder[iozhik.OpenEnum[A]])
+      : RoundTripCase[A] =
+      new RoundTripCase(name, gen, shrink, e,
+        d.emap {
+          case iozhik.OpenEnum.Known(a) => Right(a)
+          case iozhik.OpenEnum.Unknown(v) => Left("unknown value: " + v)
+        })
   }
 
 }
