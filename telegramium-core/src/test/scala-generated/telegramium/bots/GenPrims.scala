@@ -9,7 +9,8 @@ import scala.reflect.ClassTag
 // ScalaCheck's Shrink is built on Stream, deprecated since Scala 2.13
 @scala.annotation.nowarn("cat=deprecation")
 object GenPrims {
-
+  // Recursion is bounded by a size budget: every composite generator spends one unit, optional or list fields of
+  // composite type collapse to None/Nil at zero, and sum types pick their shallowest variants.
   val Budget = 3
 
   // capped at Budget, so that the generators are bounded whatever size they are run at
@@ -118,5 +119,4 @@ object GenPrims {
           case iozhik.OpenEnum.Unknown(v) => Left("unknown value: " + v)
         })
   }
-
 }
