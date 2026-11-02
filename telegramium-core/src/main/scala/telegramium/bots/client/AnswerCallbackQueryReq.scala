@@ -18,8 +18,7 @@ package telegramium.bots.client
   *
   * Otherwise, you may use links like <code>t.me/your_bot?start=XXXX</code> that open your bot with a parameter.
   * @param cacheTime
-  *   The maximum amount of time in seconds that the result of the callback query may be cached client-side. Defaults to
-  *   0.
+  *   The maximum amount of time in seconds that the result of the callback query may be cached client-side. Defaults to 0.
   */
 final case class AnswerCallbackQueryReq(
   callbackQueryId: String,

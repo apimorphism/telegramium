@@ -483,8 +483,8 @@ object CirceImplicits {
     }
 
   implicit lazy val chatmemberEncoder: Encoder[ChatMember] = {
-    case kicked: ChatMemberBanned => kicked.asJson.mapObject(_.add("status", Json.fromString("kicked")))
-    case left: ChatMemberLeft     => left.asJson.mapObject(_.add("status", Json.fromString("left")))
+    case kicked: ChatMemberBanned               => kicked.asJson.mapObject(_.add("status", Json.fromString("kicked")))
+    case left: ChatMemberLeft                   => left.asJson.mapObject(_.add("status", Json.fromString("left")))
     case administrator: ChatMemberAdministrator =>
       administrator.asJson.mapObject(_.add("status", Json.fromString("administrator")))
     case creator: ChatMemberOwner         => creator.asJson.mapObject(_.add("status", Json.fromString("creator")))
@@ -1404,7 +1404,7 @@ object CirceImplicits {
     }
 
   implicit lazy val inputpaidmediaEncoder: Encoder[InputPaidMedia] = {
-    case photo: InputPaidMediaPhoto => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
+    case photo: InputPaidMediaPhoto          => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
     case live_photo: InputPaidMediaLivePhoto =>
       live_photo.asJson.mapObject(_.add("type", Json.fromString("live_photo")))
     case video: InputPaidMediaVideo => video.asJson.mapObject(_.add("type", Json.fromString("video")))
@@ -1478,12 +1478,12 @@ object CirceImplicits {
     case buttons: InputRichBlockButtons        => buttons.asJson.mapObject(_.add("type", Json.fromString("buttons")))
     case blockquote: InputRichBlockBlockQuotation =>
       blockquote.asJson.mapObject(_.add("type", Json.fromString("blockquote")))
-    case video: InputRichBlockVideo       => video.asJson.mapObject(_.add("type", Json.fromString("video")))
-    case details: InputRichBlockDetails   => details.asJson.mapObject(_.add("type", Json.fromString("details")))
-    case thinking: InputRichBlockThinking => thinking.asJson.mapObject(_.add("type", Json.fromString("thinking")))
-    case footer: InputRichBlockFooter     => footer.asJson.mapObject(_.add("type", Json.fromString("footer")))
-    case anchor: InputRichBlockAnchor     => anchor.asJson.mapObject(_.add("type", Json.fromString("anchor")))
-    case pre: InputRichBlockPreformatted  => pre.asJson.mapObject(_.add("type", Json.fromString("pre")))
+    case video: InputRichBlockVideo             => video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case details: InputRichBlockDetails         => details.asJson.mapObject(_.add("type", Json.fromString("details")))
+    case thinking: InputRichBlockThinking       => thinking.asJson.mapObject(_.add("type", Json.fromString("thinking")))
+    case footer: InputRichBlockFooter           => footer.asJson.mapObject(_.add("type", Json.fromString("footer")))
+    case anchor: InputRichBlockAnchor           => anchor.asJson.mapObject(_.add("type", Json.fromString("anchor")))
+    case pre: InputRichBlockPreformatted        => pre.asJson.mapObject(_.add("type", Json.fromString("pre")))
     case pullquote: InputRichBlockPullQuotation =>
       pullquote.asJson.mapObject(_.add("type", Json.fromString("pullquote")))
     case mathematical_expression: InputRichBlockMathematicalExpression =>
@@ -2226,21 +2226,21 @@ object CirceImplicits {
     case underline: UnderlineMessageEntity => underline.asJson.mapObject(_.add("type", Json.fromString("underline")))
     case expandable_blockquote: ExpandableBlockquoteMessageEntity =>
       expandable_blockquote.asJson.mapObject(_.add("type", Json.fromString("expandable_blockquote")))
-    case hashtag: HashtagMessageEntity => hashtag.asJson.mapObject(_.add("type", Json.fromString("hashtag")))
+    case hashtag: HashtagMessageEntity       => hashtag.asJson.mapObject(_.add("type", Json.fromString("hashtag")))
     case blockquote: BlockquoteMessageEntity =>
       blockquote.asJson.mapObject(_.add("type", Json.fromString("blockquote")))
     case date_time: DateTimeMessageEntity => date_time.asJson.mapObject(_.add("type", Json.fromString("date_time")))
     case text_link: TextLinkMessageEntity => text_link.asJson.mapObject(_.add("type", Json.fromString("text_link")))
     case strikethrough: StrikethroughMessageEntity =>
       strikethrough.asJson.mapObject(_.add("type", Json.fromString("strikethrough")))
-    case pre: PreMessageEntity => pre.asJson.mapObject(_.add("type", Json.fromString("pre")))
+    case pre: PreMessageEntity                  => pre.asJson.mapObject(_.add("type", Json.fromString("pre")))
     case text_mention: TextMentionMessageEntity =>
       text_mention.asJson.mapObject(_.add("type", Json.fromString("text_mention")))
     case bot_command: BotCommandMessageEntity =>
       bot_command.asJson.mapObject(_.add("type", Json.fromString("bot_command")))
     case phone_number: PhoneNumberMessageEntity =>
       phone_number.asJson.mapObject(_.add("type", Json.fromString("phone_number")))
-    case email: EmailMessageEntity => email.asJson.mapObject(_.add("type", Json.fromString("email")))
+    case email: EmailMessageEntity              => email.asJson.mapObject(_.add("type", Json.fromString("email")))
     case custom_emoji: CustomEmojiMessageEntity =>
       custom_emoji.asJson.mapObject(_.add("type", Json.fromString("custom_emoji")))
     case url: UrlMessageEntity         => url.asJson.mapObject(_.add("type", Json.fromString("url")))
@@ -2697,7 +2697,7 @@ object CirceImplicits {
     }
 
   implicit lazy val messageoriginEncoder: Encoder[MessageOrigin] = {
-    case channel: MessageOriginChannel => channel.asJson.mapObject(_.add("type", Json.fromString("channel")))
+    case channel: MessageOriginChannel        => channel.asJson.mapObject(_.add("type", Json.fromString("channel")))
     case hidden_user: MessageOriginHiddenUser =>
       hidden_user.asJson.mapObject(_.add("type", Json.fromString("hidden_user")))
     case chat: MessageOriginChat => chat.asJson.mapObject(_.add("type", Json.fromString("chat")))
@@ -3183,7 +3183,7 @@ object CirceImplicits {
     }
 
   implicit lazy val revenuewithdrawalstateEncoder: Encoder[RevenueWithdrawalState] = {
-    case failed: RevenueWithdrawalStateFailed.type => failed.asJson.mapObject(_.add("type", Json.fromString("failed")))
+    case failed: RevenueWithdrawalStateFailed.type  => failed.asJson.mapObject(_.add("type", Json.fromString("failed")))
     case succeeded: RevenueWithdrawalStateSucceeded =>
       succeeded.asJson.mapObject(_.add("type", Json.fromString("succeeded")))
     case pending: RevenueWithdrawalStatePending.type =>
@@ -3233,12 +3233,12 @@ object CirceImplicits {
     Right(RevenueWithdrawalStateFailed)
 
   implicit lazy val richblockEncoder: Encoder[RichBlock] = {
-    case heading: RichBlockSectionHeading => heading.asJson.mapObject(_.add("type", Json.fromString("heading")))
-    case map: RichBlockMap                => map.asJson.mapObject(_.add("type", Json.fromString("map")))
-    case document: RichBlockDocument      => document.asJson.mapObject(_.add("type", Json.fromString("document")))
-    case audio: RichBlockAudio            => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
-    case divider: RichBlockDivider.type   => divider.asJson.mapObject(_.add("type", Json.fromString("divider")))
-    case buttons: RichBlockButtons        => buttons.asJson.mapObject(_.add("type", Json.fromString("buttons")))
+    case heading: RichBlockSectionHeading    => heading.asJson.mapObject(_.add("type", Json.fromString("heading")))
+    case map: RichBlockMap                   => map.asJson.mapObject(_.add("type", Json.fromString("map")))
+    case document: RichBlockDocument         => document.asJson.mapObject(_.add("type", Json.fromString("document")))
+    case audio: RichBlockAudio               => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
+    case divider: RichBlockDivider.type      => divider.asJson.mapObject(_.add("type", Json.fromString("divider")))
+    case buttons: RichBlockButtons           => buttons.asJson.mapObject(_.add("type", Json.fromString("buttons")))
     case blockquote: RichBlockBlockQuotation =>
       blockquote.asJson.mapObject(_.add("type", Json.fromString("blockquote")))
     case video: RichBlockVideo             => video.asJson.mapObject(_.add("type", Json.fromString("video")))
@@ -3785,8 +3785,8 @@ object CirceImplicits {
       bank_card_number.asJson.mapObject(_.add("type", Json.fromString("bank_card_number")))
     case strikethrough: RichTextStrikethrough =>
       strikethrough.asJson.mapObject(_.add("type", Json.fromString("strikethrough")))
-    case reference: RichTextReference => reference.asJson.mapObject(_.add("type", Json.fromString("reference")))
-    case anchor: RichTextAnchor       => anchor.asJson.mapObject(_.add("type", Json.fromString("anchor")))
+    case reference: RichTextReference      => reference.asJson.mapObject(_.add("type", Json.fromString("reference")))
+    case anchor: RichTextAnchor            => anchor.asJson.mapObject(_.add("type", Json.fromString("anchor")))
     case text_mention: RichTextTextMention =>
       text_mention.asJson.mapObject(_.add("type", Json.fromString("text_mention")))
     case bot_command: RichTextBotCommand => bot_command.asJson.mapObject(_.add("type", Json.fromString("bot_command")))
@@ -4458,7 +4458,7 @@ object CirceImplicits {
     case fragment: TransactionPartnerFragment => fragment.asJson.mapObject(_.add("type", Json.fromString("fragment")))
     case telegram_ads: TransactionPartnerTelegramAds.type =>
       telegram_ads.asJson.mapObject(_.add("type", Json.fromString("telegram_ads")))
-    case chat: TransactionPartnerChat => chat.asJson.mapObject(_.add("type", Json.fromString("chat")))
+    case chat: TransactionPartnerChat                => chat.asJson.mapObject(_.add("type", Json.fromString("chat")))
     case telegram_api: TransactionPartnerTelegramApi =>
       telegram_api.asJson.mapObject(_.add("type", Json.fromString("telegram_api")))
     case affiliate_program: TransactionPartnerAffiliateProgram =>
