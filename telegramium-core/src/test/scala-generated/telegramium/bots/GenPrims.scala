@@ -59,6 +59,11 @@ object GenPrims {
 
   def either[A, B](a: => Gen[A], b: => Gen[B]): Gen[Either[A, B]] =
     Gen.oneOf(Gen.lzy(a).map(Left(_)), Gen.lzy(b).map(Right(_)))
+  // one side is shallower: at size 0 only that one, like a sum type, so a recursive side ends there
+  def eitherLeftAtZero[A, B](a: => Gen[A], b: => Gen[B]): Gen[Either[A, B]] =
+    Gen.sized(n => if (n <= 0) Gen.lzy(a).map(Left(_)) else either(a, b))
+  def eitherRightAtZero[A, B](a: => Gen[A], b: => Gen[B]): Gen[Either[A, B]] =
+    Gen.sized(n => if (n <= 0) Gen.lzy(b).map(Right(_)) else either(a, b))
 
   // Only Known values: Unknown values are receive-only
   def openEnum[A](g: => Gen[A]): Gen[iozhik.OpenEnum[A]] = Gen.lzy(g).map(iozhik.OpenEnum.Known(_))

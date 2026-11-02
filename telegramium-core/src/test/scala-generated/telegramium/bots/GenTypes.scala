@@ -276,8 +276,7 @@ object GenBotCommandScopeChatAdministrators {
   lazy val gen: Gen[BotCommandScopeChatAdministrators] = Gen.lzy(deeper(GenChatId.gen.map { a0 =>
     BotCommandScopeChatAdministrators(chatId = a0)
   }))
-  lazy val shrink: Shrink[BotCommandScopeChatAdministrators] = shrinkFields[BotCommandScopeChatAdministrators](x =>
-    List(field(x.chatId)(GenChatId.shrink)(v => x.copy(chatId = v))))
+  lazy val shrink: Shrink[BotCommandScopeChatAdministrators] = noShrink
 }
 
 object GenBotCommandScopeChatMember {
@@ -285,15 +284,13 @@ object GenBotCommandScopeChatMember {
   lazy val gen: Gen[BotCommandScopeChatMember] = Gen.lzy(deeper(Gen.zip(GenChatId.gen, genLong).map { case (a0, a1) =>
     BotCommandScopeChatMember(chatId = a0, userId = a1)
   }))
-  lazy val shrink: Shrink[BotCommandScopeChatMember] =
-    shrinkFields[BotCommandScopeChatMember](x => List(field(x.chatId)(GenChatId.shrink)(v => x.copy(chatId = v))))
+  lazy val shrink: Shrink[BotCommandScopeChatMember] = noShrink
 }
 
 object GenBotCommandScopeChat {
   import GenPrims._
   lazy val gen: Gen[BotCommandScopeChat] = Gen.lzy(deeper(GenChatId.gen.map { a0 => BotCommandScopeChat(chatId = a0) }))
-  lazy val shrink: Shrink[BotCommandScopeChat] =
-    shrinkFields[BotCommandScopeChat](x => List(field(x.chatId)(GenChatId.shrink)(v => x.copy(chatId = v))))
+  lazy val shrink: Shrink[BotCommandScopeChat] = noShrink
 }
 
 object GenBotCommandScopeAllPrivateChats {
@@ -309,9 +306,7 @@ object GenBotCommandScope {
         GenBotCommandScopeChatMember.gen, GenBotCommandScopeChat.gen, GenBotCommandScopeAllPrivateChats.gen),
       List(GenBotCommandScopeAllChatAdministrators.gen, GenBotCommandScopeAllGroupChats.gen,
         GenBotCommandScopeDefault.gen, GenBotCommandScopeAllPrivateChats.gen)))
-  lazy val shrink: Shrink[BotCommandScope] =
-    shrinkSum[BotCommandScope](variant(GenBotCommandScopeChatAdministrators.shrink),
-      variant(GenBotCommandScopeChatMember.shrink), variant(GenBotCommandScopeChat.shrink))
+  lazy val shrink: Shrink[BotCommandScope] = noShrink
 }
 
 object GenChatBoostSourceGiftCode {
@@ -468,7 +463,7 @@ object GenInlineQueryResultGif {
       field(x.thumbnailMimeType)(shrinkOpt(noShrink))(v => x.copy(thumbnailMimeType = v)),
       field(x.title)(shrinkOpt(noShrink))(v => x.copy(title = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
       field(x.replyMarkup)(shrinkOpt(GenInlineKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v)),
@@ -543,7 +538,7 @@ object GenInlineQueryResultPhoto {
       field(x.title)(shrinkOpt(noShrink))(v => x.copy(title = v)),
       field(x.description)(shrinkOpt(noShrink))(v => x.copy(description = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
       field(x.replyMarkup)(shrinkOpt(GenInlineKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v)),
@@ -565,7 +560,7 @@ object GenInlineQueryResultDocument {
   lazy val shrink: Shrink[InlineQueryResultDocument] = shrinkFields[InlineQueryResultDocument](x =>
     List(
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.description)(shrinkOpt(noShrink))(v => x.copy(description = v)),
       field(x.replyMarkup)(shrinkOpt(GenInlineKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v)),
@@ -587,7 +582,7 @@ object GenInlineQueryResultCachedVoice {
   lazy val shrink: Shrink[InlineQueryResultCachedVoice] = shrinkFields[InlineQueryResultCachedVoice](x =>
     List(
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.replyMarkup)(shrinkOpt(GenInlineKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v)),
       field(x.inputMessageContent)(shrinkOpt(GenInputMessageContent.shrink))(v => x.copy(inputMessageContent = v))))
@@ -628,7 +623,7 @@ object GenInlineQueryResultAudio {
   lazy val shrink: Shrink[InlineQueryResultAudio] = shrinkFields[InlineQueryResultAudio](x =>
     List(
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.performer)(shrinkOpt(noShrink))(v => x.copy(performer = v)),
       field(x.audioDuration)(shrinkOpt(noShrink))(v => x.copy(audioDuration = v)),
@@ -657,7 +652,7 @@ object GenInlineQueryResultMpeg4Gif {
       field(x.thumbnailMimeType)(shrinkOpt(noShrink))(v => x.copy(thumbnailMimeType = v)),
       field(x.title)(shrinkOpt(noShrink))(v => x.copy(title = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
       field(x.replyMarkup)(shrinkOpt(GenInlineKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v)),
@@ -679,7 +674,7 @@ object GenInlineQueryResultCachedMpeg4Gif {
     List(
       field(x.title)(shrinkOpt(noShrink))(v => x.copy(title = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
       field(x.replyMarkup)(shrinkOpt(GenInlineKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v)),
@@ -700,7 +695,7 @@ object GenInlineQueryResultCachedDocument {
     List(
       field(x.description)(shrinkOpt(noShrink))(v => x.copy(description = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.replyMarkup)(shrinkOpt(GenInlineKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v)),
       field(x.inputMessageContent)(shrinkOpt(GenInputMessageContent.shrink))(v => x.copy(inputMessageContent = v))))
@@ -722,7 +717,7 @@ object GenInlineQueryResultCachedVideo {
     List(
       field(x.description)(shrinkOpt(noShrink))(v => x.copy(description = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
       field(x.replyMarkup)(shrinkOpt(GenInlineKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v)),
@@ -756,7 +751,7 @@ object GenInlineQueryResultCachedPhoto {
       field(x.title)(shrinkOpt(noShrink))(v => x.copy(title = v)),
       field(x.description)(shrinkOpt(noShrink))(v => x.copy(description = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
       field(x.replyMarkup)(shrinkOpt(GenInlineKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v)),
@@ -792,7 +787,7 @@ object GenInlineQueryResultVideo {
   lazy val shrink: Shrink[InlineQueryResultVideo] = shrinkFields[InlineQueryResultVideo](x =>
     List(
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
       field(x.videoWidth)(shrinkOpt(noShrink))(v => x.copy(videoWidth = v)),
@@ -815,7 +810,7 @@ object GenInlineQueryResultCachedAudio {
   lazy val shrink: Shrink[InlineQueryResultCachedAudio] = shrinkFields[InlineQueryResultCachedAudio](x =>
     List(
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.replyMarkup)(shrinkOpt(GenInlineKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v)),
       field(x.inputMessageContent)(shrinkOpt(GenInputMessageContent.shrink))(v => x.copy(inputMessageContent = v))))
@@ -836,7 +831,7 @@ object GenInlineQueryResultCachedGif {
     List(
       field(x.title)(shrinkOpt(noShrink))(v => x.copy(title = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
       field(x.replyMarkup)(shrinkOpt(GenInlineKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v)),
@@ -881,7 +876,7 @@ object GenInlineQueryResultVoice {
   lazy val shrink: Shrink[InlineQueryResultVoice] = shrinkFields[InlineQueryResultVoice](x =>
     List(
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.voiceDuration)(shrinkOpt(noShrink))(v => x.copy(voiceDuration = v)),
       field(x.replyMarkup)(shrinkOpt(GenInlineKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v)),
@@ -940,10 +935,9 @@ object GenInputMediaAnimation {
         }))
   lazy val shrink: Shrink[InputMediaAnimation] = shrinkFields[InputMediaAnimation](x =>
     List(
-      field(x.media)(GenIFile.shrink)(v => x.copy(media = v)),
-      field(x.thumbnail)(shrinkOpt(GenIFile.shrink))(v => x.copy(thumbnail = v)),
+      field(x.thumbnail)(shrinkOpt(noShrink))(v => x.copy(thumbnail = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
       field(x.width)(shrinkOpt(noShrink))(v => x.copy(width = v)),
@@ -967,9 +961,8 @@ object GenInputMediaVoiceNote {
         }))
   lazy val shrink: Shrink[InputMediaVoiceNote] = shrinkFields[InputMediaVoiceNote](x =>
     List(
-      field(x.media)(GenIFile.shrink)(v => x.copy(media = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.duration)(shrinkOpt(noShrink))(v => x.copy(duration = v))))
 }
@@ -985,9 +978,8 @@ object GenInputMediaPhoto {
         }))
   lazy val shrink: Shrink[InputMediaPhoto] = shrinkFields[InputMediaPhoto](x =>
     List(
-      field(x.media)(GenIFile.shrink)(v => x.copy(media = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
       field(x.hasSpoiler)(shrinkOpt(noShrink))(v => x.copy(hasSpoiler = v))))
@@ -1007,12 +999,11 @@ object GenInputMediaVideo {
         }))
   lazy val shrink: Shrink[InputMediaVideo] = shrinkFields[InputMediaVideo](x =>
     List(
-      field(x.media)(GenIFile.shrink)(v => x.copy(media = v)),
-      field(x.thumbnail)(shrinkOpt(GenIFile.shrink))(v => x.copy(thumbnail = v)),
-      field(x.cover)(shrinkOpt(GenIFile.shrink))(v => x.copy(cover = v)),
+      field(x.thumbnail)(shrinkOpt(noShrink))(v => x.copy(thumbnail = v)),
+      field(x.cover)(shrinkOpt(noShrink))(v => x.copy(cover = v)),
       field(x.startTimestamp)(shrinkOpt(noShrink))(v => x.copy(startTimestamp = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
       field(x.width)(shrinkOpt(noShrink))(v => x.copy(width = v)),
@@ -1033,9 +1024,8 @@ object GenInputMediaLivePhoto {
         }))
   lazy val shrink: Shrink[InputMediaLivePhoto] = shrinkFields[InputMediaLivePhoto](x =>
     List(
-      field(x.media)(GenIFile.shrink)(v => x.copy(media = v)), field(x.photo)(GenIFile.shrink)(v => x.copy(photo = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
       field(x.hasSpoiler)(shrinkOpt(noShrink))(v => x.copy(hasSpoiler = v))))
@@ -1069,10 +1059,9 @@ object GenInputMediaDocument {
         }))
   lazy val shrink: Shrink[InputMediaDocument] = shrinkFields[InputMediaDocument](x =>
     List(
-      field(x.media)(GenIFile.shrink)(v => x.copy(media = v)),
-      field(x.thumbnail)(shrinkOpt(GenIFile.shrink))(v => x.copy(thumbnail = v)),
+      field(x.thumbnail)(shrinkOpt(noShrink))(v => x.copy(thumbnail = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.disableContentTypeDetection)(shrinkOpt(noShrink))(v => x.copy(disableContentTypeDetection = v))))
 }
@@ -1082,9 +1071,8 @@ object GenInputMediaSticker {
   lazy val gen: Gen[InputMediaSticker] = Gen.lzy(deeper(Gen.zip(GenIFile.gen, optPrim(genString)).map { case (a0, a1) =>
     InputMediaSticker(media = a0, emoji = a1)
   }))
-  lazy val shrink: Shrink[InputMediaSticker] = shrinkFields[InputMediaSticker](x =>
-    List(field(x.media)(GenIFile.shrink)(v => x.copy(media = v)),
-      field(x.emoji)(shrinkOpt(noShrink))(v => x.copy(emoji = v))))
+  lazy val shrink: Shrink[InputMediaSticker] =
+    shrinkFields[InputMediaSticker](x => List(field(x.emoji)(shrinkOpt(noShrink))(v => x.copy(emoji = v))))
 }
 
 object GenInputMediaAudio {
@@ -1098,10 +1086,9 @@ object GenInputMediaAudio {
         }))
   lazy val shrink: Shrink[InputMediaAudio] = shrinkFields[InputMediaAudio](x =>
     List(
-      field(x.media)(GenIFile.shrink)(v => x.copy(media = v)),
-      field(x.thumbnail)(shrinkOpt(GenIFile.shrink))(v => x.copy(thumbnail = v)),
+      field(x.thumbnail)(shrinkOpt(noShrink))(v => x.copy(thumbnail = v)),
       field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
       field(x.duration)(shrinkOpt(noShrink))(v => x.copy(duration = v)),
       field(x.performer)(shrinkOpt(noShrink))(v => x.copy(performer = v)),
@@ -1155,7 +1142,7 @@ object GenInputInvoiceMessageContent {
   lazy val shrink: Shrink[InputInvoiceMessageContent] = shrinkFields[InputInvoiceMessageContent](x =>
     List(
       field(x.providerToken)(shrinkOpt(noShrink))(v => x.copy(providerToken = v)),
-      field(x.prices)(shrinkList(GenLabeledPrice.shrink))(v => x.copy(prices = v)),
+      field(x.prices)(shrinkList(noShrink))(v => x.copy(prices = v)),
       field(x.maxTipAmount)(shrinkOpt(noShrink))(v => x.copy(maxTipAmount = v)),
       field(x.suggestedTipAmounts)(shrinkList(noShrink))(v => x.copy(suggestedTipAmounts = v)),
       field(x.providerData)(shrinkOpt(noShrink))(v => x.copy(providerData = v)),
@@ -1208,7 +1195,7 @@ object GenInputTextMessageContent {
     }))
   lazy val shrink: Shrink[InputTextMessageContent] = shrinkFields[InputTextMessageContent](x =>
     List(
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.entities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(entities = v)),
       field(x.linkPreviewOptions)(shrinkOpt(GenLinkPreviewOptions.shrink))(v => x.copy(linkPreviewOptions = v))))
 }
@@ -1238,8 +1225,7 @@ object GenInputMessageContent {
 object GenInputPaidMediaPhoto {
   import GenPrims._
   lazy val gen: Gen[InputPaidMediaPhoto] = Gen.lzy(deeper(GenIFile.gen.map { a0 => InputPaidMediaPhoto(media = a0) }))
-  lazy val shrink: Shrink[InputPaidMediaPhoto] =
-    shrinkFields[InputPaidMediaPhoto](x => List(field(x.media)(GenIFile.shrink)(v => x.copy(media = v))))
+  lazy val shrink: Shrink[InputPaidMediaPhoto] = noShrink
 }
 
 object GenInputPaidMediaLivePhoto {
@@ -1247,9 +1233,7 @@ object GenInputPaidMediaLivePhoto {
   lazy val gen: Gen[InputPaidMediaLivePhoto] = Gen.lzy(deeper(Gen.zip(GenIFile.gen, GenIFile.gen).map { case (a0, a1) =>
     InputPaidMediaLivePhoto(media = a0, photo = a1)
   }))
-  lazy val shrink: Shrink[InputPaidMediaLivePhoto] = shrinkFields[InputPaidMediaLivePhoto](x =>
-    List(
-      field(x.media)(GenIFile.shrink)(v => x.copy(media = v)), field(x.photo)(GenIFile.shrink)(v => x.copy(photo = v))))
+  lazy val shrink: Shrink[InputPaidMediaLivePhoto] = noShrink
 }
 
 object GenInputPaidMediaVideo {
@@ -1263,9 +1247,8 @@ object GenInputPaidMediaVideo {
         }))
   lazy val shrink: Shrink[InputPaidMediaVideo] = shrinkFields[InputPaidMediaVideo](x =>
     List(
-      field(x.media)(GenIFile.shrink)(v => x.copy(media = v)),
-      field(x.thumbnail)(shrinkOpt(GenIFile.shrink))(v => x.copy(thumbnail = v)),
-      field(x.cover)(shrinkOpt(GenIFile.shrink))(v => x.copy(cover = v)),
+      field(x.thumbnail)(shrinkOpt(noShrink))(v => x.copy(thumbnail = v)),
+      field(x.cover)(shrinkOpt(noShrink))(v => x.copy(cover = v)),
       field(x.startTimestamp)(shrinkOpt(noShrink))(v => x.copy(startTimestamp = v)),
       field(x.width)(shrinkOpt(noShrink))(v => x.copy(width = v)),
       field(x.height)(shrinkOpt(noShrink))(v => x.copy(height = v)),
@@ -1277,8 +1260,7 @@ object GenInputPaidMedia {
   import GenPrims._
   lazy val gen: Gen[InputPaidMedia] = Gen.lzy(Gen.oneOf[InputPaidMedia](GenInputPaidMediaPhoto.gen,
       GenInputPaidMediaLivePhoto.gen, GenInputPaidMediaVideo.gen))
-  lazy val shrink: Shrink[InputPaidMedia] = shrinkSum[InputPaidMedia](variant(GenInputPaidMediaPhoto.shrink),
-    variant(GenInputPaidMediaLivePhoto.shrink), variant(GenInputPaidMediaVideo.shrink))
+  lazy val shrink: Shrink[InputPaidMedia] = shrinkSum[InputPaidMedia](variant(GenInputPaidMediaVideo.shrink))
 }
 
 object GenInputProfilePhotoAnimated {
@@ -1287,8 +1269,7 @@ object GenInputProfilePhotoAnimated {
     case (a0, a1) => InputProfilePhotoAnimated(animation = a0, mainFrameTimestamp = a1)
   }))
   lazy val shrink: Shrink[InputProfilePhotoAnimated] = shrinkFields[InputProfilePhotoAnimated](x =>
-    List(field(x.animation)(GenIFile.shrink)(v => x.copy(animation = v)),
-      field(x.mainFrameTimestamp)(shrinkOpt(noShrink))(v => x.copy(mainFrameTimestamp = v))))
+    List(field(x.mainFrameTimestamp)(shrinkOpt(noShrink))(v => x.copy(mainFrameTimestamp = v))))
 }
 
 object GenInputProfilePhotoStatic {
@@ -1296,16 +1277,15 @@ object GenInputProfilePhotoStatic {
   lazy val gen: Gen[InputProfilePhotoStatic] = Gen.lzy(deeper(GenIFile.gen.map { a0 =>
     InputProfilePhotoStatic(photo = a0)
   }))
-  lazy val shrink: Shrink[InputProfilePhotoStatic] =
-    shrinkFields[InputProfilePhotoStatic](x => List(field(x.photo)(GenIFile.shrink)(v => x.copy(photo = v))))
+  lazy val shrink: Shrink[InputProfilePhotoStatic] = noShrink
 }
 
 object GenInputProfilePhoto {
   import GenPrims._
   lazy val gen: Gen[InputProfilePhoto] =
     Gen.lzy(Gen.oneOf[InputProfilePhoto](GenInputProfilePhotoAnimated.gen, GenInputProfilePhotoStatic.gen))
-  lazy val shrink: Shrink[InputProfilePhoto] = shrinkSum[InputProfilePhoto](
-    variant(GenInputProfilePhotoAnimated.shrink), variant(GenInputProfilePhotoStatic.shrink))
+  lazy val shrink: Shrink[InputProfilePhoto] =
+    shrinkSum[InputProfilePhoto](variant(GenInputProfilePhotoAnimated.shrink))
 }
 
 object GenInputRichBlockTable {
@@ -1598,8 +1578,7 @@ object GenInputStoryContentPhoto {
   lazy val gen: Gen[InputStoryContentPhoto] = Gen.lzy(deeper(GenIFile.gen.map { a0 =>
     InputStoryContentPhoto(photo = a0)
   }))
-  lazy val shrink: Shrink[InputStoryContentPhoto] =
-    shrinkFields[InputStoryContentPhoto](x => List(field(x.photo)(GenIFile.shrink)(v => x.copy(photo = v))))
+  lazy val shrink: Shrink[InputStoryContentPhoto] = noShrink
 }
 
 object GenInputStoryContentVideo {
@@ -1611,7 +1590,6 @@ object GenInputStoryContentVideo {
     }))
   lazy val shrink: Shrink[InputStoryContentVideo] = shrinkFields[InputStoryContentVideo](x =>
     List(
-      field(x.video)(GenIFile.shrink)(v => x.copy(video = v)),
       field(x.duration)(shrinkOpt(noShrink))(v => x.copy(duration = v)),
       field(x.coverFrameTimestamp)(shrinkOpt(noShrink))(v => x.copy(coverFrameTimestamp = v)),
       field(x.isAnimation)(shrinkOpt(noShrink))(v => x.copy(isAnimation = v))))
@@ -1621,8 +1599,7 @@ object GenInputStoryContent {
   import GenPrims._
   lazy val gen: Gen[InputStoryContent] =
     Gen.lzy(Gen.oneOf[InputStoryContent](GenInputStoryContentPhoto.gen, GenInputStoryContentVideo.gen))
-  lazy val shrink: Shrink[InputStoryContent] =
-    shrinkSum[InputStoryContent](variant(GenInputStoryContentPhoto.shrink), variant(GenInputStoryContentVideo.shrink))
+  lazy val shrink: Shrink[InputStoryContent] = shrinkSum[InputStoryContent](variant(GenInputStoryContentVideo.shrink))
 }
 
 object GenMessage {
@@ -1763,7 +1740,7 @@ object GenMessage {
         field(x.hasMediaSpoiler)(shrinkOpt(noShrink))(v => x.copy(hasMediaSpoiler = v)),
         field(x.checklist)(shrinkOpt(GenChecklist.shrink))(v => x.copy(checklist = v)),
         field(x.contact)(shrinkOpt(GenContact.shrink))(v => x.copy(contact = v)),
-        field(x.dice)(shrinkOpt(GenDice.shrink))(v => x.copy(dice = v)),
+        field(x.dice)(shrinkOpt(noShrink))(v => x.copy(dice = v)),
         field(x.game)(shrinkOpt(GenGame.shrink))(v => x.copy(game = v)),
         field(x.poll)(shrinkOpt(GenPoll.shrink))(v => x.copy(poll = v)),
         field(x.venue)(shrinkOpt(GenVenue.shrink))(v => x.copy(venue = v)),
@@ -1778,12 +1755,11 @@ object GenMessage {
         field(x.groupChatCreated)(shrinkOpt(noShrink))(v => x.copy(groupChatCreated = v)),
         field(x.supergroupChatCreated)(shrinkOpt(noShrink))(v => x.copy(supergroupChatCreated = v)),
         field(x.channelChatCreated)(shrinkOpt(noShrink))(v => x.copy(channelChatCreated = v)),
-        field(x.messageAutoDeleteTimerChanged)(shrinkOpt(GenMessageAutoDeleteTimerChanged.shrink))(v =>
-          x.copy(messageAutoDeleteTimerChanged = v)),
+        field(x.messageAutoDeleteTimerChanged)(shrinkOpt(noShrink))(v => x.copy(messageAutoDeleteTimerChanged = v)),
         field(x.migrateToChatId)(shrinkOpt(noShrink))(v => x.copy(migrateToChatId = v)),
         field(x.migrateFromChatId)(shrinkOpt(noShrink))(v => x.copy(migrateFromChatId = v)),
         field(x.pinnedMessage)(shrinkOpt(GenMaybeInaccessibleMessage.shrink))(v => x.copy(pinnedMessage = v)),
-        field(x.invoice)(shrinkOpt(GenInvoice.shrink))(v => x.copy(invoice = v)),
+        field(x.invoice)(shrinkOpt(noShrink))(v => x.copy(invoice = v)),
         field(x.successfulPayment)(shrinkOpt(GenSuccessfulPayment.shrink))(v => x.copy(successfulPayment = v)),
         field(x.refundedPayment)(shrinkOpt(GenRefundedPayment.shrink))(v => x.copy(refundedPayment = v)),
         field(x.usersShared)(shrinkOpt(GenUsersShared.shrink))(v => x.copy(usersShared = v)),
@@ -1795,31 +1771,27 @@ object GenMessage {
         field(x.writeAccessAllowed)(shrinkOpt(GenWriteAccessAllowed.shrink))(v => x.copy(writeAccessAllowed = v)),
         field(x.passportData)(shrinkOpt(GenPassportData.shrink))(v => x.copy(passportData = v)),
         field(x.proximityAlertTriggered)(shrinkOpt(GenProximityAlertTriggered.shrink))(v =>
-          x.copy(proximityAlertTriggered = v)),
-        field(x.boostAdded)(shrinkOpt(GenChatBoostAdded.shrink))(v => x.copy(boostAdded = v)),
+          x.copy(proximityAlertTriggered = v)), field(x.boostAdded)(shrinkOpt(noShrink))(v => x.copy(boostAdded = v)),
         field(x.chatBackgroundSet)(shrinkOpt(GenChatBackground.shrink))(v => x.copy(chatBackgroundSet = v)),
         field(x.checklistTasksDone)(shrinkOpt(GenChecklistTasksDone.shrink))(v => x.copy(checklistTasksDone = v)),
         field(x.checklistTasksAdded)(shrinkOpt(GenChecklistTasksAdded.shrink))(v => x.copy(checklistTasksAdded = v)),
-        field(x.communityChatAdded)(shrinkOpt(GenCommunityChatAdded.shrink))(v => x.copy(communityChatAdded = v)),
-        field(x.communityChatJoined)(shrinkOpt(GenCommunityChatJoined.shrink))(v => x.copy(communityChatJoined = v)),
-        field(x.communityChatRemoved)(shrinkOpt(GenCommunityChatRemoved.shrink))(v => x.copy(communityChatRemoved = v)),
+        field(x.communityChatAdded)(shrinkOpt(noShrink))(v => x.copy(communityChatAdded = v)),
+        field(x.communityChatJoined)(shrinkOpt(noShrink))(v => x.copy(communityChatJoined = v)),
+        field(x.communityChatRemoved)(shrinkOpt(noShrink))(v => x.copy(communityChatRemoved = v)),
         field(x.directMessagePriceChanged)(shrinkOpt(GenDirectMessagePriceChanged.shrink))(v =>
           x.copy(directMessagePriceChanged = v)),
         field(x.forumTopicCreated)(shrinkOpt(GenForumTopicCreated.shrink))(v => x.copy(forumTopicCreated = v)),
         field(x.forumTopicEdited)(shrinkOpt(GenForumTopicEdited.shrink))(v => x.copy(forumTopicEdited = v)),
-        field(x.forumTopicClosed)(shrinkOpt(GenForumTopicClosed.shrink))(v => x.copy(forumTopicClosed = v)),
-        field(x.forumTopicReopened)(shrinkOpt(GenForumTopicReopened.shrink))(v => x.copy(forumTopicReopened = v)),
-        field(x.generalForumTopicHidden)(shrinkOpt(GenGeneralForumTopicHidden.shrink))(v =>
-          x.copy(generalForumTopicHidden = v)),
-        field(x.generalForumTopicUnhidden)(shrinkOpt(GenGeneralForumTopicUnhidden.shrink))(v =>
-          x.copy(generalForumTopicUnhidden = v)),
+        field(x.forumTopicClosed)(shrinkOpt(noShrink))(v => x.copy(forumTopicClosed = v)),
+        field(x.forumTopicReopened)(shrinkOpt(noShrink))(v => x.copy(forumTopicReopened = v)),
+        field(x.generalForumTopicHidden)(shrinkOpt(noShrink))(v => x.copy(generalForumTopicHidden = v)),
+        field(x.generalForumTopicUnhidden)(shrinkOpt(noShrink))(v => x.copy(generalForumTopicUnhidden = v)),
         field(x.giveawayCreated)(shrinkOpt(GenGiveawayCreated.shrink))(v => x.copy(giveawayCreated = v)),
         field(x.giveaway)(shrinkOpt(GenGiveaway.shrink))(v => x.copy(giveaway = v)),
         field(x.giveawayWinners)(shrinkOpt(GenGiveawayWinners.shrink))(v => x.copy(giveawayWinners = v)),
         field(x.giveawayCompleted)(shrinkOpt(GenGiveawayCompleted.shrink))(v => x.copy(giveawayCompleted = v)),
         field(x.managedBotCreated)(shrinkOpt(GenManagedBotCreated.shrink))(v => x.copy(managedBotCreated = v)),
-        field(x.paidMessagePriceChanged)(shrinkOpt(GenPaidMessagePriceChanged.shrink))(v =>
-          x.copy(paidMessagePriceChanged = v)),
+        field(x.paidMessagePriceChanged)(shrinkOpt(noShrink))(v => x.copy(paidMessagePriceChanged = v)),
         field(x.pollOptionAdded)(shrinkOpt(GenPollOptionAdded.shrink))(v => x.copy(pollOptionAdded = v)),
         field(x.pollOptionDeleted)(shrinkOpt(GenPollOptionDeleted.shrink))(v => x.copy(pollOptionDeleted = v)),
         field(x.suggestedPostApproved)(shrinkOpt(GenSuggestedPostApproved.shrink))(v =>
@@ -1831,12 +1803,12 @@ object GenMessage {
         field(x.suggestedPostPaid)(shrinkOpt(GenSuggestedPostPaid.shrink))(v => x.copy(suggestedPostPaid = v)),
         field(x.suggestedPostRefunded)(shrinkOpt(GenSuggestedPostRefunded.shrink))(v =>
           x.copy(suggestedPostRefunded = v)),
-        field(x.videoChatScheduled)(shrinkOpt(GenVideoChatScheduled.shrink))(v => x.copy(videoChatScheduled = v)),
-        field(x.videoChatStarted)(shrinkOpt(GenVideoChatStarted.shrink))(v => x.copy(videoChatStarted = v)),
-        field(x.videoChatEnded)(shrinkOpt(GenVideoChatEnded.shrink))(v => x.copy(videoChatEnded = v)),
+        field(x.videoChatScheduled)(shrinkOpt(noShrink))(v => x.copy(videoChatScheduled = v)),
+        field(x.videoChatStarted)(shrinkOpt(noShrink))(v => x.copy(videoChatStarted = v)),
+        field(x.videoChatEnded)(shrinkOpt(noShrink))(v => x.copy(videoChatEnded = v)),
         field(x.videoChatParticipantsInvited)(shrinkOpt(GenVideoChatParticipantsInvited.shrink))(v =>
           x.copy(videoChatParticipantsInvited = v)),
-        field(x.webAppData)(shrinkOpt(GenWebAppData.shrink))(v => x.copy(webAppData = v)),
+        field(x.webAppData)(shrinkOpt(noShrink))(v => x.copy(webAppData = v)),
         field(x.replyMarkup)(shrinkOpt(GenInlineKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v)))), fix)
 }
 
@@ -1870,8 +1842,7 @@ object GenMenuButtonWebApp {
   lazy val gen: Gen[MenuButtonWebApp] = Gen.lzy(deeper(Gen.zip(genString, GenWebAppInfo.gen).map { case (a0, a1) =>
     MenuButtonWebApp(text = a0, webApp = a1)
   }))
-  lazy val shrink: Shrink[MenuButtonWebApp] =
-    shrinkFields[MenuButtonWebApp](x => List(field(x.webApp)(GenWebAppInfo.shrink)(v => x.copy(webApp = v))))
+  lazy val shrink: Shrink[MenuButtonWebApp] = noShrink
 }
 
 object GenMenuButtonCommands {
@@ -1885,7 +1856,7 @@ object GenMenuButton {
   lazy val gen: Gen[MenuButton] =
     Gen.lzy(sum[MenuButton](List(GenMenuButtonDefault.gen, GenMenuButtonWebApp.gen, GenMenuButtonCommands.gen),
         List(GenMenuButtonDefault.gen, GenMenuButtonCommands.gen)))
-  lazy val shrink: Shrink[MenuButton] = shrinkSum[MenuButton](variant(GenMenuButtonWebApp.shrink))
+  lazy val shrink: Shrink[MenuButton] = noShrink
 }
 
 object GenMentionMessageEntity {
@@ -2924,9 +2895,7 @@ object GenStoryAreaTypeSuggestedReaction {
       StoryAreaTypeSuggestedReaction(reactionType = a0, isDark = a1, isFlipped = a2)
     }))
   lazy val shrink: Shrink[StoryAreaTypeSuggestedReaction] = shrinkFields[StoryAreaTypeSuggestedReaction](x =>
-    List(
-      field(x.reactionType)(GenReactionType.shrink)(v => x.copy(reactionType = v)),
-      field(x.isDark)(shrinkOpt(noShrink))(v => x.copy(isDark = v)),
+    List(field(x.isDark)(shrinkOpt(noShrink))(v => x.copy(isDark = v)),
       field(x.isFlipped)(shrinkOpt(noShrink))(v => x.copy(isFlipped = v))))
 }
 
@@ -3008,8 +2977,7 @@ object GenTransactionPartnerFragment {
     a0 => TransactionPartnerFragment(withdrawalState = a0)
   }))
   lazy val shrink: Shrink[TransactionPartnerFragment] = shrinkFields[TransactionPartnerFragment](x =>
-    List(field(x.withdrawalState)(shrinkOpt(shrinkOpenEnum(GenRevenueWithdrawalState.shrink)))(v =>
-        x.copy(withdrawalState = v))))
+    List(field(x.withdrawalState)(shrinkOpt(noShrink))(v => x.copy(withdrawalState = v))))
 }
 
 object GenTransactionPartner {
@@ -3223,7 +3191,7 @@ object GenBusinessOpeningHours {
       BusinessOpeningHours(timeZoneName = a0, openingHours = a1)
     }))
   lazy val shrink: Shrink[BusinessOpeningHours] = shrinkFields[BusinessOpeningHours](x =>
-    List(field(x.openingHours)(shrinkList(GenBusinessOpeningHoursInterval.shrink))(v => x.copy(openingHours = v))))
+    List(field(x.openingHours)(shrinkList(noShrink))(v => x.copy(openingHours = v))))
 }
 
 object GenBusinessOpeningHoursInterval {
@@ -3385,14 +3353,13 @@ object GenChatFullInfo {
         }))
   lazy val shrink: Shrink[ChatFullInfo] = shrinkFields[ChatFullInfo](x =>
     List(
-      field(x.acceptedGiftTypes)(GenAcceptedGiftTypes.shrink)(v => x.copy(acceptedGiftTypes = v)),
       field(x.title)(shrinkOpt(noShrink))(v => x.copy(title = v)),
       field(x.username)(shrinkOpt(noShrink))(v => x.copy(username = v)),
       field(x.firstName)(shrinkOpt(noShrink))(v => x.copy(firstName = v)),
       field(x.lastName)(shrinkOpt(noShrink))(v => x.copy(lastName = v)),
       field(x.isForum)(shrinkOpt(noShrink))(v => x.copy(isForum = v)),
       field(x.isDirectMessages)(shrinkOpt(noShrink))(v => x.copy(isDirectMessages = v)),
-      field(x.photo)(shrinkOpt(GenChatPhoto.shrink))(v => x.copy(photo = v)),
+      field(x.photo)(shrinkOpt(noShrink))(v => x.copy(photo = v)),
       field(x.activeUsernames)(shrinkList(noShrink))(v => x.copy(activeUsernames = v)),
       field(x.birthdate)(shrinkOpt(GenBirthdate.shrink))(v => x.copy(birthdate = v)),
       field(x.businessIntro)(shrinkOpt(GenBusinessIntro.shrink))(v => x.copy(businessIntro = v)),
@@ -3400,8 +3367,7 @@ object GenChatFullInfo {
       field(x.businessOpeningHours)(shrinkOpt(GenBusinessOpeningHours.shrink))(v => x.copy(businessOpeningHours = v)),
       field(x.personalChat)(shrinkOpt(GenChat.shrink))(v => x.copy(personalChat = v)),
       field(x.parentChat)(shrinkOpt(GenChat.shrink))(v => x.copy(parentChat = v)),
-      field(x.availableReactions)(shrinkOpt(shrinkList(shrinkOpenEnum(GenReactionType.shrink))))(v =>
-        x.copy(availableReactions = v)),
+      field(x.availableReactions)(shrinkOpt(shrinkList(noShrink)))(v => x.copy(availableReactions = v)),
       field(x.backgroundCustomEmojiId)(shrinkOpt(noShrink))(v => x.copy(backgroundCustomEmojiId = v)),
       field(x.profileAccentColorId)(shrinkOpt(noShrink))(v => x.copy(profileAccentColorId = v)),
       field(x.profileBackgroundCustomEmojiId)(shrinkOpt(noShrink))(v => x.copy(profileBackgroundCustomEmojiId = v)),
@@ -3435,7 +3401,7 @@ object GenChatFullInfo {
       field(x.uniqueGiftColors)(shrinkOpt(GenUniqueGiftColors.shrink))(v => x.copy(uniqueGiftColors = v)),
       field(x.paidMessageStarCount)(shrinkOpt(noShrink))(v => x.copy(paidMessageStarCount = v)),
       field(x.guardBot)(shrinkOpt(GenUser.shrink))(v => x.copy(guardBot = v)),
-      field(x.community)(shrinkOpt(GenCommunity.shrink))(v => x.copy(community = v))))
+      field(x.community)(shrinkOpt(noShrink))(v => x.copy(community = v))))
 }
 
 object GenChatInviteLink {
@@ -3656,8 +3622,7 @@ object GenCommunityChatAdded {
   lazy val gen: Gen[CommunityChatAdded] = Gen.lzy(deeper(GenCommunity.gen.map { a0 =>
     CommunityChatAdded(community = a0)
   }))
-  lazy val shrink: Shrink[CommunityChatAdded] =
-    shrinkFields[CommunityChatAdded](x => List(field(x.community)(GenCommunity.shrink)(v => x.copy(community = v))))
+  lazy val shrink: Shrink[CommunityChatAdded] = noShrink
 }
 
 object GenCommunityChatJoined {
@@ -3665,8 +3630,7 @@ object GenCommunityChatJoined {
   lazy val gen: Gen[CommunityChatJoined] = Gen.lzy(deeper(GenCommunity.gen.map { a0 =>
     CommunityChatJoined(community = a0)
   }))
-  lazy val shrink: Shrink[CommunityChatJoined] =
-    shrinkFields[CommunityChatJoined](x => List(field(x.community)(GenCommunity.shrink)(v => x.copy(community = v))))
+  lazy val shrink: Shrink[CommunityChatJoined] = noShrink
 }
 
 object GenCommunityChatRemoved {
@@ -3764,11 +3728,11 @@ object GenEncryptedPassportElement {
       field(x.data)(shrinkOpt(noShrink))(v => x.copy(data = v)),
       field(x.phoneNumber)(shrinkOpt(noShrink))(v => x.copy(phoneNumber = v)),
       field(x.email)(shrinkOpt(noShrink))(v => x.copy(email = v)),
-      field(x.files)(shrinkList(GenPassportFile.shrink))(v => x.copy(files = v)),
-      field(x.frontSide)(shrinkOpt(GenPassportFile.shrink))(v => x.copy(frontSide = v)),
-      field(x.reverseSide)(shrinkOpt(GenPassportFile.shrink))(v => x.copy(reverseSide = v)),
-      field(x.selfie)(shrinkOpt(GenPassportFile.shrink))(v => x.copy(selfie = v)),
-      field(x.translation)(shrinkList(GenPassportFile.shrink))(v => x.copy(translation = v))))
+      field(x.files)(shrinkList(noShrink))(v => x.copy(files = v)),
+      field(x.frontSide)(shrinkOpt(noShrink))(v => x.copy(frontSide = v)),
+      field(x.reverseSide)(shrinkOpt(noShrink))(v => x.copy(reverseSide = v)),
+      field(x.selfie)(shrinkOpt(noShrink))(v => x.copy(selfie = v)),
+      field(x.translation)(shrinkList(noShrink))(v => x.copy(translation = v))))
 }
 
 object GenEphemeralMessageParameters {
@@ -3823,11 +3787,11 @@ object GenExternalReplyInfo {
       field(x.hasMediaSpoiler)(shrinkOpt(noShrink))(v => x.copy(hasMediaSpoiler = v)),
       field(x.checklist)(shrinkOpt(GenChecklist.shrink))(v => x.copy(checklist = v)),
       field(x.contact)(shrinkOpt(GenContact.shrink))(v => x.copy(contact = v)),
-      field(x.dice)(shrinkOpt(GenDice.shrink))(v => x.copy(dice = v)),
+      field(x.dice)(shrinkOpt(noShrink))(v => x.copy(dice = v)),
       field(x.game)(shrinkOpt(GenGame.shrink))(v => x.copy(game = v)),
       field(x.giveaway)(shrinkOpt(GenGiveaway.shrink))(v => x.copy(giveaway = v)),
       field(x.giveawayWinners)(shrinkOpt(GenGiveawayWinners.shrink))(v => x.copy(giveawayWinners = v)),
-      field(x.invoice)(shrinkOpt(GenInvoice.shrink))(v => x.copy(invoice = v)),
+      field(x.invoice)(shrinkOpt(noShrink))(v => x.copy(invoice = v)),
       field(x.location)(shrinkOpt(GenLocation.shrink))(v => x.copy(location = v)),
       field(x.poll)(shrinkOpt(GenPoll.shrink))(v => x.copy(poll = v)),
       field(x.venue)(shrinkOpt(GenVenue.shrink))(v => x.copy(venue = v))))
@@ -3949,7 +3913,7 @@ object GenGift {
       field(x.remainingCount)(shrinkOpt(noShrink))(v => x.copy(remainingCount = v)),
       field(x.personalTotalCount)(shrinkOpt(noShrink))(v => x.copy(personalTotalCount = v)),
       field(x.personalRemainingCount)(shrinkOpt(noShrink))(v => x.copy(personalRemainingCount = v)),
-      field(x.background)(shrinkOpt(GenGiftBackground.shrink))(v => x.copy(background = v)),
+      field(x.background)(shrinkOpt(noShrink))(v => x.copy(background = v)),
       field(x.uniqueGiftVariantCount)(shrinkOpt(noShrink))(v => x.copy(uniqueGiftVariantCount = v)),
       field(x.publisherChat)(shrinkOpt(GenChat.shrink))(v => x.copy(publisherChat = v))))
 }
@@ -4080,16 +4044,15 @@ object GenInlineKeyboardButton {
       field(x.style)(shrinkOpt(noShrink))(v => x.copy(style = v)),
       field(x.url)(shrinkOpt(noShrink))(v => x.copy(url = v)),
       field(x.callbackData)(shrinkOpt(noShrink))(v => x.copy(callbackData = v)),
-      field(x.webApp)(shrinkOpt(GenWebAppInfo.shrink))(v => x.copy(webApp = v)),
+      field(x.webApp)(shrinkOpt(noShrink))(v => x.copy(webApp = v)),
       field(x.loginUrl)(shrinkOpt(GenLoginUrl.shrink))(v => x.copy(loginUrl = v)),
       field(x.switchInlineQuery)(shrinkOpt(noShrink))(v => x.copy(switchInlineQuery = v)),
       field(x.switchInlineQueryCurrentChat)(shrinkOpt(noShrink))(v => x.copy(switchInlineQueryCurrentChat = v)),
       field(x.switchInlineQueryChosenChat)(shrinkOpt(GenSwitchInlineQueryChosenChat.shrink))(v =>
-        x.copy(switchInlineQueryChosenChat = v)),
-      field(x.copyText)(shrinkOpt(GenCopyTextButton.shrink))(v => x.copy(copyText = v)),
-      field(x.callbackGame)(shrinkOpt(GenCallbackGame.shrink))(v => x.copy(callbackGame = v)),
+        x.copy(switchInlineQueryChosenChat = v)), field(x.copyText)(shrinkOpt(noShrink))(v => x.copy(copyText = v)),
+      field(x.callbackGame)(shrinkOpt(noShrink))(v => x.copy(callbackGame = v)),
       field(x.pay)(shrinkOpt(noShrink))(v => x.copy(pay = v)),
-      field(x.disabled)(shrinkOpt(GenDisabledButton.shrink))(v => x.copy(disabled = v))))
+      field(x.disabled)(shrinkOpt(noShrink))(v => x.copy(disabled = v))))
 }
 
 object GenInlineQuery {
@@ -4113,7 +4076,7 @@ object GenInlineQueryResultsButton {
       InlineQueryResultsButton(text = a0, webApp = a1, startParameter = a2)
     }))
   lazy val shrink: Shrink[InlineQueryResultsButton] = shrinkFields[InlineQueryResultsButton](x =>
-    List(field(x.webApp)(shrinkOpt(GenWebAppInfo.shrink))(v => x.copy(webApp = v)),
+    List(field(x.webApp)(shrinkOpt(noShrink))(v => x.copy(webApp = v)),
       field(x.startParameter)(shrinkOpt(noShrink))(v => x.copy(startParameter = v))))
 }
 
@@ -4128,7 +4091,7 @@ object GenInputChecklist {
         }))
   lazy val shrink: Shrink[InputChecklist] = shrinkFields[InputChecklist](x =>
     List(
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.titleEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(titleEntities = v)),
       field(x.tasks)(shrinkList(GenInputChecklistTask.shrink))(v => x.copy(tasks = v)),
       field(x.othersCanAddTasks)(shrinkOpt(noShrink))(v => x.copy(othersCanAddTasks = v)),
@@ -4143,7 +4106,7 @@ object GenInputChecklistTask {
     }))
   lazy val shrink: Shrink[InputChecklistTask] = shrinkFields[InputChecklistTask](x =>
     List(
-      field(x.parseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(parseMode = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
       field(x.textEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(textEntities = v))))
 }
 
@@ -4161,7 +4124,7 @@ object GenInputPollOption {
     }))
   lazy val shrink: Shrink[InputPollOption] = shrinkFields[InputPollOption](x =>
     List(
-      field(x.textParseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(textParseMode = v)),
+      field(x.textParseMode)(shrinkOpt(noShrink))(v => x.copy(textParseMode = v)),
       field(x.textEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(textEntities = v)),
       field(x.media)(shrinkOpt(GenInputMedia.shrink))(v => x.copy(media = v))))
 }
@@ -4218,9 +4181,8 @@ object GenInputSticker {
     }))
   lazy val shrink: Shrink[InputSticker] = shrinkFields[InputSticker](x =>
     List(
-      field(x.sticker)(GenIFile.shrink)(v => x.copy(sticker = v)),
       field(x.emojiList)(shrinkList(noShrink))(v => x.copy(emojiList = v)),
-      field(x.maskPosition)(shrinkOpt(GenMaskPosition.shrink))(v => x.copy(maskPosition = v)),
+      field(x.maskPosition)(shrinkOpt(noShrink))(v => x.copy(maskPosition = v)),
       field(x.keywords)(shrinkList(noShrink))(v => x.copy(keywords = v))))
 }
 
@@ -4254,7 +4216,7 @@ object GenKeyboardButton {
         x.copy(requestManagedBot = v)), field(x.requestContact)(shrinkOpt(noShrink))(v => x.copy(requestContact = v)),
       field(x.requestLocation)(shrinkOpt(noShrink))(v => x.copy(requestLocation = v)),
       field(x.requestPoll)(shrinkOpt(GenKeyboardButtonPollType.shrink))(v => x.copy(requestPoll = v)),
-      field(x.webApp)(shrinkOpt(GenWebAppInfo.shrink))(v => x.copy(webApp = v))))
+      field(x.webApp)(shrinkOpt(noShrink))(v => x.copy(webApp = v))))
 }
 
 object GenKeyboardButtonPollType {
@@ -4465,7 +4427,7 @@ object GenMessageReactionCountUpdated {
     }))
   lazy val shrink: Shrink[MessageReactionCountUpdated] = shrinkFields[MessageReactionCountUpdated](x =>
     List(field(x.chat)(GenChat.shrink)(v => x.copy(chat = v)),
-      field(x.reactions)(shrinkList(GenReactionCount.shrink))(v => x.copy(reactions = v))))
+      field(x.reactions)(shrinkList(noShrink))(v => x.copy(reactions = v))))
 }
 
 object GenMessageReactionUpdated {
@@ -4482,8 +4444,8 @@ object GenMessageReactionUpdated {
       field(x.chat)(GenChat.shrink)(v => x.copy(chat = v)),
       field(x.user)(shrinkOpt(GenUser.shrink))(v => x.copy(user = v)),
       field(x.actorChat)(shrinkOpt(GenChat.shrink))(v => x.copy(actorChat = v)),
-      field(x.oldReaction)(shrinkList(shrinkOpenEnum(GenReactionType.shrink)))(v => x.copy(oldReaction = v)),
-      field(x.newReaction)(shrinkList(shrinkOpenEnum(GenReactionType.shrink)))(v => x.copy(newReaction = v))))
+      field(x.oldReaction)(shrinkList(noShrink))(v => x.copy(oldReaction = v)),
+      field(x.newReaction)(shrinkList(noShrink))(v => x.copy(newReaction = v))))
 }
 
 object GenOrderInfo {
@@ -4497,7 +4459,7 @@ object GenOrderInfo {
       field(x.name)(shrinkOpt(noShrink))(v => x.copy(name = v)),
       field(x.phoneNumber)(shrinkOpt(noShrink))(v => x.copy(phoneNumber = v)),
       field(x.email)(shrinkOpt(noShrink))(v => x.copy(email = v)),
-      field(x.shippingAddress)(shrinkOpt(GenShippingAddress.shrink))(v => x.copy(shippingAddress = v))))
+      field(x.shippingAddress)(shrinkOpt(noShrink))(v => x.copy(shippingAddress = v))))
 }
 
 object GenOwnedGifts {
@@ -4545,9 +4507,7 @@ object GenPassportData {
       PassportData(credentials = a0, data = a1)
     }))
   lazy val shrink: Shrink[PassportData] = shrinkFields[PassportData](x =>
-    List(
-      field(x.credentials)(GenEncryptedCredentials.shrink)(v => x.copy(credentials = v)),
-      field(x.data)(shrinkList(GenEncryptedPassportElement.shrink))(v => x.copy(data = v))))
+    List(field(x.data)(shrinkList(GenEncryptedPassportElement.shrink))(v => x.copy(data = v))))
 }
 
 object GenPassportFile {
@@ -4632,7 +4592,7 @@ object GenPollMedia {
       field(x.animation)(shrinkOpt(GenAnimation.shrink))(v => x.copy(animation = v)),
       field(x.audio)(shrinkOpt(GenAudio.shrink))(v => x.copy(audio = v)),
       field(x.document)(shrinkOpt(GenDocument.shrink))(v => x.copy(document = v)),
-      field(x.link)(shrinkOpt(GenLink.shrink))(v => x.copy(link = v)),
+      field(x.link)(shrinkOpt(noShrink))(v => x.copy(link = v)),
       field(x.livePhoto)(shrinkOpt(GenLivePhoto.shrink))(v => x.copy(livePhoto = v)),
       field(x.location)(shrinkOpt(GenLocation.shrink))(v => x.copy(location = v)),
       field(x.photo)(shrinkList(GenPhotoSize.shrink))(v => x.copy(photo = v)),
@@ -4734,8 +4694,7 @@ object GenReactionCount {
   lazy val gen: Gen[ReactionCount] = Gen.lzy(deeper(Gen.zip(openEnum(GenReactionType.gen), genInt).map {
     case (a0, a1) => ReactionCount(`type` = a0, totalCount = a1)
   }))
-  lazy val shrink: Shrink[ReactionCount] = shrinkFields[ReactionCount](x =>
-    List(field(x.`type`)(shrinkOpenEnum(GenReactionType.shrink))(v => x.copy(`type` = v))))
+  lazy val shrink: Shrink[ReactionCount] = noShrink
 }
 
 object GenRefundedPayment {
@@ -4763,11 +4722,11 @@ object GenReplyParameters {
   lazy val shrink: Shrink[ReplyParameters] = shrinkFields[ReplyParameters](x =>
     List(
       field(x.messageId)(shrinkOpt(noShrink))(v => x.copy(messageId = v)),
-      field(x.chatId)(shrinkOpt(GenChatId.shrink))(v => x.copy(chatId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.ephemeralMessageId)(shrinkOpt(noShrink))(v => x.copy(ephemeralMessageId = v)),
       field(x.allowSendingWithoutReply)(shrinkOpt(noShrink))(v => x.copy(allowSendingWithoutReply = v)),
       field(x.quote)(shrinkOpt(noShrink))(v => x.copy(quote = v)),
-      field(x.quoteParseMode)(shrinkOpt(GenParseMode.shrink))(v => x.copy(quoteParseMode = v)),
+      field(x.quoteParseMode)(shrinkOpt(noShrink))(v => x.copy(quoteParseMode = v)),
       field(x.quoteEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(quoteEntities = v)),
       field(x.quotePosition)(shrinkOpt(noShrink))(v => x.copy(quotePosition = v)),
       field(x.checklistTaskId)(shrinkOpt(noShrink))(v => x.copy(checklistTaskId = v)),
@@ -4857,14 +4816,13 @@ object GenRichMessageButton {
       field(x.style)(shrinkOpt(noShrink))(v => x.copy(style = v)),
       field(x.url)(shrinkOpt(noShrink))(v => x.copy(url = v)),
       field(x.callbackData)(shrinkOpt(noShrink))(v => x.copy(callbackData = v)),
-      field(x.webApp)(shrinkOpt(GenWebAppInfo.shrink))(v => x.copy(webApp = v)),
+      field(x.webApp)(shrinkOpt(noShrink))(v => x.copy(webApp = v)),
       field(x.loginUrl)(shrinkOpt(GenLoginUrl.shrink))(v => x.copy(loginUrl = v)),
       field(x.switchInlineQuery)(shrinkOpt(noShrink))(v => x.copy(switchInlineQuery = v)),
       field(x.switchInlineQueryCurrentChat)(shrinkOpt(noShrink))(v => x.copy(switchInlineQueryCurrentChat = v)),
       field(x.switchInlineQueryChosenChat)(shrinkOpt(GenSwitchInlineQueryChosenChat.shrink))(v =>
-        x.copy(switchInlineQueryChosenChat = v)),
-      field(x.copyText)(shrinkOpt(GenCopyTextButton.shrink))(v => x.copy(copyText = v)),
-      field(x.disabled)(shrinkOpt(GenDisabledButton.shrink))(v => x.copy(disabled = v))))
+        x.copy(switchInlineQueryChosenChat = v)), field(x.copyText)(shrinkOpt(noShrink))(v => x.copy(copyText = v)),
+      field(x.disabled)(shrinkOpt(noShrink))(v => x.copy(disabled = v))))
 }
 
 object GenSentGuestMessage {
@@ -4911,8 +4869,8 @@ object GenShippingOption {
   lazy val gen: Gen[ShippingOption] = Gen.lzy(deeper(Gen.zip(genString, genString, list(GenLabeledPrice.gen)).map {
     case (a0, a1, a2) => ShippingOption(id = a0, title = a1, prices = a2)
   }))
-  lazy val shrink: Shrink[ShippingOption] = shrinkFields[ShippingOption](x =>
-    List(field(x.prices)(shrinkList(GenLabeledPrice.shrink))(v => x.copy(prices = v))))
+  lazy val shrink: Shrink[ShippingOption] =
+    shrinkFields[ShippingOption](x => List(field(x.prices)(shrinkList(noShrink))(v => x.copy(prices = v))))
 }
 
 object GenShippingQuery {
@@ -4921,9 +4879,8 @@ object GenShippingQuery {
     Gen.lzy(deeper(Gen.zip(genString, GenUser.gen, genString, GenShippingAddress.gen).map { case (a0, a1, a2, a3) =>
       ShippingQuery(id = a0, from = a1, invoicePayload = a2, shippingAddress = a3)
     }))
-  lazy val shrink: Shrink[ShippingQuery] = shrinkFields[ShippingQuery](x =>
-    List(field(x.from)(GenUser.shrink)(v => x.copy(from = v)),
-      field(x.shippingAddress)(GenShippingAddress.shrink)(v => x.copy(shippingAddress = v))))
+  lazy val shrink: Shrink[ShippingQuery] =
+    shrinkFields[ShippingQuery](x => List(field(x.from)(GenUser.shrink)(v => x.copy(from = v))))
 }
 
 object GenStarAmount {
@@ -4978,7 +4935,7 @@ object GenSticker {
       field(x.emoji)(shrinkOpt(noShrink))(v => x.copy(emoji = v)),
       field(x.setName)(shrinkOpt(noShrink))(v => x.copy(setName = v)),
       field(x.premiumAnimation)(shrinkOpt(GenFile.shrink))(v => x.copy(premiumAnimation = v)),
-      field(x.maskPosition)(shrinkOpt(GenMaskPosition.shrink))(v => x.copy(maskPosition = v)),
+      field(x.maskPosition)(shrinkOpt(noShrink))(v => x.copy(maskPosition = v)),
       field(x.customEmojiId)(shrinkOpt(noShrink))(v => x.copy(customEmojiId = v)),
       field(x.needsRepainting)(shrinkOpt(noShrink))(v => x.copy(needsRepainting = v)),
       field(x.fileSize)(shrinkOpt(noShrink))(v => x.copy(fileSize = v))))
@@ -5007,9 +4964,8 @@ object GenStoryArea {
   lazy val gen: Gen[StoryArea] = Gen.lzy(deeper(Gen.zip(GenStoryAreaPosition.gen, GenStoryAreaType.gen).map {
     case (a0, a1) => StoryArea(position = a0, `type` = a1)
   }))
-  lazy val shrink: Shrink[StoryArea] = shrinkFields[StoryArea](x =>
-    List(field(x.position)(GenStoryAreaPosition.shrink)(v => x.copy(position = v)),
-      field(x.`type`)(GenStoryAreaType.shrink)(v => x.copy(`type` = v))))
+  lazy val shrink: Shrink[StoryArea] =
+    shrinkFields[StoryArea](x => List(field(x.`type`)(GenStoryAreaType.shrink)(v => x.copy(`type` = v))))
 }
 
 object GenStoryAreaPosition {
@@ -5049,9 +5005,7 @@ object GenSuggestedPostApprovalFailed {
       SuggestedPostApprovalFailed(price = a0, suggestedPostMessage = a1)
     }))
   lazy val shrink: Shrink[SuggestedPostApprovalFailed] = shrinkFields[SuggestedPostApprovalFailed](x =>
-    List(
-      field(x.price)(GenSuggestedPostPrice.shrink)(v => x.copy(price = v)),
-      field(x.suggestedPostMessage)(shrinkOpt(GenMessage.shrink))(v => x.copy(suggestedPostMessage = v))))
+    List(field(x.suggestedPostMessage)(shrinkOpt(GenMessage.shrink))(v => x.copy(suggestedPostMessage = v))))
 }
 
 object GenSuggestedPostApproved {
@@ -5063,7 +5017,7 @@ object GenSuggestedPostApproved {
   lazy val shrink: Shrink[SuggestedPostApproved] = shrinkFields[SuggestedPostApproved](x =>
     List(
       field(x.suggestedPostMessage)(shrinkOpt(GenMessage.shrink))(v => x.copy(suggestedPostMessage = v)),
-      field(x.price)(shrinkOpt(GenSuggestedPostPrice.shrink))(v => x.copy(price = v))))
+      field(x.price)(shrinkOpt(noShrink))(v => x.copy(price = v))))
 }
 
 object GenSuggestedPostDeclined {
@@ -5084,7 +5038,7 @@ object GenSuggestedPostInfo {
       SuggestedPostInfo(state = a0, price = a1, sendDate = a2)
     }))
   lazy val shrink: Shrink[SuggestedPostInfo] = shrinkFields[SuggestedPostInfo](x =>
-    List(field(x.price)(shrinkOpt(GenSuggestedPostPrice.shrink))(v => x.copy(price = v)),
+    List(field(x.price)(shrinkOpt(noShrink))(v => x.copy(price = v)),
       field(x.sendDate)(shrinkOpt(noShrink))(v => x.copy(sendDate = v))))
 }
 
@@ -5108,7 +5062,7 @@ object GenSuggestedPostParameters {
       SuggestedPostParameters(price = a0, sendDate = a1)
     }))
   lazy val shrink: Shrink[SuggestedPostParameters] = shrinkFields[SuggestedPostParameters](x =>
-    List(field(x.price)(shrinkOpt(GenSuggestedPostPrice.shrink))(v => x.copy(price = v)),
+    List(field(x.price)(shrinkOpt(noShrink))(v => x.copy(price = v)),
       field(x.sendDate)(shrinkOpt(noShrink))(v => x.copy(sendDate = v))))
 }
 
@@ -5172,7 +5126,6 @@ object GenUniqueGift {
     List(
       field(x.model)(GenUniqueGiftModel.shrink)(v => x.copy(model = v)),
       field(x.symbol)(GenUniqueGiftSymbol.shrink)(v => x.copy(symbol = v)),
-      field(x.backdrop)(GenUniqueGiftBackdrop.shrink)(v => x.copy(backdrop = v)),
       field(x.isPremium)(shrinkOpt(noShrink))(v => x.copy(isPremium = v)),
       field(x.isBurned)(shrinkOpt(noShrink))(v => x.copy(isBurned = v)),
       field(x.isFromBlockchain)(shrinkOpt(noShrink))(v => x.copy(isFromBlockchain = v)),
@@ -5186,8 +5139,7 @@ object GenUniqueGiftBackdrop {
     Gen.lzy(deeper(Gen.zip(genString, GenUniqueGiftBackdropColors.gen, genInt).map { case (a0, a1, a2) =>
       UniqueGiftBackdrop(name = a0, colors = a1, rarityPerMille = a2)
     }))
-  lazy val shrink: Shrink[UniqueGiftBackdrop] = shrinkFields[UniqueGiftBackdrop](x =>
-    List(field(x.colors)(GenUniqueGiftBackdropColors.shrink)(v => x.copy(colors = v))))
+  lazy val shrink: Shrink[UniqueGiftBackdrop] = noShrink
 }
 
 object GenUniqueGiftBackdropColors {
