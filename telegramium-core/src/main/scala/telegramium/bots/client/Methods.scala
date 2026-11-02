@@ -16,6 +16,7 @@ import telegramium.bots.InlineQueryResultMpeg4Gif
 import telegramium.bots.InlineQueryResultCachedMpeg4Gif
 import telegramium.bots.InlineQueryResultCachedDocument
 import telegramium.bots.InlineQueryResultCachedVideo
+import telegramium.bots.InlineQueryResultGame
 import telegramium.bots.InlineQueryResultCachedPhoto
 import telegramium.bots.InlineQueryResultCachedSticker
 import telegramium.bots.InlineQueryResultVideo
@@ -24,11 +25,14 @@ import telegramium.bots.InlineQueryResultCachedGif
 import telegramium.bots.InlineQueryResultLocation
 import telegramium.bots.InlineQueryResultVoice
 import telegramium.bots.InputMedia
+import telegramium.bots.InputMediaLocation
 import telegramium.bots.InputMediaAnimation
+import telegramium.bots.InputMediaLink
 import telegramium.bots.InputMediaVoiceNote
 import telegramium.bots.InputMediaPhoto
 import telegramium.bots.InputMediaVideo
 import telegramium.bots.InputMediaLivePhoto
+import telegramium.bots.InputMediaVenue
 import telegramium.bots.InputMediaDocument
 import telegramium.bots.InputMediaSticker
 import telegramium.bots.InputMediaAudio
@@ -45,19 +49,37 @@ import telegramium.bots.InputProfilePhoto
 import telegramium.bots.InputProfilePhotoAnimated
 import telegramium.bots.InputProfilePhotoStatic
 import telegramium.bots.InputMessageContent
+import telegramium.bots.InputVenueMessageContent
+import telegramium.bots.InputInvoiceMessageContent
+import telegramium.bots.InputContactMessageContent
+import telegramium.bots.InputLocationMessageContent
+import telegramium.bots.InputTextMessageContent
 import telegramium.bots.InputRichMessageContent
 import telegramium.bots.InputRichBlock
+import telegramium.bots.InputRichBlockTable
+import telegramium.bots.InputRichBlockAnchor
 import telegramium.bots.InputRichBlockVoiceNote
 import telegramium.bots.InputRichBlockList
+import telegramium.bots.InputRichBlockParagraph
+import telegramium.bots.InputRichBlockPreformatted
 import telegramium.bots.InputRichBlockAudio
+import telegramium.bots.InputRichBlockExpandableBlockQuotation
 import telegramium.bots.InputRichBlockCollage
+import telegramium.bots.InputRichBlockFooter
 import telegramium.bots.InputRichBlockDocument
+import telegramium.bots.InputRichBlockMathematicalExpression
+import telegramium.bots.InputRichBlockDivider
 import telegramium.bots.InputRichBlockBlockQuotation
+import telegramium.bots.InputRichBlockThinking
+import telegramium.bots.InputRichBlockMap
 import telegramium.bots.InputRichBlockSlideshow
 import telegramium.bots.InputRichBlockPhoto
 import telegramium.bots.InputRichBlockAnimation
+import telegramium.bots.InputRichBlockSectionHeading
 import telegramium.bots.InputRichBlockDetails
+import telegramium.bots.InputRichBlockButtons
 import telegramium.bots.InputRichBlockVideo
+import telegramium.bots.InputRichBlockPullQuotation
 import telegramium.bots.InputRichMessageMedia
 import telegramium.bots.InputRichBlockListItem
 import telegramium.bots._
@@ -110,7 +132,8 @@ trait Methods {
     value match {
       case v: InputSticker =>
         val (sticker1, stickerFiles) = MethodReq.attachFile(name + "_sticker", v.sticker)
-        (v.copy(sticker = sticker1), stickerFiles)
+        val files                    = stickerFiles
+        if (files.isEmpty) (v, files) else (v.copy(sticker = sticker1), files)
     }
 
   private def attachFiles_InlineQueryResult(
@@ -124,7 +147,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultVenue =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -132,7 +156,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultContact =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -140,7 +165,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultPhoto =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -148,7 +174,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultDocument =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -156,7 +183,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultCachedVoice =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -164,11 +192,13 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultArticle =>
       val (inputMessageContent1, inputMessageContentFiles) =
         attachFiles_InputMessageContent(name + "_input_message_content", v.inputMessageContent)
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultAudio =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -176,7 +206,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultMpeg4Gif =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -184,7 +215,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultCachedMpeg4Gif =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -192,7 +224,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultCachedDocument =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -200,7 +233,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultCachedVideo =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -208,7 +242,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultCachedPhoto =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -216,7 +251,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultCachedSticker =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -224,7 +260,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultVideo =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -232,7 +269,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultCachedAudio =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -240,7 +278,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultCachedGif =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -248,7 +287,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultLocation =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -256,7 +296,8 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
     case v: InlineQueryResultVoice =>
       val (inputMessageContent1, inputMessageContentFiles) = v.inputMessageContent match {
         case Some(x0) =>
@@ -264,42 +305,53 @@ trait Methods {
           (Some(a0), f0)
         case None => (None, Map.empty[String, IFile])
       }
-      (v.copy(inputMessageContent = inputMessageContent1), inputMessageContentFiles)
-    case v => (v, Map.empty[String, IFile])
+      val files = inputMessageContentFiles
+      if (files.isEmpty) (v, files) else (v.copy(inputMessageContent = inputMessageContent1), files)
+    case v: InlineQueryResultGame => (v, Map.empty[String, IFile])
   }
 
   private def attachFiles_InputMedia(name: String, value: InputMedia): (InputMedia, Map[String, IFile]) = value match {
     case v: InputMediaAnimation =>
       val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
       val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
-      (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
+      val files                        = mediaFiles ++ thumbnailFiles
+      if (files.isEmpty) (v, files) else (v.copy(media = media1, thumbnail = thumbnail1), files)
     case v: InputMediaVoiceNote =>
       val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
-      (v.copy(media = media1), mediaFiles)
+      val files                = mediaFiles
+      if (files.isEmpty) (v, files) else (v.copy(media = media1), files)
     case v: InputMediaPhoto =>
       val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
-      (v.copy(media = media1), mediaFiles)
+      val files                = mediaFiles
+      if (files.isEmpty) (v, files) else (v.copy(media = media1), files)
     case v: InputMediaVideo =>
       val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
       val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
       val (cover1, coverFiles)         = MethodReq.attachFile(name + "_cover", v.cover)
-      (v.copy(media = media1, thumbnail = thumbnail1, cover = cover1), mediaFiles ++ thumbnailFiles ++ coverFiles)
+      val files                        = mediaFiles ++ thumbnailFiles ++ coverFiles
+      if (files.isEmpty) (v, files) else (v.copy(media = media1, thumbnail = thumbnail1, cover = cover1), files)
     case v: InputMediaLivePhoto =>
       val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
       val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
-      (v.copy(media = media1, photo = photo1), mediaFiles ++ photoFiles)
+      val files                = mediaFiles ++ photoFiles
+      if (files.isEmpty) (v, files) else (v.copy(media = media1, photo = photo1), files)
     case v: InputMediaDocument =>
       val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
       val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
-      (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
+      val files                        = mediaFiles ++ thumbnailFiles
+      if (files.isEmpty) (v, files) else (v.copy(media = media1, thumbnail = thumbnail1), files)
     case v: InputMediaSticker =>
       val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
-      (v.copy(media = media1), mediaFiles)
+      val files                = mediaFiles
+      if (files.isEmpty) (v, files) else (v.copy(media = media1), files)
     case v: InputMediaAudio =>
       val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
       val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
-      (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
-    case v => (v, Map.empty[String, IFile])
+      val files                        = mediaFiles ++ thumbnailFiles
+      if (files.isEmpty) (v, files) else (v.copy(media = media1, thumbnail = thumbnail1), files)
+    case v: InputMediaLocation => (v, Map.empty[String, IFile])
+    case v: InputMediaLink     => (v, Map.empty[String, IFile])
+    case v: InputMediaVenue    => (v, Map.empty[String, IFile])
   }
 
   private def attachFiles_InputRichMessage(
@@ -309,17 +361,20 @@ trait Methods {
     case v: InputRichMessage =>
       val (blocks1, blocksFiles) = {
         val (a0, f0) = v.blocks.zipWithIndex.map { case (x0, i0) =>
-          attachFiles_InputRichBlock(name + "_blocks" + i0, x0)
+          attachFiles_InputRichBlock(name + "_blocks_" + i0, x0)
         }.unzip
-        (a0, f0.flatten.toMap)
+        val files0 = f0.flatten.toMap
+        (if (files0.isEmpty) v.blocks else a0, files0)
       }
       val (media1, mediaFiles) = {
         val (a0, f0) = v.media.zipWithIndex.map { case (x0, i0) =>
-          attachFiles_InputRichMessageMedia(name + "_media" + i0, x0)
+          attachFiles_InputRichMessageMedia(name + "_media_" + i0, x0)
         }.unzip
-        (a0, f0.flatten.toMap)
+        val files0 = f0.flatten.toMap
+        (if (files0.isEmpty) v.media else a0, files0)
       }
-      (v.copy(blocks = blocks1, media = media1), blocksFiles ++ mediaFiles)
+      val files = blocksFiles ++ mediaFiles
+      if (files.isEmpty) (v, files) else (v.copy(blocks = blocks1, media = media1), files)
   }
 
   private def attachFiles_InputStoryContent(
@@ -328,26 +383,31 @@ trait Methods {
   ): (InputStoryContent, Map[String, IFile]) = value match {
     case v: InputStoryContentPhoto =>
       val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
-      (v.copy(photo = photo1), photoFiles)
+      val files                = photoFiles
+      if (files.isEmpty) (v, files) else (v.copy(photo = photo1), files)
     case v: InputStoryContentVideo =>
       val (video1, videoFiles) = MethodReq.attachFile(name + "_video", v.video)
-      (v.copy(video = video1), videoFiles)
+      val files                = videoFiles
+      if (files.isEmpty) (v, files) else (v.copy(video = video1), files)
   }
 
   private def attachFiles_InputPaidMedia(name: String, value: InputPaidMedia): (InputPaidMedia, Map[String, IFile]) =
     value match {
       case v: InputPaidMediaPhoto =>
         val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
-        (v.copy(media = media1), mediaFiles)
+        val files                = mediaFiles
+        if (files.isEmpty) (v, files) else (v.copy(media = media1), files)
       case v: InputPaidMediaLivePhoto =>
         val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
         val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
-        (v.copy(media = media1, photo = photo1), mediaFiles ++ photoFiles)
+        val files                = mediaFiles ++ photoFiles
+        if (files.isEmpty) (v, files) else (v.copy(media = media1, photo = photo1), files)
       case v: InputPaidMediaVideo =>
         val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
         val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
         val (cover1, coverFiles)         = MethodReq.attachFile(name + "_cover", v.cover)
-        (v.copy(media = media1, thumbnail = thumbnail1, cover = cover1), mediaFiles ++ thumbnailFiles ++ coverFiles)
+        val files                        = mediaFiles ++ thumbnailFiles ++ coverFiles
+        if (files.isEmpty) (v, files) else (v.copy(media = media1, thumbnail = thumbnail1, cover = cover1), files)
     }
 
   private def attachFiles_InputPollOption(name: String, value: InputPollOption): (InputPollOption, Map[String, IFile]) =
@@ -359,7 +419,8 @@ trait Methods {
             (Some(a0), f0)
           case None => (None, Map.empty[String, IFile])
         }
-        (v.copy(media = media1), mediaFiles)
+        val files = mediaFiles
+        if (files.isEmpty) (v, files) else (v.copy(media = media1), files)
     }
 
   private def attachFiles_InputProfilePhoto(
@@ -368,10 +429,12 @@ trait Methods {
   ): (InputProfilePhoto, Map[String, IFile]) = value match {
     case v: InputProfilePhotoAnimated =>
       val (animation1, animationFiles) = MethodReq.attachFile(name + "_animation", v.animation)
-      (v.copy(animation = animation1), animationFiles)
+      val files                        = animationFiles
+      if (files.isEmpty) (v, files) else (v.copy(animation = animation1), files)
     case v: InputProfilePhotoStatic =>
       val (photo1, photoFiles) = MethodReq.attachFile(name + "_photo", v.photo)
-      (v.copy(photo = photo1), photoFiles)
+      val files                = photoFiles
+      if (files.isEmpty) (v, files) else (v.copy(photo = photo1), files)
   }
 
   private def attachFiles_InputMessageContent(
@@ -380,71 +443,104 @@ trait Methods {
   ): (InputMessageContent, Map[String, IFile]) = value match {
     case v: InputRichMessageContent =>
       val (richMessage1, richMessageFiles) = attachFiles_InputRichMessage(name + "_rich_message", v.richMessage)
-      (v.copy(richMessage = richMessage1), richMessageFiles)
-    case v => (v, Map.empty[String, IFile])
+      val files                            = richMessageFiles
+      if (files.isEmpty) (v, files) else (v.copy(richMessage = richMessage1), files)
+    case v: InputVenueMessageContent    => (v, Map.empty[String, IFile])
+    case v: InputInvoiceMessageContent  => (v, Map.empty[String, IFile])
+    case v: InputContactMessageContent  => (v, Map.empty[String, IFile])
+    case v: InputLocationMessageContent => (v, Map.empty[String, IFile])
+    case v: InputTextMessageContent     => (v, Map.empty[String, IFile])
   }
 
   private def attachFiles_InputRichBlock(name: String, value: InputRichBlock): (InputRichBlock, Map[String, IFile]) =
     value match {
       case v: InputRichBlockVoiceNote =>
         val (voiceNote1, voiceNoteFiles) = attachFiles_InputMediaVoiceNote(name + "_voice_note", v.voiceNote)
-        (v.copy(voiceNote = voiceNote1), voiceNoteFiles)
+        val files                        = voiceNoteFiles
+        if (files.isEmpty) (v, files) else (v.copy(voiceNote = voiceNote1), files)
       case v: InputRichBlockList =>
         val (items1, itemsFiles) = {
           val (a0, f0) = v.items.zipWithIndex.map { case (x0, i0) =>
-            attachFiles_InputRichBlockListItem(name + "_items" + i0, x0)
+            attachFiles_InputRichBlockListItem(name + "_items_" + i0, x0)
           }.unzip
-          (a0, f0.flatten.toMap)
+          val files0 = f0.flatten.toMap
+          (if (files0.isEmpty) v.items else a0, files0)
         }
-        (v.copy(items = items1), itemsFiles)
+        val files = itemsFiles
+        if (files.isEmpty) (v, files) else (v.copy(items = items1), files)
       case v: InputRichBlockAudio =>
         val (audio1, audioFiles) = attachFiles_InputMediaAudio(name + "_audio", v.audio)
-        (v.copy(audio = audio1), audioFiles)
+        val files                = audioFiles
+        if (files.isEmpty) (v, files) else (v.copy(audio = audio1), files)
       case v: InputRichBlockCollage =>
         val (blocks1, blocksFiles) = {
           val (a0, f0) = v.blocks.zipWithIndex.map { case (x0, i0) =>
-            attachFiles_InputRichBlock(name + "_blocks" + i0, x0)
+            attachFiles_InputRichBlock(name + "_blocks_" + i0, x0)
           }.unzip
-          (a0, f0.flatten.toMap)
+          val files0 = f0.flatten.toMap
+          (if (files0.isEmpty) v.blocks else a0, files0)
         }
-        (v.copy(blocks = blocks1), blocksFiles)
+        val files = blocksFiles
+        if (files.isEmpty) (v, files) else (v.copy(blocks = blocks1), files)
       case v: InputRichBlockDocument =>
         val (document1, documentFiles) = attachFiles_InputMediaDocument(name + "_document", v.document)
-        (v.copy(document = document1), documentFiles)
+        val files                      = documentFiles
+        if (files.isEmpty) (v, files) else (v.copy(document = document1), files)
       case v: InputRichBlockBlockQuotation =>
         val (blocks1, blocksFiles) = {
           val (a0, f0) = v.blocks.zipWithIndex.map { case (x0, i0) =>
-            attachFiles_InputRichBlock(name + "_blocks" + i0, x0)
+            attachFiles_InputRichBlock(name + "_blocks_" + i0, x0)
           }.unzip
-          (a0, f0.flatten.toMap)
+          val files0 = f0.flatten.toMap
+          (if (files0.isEmpty) v.blocks else a0, files0)
         }
-        (v.copy(blocks = blocks1), blocksFiles)
+        val files = blocksFiles
+        if (files.isEmpty) (v, files) else (v.copy(blocks = blocks1), files)
       case v: InputRichBlockSlideshow =>
         val (blocks1, blocksFiles) = {
           val (a0, f0) = v.blocks.zipWithIndex.map { case (x0, i0) =>
-            attachFiles_InputRichBlock(name + "_blocks" + i0, x0)
+            attachFiles_InputRichBlock(name + "_blocks_" + i0, x0)
           }.unzip
-          (a0, f0.flatten.toMap)
+          val files0 = f0.flatten.toMap
+          (if (files0.isEmpty) v.blocks else a0, files0)
         }
-        (v.copy(blocks = blocks1), blocksFiles)
+        val files = blocksFiles
+        if (files.isEmpty) (v, files) else (v.copy(blocks = blocks1), files)
       case v: InputRichBlockPhoto =>
         val (photo1, photoFiles) = attachFiles_InputMediaPhoto(name + "_photo", v.photo)
-        (v.copy(photo = photo1), photoFiles)
+        val files                = photoFiles
+        if (files.isEmpty) (v, files) else (v.copy(photo = photo1), files)
       case v: InputRichBlockAnimation =>
         val (animation1, animationFiles) = attachFiles_InputMediaAnimation(name + "_animation", v.animation)
-        (v.copy(animation = animation1), animationFiles)
+        val files                        = animationFiles
+        if (files.isEmpty) (v, files) else (v.copy(animation = animation1), files)
       case v: InputRichBlockDetails =>
         val (blocks1, blocksFiles) = {
           val (a0, f0) = v.blocks.zipWithIndex.map { case (x0, i0) =>
-            attachFiles_InputRichBlock(name + "_blocks" + i0, x0)
+            attachFiles_InputRichBlock(name + "_blocks_" + i0, x0)
           }.unzip
-          (a0, f0.flatten.toMap)
+          val files0 = f0.flatten.toMap
+          (if (files0.isEmpty) v.blocks else a0, files0)
         }
-        (v.copy(blocks = blocks1), blocksFiles)
+        val files = blocksFiles
+        if (files.isEmpty) (v, files) else (v.copy(blocks = blocks1), files)
       case v: InputRichBlockVideo =>
         val (video1, videoFiles) = attachFiles_InputMediaVideo(name + "_video", v.video)
-        (v.copy(video = video1), videoFiles)
-      case v => (v, Map.empty[String, IFile])
+        val files                = videoFiles
+        if (files.isEmpty) (v, files) else (v.copy(video = video1), files)
+      case v: InputRichBlockTable                    => (v, Map.empty[String, IFile])
+      case v: InputRichBlockAnchor                   => (v, Map.empty[String, IFile])
+      case v: InputRichBlockParagraph                => (v, Map.empty[String, IFile])
+      case v: InputRichBlockPreformatted             => (v, Map.empty[String, IFile])
+      case v: InputRichBlockExpandableBlockQuotation => (v, Map.empty[String, IFile])
+      case v: InputRichBlockFooter                   => (v, Map.empty[String, IFile])
+      case v: InputRichBlockMathematicalExpression   => (v, Map.empty[String, IFile])
+      case InputRichBlockDivider                     => (InputRichBlockDivider, Map.empty[String, IFile])
+      case v: InputRichBlockThinking                 => (v, Map.empty[String, IFile])
+      case v: InputRichBlockMap                      => (v, Map.empty[String, IFile])
+      case v: InputRichBlockSectionHeading           => (v, Map.empty[String, IFile])
+      case v: InputRichBlockButtons                  => (v, Map.empty[String, IFile])
+      case v: InputRichBlockPullQuotation            => (v, Map.empty[String, IFile])
     }
 
   private def attachFiles_InputRichMessageMedia(
@@ -453,7 +549,8 @@ trait Methods {
   ): (InputRichMessageMedia, Map[String, IFile]) = value match {
     case v: InputRichMessageMedia =>
       val (media1, mediaFiles) = attachFiles_InputMedia(name + "_media", v.media)
-      (v.copy(media = media1), mediaFiles)
+      val files                = mediaFiles
+      if (files.isEmpty) (v, files) else (v.copy(media = media1), files)
   }
 
   private def attachFiles_InputMediaVoiceNote(
@@ -462,7 +559,8 @@ trait Methods {
   ): (InputMediaVoiceNote, Map[String, IFile]) = value match {
     case v: InputMediaVoiceNote =>
       val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
-      (v.copy(media = media1), mediaFiles)
+      val files                = mediaFiles
+      if (files.isEmpty) (v, files) else (v.copy(media = media1), files)
   }
 
   private def attachFiles_InputRichBlockListItem(
@@ -472,11 +570,13 @@ trait Methods {
     case v: InputRichBlockListItem =>
       val (blocks1, blocksFiles) = {
         val (a0, f0) = v.blocks.zipWithIndex.map { case (x0, i0) =>
-          attachFiles_InputRichBlock(name + "_blocks" + i0, x0)
+          attachFiles_InputRichBlock(name + "_blocks_" + i0, x0)
         }.unzip
-        (a0, f0.flatten.toMap)
+        val files0 = f0.flatten.toMap
+        (if (files0.isEmpty) v.blocks else a0, files0)
       }
-      (v.copy(blocks = blocks1), blocksFiles)
+      val files = blocksFiles
+      if (files.isEmpty) (v, files) else (v.copy(blocks = blocks1), files)
   }
 
   private def attachFiles_InputMediaAudio(name: String, value: InputMediaAudio): (InputMediaAudio, Map[String, IFile]) =
@@ -484,7 +584,8 @@ trait Methods {
       case v: InputMediaAudio =>
         val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
         val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
-        (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
+        val files                        = mediaFiles ++ thumbnailFiles
+        if (files.isEmpty) (v, files) else (v.copy(media = media1, thumbnail = thumbnail1), files)
     }
 
   private def attachFiles_InputMediaDocument(
@@ -494,14 +595,16 @@ trait Methods {
     case v: InputMediaDocument =>
       val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
       val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
-      (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
+      val files                        = mediaFiles ++ thumbnailFiles
+      if (files.isEmpty) (v, files) else (v.copy(media = media1, thumbnail = thumbnail1), files)
   }
 
   private def attachFiles_InputMediaPhoto(name: String, value: InputMediaPhoto): (InputMediaPhoto, Map[String, IFile]) =
     value match {
       case v: InputMediaPhoto =>
         val (media1, mediaFiles) = MethodReq.attachFile(name + "_media", v.media)
-        (v.copy(media = media1), mediaFiles)
+        val files                = mediaFiles
+        if (files.isEmpty) (v, files) else (v.copy(media = media1), files)
     }
 
   private def attachFiles_InputMediaAnimation(
@@ -511,7 +614,8 @@ trait Methods {
     case v: InputMediaAnimation =>
       val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
       val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
-      (v.copy(media = media1, thumbnail = thumbnail1), mediaFiles ++ thumbnailFiles)
+      val files                        = mediaFiles ++ thumbnailFiles
+      if (files.isEmpty) (v, files) else (v.copy(media = media1, thumbnail = thumbnail1), files)
   }
 
   private def attachFiles_InputMediaVideo(name: String, value: InputMediaVideo): (InputMediaVideo, Map[String, IFile]) =
@@ -520,7 +624,8 @@ trait Methods {
         val (media1, mediaFiles)         = MethodReq.attachFile(name + "_media", v.media)
         val (thumbnail1, thumbnailFiles) = MethodReq.attachFile(name + "_thumbnail", v.thumbnail)
         val (cover1, coverFiles)         = MethodReq.attachFile(name + "_cover", v.cover)
-        (v.copy(media = media1, thumbnail = thumbnail1, cover = cover1), mediaFiles ++ thumbnailFiles ++ coverFiles)
+        val files                        = mediaFiles ++ thumbnailFiles ++ coverFiles
+        if (files.isEmpty) (v, files) else (v.copy(media = media1, thumbnail = thumbnail1, cover = cover1), files)
     }
 
   /** Use this method to add a new sticker to a set created by the bot. Emoji sticker sets can have up to 200 stickers.
@@ -638,9 +743,10 @@ trait Methods {
   ): Method[Boolean] = {
     val (resultsAttached, resultsFiles) = {
       val (a0, f0) = results.zipWithIndex.map { case (x0, i0) =>
-        attachFiles_InlineQueryResult("results" + i0, x0)
+        attachFiles_InlineQueryResult("results_" + i0, x0)
       }.unzip
-      (a0, f0.flatten.toMap)
+      val files0 = f0.flatten.toMap
+      (if (files0.isEmpty) results else a0, files0)
     }
     val req = AnswerInlineQueryReq(inlineQueryId, resultsAttached, cacheTime, isPersonal, nextOffset, button)
     MethodReq[Boolean]("answerInlineQuery", req.asJson, resultsFiles)
@@ -1238,8 +1344,9 @@ trait Methods {
     needsRepainting: Option[Boolean] = Option.empty
   ): Method[Boolean] = {
     val (stickersAttached, stickersFiles) = {
-      val (a0, f0) = stickers.zipWithIndex.map { case (x0, i0) => attachFiles_InputSticker("stickers" + i0, x0) }.unzip
-      (a0, f0.flatten.toMap)
+      val (a0, f0) = stickers.zipWithIndex.map { case (x0, i0) => attachFiles_InputSticker("stickers_" + i0, x0) }.unzip
+      val files0   = f0.flatten.toMap
+      (if (files0.isEmpty) stickers else a0, files0)
     }
     val req = CreateNewStickerSetReq(userId, name, title, stickersAttached, stickerType, needsRepainting)
     MethodReq[Boolean]("createNewStickerSet", req.asJson, stickersFiles)
@@ -4437,8 +4544,9 @@ trait Methods {
     replyParameters: Option[ReplyParameters] = Option.empty
   ): Method[List[Message]] = {
     val (mediaAttached, mediaFiles) = {
-      val (a0, f0) = media.zipWithIndex.map { case (x0, i0) => attachFiles_InputMedia("media" + i0, x0) }.unzip
-      (a0, f0.flatten.toMap)
+      val (a0, f0) = media.zipWithIndex.map { case (x0, i0) => attachFiles_InputMedia("media_" + i0, x0) }.unzip
+      val files0   = f0.flatten.toMap
+      (if (files0.isEmpty) media else a0, files0)
     }
     val req = SendMediaGroupReq(
       chatId,
@@ -4662,8 +4770,9 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val (mediaAttached, mediaFiles) = {
-      val (a0, f0) = media.zipWithIndex.map { case (x0, i0) => attachFiles_InputPaidMedia("media" + i0, x0) }.unzip
-      (a0, f0.flatten.toMap)
+      val (a0, f0) = media.zipWithIndex.map { case (x0, i0) => attachFiles_InputPaidMedia("media_" + i0, x0) }.unzip
+      val files0   = f0.flatten.toMap
+      (if (files0.isEmpty) media else a0, files0)
     }
     val req = SendPaidMediaReq(
       chatId,
@@ -4923,8 +5032,11 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val (optionsAttached, optionsFiles) = {
-      val (a0, f0) = options.zipWithIndex.map { case (x0, i0) => attachFiles_InputPollOption("options" + i0, x0) }.unzip
-      (a0, f0.flatten.toMap)
+      val (a0, f0) = options.zipWithIndex.map { case (x0, i0) =>
+        attachFiles_InputPollOption("options_" + i0, x0)
+      }.unzip
+      val files0 = f0.flatten.toMap
+      (if (files0.isEmpty) options else a0, files0)
     }
     val (explanationMediaAttached, explanationMediaFiles) = explanationMedia match {
       case Some(x0) =>

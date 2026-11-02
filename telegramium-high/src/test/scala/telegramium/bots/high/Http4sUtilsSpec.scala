@@ -117,9 +117,9 @@ class Http4sUtilsSpec extends AnyFreeSpec with Matchers {
     )
     val media = parse(formFields(multipart)("media")).map(_.hcursor)
 
-    media.map(_.downN(0).get[String]("media")) shouldBe Right(Right("attach://media0_media"))
+    media.map(_.downN(0).get[String]("media")) shouldBe Right(Right("attach://media_0_media"))
     media.map(_.downN(1).get[String]("media")) shouldBe Right(Right("file_id"))
-    MultipartFields.fileParts(multipart) shouldBe Vector("media0_media" -> "document.txt")
+    MultipartFields.fileParts(multipart) shouldBe Vector("media_0_media" -> "document.txt")
   }
 
   // https://github.com/apimorphism/iozhik/issues/21
@@ -139,13 +139,13 @@ class Http4sUtilsSpec extends AnyFreeSpec with Matchers {
     val options = parse(fields("options")).map(_.hcursor)
 
     options.map(_.downN(0).downField("media").get[String]("media")) shouldBe Right(
-      Right("attach://options0_media_media")
+      Right("attach://options_0_media_media")
     )
     options.map(_.downN(1).downField("media").get[String]("media")) shouldBe Right(Right("file_id"))
     parse(fields("media")).map(_.hcursor.get[String]("media")) shouldBe Right(Right("attach://media_media"))
     MultipartFields.fileParts(multipart).sorted shouldBe Vector(
-      "media_media"          -> "document.txt",
-      "options0_media_media" -> "document.txt"
+      "media_media"           -> "document.txt",
+      "options_0_media_media" -> "document.txt"
     )
   }
 
@@ -161,16 +161,16 @@ class Http4sUtilsSpec extends AnyFreeSpec with Matchers {
     val rich      = parse(formFields(multipart)("rich_message")).map(_.hcursor)
 
     rich.map(_.downField("media").downN(0).downField("media").get[String]("media")) shouldBe Right(
-      Right("attach://rich_message_media0_media_media")
+      Right("attach://rich_message_media_0_media_media")
     )
     rich.map(_.downField("blocks").downN(0).downField("photo").get[String]("media")) shouldBe Right(Right("file_id"))
     rich.map(
       _.downField("blocks").downN(1).downField("blocks").downN(0).downField("photo").get[String]("media")
     ) shouldBe
-      Right(Right("attach://rich_message_blocks1_blocks0_photo_media"))
+      Right(Right("attach://rich_message_blocks_1_blocks_0_photo_media"))
     MultipartFields.fileParts(multipart).sorted shouldBe Vector(
-      "rich_message_blocks1_blocks0_photo_media" -> "document.txt",
-      "rich_message_media0_media_media"          -> "document.txt"
+      "rich_message_blocks_1_blocks_0_photo_media" -> "document.txt",
+      "rich_message_media_0_media_media"           -> "document.txt"
     )
   }
 
@@ -186,9 +186,9 @@ class Http4sUtilsSpec extends AnyFreeSpec with Matchers {
 
     parse(formFields(multipart)("rich_message"))
       .map(_.hcursor.downField("media").downN(0).downField("media").get[String]("media")) shouldBe Right(
-      Right("attach://rich_message_media0_media_media")
+      Right("attach://rich_message_media_0_media_media")
     )
-    MultipartFields.fileParts(multipart) shouldBe Vector("rich_message_media0_media_media" -> "document.txt")
+    MultipartFields.fileParts(multipart) shouldBe Vector("rich_message_media_0_media_media" -> "document.txt")
   }
 
   "should skip null fields and the fields of uploaded files" in {

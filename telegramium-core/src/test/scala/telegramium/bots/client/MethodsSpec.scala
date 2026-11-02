@@ -33,18 +33,18 @@ class MethodsSpec extends AnyFunSuite with Methods {
     val media   = List(InputMediaPhoto(media = file), InputMediaPhoto(media = file2))
     val payload = payloadOf(sendMediaGroup(ChatIntId(1L), media = media))
 
-    assert(payload.files == Map("media0_media" -> file, "media1_media" -> file2))
-    assert(str(payload.json, "media", 0, "media").contains("attach://media0_media"))
-    assert(str(payload.json, "media", 1, "media").contains("attach://media1_media"))
+    assert(payload.files == Map("media_0_media" -> file, "media_1_media" -> file2))
+    assert(str(payload.json, "media", 0, "media").contains("attach://media_0_media"))
+    assert(str(payload.json, "media", 1, "media").contains("attach://media_1_media"))
   }
 
   test("sendMediaGroup should leave file_id/URL references untouched and not attach them") {
     val media   = List(InputMediaPhoto(media = link), InputMediaPhoto(media = file))
     val payload = payloadOf(sendMediaGroup(ChatIntId(1L), media = media))
 
-    assert(payload.files == Map("media1_media" -> file))
+    assert(payload.files == Map("media_1_media" -> file))
     assert(str(payload.json, "media", 0, "media").contains(link.file))
-    assert(str(payload.json, "media", 1, "media").contains("attach://media1_media"))
+    assert(str(payload.json, "media", 1, "media").contains("attach://media_1_media"))
   }
 
   test("sendMediaGroup should attach optional embedded files only when present") {
@@ -54,8 +54,8 @@ class MethodsSpec extends AnyFunSuite with Methods {
     )
     val payload = payloadOf(sendMediaGroup(ChatIntId(1L), media = media))
 
-    assert(payload.files == Map("media0_media" -> file, "media0_thumbnail" -> file2, "media1_media" -> file))
-    assert(str(payload.json, "media", 0, "thumbnail").contains("attach://media0_thumbnail"))
+    assert(payload.files == Map("media_0_media" -> file, "media_0_thumbnail" -> file2, "media_1_media" -> file))
+    assert(str(payload.json, "media", 0, "thumbnail").contains("attach://media_0_thumbnail"))
     assert(str(payload.json, "media", 1, "thumbnail").isEmpty)
   }
 
@@ -81,15 +81,15 @@ class MethodsSpec extends AnyFunSuite with Methods {
     )
     val payload = payloadOf(createNewStickerSet(1L, "set_name", "Set Title", stickers))
 
-    assert(payload.files == Map("stickers0_sticker" -> file, "stickers1_sticker" -> file2))
+    assert(payload.files == Map("stickers_0_sticker" -> file, "stickers_1_sticker" -> file2))
   }
 
   test("sendPaidMedia should attach the embedded media file") {
     val media   = List(InputPaidMediaPhoto(media = file))
     val payload = payloadOf(sendPaidMedia(ChatIntId(1L), starCount = 1, media = media))
 
-    assert(payload.files == Map("media0_media" -> file))
-    assert(str(payload.json, "media", 0, "media").contains("attach://media0_media"))
+    assert(payload.files == Map("media_0_media" -> file))
+    assert(str(payload.json, "media", 0, "media").contains("attach://media_0_media"))
   }
 
   test("setMyProfilePhoto should attach the embedded profile photo file") {
