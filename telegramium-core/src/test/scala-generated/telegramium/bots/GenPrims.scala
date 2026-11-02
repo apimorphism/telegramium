@@ -74,7 +74,10 @@ object GenPrims {
   def shrinkList[A](s: => Shrink[A]): Shrink[List[A]] =
     Shrink { l =>
       if (l.isEmpty) Stream.empty
-      else Nil #:: l.indices.toStream.flatMap(i => s.shrink(l(i)).map(l.updated(i, _)))
+      else {
+        val dropOne = if (l.size > 1) l.indices.toStream.map(i => l.patch(i, Nil, 1)) else Stream.empty
+        Nil #:: dropOne #::: l.indices.toStream.flatMap(i => s.shrink(l(i)).map(l.updated(i, _)))
+      }
     }
   def shrinkEither[A, B](sa: => Shrink[A], sb: => Shrink[B]): Shrink[Either[A, B]] =
     Shrink {
@@ -90,9 +93,10 @@ object GenPrims {
   def shrinkSum[A](variants: PartialFunction[A, Stream[A]]*): Shrink[A] =
     Shrink(a => variants.find(_.isDefinedAt(a)).fold(Stream.empty[A])(_(a)))
   def variant[A, B <: A: ClassTag](s: Shrink[B]): PartialFunction[A, Stream[A]] = { case b: B => s.shrink(b) }
-  // the shrunk variants of each field, each rebuilt into the whole value
-  def shrinkFields[A](fields: A => List[Stream[A]]): Shrink[A] = Shrink(a => fields(a).toStream.flatten)
-  def field[A, F](value: F)(s: => Shrink[F])(copy: F => A): Stream[A] = s.shrink(value).map(copy)
+  // the shrunk variants of each field, each rebuilt into the whole value; a field isn't shrunk until the ones before it
+  // run out, as a Stream computes its head right away
+  def shrinkFields[A](fields: A => List[() => Stream[A]]): Shrink[A] = Shrink(a => fields(a).toStream.flatMap(_()))
+  def field[A, F](value: F)(s: => Shrink[F])(copy: F => A): () => Stream[A] = () => s.shrink(value).map(copy)
   // a custom-gens fix applies to the shrunk values too, so shrinking can't produce what the generator never would
   def fixed[A](s: Shrink[A], fix: A => A): Shrink[A] = Shrink(a => s.shrink(a).map(fix).filter(_ != a))
 
