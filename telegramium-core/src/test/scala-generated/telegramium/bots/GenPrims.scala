@@ -10,8 +10,9 @@ import scala.reflect.ClassTag
 @scala.annotation.nowarn("cat=deprecation")
 object GenPrims {
   // Recursion is bounded by a size budget: every composite generator spends one unit, optional or list fields of
-  // composite type collapse to None/Nil at zero, and sum types pick their shallowest variants.
-  val Budget = 3
+  // composite type collapse to None/Nil at zero, and sum types pick their shallowest variants. 5 reaches the Bot API's
+  // deepest requests (rich messages, about 10 levels of JSON); 3 left them shallow.
+  val Budget = 5
 
   // capped at Budget, so that the generators are bounded whatever size they are run at
   def deeper[A](g: Gen[A]): Gen[A] = Gen.sized(n => Gen.resize(math.max(math.min(n, Budget) - 1, 0), g))
@@ -36,7 +37,8 @@ object GenPrims {
     Gen.frequency(1 -> Gen.oneOf(edgeStrings), 4 -> Gen.listOfN(8, Gen.alphaNumChar).map(_.mkString))
 
   // a plain file name; checks that build wire requests create the matching temporary files themselves
-  val genJavaFile: Gen[java.io.File] = Gen.alphaNumStr.map(s => new java.io.File(s + ".bin"))
+  // distinct names, so a check can tell which file went where; alphaNumStr is mostly empty within the size budget
+  val genJavaFile: Gen[java.io.File] = Gen.uuid.map(u => new java.io.File(u.toString + ".bin"))
 
   def opt[A](g: => Gen[A]): Gen[Option[A]] =
     Gen.sized(n => if (n <= 0) Gen.const(None) else Gen.frequency(1 -> Gen.const(None), 1 -> g.map(Some(_))))
