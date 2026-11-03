@@ -154,10 +154,9 @@ object CirceImplicits {
   implicit lazy val inputlinkfileDecoder: Decoder[InputLinkFile] = Decoder[String].map(InputLinkFile.apply)
 
   implicit lazy val backgroundfillEncoder: Encoder[BackgroundFill] = {
-    case freeform_gradient: BackgroundFillFreeformGradient =>
-      freeform_gradient.asJson.mapObject(_.add("type", Json.fromString("freeform_gradient")))
-    case gradient: BackgroundFillGradient => gradient.asJson.mapObject(_.add("type", Json.fromString("gradient")))
-    case solid: BackgroundFillSolid       => solid.asJson.mapObject(_.add("type", Json.fromString("solid")))
+    case freeform_gradient: BackgroundFillFreeformGradient => freeform_gradient.asJson
+    case gradient: BackgroundFillGradient                  => gradient.asJson
+    case solid: BackgroundFillSolid                        => solid.asJson
   }
 
   implicit lazy val backgroundfillDecoder: Decoder[iozhik.OpenEnum[BackgroundFill]] = for {
@@ -176,7 +175,8 @@ object CirceImplicits {
         List(
           "top_color"      -> x.topColor.asJson,
           "bottom_color"   -> x.bottomColor.asJson,
-          "rotation_angle" -> x.rotationAngle.asJson
+          "rotation_angle" -> x.rotationAngle.asJson,
+          "type"           -> "gradient".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -196,7 +196,8 @@ object CirceImplicits {
     (x: BackgroundFillFreeformGradient) => {
       Json.fromFields(
         List(
-          "colors" -> x.colors.asJson
+          "colors" -> x.colors.asJson,
+          "type"   -> "freeform_gradient".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -214,7 +215,8 @@ object CirceImplicits {
     (x: BackgroundFillSolid) => {
       Json.fromFields(
         List(
-          "color" -> x.color.asJson
+          "color" -> x.color.asJson,
+          "type"  -> "solid".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -229,11 +231,10 @@ object CirceImplicits {
     }
 
   implicit lazy val backgroundtypeEncoder: Encoder[BackgroundType] = {
-    case chat_theme: BackgroundTypeChatTheme =>
-      chat_theme.asJson.mapObject(_.add("type", Json.fromString("chat_theme")))
-    case fill: BackgroundTypeFill           => fill.asJson.mapObject(_.add("type", Json.fromString("fill")))
-    case wallpaper: BackgroundTypeWallpaper => wallpaper.asJson.mapObject(_.add("type", Json.fromString("wallpaper")))
-    case pattern: BackgroundTypePattern     => pattern.asJson.mapObject(_.add("type", Json.fromString("pattern")))
+    case chat_theme: BackgroundTypeChatTheme => chat_theme.asJson
+    case fill: BackgroundTypeFill            => fill.asJson
+    case wallpaper: BackgroundTypeWallpaper  => wallpaper.asJson
+    case pattern: BackgroundTypePattern      => pattern.asJson
   }
 
   implicit lazy val backgroundtypeDecoder: Decoder[iozhik.OpenEnum[BackgroundType]] = for {
@@ -254,7 +255,8 @@ object CirceImplicits {
           "document"           -> x.document.asJson,
           "dark_theme_dimming" -> x.darkThemeDimming.asJson,
           "is_blurred"         -> x.isBlurred.asJson,
-          "is_moving"          -> x.isMoving.asJson
+          "is_moving"          -> x.isMoving.asJson,
+          "type"               -> "wallpaper".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -284,7 +286,8 @@ object CirceImplicits {
           "fill"        -> x.fill.asJson,
           "intensity"   -> x.intensity.asJson,
           "is_inverted" -> x.isInverted.asJson,
-          "is_moving"   -> x.isMoving.asJson
+          "is_moving"   -> x.isMoving.asJson,
+          "type"        -> "pattern".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -312,7 +315,8 @@ object CirceImplicits {
     (x: BackgroundTypeChatTheme) => {
       Json.fromFields(
         List(
-          "theme_name" -> x.themeName.asJson
+          "theme_name" -> x.themeName.asJson,
+          "type"       -> "chat_theme".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -331,7 +335,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "fill"               -> x.fill.asJson,
-          "dark_theme_dimming" -> x.darkThemeDimming.asJson
+          "dark_theme_dimming" -> x.darkThemeDimming.asJson,
+          "type"               -> "fill".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -347,34 +352,30 @@ object CirceImplicits {
     }
 
   implicit lazy val botcommandscopeEncoder: Encoder[BotCommandScope] = {
-    case all_chat_administrators: BotCommandScopeAllChatAdministrators.type =>
-      all_chat_administrators.asJson.mapObject(_.add("type", Json.fromString("all_chat_administrators")))
-    case all_group_chats: BotCommandScopeAllGroupChats.type =>
-      all_group_chats.asJson.mapObject(_.add("type", Json.fromString("all_group_chats")))
-    case chat: BotCommandScopeChat => chat.asJson.mapObject(_.add("type", Json.fromString("chat")))
-    case chat_administrators: BotCommandScopeChatAdministrators =>
-      chat_administrators.asJson.mapObject(_.add("type", Json.fromString("chat_administrators")))
-    case default: BotCommandScopeDefault.type => default.asJson.mapObject(_.add("type", Json.fromString("default")))
-    case all_private_chats: BotCommandScopeAllPrivateChats.type =>
-      all_private_chats.asJson.mapObject(_.add("type", Json.fromString("all_private_chats")))
-    case chat_member: BotCommandScopeChatMember =>
-      chat_member.asJson.mapObject(_.add("type", Json.fromString("chat_member")))
+    case all_chat_administrators: BotCommandScopeAllChatAdministrators.type => all_chat_administrators.asJson
+    case all_group_chats: BotCommandScopeAllGroupChats.type                 => all_group_chats.asJson
+    case chat: BotCommandScopeChat                                          => chat.asJson
+    case chat_administrators: BotCommandScopeChatAdministrators             => chat_administrators.asJson
+    case default: BotCommandScopeDefault.type                               => default.asJson
+    case all_private_chats: BotCommandScopeAllPrivateChats.type             => all_private_chats.asJson
+    case chat_member: BotCommandScopeChatMember                             => chat_member.asJson
   }
 
   implicit lazy val botcommandscopeallchatadministratorsEncoder: Encoder[BotCommandScopeAllChatAdministrators.type] =
-    (_: BotCommandScopeAllChatAdministrators.type) => ().asJson
+    (_: BotCommandScopeAllChatAdministrators.type) => Json.obj("type" -> "all_chat_administrators".asJson)
 
   implicit lazy val botcommandscopeallgroupchatsEncoder: Encoder[BotCommandScopeAllGroupChats.type] =
-    (_: BotCommandScopeAllGroupChats.type) => ().asJson
+    (_: BotCommandScopeAllGroupChats.type) => Json.obj("type" -> "all_group_chats".asJson)
 
   implicit lazy val botcommandscopedefaultEncoder: Encoder[BotCommandScopeDefault.type] =
-    (_: BotCommandScopeDefault.type) => ().asJson
+    (_: BotCommandScopeDefault.type) => Json.obj("type" -> "default".asJson)
 
   implicit lazy val botcommandscopechatadministratorsEncoder: Encoder[BotCommandScopeChatAdministrators] =
     (x: BotCommandScopeChatAdministrators) => {
       Json.fromFields(
         List(
-          "chat_id" -> x.chatId.asJson
+          "chat_id" -> x.chatId.asJson,
+          "type"    -> "chat_administrators".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -384,7 +385,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat_id" -> x.chatId.asJson,
-          "user_id" -> x.userId.asJson
+          "user_id" -> x.userId.asJson,
+          "type"    -> "chat_member".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -393,18 +395,19 @@ object CirceImplicits {
     (x: BotCommandScopeChat) => {
       Json.fromFields(
         List(
-          "chat_id" -> x.chatId.asJson
+          "chat_id" -> x.chatId.asJson,
+          "type"    -> "chat".asJson
         ).filter(!_._2.isNull)
       )
     }
 
   implicit lazy val botcommandscopeallprivatechatsEncoder: Encoder[BotCommandScopeAllPrivateChats.type] =
-    (_: BotCommandScopeAllPrivateChats.type) => ().asJson
+    (_: BotCommandScopeAllPrivateChats.type) => Json.obj("type" -> "all_private_chats".asJson)
 
   implicit lazy val chatboostsourceEncoder: Encoder[ChatBoostSource] = {
-    case giveaway: ChatBoostSourceGiveaway  => giveaway.asJson.mapObject(_.add("source", Json.fromString("giveaway")))
-    case premium: ChatBoostSourcePremium    => premium.asJson.mapObject(_.add("source", Json.fromString("premium")))
-    case gift_code: ChatBoostSourceGiftCode => gift_code.asJson.mapObject(_.add("source", Json.fromString("gift_code")))
+    case giveaway: ChatBoostSourceGiveaway  => giveaway.asJson
+    case premium: ChatBoostSourcePremium    => premium.asJson
+    case gift_code: ChatBoostSourceGiftCode => gift_code.asJson
   }
 
   implicit lazy val chatboostsourceDecoder: Decoder[iozhik.OpenEnum[ChatBoostSource]] = for {
@@ -421,7 +424,8 @@ object CirceImplicits {
     (x: ChatBoostSourceGiftCode) => {
       Json.fromFields(
         List(
-          "user" -> x.user.asJson
+          "user"   -> x.user.asJson,
+          "source" -> "gift_code".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -442,7 +446,8 @@ object CirceImplicits {
           "giveaway_message_id" -> x.giveawayMessageId.asJson,
           "user"                -> x.user.asJson,
           "prize_star_count"    -> x.prizeStarCount.asJson,
-          "is_unclaimed"        -> x.isUnclaimed.asJson
+          "is_unclaimed"        -> x.isUnclaimed.asJson,
+          "source"              -> "giveaway".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -468,7 +473,8 @@ object CirceImplicits {
     (x: ChatBoostSourcePremium) => {
       Json.fromFields(
         List(
-          "user" -> x.user.asJson
+          "user"   -> x.user.asJson,
+          "source" -> "premium".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -483,13 +489,12 @@ object CirceImplicits {
     }
 
   implicit lazy val chatmemberEncoder: Encoder[ChatMember] = {
-    case kicked: ChatMemberBanned               => kicked.asJson.mapObject(_.add("status", Json.fromString("kicked")))
-    case left: ChatMemberLeft                   => left.asJson.mapObject(_.add("status", Json.fromString("left")))
-    case administrator: ChatMemberAdministrator =>
-      administrator.asJson.mapObject(_.add("status", Json.fromString("administrator")))
-    case creator: ChatMemberOwner         => creator.asJson.mapObject(_.add("status", Json.fromString("creator")))
-    case member: ChatMemberMember         => member.asJson.mapObject(_.add("status", Json.fromString("member")))
-    case restricted: ChatMemberRestricted => restricted.asJson.mapObject(_.add("status", Json.fromString("restricted")))
+    case kicked: ChatMemberBanned               => kicked.asJson
+    case left: ChatMemberLeft                   => left.asJson
+    case administrator: ChatMemberAdministrator => administrator.asJson
+    case creator: ChatMemberOwner               => creator.asJson
+    case member: ChatMemberMember               => member.asJson
+    case restricted: ChatMemberRestricted       => restricted.asJson
   }
 
   implicit lazy val chatmemberDecoder: Decoder[iozhik.OpenEnum[ChatMember]] = for {
@@ -511,7 +516,8 @@ object CirceImplicits {
         List(
           "user"         -> x.user.asJson,
           "is_anonymous" -> x.isAnonymous.asJson,
-          "custom_title" -> x.customTitle.asJson
+          "custom_title" -> x.customTitle.asJson,
+          "status"       -> "creator".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -531,7 +537,8 @@ object CirceImplicits {
     (x: ChatMemberLeft) => {
       Json.fromFields(
         List(
-          "user" -> x.user.asJson
+          "user"   -> x.user.asJson,
+          "status" -> "left".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -569,7 +576,8 @@ object CirceImplicits {
           "can_manage_direct_messages" -> x.canManageDirectMessages.asJson,
           "can_manage_tags"            -> x.canManageTags.asJson,
           "can_send_welcome_messages"  -> x.canSendWelcomeMessages.asJson,
-          "custom_title"               -> x.customTitle.asJson
+          "custom_title"               -> x.customTitle.asJson,
+          "status"                     -> "administrator".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -631,7 +639,8 @@ object CirceImplicits {
         List(
           "tag"        -> x.tag.asJson,
           "user"       -> x.user.asJson,
-          "until_date" -> x.untilDate.asJson
+          "until_date" -> x.untilDate.asJson,
+          "status"     -> "member".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -652,7 +661,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "user"       -> x.user.asJson,
-          "until_date" -> x.untilDate.asJson
+          "until_date" -> x.untilDate.asJson,
+          "status"     -> "kicked".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -690,7 +700,8 @@ object CirceImplicits {
           "can_invite_users"          -> x.canInviteUsers.asJson,
           "can_pin_messages"          -> x.canPinMessages.asJson,
           "can_manage_topics"         -> x.canManageTopics.asJson,
-          "until_date"                -> x.untilDate.asJson
+          "until_date"                -> x.untilDate.asJson,
+          "status"                    -> "restricted".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -745,28 +756,26 @@ object CirceImplicits {
     }
 
   implicit lazy val inlinequeryresultEncoder: Encoder[InlineQueryResult] = {
-    case mpeg4_gif: InlineQueryResultMpeg4Gif => mpeg4_gif.asJson.mapObject(_.add("type", Json.fromString("mpeg4_gif")))
-    case mpeg4_gif: InlineQueryResultCachedMpeg4Gif =>
-      mpeg4_gif.asJson.mapObject(_.add("type", Json.fromString("mpeg4_gif")))
-    case location: InlineQueryResultLocation => location.asJson.mapObject(_.add("type", Json.fromString("location")))
-    case photo: InlineQueryResultPhoto       => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case photo: InlineQueryResultCachedPhoto => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case document: InlineQueryResultDocument => document.asJson.mapObject(_.add("type", Json.fromString("document")))
-    case document: InlineQueryResultCachedDocument =>
-      document.asJson.mapObject(_.add("type", Json.fromString("document")))
-    case audio: InlineQueryResultAudio           => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
-    case audio: InlineQueryResultCachedAudio     => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
-    case voice: InlineQueryResultCachedVoice     => voice.asJson.mapObject(_.add("type", Json.fromString("voice")))
-    case voice: InlineQueryResultVoice           => voice.asJson.mapObject(_.add("type", Json.fromString("voice")))
-    case article: InlineQueryResultArticle       => article.asJson.mapObject(_.add("type", Json.fromString("article")))
-    case contact: InlineQueryResultContact       => contact.asJson.mapObject(_.add("type", Json.fromString("contact")))
-    case video: InlineQueryResultCachedVideo     => video.asJson.mapObject(_.add("type", Json.fromString("video")))
-    case video: InlineQueryResultVideo           => video.asJson.mapObject(_.add("type", Json.fromString("video")))
-    case gif: InlineQueryResultGif               => gif.asJson.mapObject(_.add("type", Json.fromString("gif")))
-    case gif: InlineQueryResultCachedGif         => gif.asJson.mapObject(_.add("type", Json.fromString("gif")))
-    case sticker: InlineQueryResultCachedSticker => sticker.asJson.mapObject(_.add("type", Json.fromString("sticker")))
-    case game: InlineQueryResultGame             => game.asJson.mapObject(_.add("type", Json.fromString("game")))
-    case venue: InlineQueryResultVenue           => venue.asJson.mapObject(_.add("type", Json.fromString("venue")))
+    case mpeg4_gif: InlineQueryResultMpeg4Gif       => mpeg4_gif.asJson
+    case mpeg4_gif: InlineQueryResultCachedMpeg4Gif => mpeg4_gif.asJson
+    case location: InlineQueryResultLocation        => location.asJson
+    case photo: InlineQueryResultPhoto              => photo.asJson
+    case photo: InlineQueryResultCachedPhoto        => photo.asJson
+    case document: InlineQueryResultDocument        => document.asJson
+    case document: InlineQueryResultCachedDocument  => document.asJson
+    case audio: InlineQueryResultAudio              => audio.asJson
+    case audio: InlineQueryResultCachedAudio        => audio.asJson
+    case voice: InlineQueryResultCachedVoice        => voice.asJson
+    case voice: InlineQueryResultVoice              => voice.asJson
+    case article: InlineQueryResultArticle          => article.asJson
+    case contact: InlineQueryResultContact          => contact.asJson
+    case video: InlineQueryResultCachedVideo        => video.asJson
+    case video: InlineQueryResultVideo              => video.asJson
+    case gif: InlineQueryResultGif                  => gif.asJson
+    case gif: InlineQueryResultCachedGif            => gif.asJson
+    case sticker: InlineQueryResultCachedSticker    => sticker.asJson
+    case game: InlineQueryResultGame                => game.asJson
+    case venue: InlineQueryResultVenue              => venue.asJson
   }
 
   implicit lazy val inlinequeryresultgifEncoder: Encoder[InlineQueryResultGif] =
@@ -786,7 +795,8 @@ object CirceImplicits {
           "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
-          "input_message_content"    -> x.inputMessageContent.asJson
+          "input_message_content"    -> x.inputMessageContent.asJson,
+          "type"                     -> "gif".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -808,7 +818,8 @@ object CirceImplicits {
           "input_message_content" -> x.inputMessageContent.asJson,
           "thumbnail_url"         -> x.thumbnailUrl.asJson,
           "thumbnail_width"       -> x.thumbnailWidth.asJson,
-          "thumbnail_height"      -> x.thumbnailHeight.asJson
+          "thumbnail_height"      -> x.thumbnailHeight.asJson,
+          "type"                  -> "venue".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -826,7 +837,8 @@ object CirceImplicits {
           "input_message_content" -> x.inputMessageContent.asJson,
           "thumbnail_url"         -> x.thumbnailUrl.asJson,
           "thumbnail_width"       -> x.thumbnailWidth.asJson,
-          "thumbnail_height"      -> x.thumbnailHeight.asJson
+          "thumbnail_height"      -> x.thumbnailHeight.asJson,
+          "type"                  -> "contact".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -847,7 +859,8 @@ object CirceImplicits {
           "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
-          "input_message_content"    -> x.inputMessageContent.asJson
+          "input_message_content"    -> x.inputMessageContent.asJson,
+          "type"                     -> "photo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -868,7 +881,8 @@ object CirceImplicits {
           "input_message_content" -> x.inputMessageContent.asJson,
           "thumbnail_url"         -> x.thumbnailUrl.asJson,
           "thumbnail_width"       -> x.thumbnailWidth.asJson,
-          "thumbnail_height"      -> x.thumbnailHeight.asJson
+          "thumbnail_height"      -> x.thumbnailHeight.asJson,
+          "type"                  -> "document".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -884,7 +898,8 @@ object CirceImplicits {
           "parse_mode"            -> x.parseMode.asJson,
           "caption_entities"      -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson
+          "input_message_content" -> x.inputMessageContent.asJson,
+          "type"                  -> "voice".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -901,7 +916,8 @@ object CirceImplicits {
           "description"           -> x.description.asJson,
           "thumbnail_url"         -> x.thumbnailUrl.asJson,
           "thumbnail_width"       -> x.thumbnailWidth.asJson,
-          "thumbnail_height"      -> x.thumbnailHeight.asJson
+          "thumbnail_height"      -> x.thumbnailHeight.asJson,
+          "type"                  -> "article".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -919,7 +935,8 @@ object CirceImplicits {
           "performer"             -> x.performer.asJson,
           "audio_duration"        -> x.audioDuration.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson
+          "input_message_content" -> x.inputMessageContent.asJson,
+          "type"                  -> "audio".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -941,7 +958,8 @@ object CirceImplicits {
           "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
-          "input_message_content"    -> x.inputMessageContent.asJson
+          "input_message_content"    -> x.inputMessageContent.asJson,
+          "type"                     -> "mpeg4_gif".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -958,7 +976,8 @@ object CirceImplicits {
           "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
-          "input_message_content"    -> x.inputMessageContent.asJson
+          "input_message_content"    -> x.inputMessageContent.asJson,
+          "type"                     -> "mpeg4_gif".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -975,7 +994,8 @@ object CirceImplicits {
           "parse_mode"            -> x.parseMode.asJson,
           "caption_entities"      -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson
+          "input_message_content" -> x.inputMessageContent.asJson,
+          "type"                  -> "document".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -993,7 +1013,8 @@ object CirceImplicits {
           "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
-          "input_message_content"    -> x.inputMessageContent.asJson
+          "input_message_content"    -> x.inputMessageContent.asJson,
+          "type"                     -> "video".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1004,7 +1025,8 @@ object CirceImplicits {
         List(
           "id"              -> x.id.asJson,
           "game_short_name" -> x.gameShortName.asJson,
-          "reply_markup"    -> x.replyMarkup.asJson
+          "reply_markup"    -> x.replyMarkup.asJson,
+          "type"            -> "game".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1022,7 +1044,8 @@ object CirceImplicits {
           "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
-          "input_message_content"    -> x.inputMessageContent.asJson
+          "input_message_content"    -> x.inputMessageContent.asJson,
+          "type"                     -> "photo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1034,7 +1057,8 @@ object CirceImplicits {
           "id"                    -> x.id.asJson,
           "sticker_file_id"       -> x.stickerFileId.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson
+          "input_message_content" -> x.inputMessageContent.asJson,
+          "type"                  -> "sticker".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1057,7 +1081,8 @@ object CirceImplicits {
           "video_duration"           -> x.videoDuration.asJson,
           "description"              -> x.description.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
-          "input_message_content"    -> x.inputMessageContent.asJson
+          "input_message_content"    -> x.inputMessageContent.asJson,
+          "type"                     -> "video".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1072,7 +1097,8 @@ object CirceImplicits {
           "parse_mode"            -> x.parseMode.asJson,
           "caption_entities"      -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson
+          "input_message_content" -> x.inputMessageContent.asJson,
+          "type"                  -> "audio".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1089,7 +1115,8 @@ object CirceImplicits {
           "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
           "reply_markup"             -> x.replyMarkup.asJson,
-          "input_message_content"    -> x.inputMessageContent.asJson
+          "input_message_content"    -> x.inputMessageContent.asJson,
+          "type"                     -> "gif".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1110,7 +1137,8 @@ object CirceImplicits {
           "input_message_content"  -> x.inputMessageContent.asJson,
           "thumbnail_url"          -> x.thumbnailUrl.asJson,
           "thumbnail_width"        -> x.thumbnailWidth.asJson,
-          "thumbnail_height"       -> x.thumbnailHeight.asJson
+          "thumbnail_height"       -> x.thumbnailHeight.asJson,
+          "type"                   -> "location".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1127,23 +1155,24 @@ object CirceImplicits {
           "caption_entities"      -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "voice_duration"        -> x.voiceDuration.asJson,
           "reply_markup"          -> x.replyMarkup.asJson,
-          "input_message_content" -> x.inputMessageContent.asJson
+          "input_message_content" -> x.inputMessageContent.asJson,
+          "type"                  -> "voice".asJson
         ).filter(!_._2.isNull)
       )
     }
 
   implicit lazy val inputmediaEncoder: Encoder[InputMedia] = {
-    case location: InputMediaLocation    => location.asJson.mapObject(_.add("type", Json.fromString("location")))
-    case photo: InputMediaPhoto          => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case document: InputMediaDocument    => document.asJson.mapObject(_.add("type", Json.fromString("document")))
-    case audio: InputMediaAudio          => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
-    case live_photo: InputMediaLivePhoto => live_photo.asJson.mapObject(_.add("type", Json.fromString("live_photo")))
-    case video: InputMediaVideo          => video.asJson.mapObject(_.add("type", Json.fromString("video")))
-    case link: InputMediaLink            => link.asJson.mapObject(_.add("type", Json.fromString("link")))
-    case sticker: InputMediaSticker      => sticker.asJson.mapObject(_.add("type", Json.fromString("sticker")))
-    case venue: InputMediaVenue          => venue.asJson.mapObject(_.add("type", Json.fromString("venue")))
-    case voice_note: InputMediaVoiceNote => voice_note.asJson.mapObject(_.add("type", Json.fromString("voice_note")))
-    case animation: InputMediaAnimation  => animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
+    case location: InputMediaLocation    => location.asJson
+    case photo: InputMediaPhoto          => photo.asJson
+    case document: InputMediaDocument    => document.asJson
+    case audio: InputMediaAudio          => audio.asJson
+    case live_photo: InputMediaLivePhoto => live_photo.asJson
+    case video: InputMediaVideo          => video.asJson
+    case link: InputMediaLink            => link.asJson
+    case sticker: InputMediaSticker      => sticker.asJson
+    case venue: InputMediaVenue          => venue.asJson
+    case voice_note: InputMediaVoiceNote => voice_note.asJson
+    case animation: InputMediaAnimation  => animation.asJson
   }
 
   implicit lazy val inputmedialocationEncoder: Encoder[InputMediaLocation] =
@@ -1152,7 +1181,8 @@ object CirceImplicits {
         List(
           "latitude"            -> x.latitude.asJson,
           "longitude"           -> x.longitude.asJson,
-          "horizontal_accuracy" -> x.horizontalAccuracy.asJson
+          "horizontal_accuracy" -> x.horizontalAccuracy.asJson,
+          "type"                -> "location".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1170,7 +1200,8 @@ object CirceImplicits {
           "width"                    -> x.width.asJson,
           "height"                   -> x.height.asJson,
           "duration"                 -> x.duration.asJson,
-          "has_spoiler"              -> x.hasSpoiler.asJson
+          "has_spoiler"              -> x.hasSpoiler.asJson,
+          "type"                     -> "animation".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1179,7 +1210,8 @@ object CirceImplicits {
     (x: InputMediaLink) => {
       Json.fromFields(
         List(
-          "url" -> x.url.asJson
+          "url"  -> x.url.asJson,
+          "type" -> "link".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1192,7 +1224,8 @@ object CirceImplicits {
           "caption"          -> x.caption.asJson,
           "parse_mode"       -> x.parseMode.asJson,
           "caption_entities" -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
-          "duration"         -> x.duration.asJson
+          "duration"         -> x.duration.asJson,
+          "type"             -> "voice_note".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1206,7 +1239,8 @@ object CirceImplicits {
           "parse_mode"               -> x.parseMode.asJson,
           "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
-          "has_spoiler"              -> x.hasSpoiler.asJson
+          "has_spoiler"              -> x.hasSpoiler.asJson,
+          "type"                     -> "photo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1227,7 +1261,8 @@ object CirceImplicits {
           "height"                   -> x.height.asJson,
           "duration"                 -> x.duration.asJson,
           "supports_streaming"       -> x.supportsStreaming.asJson,
-          "has_spoiler"              -> x.hasSpoiler.asJson
+          "has_spoiler"              -> x.hasSpoiler.asJson,
+          "type"                     -> "video".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1242,7 +1277,8 @@ object CirceImplicits {
           "parse_mode"               -> x.parseMode.asJson,
           "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
-          "has_spoiler"              -> x.hasSpoiler.asJson
+          "has_spoiler"              -> x.hasSpoiler.asJson,
+          "type"                     -> "live_photo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1258,7 +1294,8 @@ object CirceImplicits {
           "foursquare_id"     -> x.foursquareId.asJson,
           "foursquare_type"   -> x.foursquareType.asJson,
           "google_place_id"   -> x.googlePlaceId.asJson,
-          "google_place_type" -> x.googlePlaceType.asJson
+          "google_place_type" -> x.googlePlaceType.asJson,
+          "type"              -> "venue".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1272,7 +1309,8 @@ object CirceImplicits {
           "caption"                        -> x.caption.asJson,
           "parse_mode"                     -> x.parseMode.asJson,
           "caption_entities"               -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
-          "disable_content_type_detection" -> x.disableContentTypeDetection.asJson
+          "disable_content_type_detection" -> x.disableContentTypeDetection.asJson,
+          "type"                           -> "document".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1282,7 +1320,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "media" -> x.media.asJson,
-          "emoji" -> x.emoji.asJson
+          "emoji" -> x.emoji.asJson,
+          "type"  -> "sticker".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1298,7 +1337,8 @@ object CirceImplicits {
           "caption_entities" -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "duration"         -> x.duration.asJson,
           "performer"        -> x.performer.asJson,
-          "title"            -> x.title.asJson
+          "title"            -> x.title.asJson,
+          "type"             -> "audio".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1404,17 +1444,17 @@ object CirceImplicits {
     }
 
   implicit lazy val inputpaidmediaEncoder: Encoder[InputPaidMedia] = {
-    case photo: InputPaidMediaPhoto          => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case live_photo: InputPaidMediaLivePhoto =>
-      live_photo.asJson.mapObject(_.add("type", Json.fromString("live_photo")))
-    case video: InputPaidMediaVideo => video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case photo: InputPaidMediaPhoto          => photo.asJson
+    case live_photo: InputPaidMediaLivePhoto => live_photo.asJson
+    case video: InputPaidMediaVideo          => video.asJson
   }
 
   implicit lazy val inputpaidmediaphotoEncoder: Encoder[InputPaidMediaPhoto] =
     (x: InputPaidMediaPhoto) => {
       Json.fromFields(
         List(
-          "media" -> x.media.asJson
+          "media" -> x.media.asJson,
+          "type"  -> "photo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1424,7 +1464,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "media" -> x.media.asJson,
-          "photo" -> x.photo.asJson
+          "photo" -> x.photo.asJson,
+          "type"  -> "live_photo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1440,14 +1481,15 @@ object CirceImplicits {
           "width"              -> x.width.asJson,
           "height"             -> x.height.asJson,
           "duration"           -> x.duration.asJson,
-          "supports_streaming" -> x.supportsStreaming.asJson
+          "supports_streaming" -> x.supportsStreaming.asJson,
+          "type"               -> "video".asJson
         ).filter(!_._2.isNull)
       )
     }
 
   implicit lazy val inputprofilephotoEncoder: Encoder[InputProfilePhoto] = {
-    case static: InputProfilePhotoStatic     => static.asJson.mapObject(_.add("type", Json.fromString("static")))
-    case animated: InputProfilePhotoAnimated => animated.asJson.mapObject(_.add("type", Json.fromString("animated")))
+    case static: InputProfilePhotoStatic     => static.asJson
+    case animated: InputProfilePhotoAnimated => animated.asJson
   }
 
   implicit lazy val inputprofilephotoanimatedEncoder: Encoder[InputProfilePhotoAnimated] =
@@ -1455,7 +1497,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "animation"            -> x.animation.asJson,
-          "main_frame_timestamp" -> x.mainFrameTimestamp.asJson
+          "main_frame_timestamp" -> x.mainFrameTimestamp.asJson,
+          "type"                 -> "animated".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1464,41 +1507,37 @@ object CirceImplicits {
     (x: InputProfilePhotoStatic) => {
       Json.fromFields(
         List(
-          "photo" -> x.photo.asJson
+          "photo" -> x.photo.asJson,
+          "type"  -> "static".asJson
         ).filter(!_._2.isNull)
       )
     }
 
   implicit lazy val inputrichblockEncoder: Encoder[InputRichBlock] = {
-    case heading: InputRichBlockSectionHeading => heading.asJson.mapObject(_.add("type", Json.fromString("heading")))
-    case map: InputRichBlockMap                => map.asJson.mapObject(_.add("type", Json.fromString("map")))
-    case document: InputRichBlockDocument      => document.asJson.mapObject(_.add("type", Json.fromString("document")))
-    case audio: InputRichBlockAudio            => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
-    case divider: InputRichBlockDivider.type   => divider.asJson.mapObject(_.add("type", Json.fromString("divider")))
-    case buttons: InputRichBlockButtons        => buttons.asJson.mapObject(_.add("type", Json.fromString("buttons")))
-    case blockquote: InputRichBlockBlockQuotation =>
-      blockquote.asJson.mapObject(_.add("type", Json.fromString("blockquote")))
-    case video: InputRichBlockVideo             => video.asJson.mapObject(_.add("type", Json.fromString("video")))
-    case details: InputRichBlockDetails         => details.asJson.mapObject(_.add("type", Json.fromString("details")))
-    case thinking: InputRichBlockThinking       => thinking.asJson.mapObject(_.add("type", Json.fromString("thinking")))
-    case footer: InputRichBlockFooter           => footer.asJson.mapObject(_.add("type", Json.fromString("footer")))
-    case anchor: InputRichBlockAnchor           => anchor.asJson.mapObject(_.add("type", Json.fromString("anchor")))
-    case pre: InputRichBlockPreformatted        => pre.asJson.mapObject(_.add("type", Json.fromString("pre")))
-    case pullquote: InputRichBlockPullQuotation =>
-      pullquote.asJson.mapObject(_.add("type", Json.fromString("pullquote")))
-    case mathematical_expression: InputRichBlockMathematicalExpression =>
-      mathematical_expression.asJson.mapObject(_.add("type", Json.fromString("mathematical_expression")))
-    case slideshow: InputRichBlockSlideshow => slideshow.asJson.mapObject(_.add("type", Json.fromString("slideshow")))
-    case photo: InputRichBlockPhoto         => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case collage: InputRichBlockCollage     => collage.asJson.mapObject(_.add("type", Json.fromString("collage")))
-    case expandable_blockquote: InputRichBlockExpandableBlockQuotation =>
-      expandable_blockquote.asJson.mapObject(_.add("type", Json.fromString("expandable_blockquote")))
-    case voice_note: InputRichBlockVoiceNote =>
-      voice_note.asJson.mapObject(_.add("type", Json.fromString("voice_note")))
-    case paragraph: InputRichBlockParagraph => paragraph.asJson.mapObject(_.add("type", Json.fromString("paragraph")))
-    case animation: InputRichBlockAnimation => animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
-    case list: InputRichBlockList           => list.asJson.mapObject(_.add("type", Json.fromString("list")))
-    case table: InputRichBlockTable         => table.asJson.mapObject(_.add("type", Json.fromString("table")))
+    case heading: InputRichBlockSectionHeading                         => heading.asJson
+    case map: InputRichBlockMap                                        => map.asJson
+    case document: InputRichBlockDocument                              => document.asJson
+    case audio: InputRichBlockAudio                                    => audio.asJson
+    case divider: InputRichBlockDivider.type                           => divider.asJson
+    case buttons: InputRichBlockButtons                                => buttons.asJson
+    case blockquote: InputRichBlockBlockQuotation                      => blockquote.asJson
+    case video: InputRichBlockVideo                                    => video.asJson
+    case details: InputRichBlockDetails                                => details.asJson
+    case thinking: InputRichBlockThinking                              => thinking.asJson
+    case footer: InputRichBlockFooter                                  => footer.asJson
+    case anchor: InputRichBlockAnchor                                  => anchor.asJson
+    case pre: InputRichBlockPreformatted                               => pre.asJson
+    case pullquote: InputRichBlockPullQuotation                        => pullquote.asJson
+    case mathematical_expression: InputRichBlockMathematicalExpression => mathematical_expression.asJson
+    case slideshow: InputRichBlockSlideshow                            => slideshow.asJson
+    case photo: InputRichBlockPhoto                                    => photo.asJson
+    case collage: InputRichBlockCollage                                => collage.asJson
+    case expandable_blockquote: InputRichBlockExpandableBlockQuotation => expandable_blockquote.asJson
+    case voice_note: InputRichBlockVoiceNote                           => voice_note.asJson
+    case paragraph: InputRichBlockParagraph                            => paragraph.asJson
+    case animation: InputRichBlockAnimation                            => animation.asJson
+    case list: InputRichBlockList                                      => list.asJson
+    case table: InputRichBlockTable                                    => table.asJson
   }
 
   implicit lazy val inputrichblocktableEncoder: Encoder[InputRichBlockTable] =
@@ -1509,7 +1548,8 @@ object CirceImplicits {
           "is_bordered" -> x.isBordered.asJson,
           "is_striped"  -> x.isStriped.asJson,
           "is_compact"  -> x.isCompact.asJson,
-          "caption"     -> x.caption.asJson
+          "caption"     -> x.caption.asJson,
+          "type"        -> "table".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1518,7 +1558,8 @@ object CirceImplicits {
     (x: InputRichBlockAnchor) => {
       Json.fromFields(
         List(
-          "name" -> x.name.asJson
+          "name" -> x.name.asJson,
+          "type" -> "anchor".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1528,7 +1569,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "voice_note" -> x.voiceNote.asJson,
-          "caption"    -> x.caption.asJson
+          "caption"    -> x.caption.asJson,
+          "type"       -> "voice_note".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1537,7 +1579,8 @@ object CirceImplicits {
     (x: InputRichBlockList) => {
       Json.fromFields(
         List(
-          "items" -> x.items.asJson
+          "items" -> x.items.asJson,
+          "type"  -> "list".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1546,7 +1589,8 @@ object CirceImplicits {
     (x: InputRichBlockParagraph) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "paragraph".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1556,7 +1600,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"     -> x.text.asJson,
-          "language" -> x.language.asJson
+          "language" -> x.language.asJson,
+          "type"     -> "pre".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1566,7 +1611,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "audio"   -> x.audio.asJson,
-          "caption" -> x.caption.asJson
+          "caption" -> x.caption.asJson,
+          "type"    -> "audio".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1576,7 +1622,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"   -> x.text.asJson,
-          "credit" -> x.credit.asJson
+          "credit" -> x.credit.asJson,
+          "type"   -> "expandable_blockquote".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1586,7 +1633,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "blocks"  -> x.blocks.asJson,
-          "caption" -> x.caption.asJson
+          "caption" -> x.caption.asJson,
+          "type"    -> "collage".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1595,7 +1643,8 @@ object CirceImplicits {
     (x: InputRichBlockFooter) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "footer".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1605,7 +1654,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "document" -> x.document.asJson,
-          "caption"  -> x.caption.asJson
+          "caption"  -> x.caption.asJson,
+          "type"     -> "document".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1614,20 +1664,22 @@ object CirceImplicits {
     (x: InputRichBlockMathematicalExpression) => {
       Json.fromFields(
         List(
-          "expression" -> x.expression.asJson
+          "expression" -> x.expression.asJson,
+          "type"       -> "mathematical_expression".asJson
         ).filter(!_._2.isNull)
       )
     }
 
   implicit lazy val inputrichblockdividerEncoder: Encoder[InputRichBlockDivider.type] =
-    (_: InputRichBlockDivider.type) => ().asJson
+    (_: InputRichBlockDivider.type) => Json.obj("type" -> "divider".asJson)
 
   implicit lazy val inputrichblockblockquotationEncoder: Encoder[InputRichBlockBlockQuotation] =
     (x: InputRichBlockBlockQuotation) => {
       Json.fromFields(
         List(
           "blocks" -> x.blocks.asJson,
-          "credit" -> x.credit.asJson
+          "credit" -> x.credit.asJson,
+          "type"   -> "blockquote".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1636,7 +1688,8 @@ object CirceImplicits {
     (x: InputRichBlockThinking) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "thinking".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1649,7 +1702,8 @@ object CirceImplicits {
           "zoom"     -> x.zoom.asJson,
           "width"    -> x.width.asJson,
           "height"   -> x.height.asJson,
-          "caption"  -> x.caption.asJson
+          "caption"  -> x.caption.asJson,
+          "type"     -> "map".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1659,7 +1713,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "blocks"  -> x.blocks.asJson,
-          "caption" -> x.caption.asJson
+          "caption" -> x.caption.asJson,
+          "type"    -> "slideshow".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1669,7 +1724,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "photo"   -> x.photo.asJson,
-          "caption" -> x.caption.asJson
+          "caption" -> x.caption.asJson,
+          "type"    -> "photo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1679,7 +1735,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "animation" -> x.animation.asJson,
-          "caption"   -> x.caption.asJson
+          "caption"   -> x.caption.asJson,
+          "type"      -> "animation".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1689,7 +1746,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text" -> x.text.asJson,
-          "size" -> x.size.asJson
+          "size" -> x.size.asJson,
+          "type" -> "heading".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1700,7 +1758,8 @@ object CirceImplicits {
         List(
           "summary" -> x.summary.asJson,
           "blocks"  -> x.blocks.asJson,
-          "is_open" -> x.isOpen.asJson
+          "is_open" -> x.isOpen.asJson,
+          "type"    -> "details".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1710,7 +1769,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "buttons" -> x.buttons.asJson,
-          "align"   -> x.align.asJson
+          "align"   -> x.align.asJson,
+          "type"    -> "buttons".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1720,7 +1780,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "video"   -> x.video.asJson,
-          "caption" -> x.caption.asJson
+          "caption" -> x.caption.asJson,
+          "type"    -> "video".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1730,21 +1791,23 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"   -> x.text.asJson,
-          "credit" -> x.credit.asJson
+          "credit" -> x.credit.asJson,
+          "type"   -> "pullquote".asJson
         ).filter(!_._2.isNull)
       )
     }
 
   implicit lazy val inputstorycontentEncoder: Encoder[InputStoryContent] = {
-    case photo: InputStoryContentPhoto => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case video: InputStoryContentVideo => video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case photo: InputStoryContentPhoto => photo.asJson
+    case video: InputStoryContentVideo => video.asJson
   }
 
   implicit lazy val inputstorycontentphotoEncoder: Encoder[InputStoryContentPhoto] =
     (x: InputStoryContentPhoto) => {
       Json.fromFields(
         List(
-          "photo" -> x.photo.asJson
+          "photo" -> x.photo.asJson,
+          "type"  -> "photo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1756,7 +1819,8 @@ object CirceImplicits {
           "video"                 -> x.video.asJson,
           "duration"              -> x.duration.asJson,
           "cover_frame_timestamp" -> x.coverFrameTimestamp.asJson,
-          "is_animation"          -> x.isAnimation.asJson
+          "is_animation"          -> x.isAnimation.asJson,
+          "type"                  -> "video".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2178,9 +2242,9 @@ object CirceImplicits {
     }
 
   implicit lazy val menubuttonEncoder: Encoder[MenuButton] = {
-    case web_app: MenuButtonWebApp         => web_app.asJson.mapObject(_.add("type", Json.fromString("web_app")))
-    case default: MenuButtonDefault.type   => default.asJson.mapObject(_.add("type", Json.fromString("default")))
-    case commands: MenuButtonCommands.type => commands.asJson.mapObject(_.add("type", Json.fromString("commands")))
+    case web_app: MenuButtonWebApp         => web_app.asJson
+    case default: MenuButtonDefault.type   => default.asJson
+    case commands: MenuButtonCommands.type => commands.asJson
   }
 
   implicit lazy val menubuttonDecoder: Decoder[iozhik.OpenEnum[MenuButton]] = for {
@@ -2193,7 +2257,9 @@ object CirceImplicits {
     }
   } yield value
 
-  implicit lazy val menubuttondefaultEncoder: Encoder[MenuButtonDefault.type] = (_: MenuButtonDefault.type) => ().asJson
+  implicit lazy val menubuttondefaultEncoder: Encoder[MenuButtonDefault.type] = (_: MenuButtonDefault.type) =>
+    Json.obj("type" -> "default".asJson)
+
   implicit lazy val menubuttondefaultDecoder: Decoder[MenuButtonDefault.type] = (_: HCursor) => Right(MenuButtonDefault)
 
   implicit lazy val menubuttonwebappEncoder: Encoder[MenuButtonWebApp] =
@@ -2201,7 +2267,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"    -> x.text.asJson,
-          "web_app" -> x.webApp.asJson
+          "web_app" -> x.webApp.asJson,
+          "type"    -> "web_app".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2217,39 +2284,32 @@ object CirceImplicits {
     }
 
   implicit lazy val menubuttoncommandsEncoder: Encoder[MenuButtonCommands.type] = (_: MenuButtonCommands.type) =>
-    ().asJson
+    Json.obj("type" -> "commands".asJson)
 
   implicit lazy val menubuttoncommandsDecoder: Decoder[MenuButtonCommands.type] = (_: HCursor) =>
     Right(MenuButtonCommands)
 
   implicit lazy val messageentityEncoder: Encoder[MessageEntity] = {
-    case underline: UnderlineMessageEntity => underline.asJson.mapObject(_.add("type", Json.fromString("underline")))
-    case expandable_blockquote: ExpandableBlockquoteMessageEntity =>
-      expandable_blockquote.asJson.mapObject(_.add("type", Json.fromString("expandable_blockquote")))
-    case hashtag: HashtagMessageEntity       => hashtag.asJson.mapObject(_.add("type", Json.fromString("hashtag")))
-    case blockquote: BlockquoteMessageEntity =>
-      blockquote.asJson.mapObject(_.add("type", Json.fromString("blockquote")))
-    case date_time: DateTimeMessageEntity => date_time.asJson.mapObject(_.add("type", Json.fromString("date_time")))
-    case text_link: TextLinkMessageEntity => text_link.asJson.mapObject(_.add("type", Json.fromString("text_link")))
-    case strikethrough: StrikethroughMessageEntity =>
-      strikethrough.asJson.mapObject(_.add("type", Json.fromString("strikethrough")))
-    case pre: PreMessageEntity                  => pre.asJson.mapObject(_.add("type", Json.fromString("pre")))
-    case text_mention: TextMentionMessageEntity =>
-      text_mention.asJson.mapObject(_.add("type", Json.fromString("text_mention")))
-    case bot_command: BotCommandMessageEntity =>
-      bot_command.asJson.mapObject(_.add("type", Json.fromString("bot_command")))
-    case phone_number: PhoneNumberMessageEntity =>
-      phone_number.asJson.mapObject(_.add("type", Json.fromString("phone_number")))
-    case email: EmailMessageEntity              => email.asJson.mapObject(_.add("type", Json.fromString("email")))
-    case custom_emoji: CustomEmojiMessageEntity =>
-      custom_emoji.asJson.mapObject(_.add("type", Json.fromString("custom_emoji")))
-    case url: UrlMessageEntity         => url.asJson.mapObject(_.add("type", Json.fromString("url")))
-    case italic: ItalicMessageEntity   => italic.asJson.mapObject(_.add("type", Json.fromString("italic")))
-    case bold: BoldMessageEntity       => bold.asJson.mapObject(_.add("type", Json.fromString("bold")))
-    case cashtag: CashtagMessageEntity => cashtag.asJson.mapObject(_.add("type", Json.fromString("cashtag")))
-    case code: CodeMessageEntity       => code.asJson.mapObject(_.add("type", Json.fromString("code")))
-    case spoiler: SpoilerMessageEntity => spoiler.asJson.mapObject(_.add("type", Json.fromString("spoiler")))
-    case mention: MentionMessageEntity => mention.asJson.mapObject(_.add("type", Json.fromString("mention")))
+    case underline: UnderlineMessageEntity                        => underline.asJson
+    case expandable_blockquote: ExpandableBlockquoteMessageEntity => expandable_blockquote.asJson
+    case hashtag: HashtagMessageEntity                            => hashtag.asJson
+    case blockquote: BlockquoteMessageEntity                      => blockquote.asJson
+    case date_time: DateTimeMessageEntity                         => date_time.asJson
+    case text_link: TextLinkMessageEntity                         => text_link.asJson
+    case strikethrough: StrikethroughMessageEntity                => strikethrough.asJson
+    case pre: PreMessageEntity                                    => pre.asJson
+    case text_mention: TextMentionMessageEntity                   => text_mention.asJson
+    case bot_command: BotCommandMessageEntity                     => bot_command.asJson
+    case phone_number: PhoneNumberMessageEntity                   => phone_number.asJson
+    case email: EmailMessageEntity                                => email.asJson
+    case custom_emoji: CustomEmojiMessageEntity                   => custom_emoji.asJson
+    case url: UrlMessageEntity                                    => url.asJson
+    case italic: ItalicMessageEntity                              => italic.asJson
+    case bold: BoldMessageEntity                                  => bold.asJson
+    case cashtag: CashtagMessageEntity                            => cashtag.asJson
+    case code: CodeMessageEntity                                  => code.asJson
+    case spoiler: SpoilerMessageEntity                            => spoiler.asJson
+    case mention: MentionMessageEntity                            => mention.asJson
   }
 
   implicit lazy val messageentityDecoder: Decoder[iozhik.OpenEnum[MessageEntity]] = for {
@@ -2284,7 +2344,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "mention".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2304,7 +2365,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "cashtag".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2324,7 +2386,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "code".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2344,7 +2407,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "bot_command".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2365,7 +2429,8 @@ object CirceImplicits {
         List(
           "offset"          -> x.offset.asJson,
           "length"          -> x.length.asJson,
-          "custom_emoji_id" -> x.customEmojiId.asJson
+          "custom_emoji_id" -> x.customEmojiId.asJson,
+          "type"            -> "custom_emoji".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2386,7 +2451,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "expandable_blockquote".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2406,7 +2472,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "spoiler".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2426,7 +2493,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "email".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2446,7 +2514,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "blockquote".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2466,7 +2535,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "bold".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2487,7 +2557,8 @@ object CirceImplicits {
         List(
           "offset"   -> x.offset.asJson,
           "length"   -> x.length.asJson,
-          "language" -> x.language.asJson
+          "language" -> x.language.asJson,
+          "type"     -> "pre".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2508,7 +2579,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "italic".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2530,7 +2602,8 @@ object CirceImplicits {
           "offset"           -> x.offset.asJson,
           "length"           -> x.length.asJson,
           "unix_time"        -> x.unixTime.asJson,
-          "date_time_format" -> x.dateTimeFormat.asJson
+          "date_time_format" -> x.dateTimeFormat.asJson,
+          "type"             -> "date_time".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2557,7 +2630,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "strikethrough".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2577,7 +2651,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "underline".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2597,7 +2672,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "hashtag".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2618,7 +2694,8 @@ object CirceImplicits {
         List(
           "offset" -> x.offset.asJson,
           "length" -> x.length.asJson,
-          "user"   -> x.user.asJson
+          "user"   -> x.user.asJson,
+          "type"   -> "text_mention".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2639,7 +2716,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "url".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2660,7 +2738,8 @@ object CirceImplicits {
         List(
           "offset" -> x.offset.asJson,
           "length" -> x.length.asJson,
-          "url"    -> x.url.asJson
+          "url"    -> x.url.asJson,
+          "type"   -> "text_link".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2681,7 +2760,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson
+          "length" -> x.length.asJson,
+          "type"   -> "phone_number".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2697,11 +2777,10 @@ object CirceImplicits {
     }
 
   implicit lazy val messageoriginEncoder: Encoder[MessageOrigin] = {
-    case channel: MessageOriginChannel        => channel.asJson.mapObject(_.add("type", Json.fromString("channel")))
-    case hidden_user: MessageOriginHiddenUser =>
-      hidden_user.asJson.mapObject(_.add("type", Json.fromString("hidden_user")))
-    case chat: MessageOriginChat => chat.asJson.mapObject(_.add("type", Json.fromString("chat")))
-    case user: MessageOriginUser => user.asJson.mapObject(_.add("type", Json.fromString("user")))
+    case channel: MessageOriginChannel        => channel.asJson
+    case hidden_user: MessageOriginHiddenUser => hidden_user.asJson
+    case chat: MessageOriginChat              => chat.asJson
+    case user: MessageOriginUser              => user.asJson
   }
 
   implicit lazy val messageoriginDecoder: Decoder[iozhik.OpenEnum[MessageOrigin]] = for {
@@ -2720,7 +2799,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "date"        -> x.date.asJson,
-          "sender_user" -> x.senderUser.asJson
+          "sender_user" -> x.senderUser.asJson,
+          "type"        -> "user".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2742,7 +2822,8 @@ object CirceImplicits {
           "date"             -> x.date.asJson,
           "chat"             -> x.chat.asJson,
           "message_id"       -> x.messageId.asJson,
-          "author_signature" -> x.authorSignature.asJson
+          "author_signature" -> x.authorSignature.asJson,
+          "type"             -> "channel".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2764,7 +2845,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "date"             -> x.date.asJson,
-          "sender_user_name" -> x.senderUserName.asJson
+          "sender_user_name" -> x.senderUserName.asJson,
+          "type"             -> "hidden_user".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2785,7 +2867,8 @@ object CirceImplicits {
         List(
           "date"             -> x.date.asJson,
           "sender_chat"      -> x.senderChat.asJson,
-          "author_signature" -> x.authorSignature.asJson
+          "author_signature" -> x.authorSignature.asJson,
+          "type"             -> "chat".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2802,8 +2885,8 @@ object CirceImplicits {
     }
 
   implicit lazy val ownedgiftEncoder: Encoder[OwnedGift] = {
-    case regular: OwnedGiftRegular => regular.asJson.mapObject(_.add("type", Json.fromString("regular")))
-    case unique: OwnedGiftUnique   => unique.asJson.mapObject(_.add("type", Json.fromString("unique")))
+    case regular: OwnedGiftRegular => regular.asJson
+    case unique: OwnedGiftUnique   => unique.asJson
   }
 
   implicit lazy val ownedgiftDecoder: Decoder[iozhik.OpenEnum[OwnedGift]] = for {
@@ -2826,7 +2909,8 @@ object CirceImplicits {
           "is_saved"            -> x.isSaved.asJson,
           "can_be_transferred"  -> x.canBeTransferred.asJson,
           "transfer_star_count" -> x.transferStarCount.asJson,
-          "next_transfer_date"  -> x.nextTransferDate.asJson
+          "next_transfer_date"  -> x.nextTransferDate.asJson,
+          "type"                -> "unique".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2873,7 +2957,8 @@ object CirceImplicits {
           "convert_star_count"         -> x.convertStarCount.asJson,
           "prepaid_upgrade_star_count" -> x.prepaidUpgradeStarCount.asJson,
           "is_upgrade_separate"        -> x.isUpgradeSeparate.asJson,
-          "unique_gift_number"         -> x.uniqueGiftNumber.asJson
+          "unique_gift_number"         -> x.uniqueGiftNumber.asJson,
+          "type"                       -> "regular".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2916,10 +3001,10 @@ object CirceImplicits {
     }
 
   implicit lazy val paidmediaEncoder: Encoder[PaidMedia] = {
-    case photo: PaidMediaPhoto          => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case preview: PaidMediaPreview      => preview.asJson.mapObject(_.add("type", Json.fromString("preview")))
-    case live_photo: PaidMediaLivePhoto => live_photo.asJson.mapObject(_.add("type", Json.fromString("live_photo")))
-    case video: PaidMediaVideo          => video.asJson.mapObject(_.add("type", Json.fromString("video")))
+    case photo: PaidMediaPhoto          => photo.asJson
+    case preview: PaidMediaPreview      => preview.asJson
+    case live_photo: PaidMediaLivePhoto => live_photo.asJson
+    case video: PaidMediaVideo          => video.asJson
   }
 
   implicit lazy val paidmediaDecoder: Decoder[iozhik.OpenEnum[PaidMedia]] = for {
@@ -2937,7 +3022,8 @@ object CirceImplicits {
     (x: PaidMediaLivePhoto) => {
       Json.fromFields(
         List(
-          "live_photo" -> x.livePhoto.asJson
+          "live_photo" -> x.livePhoto.asJson,
+          "type"       -> "live_photo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2955,7 +3041,8 @@ object CirceImplicits {
     (x: PaidMediaVideo) => {
       Json.fromFields(
         List(
-          "video" -> x.video.asJson
+          "video" -> x.video.asJson,
+          "type"  -> "video".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2973,7 +3060,8 @@ object CirceImplicits {
     (x: PaidMediaPhoto) => {
       Json.fromFields(
         List(
-          "photo" -> x.photo.asJson
+          "photo" -> x.photo.asJson,
+          "type"  -> "photo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2993,7 +3081,8 @@ object CirceImplicits {
         List(
           "width"    -> x.width.asJson,
           "height"   -> x.height.asJson,
-          "duration" -> x.duration.asJson
+          "duration" -> x.duration.asJson,
+          "type"     -> "preview".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3010,20 +3099,15 @@ object CirceImplicits {
     }
 
   implicit lazy val passportelementerrorEncoder: Encoder[PassportElementError] = {
-    case translation_file: PassportElementErrorTranslationFile =>
-      translation_file.asJson.mapObject(_.add("source", Json.fromString("translation_file")))
-    case translation_files: PassportElementErrorTranslationFiles =>
-      translation_files.asJson.mapObject(_.add("source", Json.fromString("translation_files")))
-    case front_side: PassportElementErrorFrontSide =>
-      front_side.asJson.mapObject(_.add("source", Json.fromString("front_side")))
-    case files: PassportElementErrorFiles => files.asJson.mapObject(_.add("source", Json.fromString("files")))
-    case unspecified: PassportElementErrorUnspecified =>
-      unspecified.asJson.mapObject(_.add("source", Json.fromString("unspecified")))
-    case file: PassportElementErrorFile     => file.asJson.mapObject(_.add("source", Json.fromString("file")))
-    case selfie: PassportElementErrorSelfie => selfie.asJson.mapObject(_.add("source", Json.fromString("selfie")))
-    case reverse_side: PassportElementErrorReverseSide =>
-      reverse_side.asJson.mapObject(_.add("source", Json.fromString("reverse_side")))
-    case data: PassportElementErrorDataField => data.asJson.mapObject(_.add("source", Json.fromString("data")))
+    case translation_file: PassportElementErrorTranslationFile   => translation_file.asJson
+    case translation_files: PassportElementErrorTranslationFiles => translation_files.asJson
+    case front_side: PassportElementErrorFrontSide               => front_side.asJson
+    case files: PassportElementErrorFiles                        => files.asJson
+    case unspecified: PassportElementErrorUnspecified            => unspecified.asJson
+    case file: PassportElementErrorFile                          => file.asJson
+    case selfie: PassportElementErrorSelfie                      => selfie.asJson
+    case reverse_side: PassportElementErrorReverseSide           => reverse_side.asJson
+    case data: PassportElementErrorDataField                     => data.asJson
   }
 
   implicit lazy val passportelementerrorfilesEncoder: Encoder[PassportElementErrorFiles] =
@@ -3032,7 +3116,8 @@ object CirceImplicits {
         List(
           "type"        -> x.`type`.asJson,
           "file_hashes" -> x.fileHashes.asJson,
-          "message"     -> x.message.asJson
+          "message"     -> x.message.asJson,
+          "source"      -> "files".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3044,7 +3129,8 @@ object CirceImplicits {
           "type"       -> x.`type`.asJson,
           "field_name" -> x.fieldName.asJson,
           "data_hash"  -> x.dataHash.asJson,
-          "message"    -> x.message.asJson
+          "message"    -> x.message.asJson,
+          "source"     -> "data".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3055,7 +3141,8 @@ object CirceImplicits {
         List(
           "type"      -> x.`type`.asJson,
           "file_hash" -> x.fileHash.asJson,
-          "message"   -> x.message.asJson
+          "message"   -> x.message.asJson,
+          "source"    -> "reverse_side".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3066,7 +3153,8 @@ object CirceImplicits {
         List(
           "type"      -> x.`type`.asJson,
           "file_hash" -> x.fileHash.asJson,
-          "message"   -> x.message.asJson
+          "message"   -> x.message.asJson,
+          "source"    -> "selfie".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3077,7 +3165,8 @@ object CirceImplicits {
         List(
           "type"      -> x.`type`.asJson,
           "file_hash" -> x.fileHash.asJson,
-          "message"   -> x.message.asJson
+          "message"   -> x.message.asJson,
+          "source"    -> "front_side".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3088,7 +3177,8 @@ object CirceImplicits {
         List(
           "type"      -> x.`type`.asJson,
           "file_hash" -> x.fileHash.asJson,
-          "message"   -> x.message.asJson
+          "message"   -> x.message.asJson,
+          "source"    -> "file".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3099,7 +3189,8 @@ object CirceImplicits {
         List(
           "type"         -> x.`type`.asJson,
           "element_hash" -> x.elementHash.asJson,
-          "message"      -> x.message.asJson
+          "message"      -> x.message.asJson,
+          "source"       -> "unspecified".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3110,7 +3201,8 @@ object CirceImplicits {
         List(
           "type"      -> x.`type`.asJson,
           "file_hash" -> x.fileHash.asJson,
-          "message"   -> x.message.asJson
+          "message"   -> x.message.asJson,
+          "source"    -> "translation_file".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3121,16 +3213,16 @@ object CirceImplicits {
         List(
           "type"        -> x.`type`.asJson,
           "file_hashes" -> x.fileHashes.asJson,
-          "message"     -> x.message.asJson
+          "message"     -> x.message.asJson,
+          "source"      -> "translation_files".asJson
         ).filter(!_._2.isNull)
       )
     }
 
   implicit lazy val reactiontypeEncoder: Encoder[ReactionType] = {
-    case custom_emoji: ReactionTypeCustomEmoji =>
-      custom_emoji.asJson.mapObject(_.add("type", Json.fromString("custom_emoji")))
-    case paid: ReactionTypePaid.type => paid.asJson.mapObject(_.add("type", Json.fromString("paid")))
-    case emoji: ReactionTypeEmoji    => emoji.asJson.mapObject(_.add("type", Json.fromString("emoji")))
+    case custom_emoji: ReactionTypeCustomEmoji => custom_emoji.asJson
+    case paid: ReactionTypePaid.type           => paid.asJson
+    case emoji: ReactionTypeEmoji              => emoji.asJson
   }
 
   implicit lazy val reactiontypeDecoder: Decoder[iozhik.OpenEnum[ReactionType]] = for {
@@ -3143,14 +3235,17 @@ object CirceImplicits {
     }
   } yield value
 
-  implicit lazy val reactiontypepaidEncoder: Encoder[ReactionTypePaid.type] = (_: ReactionTypePaid.type) => ().asJson
+  implicit lazy val reactiontypepaidEncoder: Encoder[ReactionTypePaid.type] = (_: ReactionTypePaid.type) =>
+    Json.obj("type" -> "paid".asJson)
+
   implicit lazy val reactiontypepaidDecoder: Decoder[ReactionTypePaid.type] = (_: HCursor) => Right(ReactionTypePaid)
 
   implicit lazy val reactiontypeemojiEncoder: Encoder[ReactionTypeEmoji] =
     (x: ReactionTypeEmoji) => {
       Json.fromFields(
         List(
-          "emoji" -> x.emoji.asJson
+          "emoji" -> x.emoji.asJson,
+          "type"  -> "emoji".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3168,7 +3263,8 @@ object CirceImplicits {
     (x: ReactionTypeCustomEmoji) => {
       Json.fromFields(
         List(
-          "custom_emoji_id" -> x.customEmojiId.asJson
+          "custom_emoji_id" -> x.customEmojiId.asJson,
+          "type"            -> "custom_emoji".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3183,11 +3279,9 @@ object CirceImplicits {
     }
 
   implicit lazy val revenuewithdrawalstateEncoder: Encoder[RevenueWithdrawalState] = {
-    case failed: RevenueWithdrawalStateFailed.type  => failed.asJson.mapObject(_.add("type", Json.fromString("failed")))
-    case succeeded: RevenueWithdrawalStateSucceeded =>
-      succeeded.asJson.mapObject(_.add("type", Json.fromString("succeeded")))
-    case pending: RevenueWithdrawalStatePending.type =>
-      pending.asJson.mapObject(_.add("type", Json.fromString("pending")))
+    case failed: RevenueWithdrawalStateFailed.type   => failed.asJson
+    case succeeded: RevenueWithdrawalStateSucceeded  => succeeded.asJson
+    case pending: RevenueWithdrawalStatePending.type => pending.asJson
   }
 
   implicit lazy val revenuewithdrawalstateDecoder: Decoder[iozhik.OpenEnum[RevenueWithdrawalState]] = for {
@@ -3201,7 +3295,7 @@ object CirceImplicits {
   } yield value
 
   implicit lazy val revenuewithdrawalstatependingEncoder: Encoder[RevenueWithdrawalStatePending.type] =
-    (_: RevenueWithdrawalStatePending.type) => ().asJson
+    (_: RevenueWithdrawalStatePending.type) => Json.obj("type" -> "pending".asJson)
 
   implicit lazy val revenuewithdrawalstatependingDecoder: Decoder[RevenueWithdrawalStatePending.type] = (_: HCursor) =>
     Right(RevenueWithdrawalStatePending)
@@ -3211,7 +3305,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "date" -> x.date.asJson,
-          "url"  -> x.url.asJson
+          "url"  -> x.url.asJson,
+          "type" -> "succeeded".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3227,39 +3322,36 @@ object CirceImplicits {
     }
 
   implicit lazy val revenuewithdrawalstatefailedEncoder: Encoder[RevenueWithdrawalStateFailed.type] =
-    (_: RevenueWithdrawalStateFailed.type) => ().asJson
+    (_: RevenueWithdrawalStateFailed.type) => Json.obj("type" -> "failed".asJson)
 
   implicit lazy val revenuewithdrawalstatefailedDecoder: Decoder[RevenueWithdrawalStateFailed.type] = (_: HCursor) =>
     Right(RevenueWithdrawalStateFailed)
 
   implicit lazy val richblockEncoder: Encoder[RichBlock] = {
-    case heading: RichBlockSectionHeading    => heading.asJson.mapObject(_.add("type", Json.fromString("heading")))
-    case map: RichBlockMap                   => map.asJson.mapObject(_.add("type", Json.fromString("map")))
-    case document: RichBlockDocument         => document.asJson.mapObject(_.add("type", Json.fromString("document")))
-    case audio: RichBlockAudio               => audio.asJson.mapObject(_.add("type", Json.fromString("audio")))
-    case divider: RichBlockDivider.type      => divider.asJson.mapObject(_.add("type", Json.fromString("divider")))
-    case buttons: RichBlockButtons           => buttons.asJson.mapObject(_.add("type", Json.fromString("buttons")))
-    case blockquote: RichBlockBlockQuotation =>
-      blockquote.asJson.mapObject(_.add("type", Json.fromString("blockquote")))
-    case video: RichBlockVideo             => video.asJson.mapObject(_.add("type", Json.fromString("video")))
-    case details: RichBlockDetails         => details.asJson.mapObject(_.add("type", Json.fromString("details")))
-    case thinking: RichBlockThinking       => thinking.asJson.mapObject(_.add("type", Json.fromString("thinking")))
-    case footer: RichBlockFooter           => footer.asJson.mapObject(_.add("type", Json.fromString("footer")))
-    case anchor: RichBlockAnchor           => anchor.asJson.mapObject(_.add("type", Json.fromString("anchor")))
-    case pre: RichBlockPreformatted        => pre.asJson.mapObject(_.add("type", Json.fromString("pre")))
-    case pullquote: RichBlockPullQuotation => pullquote.asJson.mapObject(_.add("type", Json.fromString("pullquote")))
-    case mathematical_expression: RichBlockMathematicalExpression =>
-      mathematical_expression.asJson.mapObject(_.add("type", Json.fromString("mathematical_expression")))
-    case slideshow: RichBlockSlideshow => slideshow.asJson.mapObject(_.add("type", Json.fromString("slideshow")))
-    case photo: RichBlockPhoto         => photo.asJson.mapObject(_.add("type", Json.fromString("photo")))
-    case collage: RichBlockCollage     => collage.asJson.mapObject(_.add("type", Json.fromString("collage")))
-    case expandable_blockquote: RichBlockExpandableBlockQuotation =>
-      expandable_blockquote.asJson.mapObject(_.add("type", Json.fromString("expandable_blockquote")))
-    case voice_note: RichBlockVoiceNote => voice_note.asJson.mapObject(_.add("type", Json.fromString("voice_note")))
-    case paragraph: RichBlockParagraph  => paragraph.asJson.mapObject(_.add("type", Json.fromString("paragraph")))
-    case animation: RichBlockAnimation  => animation.asJson.mapObject(_.add("type", Json.fromString("animation")))
-    case list: RichBlockList            => list.asJson.mapObject(_.add("type", Json.fromString("list")))
-    case table: RichBlockTable          => table.asJson.mapObject(_.add("type", Json.fromString("table")))
+    case heading: RichBlockSectionHeading                         => heading.asJson
+    case map: RichBlockMap                                        => map.asJson
+    case document: RichBlockDocument                              => document.asJson
+    case audio: RichBlockAudio                                    => audio.asJson
+    case divider: RichBlockDivider.type                           => divider.asJson
+    case buttons: RichBlockButtons                                => buttons.asJson
+    case blockquote: RichBlockBlockQuotation                      => blockquote.asJson
+    case video: RichBlockVideo                                    => video.asJson
+    case details: RichBlockDetails                                => details.asJson
+    case thinking: RichBlockThinking                              => thinking.asJson
+    case footer: RichBlockFooter                                  => footer.asJson
+    case anchor: RichBlockAnchor                                  => anchor.asJson
+    case pre: RichBlockPreformatted                               => pre.asJson
+    case pullquote: RichBlockPullQuotation                        => pullquote.asJson
+    case mathematical_expression: RichBlockMathematicalExpression => mathematical_expression.asJson
+    case slideshow: RichBlockSlideshow                            => slideshow.asJson
+    case photo: RichBlockPhoto                                    => photo.asJson
+    case collage: RichBlockCollage                                => collage.asJson
+    case expandable_blockquote: RichBlockExpandableBlockQuotation => expandable_blockquote.asJson
+    case voice_note: RichBlockVoiceNote                           => voice_note.asJson
+    case paragraph: RichBlockParagraph                            => paragraph.asJson
+    case animation: RichBlockAnimation                            => animation.asJson
+    case list: RichBlockList                                      => list.asJson
+    case table: RichBlockTable                                    => table.asJson
   }
 
   implicit lazy val richblockDecoder: Decoder[iozhik.OpenEnum[RichBlock]] = for {
@@ -3299,7 +3391,8 @@ object CirceImplicits {
         List(
           "video"       -> x.video.asJson,
           "has_spoiler" -> x.hasSpoiler.asJson,
-          "caption"     -> x.caption.asJson
+          "caption"     -> x.caption.asJson,
+          "type"        -> "video".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3321,7 +3414,8 @@ object CirceImplicits {
         List(
           "summary" -> x.summary.asJson,
           "blocks"  -> x.blocks.asJson,
-          "is_open" -> x.isOpen.asJson
+          "is_open" -> x.isOpen.asJson,
+          "type"    -> "details".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3341,7 +3435,8 @@ object CirceImplicits {
     (x: RichBlockList) => {
       Json.fromFields(
         List(
-          "items" -> x.items.asJson
+          "items" -> x.items.asJson,
+          "type"  -> "list".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3361,7 +3456,8 @@ object CirceImplicits {
         List(
           "photo"       -> x.photo.asJson,
           "has_spoiler" -> x.hasSpoiler.asJson,
-          "caption"     -> x.caption.asJson
+          "caption"     -> x.caption.asJson,
+          "type"        -> "photo".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3381,7 +3477,8 @@ object CirceImplicits {
     (x: RichBlockThinking) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "thinking".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3399,7 +3496,8 @@ object CirceImplicits {
     (x: RichBlockFooter) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "footer".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3417,7 +3515,8 @@ object CirceImplicits {
     (x: RichBlockAnchor) => {
       Json.fromFields(
         List(
-          "name" -> x.name.asJson
+          "name" -> x.name.asJson,
+          "type" -> "anchor".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3436,7 +3535,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "document" -> x.document.asJson,
-          "caption"  -> x.caption.asJson
+          "caption"  -> x.caption.asJson,
+          "type"     -> "document".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3455,7 +3555,8 @@ object CirceImplicits {
     (x: RichBlockMathematicalExpression) => {
       Json.fromFields(
         List(
-          "expression" -> x.expression.asJson
+          "expression" -> x.expression.asJson,
+          "type"       -> "mathematical_expression".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3474,7 +3575,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "blocks" -> x.blocks.asJson,
-          "credit" -> x.credit.asJson
+          "credit" -> x.credit.asJson,
+          "type"   -> "blockquote".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3497,7 +3599,8 @@ object CirceImplicits {
           "zoom"     -> x.zoom.asJson,
           "width"    -> x.width.asJson,
           "height"   -> x.height.asJson,
-          "caption"  -> x.caption.asJson
+          "caption"  -> x.caption.asJson,
+          "type"     -> "map".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3520,7 +3623,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "blocks"  -> x.blocks.asJson,
-          "caption" -> x.caption.asJson
+          "caption" -> x.caption.asJson,
+          "type"    -> "slideshow".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3539,7 +3643,8 @@ object CirceImplicits {
     (x: RichBlockParagraph) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "paragraph".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3558,7 +3663,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"   -> x.text.asJson,
-          "credit" -> x.credit.asJson
+          "credit" -> x.credit.asJson,
+          "type"   -> "pullquote".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3578,7 +3684,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"     -> x.text.asJson,
-          "language" -> x.language.asJson
+          "language" -> x.language.asJson,
+          "type"     -> "pre".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3601,7 +3708,8 @@ object CirceImplicits {
           "is_bordered" -> x.isBordered.asJson,
           "is_striped"  -> x.isStriped.asJson,
           "is_compact"  -> x.isCompact.asJson,
-          "caption"     -> x.caption.asJson
+          "caption"     -> x.caption.asJson,
+          "type"        -> "table".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3630,7 +3738,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "blocks"  -> x.blocks.asJson,
-          "caption" -> x.caption.asJson
+          "caption" -> x.caption.asJson,
+          "type"    -> "collage".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3650,7 +3759,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "audio"   -> x.audio.asJson,
-          "caption" -> x.caption.asJson
+          "caption" -> x.caption.asJson,
+          "type"    -> "audio".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3665,7 +3775,9 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val richblockdividerEncoder: Encoder[RichBlockDivider.type] = (_: RichBlockDivider.type) => ().asJson
+  implicit lazy val richblockdividerEncoder: Encoder[RichBlockDivider.type] = (_: RichBlockDivider.type) =>
+    Json.obj("type" -> "divider".asJson)
+
   implicit lazy val richblockdividerDecoder: Decoder[RichBlockDivider.type] = (_: HCursor) => Right(RichBlockDivider)
 
   implicit lazy val richblockanimationEncoder: Encoder[RichBlockAnimation] =
@@ -3674,7 +3786,8 @@ object CirceImplicits {
         List(
           "animation"   -> x.animation.asJson,
           "has_spoiler" -> x.hasSpoiler.asJson,
-          "caption"     -> x.caption.asJson
+          "caption"     -> x.caption.asJson,
+          "type"        -> "animation".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3695,7 +3808,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"   -> x.text.asJson,
-          "credit" -> x.credit.asJson
+          "credit" -> x.credit.asJson,
+          "type"   -> "expandable_blockquote".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3715,7 +3829,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text" -> x.text.asJson,
-          "size" -> x.size.asJson
+          "size" -> x.size.asJson,
+          "type" -> "heading".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3735,7 +3850,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "buttons" -> x.buttons.asJson,
-          "align"   -> x.align.asJson
+          "align"   -> x.align.asJson,
+          "type"    -> "buttons".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3755,7 +3871,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "voice_note" -> x.voiceNote.asJson,
-          "caption"    -> x.caption.asJson
+          "caption"    -> x.caption.asJson,
+          "type"       -> "voice_note".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3771,42 +3888,34 @@ object CirceImplicits {
     }
 
   private lazy val richtextGeneratedEncoder: Encoder[RichText] = {
-    case mathematical_expression: RichTextMathematicalExpression =>
-      mathematical_expression.asJson.mapObject(_.add("type", Json.fromString("mathematical_expression")))
-    case underline: RichTextUnderline => underline.asJson.mapObject(_.add("type", Json.fromString("underline")))
-    case marked: RichTextMarked       => marked.asJson.mapObject(_.add("type", Json.fromString("marked")))
-    case hashtag: RichTextHashtag     => hashtag.asJson.mapObject(_.add("type", Json.fromString("hashtag")))
-    case date_time: RichTextDateTime  => date_time.asJson.mapObject(_.add("type", Json.fromString("date_time")))
-    case reference_link: RichTextReferenceLink =>
-      reference_link.asJson.mapObject(_.add("type", Json.fromString("reference_link")))
-    case plain: RichTextPlain            => plain.asJson.mapObject(_.add("type", Json.fromString("plain")))
-    case anchor_link: RichTextAnchorLink => anchor_link.asJson.mapObject(_.add("type", Json.fromString("anchor_link")))
-    case bank_card_number: RichTextBankCardNumber =>
-      bank_card_number.asJson.mapObject(_.add("type", Json.fromString("bank_card_number")))
-    case strikethrough: RichTextStrikethrough =>
-      strikethrough.asJson.mapObject(_.add("type", Json.fromString("strikethrough")))
-    case reference: RichTextReference      => reference.asJson.mapObject(_.add("type", Json.fromString("reference")))
-    case anchor: RichTextAnchor            => anchor.asJson.mapObject(_.add("type", Json.fromString("anchor")))
-    case text_mention: RichTextTextMention =>
-      text_mention.asJson.mapObject(_.add("type", Json.fromString("text_mention")))
-    case bot_command: RichTextBotCommand => bot_command.asJson.mapObject(_.add("type", Json.fromString("bot_command")))
-    case phone_number: RichTextPhoneNumber =>
-      phone_number.asJson.mapObject(_.add("type", Json.fromString("phone_number")))
-    case email_address: RichTextEmailAddress =>
-      email_address.asJson.mapObject(_.add("type", Json.fromString("email_address")))
-    case custom_emoji: RichTextCustomEmoji =>
-      custom_emoji.asJson.mapObject(_.add("type", Json.fromString("custom_emoji")))
-    case url: RichTextUrl                 => url.asJson.mapObject(_.add("type", Json.fromString("url")))
-    case italic: RichTextItalic           => italic.asJson.mapObject(_.add("type", Json.fromString("italic")))
-    case bold: RichTextBold               => bold.asJson.mapObject(_.add("type", Json.fromString("bold")))
-    case concat: RichTextConcat           => concat.asJson.mapObject(_.add("type", Json.fromString("concat")))
-    case subscript: RichTextSubscript     => subscript.asJson.mapObject(_.add("type", Json.fromString("subscript")))
-    case superscript: RichTextSuperscript => superscript.asJson.mapObject(_.add("type", Json.fromString("superscript")))
-    case cashtag: RichTextCashtag         => cashtag.asJson.mapObject(_.add("type", Json.fromString("cashtag")))
-    case code: RichTextCode               => code.asJson.mapObject(_.add("type", Json.fromString("code")))
-    case button: RichTextButton           => button.asJson.mapObject(_.add("type", Json.fromString("button")))
-    case spoiler: RichTextSpoiler         => spoiler.asJson.mapObject(_.add("type", Json.fromString("spoiler")))
-    case mention: RichTextMention         => mention.asJson.mapObject(_.add("type", Json.fromString("mention")))
+    case mathematical_expression: RichTextMathematicalExpression => mathematical_expression.asJson
+    case underline: RichTextUnderline                            => underline.asJson
+    case marked: RichTextMarked                                  => marked.asJson
+    case hashtag: RichTextHashtag                                => hashtag.asJson
+    case date_time: RichTextDateTime                             => date_time.asJson
+    case reference_link: RichTextReferenceLink                   => reference_link.asJson
+    case plain: RichTextPlain                                    => plain.asJson
+    case anchor_link: RichTextAnchorLink                         => anchor_link.asJson
+    case bank_card_number: RichTextBankCardNumber                => bank_card_number.asJson
+    case strikethrough: RichTextStrikethrough                    => strikethrough.asJson
+    case reference: RichTextReference                            => reference.asJson
+    case anchor: RichTextAnchor                                  => anchor.asJson
+    case text_mention: RichTextTextMention                       => text_mention.asJson
+    case bot_command: RichTextBotCommand                         => bot_command.asJson
+    case phone_number: RichTextPhoneNumber                       => phone_number.asJson
+    case email_address: RichTextEmailAddress                     => email_address.asJson
+    case custom_emoji: RichTextCustomEmoji                       => custom_emoji.asJson
+    case url: RichTextUrl                                        => url.asJson
+    case italic: RichTextItalic                                  => italic.asJson
+    case bold: RichTextBold                                      => bold.asJson
+    case concat: RichTextConcat                                  => concat.asJson
+    case subscript: RichTextSubscript                            => subscript.asJson
+    case superscript: RichTextSuperscript                        => superscript.asJson
+    case cashtag: RichTextCashtag                                => cashtag.asJson
+    case code: RichTextCode                                      => code.asJson
+    case button: RichTextButton                                  => button.asJson
+    case spoiler: RichTextSpoiler                                => spoiler.asJson
+    case mention: RichTextMention                                => mention.asJson
   }
 
   implicit lazy val richtextEncoder: Encoder[RichText] = {
@@ -3863,7 +3972,8 @@ object CirceImplicits {
     (x: RichTextSubscript) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "subscript".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3882,7 +3992,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"         -> x.text.asJson,
-          "phone_number" -> x.phoneNumber.asJson
+          "phone_number" -> x.phoneNumber.asJson,
+          "type"         -> "phone_number".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3901,7 +4012,8 @@ object CirceImplicits {
     (x: RichTextCode) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "code".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3920,7 +4032,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"        -> x.text.asJson,
-          "anchor_name" -> x.anchorName.asJson
+          "anchor_name" -> x.anchorName.asJson,
+          "type"        -> "anchor_link".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3939,7 +4052,8 @@ object CirceImplicits {
     (x: RichTextConcat) => {
       Json.fromFields(
         List(
-          "texts" -> x.texts.asJson
+          "texts" -> x.texts.asJson,
+          "type"  -> "concat".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3957,7 +4071,8 @@ object CirceImplicits {
     (x: RichTextSpoiler) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "spoiler".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3976,7 +4091,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text" -> x.text.asJson,
-          "name" -> x.name.asJson
+          "name" -> x.name.asJson,
+          "type" -> "reference".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -3996,7 +4112,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"     -> x.text.asJson,
-          "username" -> x.username.asJson
+          "username" -> x.username.asJson,
+          "type"     -> "mention".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4015,7 +4132,8 @@ object CirceImplicits {
     (x: RichTextUnderline) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "underline".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4034,7 +4152,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text" -> x.text.asJson,
-          "url"  -> x.url.asJson
+          "url"  -> x.url.asJson,
+          "type" -> "url".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4053,7 +4172,8 @@ object CirceImplicits {
     (x: RichTextButton) => {
       Json.fromFields(
         List(
-          "button" -> x.button.asJson
+          "button" -> x.button.asJson,
+          "type"   -> "button".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4072,7 +4192,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"        -> x.text.asJson,
-          "bot_command" -> x.botCommand.asJson
+          "bot_command" -> x.botCommand.asJson,
+          "type"        -> "bot_command".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4092,7 +4213,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text" -> x.text.asJson,
-          "user" -> x.user.asJson
+          "user" -> x.user.asJson,
+          "type" -> "text_mention".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4111,7 +4233,8 @@ object CirceImplicits {
     (x: RichTextMathematicalExpression) => {
       Json.fromFields(
         List(
-          "expression" -> x.expression.asJson
+          "expression" -> x.expression.asJson,
+          "type"       -> "mathematical_expression".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4129,7 +4252,8 @@ object CirceImplicits {
     (x: RichTextSuperscript) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "superscript".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4148,7 +4272,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"          -> x.text.asJson,
-          "email_address" -> x.emailAddress.asJson
+          "email_address" -> x.emailAddress.asJson,
+          "type"          -> "email_address".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4167,7 +4292,8 @@ object CirceImplicits {
     (x: RichTextMarked) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "marked".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4185,7 +4311,8 @@ object CirceImplicits {
     (x: RichTextPlain) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "plain".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4203,7 +4330,8 @@ object CirceImplicits {
     (x: RichTextItalic) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "italic".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4222,7 +4350,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"             -> x.text.asJson,
-          "bank_card_number" -> x.bankCardNumber.asJson
+          "bank_card_number" -> x.bankCardNumber.asJson,
+          "type"             -> "bank_card_number".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4241,7 +4370,8 @@ object CirceImplicits {
     (x: RichTextStrikethrough) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "strikethrough".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4260,7 +4390,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "custom_emoji_id"  -> x.customEmojiId.asJson,
-          "alternative_text" -> x.alternativeText.asJson
+          "alternative_text" -> x.alternativeText.asJson,
+          "type"             -> "custom_emoji".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4279,7 +4410,8 @@ object CirceImplicits {
     (x: RichTextAnchor) => {
       Json.fromFields(
         List(
-          "name" -> x.name.asJson
+          "name" -> x.name.asJson,
+          "type" -> "anchor".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4298,7 +4430,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"    -> x.text.asJson,
-          "hashtag" -> x.hashtag.asJson
+          "hashtag" -> x.hashtag.asJson,
+          "type"    -> "hashtag".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4319,7 +4452,8 @@ object CirceImplicits {
         List(
           "text"             -> x.text.asJson,
           "unix_time"        -> x.unixTime.asJson,
-          "date_time_format" -> x.dateTimeFormat.asJson
+          "date_time_format" -> x.dateTimeFormat.asJson,
+          "type"             -> "date_time".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4340,7 +4474,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"    -> x.text.asJson,
-          "cashtag" -> x.cashtag.asJson
+          "cashtag" -> x.cashtag.asJson,
+          "type"    -> "cashtag".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4359,7 +4494,8 @@ object CirceImplicits {
     (x: RichTextBold) => {
       Json.fromFields(
         List(
-          "text" -> x.text.asJson
+          "text" -> x.text.asJson,
+          "type" -> "bold".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4378,7 +4514,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "text"           -> x.text.asJson,
-          "reference_name" -> x.referenceName.asJson
+          "reference_name" -> x.referenceName.asJson,
+          "type"           -> "reference_link".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4394,20 +4531,19 @@ object CirceImplicits {
     }
 
   implicit lazy val storyareatypeEncoder: Encoder[StoryAreaType] = {
-    case unique_gift: StoryAreaTypeUniqueGift =>
-      unique_gift.asJson.mapObject(_.add("type", Json.fromString("unique_gift")))
-    case location: StoryAreaTypeLocation => location.asJson.mapObject(_.add("type", Json.fromString("location")))
-    case suggested_reaction: StoryAreaTypeSuggestedReaction =>
-      suggested_reaction.asJson.mapObject(_.add("type", Json.fromString("suggested_reaction")))
-    case link: StoryAreaTypeLink       => link.asJson.mapObject(_.add("type", Json.fromString("link")))
-    case weather: StoryAreaTypeWeather => weather.asJson.mapObject(_.add("type", Json.fromString("weather")))
+    case unique_gift: StoryAreaTypeUniqueGift               => unique_gift.asJson
+    case location: StoryAreaTypeLocation                    => location.asJson
+    case suggested_reaction: StoryAreaTypeSuggestedReaction => suggested_reaction.asJson
+    case link: StoryAreaTypeLink                            => link.asJson
+    case weather: StoryAreaTypeWeather                      => weather.asJson
   }
 
   implicit lazy val storyareatypelinkEncoder: Encoder[StoryAreaTypeLink] =
     (x: StoryAreaTypeLink) => {
       Json.fromFields(
         List(
-          "url" -> x.url.asJson
+          "url"  -> x.url.asJson,
+          "type" -> "link".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4418,7 +4554,8 @@ object CirceImplicits {
         List(
           "latitude"  -> x.latitude.asJson,
           "longitude" -> x.longitude.asJson,
-          "address"   -> x.address.asJson
+          "address"   -> x.address.asJson,
+          "type"      -> "location".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4429,7 +4566,8 @@ object CirceImplicits {
         List(
           "temperature"      -> x.temperature.asJson,
           "emoji"            -> x.emoji.asJson,
-          "background_color" -> x.backgroundColor.asJson
+          "background_color" -> x.backgroundColor.asJson,
+          "type"             -> "weather".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4438,7 +4576,8 @@ object CirceImplicits {
     (x: StoryAreaTypeUniqueGift) => {
       Json.fromFields(
         List(
-          "name" -> x.name.asJson
+          "name" -> x.name.asJson,
+          "type" -> "unique_gift".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4449,22 +4588,20 @@ object CirceImplicits {
         List(
           "reaction_type" -> x.reactionType.asJson,
           "is_dark"       -> x.isDark.asJson,
-          "is_flipped"    -> x.isFlipped.asJson
+          "is_flipped"    -> x.isFlipped.asJson,
+          "type"          -> "suggested_reaction".asJson
         ).filter(!_._2.isNull)
       )
     }
 
   implicit lazy val transactionpartnerEncoder: Encoder[TransactionPartner] = {
-    case fragment: TransactionPartnerFragment => fragment.asJson.mapObject(_.add("type", Json.fromString("fragment")))
-    case telegram_ads: TransactionPartnerTelegramAds.type =>
-      telegram_ads.asJson.mapObject(_.add("type", Json.fromString("telegram_ads")))
-    case chat: TransactionPartnerChat                => chat.asJson.mapObject(_.add("type", Json.fromString("chat")))
-    case telegram_api: TransactionPartnerTelegramApi =>
-      telegram_api.asJson.mapObject(_.add("type", Json.fromString("telegram_api")))
-    case affiliate_program: TransactionPartnerAffiliateProgram =>
-      affiliate_program.asJson.mapObject(_.add("type", Json.fromString("affiliate_program")))
-    case user: TransactionPartnerUser        => user.asJson.mapObject(_.add("type", Json.fromString("user")))
-    case other: TransactionPartnerOther.type => other.asJson.mapObject(_.add("type", Json.fromString("other")))
+    case fragment: TransactionPartnerFragment                  => fragment.asJson
+    case telegram_ads: TransactionPartnerTelegramAds.type      => telegram_ads.asJson
+    case chat: TransactionPartnerChat                          => chat.asJson
+    case telegram_api: TransactionPartnerTelegramApi           => telegram_api.asJson
+    case affiliate_program: TransactionPartnerAffiliateProgram => affiliate_program.asJson
+    case user: TransactionPartnerUser                          => user.asJson
+    case other: TransactionPartnerOther.type                   => other.asJson
   }
 
   implicit lazy val transactionpartnerDecoder: Decoder[iozhik.OpenEnum[TransactionPartner]] = for {
@@ -4486,7 +4623,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "chat" -> x.chat.asJson,
-          "gift" -> x.gift.asJson
+          "gift" -> x.gift.asJson,
+          "type" -> "chat".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4506,7 +4644,8 @@ object CirceImplicits {
       Json.fromFields(
         List(
           "sponsor_user"         -> x.sponsorUser.asJson,
-          "commission_per_mille" -> x.commissionPerMille.asJson
+          "commission_per_mille" -> x.commissionPerMille.asJson,
+          "type"                 -> "affiliate_program".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4522,13 +4661,13 @@ object CirceImplicits {
     }
 
   implicit lazy val transactionpartnerotherEncoder: Encoder[TransactionPartnerOther.type] =
-    (_: TransactionPartnerOther.type) => ().asJson
+    (_: TransactionPartnerOther.type) => Json.obj("type" -> "other".asJson)
 
   implicit lazy val transactionpartnerotherDecoder: Decoder[TransactionPartnerOther.type] = (_: HCursor) =>
     Right(TransactionPartnerOther)
 
   implicit lazy val transactionpartnertelegramadsEncoder: Encoder[TransactionPartnerTelegramAds.type] =
-    (_: TransactionPartnerTelegramAds.type) => ().asJson
+    (_: TransactionPartnerTelegramAds.type) => Json.obj("type" -> "telegram_ads".asJson)
 
   implicit lazy val transactionpartnertelegramadsDecoder: Decoder[TransactionPartnerTelegramAds.type] = (_: HCursor) =>
     Right(TransactionPartnerTelegramAds)
@@ -4545,7 +4684,8 @@ object CirceImplicits {
           "paid_media"                    -> (if (x.paidMedia.isEmpty) Json.Null else x.paidMedia.asJson),
           "paid_media_payload"            -> x.paidMediaPayload.asJson,
           "gift"                          -> x.gift.asJson,
-          "premium_subscription_duration" -> x.premiumSubscriptionDuration.asJson
+          "premium_subscription_duration" -> x.premiumSubscriptionDuration.asJson,
+          "type"                          -> "user".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4581,7 +4721,8 @@ object CirceImplicits {
     (x: TransactionPartnerTelegramApi) => {
       Json.fromFields(
         List(
-          "request_count" -> x.requestCount.asJson
+          "request_count" -> x.requestCount.asJson,
+          "type"          -> "telegram_api".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -4599,7 +4740,8 @@ object CirceImplicits {
     (x: TransactionPartnerFragment) => {
       Json.fromFields(
         List(
-          "withdrawal_state" -> x.withdrawalState.asJson
+          "withdrawal_state" -> x.withdrawalState.asJson,
+          "type"             -> "fragment".asJson
         ).filter(!_._2.isNull)
       )
     }
