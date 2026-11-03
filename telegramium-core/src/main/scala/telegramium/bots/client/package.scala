@@ -186,7 +186,7 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val closereqEncoder: Encoder[CloseReq.type] = (_: CloseReq.type) => ().asJson
+  implicit lazy val closereqEncoder: Encoder[CloseReq.type] = (_: CloseReq.type) => Json.obj("method" -> "close".asJson)
 
   implicit lazy val closeforumtopicreqEncoder: Encoder[CloseForumTopicReq] =
     (x: CloseForumTopicReq) => {
@@ -812,7 +812,7 @@ object CirceImplicits {
     }
 
   implicit lazy val getavailablegiftsreqEncoder: Encoder[GetAvailableGiftsReq.type] = (_: GetAvailableGiftsReq.type) =>
-    ().asJson
+    Json.obj("method" -> "getAvailableGifts".asJson)
 
   implicit lazy val getbusinessaccountgiftsreqEncoder: Encoder[GetBusinessAccountGiftsReq] =
     (x: GetBusinessAccountGiftsReq) => {
@@ -947,7 +947,7 @@ object CirceImplicits {
     }
 
   implicit lazy val getforumtopiciconstickersreqEncoder: Encoder[GetForumTopicIconStickersReq.type] =
-    (_: GetForumTopicIconStickersReq.type) => ().asJson
+    (_: GetForumTopicIconStickersReq.type) => Json.obj("method" -> "getForumTopicIconStickers".asJson)
 
   implicit lazy val getgamehighscoresreqEncoder: Encoder[GetGameHighScoresReq] =
     (x: GetGameHighScoresReq) => {
@@ -982,7 +982,7 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val getmereqEncoder: Encoder[GetMeReq.type] = (_: GetMeReq.type) => ().asJson
+  implicit lazy val getmereqEncoder: Encoder[GetMeReq.type] = (_: GetMeReq.type) => Json.obj("method" -> "getMe".asJson)
 
   implicit lazy val getmycommandsreqEncoder: Encoder[GetMyCommandsReq] =
     (x: GetMyCommandsReq) => {
@@ -1036,7 +1036,7 @@ object CirceImplicits {
     }
 
   implicit lazy val getmystarbalancereqEncoder: Encoder[GetMyStarBalanceReq.type] = (_: GetMyStarBalanceReq.type) =>
-    ().asJson
+    Json.obj("method" -> "getMyStarBalance".asJson)
 
   implicit lazy val getstartransactionsreqEncoder: Encoder[GetStarTransactionsReq] =
     (x: GetStarTransactionsReq) => {
@@ -1136,7 +1136,8 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val getwebhookinforeqEncoder: Encoder[GetWebhookInfoReq.type] = (_: GetWebhookInfoReq.type) => ().asJson
+  implicit lazy val getwebhookinforeqEncoder: Encoder[GetWebhookInfoReq.type] = (_: GetWebhookInfoReq.type) =>
+    Json.obj("method" -> "getWebhookInfo".asJson)
 
   implicit lazy val giftpremiumsubscriptionreqEncoder: Encoder[GiftPremiumSubscriptionReq] =
     (x: GiftPremiumSubscriptionReq) => {
@@ -1173,7 +1174,8 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val logoutreqEncoder: Encoder[LogOutReq.type] = (_: LogOutReq.type) => ().asJson
+  implicit lazy val logoutreqEncoder: Encoder[LogOutReq.type] = (_: LogOutReq.type) =>
+    Json.obj("method" -> "logOut".asJson)
 
   implicit lazy val pinchatmessagereqEncoder: Encoder[PinChatMessageReq] =
     (x: PinChatMessageReq) => {
@@ -1280,7 +1282,7 @@ object CirceImplicits {
     }
 
   implicit lazy val removemyprofilephotoreqEncoder: Encoder[RemoveMyProfilePhotoReq.type] =
-    (_: RemoveMyProfilePhotoReq.type) => ().asJson
+    (_: RemoveMyProfilePhotoReq.type) => Json.obj("method" -> "removeMyProfilePhoto".asJson)
 
   implicit lazy val removeuserverificationreqEncoder: Encoder[RemoveUserVerificationReq] =
     (x: RemoveUserVerificationReq) => {
