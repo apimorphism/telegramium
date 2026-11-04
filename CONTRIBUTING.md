@@ -23,9 +23,11 @@ The test-scope generators are generated too, into
 `telegramium-core/src/test/scala-generated` (wiped on every regen, like
 `src/main/scala`, and formatted by iozhik, so `fmtAll` leaves it alone). They
 feed `CodecRoundTripSpec`, which checks that every type with both an encoder and
-a decoder survives encode → decode, and telegramium-high's `BotApiWireSpec`,
-which checks the wire request of every Method. A restriction on a generator belongs in
-iozhik's `custom-gens` config, with a comment explaining it.
+a decoder survives encode → decode, and telegramium-high's `WireSpec`, which
+checks the wire request of every Method, both sent through `BotApi`
+(`BotApiWireSpec`) and returned as a `WebhookBot` reply (`WebhookBotWireSpec`).
+A restriction on a generator belongs in iozhik's `custom-gens` config, with a
+comment explaining it.
 
 ## Code style
 

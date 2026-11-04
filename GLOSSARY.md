@@ -23,7 +23,7 @@ A file nested inside a compound argument (`InputMedia`, `InputSticker`, ...), as
 _Avoid_: nested attachment, inner file
 
 **Wire request**:
-The HTTP request actually sent to Telegram for a Method: a JSON body or a multipart form.
+The HTTP request actually sent to Telegram for a Method: a JSON body or a multipart form. A `WebhookBot` reply carries one in its response to Telegram's update request.
 _Avoid_: HTTP payload, raw request
 
 **Omitted vs empty**:
