@@ -1,0 +1,4 @@
+# Both come from the shared /wizard library, which is kept identical across
+# wizards: SC1087 misreads "$e[" (a variable, then a literal bracket) as an
+# array index, and SC2329 flags library helpers a wizard doesn't use.
+disable=SC1087,SC2329
