@@ -79,7 +79,8 @@ lazy val `telegramium-core` = (projectMatrix in file("telegramium-core"))
 
 lazy val `telegramium-high` = (projectMatrix in file("telegramium-high"))
   .jvmPlatform(scalaVersions = Seq(scala3, scala213, scala212))
-  .dependsOn(`telegramium-core`)
+  // test->test: the wire checks use the generators generated into telegramium-core's tests
+  .dependsOn(`telegramium-core` % "compile->compile;test->test")
   .settings(settings: _*)
   .settings(
     semanticdbEnabled := true,
