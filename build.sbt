@@ -61,6 +61,10 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 val settings = Compiler.settings ++ Seq()
 
+// Live tests talk to real Telegram (see TelegramLiveSpec): plain `sbt test` skips them, `sbt liveTest` runs only them
+val onlyLiveTests = settingKey[Boolean]("Run only the tests tagged LiveTest, instead of skipping them")
+ThisBuild / onlyLiveTests := false
+
 lazy val `telegramium-core` = (projectMatrix in file("telegramium-core"))
   .jvmPlatform(scalaVersions = Seq(scala3, scala213, scala212))
   .enablePlugins(BuildInfoPlugin)
@@ -87,6 +91,13 @@ lazy val `telegramium-high` = (projectMatrix in file("telegramium-high"))
     semanticdbVersion := scalafixSemanticdb.revision
   )
   .settings(libraryDependencies ++= Dependencies.telegramiumHigh)
+  .settings(
+    Test / testOptions += Tests.Argument(
+      TestFrameworks.ScalaTest,
+      if (onlyLiveTests.value) "-n" else "-l",
+      "telegramium.bots.high.LiveTest"
+    )
+  )
 
 lazy val `telegramium-examples` = (projectMatrix in file("telegramium-examples"))
   .jvmPlatform(scalaVersions = Seq(scala3))
@@ -114,3 +125,5 @@ lazy val telegramium = (project in file("."))
   )
 
 addCommandAlias("fmtAll", "scalafixAll; scalafmtAll; scalafmtSbt")
+// one Scala version is enough: what's checked is Telegram's answer, not the cross-build
+addCommandAlias("liveTest", "set ThisBuild / onlyLiveTests := true; telegramium-high3/test")
