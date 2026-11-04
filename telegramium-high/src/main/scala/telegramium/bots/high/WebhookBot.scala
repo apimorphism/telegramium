@@ -245,7 +245,7 @@ abstract class WebhookBot[F[_]: Async](
   ): F[Unit] =
     bot.execute(setWebhook(url, certificate, ipAddress, maxConnections, Some(allowedUpdates))).void
 
-  private def routes(): HttpRoutes[F] = {
+  private[high] def routes(): HttpRoutes[F] = {
     val dsl = Http4sDsl[F]
     import dsl.*
 
