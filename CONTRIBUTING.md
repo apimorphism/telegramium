@@ -41,6 +41,20 @@ sbt fmtAll
 `core-fmt` alias. Not required; the raw command above works the same without
 Nix.)
 
+## Live test bot (maintainers)
+
+The live test talks to production Telegram as a dedicated bot with no real
+users, posting to a private channel. It reads `TELEGRAM_LIVE_BOT_TOKEN` and
+`TELEGRAM_LIVE_CHAT_ID`, from `.env` locally and from GitHub secrets in CI. To
+create the bot and channel, or re-create them, run:
+
+```
+scripts/live-bot-wizard.sh
+```
+
+It walks you through @BotFather and the channel setup, then writes both values
+to `.env` (gitignored) and to the secrets on `apimorphism/telegramium`.
+
 ## Releasing (maintainers)
 
 The version comes from the git tag on `HEAD` (via sbt-dynver, see `build.sbt`)
