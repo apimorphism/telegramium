@@ -13,7 +13,7 @@ import org.http4s.implicits.*
 import telegramium.bots.Message
 import telegramium.bots.client.Method
 
-/** The wire checks on every Method returned from a WebhookBot reply handler, read from the response of its routes */
+/** The wire checks on every Method returned as a webhook reply, read from the response of WebhookBot's routes */
 class WebhookBotWireSpec extends WireSpec {
 
   import WireSpec.*

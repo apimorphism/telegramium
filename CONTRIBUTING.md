@@ -25,7 +25,7 @@ The test-scope generators are generated too, into
 feed `CodecRoundTripSpec`, which checks that every type with both an encoder and
 a decoder survives encode → decode, and telegramium-high's `WireSpec`, which
 checks the wire request of every Method, both sent through `BotApi`
-(`BotApiWireSpec`) and returned as a `WebhookBot` reply (`WebhookBotWireSpec`).
+(`BotApiWireSpec`) and returned as a webhook reply (`WebhookBotWireSpec`).
 A restriction on a generator belongs in iozhik's `custom-gens` config, with a
 comment explaining it.
 

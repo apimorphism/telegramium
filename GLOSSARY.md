@@ -23,8 +23,12 @@ A file nested inside a compound argument (`InputMedia`, `InputSticker`, ...), as
 _Avoid_: nested attachment, inner file
 
 **Wire request**:
-The HTTP request actually sent to Telegram for a Method: a JSON body or a multipart form. A `WebhookBot` reply carries one in its response to Telegram's update request.
+What Telegram actually receives for a Method: a JSON body or a multipart form, sent as an HTTP request or as a webhook reply.
 _Avoid_: HTTP payload, raw request
+
+**Webhook reply**:
+A Method a webhook bot returns in its response to an update, which Telegram executes instead of the bot calling the API.
+_Avoid_: reply (alone), webhook answer, webhook response
 
 **Omitted vs empty**:
 An omitted field is absent from the wire request; an empty one is sent as `[]`. Telegram can give them different meanings.
