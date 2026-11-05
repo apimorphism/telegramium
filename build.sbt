@@ -46,7 +46,7 @@ ThisBuild / publishTo         := {
 ThisBuild / githubWorkflowScalaVersions := Seq(scala3, scala213, scala212)
 
 ThisBuild / githubWorkflowJavaVersions :=
-  Seq(JavaSpec.temurin("17"), JavaSpec.temurin("11"), JavaSpec.temurin("8"))
+  Seq(JavaSpec.temurin("21"), JavaSpec.temurin("17"), JavaSpec.temurin("8"))
 
 ThisBuild / githubWorkflowPublishTargetBranches := Seq.empty
 
