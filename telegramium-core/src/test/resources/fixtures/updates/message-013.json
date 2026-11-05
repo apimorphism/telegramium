@@ -1,0 +1,45 @@
+{
+  "update_id" : 1030,
+  "message" : {
+    "message_id" : 1031,
+    "from" : {
+      "id" : 1003,
+      "is_bot" : false,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "language_code" : "xx",
+      "is_premium" : true
+    },
+    "chat" : {
+      "id" : 1003,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "type" : "private"
+    },
+    "date" : 1793844275,
+    "poll" : {
+      "id" : "6197321944338862730",
+      "question" : "xxxxxx xx xxxx xxx xxxxxxxxxx",
+      "options" : [
+        {
+          "persistent_id" : "9",
+          "text" : "00",
+          "voter_count" : 0
+        }
+      ],
+      "total_voter_count" : 0,
+      "is_closed" : false,
+      "is_anonymous" : false,
+      "allows_multiple_answers" : true,
+      "allows_revoting" : false,
+      "members_only" : false,
+      "type" : "quiz",
+      "correct_option_id" : 0,
+      "correct_option_ids" : [
+        0
+      ]
+    }
+  }
+}

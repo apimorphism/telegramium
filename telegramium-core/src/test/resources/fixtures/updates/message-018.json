@@ -1,0 +1,74 @@
+{
+  "update_id" : 1050,
+  "message" : {
+    "message_id" : 1051,
+    "from" : {
+      "id" : 1003,
+      "is_bot" : false,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "language_code" : "xx",
+      "is_premium" : true
+    },
+    "chat" : {
+      "id" : 1003,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "type" : "private"
+    },
+    "date" : 1793845321,
+    "animation" : {
+      "file_name" : "xxxxxxx00.xx0",
+      "mime_type" : "video/mp4",
+      "duration" : 1,
+      "width" : 1024,
+      "height" : 768,
+      "thumbnail" : {
+        "file_id" : "LYKLXeUCRIBZGaDm1-sVz_AErQjOaumIHcGHU5XUrkUS-i1GMxCVKMqVlsbJgqZFbEKNV24UJq6F",
+        "file_unique_id" : "MXNV-y4ZMmGJJBef",
+        "file_size" : 15948,
+        "width" : 320,
+        "height" : 240
+      },
+      "thumb" : {
+        "file_id" : "LYKLXeUCRIBZGaDm1-sVz_AErQjOaumIHcGHU5XUrkUS-i1GMxCVKMqVlsbJgqZFbEKNV24UJq6F",
+        "file_unique_id" : "MXNV-y4ZMmGJJBef",
+        "file_size" : 15948,
+        "width" : 320,
+        "height" : 240
+      },
+      "file_id" : "NwNMOdFAXscHCTDNdkgyXX_bzJUQlSHGkICIjJ2CUn6ZMzaUZGHZh6SQSmSsFOO4vta4GK",
+      "file_unique_id" : "VtPA-t7ZVtKTZWr",
+      "file_size" : 204743
+    },
+    "document" : {
+      "file_name" : "xxxxxxx00.xx0",
+      "mime_type" : "video/mp4",
+      "thumbnail" : {
+        "file_id" : "LYKLXeUCRIBZGaDm1-sVz_AErQjOaumIHcGHU5XUrkUS-i1GMxCVKMqVlsbJgqZFbEKNV24UJq6F",
+        "file_unique_id" : "MXNV-y4ZMmGJJBef",
+        "file_size" : 15948,
+        "width" : 320,
+        "height" : 240
+      },
+      "thumb" : {
+        "file_id" : "LYKLXeUCRIBZGaDm1-sVz_AErQjOaumIHcGHU5XUrkUS-i1GMxCVKMqVlsbJgqZFbEKNV24UJq6F",
+        "file_unique_id" : "MXNV-y4ZMmGJJBef",
+        "file_size" : 15948,
+        "width" : 320,
+        "height" : 240
+      },
+      "file_id" : "NwNMOdFAXscHCTDNdkgyXX_bzJUQlSHGkICIjJ2CUn6ZMzaUZGHZh6SQSmSsFOO4vta4GK",
+      "file_unique_id" : "VtPA-t7ZVtKTZWr",
+      "file_size" : 204743
+    },
+    "via_bot" : {
+      "id" : 1052,
+      "is_bot" : true,
+      "first_name" : "xxx xxxxxx",
+      "username" : "xxx"
+    }
+  }
+}

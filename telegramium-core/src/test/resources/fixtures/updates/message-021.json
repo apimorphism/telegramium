@@ -1,0 +1,52 @@
+{
+  "update_id" : 1059,
+  "message" : {
+    "message_id" : 1060,
+    "from" : {
+      "id" : 1003,
+      "is_bot" : false,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "language_code" : "xx",
+      "is_premium" : true
+    },
+    "chat" : {
+      "id" : 1003,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "type" : "private"
+    },
+    "date" : 1793845680,
+    "forward_origin" : {
+      "type" : "user",
+      "sender_user" : {
+        "id" : 7000000004,
+        "is_bot" : true,
+        "first_name" : "xxxxxxxxxxx xxxx xxxx",
+        "username" : "xxx_xxxx_xxxx_xxx"
+      },
+      "date" : 1793845667
+    },
+    "forward_from" : {
+      "id" : 7000000004,
+      "is_bot" : true,
+      "first_name" : "xxxxxxxxxxx xxxx xxxx",
+      "username" : "xxx_xxxx_xxxx_xxx"
+    },
+    "forward_date" : 1793845667,
+    "location" : {
+      "latitude" : 52.52,
+      "longitude" : 13.405
+    },
+    "venue" : {
+      "location" : {
+        "latitude" : 52.52,
+        "longitude" : 13.405
+      },
+      "title" : "xxxxxxxxxxx xxxx xxxxx",
+      "address" : "xxxxxxxxxxxxxx, xxxxxx"
+    }
+  }
+}

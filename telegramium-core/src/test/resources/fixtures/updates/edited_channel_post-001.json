@@ -1,0 +1,56 @@
+{
+  "update_id" : 1049,
+  "edited_channel_post" : {
+    "message_id" : 1048,
+    "sender_chat" : {
+      "id" : -1000000000002,
+      "title" : "xxxxxxxxxxx xxxx xxxx",
+      "type" : "channel"
+    },
+    "chat" : {
+      "id" : -1000000000002,
+      "title" : "xxxxxxxxxxx xxxx xxxx",
+      "type" : "channel"
+    },
+    "date" : 1793845185,
+    "edit_date" : 1793845197,
+    "photo" : [
+      {
+        "file_id" : "FgNTBoIFEhFGALNDEw6ZnuTNINsf96Xm7MjHM-ZAHSaxQ4DJ7ypoITQ3RblaZBjzC1KFktCTOzLQKNWVPyLIcsEYRFN",
+        "file_unique_id" : "GVOCoJOcA7gJIHz5",
+        "file_size" : 491,
+        "width" : 67,
+        "height" : 90
+      },
+      {
+        "file_id" : "TqLQPpVDEtKSVGNBZt0VldUXAPdi43Ht6EuHI-WIMWsfV2HK6hhzQGO5XfbgDOamE4JPvaCPHwJBEACIWiWQvRQRZOA",
+        "file_unique_id" : "HCIKjIZbM2vGLRsi",
+        "file_size" : 9441,
+        "width" : 240,
+        "height" : 320
+      },
+      {
+        "file_id" : "OtMICiCPPwHYGPJJPw9BkhWNNIxt38Og8HrGF-UTMUxiV6OZ6hpvBEY9RxzzDVyzE7UCoxPIXsGECPKQGkKIoIKTHMF",
+        "file_unique_id" : "XXOMpQYbZ9tYZJp3",
+        "file_size" : 60811,
+        "width" : 600,
+        "height" : 800
+      },
+      {
+        "file_id" : "TdTKAdCNSnCYFMMEYq1OygSGLLgi08Te2AuBZ-FZBJgfI0CJ3zmwQNQ3ErswKNghQ3FRmgZHIyCEDZGIOhXIpIJFZPO",
+        "file_unique_id" : "QHGCfHDyN0vGFSl-",
+        "file_size" : 149042,
+        "width" : 960,
+        "height" : 1280
+      },
+      {
+        "file_id" : "GxJAJyCSAqTFCDXEVb2MjfCBDUyr04La0RhIL-KZBWhbW1GQ0jxyNVS8AddlMLxpB7XDxqOMQpTQXVSUFjNKvoCBJCS",
+        "file_unique_id" : "NAAKxJOzQ9wFBNz5",
+        "file_size" : 492025,
+        "width" : 1920,
+        "height" : 2560
+      }
+    ],
+    "caption" : "x xxxx xx x xxxx"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "update_id" : 1026,
+  "message" : {
+    "message_id" : 1027,
+    "from" : {
+      "id" : 1003,
+      "is_bot" : false,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "language_code" : "xx",
+      "is_premium" : true
+    },
+    "chat" : {
+      "id" : 1003,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "type" : "private"
+    },
+    "date" : 1793844160,
+    "location" : {
+      "latitude" : 52.52,
+      "longitude" : 13.405
+    }
+  }
+}

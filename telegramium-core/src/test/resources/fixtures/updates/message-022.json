@@ -1,0 +1,30 @@
+{
+  "update_id" : 1061,
+  "message" : {
+    "message_id" : 1062,
+    "from" : {
+      "id" : 1003,
+      "is_bot" : false,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "language_code" : "xx",
+      "is_premium" : true
+    },
+    "chat" : {
+      "id" : 1003,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "type" : "private"
+    },
+    "date" : 1793845689,
+    "voice" : {
+      "duration" : 1,
+      "mime_type" : "audio/ogg",
+      "file_id" : "QlRWQsASLcsTEIEEinpwnlKA3bzc-V2aWonV4IqWvuHXWsGBAJQO50EIX-g6gXY5ErK5ZY",
+      "file_unique_id" : "WfKKcGVRSyhsVPx",
+      "file_size" : 8589
+    }
+  }
+}

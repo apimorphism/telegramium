@@ -1,0 +1,18 @@
+{
+  "update_id" : 1045,
+  "channel_post" : {
+    "message_id" : 1046,
+    "sender_chat" : {
+      "id" : -1000000000002,
+      "title" : "xxxxxxxxxxx xxxx xxxx",
+      "type" : "channel"
+    },
+    "chat" : {
+      "id" : -1000000000002,
+      "title" : "xxxxxxxxxxx xxxx xxxx",
+      "type" : "channel"
+    },
+    "date" : 1793845145,
+    "text" : "xxxxxxx xxxx"
+  }
+}

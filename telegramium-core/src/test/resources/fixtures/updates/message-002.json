@@ -1,0 +1,50 @@
+{
+  "update_id" : 1009,
+  "message" : {
+    "message_id" : 1006,
+    "from" : {
+      "id" : 1003,
+      "is_bot" : false,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "language_code" : "xx",
+      "is_premium" : true
+    },
+    "chat" : {
+      "id" : 1003,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "type" : "private"
+    },
+    "date" : 1793843945,
+    "text" : "xxxxx, xxxxx! xxxxx://xxxxxx.xxx/xxxxxxxxxxx/xxxxxxxxxxx/xxxxxx/000 @xxx_xxxx_xxxx_xxx 😁",
+    "entities" : [
+      {
+        "offset" : 0,
+        "length" : 5,
+        "type" : "bold"
+      },
+      {
+        "offset" : 7,
+        "length" : 5,
+        "type" : "italic"
+      },
+      {
+        "offset" : 14,
+        "length" : 53,
+        "type" : "url"
+      },
+      {
+        "offset" : 68,
+        "length" : 18,
+        "type" : "mention"
+      }
+    ],
+    "link_preview_options" : {
+      "url" : "xxxxx://xxxxxx.xxx/xxxxxxxxxxx/xxxxxxxxxxx/xxxxxx/000",
+      "prefer_small_media" : true
+    }
+  }
+}

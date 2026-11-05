@@ -1,0 +1,30 @@
+{
+  "id" : 1003,
+  "first_name" : "xxxx",
+  "last_name" : "x",
+  "username" : "xxxxxxxxx",
+  "type" : "private",
+  "can_send_gift" : true,
+  "active_usernames" : [
+    "xxxxxxxxx"
+  ],
+  "bio" : "xxxxxxxx xxx",
+  "has_private_forwards" : true,
+  "accepted_gift_types" : {
+    "unlimited_gifts" : true,
+    "limited_gifts" : true,
+    "unique_gifts" : true,
+    "premium_subscription" : true,
+    "gifts_from_channels" : true
+  },
+  "photo" : {
+    "small_file_id" : "DGNEVpWOyzhoPzx7LmCBYXSJTjg4EcAFWNJjbpsUVa18YPS",
+    "small_file_unique_id" : "OKTOfcvmHlr2ReDEUO",
+    "big_file_id" : "CJZMVhHGoztaHgl3JgNIAZSFQnv6ZuPRIAEytxvWLk49PSV",
+    "big_file_unique_id" : "NLOQrziqEkb3HvXI"
+  },
+  "emoji_status_custom_emoji_id" : "9213235647069629058",
+  "max_reaction_count" : 11,
+  "accent_color_id" : 3,
+  "profile_accent_color_id" : 11
+}

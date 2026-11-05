@@ -1,0 +1,35 @@
+{
+  "update_id" : 1032,
+  "message" : {
+    "message_id" : 1033,
+    "from" : {
+      "id" : 1003,
+      "is_bot" : false,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "language_code" : "xx",
+      "is_premium" : true
+    },
+    "chat" : {
+      "id" : 1003,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "type" : "private"
+    },
+    "date" : 1793844296,
+    "text" : "xxxxx://xxxxxx.xxx/xxxxxxxxxxxxxx/xxx-xx",
+    "entities" : [
+      {
+        "offset" : 0,
+        "length" : 40,
+        "type" : "url"
+      }
+    ],
+    "link_preview_options" : {
+      "url" : "xxxxx://xxxxxx.xxx/xxxxxxxxxxxxxx/xxx-xx",
+      "prefer_large_media" : true
+    }
+  }
+}

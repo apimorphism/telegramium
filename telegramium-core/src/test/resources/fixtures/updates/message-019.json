@@ -1,0 +1,56 @@
+{
+  "update_id" : 1054,
+  "message" : {
+    "message_id" : 1055,
+    "from" : {
+      "id" : 1003,
+      "is_bot" : false,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "language_code" : "xx",
+      "is_premium" : true
+    },
+    "chat" : {
+      "id" : 1003,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "type" : "private"
+    },
+    "date" : 1793845393,
+    "forward_origin" : {
+      "type" : "user",
+      "sender_user" : {
+        "id" : 1056,
+        "is_bot" : true,
+        "first_name" : "xxxxxxxxx xxxxxx xxx",
+        "username" : "xxxxxxxxx_xxxxx_xxx"
+      },
+      "date" : 1792523827
+    },
+    "forward_from" : {
+      "id" : 1056,
+      "is_bot" : true,
+      "first_name" : "xxxxxxxxx xxxxxx xxx",
+      "username" : "xxxxxxxxx_xxxxx_xxx"
+    },
+    "forward_date" : 1792523827,
+    "text" : "xxxx xxxx xxxxx xxxxx, xx xxxxxx?\n\nxxx xxxxx xx xxxx xxxxxxxx — xxxx-xxxxxx xxx xxxx xxx xxx'x xxxxxxxx xxxx xxxx/xxxxx/xxxx/xxxxxxx xxxxxx. 000 xxxx xxxxxxxx xxxxxxxx.\n\n👉 xxxxxx.xxx/xxxxxxxxx/xxxxx",
+    "entities" : [
+      {
+        "offset" : 35,
+        "length" : 26,
+        "type" : "bold"
+      },
+      {
+        "offset" : 173,
+        "length" : 26,
+        "type" : "url"
+      }
+    ],
+    "link_preview_options" : {
+      "url" : "xxxxx://xxxxxx.xxx/xxxxxxxxx/xxxxx"
+    }
+  }
+}

@@ -71,6 +71,42 @@ get no secrets, so it's skipped there). A failing nightly run opens a "Live
 test failing" issue, or comments on the open one; the next green nightly run
 closes it.
 
+## Recorded fixtures (maintainers)
+
+`telegramium-core/src/test/resources/fixtures` holds real JSON that Telegram
+sent the live test bot. It has `updates/` and `responses/` (of `getMe`,
+`getChat`, ...) and is scrubbed of personal data. `FixturesSpec` checks that
+every fixture decodes and gives the same value after decode → encode → decode.
+To refresh the fixtures, for example after a Bot API release:
+
+1. Record. Leave this running while you produce updates by hand: post, edit
+   and react in the channel, and message the bot privately (text, photos,
+   stickers, voice, polls, locations, contacts, forwards, replies, edits,
+   reactions, blocking and unblocking it, ...):
+
+   ```
+   set -a; . ./.env; set +a
+   sbt "telegramium-examples3/runMain telegramium.bots.examples.CaptureBot"
+   ```
+
+   `CaptureBot` saves each raw update, and the responses for each chat, user
+   and file it mentions, to `.fixtures-raw/` (gitignored). Stop it with Ctrl-C.
+   A later session adds to what's already there.
+2. Scrub. This replaces `fixtures/updates` and `fixtures/responses` with a
+   scrubbed copy of everything in `.fixtures-raw/`:
+
+   ```
+   sbt "telegramium-examples3/runMain telegramium.bots.examples.FixtureScrubber"
+   ```
+
+   IDs are remapped consistently, keeping IDs above 2³¹ above it. File IDs
+   become fakes of the same shape, and locations move to a fixed place. Every
+   other string has its letters and digits replaced, unless its key is listed in
+   `FixtureScrubber`'s `keptStrings`. If `FixturesSpec` then fails on a
+   decoder's discriminator, add that key there.
+3. Check with `sbt "telegramium-core3/testOnly telegramium.bots.FixturesSpec"`.
+   Then read the diff for anything personal before you commit it.
+
 ## Releasing (maintainers)
 
 The version comes from the git tag on `HEAD` (via sbt-dynver, see `build.sbt`)
