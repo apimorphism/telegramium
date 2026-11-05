@@ -1,0 +1,25 @@
+{
+  "update_id" : 2001,
+  "message" : {
+    "message_id" : 1008,
+    "from" : {
+      "id" : 1003,
+      "is_bot" : false,
+      "first_name" : "xxxx",
+      "username" : "xxxxxxxxx",
+      "language_code" : "xx"
+    },
+    "chat" : {
+      "id" : 1003,
+      "first_name" : "xxxx",
+      "username" : "xxxxxxxxx",
+      "type" : "private"
+    },
+    "date" : 1793843833,
+    "text" : "xxx"
+  },
+  "future_field" : {
+    "id" : 1001,
+    "date" : 1793843833
+  }
+}
