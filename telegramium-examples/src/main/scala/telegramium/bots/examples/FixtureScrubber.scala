@@ -52,7 +52,7 @@ object FixtureScrubber {
   // Strings are scrubbed unless their key is listed here: anything else may be personal, including fields that are new
   // to the Bot API. Decoders dispatch on type, status and source, so scrubbing those would turn values into unknown
   // ones, which the fixture check catches.
-  private val keptStrings = Set("type", "status", "source", "mime_type", "emoji", "currency")
+  private val keptStrings = Set("type", "chat_type", "status", "source", "mime_type", "emoji", "currency")
 
   // shared locations and venues are moved here
   private val fixedPlace = Map("latitude" -> 52.52, "longitude" -> 13.405)

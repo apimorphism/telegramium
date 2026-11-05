@@ -32,7 +32,7 @@ class FixtureScrubberSpec extends AnyFreeSpec with Matchers {
 
   "keeps the strings decoders dispatch on, and other values that aren't personal" in {
     val doc = json(
-      """{"chat": {"type": "private"}, "status": "member", "source": "gift_code", "mime_type": "image/png",
+      """{"chat": {"type": "private"}, "chat_type": "sender", "status": "member", "source": "gift_code", "mime_type": "image/png",
         |"emoji": "👍", "currency": "XTR", "date": 1700000000, "is_bot": false}""".stripMargin
     )
     FixtureScrubber.scrub(List(doc)) shouldBe List(doc)

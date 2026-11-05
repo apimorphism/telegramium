@@ -24,7 +24,8 @@ import org.http4s.client.Client
   * every update, and the response to getMe, and to getChat, getChatAdministrators, getUserProfilePhotos and getFile for
   * each chat, user and file the updates mention. Raw, rather than through BotApi, so that fields telegramium doesn't
   * know yet are kept. On /interact in a private chat it sends an inline keyboard and a poll, and records those
-  * responses too, so that tapping a button and voting give callback_query, poll and poll_answer updates. See
+  * responses too, so that tapping a button and voting give callback_query, poll and poll_answer updates. It answers
+  * inline queries with one article, so that picking it gives chosen_inline_result (with inline feedback on). See
   * CONTRIBUTING.md on refreshing the fixtures.
   *
   * Usage: CaptureBot [rawDir], with TELEGRAM_LIVE_BOT_TOKEN set. rawDir defaults to .fixtures-raw, which is gitignored:
@@ -143,6 +144,7 @@ object CaptureBot extends IOApp {
     private def interact(update: Json): IO[Unit] = {
       val message  = update.hcursor.downField("message")
       val callback = update.hcursor.downField("callback_query").get[String]("id").toOption
+      val inline   = update.hcursor.downField("inline_query").get[String]("id").toOption
       (message.get[String]("text").toOption, message.downField("chat").get[Long]("id").toOption) match {
         case (Some("/interact"), Some(chatId)) =>
           val button = (text: String) =>
@@ -163,7 +165,23 @@ object CaptureBot extends IOApp {
           )
         case _ =>
           // stops the button's loading spinner
-          callback.traverse_(id => call("answerCallbackQuery", "callback_query_id" -> Json.fromString(id)).attempt.void)
+          callback.traverse_(id =>
+            call("answerCallbackQuery", "callback_query_id" -> Json.fromString(id)).attempt.void
+          ) >>
+            inline.traverse_ { id =>
+              val article = Json.obj(
+                "type"                  -> Json.fromString("article"),
+                "id"                    -> Json.fromString("article"),
+                "title"                 -> Json.fromString("Send this"),
+                "input_message_content" -> Json.obj("message_text" -> Json.fromString("Sent inline"))
+              )
+              call(
+                "answerInlineQuery",
+                "inline_query_id" -> Json.fromString(id),
+                "results"         -> Json.arr(article),
+                "cache_time"      -> Json.fromInt(0)
+              ).void.handleErrorWith(e => IO.println(s"answerInlineQuery failed: ${e.getMessage}"))
+            }
       }
     }
 
