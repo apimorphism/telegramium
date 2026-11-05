@@ -17,21 +17,27 @@ permissions:
 jobs:
   live:
     name: Live test
-    # fork PRs get no secrets
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    # fork PRs get no secrets, and a fork's nightly would fail without them and report it in the fork
+    if: >-
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event_name != 'schedule' || github.repository == 'apimorphism/telegramium')
+    # one run at a time posts to the channel; a new run waits instead of cancelling the one in progress
+    concurrency:
+      group: live-test
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-java@v6
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: 17
           cache: sbt
 
-      - uses: sbt/setup-sbt@v1
+      - uses: sbt/setup-sbt@b113b960ba361e87e08ce02a390d51871b7ee459 # v1.5.13
 
       - run: sbt liveTest
         env:
