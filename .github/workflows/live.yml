@@ -8,8 +8,10 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - 'telegramium-core/**'
+      # core's tests and fixtures can't change what the live test sends
+      - 'telegramium-core/src/main/**'
       - 'telegramium-high/**'
+      - '.github/workflows/live.yml'
 
 permissions:
   contents: read
