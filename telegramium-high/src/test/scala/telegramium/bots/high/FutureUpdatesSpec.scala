@@ -3,7 +3,6 @@ package telegramium.bots.high
 import java.io.File as JFile
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
-
 import scala.concurrent.duration.*
 
 import cats.effect.Deferred
