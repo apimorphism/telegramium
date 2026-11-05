@@ -55,6 +55,21 @@ scripts/live-bot-wizard.sh
 It walks you through @BotFather and the channel setup, then writes both values
 to `.env` (gitignored) and to the secrets on `apimorphism/telegramium`.
 
+The live test is `TelegramLiveSpec` in telegramium-high. Its tests are tagged
+`LiveTest`, which plain `sbt test` skips. To run them, and only them, against
+Telegram:
+
+```
+set -a; . ./.env; set +a
+sbt liveTest
+```
+
+Each test posts a message to the channel. In CI, `.github/workflows/live.yml`
+runs them nightly, on manual trigger, and on PRs from this repo that touch
+telegramium-core or telegramium-high (fork PRs get no secrets, so it's skipped
+there). A failing nightly run opens a "Live test failing" issue, or comments on
+the open one; the next green nightly run closes it.
+
 ## Releasing (maintainers)
 
 The version comes from the git tag on `HEAD` (via sbt-dynver, see `build.sbt`)

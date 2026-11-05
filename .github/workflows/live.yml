@@ -1,0 +1,73 @@
+# Runs TelegramLiveSpec against real Telegram (see CONTRIBUTING.md). Hand-written, unlike ci.yml.
+
+name: Live test
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'telegramium-core/**'
+      - 'telegramium-high/**'
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    name: Live test
+    # fork PRs get no secrets, and a fork's nightly would fail without them and report it in the fork
+    if: >-
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event_name != 'schedule' || github.repository == 'apimorphism/telegramium')
+    # one run at a time posts to the channel; a new run waits instead of cancelling the one in progress
+    concurrency:
+      group: live-test
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+
+      - uses: sbt/setup-sbt@b113b960ba361e87e08ce02a390d51871b7ee459 # v1.5.13
+
+      - run: sbt liveTest
+        env:
+          TELEGRAM_LIVE_BOT_TOKEN: ${{ secrets.TELEGRAM_LIVE_BOT_TOKEN }}
+          TELEGRAM_LIVE_CHAT_ID: ${{ secrets.TELEGRAM_LIVE_CHAT_ID }}
+
+  # On scheduled runs, keep a single "Live test failing" issue: open it (or comment on it) on failure, close it on success
+  report:
+    name: Report
+    needs: live
+    if: always() && github.event_name == 'schedule' && (needs.live.result == 'failure' || needs.live.result == 'success')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TITLE: Live test failing
+      RESULT: ${{ needs.live.result }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - run: |
+          issue=$(gh issue list --state open --search "\"$TITLE\" in:title" --json number,title \
+            --jq "map(select(.title == \"$TITLE\")) | first | .number // empty")
+          if [ "$RESULT" = failure ]; then
+            if [ -n "$issue" ]; then
+              gh issue comment "$issue" --body "Still failing: $RUN_URL"
+            else
+              gh issue create --title "$TITLE" --body "The scheduled live test against Telegram failed: $RUN_URL"
+            fi
+          elif [ -n "$issue" ]; then
+            gh issue close "$issue" --comment "Passing again: $RUN_URL"
+          fi
