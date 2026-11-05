@@ -29,7 +29,11 @@ import telegramium.bots.high.keyboards.InlineKeyboardMarkups
 class TelegramLiveSpec extends AnyFreeSpec with Matchers {
 
   private def env(name: String): String =
-    sys.env.getOrElse(name, fail(s"$name is not set; see CONTRIBUTING.md on running the live test"))
+    // a missing GitHub secret arrives as an empty string, not as an unset variable
+    sys.env
+      .get(name)
+      .filter(_.nonEmpty)
+      .getOrElse(fail(s"$name is not set; see CONTRIBUTING.md on running the live test"))
 
   // read inside each test, so plain `sbt test`, which skips them, doesn't need the variables
   private def chatId = ChatIntId(env("TELEGRAM_LIVE_CHAT_ID").toLong)
