@@ -19,7 +19,7 @@ env:
 jobs:
   build:
     name: Build and Test
-    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/master'
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/master' || github.repository != 'apimorphism/telegramium'
     strategy:
       matrix:
         os: [ubuntu-latest]

@@ -52,11 +52,16 @@ lazy val jdk21 = JavaSpec.temurin("21")
 
 ThisBuild / githubWorkflowJavaVersions := Seq(jdk21, jdk8)
 
-// Every PR, stacked ones included, and pushes to master. A push to any other branch skips the build: with both events
-// building, each push to a PR ran the matrix twice.
+// Every PR, stacked ones included, pushes to master, and any push in a fork (CI before opening a PR). Upstream, a push
+// to any other branch skips the build: with both events building, each push to a PR ran the matrix twice.
 ThisBuild / githubWorkflowGeneratedCI ~= (_.map {
   case job if job.id == "build" =>
-    job.copy(cond = Some("github.event_name == 'pull_request' || github.ref == 'refs/heads/master'"))
+    job.copy(cond =
+      Some(
+        "github.event_name == 'pull_request' || github.ref == 'refs/heads/master' || " +
+          "github.repository != 'apimorphism/telegramium'"
+      )
+    )
   case job => job
 })
 
