@@ -1,0 +1,41 @@
+{
+  "update_id" : 1040,
+  "my_chat_member" : {
+    "chat" : {
+      "id" : 1003,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "type" : "private"
+    },
+    "from" : {
+      "id" : 1003,
+      "is_bot" : false,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "language_code" : "xx",
+      "is_premium" : true
+    },
+    "date" : 1793844367,
+    "old_chat_member" : {
+      "user" : {
+        "id" : 7000000004,
+        "is_bot" : true,
+        "first_name" : "xxxxxxxxxxx xxxx xxxx",
+        "username" : "xxx_xxxx_xxxx_xxx"
+      },
+      "status" : "member"
+    },
+    "new_chat_member" : {
+      "user" : {
+        "id" : 7000000004,
+        "is_bot" : true,
+        "first_name" : "xxxxxxxxxxx xxxx xxxx",
+        "username" : "xxx_xxxx_xxxx_xxx"
+      },
+      "status" : "kicked",
+      "until_date" : 0
+    }
+  }
+}

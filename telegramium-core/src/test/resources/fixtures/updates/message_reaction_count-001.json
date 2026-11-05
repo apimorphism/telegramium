@@ -1,0 +1,21 @@
+{
+  "update_id" : 1053,
+  "message_reaction_count" : {
+    "chat" : {
+      "id" : -1000000000002,
+      "title" : "xxxxxxxxxxx xxxx xxxx",
+      "type" : "channel"
+    },
+    "message_id" : 1048,
+    "date" : 1793845328,
+    "reactions" : [
+      {
+        "type" : {
+          "type" : "emoji",
+          "emoji" : "👀"
+        },
+        "total_count" : 1
+      }
+    ]
+  }
+}

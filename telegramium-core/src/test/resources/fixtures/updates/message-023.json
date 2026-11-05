@@ -1,0 +1,44 @@
+{
+  "update_id" : 1063,
+  "message" : {
+    "message_id" : 1064,
+    "from" : {
+      "id" : 1003,
+      "is_bot" : false,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "language_code" : "xx",
+      "is_premium" : true
+    },
+    "chat" : {
+      "id" : 1003,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "type" : "private"
+    },
+    "date" : 1793845706,
+    "video_note" : {
+      "duration" : 4,
+      "length" : 384,
+      "thumbnail" : {
+        "file_id" : "VEKJXfCMPAMRKpoj0-cYRR2mgDiMmjIzPi9k31fLROFGizNOWuffMPfYxiPlTNI3KGEYK48URy7R",
+        "file_unique_id" : "OJWSesLZHjazSOsb",
+        "file_size" : 10445,
+        "width" : 320,
+        "height" : 320
+      },
+      "thumb" : {
+        "file_id" : "VEKJXfCMPAMRKpoj0-cYRR2mgDiMmjIzPi9k31fLROFGizNOWuffMPfYxiPlTNI3KGEYK48URy7R",
+        "file_unique_id" : "OJWSesLZHjazSOsb",
+        "file_size" : 10445,
+        "width" : 320,
+        "height" : 320
+      },
+      "file_id" : "XSEMRmFSWgvXHNEYztipfVMBNswGouxBryB36K5mBL9HRkBMWDGO56TH7G5GCmG7k4O9VD",
+      "file_unique_id" : "EbQDmxXAMpokXNu",
+      "file_size" : 411238
+    }
+  }
+}

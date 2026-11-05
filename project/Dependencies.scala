@@ -49,5 +49,5 @@ object Dependencies {
   val telegramiumHigh: Seq[ModuleID] = common ++ Seq(catsEffect, scalatest) ++ http4sServer ++
     http4sClient ++ testcontainers
 
-  val telegramiumExam: Seq[ModuleID] = common ++ Seq(catsEffect) ++ http4sClient
+  val telegramiumExam: Seq[ModuleID] = common ++ Seq(catsEffect, scalatest) ++ http4sClient
 }

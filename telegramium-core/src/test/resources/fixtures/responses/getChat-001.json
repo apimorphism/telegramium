@@ -1,0 +1,19 @@
+{
+  "id" : -1000000000002,
+  "title" : "xxxxxxxxxxx xxxx xxxx",
+  "type" : "channel",
+  "can_send_gift" : true,
+  "has_visible_history" : true,
+  "can_send_paid_media" : true,
+  "accepted_gift_types" : {
+    "unlimited_gifts" : true,
+    "limited_gifts" : true,
+    "unique_gifts" : true,
+    "premium_subscription" : true,
+    "gifts_from_channels" : true
+  },
+  "available_reactions" : [
+  ],
+  "max_reaction_count" : 11,
+  "accent_color_id" : 3
+}
