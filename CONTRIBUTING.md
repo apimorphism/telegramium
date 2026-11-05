@@ -110,6 +110,16 @@ To refresh the fixtures, for example after a Bot API release:
 3. Check with `sbt "telegramium-core3/testOnly telegramium.bots.FixturesSpec"`.
    Then read the diff for anything personal before you commit it.
 
+`fixtures/future/` sits next to them and isn't touched by the scrubber. It holds
+hand-made updates, derived from the recorded ones, that simulate a Bot API
+release newer than the library: each file is named after what it simulates
+(`unknown_top_level_field`, `unknown_update_kind`, `unknown_value`,
+`unknown_nested_fields`). `FixturesSpec` checks that they decode, with unknown
+values as `Unknown`, and `FutureUpdatesSpec` that `LongPollBot` moves past each
+one and `WebhookBot` acknowledges it, both reporting unknown top-level fields
+through `onUnknownUpdate`. A new one needs its expected unknown fields listed in
+`FutureUpdatesSpec`, and a new case its name in `FixturesSpec`'s list of cases.
+
 ## Releasing (maintainers)
 
 The version comes from the git tag on `HEAD` (via sbt-dynver, see `build.sbt`)

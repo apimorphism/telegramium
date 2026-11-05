@@ -52,6 +52,14 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
 
   private val updates   = fixtures("updates")
   private val responses = fixtures("responses")
+  // hand-made, derived from the recorded ones: what a Bot API release newer than the library may send, named after
+  // what each simulates
+  private val future = fixtures("future")
+
+  private def decode(file: JFile): Update = read(file).as[Update].fold(e => fail(s"failed to decode: $e"), u => u)
+
+  private def decodeFuture(name: String): Update =
+    decode(future.find(_.getName == name).getOrElse(fail(s"no future fixture $name")))
 
   "there are recorded updates and responses" in {
     updates should not be empty
@@ -80,6 +88,38 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
       val method = file.getName.takeWhile(_ != '-')
       file.getName in roundTrips(file, responseCodecs.getOrElse(method, fail(s"no codec for $method responses")))
     }
+  }
+
+  "future updates decode" - {
+    "there is one for each case" in {
+      future.map(_.getName.takeWhile(_ != '-')).distinct should contain theSameElementsAs List(
+        "unknown_top_level_field",
+        "unknown_update_kind",
+        "unknown_value",
+        "unknown_nested_fields"
+      )
+    }
+    future.foreach(file => file.getName in decode(file))
+  }
+
+  "unknown values decode as Unknown" - {
+    "a reaction of an unknown type" in {
+      decodeFuture("unknown_value-001.json").messageReaction.map(_.newReaction) shouldBe Some(
+        List(iozhik.OpenEnum.Unknown[ReactionType]("future_reaction"))
+      )
+    }
+    "an entity of an unknown type" in {
+      decodeFuture("unknown_value-002.json").message.map(_.entities) shouldBe Some(
+        List(iozhik.OpenEnum.Unknown[MessageEntity]("future_entity"))
+      )
+    }
+  }
+
+  "unknown fields nested inside known objects leave the known ones intact" in {
+    val message = decodeFuture("unknown_nested_fields-001.json").message
+    message.map(_.chat.id) shouldBe Some(1003L)
+    message.flatMap(_.from).map(_.id) shouldBe Some(1003L)
+    message.map(_.entities) shouldBe Some(List(iozhik.OpenEnum.Known[MessageEntity](BotCommandMessageEntity(0, 6))))
   }
 
 }

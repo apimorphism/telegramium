@@ -1,0 +1,34 @@
+{
+  "update_id" : 2005,
+  "message" : {
+    "message_id" : 1008,
+    "from" : {
+      "id" : 1003,
+      "is_bot" : false,
+      "first_name" : "xxxx",
+      "username" : "xxxxxxxxx",
+      "language_code" : "xx",
+      "future_user_field" : true
+    },
+    "chat" : {
+      "id" : 1003,
+      "first_name" : "xxxx",
+      "username" : "xxxxxxxxx",
+      "type" : "private",
+      "future_chat_field" : "xxx"
+    },
+    "date" : 1793843833,
+    "text" : "/xxxxx",
+    "entities" : [
+      {
+        "offset" : 0,
+        "length" : 6,
+        "type" : "bot_command",
+        "future_entity_field" : 1
+      }
+    ],
+    "future_message_field" : {
+      "id" : 1001
+    }
+  }
+}

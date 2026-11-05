@@ -1,0 +1,12 @@
+{
+  "update_id" : 2002,
+  "future_update" : {
+    "chat" : {
+      "id" : -1000000000002,
+      "title" : "xxxxxxxxxxx xxxx xxxx",
+      "type" : "channel"
+    },
+    "message_id" : 1006,
+    "date" : 1793832800
+  }
+}
