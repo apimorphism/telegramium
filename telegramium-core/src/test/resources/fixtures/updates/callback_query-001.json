@@ -1,0 +1,49 @@
+{
+  "update_id" : 1071,
+  "callback_query" : {
+    "id" : "3256190463161357140",
+    "from" : {
+      "id" : 1003,
+      "is_bot" : false,
+      "first_name" : "xxxx",
+      "last_name" : "x",
+      "username" : "xxxxxxxxx",
+      "language_code" : "xx",
+      "is_premium" : true
+    },
+    "message" : {
+      "message_id" : 1072,
+      "from" : {
+        "id" : 7000000004,
+        "is_bot" : true,
+        "first_name" : "xxxxxxxxxxx xxxx xxxx",
+        "username" : "xxx_xxxx_xxxx_xxx"
+      },
+      "chat" : {
+        "id" : 1003,
+        "first_name" : "xxxx",
+        "last_name" : "x",
+        "username" : "xxxxxxxxx",
+        "type" : "private"
+      },
+      "date" : 1793891513,
+      "text" : "xxx x xxxxxx",
+      "reply_markup" : {
+        "inline_keyboard" : [
+          [
+            {
+              "text" : "xxx",
+              "callback_data" : "xxx"
+            },
+            {
+              "text" : "xxx",
+              "callback_data" : "xxx"
+            }
+          ]
+        ]
+      }
+    },
+    "chat_instance" : "5878973244607031179",
+    "data" : "xxx"
+  }
+}

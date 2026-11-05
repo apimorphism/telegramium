@@ -30,7 +30,9 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     "getChat"               -> codec(methods.getChat(ChatIntId(0))),
     "getChatAdministrators" -> codec(methods.getChatAdministrators(ChatIntId(0))),
     "getUserProfilePhotos"  -> codec(methods.getUserProfilePhotos(0)),
-    "getFile"               -> codec(methods.getFile(""))
+    "getFile"               -> codec(methods.getFile("")),
+    "sendMessage"           -> codec(methods.sendMessage(ChatIntId(0), "")),
+    "sendPoll"              -> codec(methods.sendPoll(ChatIntId(0), "", options = List.empty))
   )
 
   private def fixtures(dir: String): List[JFile] =

@@ -23,7 +23,9 @@ import org.http4s.client.Client
 /** Records the raw JSON Telegram sends the live-test bot, for FixtureScrubber to turn into telegramium-core's fixtures:
   * every update, and the response to getMe, and to getChat, getChatAdministrators, getUserProfilePhotos and getFile for
   * each chat, user and file the updates mention. Raw, rather than through BotApi, so that fields telegramium doesn't
-  * know yet are kept. See CONTRIBUTING.md on refreshing the fixtures.
+  * know yet are kept. On /interact in a private chat it sends an inline keyboard and a poll, and records those
+  * responses too, so that tapping a button and voting give callback_query, poll and poll_answer updates. See
+  * CONTRIBUTING.md on refreshing the fixtures.
   *
   * Usage: CaptureBot [rawDir], with TELEGRAM_LIVE_BOT_TOKEN set. rawDir defaults to .fixtures-raw, which is gitignored:
   * what it holds is not scrubbed yet.
@@ -131,10 +133,39 @@ object CaptureBot extends IOApp {
             once(s"chat:$id", recordChat(id, chat.hcursor.get[String]("type").contains("private")))
           } >>
             users.traverse_(id => once(s"user:$id", recordUser(id))) >>
-            files.traverse_(id => once(s"file:$id", recordFile(id)))
+            files.traverse_(id => once(s"file:$id", recordFile(id))) >>
+            interact(update)
         }
       )
     } yield ()
+
+    // updates only the bot's own messages can produce: a tap on an inline button, and a vote in a non-anonymous poll
+    private def interact(update: Json): IO[Unit] = {
+      val message  = update.hcursor.downField("message")
+      val callback = update.hcursor.downField("callback_query").get[String]("id").toOption
+      (message.get[String]("text").toOption, message.downField("chat").get[Long]("id").toOption) match {
+        case (Some("/interact"), Some(chatId)) =>
+          val button = (text: String) =>
+            Json.obj("text" -> Json.fromString(text), "callback_data" -> Json.fromString(text))
+          record(
+            "sendMessage",
+            chatId.toString,
+            "chat_id"      -> Json.fromLong(chatId),
+            "text"         -> Json.fromString("Tap a button"),
+            "reply_markup" -> Json.obj("inline_keyboard" -> Json.arr(Json.arr(button("One"), button("Two"))))
+          ) >> record(
+            "sendPoll",
+            chatId.toString,
+            "chat_id"  -> Json.fromLong(chatId),
+            "question" -> Json.fromString("Vote"),
+            "options"  -> Json.arr(Json.obj("text" -> Json.fromString("A")), Json.obj("text" -> Json.fromString("B"))),
+            "is_anonymous" -> Json.False
+          )
+        case _ =>
+          // stops the button's loading spinner
+          callback.traverse_(id => call("answerCallbackQuery", "callback_query_id" -> Json.fromString(id)).attempt.void)
+      }
+    }
 
     private def poll(offset: Long, onUpdate: Json => IO[Unit]): IO[Unit] =
       call(
