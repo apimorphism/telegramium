@@ -23,7 +23,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         scala: [3.3.9, 2.13.18, 2.12.21]
-        java: [temurin@17, temurin@11, temurin@8]
+        java: [temurin@21, temurin@8]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout current branch (full)
@@ -31,20 +31,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Java (temurin@17)
-        if: matrix.java == 'temurin@17'
+      - name: Setup Java (temurin@21)
+        if: matrix.java == 'temurin@21'
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 17
-          cache: sbt
-
-      - name: Setup Java (temurin@11)
-        if: matrix.java == 'temurin@11'
-        uses: actions/setup-java@v6
-        with:
-          distribution: temurin
-          java-version: 11
+          java-version: 21
           cache: sbt
 
       - name: Setup Java (temurin@8)
@@ -58,11 +50,11 @@ jobs:
       - name: Setup sbt
         uses: sbt/setup-sbt@v1
 
-      - run: sbt '++ ${{ matrix.scala }}; scalafixAll --check'
+      - if: matrix.java == 'temurin@21'
+        run: sbt '++ ${{ matrix.scala }}; scalafixAll --check'
 
-      - run: sbt '++ ${{ matrix.scala }}; scalafmtCheckAll'
-
-      - run: sbt '++ ${{ matrix.scala }}; scalafmtSbtCheck'
+      - if: matrix.java == 'temurin@21' && matrix.scala == '3.3.9'
+        run: sbt '++ ${{ matrix.scala }}; scalafmtCheckAll; scalafmtSbtCheck'
 
       - name: Check that workflows are up to date
         run: sbt '++ ${{ matrix.scala }}; githubWorkflowCheck'

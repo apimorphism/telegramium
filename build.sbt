@@ -45,16 +45,23 @@ ThisBuild / publishTo         := {
 
 ThisBuild / githubWorkflowScalaVersions := Seq(scala3, scala213, scala212)
 
-ThisBuild / githubWorkflowJavaVersions :=
-  Seq(JavaSpec.temurin("17"), JavaSpec.temurin("11"), JavaSpec.temurin("8"))
+// The oldest supported JDK and the newest LTS. Compile-time Java 8 compatibility comes from -release 8 (Compiler.scala),
+// so JDK 8 is here for what only shows at runtime, like a dependency that no longer runs on 8.
+lazy val jdk8  = JavaSpec.temurin("8")
+lazy val jdk21 = JavaSpec.temurin("21")
+
+ThisBuild / githubWorkflowJavaVersions := Seq(jdk21, jdk8)
 
 ThisBuild / githubWorkflowPublishTargetBranches := Seq.empty
 
+// The checks don't depend on the JDK, and scalafmt not on the Scala version either: each runs once, not in every job
 ThisBuild / githubWorkflowBuildPreamble ++=
   Seq(
-    WorkflowStep.Sbt(List("scalafixAll --check")),
-    WorkflowStep.Sbt(List("scalafmtCheckAll")),
-    WorkflowStep.Sbt(List("scalafmtSbtCheck"))
+    WorkflowStep.Sbt(List("scalafixAll --check"), cond = Some(s"matrix.java == '${jdk21.render}'")),
+    WorkflowStep.Sbt(
+      List("scalafmtCheckAll", "scalafmtSbtCheck"),
+      cond = Some(s"matrix.java == '${jdk21.render}' && matrix.scala == '$scala3'")
+    )
   )
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
