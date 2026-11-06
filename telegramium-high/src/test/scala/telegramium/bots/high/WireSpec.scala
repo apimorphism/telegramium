@@ -2,7 +2,6 @@ package telegramium.bots.high
 
 import java.io.File
 import java.nio.file.Files
-import scala.util.Try
 
 import cats.effect.IO
 
@@ -31,11 +30,6 @@ object WireSpec {
   sealed trait Wire
   final case class JsonWire(json: Json)                                                   extends Wire
   final case class FormWire(fields: Map[String, String], files: Vector[(String, String)]) extends Wire
-
-  /** A value in the arguments, at its path, with the JSON it was sent as (None: left out of the JSON), and for a field,
-    * which: `<type>.<JSON key>`
-    */
-  final case class Sent(value: Any, json: Option[Json], path: String, field: Option[String])
 
 }
 
@@ -104,7 +98,7 @@ abstract class WireSpec extends AnyFreeSpec {
   private def strings(json: Json): List[String] =
     json.fold(Nil, _ => Nil, _ => Nil, s => List(s), _.toList.flatMap(strings), _.values.toList.flatMap(strings))
 
-  // every value reachable from a Method's arguments; unlike walk, it needs no field names, so check 1 runs on 2.12 too
+  // every value reachable from a Method's arguments; it needs no field names, so the checks run on 2.12 too
   private def reachable(a: Any): Iterator[Any] =
     Iterator(a) ++ (a match {
       case it: Iterable[?] => it.iterator.flatMap(reachable)
@@ -148,59 +142,6 @@ abstract class WireSpec extends AnyFreeSpec {
         }
     }
 
-  // A case class's field names: productElementNames is Scala 2.13+, so this is None on 2.12, where the same generated
-  // encoders are checked by the other Scala versions
-  private val fieldNames: Option[Product => List[String]] =
-    Try(classOf[Product].getMethod("productElementNames")).toOption.map { m => p =>
-      m.invoke(p).asInstanceOf[Iterator[String]].toList
-    }
-
-  // a field's JSON key, as the generated encoders write it
-  private def jsonKey(name: String): String =
-    name.replaceAll("([A-Z]+)([A-Z][a-z])", "$1_$2").replaceAll("([a-z\\d])([A-Z])", "$1_$2").toLowerCase
-
-  // One layer: the values one level down, each with the JSON it was sent as
-  private def step(names: Product => List[String])(node: Sent): List[Sent] =
-    node.value match {
-      // sent as the value they hold
-      case Some(v)                  => List(node.copy(value = v, field = None))
-      case iozhik.OpenEnum.Known(v) => List(node.copy(value = v, field = None))
-      case it: Iterable[?]          =>
-        val js = node.json.flatMap(_.asArray).getOrElse(Vector.empty)
-        it.toList.zipWithIndex.map { case (v, i) => Sent(v, js.lift(i), s"${node.path}[$i]", None) }
-      case p: Product =>
-        node.json.flatMap(_.asObject) match {
-          // a case class sent as an object: each field under its key
-          case Some(obj) =>
-            names(p).zip(p.productIterator.toList).map { case (name, v) =>
-              val key = jsonKey(name)
-              Sent(v, obj(key), s"${node.path}.$key", Some(s"${p.productPrefix}.$key"))
-            }
-          // sent as the value it holds, like ChatIntId, InputLinkFile or the RichText shorthands
-          case None => p.productIterator.toList.map(v => node.copy(value = v, field = None))
-        }
-      case _ => Nil
-    }
-
-  // The recursion, written once: every value in the arguments, with the JSON it was sent as
-  private def walk(names: Product => List[String])(node: Sent): List[Sent] =
-    node :: step(names)(node).flatMap(walk(names))
-
-  // a key the encoders write differently would make the check pass without looking
-  private def omittedKey(s: Sent): Option[String] = s match {
-    case Sent(None, None, _, _)                          => None
-    case Sent(it: Iterable[?], None, _, _) if it.isEmpty => None
-    case Sent(v, None, path, Some(field)) => Some(s"$path: $field holds $v, but the JSON has no such key")
-    case _                                => None
-  }
-
-  // https://github.com/apimorphism/telegramium/issues/686
-  private def emptyOptionalArray(s: Sent): Option[String] = s match {
-    case Sent(_, Some(j), path, Some(field)) if OptionalArrays.all(field) && j.asArray.exists(_.isEmpty) =>
-      Some(s"$path: sent as []")
-    case _ => None
-  }
-
   private def checkMethod[A](c: MethodCase[A], check: (Wire, Any, Json) => Prop): Unit =
     c.name in {
       val prop = Prop.forAllShrink(c.gen, c.shrink.shrink) { args =>
@@ -234,21 +175,44 @@ abstract class WireSpec extends AnyFreeSpec {
     }
   }
 
-  "No optional array is sent as [], unless it is an Option[List]" - {
-    fieldNames match {
-      case Some(names) =>
-        MethodCases.all.foreach { c =>
-          checkMethod(
-            c,
-            (wire, args, encoded) => {
-              val problems = walk(names)(Sent(args, Some(sentJson(wire, encoded)), "", None)).flatMap { s =>
-                omittedKey(s) ++ emptyOptionalArray(s)
-              }
-              Prop(problems.isEmpty) :| problems.mkString("\n")
-            }
-          )
+  // the optional arrays seen holding values and found under their keys, by any Method
+  private val matched = scala.collection.mutable.Set.empty[String]
+
+  /** Where an optional array in the arguments is sent as [], or isn't found under its key. Each one is looked up in the
+    * encoding of the value holding it: the check above holds the wire request to the encoded arguments.
+    */
+  private def optionalArrayProblems(args: Any): List[String] =
+    reachable(args).toList.flatMap { v =>
+      OptionalArrays.all.flatMap { array =>
+        array.in(v).toList.flatMap {
+          case (values, Some(json)) if values.isEmpty && json.asArray.exists(_.isEmpty) =>
+            List(s"${array.name}: sent as []")
+          case (values, None) if values.nonEmpty =>
+            // a key the encoders write differently would make the check pass without looking
+            List(s"${array.name} holds $values, but the JSON has no such key")
+          case (values, Some(_)) if values.nonEmpty => matched += array.name; Nil
+          case _                                    => Nil
         }
-      case None => "needs productElementNames, from Scala 2.13" ignore {}
+      }
+    }
+
+  // https://github.com/apimorphism/telegramium/issues/686
+  "No optional array is sent as [], unless it is an Option[List]" - {
+    MethodCases.all.foreach { c =>
+      checkMethod(
+        c,
+        (_, args, _) => {
+          val problems = optionalArrayProblems(args)
+          Prop(problems.isEmpty) :| problems.mkString("\n")
+        }
+      )
+    }
+
+    // runs after the Methods above: a list the check never matches would make it pass without looking
+    "The optional arrays are listed, and each is found holding values in some Method's arguments" in {
+      assert(OptionalArrays.all.nonEmpty, "no optional arrays listed")
+      val unmatched = OptionalArrays.all.map(_.name).filterNot(matched)
+      assert(unmatched.isEmpty, s"never found holding values under their key: ${unmatched.mkString(", ")}")
     }
   }
 

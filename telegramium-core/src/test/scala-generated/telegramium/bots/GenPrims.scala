@@ -59,14 +59,6 @@ object GenPrims {
     Gen.sized(n => if (n <= 0) pick(atZero) else pick(all))
   }
 
-  def either[A, B](a: => Gen[A], b: => Gen[B]): Gen[Either[A, B]] =
-    Gen.oneOf(Gen.lzy(a).map(Left(_)), Gen.lzy(b).map(Right(_)))
-  // one side is shallower: at size 0 only that one, like a sum type, so a recursive side ends there
-  def eitherLeftAtZero[A, B](a: => Gen[A], b: => Gen[B]): Gen[Either[A, B]] =
-    Gen.sized(n => if (n <= 0) Gen.lzy(a).map(Left(_)) else either(a, b))
-  def eitherRightAtZero[A, B](a: => Gen[A], b: => Gen[B]): Gen[Either[A, B]] =
-    Gen.sized(n => if (n <= 0) Gen.lzy(b).map(Right(_)) else either(a, b))
-
   // Only Known values: Unknown values are receive-only
   def openEnum[A](g: => Gen[A]): Gen[iozhik.OpenEnum[A]] = Gen.lzy(g).map(iozhik.OpenEnum.Known(_))
 
@@ -86,11 +78,6 @@ object GenPrims {
         Nil #:: dropOne #::: l.indices.toStream.flatMap(i => s.shrink(l(i)).map(l.updated(i, _)))
       }
     }
-  def shrinkEither[A, B](sa: => Shrink[A], sb: => Shrink[B]): Shrink[Either[A, B]] =
-    Shrink {
-      case Left(a)  => sa.shrink(a).map(Left(_))
-      case Right(b) => sb.shrink(b).map(Right(_))
-    }
   def shrinkOpenEnum[A](s: => Shrink[A]): Shrink[iozhik.OpenEnum[A]] =
     Shrink {
       case iozhik.OpenEnum.Known(a) => s.shrink(a).map(iozhik.OpenEnum.Known(_))
@@ -106,6 +93,18 @@ object GenPrims {
   def field[A, F](value: F)(s: => Shrink[F])(copy: F => A): () => Stream[A] = () => s.shrink(value).map(copy)
   // a custom-gens fix applies to the shrunk values too, so shrinking can't produce what the generator never would
   def fixed[A](s: Shrink[A], fix: A => A): Shrink[A] = Shrink(a => s.shrink(a).map(fix).filter(_ != a))
+
+  /** An (omitempty) List field, with its JSON key, and the type's encoder to find the key in. */
+  final class OptionalArray[A](val typeName: String, val key: String, values: A => List[_])(
+    implicit encoder: Encoder[A],
+    tag: ClassTag[A]
+  ) {
+    def name: String = typeName + "." + key
+
+    /** For a value of the field's type: the field, and the JSON under its key (None: left out). */
+    def in(a: Any): Option[(List[_], Option[io.circe.Json])] =
+      tag.unapply(a).map(x => (values(x), encoder(x).hcursor.downField(key).focus))
+  }
 
   /** A type with both an encoder and a decoder, with the generator to feed it. */
   final class RoundTripCase[A](
