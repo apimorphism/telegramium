@@ -28,6 +28,13 @@ class WebhookBotWireSpec extends WireSpec {
       """{"update_id": 1, "message": {"message_id": 0, "date": 0, "chat": {"id": 0, "type": "private"}}}"""
     ).toOption.get
 
+  // Telegram reads which Method a reply is from its `method`. The expected JSON comes from the same encoders as the
+  // request, so a key that every encoder drops passes every other check
+  private def methodOf(wire: Wire): Option[String] = wire match {
+    case JsonWire(json)      => json.hcursor.get[String]("method").toOption
+    case FormWire(fields, _) => fields.get("method")
+  }
+
   protected def send(method: Method[?]): Wire = {
     val bot = new WebhookBot[IO](api, url = "localhost") {
       override def onMessageReply(msg: Message): IO[Option[Method[?]]] = IO.pure(Some(method))
@@ -39,6 +46,10 @@ class WebhookBotWireSpec extends WireSpec {
       .flatMap { response =>
         if (response.status == Status.Ok) readWire(response)
         else IO(fail(s"${method.payload.name} replied ${response.status}"))
+      }
+      .map { wire =>
+        if (methodOf(wire).contains(method.payload.name)) wire
+        else fail(s"${method.payload.name} replied with method ${methodOf(wire)}: $wire")
       }
       .unsafeRunSync()
   }

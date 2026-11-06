@@ -131,6 +131,20 @@ lazy val telegramium = (project in file("."))
       `telegramium-examples`.projectRefs: _*
   )
 
+// `++ X; test` runs every Scala version's tests, as each matrix project keeps its own version; `testScala X` runs only
+// those of X, for each CI job to test its own
+commands += Command.single("testScala") { (state, version) =>
+  val extracted = Project.extract(state)
+  val refs      = Seq(`telegramium-core`, `telegramium-high`, `telegramium-examples`).flatMap(_.projectRefs)
+  refs
+    .filter(ref => extracted.get(ref / scalaVersion) == version)
+    .map(ref => s"${extracted.get(ref / thisProject).id}/test")
+    .toList ::: state
+}
+ThisBuild / githubWorkflowBuild := Seq(
+  WorkflowStep.Sbt(List("testScala ${{ matrix.scala }}"), name = Some("Build project"))
+)
+
 addCommandAlias("fmtAll", "scalafixAll; scalafmtAll; scalafmtSbt")
 // one Scala version is enough: what's checked is Telegram's answer, not the cross-build
 addCommandAlias("liveTest", "set ThisBuild / onlyLiveTests := true; telegramium-high3/test")

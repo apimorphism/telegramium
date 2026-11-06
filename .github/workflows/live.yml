@@ -23,11 +23,16 @@ jobs:
     if: >-
       (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
       (github.event_name != 'schedule' || github.repository == 'apimorphism/telegramium')
-    # one run at a time posts to the channel; a new run waits instead of cancelling the one in progress
+    # a group's runs go one at a time: a new run waits instead of cancelling the one in progress. A group keeps one
+    # waiting run, the newest, so nightly runs get a group of their own, where no PR run can replace them. A nightly and
+    # a PR run may then post to the channel at the same time, which the live test doesn't mind: it checks only the
+    # Message each call returns
     concurrency:
-      group: live-test
+      group: live-test-${{ github.event_name == 'schedule' && 'nightly' || 'other' }}
       cancel-in-progress: false
     runs-on: ubuntu-latest
+    # a run takes about 2 minutes; one stuck on Telegram ends here, instead of after GitHub's 6 hours
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -46,11 +51,12 @@ jobs:
           TELEGRAM_LIVE_BOT_TOKEN: ${{ secrets.TELEGRAM_LIVE_BOT_TOKEN }}
           TELEGRAM_LIVE_CHAT_ID: ${{ secrets.TELEGRAM_LIVE_CHAT_ID }}
 
-  # On scheduled runs, keep a single "Live test failing" issue: open it (or comment on it) on failure, close it on success
+  # On scheduled runs, keep a single "Live test failing" issue: open it (or comment on it) on failure, close it on success.
+  # A run that timed out or was cancelled counts as failing too: it didn't show the live test passing
   report:
     name: Report
     needs: live
-    if: always() && github.event_name == 'schedule' && (needs.live.result == 'failure' || needs.live.result == 'success')
+    if: always() && github.event_name == 'schedule' && needs.live.result != 'skipped'
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -64,11 +70,11 @@ jobs:
       - run: |
           issue=$(gh issue list --state open --search "\"$TITLE\" in:title" --json number,title \
             --jq "map(select(.title == \"$TITLE\")) | first | .number // empty")
-          if [ "$RESULT" = failure ]; then
+          if [ "$RESULT" != success ]; then
             if [ -n "$issue" ]; then
-              gh issue comment "$issue" --body "Still failing: $RUN_URL"
+              gh issue comment "$issue" --body "Still failing ($RESULT): $RUN_URL"
             else
-              gh issue create --title "$TITLE" --body "The scheduled live test against Telegram failed: $RUN_URL"
+              gh issue create --title "$TITLE" --body "The scheduled live test against Telegram ended in $RESULT: $RUN_URL"
             fi
           elif [ -n "$issue" ]; then
             gh issue close "$issue" --comment "Passing again: $RUN_URL"

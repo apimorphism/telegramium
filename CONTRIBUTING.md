@@ -73,9 +73,9 @@ sbt liveTest
 Each test posts a message to the channel. In CI, `.github/workflows/live.yml`
 runs them nightly, on manual trigger, and on PRs from this repo that touch
 telegramium-core's main code, telegramium-high or the workflow itself (fork PRs
-get no secrets, so it's skipped there). A failing nightly run opens a "Live
-test failing" issue, or comments on the open one; the next green nightly run
-closes it.
+get no secrets, so it's skipped there). A nightly run that fails, times out or
+is cancelled opens a "Live test failing" issue, or comments on the open one;
+the next green nightly run closes it.
 
 ## Recorded fixtures (maintainers)
 

@@ -12,9 +12,6 @@ import org.http4s.circe.*
 import org.http4s.headers.`Content-Type`
 import org.http4s.multipart.Multipart
 import org.scalacheck.Prop
-import org.scalacheck.Test
-import org.scalacheck.rng.Seed
-import org.scalacheck.util.Pretty
 import org.scalatest.freespec.AnyFreeSpec
 
 import telegramium.bots.GenPrims.FieldsOf
@@ -22,6 +19,7 @@ import telegramium.bots.InputPartFile
 import telegramium.bots.JsonFields
 import telegramium.bots.MethodCases
 import telegramium.bots.MethodCases.MethodCase
+import telegramium.bots.SeededCheck
 import telegramium.bots.client.Method
 import telegramium.bots.client.MethodReq
 
@@ -46,10 +44,7 @@ abstract class WireSpec extends AnyFreeSpec {
 
   import WireSpec.*
 
-  private val samples = 100
-
-  // A run's samples are random, so a failure prints its seed; WIRE_SEED=<seed> replays that run
-  private val seed = sys.env.get("WIRE_SEED").fold(Seed.random())(Seed.fromBase64(_).get)
+  private val seededCheck = new SeededCheck("WIRE_SEED")
 
   // Generated InputPartFiles are plain file names; the request is only built from files that exist
   private val tmpDir = Files.createTempDirectory("wire").toFile
@@ -154,9 +149,7 @@ abstract class WireSpec extends AnyFreeSpec {
         val wire = send(withTempFiles(c.method(args)))
         check(wire, args, c.json(args)) :| s"wire request: $wire"
       }
-      val result = Test.check(Test.Parameters.default.withMinSuccessfulTests(samples).withInitialSeed(seed), prop)
-      // the report has the failing labels and the shrunk arguments
-      if (!result.passed) fail(s"${c.name} (WIRE_SEED=${seed.toBase64}): ${Pretty.pretty(result, Pretty.Params(0))}")
+      seededCheck.failure(c.name, prop).foreach(fail(_))
     }
 
   // https://github.com/apimorphism/telegramium/issues/666, https://github.com/apimorphism/telegramium/issues/669

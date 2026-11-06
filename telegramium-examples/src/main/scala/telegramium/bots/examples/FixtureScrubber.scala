@@ -57,6 +57,9 @@ object FixtureScrubber {
   // shared locations and venues are moved here
   private val fixedPlace = Map("latitude" -> 52.52, "longitude" -> 13.405)
 
+  // personal numbers that aren't IDs, under objects whose fields have generic names: each field gets a fixed value
+  private val fixedObjects = Map("birthdate" -> Map("day" -> 1, "month" -> 1, "year" -> 2000))
+
   // keys ending in _id that hold an index or an enum value, not an identifier
   private val notIds =
     Set("accent_color_id", "profile_accent_color_id", "correct_option_id", "correct_option_ids", "option_ids")
@@ -106,7 +109,11 @@ object FixtureScrubber {
           else if (isId(key)) Json.fromString(fakeStringId(s))
           else Json.fromString(placeholder(s)),
         arr => Json.fromValues(arr.map(scrubValue(key, _))),
-        obj => Json.fromFields(obj.toIterable.map((k, v) => k -> scrubValue(k, v)))
+        obj =>
+          fixedObjects.get(key) match {
+            case Some(fixed) => Json.fromFields(obj.toIterable.map((k, v) => k -> fixed.get(k).fold(v)(Json.fromInt)))
+            case None        => Json.fromFields(obj.toIterable.map((k, v) => k -> scrubValue(k, v)))
+          }
       )
 
     docs.map(scrubValue("", _))

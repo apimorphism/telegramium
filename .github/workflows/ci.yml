@@ -60,4 +60,4 @@ jobs:
         run: sbt '++ ${{ matrix.scala }}; githubWorkflowCheck'
 
       - name: Build project
-        run: sbt '++ ${{ matrix.scala }}; test'
+        run: sbt '++ ${{ matrix.scala }}; testScala ${{ matrix.scala }}'

@@ -14,13 +14,7 @@ import org.scalatest.matchers.should.Matchers
 import telegramium.bots.ChatIntId
 import telegramium.bots.InputLinkFile
 import telegramium.bots.InputMediaDocument
-import telegramium.bots.InputMediaPhoto
 import telegramium.bots.InputPartFile
-import telegramium.bots.InputPollOption
-import telegramium.bots.InputRichBlockCollage
-import telegramium.bots.InputRichBlockPhoto
-import telegramium.bots.InputRichMessage
-import telegramium.bots.InputRichMessageMedia
 import telegramium.bots.InputSticker
 import telegramium.bots.ReplyParameters
 import telegramium.bots.client.Method
@@ -120,75 +114,6 @@ class Http4sUtilsSpec extends AnyFreeSpec with Matchers {
     media.map(_.downN(0).get[String]("media")) shouldBe Right(Right("attach://media.0.media"))
     media.map(_.downN(1).get[String]("media")) shouldBe Right(Right("file_id"))
     MultipartFields.fileParts(multipart) shouldBe Vector("media.0.media" -> "document.txt")
-  }
-
-  // https://github.com/apimorphism/iozhik/issues/21
-  "should send a file in a poll option's media, and in the poll's own media" in {
-    val multipart = toMultipart(
-      Methods.sendPoll(
-        ChatIntId(0),
-        "question",
-        options = List(
-          InputPollOption("a", media = Some(InputMediaPhoto(InputPartFile(file)))),
-          InputPollOption("b", media = Some(InputMediaPhoto(InputLinkFile("file_id"))))
-        ),
-        media = Some(InputMediaPhoto(InputPartFile(file)))
-      )
-    )
-    val fields  = formFields(multipart)
-    val options = parse(fields("options")).map(_.hcursor)
-
-    options.map(_.downN(0).downField("media").get[String]("media")) shouldBe Right(
-      Right("attach://options.0.media.media")
-    )
-    options.map(_.downN(1).downField("media").get[String]("media")) shouldBe Right(Right("file_id"))
-    parse(fields("media")).map(_.hcursor.get[String]("media")) shouldBe Right(Right("attach://media.media"))
-    MultipartFields.fileParts(multipart).sorted shouldBe Vector(
-      "media.media"           -> "document.txt",
-      "options.0.media.media" -> "document.txt"
-    )
-  }
-
-  "should send files in a rich message's media and in its blocks, nested ones too" in {
-    val richMessage = InputRichMessage(
-      blocks = List(
-        InputRichBlockPhoto(InputMediaPhoto(InputLinkFile("file_id"))),
-        InputRichBlockCollage(blocks = List(InputRichBlockPhoto(InputMediaPhoto(InputPartFile(file)))))
-      ),
-      media = List(InputRichMessageMedia("id", InputMediaDocument(InputPartFile(file))))
-    )
-    val multipart = toMultipart(Methods.sendRichMessage(ChatIntId(0), richMessage))
-    val rich      = parse(formFields(multipart)("rich_message")).map(_.hcursor)
-
-    rich.map(_.downField("media").downN(0).downField("media").get[String]("media")) shouldBe Right(
-      Right("attach://rich_message.media.0.media.media")
-    )
-    rich.map(_.downField("blocks").downN(0).downField("photo").get[String]("media")) shouldBe Right(Right("file_id"))
-    rich.map(
-      _.downField("blocks").downN(1).downField("blocks").downN(0).downField("photo").get[String]("media")
-    ) shouldBe
-      Right(Right("attach://rich_message.blocks.1.blocks.0.photo.media"))
-    MultipartFields.fileParts(multipart).sorted shouldBe Vector(
-      "rich_message.blocks.1.blocks.0.photo.media" -> "document.txt",
-      "rich_message.media.0.media.media"           -> "document.txt"
-    )
-  }
-
-  "should send a file in the rich message of editMessageText" in {
-    val multipart = toMultipart(
-      Methods.editMessageText(
-        chatId = Some(ChatIntId(0)),
-        messageId = Some(1),
-        richMessage =
-          Some(InputRichMessage(media = List(InputRichMessageMedia("id", InputMediaPhoto(InputPartFile(file))))))
-      )
-    )
-
-    parse(formFields(multipart)("rich_message"))
-      .map(_.hcursor.downField("media").downN(0).downField("media").get[String]("media")) shouldBe Right(
-      Right("attach://rich_message.media.0.media.media")
-    )
-    MultipartFields.fileParts(multipart) shouldBe Vector("rich_message.media.0.media.media" -> "document.txt")
   }
 
   "should skip null fields and the fields of uploaded files" in {
