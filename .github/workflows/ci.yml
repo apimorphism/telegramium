@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [3.3.9, 2.13.18, 2.12.21]
+        scala: [3.3.9]
         java: [temurin@21, temurin@8]
     runs-on: ${{ matrix.os }}
     steps:
@@ -53,11 +53,11 @@ jobs:
       - if: matrix.java == 'temurin@21'
         run: sbt '++ ${{ matrix.scala }}; scalafixAll --check'
 
-      - if: matrix.java == 'temurin@21' && matrix.scala == '3.3.9'
+      - if: matrix.java == 'temurin@21'
         run: sbt '++ ${{ matrix.scala }}; scalafmtCheckAll; scalafmtSbtCheck'
 
       - name: Check that workflows are up to date
         run: sbt '++ ${{ matrix.scala }}; githubWorkflowCheck'
 
       - name: Build project
-        run: sbt '++ ${{ matrix.scala }}; testScala ${{ matrix.scala }}'
+        run: sbt '++ ${{ matrix.scala }}; test'

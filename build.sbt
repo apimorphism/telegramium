@@ -43,7 +43,9 @@ ThisBuild / publishTo         := {
   else localStaging.value
 }
 
-ThisBuild / githubWorkflowScalaVersions := Seq(scala3, scala213, scala212)
+// No Scala axis in CI: the matrix projects each keep their own Scala version, so `test` on the root already tests all
+// three, and `++ X; test` in a job per version would test all three in each. The axis defaults to crossScalaVersions,
+// which is just scalaVersion here
 
 // The oldest supported JDK and the newest LTS. Compile-time Java 8 compatibility comes from -release 8 (Compiler.scala),
 // so JDK 8 is here for what only shows at runtime, like a dependency that no longer runs on 8.
@@ -54,14 +56,11 @@ ThisBuild / githubWorkflowJavaVersions := Seq(jdk21, jdk8)
 
 ThisBuild / githubWorkflowPublishTargetBranches := Seq.empty
 
-// The checks don't depend on the JDK, and scalafmt not on the Scala version either: each runs once, not in every job
+// The checks don't depend on the JDK: each runs once, not in every job
 ThisBuild / githubWorkflowBuildPreamble ++=
   Seq(
     WorkflowStep.Sbt(List("scalafixAll --check"), cond = Some(s"matrix.java == '${jdk21.render}'")),
-    WorkflowStep.Sbt(
-      List("scalafmtCheckAll", "scalafmtSbtCheck"),
-      cond = Some(s"matrix.java == '${jdk21.render}' && matrix.scala == '$scala3'")
-    )
+    WorkflowStep.Sbt(List("scalafmtCheckAll", "scalafmtSbtCheck"), cond = Some(s"matrix.java == '${jdk21.render}'"))
   )
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
@@ -125,25 +124,11 @@ lazy val telegramium = (project in file("."))
     name           := "F[Tg]",
     publish / skip := true
   )
-  .aggregate(modules.flatMap(_.projectRefs): _*)
-
-lazy val modules = Seq(`telegramium-core`, `telegramium-high`, `telegramium-examples`)
-
-// `++ X; test` runs every Scala version's tests, as each matrix project keeps its own version; `testScala X` runs only
-// those of X, for each CI job to test its own
-commands += Command.single("testScala") { (state, version) =>
-  val extracted = Project.extract(state)
-  val tests     = modules
-    .flatMap(_.projectRefs)
-    .filter(ref => extracted.get(ref / scalaVersion) == version)
-    .map(ref => s"${extracted.get(ref / thisProject).id}/test")
-  // a version the build doesn't have would otherwise test nothing, and pass
-  if (tests.isEmpty) sys.error(s"testScala: no projects on Scala $version")
-  tests.toList ::: state
-}
-ThisBuild / githubWorkflowBuild := Seq(
-  WorkflowStep.Sbt(List("testScala ${{ matrix.scala }}"), name = Some("Build project"))
-)
+  .aggregate(
+    `telegramium-core`.projectRefs ++
+      `telegramium-high`.projectRefs ++
+      `telegramium-examples`.projectRefs: _*
+  )
 
 addCommandAlias("fmtAll", "scalafixAll; scalafmtAll; scalafmtSbt")
 // one Scala version is enough: what's checked is Telegram's answer, not the cross-build
