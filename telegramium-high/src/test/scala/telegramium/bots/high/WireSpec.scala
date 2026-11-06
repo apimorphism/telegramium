@@ -17,11 +17,11 @@ import org.scalacheck.rng.Seed
 import org.scalacheck.util.Pretty
 import org.scalatest.freespec.AnyFreeSpec
 
+import telegramium.bots.GenPrims.FieldsOf
 import telegramium.bots.InputPartFile
+import telegramium.bots.JsonFields
 import telegramium.bots.MethodCases
 import telegramium.bots.MethodCases.MethodCase
-import telegramium.bots.GenPrims.FieldsOf
-import telegramium.bots.JsonFields
 import telegramium.bots.client.Method
 import telegramium.bots.client.MethodReq
 
