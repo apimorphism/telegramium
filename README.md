@@ -152,6 +152,11 @@ X.Y.Z where
 
 Please, note, that this versioning scheme is started from version `1.48.0`.
 
+#### Upgrading
+
+* Pass optional arguments by name: `editMessageReplyMarkup(chatId = Some(ChatIntId(id)), messageId = Some(msgId))`. Telegram often adds new optional parameters in the middle of a method's list, so positional calls can stop compiling after a Bot API update.
+* On Scala 2.13, telegramium depends on the latest scala-library (2.13.18 since `10.905.0`), and sbt refuses to build a project whose `scalaVersion` is older than that. Upgrade `scalaVersion` along with telegramium.
+
 ### Contribution
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
