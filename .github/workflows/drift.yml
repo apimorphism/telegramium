@@ -5,7 +5,8 @@ name: Drift check
 
 on:
   schedule:
-    - cron: '30 3 * * *'
+    # 03:47 UTC daily, after the live test. Off the hour and half hour, when GitHub's scheduled runs start latest
+    - cron: '47 3 * * *'
   workflow_dispatch:
 
 permissions:

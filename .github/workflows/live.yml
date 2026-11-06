@@ -4,7 +4,8 @@ name: Live test
 
 on:
   schedule:
-    - cron: '0 3 * * *'
+    # 03:17 UTC daily. Off the hour and half hour, when GitHub's scheduled runs are busiest and start latest
+    - cron: '17 3 * * *'
   workflow_dispatch:
   pull_request:
     paths:
