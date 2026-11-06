@@ -79,4 +79,16 @@ class FixtureScrubberSpec extends AnyFreeSpec with Matchers {
     ) shouldBe List(json("""{"location": {"latitude": 52.52, "longitude": 13.405, "horizontal_accuracy": 25.5}}"""))
   }
 
+  "moves birthdates to a fixed date, keeping a year left out" in {
+    FixtureScrubber.scrub(
+      List(
+        json("""{"birthdate": {"day": 17, "month": 8, "year": 1991}}"""),
+        json("""{"birthdate": {"day": 3, "month": 12}}""")
+      )
+    ) shouldBe List(
+      json("""{"birthdate": {"day": 1, "month": 1, "year": 2000}}"""),
+      json("""{"birthdate": {"day": 1, "month": 1}}""")
+    )
+  }
+
 }

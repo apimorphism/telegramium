@@ -74,18 +74,23 @@ object CaptureBot extends IOApp {
     _ <- client.resource.use(http => new Capture(http, token, raw).run)
   } yield ExitCode.Success
 
-  private class Capture(http: Client[IO], token: String, raw: Path) {
+  private[examples] class Capture(http: Client[IO], token: String, raw: Path) {
 
     private val api = Uri.unsafeFromString(s"https://api.telegram.org/bot$token")
 
-    // the `result` of a Bot API call, as Telegram sent it
-    private def call(method: String, params: (String, Json)*): IO[Json] =
+    // the `result` of a Bot API call, as Telegram sent it. The body is read whatever the status, as Telegram explains
+    // an error in it; http.expect would fail with the request URI instead, and the token in it
+    private[examples] def call(method: String, params: (String, Json)*): IO[Json] =
       http
-        .expect[Json](Request[IO](POST, api / method).withEntity(Json.fromFields(params)))
+        .run(Request[IO](POST, api / method).withEntity(Json.fromFields(params)))
+        .use(_.as[Json])
         .flatMap { response =>
           val c = response.hcursor
           if (c.get[Boolean]("ok").contains(true)) IO.fromEither(c.downField("result").as[Json])
-          else IO.raiseError(new RuntimeException(s"$method failed: ${response.noSpaces}"))
+          else
+            IO.raiseError(
+              new RuntimeException(s"$method failed: ${c.get[String]("description").getOrElse(response.noSpaces)}")
+            )
         }
 
     private def write(path: Path, json: Json): IO[Unit] = IO {
@@ -197,7 +202,8 @@ object CaptureBot extends IOApp {
           .traverse_ { case (id, update) =>
             write(raw.resolve("updates").resolve(s"$id.json"), update) >>
               IO.println(s"Recorded update $id: ${update.asObject.toList.flatMap(_.keys).mkString(", ")}") >>
-              onUpdate(update)
+              // as LongPollBot does: one update it can't handle mustn't be fetched again forever
+              IO.defer(onUpdate(update)).handleErrorWith(e => IO.println(s"Failed to handle update $id: $e"))
           }
           .as(updates.map(_._1).maxOption.fold(offset)(_ + 1))
       }.handleErrorWith { e =>
