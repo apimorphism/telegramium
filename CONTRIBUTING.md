@@ -29,6 +29,12 @@ checks the wire request of every Method, both sent through `BotApi`
 A restriction on a generator belongs in iozhik's `custom-gens` config, with a
 comment explaining it.
 
+A nightly drift check (`.github/workflows/drift.yml`, also run by hand from the
+Actions tab) regenerates both trees from iozhik master and fails on any
+difference, opening a "Drift check failing" issue, or commenting on the open
+one, and closing it once a run on master is green again. Between the merges of
+an iozhik PR and its telegramium tandem it is expected to be red.
+
 ## Code style
 
 Before you submit a PR, ensure that you've formatted your code by running:

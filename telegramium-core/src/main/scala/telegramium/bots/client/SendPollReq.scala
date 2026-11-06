@@ -1,9 +1,9 @@
 package telegramium.bots.client
 
 import telegramium.bots.ChatId
+import telegramium.bots.ParseMode
 import telegramium.bots.MessageEntity
 import telegramium.bots.InputPollOption
-import telegramium.bots.ParseMode
 import telegramium.bots.InputMedia
 import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
@@ -108,7 +108,7 @@ final case class SendPollReq(
   question: String,
   businessConnectionId: Option[String] = Option.empty,
   messageThreadId: Option[Int] = Option.empty,
-  questionParseMode: Option[String] = Option.empty,
+  questionParseMode: Option[ParseMode] = Option.empty,
   questionEntities: List[MessageEntity] = List.empty,
   options: List[InputPollOption] = List.empty,
   isAnonymous: Option[Boolean] = Option.empty,
@@ -129,7 +129,7 @@ final case class SendPollReq(
   closeDate: Option[Long] = Option.empty,
   isClosed: Option[Boolean] = Option.empty,
   description: Option[String] = Option.empty,
-  descriptionParseMode: Option[String] = Option.empty,
+  descriptionParseMode: Option[ParseMode] = Option.empty,
   descriptionEntities: List[MessageEntity] = List.empty,
   media: Option[InputMedia] = Option.empty,
   disableNotification: Option[Boolean] = Option.empty,

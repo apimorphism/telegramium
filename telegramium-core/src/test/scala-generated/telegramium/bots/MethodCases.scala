@@ -1884,12 +1884,13 @@ object GenSendPollReq {
   import GenPrims._
   lazy val gen: Gen[client.SendPollReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, genString, optPrim(genString), optPrim(genInt), optPrim(genString),
+        .zip(Gen.zip(GenChatId.gen, genString, optPrim(genString), optPrim(genInt), opt(GenParseMode.gen),
             list(GenMessageEntity.gen), list(GenInputPollOption.gen), optPrim(genBoolean), optPrim(genString)),
           Gen.zip(optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean),
             optPrim(genBoolean), optPrim(genBoolean), listPrim(genString), listPrim(genInt), optPrim(genString)),
           Gen.zip(opt(GenParseMode.gen), list(GenMessageEntity.gen), opt(GenInputMedia.gen), optPrim(genInt),
-            optPrim(genLong), optPrim(genBoolean), optPrim(genString), optPrim(genString), list(GenMessageEntity.gen)),
+            optPrim(genLong), optPrim(genBoolean), optPrim(genString), opt(GenParseMode.gen),
+            list(GenMessageEntity.gen)),
           Gen.zip(opt(GenInputMedia.gen), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean),
             optPrim(genString), opt(GenReplyParameters.gen), opt(GenKeyboardMarkup.gen)))
         .map {

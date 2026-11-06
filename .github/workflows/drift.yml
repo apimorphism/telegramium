@@ -1,0 +1,88 @@
+# Regenerates telegramium-core from iozhik master and fails on any diff (see CONTRIBUTING.md). Hand-written, unlike
+# ci.yml.
+
+name: Drift check
+
+on:
+  schedule:
+    - cron: '30 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    name: Drift check
+    # a fork's nightly would report it in the fork
+    if: github.event_name != 'schedule' || github.repository == 'apimorphism/telegramium'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: telegramium
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: apimorphism/iozhik
+          ref: master
+          path: iozhik
+
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: sbt
+          cache-dependency-path: iozhik/build.sbt
+
+      - uses: sbt/setup-sbt@b113b960ba361e87e08ce02a390d51871b7ee459 # v1.5.13
+
+      # the regen wipes both trees and writes them again, so a file it no longer generates shows up as deleted
+      - name: Regenerate telegramium-core
+        working-directory: iozhik
+        run: >-
+          sbt "iozhik/run iozhik/src/main/resources/tgbotapi.conf
+          ../telegramium/telegramium-core/src/main/scala
+          ../telegramium/telegramium-core/src/test/scala-generated"
+
+      - name: Compare with the committed sources
+        working-directory: telegramium
+        run: |
+          git add -A telegramium-core
+          if ! git diff --cached --quiet; then
+            echo "::error::telegramium-core differs from what iozhik master generates; regenerate it (see iozhik's CONTRIBUTING.md)"
+            git diff --cached --stat
+            git diff --cached
+            exit 1
+          fi
+
+  # Like the live test: keep a single "Drift check failing" issue, open it (or comment on it) on failure, close it on
+  # success. Manual runs report too, but only on master, so one can confirm a fix.
+  report:
+    name: Report
+    needs: drift
+    if: >-
+      always() && github.ref == 'refs/heads/master' &&
+      (needs.drift.result == 'failure' || needs.drift.result == 'success')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TITLE: Drift check failing
+      RESULT: ${{ needs.drift.result }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - run: |
+          issue=$(gh issue list --state open --search "\"$TITLE\" in:title" --json number,title \
+            --jq "map(select(.title == \"$TITLE\")) | first | .number // empty")
+          if [ "$RESULT" = failure ]; then
+            if [ -n "$issue" ]; then
+              gh issue comment "$issue" --body "Still failing: $RUN_URL"
+            else
+              gh issue create --title "$TITLE" --body "telegramium-core differs from what iozhik master generates: $RUN_URL"
+            fi
+          elif [ -n "$issue" ]; then
+            gh issue close "$issue" --comment "Passing again: $RUN_URL"
+          fi
