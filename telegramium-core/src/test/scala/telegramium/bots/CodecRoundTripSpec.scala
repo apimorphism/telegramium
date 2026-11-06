@@ -8,7 +8,7 @@ import telegramium.bots.GenPrims.RoundTripCase
 
 class CodecRoundTripSpec extends AnyFlatSpec with Matchers {
 
-  private val check = new SeededCheck("ROUNDTRIP_SEED")
+  private val seededCheck = new SeededCheck("ROUNDTRIP_SEED")
 
   private def roundTrips[A](c: RoundTripCase[A]): Unit =
     c.name should "survive encode → decode" in {
@@ -20,7 +20,7 @@ class CodecRoundTripSpec extends AnyFlatSpec with Matchers {
           case Left(error)    => Prop.falsified :| s"failed to decode $json: $error"
         }
       }
-      check
+      seededCheck
         .failure(c.name, prop, a => s"$a\nAs JSON: ${c.encoder(a.asInstanceOf[A]).noSpaces}")
         .foreach(fail(_))
     }

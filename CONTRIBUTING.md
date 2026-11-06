@@ -109,7 +109,8 @@ To refresh the fixtures, for example after a Bot API release:
    ```
 
    IDs are remapped consistently, keeping IDs above 2³¹ above it. File IDs
-   become fakes of the same shape, and locations move to a fixed place. Every
+   become fakes of the same shape, and locations and birthdates move to a fixed
+   place and date. Every
    other string has its letters and digits replaced, unless its key is listed in
    `FixtureScrubber`'s `keptStrings`. If `FixturesSpec` then fails on a
    decoder's discriminator, add that key there.

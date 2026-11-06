@@ -109,11 +109,12 @@ object FixtureScrubber {
           else if (isId(key)) Json.fromString(fakeStringId(s))
           else Json.fromString(placeholder(s)),
         arr => Json.fromValues(arr.map(scrubValue(key, _))),
-        obj =>
-          fixedObjects.get(key) match {
-            case Some(fixed) => Json.fromFields(obj.toIterable.map((k, v) => k -> fixed.get(k).fold(v)(Json.fromInt)))
-            case None        => Json.fromFields(obj.toIterable.map((k, v) => k -> scrubValue(k, v)))
-          }
+        obj => {
+          val fixed = fixedObjects.get(key)
+          Json.fromFields(
+            obj.toIterable.map((k, v) => k -> fixed.fold(scrubValue(k, v))(_.get(k).fold(v)(Json.fromInt)))
+          )
+        }
       )
 
     docs.map(scrubValue("", _))

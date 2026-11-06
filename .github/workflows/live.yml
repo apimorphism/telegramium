@@ -23,10 +23,8 @@ jobs:
     if: >-
       (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
       (github.event_name != 'schedule' || github.repository == 'apimorphism/telegramium')
-    # a group's runs go one at a time: a new run waits instead of cancelling the one in progress. A group keeps one
-    # waiting run, the newest, so nightly runs get a group of their own, where no PR run can replace them. A nightly and
-    # a PR run may then post to the channel at the same time, which the live test doesn't mind: it checks only the
-    # Message each call returns
+    # a new run waits instead of cancelling the one in progress. A group keeps only its newest waiting run, so nightlies
+    # get their own group, where a PR run can't replace one; the test doesn't mind a nightly and a PR run posting at once
     concurrency:
       group: live-test-${{ github.event_name == 'schedule' && 'nightly' || 'other' }}
       cancel-in-progress: false

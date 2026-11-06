@@ -125,21 +125,21 @@ lazy val telegramium = (project in file("."))
     name           := "F[Tg]",
     publish / skip := true
   )
-  .aggregate(
-    `telegramium-core`.projectRefs ++
-      `telegramium-high`.projectRefs ++
-      `telegramium-examples`.projectRefs: _*
-  )
+  .aggregate(modules.flatMap(_.projectRefs): _*)
+
+lazy val modules = Seq(`telegramium-core`, `telegramium-high`, `telegramium-examples`)
 
 // `++ X; test` runs every Scala version's tests, as each matrix project keeps its own version; `testScala X` runs only
 // those of X, for each CI job to test its own
 commands += Command.single("testScala") { (state, version) =>
   val extracted = Project.extract(state)
-  val refs      = Seq(`telegramium-core`, `telegramium-high`, `telegramium-examples`).flatMap(_.projectRefs)
-  refs
+  val tests     = modules
+    .flatMap(_.projectRefs)
     .filter(ref => extracted.get(ref / scalaVersion) == version)
     .map(ref => s"${extracted.get(ref / thisProject).id}/test")
-    .toList ::: state
+  // a version the build doesn't have would otherwise test nothing, and pass
+  if (tests.isEmpty) sys.error(s"testScala: no projects on Scala $version")
+  tests.toList ::: state
 }
 ThisBuild / githubWorkflowBuild := Seq(
   WorkflowStep.Sbt(List("testScala ${{ matrix.scala }}"), name = Some("Build project"))
