@@ -43,8 +43,8 @@ class Http4sUtilsSpec extends AnyFreeSpec with Matchers {
   "should send object-valued fields as compact JSON form fields" in {
     val multipart = toMultipart(
       Methods.sendDocument(
-        ChatIntId(0),
-        InputPartFile(file),
+        chatId = Some(ChatIntId(0)),
+        document = InputPartFile(file),
         caption = Some("hi"),
         replyParameters = Some(ReplyParameters(messageId = Some(1))),
         replyMarkup = Some(keyboard)
@@ -63,10 +63,10 @@ class Http4sUtilsSpec extends AnyFreeSpec with Matchers {
 
   "should send object-valued fields for other upload methods" in {
     val methods = List(
-      Methods.sendPhoto(ChatIntId(0), InputPartFile(file), replyMarkup = Some(keyboard)),
-      Methods.sendVideo(ChatIntId(0), InputPartFile(file), replyMarkup = Some(keyboard)),
-      Methods.sendAudio(ChatIntId(0), InputPartFile(file), replyMarkup = Some(keyboard)),
-      Methods.sendSticker(ChatIntId(0), InputPartFile(file), replyMarkup = Some(keyboard))
+      Methods.sendPhoto(chatId = Some(ChatIntId(0)), photo = InputPartFile(file), replyMarkup = Some(keyboard)),
+      Methods.sendVideo(chatId = Some(ChatIntId(0)), video = InputPartFile(file), replyMarkup = Some(keyboard)),
+      Methods.sendAudio(chatId = Some(ChatIntId(0)), audio = InputPartFile(file), replyMarkup = Some(keyboard)),
+      Methods.sendSticker(chatId = Some(ChatIntId(0)), sticker = InputPartFile(file), replyMarkup = Some(keyboard))
     )
     methods.foreach { method =>
       withClue(method.payload.name) {

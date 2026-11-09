@@ -25,7 +25,7 @@ import telegramium.bots.PreCheckoutQuery
 import telegramium.bots.ShippingQuery
 
 class TestLongPollBot(api: Api[IO]) extends LongPollBot[IO](api) {
-  private def sendMessageTask(text: String) = api.execute(sendMessage(ChatIntId(0), text)).void
+  private def sendMessageTask(text: String) = api.execute(sendMessage(chatId = Some(ChatIntId(0)), text = text)).void
 
   override def onMessage(msg: Message): IO[Unit]                              = sendMessageTask("onMessage")
   override def onEditedMessage(msg: Message): IO[Unit]                        = sendMessageTask("onEditedMessage")

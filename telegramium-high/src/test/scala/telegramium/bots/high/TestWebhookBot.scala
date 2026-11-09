@@ -32,7 +32,7 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
       url = "localhost",
       path = path
     ) {
-  private def sendMessageMethod(text: String) = sendMessage(ChatIntId(0), text)
+  private def sendMessageMethod(text: String) = sendMessage(chatId = Some(ChatIntId(0)), text = text)
 
   override def onMessage(msg: Message): IO[Unit] =
     api.execute(sendMessageMethod("onMessage")).void

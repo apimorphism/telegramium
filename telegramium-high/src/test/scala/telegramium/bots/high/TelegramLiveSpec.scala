@@ -79,8 +79,8 @@ class TelegramLiveSpec extends AnyFreeSpec with Matchers {
     )
     val message = execute(
       Methods.sendPhoto(
-        chatId,
-        InputPartFile(image),
+        chatId = Some(chatId),
+        photo = InputPartFile(image),
         caption = Some("#669: uploaded, with reply_markup"),
         replyMarkup = Some(markup)
       )
@@ -90,7 +90,10 @@ class TelegramLiveSpec extends AnyFreeSpec with Matchers {
 
   "a markdown-only rich message is not rejected as RICH_MESSAGE_EMPTY (#686)" taggedAs LiveTest in {
     val message = execute(
-      Methods.sendRichMessage(chatId, InputRichMessage(markdown = Some("**#686**: a *markdown-only* rich message")))
+      Methods.sendRichMessage(
+        chatId = Some(chatId),
+        richMessage = InputRichMessage(markdown = Some("**#686**: a *markdown-only* rich message"))
+      )
     )
     message.richMessage shouldBe defined
   }
@@ -98,8 +101,8 @@ class TelegramLiveSpec extends AnyFreeSpec with Matchers {
   "a document with an uploaded thumbnail keeps the thumbnail" taggedAs LiveTest in {
     val message = execute(
       Methods.sendDocument(
-        chatId,
-        InputPartFile(new File(this.getClass.getResource("/document.txt").getFile)),
+        chatId = Some(chatId),
+        document = InputPartFile(new File(this.getClass.getResource("/document.txt").getFile)),
         thumbnail = Some(InputPartFile(image)),
         caption = Some("Uploaded, with an uploaded thumbnail")
       )

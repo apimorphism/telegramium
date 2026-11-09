@@ -469,7 +469,7 @@ class WebhookBotISpec
   private def verifyResult(update: Update, expectedText: String) =
     bot1.onUpdate(update).unsafeRunSync().value shouldBe MethodReq[Message](
       "sendMessage",
-      SendMessageReq(ChatIntId(0), expectedText).asJson
+      SendMessageReq(chatId = Some(ChatIntId(0)), text = expectedText).asJson
     )
 
   private def prepareHttpMocks(): Unit = {

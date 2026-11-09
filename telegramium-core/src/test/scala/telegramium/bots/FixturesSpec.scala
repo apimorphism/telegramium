@@ -28,7 +28,7 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     "getChatAdministrators" -> codec(methods.getChatAdministrators(ChatIntId(0))),
     "getUserProfilePhotos"  -> codec(methods.getUserProfilePhotos(0)),
     "getFile"               -> codec(methods.getFile("")),
-    "sendMessage"           -> codec(methods.sendMessage(ChatIntId(0), "")),
+    "sendMessage"           -> codec(methods.sendMessage(chatId = Some(ChatIntId(0)), text = "")),
     "sendPoll"              -> codec(methods.sendPoll(ChatIntId(0), "", options = List.empty))
   )
 
