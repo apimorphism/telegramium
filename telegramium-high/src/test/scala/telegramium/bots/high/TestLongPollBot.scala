@@ -22,7 +22,9 @@ import telegramium.bots.PaidMediaPurchased
 import telegramium.bots.Poll
 import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
+import telegramium.bots.SharedWidgetQuery
 import telegramium.bots.ShippingQuery
+import telegramium.bots.WidgetQuery
 
 class TestLongPollBot(api: Api[IO]) extends LongPollBot[IO](api) {
   private def sendMessageTask(text: String) = api.execute(sendMessage(chatId = Some(ChatIntId(0)), text = text)).void
@@ -64,4 +66,8 @@ class TestLongPollBot(api: Api[IO]) extends LongPollBot[IO](api) {
 
   override def onStoppedMessageGeneration(stopped: MessageGenerationStopped): IO[Unit] =
     sendMessageTask("onStoppedMessageGeneration")
+
+  override def onWidgetQuery(query: WidgetQuery): IO[Unit] = sendMessageTask("onWidgetQuery")
+
+  override def onSharedWidgetQuery(query: SharedWidgetQuery): IO[Unit] = sendMessageTask("onSharedWidgetQuery")
 }

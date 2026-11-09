@@ -49,10 +49,13 @@ import telegramium.bots.PaidMediaPurchased
 import telegramium.bots.Poll
 import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
+import telegramium.bots.SharedWidgetQuery
 import telegramium.bots.ShippingAddress
 import telegramium.bots.ShippingQuery
 import telegramium.bots.Update
 import telegramium.bots.User
+import telegramium.bots.WidgetQuery
+import telegramium.bots.WidgetQueryTypeData
 import telegramium.bots.client.CirceImplicits.*
 import telegramium.bots.client.MethodReq
 import telegramium.bots.client.SendMessageReq
@@ -413,6 +416,28 @@ class WebhookBotISpec
       verifyResult(
         testUpdate.copy(stoppedMessageGeneration = MessageGenerationStopped(testChat, draftId = 1).some),
         "onStoppedMessageGenerationReply"
+      )
+    }
+
+    "widget query" in {
+      mockServerClient
+        .when(sendMessageRequest("onWidgetQuery"))
+        .respond(sendMessageResponse)
+      verifyResult(
+        testUpdate.copy(widgetQuery = WidgetQuery("", testUser, "", OpenEnum(WidgetQueryTypeData()), "").some),
+        "onWidgetQueryReply"
+      )
+    }
+
+    "shared widget query" in {
+      mockServerClient
+        .when(sendMessageRequest("onSharedWidgetQuery"))
+        .respond(sendMessageResponse)
+      verifyResult(
+        testUpdate.copy(sharedWidgetQuery =
+          SharedWidgetQuery("", testUser, OpenEnum(WidgetQueryTypeData()), "", "").some
+        ),
+        "onSharedWidgetQueryReply"
       )
     }
 

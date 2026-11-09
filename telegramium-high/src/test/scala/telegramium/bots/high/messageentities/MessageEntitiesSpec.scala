@@ -143,6 +143,18 @@ class MessageEntitiesSpec extends AnyFlatSpec with Matchers {
     entities.toTelegramEntities() shouldBe List(PhoneNumberMessageEntity(0, 9))
   }
 
+  it should "add TON address correctly" in {
+    val entities = MessageEntities().tonAddress("UQBvW8Z5huBkMJYdnfAEM5JqTNkuWX3diqYENkWsIL0XggGG")
+    entities.toPlainText() shouldBe "UQBvW8Z5huBkMJYdnfAEM5JqTNkuWX3diqYENkWsIL0XggGG"
+    entities.toTelegramEntities() shouldBe List(TonAddressMessageEntity(0, 48))
+  }
+
+  it should "add bank card number correctly" in {
+    val entities = MessageEntities().bankCardNumber("4242424242424242")
+    entities.toPlainText() shouldBe "4242424242424242"
+    entities.toTelegramEntities() shouldBe List(BankCardNumberMessageEntity(0, 16))
+  }
+
   it should "convert to MessageEntities correctly" in {
     val entities = MessageEntities()
       .bold("bold")
@@ -180,13 +192,17 @@ class MessageEntitiesSpec extends AnyFlatSpec with Matchers {
       .phoneNumber("+12065550100")
       .plain(" ")
       .dateTime("dateTime", 1647531900, "wDT")
+      .plain(" ")
+      .tonAddress("UQBvW8Z5huBkMJYdnfAEM5JqTNkuWX3diqYENkWsIL0XggGG")
+      .plain(" ")
+      .bankCardNumber("4242424242424242")
       .lineBreak()
 
     entities
-      .toPlainText() shouldBe "bold @mention $USD code /command example@example.com blockquote expandableBlockquote pre italic strikethrough underline #hashtag textMention textLink https://example.com +12065550100 dateTime\n"
+      .toPlainText() shouldBe "bold @mention $USD code /command example@example.com blockquote expandableBlockquote pre italic strikethrough underline #hashtag textMention textLink https://example.com +12065550100 dateTime UQBvW8Z5huBkMJYdnfAEM5JqTNkuWX3diqYENkWsIL0XggGG 4242424242424242\n"
 
     val messageEntities = entities.toTelegramEntities()
-    messageEntities.size should be(18)
+    messageEntities.size should be(20)
     messageEntities.head should be(BoldMessageEntity(0, 4))
     messageEntities(1) should be(MentionMessageEntity(5, 8))
     messageEntities(2) should be(CashtagMessageEntity(14, 4))
@@ -205,6 +221,8 @@ class MessageEntitiesSpec extends AnyFlatSpec with Matchers {
     messageEntities(15) should be(UrlMessageEntity(150, 19))
     messageEntities(16) should be(PhoneNumberMessageEntity(170, 12))
     messageEntities(17) should be(DateTimeMessageEntity(183, 8, 1647531900, "wDT"))
+    messageEntities(18) should be(TonAddressMessageEntity(192, 48))
+    messageEntities(19) should be(BankCardNumberMessageEntity(241, 16))
   }
 
 }

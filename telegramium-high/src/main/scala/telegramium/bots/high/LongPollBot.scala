@@ -51,6 +51,8 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods w
   def onManagedBot(managedBot: ManagedBotUpdated): F[Unit]                   = noop(managedBot)
   def onSubscription(subscription: BotSubscriptionUpdated): F[Unit]          = noop(subscription)
   def onStoppedMessageGeneration(stopped: MessageGenerationStopped): F[Unit] = noop(stopped)
+  def onWidgetQuery(query: WidgetQuery): F[Unit]                             = noop(query)
+  def onSharedWidgetQuery(query: SharedWidgetQuery): F[Unit]                 = noop(query)
 
   def onUpdate(update: Update): F[Unit] =
     for {
@@ -81,6 +83,8 @@ abstract class LongPollBot[F[_]: Parallel: Async](bot: Api[F]) extends Methods w
       _ <- update.managedBot.fold(Monad[F].unit)(onManagedBot)
       _ <- update.subscription.fold(Monad[F].unit)(onSubscription)
       _ <- update.stoppedMessageGeneration.fold(Monad[F].unit)(onStoppedMessageGeneration)
+      _ <- update.widgetQuery.fold(Monad[F].unit)(onWidgetQuery)
+      _ <- update.sharedWidgetQuery.fold(Monad[F].unit)(onSharedWidgetQuery)
     } yield ()
 
   def onError(e: Throwable): F[Unit] = {

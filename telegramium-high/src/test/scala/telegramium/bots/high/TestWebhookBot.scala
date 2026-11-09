@@ -23,7 +23,9 @@ import telegramium.bots.PaidMediaPurchased
 import telegramium.bots.Poll
 import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
+import telegramium.bots.SharedWidgetQuery
 import telegramium.bots.ShippingQuery
+import telegramium.bots.WidgetQuery
 import telegramium.bots.client.Method
 
 class TestWebhookBot(api: Api[IO], path: String = "/")
@@ -115,6 +117,12 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
   override def onStoppedMessageGeneration(stopped: MessageGenerationStopped): IO[Unit] =
     api.execute(sendMessageMethod("onStoppedMessageGeneration")).void
 
+  override def onWidgetQuery(query: WidgetQuery): IO[Unit] =
+    api.execute(sendMessageMethod("onWidgetQuery")).void
+
+  override def onSharedWidgetQuery(query: SharedWidgetQuery): IO[Unit] =
+    api.execute(sendMessageMethod("onSharedWidgetQuery")).void
+
   override def onMessageReply(msg: Message): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onMessageReply").some)
 
@@ -195,5 +203,11 @@ class TestWebhookBot(api: Api[IO], path: String = "/")
 
   override def onStoppedMessageGenerationReply(stopped: MessageGenerationStopped): IO[Option[Method[?]]] =
     IO.pure(sendMessageMethod("onStoppedMessageGenerationReply").some)
+
+  override def onWidgetQueryReply(query: WidgetQuery): IO[Option[Method[?]]] =
+    IO.pure(sendMessageMethod("onWidgetQueryReply").some)
+
+  override def onSharedWidgetQueryReply(query: SharedWidgetQuery): IO[Option[Method[?]]] =
+    IO.pure(sendMessageMethod("onSharedWidgetQueryReply").some)
 
 }

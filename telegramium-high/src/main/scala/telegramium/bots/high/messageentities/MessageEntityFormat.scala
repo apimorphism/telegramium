@@ -1,5 +1,6 @@
 package telegramium.bots.high.messageentities
 
+import telegramium.bots.BankCardNumberMessageEntity
 import telegramium.bots.BlockquoteMessageEntity
 import telegramium.bots.BoldMessageEntity
 import telegramium.bots.BotCommandMessageEntity
@@ -19,6 +20,7 @@ import telegramium.bots.SpoilerMessageEntity
 import telegramium.bots.StrikethroughMessageEntity
 import telegramium.bots.TextLinkMessageEntity
 import telegramium.bots.TextMentionMessageEntity
+import telegramium.bots.TonAddressMessageEntity
 import telegramium.bots.UnderlineMessageEntity
 import telegramium.bots.UrlMessageEntity
 import telegramium.bots.User
@@ -75,6 +77,8 @@ object MessageEntityFormat {
           case TextLink(text, url)     => accumulate(TextLinkMessageEntity(offset, text.length, url))
           case Url(text)               => accumulate(UrlMessageEntity(offset, text.length))
           case PhoneNumber(text)       => accumulate(PhoneNumberMessageEntity(offset, text.length))
+          case TonAddress(text)        => accumulate(TonAddressMessageEntity(offset, text.length))
+          case BankCardNumber(text)    => accumulate(BankCardNumberMessageEntity(offset, text.length))
         }
       }
       ._1
@@ -126,6 +130,10 @@ object MessageEntityFormat {
 
   final case class PhoneNumber(text: String) extends MessageEntityFormat
 
+  final case class TonAddress(text: String) extends MessageEntityFormat
+
+  final case class BankCardNumber(text: String) extends MessageEntityFormat
+
   implicit class StringMessageEntityHelper(val sc: StringContext) extends AnyVal {
     def plain(args: Any*): Plain = Plain(build(args*))
 
@@ -156,6 +164,10 @@ object MessageEntityFormat {
     def url(args: Any*): Url = Url(build(args*))
 
     def phoneNumber(args: Any*): PhoneNumber = PhoneNumber(build(args*))
+
+    def tonAddress(args: Any*): TonAddress = TonAddress(build(args*))
+
+    def bankCardNumber(args: Any*): BankCardNumber = BankCardNumber(build(args*))
 
     private def build(args: Any*): String = {
       val strings     = sc.parts.iterator

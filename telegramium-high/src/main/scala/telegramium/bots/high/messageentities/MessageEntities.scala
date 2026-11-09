@@ -72,6 +72,8 @@ class MessageEntities(val underlying: Vector[MessageEntityFormat] = Vector.empty
   def textLink(text: String, url: String): MessageEntities   = add(TextLink(text, url))
   def url(text: String): MessageEntities                     = add(Url(text))
   def phoneNumber(text: String): MessageEntities             = add(PhoneNumber(text))
+  def tonAddress(text: String): MessageEntities              = add(TonAddress(text))
+  def bankCardNumber(text: String): MessageEntities          = add(BankCardNumber(text))
   def lineBreak()                                            = add(MessageEntityFormat.Plain.lineBreak)
 
   /** Alias for `lineBreak` */
