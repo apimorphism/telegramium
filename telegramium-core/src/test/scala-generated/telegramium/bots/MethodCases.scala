@@ -97,6 +97,15 @@ object GenAnswerWebAppQueryReq {
     List(field(x.result)(GenInlineQueryResult.shrink)(v => x.copy(result = v))))
 }
 
+object GenAnswerWidgetQueryReq {
+  import GenPrims._
+  lazy val gen: Gen[client.AnswerWidgetQueryReq] = Gen.lzy(deeper(Gen.zip(genString, optPrim(genString)).map {
+    case (a0, a1) => client.AnswerWidgetQueryReq(widgetQueryId = a0, data = a1)
+  }))
+  lazy val shrink: Shrink[client.AnswerWidgetQueryReq] =
+    shrinkFields[client.AnswerWidgetQueryReq](x => List(field(x.data)(shrinkOpt(noShrink))(v => x.copy(data = v))))
+}
+
 object GenApproveChatJoinRequestReq {
   import GenPrims._
   lazy val gen: Gen[client.ApproveChatJoinRequestReq] = Gen.lzy(deeper(Gen.zip(GenChatId.gen, genLong).map {
@@ -337,6 +346,14 @@ object GenDeleteAllMessageReactionsReq {
   lazy val shrink: Shrink[client.DeleteAllMessageReactionsReq] = shrinkFields[client.DeleteAllMessageReactionsReq](x =>
     List(field(x.userId)(shrinkOpt(noShrink))(v => x.copy(userId = v)),
       field(x.actorChatId)(shrinkOpt(noShrink))(v => x.copy(actorChatId = v))))
+}
+
+object GenDeleteBusinessAccountGiftReq {
+  import GenPrims._
+  lazy val gen: Gen[client.DeleteBusinessAccountGiftReq] = Gen.lzy(deeper(Gen.zip(genString, genString).map {
+    case (a0, a1) => client.DeleteBusinessAccountGiftReq(businessConnectionId = a0, ownedGiftId = a1)
+  }))
+  lazy val shrink: Shrink[client.DeleteBusinessAccountGiftReq] = noShrink
 }
 
 object GenDeleteBusinessMessagesReq {
@@ -687,6 +704,34 @@ object GenEditMessageTextReq {
       field(x.replyMarkup)(shrinkOpt(GenInlineKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v))))
 }
 
+object GenEditMessageWidgetDataReq {
+  import GenPrims._
+  lazy val gen: Gen[client.EditMessageWidgetDataReq] = Gen.lzy(
+    deeper(
+      Gen.zip(opt(GenChatId.gen), optPrim(genInt), optPrim(genString), optPrim(genString), optPrim(genString)).map {
+        case (a0, a1, a2, a3, a4) =>
+          client.EditMessageWidgetDataReq(chatId = a0, messageId = a1, inlineMessageId = a2, publicData = a3,
+            chatData = a4)
+      }))
+  lazy val shrink: Shrink[client.EditMessageWidgetDataReq] = shrinkFields[client.EditMessageWidgetDataReq](x =>
+    List(
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
+      field(x.messageId)(shrinkOpt(noShrink))(v => x.copy(messageId = v)),
+      field(x.inlineMessageId)(shrinkOpt(noShrink))(v => x.copy(inlineMessageId = v)),
+      field(x.publicData)(shrinkOpt(noShrink))(v => x.copy(publicData = v)),
+      field(x.chatData)(shrinkOpt(noShrink))(v => x.copy(chatData = v))))
+}
+
+object GenEditSharedWidgetDataReq {
+  import GenPrims._
+  lazy val gen: Gen[client.EditSharedWidgetDataReq] =
+    Gen.lzy(deeper(Gen.zip(genString, genString, optPrim(genInt)).map { case (a0, a1, a2) =>
+      client.EditSharedWidgetDataReq(widgetId = a0, publicData = a1, cacheTime = a2)
+    }))
+  lazy val shrink: Shrink[client.EditSharedWidgetDataReq] = shrinkFields[client.EditSharedWidgetDataReq](x =>
+    List(field(x.cacheTime)(shrinkOpt(noShrink))(v => x.copy(cacheTime = v))))
+}
+
 object GenEditStoryReq {
   import GenPrims._
   lazy val gen: Gen[client.EditStoryReq] = Gen.lzy(deeper(Gen
@@ -876,6 +921,13 @@ object GenGetChatMenuButtonReq {
     shrinkFields[client.GetChatMenuButtonReq](x => List(field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v))))
 }
 
+object GenGetChatShareThemeBackdropsReq {
+  import GenPrims._
+  lazy val gen: Gen[client.GetChatShareThemeBackdropsReq.type] =
+    Gen.lzy(Gen.const(client.GetChatShareThemeBackdropsReq))
+  lazy val shrink: Shrink[client.GetChatShareThemeBackdropsReq.type] = noShrink
+}
+
 object GenGetCustomEmojiStickersReq {
   import GenPrims._
   lazy val gen: Gen[client.GetCustomEmojiStickersReq] = Gen.lzy(deeper(listPrim(genString).map { a0 =>
@@ -1002,6 +1054,14 @@ object GenGetStickerSetReq {
     client.GetStickerSetReq(name = a0)
   }))
   lazy val shrink: Shrink[client.GetStickerSetReq] = noShrink
+}
+
+object GenGetUniqueGiftReq {
+  import GenPrims._
+  lazy val gen: Gen[client.GetUniqueGiftReq] = Gen.lzy(deeper(genString.map { a0 =>
+    client.GetUniqueGiftReq(name = a0)
+  }))
+  lazy val shrink: Shrink[client.GetUniqueGiftReq] = noShrink
 }
 
 object GenGetUpdatesReq {
@@ -1341,7 +1401,7 @@ object GenSendAnimationReq {
   import GenPrims._
   lazy val gen: Gen[client.SendAnimationReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, GenIFile.gen, optPrim(genString), optPrim(genInt), optPrim(genLong),
+        .zip(Gen.zip(GenIFile.gen, optPrim(genString), opt(GenChatId.gen), optPrim(genInt), optPrim(genLong),
             opt(GenEphemeralMessageParameters.gen), optPrim(genInt), optPrim(genInt), optPrim(genInt)),
           Gen.zip(opt(GenIFile.gen), optPrim(genString), opt(GenParseMode.gen), list(GenMessageEntity.gen),
             optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean)),
@@ -1350,7 +1410,7 @@ object GenSendAnimationReq {
         .map {
           case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17),
                 (a18, a19, a20, a21)) =>
-            client.SendAnimationReq(chatId = a0, animation = a1, businessConnectionId = a2, messageThreadId = a3,
+            client.SendAnimationReq(animation = a0, businessConnectionId = a1, chatId = a2, messageThreadId = a3,
               directMessagesTopicId = a4, ephemeralMessageParameters = a5, duration = a6, width = a7, height = a8,
               thumbnail = a9, caption = a10, parseMode = a11, captionEntities = a12, showCaptionAboveMedia = a13,
               hasSpoiler = a14, disableNotification = a15, protectContent = a16, allowPaidBroadcast = a17,
@@ -1359,6 +1419,7 @@ object GenSendAnimationReq {
   lazy val shrink: Shrink[client.SendAnimationReq] = shrinkFields[client.SendAnimationReq](x =>
     List(
       field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
       field(x.directMessagesTopicId)(shrinkOpt(noShrink))(v => x.copy(directMessagesTopicId = v)),
       field(x.ephemeralMessageParameters)(shrinkOpt(GenEphemeralMessageParameters.shrink))(v =>
@@ -1385,14 +1446,14 @@ object GenSendAudioReq {
   import GenPrims._
   lazy val gen: Gen[client.SendAudioReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, GenIFile.gen, optPrim(genString), optPrim(genInt), optPrim(genLong),
+        .zip(Gen.zip(GenIFile.gen, optPrim(genString), opt(GenChatId.gen), optPrim(genInt), optPrim(genLong),
             opt(GenEphemeralMessageParameters.gen), optPrim(genString), opt(GenParseMode.gen),
             list(GenMessageEntity.gen)),
           Gen.zip(optPrim(genInt), optPrim(genString), optPrim(genString), opt(GenIFile.gen), optPrim(genBoolean),
             optPrim(genBoolean), optPrim(genBoolean), optPrim(genString), opt(GenSuggestedPostParameters.gen)),
           Gen.zip(opt(GenReplyParameters.gen), opt(GenKeyboardMarkup.gen)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17), (a18, a19)) =>
-          client.SendAudioReq(chatId = a0, audio = a1, businessConnectionId = a2, messageThreadId = a3,
+          client.SendAudioReq(audio = a0, businessConnectionId = a1, chatId = a2, messageThreadId = a3,
             directMessagesTopicId = a4, ephemeralMessageParameters = a5, caption = a6, parseMode = a7,
             captionEntities = a8, duration = a9, performer = a10, title = a11, thumbnail = a12,
             disableNotification = a13, protectContent = a14, allowPaidBroadcast = a15, messageEffectId = a16,
@@ -1401,6 +1462,7 @@ object GenSendAudioReq {
   lazy val shrink: Shrink[client.SendAudioReq] = shrinkFields[client.SendAudioReq](x =>
     List(
       field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
       field(x.directMessagesTopicId)(shrinkOpt(noShrink))(v => x.copy(directMessagesTopicId = v)),
       field(x.ephemeralMessageParameters)(shrinkOpt(GenEphemeralMessageParameters.shrink))(v =>
@@ -1465,12 +1527,12 @@ object GenSendContactReq {
   import GenPrims._
   lazy val gen: Gen[client.SendContactReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, genString, genString, optPrim(genString), optPrim(genInt), optPrim(genLong),
+        .zip(Gen.zip(genString, genString, optPrim(genString), opt(GenChatId.gen), optPrim(genInt), optPrim(genLong),
             opt(GenEphemeralMessageParameters.gen), optPrim(genString), optPrim(genString)),
           Gen.zip(optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genString),
             opt(GenSuggestedPostParameters.gen), opt(GenReplyParameters.gen), opt(GenKeyboardMarkup.gen)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15)) =>
-          client.SendContactReq(chatId = a0, phoneNumber = a1, firstName = a2, businessConnectionId = a3,
+          client.SendContactReq(phoneNumber = a0, firstName = a1, businessConnectionId = a2, chatId = a3,
             messageThreadId = a4, directMessagesTopicId = a5, ephemeralMessageParameters = a6, lastName = a7,
             vcard = a8, disableNotification = a9, protectContent = a10, allowPaidBroadcast = a11, messageEffectId = a12,
             suggestedPostParameters = a13, replyParameters = a14, replyMarkup = a15)
@@ -1478,6 +1540,7 @@ object GenSendContactReq {
   lazy val shrink: Shrink[client.SendContactReq] = shrinkFields[client.SendContactReq](x =>
     List(
       field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
       field(x.directMessagesTopicId)(shrinkOpt(noShrink))(v => x.copy(directMessagesTopicId = v)),
       field(x.ephemeralMessageParameters)(shrinkOpt(GenEphemeralMessageParameters.shrink))(v =>
@@ -1525,13 +1588,13 @@ object GenSendDocumentReq {
   import GenPrims._
   lazy val gen: Gen[client.SendDocumentReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, GenIFile.gen, optPrim(genString), optPrim(genInt), optPrim(genLong),
+        .zip(Gen.zip(GenIFile.gen, optPrim(genString), opt(GenChatId.gen), optPrim(genInt), optPrim(genLong),
             opt(GenEphemeralMessageParameters.gen), opt(GenIFile.gen), optPrim(genString), opt(GenParseMode.gen)),
           Gen.zip(list(GenMessageEntity.gen), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean),
             optPrim(genBoolean), optPrim(genString), opt(GenSuggestedPostParameters.gen), opt(GenReplyParameters.gen),
             opt(GenKeyboardMarkup.gen)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17)) =>
-          client.SendDocumentReq(chatId = a0, document = a1, businessConnectionId = a2, messageThreadId = a3,
+          client.SendDocumentReq(document = a0, businessConnectionId = a1, chatId = a2, messageThreadId = a3,
             directMessagesTopicId = a4, ephemeralMessageParameters = a5, thumbnail = a6, caption = a7, parseMode = a8,
             captionEntities = a9, disableContentTypeDetection = a10, disableNotification = a11, protectContent = a12,
             allowPaidBroadcast = a13, messageEffectId = a14, suggestedPostParameters = a15, replyParameters = a16,
@@ -1540,6 +1603,7 @@ object GenSendDocumentReq {
   lazy val shrink: Shrink[client.SendDocumentReq] = shrinkFields[client.SendDocumentReq](x =>
     List(
       field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
       field(x.directMessagesTopicId)(shrinkOpt(noShrink))(v => x.copy(directMessagesTopicId = v)),
       field(x.ephemeralMessageParameters)(shrinkOpt(GenEphemeralMessageParameters.shrink))(v =>
@@ -1659,13 +1723,13 @@ object GenSendLivePhotoReq {
   import GenPrims._
   lazy val gen: Gen[client.SendLivePhotoReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, GenIFile.gen, GenIFile.gen, optPrim(genString), optPrim(genInt), optPrim(genLong),
-            opt(GenEphemeralMessageParameters.gen), optPrim(genString), opt(GenParseMode.gen)),
+        .zip(Gen.zip(GenIFile.gen, GenIFile.gen, optPrim(genString), opt(GenChatId.gen), optPrim(genInt),
+            optPrim(genLong), opt(GenEphemeralMessageParameters.gen), optPrim(genString), opt(GenParseMode.gen)),
           Gen.zip(list(GenMessageEntity.gen), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean),
             optPrim(genBoolean), optPrim(genBoolean), optPrim(genString), opt(GenSuggestedPostParameters.gen),
             opt(GenReplyParameters.gen)), opt(GenKeyboardMarkup.gen))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17), a18) =>
-          client.SendLivePhotoReq(chatId = a0, livePhoto = a1, photo = a2, businessConnectionId = a3,
+          client.SendLivePhotoReq(livePhoto = a0, photo = a1, businessConnectionId = a2, chatId = a3,
             messageThreadId = a4, directMessagesTopicId = a5, ephemeralMessageParameters = a6, caption = a7,
             parseMode = a8, captionEntities = a9, showCaptionAboveMedia = a10, hasSpoiler = a11,
             disableNotification = a12, protectContent = a13, allowPaidBroadcast = a14, messageEffectId = a15,
@@ -1674,6 +1738,7 @@ object GenSendLivePhotoReq {
   lazy val shrink: Shrink[client.SendLivePhotoReq] = shrinkFields[client.SendLivePhotoReq](x =>
     List(
       field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
       field(x.directMessagesTopicId)(shrinkOpt(noShrink))(v => x.copy(directMessagesTopicId = v)),
       field(x.ephemeralMessageParameters)(shrinkOpt(GenEphemeralMessageParameters.shrink))(v =>
@@ -1696,13 +1761,13 @@ object GenSendLocationReq {
   import GenPrims._
   lazy val gen: Gen[client.SendLocationReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, genFloat, genFloat, optPrim(genString), optPrim(genInt), optPrim(genLong),
+        .zip(Gen.zip(genFloat, genFloat, optPrim(genString), opt(GenChatId.gen), optPrim(genInt), optPrim(genLong),
             opt(GenEphemeralMessageParameters.gen), optPrim(genFloat), optPrim(genInt)),
           Gen.zip(optPrim(genInt), optPrim(genInt), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean),
             optPrim(genString), opt(GenSuggestedPostParameters.gen), opt(GenReplyParameters.gen),
             opt(GenKeyboardMarkup.gen)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17)) =>
-          client.SendLocationReq(chatId = a0, latitude = a1, longitude = a2, businessConnectionId = a3,
+          client.SendLocationReq(latitude = a0, longitude = a1, businessConnectionId = a2, chatId = a3,
             messageThreadId = a4, directMessagesTopicId = a5, ephemeralMessageParameters = a6, horizontalAccuracy = a7,
             livePeriod = a8, heading = a9, proximityAlertRadius = a10, disableNotification = a11, protectContent = a12,
             allowPaidBroadcast = a13, messageEffectId = a14, suggestedPostParameters = a15, replyParameters = a16,
@@ -1711,6 +1776,7 @@ object GenSendLocationReq {
   lazy val shrink: Shrink[client.SendLocationReq] = shrinkFields[client.SendLocationReq](x =>
     List(
       field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
       field(x.directMessagesTopicId)(shrinkOpt(noShrink))(v => x.copy(directMessagesTopicId = v)),
       field(x.ephemeralMessageParameters)(shrinkOpt(GenEphemeralMessageParameters.shrink))(v =>
@@ -1758,13 +1824,13 @@ object GenSendMessageReq {
   import GenPrims._
   lazy val gen: Gen[client.SendMessageReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, genString, optPrim(genString), optPrim(genInt), optPrim(genLong),
+        .zip(Gen.zip(genString, optPrim(genString), opt(GenChatId.gen), optPrim(genInt), optPrim(genLong),
             opt(GenEphemeralMessageParameters.gen), opt(GenParseMode.gen), list(GenMessageEntity.gen),
             opt(GenLinkPreviewOptions.gen)),
           Gen.zip(optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genString),
             opt(GenSuggestedPostParameters.gen), opt(GenReplyParameters.gen), opt(GenKeyboardMarkup.gen)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15)) =>
-          client.SendMessageReq(chatId = a0, text = a1, businessConnectionId = a2, messageThreadId = a3,
+          client.SendMessageReq(text = a0, businessConnectionId = a1, chatId = a2, messageThreadId = a3,
             directMessagesTopicId = a4, ephemeralMessageParameters = a5, parseMode = a6, entities = a7,
             linkPreviewOptions = a8, disableNotification = a9, protectContent = a10, allowPaidBroadcast = a11,
             messageEffectId = a12, suggestedPostParameters = a13, replyParameters = a14, replyMarkup = a15)
@@ -1772,6 +1838,7 @@ object GenSendMessageReq {
   lazy val shrink: Shrink[client.SendMessageReq] = shrinkFields[client.SendMessageReq](x =>
     List(
       field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
       field(x.directMessagesTopicId)(shrinkOpt(noShrink))(v => x.copy(directMessagesTopicId = v)),
       field(x.ephemeralMessageParameters)(shrinkOpt(GenEphemeralMessageParameters.shrink))(v =>
@@ -1846,14 +1913,14 @@ object GenSendPhotoReq {
   import GenPrims._
   lazy val gen: Gen[client.SendPhotoReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, GenIFile.gen, optPrim(genString), optPrim(genInt), optPrim(genLong),
+        .zip(Gen.zip(GenIFile.gen, optPrim(genString), opt(GenChatId.gen), optPrim(genInt), optPrim(genLong),
             opt(GenEphemeralMessageParameters.gen), optPrim(genString), opt(GenParseMode.gen),
             list(GenMessageEntity.gen)),
           Gen.zip(optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean),
             optPrim(genBoolean), optPrim(genString), opt(GenSuggestedPostParameters.gen), opt(GenReplyParameters.gen),
             opt(GenKeyboardMarkup.gen)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17)) =>
-          client.SendPhotoReq(chatId = a0, photo = a1, businessConnectionId = a2, messageThreadId = a3,
+          client.SendPhotoReq(photo = a0, businessConnectionId = a1, chatId = a2, messageThreadId = a3,
             directMessagesTopicId = a4, ephemeralMessageParameters = a5, caption = a6, parseMode = a7,
             captionEntities = a8, showCaptionAboveMedia = a9, hasSpoiler = a10, disableNotification = a11,
             protectContent = a12, allowPaidBroadcast = a13, messageEffectId = a14, suggestedPostParameters = a15,
@@ -1862,6 +1929,7 @@ object GenSendPhotoReq {
   lazy val shrink: Shrink[client.SendPhotoReq] = shrinkFields[client.SendPhotoReq](x =>
     List(
       field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
       field(x.directMessagesTopicId)(shrinkOpt(noShrink))(v => x.copy(directMessagesTopicId = v)),
       field(x.ephemeralMessageParameters)(shrinkOpt(GenEphemeralMessageParameters.shrink))(v =>
@@ -1945,12 +2013,12 @@ object GenSendRichMessageReq {
   import GenPrims._
   lazy val gen: Gen[client.SendRichMessageReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, GenInputRichMessage.gen, optPrim(genString), optPrim(genInt), optPrim(genLong),
+        .zip(Gen.zip(GenInputRichMessage.gen, optPrim(genString), opt(GenChatId.gen), optPrim(genInt), optPrim(genLong),
             opt(GenEphemeralMessageParameters.gen), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean)),
           Gen.zip(optPrim(genString), opt(GenSuggestedPostParameters.gen), opt(GenReplyParameters.gen),
             opt(GenKeyboardMarkup.gen)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12)) =>
-          client.SendRichMessageReq(chatId = a0, richMessage = a1, businessConnectionId = a2, messageThreadId = a3,
+          client.SendRichMessageReq(richMessage = a0, businessConnectionId = a1, chatId = a2, messageThreadId = a3,
             directMessagesTopicId = a4, ephemeralMessageParameters = a5, disableNotification = a6, protectContent = a7,
             allowPaidBroadcast = a8, messageEffectId = a9, suggestedPostParameters = a10, replyParameters = a11,
             replyMarkup = a12)
@@ -1959,6 +2027,7 @@ object GenSendRichMessageReq {
     List(
       field(x.richMessage)(GenInputRichMessage.shrink)(v => x.copy(richMessage = v)),
       field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
       field(x.directMessagesTopicId)(shrinkOpt(noShrink))(v => x.copy(directMessagesTopicId = v)),
       field(x.ephemeralMessageParameters)(shrinkOpt(GenEphemeralMessageParameters.shrink))(v =>
@@ -1989,16 +2058,46 @@ object GenSendRichMessageDraftReq {
       field(x.keepOnStop)(shrinkOpt(noShrink))(v => x.copy(keepOnStop = v))))
 }
 
+object GenSendSharedWidgetReq {
+  import GenPrims._
+  lazy val gen: Gen[client.SendSharedWidgetReq] = Gen.lzy(
+    deeper(Gen
+        .zip(Gen.zip(GenChatId.gen, genString, optPrim(genInt), optPrim(genString), optPrim(genString),
+            opt(GenParseMode.gen), list(GenMessageEntity.gen), optPrim(genBoolean), optPrim(genBoolean)),
+          Gen.zip(optPrim(genBoolean), optPrim(genBoolean), optPrim(genString), opt(GenReplyParameters.gen),
+            opt(GenKeyboardMarkup.gen)))
+        .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13)) =>
+          client.SendSharedWidgetReq(chatId = a0, widgetId = a1, messageThreadId = a2, chatData = a3, caption = a4,
+            parseMode = a5, captionEntities = a6, showCaptionAboveMedia = a7, disableNotification = a8,
+            protectContent = a9, allowPaidBroadcast = a10, messageEffectId = a11, replyParameters = a12,
+            replyMarkup = a13)
+        }))
+  lazy val shrink: Shrink[client.SendSharedWidgetReq] = shrinkFields[client.SendSharedWidgetReq](x =>
+    List(
+      field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
+      field(x.chatData)(shrinkOpt(noShrink))(v => x.copy(chatData = v)),
+      field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
+      field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
+      field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
+      field(x.disableNotification)(shrinkOpt(noShrink))(v => x.copy(disableNotification = v)),
+      field(x.protectContent)(shrinkOpt(noShrink))(v => x.copy(protectContent = v)),
+      field(x.allowPaidBroadcast)(shrinkOpt(noShrink))(v => x.copy(allowPaidBroadcast = v)),
+      field(x.messageEffectId)(shrinkOpt(noShrink))(v => x.copy(messageEffectId = v)),
+      field(x.replyParameters)(shrinkOpt(GenReplyParameters.shrink))(v => x.copy(replyParameters = v)),
+      field(x.replyMarkup)(shrinkOpt(GenKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v))))
+}
+
 object GenSendStickerReq {
   import GenPrims._
   lazy val gen: Gen[client.SendStickerReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, GenIFile.gen, optPrim(genString), optPrim(genInt), optPrim(genLong),
+        .zip(Gen.zip(GenIFile.gen, optPrim(genString), opt(GenChatId.gen), optPrim(genInt), optPrim(genLong),
             opt(GenEphemeralMessageParameters.gen), optPrim(genString), optPrim(genBoolean), optPrim(genBoolean)),
           Gen.zip(optPrim(genBoolean), optPrim(genString), opt(GenSuggestedPostParameters.gen),
             opt(GenReplyParameters.gen), opt(GenKeyboardMarkup.gen)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13)) =>
-          client.SendStickerReq(chatId = a0, sticker = a1, businessConnectionId = a2, messageThreadId = a3,
+          client.SendStickerReq(sticker = a0, businessConnectionId = a1, chatId = a2, messageThreadId = a3,
             directMessagesTopicId = a4, ephemeralMessageParameters = a5, emoji = a6, disableNotification = a7,
             protectContent = a8, allowPaidBroadcast = a9, messageEffectId = a10, suggestedPostParameters = a11,
             replyParameters = a12, replyMarkup = a13)
@@ -2006,6 +2105,7 @@ object GenSendStickerReq {
   lazy val shrink: Shrink[client.SendStickerReq] = shrinkFields[client.SendStickerReq](x =>
     List(
       field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
       field(x.directMessagesTopicId)(shrinkOpt(noShrink))(v => x.copy(directMessagesTopicId = v)),
       field(x.ephemeralMessageParameters)(shrinkOpt(GenEphemeralMessageParameters.shrink))(v =>
@@ -2024,21 +2124,22 @@ object GenSendVenueReq {
   import GenPrims._
   lazy val gen: Gen[client.SendVenueReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, genFloat, genFloat, genString, genString, optPrim(genString), optPrim(genInt),
+        .zip(Gen.zip(genFloat, genFloat, genString, genString, optPrim(genString), opt(GenChatId.gen), optPrim(genInt),
             optPrim(genLong), opt(GenEphemeralMessageParameters.gen)),
           Gen.zip(optPrim(genString), optPrim(genString), optPrim(genString), optPrim(genString), optPrim(genBoolean),
             optPrim(genBoolean), optPrim(genBoolean), optPrim(genString), opt(GenSuggestedPostParameters.gen)),
           Gen.zip(opt(GenReplyParameters.gen), opt(GenKeyboardMarkup.gen)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17), (a18, a19)) =>
-          client.SendVenueReq(chatId = a0, latitude = a1, longitude = a2, title = a3, address = a4,
-            businessConnectionId = a5, messageThreadId = a6, directMessagesTopicId = a7,
-            ephemeralMessageParameters = a8, foursquareId = a9, foursquareType = a10, googlePlaceId = a11,
-            googlePlaceType = a12, disableNotification = a13, protectContent = a14, allowPaidBroadcast = a15,
-            messageEffectId = a16, suggestedPostParameters = a17, replyParameters = a18, replyMarkup = a19)
+          client.SendVenueReq(latitude = a0, longitude = a1, title = a2, address = a3, businessConnectionId = a4,
+            chatId = a5, messageThreadId = a6, directMessagesTopicId = a7, ephemeralMessageParameters = a8,
+            foursquareId = a9, foursquareType = a10, googlePlaceId = a11, googlePlaceType = a12,
+            disableNotification = a13, protectContent = a14, allowPaidBroadcast = a15, messageEffectId = a16,
+            suggestedPostParameters = a17, replyParameters = a18, replyMarkup = a19)
         }))
   lazy val shrink: Shrink[client.SendVenueReq] = shrinkFields[client.SendVenueReq](x =>
     List(
       field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
       field(x.directMessagesTopicId)(shrinkOpt(noShrink))(v => x.copy(directMessagesTopicId = v)),
       field(x.ephemeralMessageParameters)(shrinkOpt(GenEphemeralMessageParameters.shrink))(v =>
@@ -2061,7 +2162,7 @@ object GenSendVideoReq {
   import GenPrims._
   lazy val gen: Gen[client.SendVideoReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, GenIFile.gen, optPrim(genString), optPrim(genInt), optPrim(genLong),
+        .zip(Gen.zip(GenIFile.gen, optPrim(genString), opt(GenChatId.gen), optPrim(genInt), optPrim(genLong),
             opt(GenEphemeralMessageParameters.gen), optPrim(genInt), optPrim(genInt), optPrim(genInt)),
           Gen.zip(opt(GenIFile.gen), opt(GenIFile.gen), optPrim(genInt), optPrim(genString), opt(GenParseMode.gen),
             list(GenMessageEntity.gen), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean)),
@@ -2070,7 +2171,7 @@ object GenSendVideoReq {
         .map {
           case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17),
                 (a18, a19, a20, a21, a22, a23, a24)) =>
-            client.SendVideoReq(chatId = a0, video = a1, businessConnectionId = a2, messageThreadId = a3,
+            client.SendVideoReq(video = a0, businessConnectionId = a1, chatId = a2, messageThreadId = a3,
               directMessagesTopicId = a4, ephemeralMessageParameters = a5, duration = a6, width = a7, height = a8,
               thumbnail = a9, cover = a10, startTimestamp = a11, caption = a12, parseMode = a13, captionEntities = a14,
               showCaptionAboveMedia = a15, hasSpoiler = a16, supportsStreaming = a17, disableNotification = a18,
@@ -2080,6 +2181,7 @@ object GenSendVideoReq {
   lazy val shrink: Shrink[client.SendVideoReq] = shrinkFields[client.SendVideoReq](x =>
     List(
       field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
       field(x.directMessagesTopicId)(shrinkOpt(noShrink))(v => x.copy(directMessagesTopicId = v)),
       field(x.ephemeralMessageParameters)(shrinkOpt(GenEphemeralMessageParameters.shrink))(v =>
@@ -2109,12 +2211,12 @@ object GenSendVideoNoteReq {
   import GenPrims._
   lazy val gen: Gen[client.SendVideoNoteReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, GenIFile.gen, optPrim(genString), optPrim(genInt), optPrim(genLong),
+        .zip(Gen.zip(GenIFile.gen, optPrim(genString), opt(GenChatId.gen), optPrim(genInt), optPrim(genLong),
             opt(GenEphemeralMessageParameters.gen), optPrim(genInt), optPrim(genInt), opt(GenIFile.gen)),
           Gen.zip(optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genString),
             opt(GenSuggestedPostParameters.gen), opt(GenReplyParameters.gen), opt(GenKeyboardMarkup.gen)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15)) =>
-          client.SendVideoNoteReq(chatId = a0, videoNote = a1, businessConnectionId = a2, messageThreadId = a3,
+          client.SendVideoNoteReq(videoNote = a0, businessConnectionId = a1, chatId = a2, messageThreadId = a3,
             directMessagesTopicId = a4, ephemeralMessageParameters = a5, duration = a6, length = a7, thumbnail = a8,
             disableNotification = a9, protectContent = a10, allowPaidBroadcast = a11, messageEffectId = a12,
             suggestedPostParameters = a13, replyParameters = a14, replyMarkup = a15)
@@ -2122,6 +2224,7 @@ object GenSendVideoNoteReq {
   lazy val shrink: Shrink[client.SendVideoNoteReq] = shrinkFields[client.SendVideoNoteReq](x =>
     List(
       field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
       field(x.directMessagesTopicId)(shrinkOpt(noShrink))(v => x.copy(directMessagesTopicId = v)),
       field(x.ephemeralMessageParameters)(shrinkOpt(GenEphemeralMessageParameters.shrink))(v =>
@@ -2142,13 +2245,13 @@ object GenSendVoiceReq {
   import GenPrims._
   lazy val gen: Gen[client.SendVoiceReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, GenIFile.gen, optPrim(genString), optPrim(genInt), optPrim(genLong),
+        .zip(Gen.zip(GenIFile.gen, optPrim(genString), opt(GenChatId.gen), optPrim(genInt), optPrim(genLong),
             opt(GenEphemeralMessageParameters.gen), optPrim(genString), opt(GenParseMode.gen),
             list(GenMessageEntity.gen)),
           Gen.zip(optPrim(genInt), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genString),
             opt(GenSuggestedPostParameters.gen), opt(GenReplyParameters.gen), opt(GenKeyboardMarkup.gen)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16)) =>
-          client.SendVoiceReq(chatId = a0, voice = a1, businessConnectionId = a2, messageThreadId = a3,
+          client.SendVoiceReq(voice = a0, businessConnectionId = a1, chatId = a2, messageThreadId = a3,
             directMessagesTopicId = a4, ephemeralMessageParameters = a5, caption = a6, parseMode = a7,
             captionEntities = a8, duration = a9, disableNotification = a10, protectContent = a11,
             allowPaidBroadcast = a12, messageEffectId = a13, suggestedPostParameters = a14, replyParameters = a15,
@@ -2157,6 +2260,7 @@ object GenSendVoiceReq {
   lazy val shrink: Shrink[client.SendVoiceReq] = shrinkFields[client.SendVoiceReq](x =>
     List(
       field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
+      field(x.chatId)(shrinkOpt(noShrink))(v => x.copy(chatId = v)),
       field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
       field(x.directMessagesTopicId)(shrinkOpt(noShrink))(v => x.copy(directMessagesTopicId = v)),
       field(x.ephemeralMessageParameters)(shrinkOpt(GenEphemeralMessageParameters.shrink))(v =>
@@ -2170,6 +2274,42 @@ object GenSendVoiceReq {
       field(x.messageEffectId)(shrinkOpt(noShrink))(v => x.copy(messageEffectId = v)),
       field(x.suggestedPostParameters)(shrinkOpt(GenSuggestedPostParameters.shrink))(v =>
         x.copy(suggestedPostParameters = v)),
+      field(x.replyParameters)(shrinkOpt(GenReplyParameters.shrink))(v => x.copy(replyParameters = v)),
+      field(x.replyMarkup)(shrinkOpt(GenKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v))))
+}
+
+object GenSendWidgetReq {
+  import GenPrims._
+  lazy val gen: Gen[client.SendWidgetReq] = Gen.lzy(
+    deeper(Gen
+        .zip(Gen.zip(GenChatId.gen, genString, optPrim(genInt), optPrim(genInt), optPrim(genInt), optPrim(genString),
+            optPrim(genString), optPrim(genString), opt(GenParseMode.gen)),
+          Gen.zip(list(GenMessageEntity.gen), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean),
+            optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genString),
+            opt(GenReplyParameters.gen)), opt(GenKeyboardMarkup.gen))
+        .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17), a18) =>
+          client.SendWidgetReq(chatId = a0, html = a1, messageThreadId = a2, width = a3, height = a4, publicData = a5,
+            chatData = a6, caption = a7, parseMode = a8, captionEntities = a9, showCaptionAboveMedia = a10,
+            allowQueries = a11, isShared = a12, disableNotification = a13, protectContent = a14,
+            allowPaidBroadcast = a15, messageEffectId = a16, replyParameters = a17, replyMarkup = a18)
+        }))
+  lazy val shrink: Shrink[client.SendWidgetReq] = shrinkFields[client.SendWidgetReq](x =>
+    List(
+      field(x.messageThreadId)(shrinkOpt(noShrink))(v => x.copy(messageThreadId = v)),
+      field(x.width)(shrinkOpt(noShrink))(v => x.copy(width = v)),
+      field(x.height)(shrinkOpt(noShrink))(v => x.copy(height = v)),
+      field(x.publicData)(shrinkOpt(noShrink))(v => x.copy(publicData = v)),
+      field(x.chatData)(shrinkOpt(noShrink))(v => x.copy(chatData = v)),
+      field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
+      field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
+      field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
+      field(x.allowQueries)(shrinkOpt(noShrink))(v => x.copy(allowQueries = v)),
+      field(x.isShared)(shrinkOpt(noShrink))(v => x.copy(isShared = v)),
+      field(x.disableNotification)(shrinkOpt(noShrink))(v => x.copy(disableNotification = v)),
+      field(x.protectContent)(shrinkOpt(noShrink))(v => x.copy(protectContent = v)),
+      field(x.allowPaidBroadcast)(shrinkOpt(noShrink))(v => x.copy(allowPaidBroadcast = v)),
+      field(x.messageEffectId)(shrinkOpt(noShrink))(v => x.copy(messageEffectId = v)),
       field(x.replyParameters)(shrinkOpt(GenReplyParameters.shrink))(v => x.copy(replyParameters = v)),
       field(x.replyMarkup)(shrinkOpt(GenKeyboardMarkup.shrink))(v => x.copy(replyMarkup = v))))
 }
@@ -2641,20 +2781,34 @@ object GenUploadStickerFileReq {
 
 object GenVerifyChatReq {
   import GenPrims._
-  lazy val gen: Gen[client.VerifyChatReq] = Gen.lzy(deeper(Gen.zip(GenChatId.gen, optPrim(genString)).map {
-    case (a0, a1) => client.VerifyChatReq(chatId = a0, customDescription = a1)
-  }))
+  lazy val gen: Gen[client.VerifyChatReq] =
+    Gen.lzy(deeper(Gen.zip(GenChatId.gen, optPrim(genString), opt(GenParseMode.gen), list(GenMessageEntity.gen)).map {
+      case (a0, a1, a2, a3) =>
+        client.VerifyChatReq(chatId = a0, customDescription = a1, customDescriptionParseMode = a2,
+          customDescriptionEntities = a3)
+    }))
   lazy val shrink: Shrink[client.VerifyChatReq] = shrinkFields[client.VerifyChatReq](x =>
-    List(field(x.customDescription)(shrinkOpt(noShrink))(v => x.copy(customDescription = v))))
+    List(
+      field(x.customDescription)(shrinkOpt(noShrink))(v => x.copy(customDescription = v)),
+      field(x.customDescriptionParseMode)(shrinkOpt(noShrink))(v => x.copy(customDescriptionParseMode = v)),
+      field(x.customDescriptionEntities)(shrinkList(GenMessageEntity.shrink))(v =>
+        x.copy(customDescriptionEntities = v))))
 }
 
 object GenVerifyUserReq {
   import GenPrims._
-  lazy val gen: Gen[client.VerifyUserReq] = Gen.lzy(deeper(Gen.zip(genLong, optPrim(genString)).map { case (a0, a1) =>
-    client.VerifyUserReq(userId = a0, customDescription = a1)
-  }))
+  lazy val gen: Gen[client.VerifyUserReq] =
+    Gen.lzy(deeper(Gen.zip(genLong, optPrim(genString), opt(GenParseMode.gen), list(GenMessageEntity.gen)).map {
+      case (a0, a1, a2, a3) =>
+        client.VerifyUserReq(userId = a0, customDescription = a1, customDescriptionParseMode = a2,
+          customDescriptionEntities = a3)
+    }))
   lazy val shrink: Shrink[client.VerifyUserReq] = shrinkFields[client.VerifyUserReq](x =>
-    List(field(x.customDescription)(shrinkOpt(noShrink))(v => x.copy(customDescription = v))))
+    List(
+      field(x.customDescription)(shrinkOpt(noShrink))(v => x.copy(customDescription = v)),
+      field(x.customDescriptionParseMode)(shrinkOpt(noShrink))(v => x.copy(customDescriptionParseMode = v)),
+      field(x.customDescriptionEntities)(shrinkList(GenMessageEntity.shrink))(v =>
+        x.copy(customDescriptionEntities = v))))
 }
 
 object MethodCases {
@@ -2706,6 +2860,9 @@ object MethodCases {
     new MethodCase[client.AnswerWebAppQueryReq]("answerWebAppQuery", GenAnswerWebAppQueryReq.gen,
       GenAnswerWebAppQueryReq.shrink,
       x => Factory.answerWebAppQuery(webAppQueryId = x.webAppQueryId, result = x.result), _.asJson),
+    new MethodCase[client.AnswerWidgetQueryReq]("answerWidgetQuery", GenAnswerWidgetQueryReq.gen,
+      GenAnswerWidgetQueryReq.shrink, x => Factory.answerWidgetQuery(widgetQueryId = x.widgetQueryId, data = x.data),
+      _.asJson),
     new MethodCase[client.ApproveChatJoinRequestReq]("approveChatJoinRequest", GenApproveChatJoinRequestReq.gen,
       GenApproveChatJoinRequestReq.shrink, x => Factory.approveChatJoinRequest(chatId = x.chatId, userId = x.userId),
       _.asJson),
@@ -2785,6 +2942,11 @@ object MethodCases {
     new MethodCase[client.DeleteAllMessageReactionsReq]("deleteAllMessageReactions",
       GenDeleteAllMessageReactionsReq.gen, GenDeleteAllMessageReactionsReq.shrink,
       x => Factory.deleteAllMessageReactions(chatId = x.chatId, userId = x.userId, actorChatId = x.actorChatId),
+      _.asJson),
+    new MethodCase[client.DeleteBusinessAccountGiftReq]("deleteBusinessAccountGift",
+      GenDeleteBusinessAccountGiftReq.gen, GenDeleteBusinessAccountGiftReq.shrink,
+      x =>
+        Factory.deleteBusinessAccountGift(businessConnectionId = x.businessConnectionId, ownedGiftId = x.ownedGiftId),
       _.asJson),
     new MethodCase[client.DeleteBusinessMessagesReq]("deleteBusinessMessages", GenDeleteBusinessMessagesReq.gen,
       GenDeleteBusinessMessagesReq.shrink,
@@ -2898,6 +3060,15 @@ object MethodCases {
           messageId = x.messageId, inlineMessageId = x.inlineMessageId, text = x.text, parseMode = x.parseMode,
           entities = x.entities, linkPreviewOptions = x.linkPreviewOptions, richMessage = x.richMessage,
           replyMarkup = x.replyMarkup), _.asJson),
+    new MethodCase[client.EditMessageWidgetDataReq]("editMessageWidgetData", GenEditMessageWidgetDataReq.gen,
+      GenEditMessageWidgetDataReq.shrink,
+      x =>
+        Factory.editMessageWidgetData(chatId = x.chatId, messageId = x.messageId, inlineMessageId = x.inlineMessageId,
+          publicData = x.publicData, chatData = x.chatData), _.asJson),
+    new MethodCase[client.EditSharedWidgetDataReq]("editSharedWidgetData", GenEditSharedWidgetDataReq.gen,
+      GenEditSharedWidgetDataReq.shrink,
+      x => Factory.editSharedWidgetData(widgetId = x.widgetId, publicData = x.publicData, cacheTime = x.cacheTime),
+      _.asJson),
     new MethodCase[client.EditStoryReq]("editStory", GenEditStoryReq.gen, GenEditStoryReq.shrink,
       x =>
         Factory.editStory(businessConnectionId = x.businessConnectionId, storyId = x.storyId, content = x.content,
@@ -2957,6 +3128,9 @@ object MethodCases {
       GenGetChatMemberCountReq.shrink, x => Factory.getChatMemberCount(chatId = x.chatId), _.asJson),
     new MethodCase[client.GetChatMenuButtonReq]("getChatMenuButton", GenGetChatMenuButtonReq.gen,
       GenGetChatMenuButtonReq.shrink, x => Factory.getChatMenuButton(chatId = x.chatId), _.asJson),
+    new MethodCase[client.GetChatShareThemeBackdropsReq.type]("getChatShareThemeBackdrops",
+      GenGetChatShareThemeBackdropsReq.gen, GenGetChatShareThemeBackdropsReq.shrink,
+      _ => Factory.getChatShareThemeBackdrops(), _.asJson),
     new MethodCase[client.GetCustomEmojiStickersReq]("getCustomEmojiStickers", GenGetCustomEmojiStickersReq.gen,
       GenGetCustomEmojiStickersReq.shrink, x => Factory.getCustomEmojiStickers(customEmojiIds = x.customEmojiIds),
       _.asJson),
@@ -2993,6 +3167,8 @@ object MethodCases {
       GenGetStarTransactionsReq.shrink, x => Factory.getStarTransactions(offset = x.offset, limit = x.limit), _.asJson),
     new MethodCase[client.GetStickerSetReq]("getStickerSet", GenGetStickerSetReq.gen, GenGetStickerSetReq.shrink,
       x => Factory.getStickerSet(name = x.name), _.asJson),
+    new MethodCase[client.GetUniqueGiftReq]("getUniqueGift", GenGetUniqueGiftReq.gen, GenGetUniqueGiftReq.shrink,
+      x => Factory.getUniqueGift(name = x.name), _.asJson),
     new MethodCase[client.GetUpdatesReq]("getUpdates", GenGetUpdatesReq.gen, GenGetUpdatesReq.shrink,
       x =>
         Factory.getUpdates(offset = x.offset, limit = x.limit, timeout = x.timeout, allowedUpdates = x.allowedUpdates),
@@ -3103,7 +3279,7 @@ object MethodCases {
       x => Factory.savePreparedKeyboardButton(userId = x.userId, button = x.button), _.asJson),
     new MethodCase[client.SendAnimationReq]("sendAnimation", GenSendAnimationReq.gen, GenSendAnimationReq.shrink,
       x =>
-        Factory.sendAnimation(chatId = x.chatId, animation = x.animation, businessConnectionId = x.businessConnectionId,
+        Factory.sendAnimation(animation = x.animation, businessConnectionId = x.businessConnectionId, chatId = x.chatId,
           messageThreadId = x.messageThreadId, directMessagesTopicId = x.directMessagesTopicId,
           ephemeralMessageParameters = x.ephemeralMessageParameters, duration = x.duration, width = x.width,
           height = x.height, thumbnail = x.thumbnail, caption = x.caption, parseMode = x.parseMode,
@@ -3114,7 +3290,7 @@ object MethodCases {
           replyMarkup = x.replyMarkup), _.asJson),
     new MethodCase[client.SendAudioReq]("sendAudio", GenSendAudioReq.gen, GenSendAudioReq.shrink,
       x =>
-        Factory.sendAudio(chatId = x.chatId, audio = x.audio, businessConnectionId = x.businessConnectionId,
+        Factory.sendAudio(audio = x.audio, businessConnectionId = x.businessConnectionId, chatId = x.chatId,
           messageThreadId = x.messageThreadId, directMessagesTopicId = x.directMessagesTopicId,
           ephemeralMessageParameters = x.ephemeralMessageParameters, caption = x.caption, parseMode = x.parseMode,
           captionEntities = x.captionEntities, duration = x.duration, performer = x.performer, title = x.title,
@@ -3139,8 +3315,8 @@ object MethodCases {
       _.asJson),
     new MethodCase[client.SendContactReq]("sendContact", GenSendContactReq.gen, GenSendContactReq.shrink,
       x =>
-        Factory.sendContact(chatId = x.chatId, phoneNumber = x.phoneNumber, firstName = x.firstName,
-          businessConnectionId = x.businessConnectionId, messageThreadId = x.messageThreadId,
+        Factory.sendContact(phoneNumber = x.phoneNumber, firstName = x.firstName,
+          businessConnectionId = x.businessConnectionId, chatId = x.chatId, messageThreadId = x.messageThreadId,
           directMessagesTopicId = x.directMessagesTopicId, ephemeralMessageParameters = x.ephemeralMessageParameters,
           lastName = x.lastName, vcard = x.vcard, disableNotification = x.disableNotification,
           protectContent = x.protectContent, allowPaidBroadcast = x.allowPaidBroadcast,
@@ -3156,7 +3332,7 @@ object MethodCases {
           replyMarkup = x.replyMarkup), _.asJson),
     new MethodCase[client.SendDocumentReq]("sendDocument", GenSendDocumentReq.gen, GenSendDocumentReq.shrink,
       x =>
-        Factory.sendDocument(chatId = x.chatId, document = x.document, businessConnectionId = x.businessConnectionId,
+        Factory.sendDocument(document = x.document, businessConnectionId = x.businessConnectionId, chatId = x.chatId,
           messageThreadId = x.messageThreadId, directMessagesTopicId = x.directMessagesTopicId,
           ephemeralMessageParameters = x.ephemeralMessageParameters, thumbnail = x.thumbnail, caption = x.caption,
           parseMode = x.parseMode, captionEntities = x.captionEntities,
@@ -3191,19 +3367,18 @@ object MethodCases {
           replyMarkup = x.replyMarkup), _.asJson),
     new MethodCase[client.SendLivePhotoReq]("sendLivePhoto", GenSendLivePhotoReq.gen, GenSendLivePhotoReq.shrink,
       x =>
-        Factory.sendLivePhoto(chatId = x.chatId, livePhoto = x.livePhoto, photo = x.photo,
-          businessConnectionId = x.businessConnectionId, messageThreadId = x.messageThreadId,
-          directMessagesTopicId = x.directMessagesTopicId, ephemeralMessageParameters = x.ephemeralMessageParameters,
-          caption = x.caption, parseMode = x.parseMode, captionEntities = x.captionEntities,
-          showCaptionAboveMedia = x.showCaptionAboveMedia, hasSpoiler = x.hasSpoiler,
-          disableNotification = x.disableNotification, protectContent = x.protectContent,
+        Factory.sendLivePhoto(livePhoto = x.livePhoto, photo = x.photo, businessConnectionId = x.businessConnectionId,
+          chatId = x.chatId, messageThreadId = x.messageThreadId, directMessagesTopicId = x.directMessagesTopicId,
+          ephemeralMessageParameters = x.ephemeralMessageParameters, caption = x.caption, parseMode = x.parseMode,
+          captionEntities = x.captionEntities, showCaptionAboveMedia = x.showCaptionAboveMedia,
+          hasSpoiler = x.hasSpoiler, disableNotification = x.disableNotification, protectContent = x.protectContent,
           allowPaidBroadcast = x.allowPaidBroadcast, messageEffectId = x.messageEffectId,
           suggestedPostParameters = x.suggestedPostParameters, replyParameters = x.replyParameters,
           replyMarkup = x.replyMarkup), _.asJson),
     new MethodCase[client.SendLocationReq]("sendLocation", GenSendLocationReq.gen, GenSendLocationReq.shrink,
       x =>
-        Factory.sendLocation(chatId = x.chatId, latitude = x.latitude, longitude = x.longitude,
-          businessConnectionId = x.businessConnectionId, messageThreadId = x.messageThreadId,
+        Factory.sendLocation(latitude = x.latitude, longitude = x.longitude,
+          businessConnectionId = x.businessConnectionId, chatId = x.chatId, messageThreadId = x.messageThreadId,
           directMessagesTopicId = x.directMessagesTopicId, ephemeralMessageParameters = x.ephemeralMessageParameters,
           horizontalAccuracy = x.horizontalAccuracy, livePeriod = x.livePeriod, heading = x.heading,
           proximityAlertRadius = x.proximityAlertRadius, disableNotification = x.disableNotification,
@@ -3219,7 +3394,7 @@ object MethodCases {
           replyParameters = x.replyParameters), _.asJson),
     new MethodCase[client.SendMessageReq]("sendMessage", GenSendMessageReq.gen, GenSendMessageReq.shrink,
       x =>
-        Factory.sendMessage(chatId = x.chatId, text = x.text, businessConnectionId = x.businessConnectionId,
+        Factory.sendMessage(text = x.text, businessConnectionId = x.businessConnectionId, chatId = x.chatId,
           messageThreadId = x.messageThreadId, directMessagesTopicId = x.directMessagesTopicId,
           ephemeralMessageParameters = x.ephemeralMessageParameters, parseMode = x.parseMode, entities = x.entities,
           linkPreviewOptions = x.linkPreviewOptions, disableNotification = x.disableNotification,
@@ -3243,7 +3418,7 @@ object MethodCases {
           replyMarkup = x.replyMarkup), _.asJson),
     new MethodCase[client.SendPhotoReq]("sendPhoto", GenSendPhotoReq.gen, GenSendPhotoReq.shrink,
       x =>
-        Factory.sendPhoto(chatId = x.chatId, photo = x.photo, businessConnectionId = x.businessConnectionId,
+        Factory.sendPhoto(photo = x.photo, businessConnectionId = x.businessConnectionId, chatId = x.chatId,
           messageThreadId = x.messageThreadId, directMessagesTopicId = x.directMessagesTopicId,
           ephemeralMessageParameters = x.ephemeralMessageParameters, caption = x.caption, parseMode = x.parseMode,
           captionEntities = x.captionEntities, showCaptionAboveMedia = x.showCaptionAboveMedia,
@@ -3270,21 +3445,29 @@ object MethodCases {
     new MethodCase[client.SendRichMessageReq]("sendRichMessage", GenSendRichMessageReq.gen,
       GenSendRichMessageReq.shrink,
       x =>
-        Factory.sendRichMessage(chatId = x.chatId, richMessage = x.richMessage,
-          businessConnectionId = x.businessConnectionId, messageThreadId = x.messageThreadId,
-          directMessagesTopicId = x.directMessagesTopicId, ephemeralMessageParameters = x.ephemeralMessageParameters,
-          disableNotification = x.disableNotification, protectContent = x.protectContent,
-          allowPaidBroadcast = x.allowPaidBroadcast, messageEffectId = x.messageEffectId,
-          suggestedPostParameters = x.suggestedPostParameters, replyParameters = x.replyParameters,
-          replyMarkup = x.replyMarkup), _.asJson),
+        Factory.sendRichMessage(richMessage = x.richMessage, businessConnectionId = x.businessConnectionId,
+          chatId = x.chatId, messageThreadId = x.messageThreadId, directMessagesTopicId = x.directMessagesTopicId,
+          ephemeralMessageParameters = x.ephemeralMessageParameters, disableNotification = x.disableNotification,
+          protectContent = x.protectContent, allowPaidBroadcast = x.allowPaidBroadcast,
+          messageEffectId = x.messageEffectId, suggestedPostParameters = x.suggestedPostParameters,
+          replyParameters = x.replyParameters, replyMarkup = x.replyMarkup), _.asJson),
     new MethodCase[client.SendRichMessageDraftReq]("sendRichMessageDraft", GenSendRichMessageDraftReq.gen,
       GenSendRichMessageDraftReq.shrink,
       x =>
         Factory.sendRichMessageDraft(chatId = x.chatId, draftId = x.draftId, richMessage = x.richMessage,
           messageThreadId = x.messageThreadId, canStop = x.canStop, keepOnStop = x.keepOnStop), _.asJson),
+    new MethodCase[client.SendSharedWidgetReq]("sendSharedWidget", GenSendSharedWidgetReq.gen,
+      GenSendSharedWidgetReq.shrink,
+      x =>
+        Factory.sendSharedWidget(chatId = x.chatId, widgetId = x.widgetId, messageThreadId = x.messageThreadId,
+          chatData = x.chatData, caption = x.caption, parseMode = x.parseMode, captionEntities = x.captionEntities,
+          showCaptionAboveMedia = x.showCaptionAboveMedia, disableNotification = x.disableNotification,
+          protectContent = x.protectContent, allowPaidBroadcast = x.allowPaidBroadcast,
+          messageEffectId = x.messageEffectId, replyParameters = x.replyParameters, replyMarkup = x.replyMarkup),
+      _.asJson),
     new MethodCase[client.SendStickerReq]("sendSticker", GenSendStickerReq.gen, GenSendStickerReq.shrink,
       x =>
-        Factory.sendSticker(chatId = x.chatId, sticker = x.sticker, businessConnectionId = x.businessConnectionId,
+        Factory.sendSticker(sticker = x.sticker, businessConnectionId = x.businessConnectionId, chatId = x.chatId,
           messageThreadId = x.messageThreadId, directMessagesTopicId = x.directMessagesTopicId,
           ephemeralMessageParameters = x.ephemeralMessageParameters, emoji = x.emoji,
           disableNotification = x.disableNotification, protectContent = x.protectContent,
@@ -3293,8 +3476,8 @@ object MethodCases {
           replyMarkup = x.replyMarkup), _.asJson),
     new MethodCase[client.SendVenueReq]("sendVenue", GenSendVenueReq.gen, GenSendVenueReq.shrink,
       x =>
-        Factory.sendVenue(chatId = x.chatId, latitude = x.latitude, longitude = x.longitude, title = x.title,
-          address = x.address, businessConnectionId = x.businessConnectionId, messageThreadId = x.messageThreadId,
+        Factory.sendVenue(latitude = x.latitude, longitude = x.longitude, title = x.title, address = x.address,
+          businessConnectionId = x.businessConnectionId, chatId = x.chatId, messageThreadId = x.messageThreadId,
           directMessagesTopicId = x.directMessagesTopicId, ephemeralMessageParameters = x.ephemeralMessageParameters,
           foursquareId = x.foursquareId, foursquareType = x.foursquareType, googlePlaceId = x.googlePlaceId,
           googlePlaceType = x.googlePlaceType, disableNotification = x.disableNotification,
@@ -3303,7 +3486,7 @@ object MethodCases {
           replyParameters = x.replyParameters, replyMarkup = x.replyMarkup), _.asJson),
     new MethodCase[client.SendVideoReq]("sendVideo", GenSendVideoReq.gen, GenSendVideoReq.shrink,
       x =>
-        Factory.sendVideo(chatId = x.chatId, video = x.video, businessConnectionId = x.businessConnectionId,
+        Factory.sendVideo(video = x.video, businessConnectionId = x.businessConnectionId, chatId = x.chatId,
           messageThreadId = x.messageThreadId, directMessagesTopicId = x.directMessagesTopicId,
           ephemeralMessageParameters = x.ephemeralMessageParameters, duration = x.duration, width = x.width,
           height = x.height, thumbnail = x.thumbnail, cover = x.cover, startTimestamp = x.startTimestamp,
@@ -3315,7 +3498,7 @@ object MethodCases {
           replyParameters = x.replyParameters, replyMarkup = x.replyMarkup), _.asJson),
     new MethodCase[client.SendVideoNoteReq]("sendVideoNote", GenSendVideoNoteReq.gen, GenSendVideoNoteReq.shrink,
       x =>
-        Factory.sendVideoNote(chatId = x.chatId, videoNote = x.videoNote, businessConnectionId = x.businessConnectionId,
+        Factory.sendVideoNote(videoNote = x.videoNote, businessConnectionId = x.businessConnectionId, chatId = x.chatId,
           messageThreadId = x.messageThreadId, directMessagesTopicId = x.directMessagesTopicId,
           ephemeralMessageParameters = x.ephemeralMessageParameters, duration = x.duration, length = x.length,
           thumbnail = x.thumbnail, disableNotification = x.disableNotification, protectContent = x.protectContent,
@@ -3324,13 +3507,22 @@ object MethodCases {
           replyMarkup = x.replyMarkup), _.asJson),
     new MethodCase[client.SendVoiceReq]("sendVoice", GenSendVoiceReq.gen, GenSendVoiceReq.shrink,
       x =>
-        Factory.sendVoice(chatId = x.chatId, voice = x.voice, businessConnectionId = x.businessConnectionId,
+        Factory.sendVoice(voice = x.voice, businessConnectionId = x.businessConnectionId, chatId = x.chatId,
           messageThreadId = x.messageThreadId, directMessagesTopicId = x.directMessagesTopicId,
           ephemeralMessageParameters = x.ephemeralMessageParameters, caption = x.caption, parseMode = x.parseMode,
           captionEntities = x.captionEntities, duration = x.duration, disableNotification = x.disableNotification,
           protectContent = x.protectContent, allowPaidBroadcast = x.allowPaidBroadcast,
           messageEffectId = x.messageEffectId, suggestedPostParameters = x.suggestedPostParameters,
           replyParameters = x.replyParameters, replyMarkup = x.replyMarkup), _.asJson),
+    new MethodCase[client.SendWidgetReq]("sendWidget", GenSendWidgetReq.gen, GenSendWidgetReq.shrink,
+      x =>
+        Factory.sendWidget(chatId = x.chatId, html = x.html, messageThreadId = x.messageThreadId, width = x.width,
+          height = x.height, publicData = x.publicData, chatData = x.chatData, caption = x.caption,
+          parseMode = x.parseMode, captionEntities = x.captionEntities, showCaptionAboveMedia = x.showCaptionAboveMedia,
+          allowQueries = x.allowQueries, isShared = x.isShared, disableNotification = x.disableNotification,
+          protectContent = x.protectContent, allowPaidBroadcast = x.allowPaidBroadcast,
+          messageEffectId = x.messageEffectId, replyParameters = x.replyParameters, replyMarkup = x.replyMarkup),
+      _.asJson),
     new MethodCase[client.SetBusinessAccountBioReq]("setBusinessAccountBio", GenSetBusinessAccountBioReq.gen,
       GenSetBusinessAccountBioReq.shrink,
       x => Factory.setBusinessAccountBio(businessConnectionId = x.businessConnectionId, bio = x.bio), _.asJson),
@@ -3490,7 +3682,13 @@ object MethodCases {
       x => Factory.uploadStickerFile(userId = x.userId, sticker = x.sticker, stickerFormat = x.stickerFormat),
       _.asJson),
     new MethodCase[client.VerifyChatReq]("verifyChat", GenVerifyChatReq.gen, GenVerifyChatReq.shrink,
-      x => Factory.verifyChat(chatId = x.chatId, customDescription = x.customDescription), _.asJson),
+      x =>
+        Factory.verifyChat(chatId = x.chatId, customDescription = x.customDescription,
+          customDescriptionParseMode = x.customDescriptionParseMode,
+          customDescriptionEntities = x.customDescriptionEntities), _.asJson),
     new MethodCase[client.VerifyUserReq]("verifyUser", GenVerifyUserReq.gen, GenVerifyUserReq.shrink,
-      x => Factory.verifyUser(userId = x.userId, customDescription = x.customDescription), _.asJson))
+      x =>
+        Factory.verifyUser(userId = x.userId, customDescription = x.customDescription,
+          customDescriptionParseMode = x.customDescriptionParseMode,
+          customDescriptionEntities = x.customDescriptionEntities), _.asJson))
 }

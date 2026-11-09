@@ -136,13 +136,16 @@ sealed trait MaybeInaccessibleMessage {}
   *   information about the video message
   * @param voice
   *   <em>Optional</em>. Message is a voice message, information about the file
+  * @param widget
+  *   <em>Optional</em>. Message is an HTML widget, information about the widget
   * @param caption
-  *   <em>Optional</em>. Caption for the animation, audio, document, paid media, photo, video or voice
+  *   <em>Optional</em>. Caption for the animation, audio, document, live photo, paid media, photo, video, voice, or
+  *   widget
   * @param captionEntities
   *   <em>Optional</em>. For messages with a caption, special entities like usernames, URLs, bot commands, etc. that
   *   appear in the caption
   * @param showCaptionAboveMedia
-  *   <em>Optional</em>. <em>True</em>, if the caption must be shown above the message media
+  *   <em>Optional</em>. <em>True</em>, if the caption must be shown above the message media or the widget
   * @param hasMediaSpoiler
   *   <em>Optional</em>. <em>True</em>, if the message media is covered by a spoiler animation
   * @param checklist
@@ -273,6 +276,9 @@ sealed trait MaybeInaccessibleMessage {}
   *   <em>Optional</em>. Service message: user created a bot that will be managed by the current bot
   * @param paidMessagePriceChanged
   *   <em>Optional</em>. Service message: the price for paid messages has changed in the chat
+  * @param paidMessagesWaived
+  *   <em>Optional</em>. Service message: the sender of the message used a link of the other user, which allows sending
+  *   messages to the user without paying Telegram Stars
   * @param pollOptionAdded
   *   <em>Optional</em>. Service message: answer option was added to a poll
   * @param pollOptionDeleted
@@ -287,6 +293,8 @@ sealed trait MaybeInaccessibleMessage {}
   *   <em>Optional</em>. Service message: payment for a suggested post was received
   * @param suggestedPostRefunded
   *   <em>Optional</em>. Service message: payment for a suggested post was refunded
+  * @param tonWalletTransfer
+  *   <em>Optional</em>. Service message: a transfer with a TON wallet
   * @param videoChatScheduled
   *   <em>Optional</em>. Service message: video chat scheduled
   * @param videoChatStarted
@@ -352,6 +360,7 @@ final case class Message(
   video: Option[Video] = Option.empty,
   videoNote: Option[VideoNote] = Option.empty,
   voice: Option[Voice] = Option.empty,
+  widget: Option[Widget] = Option.empty,
   caption: Option[String] = Option.empty,
   captionEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   showCaptionAboveMedia: Option[Boolean] = Option.empty,
@@ -409,6 +418,7 @@ final case class Message(
   giveawayCompleted: Option[GiveawayCompleted] = Option.empty,
   managedBotCreated: Option[ManagedBotCreated] = Option.empty,
   paidMessagePriceChanged: Option[PaidMessagePriceChanged] = Option.empty,
+  paidMessagesWaived: Option[PaidMessagesWaived.type] = Option.empty,
   pollOptionAdded: Option[PollOptionAdded] = Option.empty,
   pollOptionDeleted: Option[PollOptionDeleted] = Option.empty,
   suggestedPostApproved: Option[SuggestedPostApproved] = Option.empty,
@@ -416,6 +426,7 @@ final case class Message(
   suggestedPostDeclined: Option[SuggestedPostDeclined] = Option.empty,
   suggestedPostPaid: Option[SuggestedPostPaid] = Option.empty,
   suggestedPostRefunded: Option[SuggestedPostRefunded] = Option.empty,
+  tonWalletTransfer: Option[TonWalletTransfer] = Option.empty,
   videoChatScheduled: Option[VideoChatScheduled] = Option.empty,
   videoChatStarted: Option[VideoChatStarted.type] = Option.empty,
   videoChatEnded: Option[VideoChatEnded] = Option.empty,

@@ -442,6 +442,55 @@ object GenChatMember {
     variant(GenChatMemberBanned.shrink), variant(GenChatMemberRestricted.shrink))
 }
 
+object GenChatShareThemeUniqueGift {
+  import GenPrims._
+  lazy val gen: Gen[ChatShareThemeUniqueGift] = Gen.lzy(deeper(GenUniqueGift.gen.map { a0 =>
+    ChatShareThemeUniqueGift(gift = a0)
+  }))
+  lazy val shrink: Shrink[ChatShareThemeUniqueGift] =
+    shrinkFields[ChatShareThemeUniqueGift](x => List(field(x.gift)(GenUniqueGift.shrink)(v => x.copy(gift = v))))
+}
+
+object GenChatShareThemeEmoji {
+  import GenPrims._
+  lazy val gen: Gen[ChatShareThemeEmoji] =
+    Gen.lzy(deeper(Gen.zip(list(openEnum(GenEmojiType.gen)), optPrim(genInt)).map { case (a0, a1) =>
+      ChatShareThemeEmoji(emojis = a0, backgroundBackdropId = a1)
+    }))
+  lazy val shrink: Shrink[ChatShareThemeEmoji] = shrinkFields[ChatShareThemeEmoji](x =>
+    List(field(x.emojis)(shrinkList(noShrink))(v => x.copy(emojis = v)),
+      field(x.backgroundBackdropId)(shrinkOpt(noShrink))(v => x.copy(backgroundBackdropId = v))))
+}
+
+object GenChatShareTheme {
+  import GenPrims._
+  lazy val gen: Gen[ChatShareTheme] =
+    Gen.lzy(sum[ChatShareTheme](List(GenChatShareThemeUniqueGift.gen, GenChatShareThemeEmoji.gen),
+        List(GenChatShareThemeEmoji.gen)))
+  lazy val shrink: Shrink[ChatShareTheme] =
+    shrinkSum[ChatShareTheme](variant(GenChatShareThemeUniqueGift.shrink), variant(GenChatShareThemeEmoji.shrink))
+}
+
+object GenEmojiTypeCustomEmoji {
+  import GenPrims._
+  lazy val gen: Gen[EmojiTypeCustomEmoji] = Gen.lzy(deeper(genString.map { a0 =>
+    EmojiTypeCustomEmoji(customEmojiId = a0)
+  }))
+  lazy val shrink: Shrink[EmojiTypeCustomEmoji] = noShrink
+}
+
+object GenEmojiTypeEmoji {
+  import GenPrims._
+  lazy val gen: Gen[EmojiTypeEmoji] = Gen.lzy(deeper(genString.map { a0 => EmojiTypeEmoji(emoji = a0) }))
+  lazy val shrink: Shrink[EmojiTypeEmoji] = noShrink
+}
+
+object GenEmojiType {
+  import GenPrims._
+  lazy val gen: Gen[EmojiType] = Gen.lzy(Gen.oneOf[EmojiType](GenEmojiTypeCustomEmoji.gen, GenEmojiTypeEmoji.gen))
+  lazy val shrink: Shrink[EmojiType] = noShrink
+}
+
 object GenInlineQueryResultGif {
   import GenPrims._
   lazy val gen: Gen[InlineQueryResultGif] = Gen.lzy(
@@ -1200,6 +1249,31 @@ object GenInputTextMessageContent {
       field(x.linkPreviewOptions)(shrinkOpt(GenLinkPreviewOptions.shrink))(v => x.copy(linkPreviewOptions = v))))
 }
 
+object GenInputWidgetMessageContent {
+  import GenPrims._
+  lazy val gen: Gen[InputWidgetMessageContent] = Gen.lzy(
+    deeper(Gen
+        .zip(Gen.zip(genString, optPrim(genInt), optPrim(genInt), optPrim(genString), optPrim(genString),
+            optPrim(genString), opt(GenParseMode.gen), list(GenMessageEntity.gen), optPrim(genBoolean)),
+          Gen.zip(optPrim(genBoolean), optPrim(genBoolean)))
+        .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10)) =>
+          InputWidgetMessageContent(html = a0, width = a1, height = a2, publicData = a3, chatData = a4, caption = a5,
+            parseMode = a6, captionEntities = a7, showCaptionAboveMedia = a8, allowQueries = a9, isShared = a10)
+        }))
+  lazy val shrink: Shrink[InputWidgetMessageContent] = shrinkFields[InputWidgetMessageContent](x =>
+    List(
+      field(x.width)(shrinkOpt(noShrink))(v => x.copy(width = v)),
+      field(x.height)(shrinkOpt(noShrink))(v => x.copy(height = v)),
+      field(x.publicData)(shrinkOpt(noShrink))(v => x.copy(publicData = v)),
+      field(x.chatData)(shrinkOpt(noShrink))(v => x.copy(chatData = v)),
+      field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
+      field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
+      field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
+      field(x.allowQueries)(shrinkOpt(noShrink))(v => x.copy(allowQueries = v)),
+      field(x.isShared)(shrinkOpt(noShrink))(v => x.copy(isShared = v))))
+}
+
 object GenInputRichMessageContent {
   import GenPrims._
   lazy val gen: Gen[InputRichMessageContent] = Gen.lzy(deeper(GenInputRichMessage.gen.map { a0 =>
@@ -1209,17 +1283,38 @@ object GenInputRichMessageContent {
     List(field(x.richMessage)(GenInputRichMessage.shrink)(v => x.copy(richMessage = v))))
 }
 
+object GenInputSharedWidgetMessageContent {
+  import GenPrims._
+  lazy val gen: Gen[InputSharedWidgetMessageContent] = Gen.lzy(deeper(Gen
+        .zip(genString, optPrim(genString), optPrim(genString), opt(GenParseMode.gen), list(GenMessageEntity.gen),
+          optPrim(genBoolean))
+        .map { case (a0, a1, a2, a3, a4, a5) =>
+          InputSharedWidgetMessageContent(widgetId = a0, chatData = a1, caption = a2, parseMode = a3,
+            captionEntities = a4, showCaptionAboveMedia = a5)
+        }))
+  lazy val shrink: Shrink[InputSharedWidgetMessageContent] = shrinkFields[InputSharedWidgetMessageContent](x =>
+    List(
+      field(x.chatData)(shrinkOpt(noShrink))(v => x.copy(chatData = v)),
+      field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
+      field(x.parseMode)(shrinkOpt(noShrink))(v => x.copy(parseMode = v)),
+      field(x.captionEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(captionEntities = v)),
+      field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v))))
+}
+
 object GenInputMessageContent {
   import GenPrims._
-  lazy val gen: Gen[InputMessageContent] = Gen.lzy(sum[InputMessageContent](List(GenInputVenueMessageContent.gen,
-        GenInputInvoiceMessageContent.gen, GenInputContactMessageContent.gen, GenInputLocationMessageContent.gen,
-        GenInputTextMessageContent.gen, GenInputRichMessageContent.gen),
-      List(GenInputVenueMessageContent.gen, GenInputInvoiceMessageContent.gen, GenInputContactMessageContent.gen,
-        GenInputLocationMessageContent.gen, GenInputTextMessageContent.gen)))
+  lazy val gen: Gen[InputMessageContent] =
+    Gen.lzy(sum[InputMessageContent](List(GenInputVenueMessageContent.gen, GenInputInvoiceMessageContent.gen,
+          GenInputContactMessageContent.gen, GenInputLocationMessageContent.gen, GenInputTextMessageContent.gen,
+          GenInputWidgetMessageContent.gen, GenInputRichMessageContent.gen, GenInputSharedWidgetMessageContent.gen),
+        List(GenInputVenueMessageContent.gen, GenInputInvoiceMessageContent.gen, GenInputContactMessageContent.gen,
+          GenInputLocationMessageContent.gen, GenInputTextMessageContent.gen, GenInputWidgetMessageContent.gen,
+          GenInputSharedWidgetMessageContent.gen)))
   lazy val shrink: Shrink[InputMessageContent] = shrinkSum[InputMessageContent](
     variant(GenInputVenueMessageContent.shrink), variant(GenInputInvoiceMessageContent.shrink),
     variant(GenInputContactMessageContent.shrink), variant(GenInputLocationMessageContent.shrink),
-    variant(GenInputTextMessageContent.shrink), variant(GenInputRichMessageContent.shrink))
+    variant(GenInputTextMessageContent.shrink), variant(GenInputWidgetMessageContent.shrink),
+    variant(GenInputRichMessageContent.shrink), variant(GenInputSharedWidgetMessageContent.shrink))
 }
 
 object GenInputPaidMediaPhoto {
@@ -1622,31 +1717,31 @@ object GenMessage {
               opt(GenAudio.gen), opt(GenDocument.gen), opt(GenLivePhoto.gen), opt(GenPaidMediaInfo.gen),
               list(GenPhotoSize.gen)),
             Gen.zip(opt(GenSticker.gen), opt(GenStory.gen), opt(GenVideo.gen), opt(GenVideoNote.gen), opt(GenVoice.gen),
-              optPrim(genString), list(openEnum(GenMessageEntity.gen)), optPrim(genBoolean), optPrim(genBoolean)),
-            Gen.zip(opt(GenChecklist.gen), opt(GenContact.gen), opt(GenDice.gen), opt(GenGame.gen), opt(GenPoll.gen),
-              opt(GenVenue.gen), opt(GenLocation.gen), list(GenUser.gen), opt(GenUser.gen)),
-            Gen.zip(opt(GenChatOwnerLeft.gen), opt(GenChatOwnerChanged.gen), optPrim(genString), list(GenPhotoSize.gen),
-              optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean),
-              opt(GenMessageAutoDeleteTimerChanged.gen)),
-            Gen.zip(optPrim(genLong), optPrim(genLong), opt(GenMaybeInaccessibleMessage.gen), opt(GenInvoice.gen),
-              opt(GenSuccessfulPayment.gen), opt(GenRefundedPayment.gen), opt(GenUsersShared.gen),
-              opt(GenChatShared.gen), opt(GenGiftInfo.gen))),
-          Gen.zip(Gen.zip(opt(GenUniqueGiftInfo.gen), opt(GenGiftInfo.gen), optPrim(genString),
+              opt(GenWidget.gen), optPrim(genString), list(openEnum(GenMessageEntity.gen)), optPrim(genBoolean)),
+            Gen.zip(optPrim(genBoolean), opt(GenChecklist.gen), opt(GenContact.gen), opt(GenDice.gen), opt(GenGame.gen),
+              opt(GenPoll.gen), opt(GenVenue.gen), opt(GenLocation.gen), list(GenUser.gen)),
+            Gen.zip(opt(GenUser.gen), opt(GenChatOwnerLeft.gen), opt(GenChatOwnerChanged.gen), optPrim(genString),
+              list(GenPhotoSize.gen), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean),
+              optPrim(genBoolean)),
+            Gen.zip(opt(GenMessageAutoDeleteTimerChanged.gen), optPrim(genLong), optPrim(genLong),
+              opt(GenMaybeInaccessibleMessage.gen), opt(GenInvoice.gen), opt(GenSuccessfulPayment.gen),
+              opt(GenRefundedPayment.gen), opt(GenUsersShared.gen), opt(GenChatShared.gen))),
+          Gen.zip(Gen.zip(opt(GenGiftInfo.gen), opt(GenUniqueGiftInfo.gen), opt(GenGiftInfo.gen), optPrim(genString),
               opt(GenWriteAccessAllowed.gen), opt(GenPassportData.gen), opt(GenProximityAlertTriggered.gen),
-              opt(GenChatBoostAdded.gen), opt(GenChatBackground.gen), opt(GenChecklistTasksDone.gen)),
-            Gen.zip(opt(GenChecklistTasksAdded.gen), opt(GenCommunityChatAdded.gen), opt(GenCommunityChatJoined.gen),
-              opt(GenCommunityChatRemoved.gen), opt(GenDirectMessagePriceChanged.gen), opt(GenForumTopicCreated.gen),
-              opt(GenForumTopicEdited.gen), opt(GenForumTopicClosed.gen), opt(GenForumTopicReopened.gen)),
-            Gen.zip(opt(GenGeneralForumTopicHidden.gen), opt(GenGeneralForumTopicUnhidden.gen),
-              opt(GenGiveawayCreated.gen), opt(GenGiveaway.gen), opt(GenGiveawayWinners.gen),
-              opt(GenGiveawayCompleted.gen), opt(GenManagedBotCreated.gen), opt(GenPaidMessagePriceChanged.gen),
-              opt(GenPollOptionAdded.gen)),
-            Gen.zip(opt(GenPollOptionDeleted.gen), opt(GenSuggestedPostApproved.gen),
-              opt(GenSuggestedPostApprovalFailed.gen), opt(GenSuggestedPostDeclined.gen), opt(GenSuggestedPostPaid.gen),
-              opt(GenSuggestedPostRefunded.gen), opt(GenVideoChatScheduled.gen), opt(GenVideoChatStarted.gen),
-              opt(GenVideoChatEnded.gen)),
-            Gen.zip(opt(GenVideoChatParticipantsInvited.gen), opt(GenWebAppData.gen),
-              opt(GenInlineKeyboardMarkup.gen))))
+              opt(GenChatBoostAdded.gen), opt(GenChatBackground.gen)),
+            Gen.zip(opt(GenChecklistTasksDone.gen), opt(GenChecklistTasksAdded.gen), opt(GenCommunityChatAdded.gen),
+              opt(GenCommunityChatJoined.gen), opt(GenCommunityChatRemoved.gen), opt(GenDirectMessagePriceChanged.gen),
+              opt(GenForumTopicCreated.gen), opt(GenForumTopicEdited.gen), opt(GenForumTopicClosed.gen)),
+            Gen.zip(opt(GenForumTopicReopened.gen), opt(GenGeneralForumTopicHidden.gen),
+              opt(GenGeneralForumTopicUnhidden.gen), opt(GenGiveawayCreated.gen), opt(GenGiveaway.gen),
+              opt(GenGiveawayWinners.gen), opt(GenGiveawayCompleted.gen), opt(GenManagedBotCreated.gen),
+              opt(GenPaidMessagePriceChanged.gen)),
+            Gen.zip(opt(GenPaidMessagesWaived.gen), opt(GenPollOptionAdded.gen), opt(GenPollOptionDeleted.gen),
+              opt(GenSuggestedPostApproved.gen), opt(GenSuggestedPostApprovalFailed.gen),
+              opt(GenSuggestedPostDeclined.gen), opt(GenSuggestedPostPaid.gen), opt(GenSuggestedPostRefunded.gen),
+              opt(GenTonWalletTransfer.gen)),
+            Gen.zip(opt(GenVideoChatScheduled.gen), opt(GenVideoChatStarted.gen), opt(GenVideoChatEnded.gen),
+              opt(GenVideoChatParticipantsInvited.gen), opt(GenWebAppData.gen), opt(GenInlineKeyboardMarkup.gen))))
         .map {
           case (((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17),
                   (a18, a19, a20, a21, a22, a23, a24, a25, a26), (a27, a28, a29, a30, a31, a32, a33, a34, a35),
@@ -1655,7 +1750,7 @@ object GenMessage {
                   (a72, a73, a74, a75, a76, a77, a78, a79, a80)),
                 ((a81, a82, a83, a84, a85, a86, a87, a88, a89), (a90, a91, a92, a93, a94, a95, a96, a97, a98),
                   (a99, a100, a101, a102, a103, a104, a105, a106, a107),
-                  (a108, a109, a110, a111, a112, a113, a114, a115, a116), (a117, a118, a119))) =>
+                  (a108, a109, a110, a111, a112, a113, a114, a115, a116), (a117, a118, a119, a120, a121, a122))) =>
             Message(messageId = a0, date = a1, chat = a2, messageThreadId = a3, directMessagesTopic = a4, from = a5,
               senderChat = a6, senderBoostCount = a7, senderBusinessBot = a8, senderTag = a9, receiverUser = a10,
               ephemeralMessageId = a11, guestQueryId = a12, businessConnectionId = a13, forwardOrigin = a14,
@@ -1665,24 +1760,25 @@ object GenMessage {
               isFromOffline = a28, isPaidPost = a29, mediaGroupId = a30, authorSignature = a31, paidStarCount = a32,
               text = a33, entities = a34, linkPreviewOptions = a35, suggestedPostInfo = a36, effectId = a37,
               richMessage = a38, animation = a39, audio = a40, document = a41, livePhoto = a42, paidMedia = a43,
-              photo = a44, sticker = a45, story = a46, video = a47, videoNote = a48, voice = a49, caption = a50,
-              captionEntities = a51, showCaptionAboveMedia = a52, hasMediaSpoiler = a53, checklist = a54, contact = a55,
-              dice = a56, game = a57, poll = a58, venue = a59, location = a60, newChatMembers = a61,
-              leftChatMember = a62, chatOwnerLeft = a63, chatOwnerChanged = a64, newChatTitle = a65, newChatPhoto = a66,
-              deleteChatPhoto = a67, groupChatCreated = a68, supergroupChatCreated = a69, channelChatCreated = a70,
-              messageAutoDeleteTimerChanged = a71, migrateToChatId = a72, migrateFromChatId = a73, pinnedMessage = a74,
-              invoice = a75, successfulPayment = a76, refundedPayment = a77, usersShared = a78, chatShared = a79,
-              gift = a80, uniqueGift = a81, giftUpgradeSent = a82, connectedWebsite = a83, writeAccessAllowed = a84,
-              passportData = a85, proximityAlertTriggered = a86, boostAdded = a87, chatBackgroundSet = a88,
-              checklistTasksDone = a89, checklistTasksAdded = a90, communityChatAdded = a91, communityChatJoined = a92,
-              communityChatRemoved = a93, directMessagePriceChanged = a94, forumTopicCreated = a95,
-              forumTopicEdited = a96, forumTopicClosed = a97, forumTopicReopened = a98, generalForumTopicHidden = a99,
-              generalForumTopicUnhidden = a100, giveawayCreated = a101, giveaway = a102, giveawayWinners = a103,
-              giveawayCompleted = a104, managedBotCreated = a105, paidMessagePriceChanged = a106,
-              pollOptionAdded = a107, pollOptionDeleted = a108, suggestedPostApproved = a109,
-              suggestedPostApprovalFailed = a110, suggestedPostDeclined = a111, suggestedPostPaid = a112,
-              suggestedPostRefunded = a113, videoChatScheduled = a114, videoChatStarted = a115, videoChatEnded = a116,
-              videoChatParticipantsInvited = a117, webAppData = a118, replyMarkup = a119)
+              photo = a44, sticker = a45, story = a46, video = a47, videoNote = a48, voice = a49, widget = a50,
+              caption = a51, captionEntities = a52, showCaptionAboveMedia = a53, hasMediaSpoiler = a54, checklist = a55,
+              contact = a56, dice = a57, game = a58, poll = a59, venue = a60, location = a61, newChatMembers = a62,
+              leftChatMember = a63, chatOwnerLeft = a64, chatOwnerChanged = a65, newChatTitle = a66, newChatPhoto = a67,
+              deleteChatPhoto = a68, groupChatCreated = a69, supergroupChatCreated = a70, channelChatCreated = a71,
+              messageAutoDeleteTimerChanged = a72, migrateToChatId = a73, migrateFromChatId = a74, pinnedMessage = a75,
+              invoice = a76, successfulPayment = a77, refundedPayment = a78, usersShared = a79, chatShared = a80,
+              gift = a81, uniqueGift = a82, giftUpgradeSent = a83, connectedWebsite = a84, writeAccessAllowed = a85,
+              passportData = a86, proximityAlertTriggered = a87, boostAdded = a88, chatBackgroundSet = a89,
+              checklistTasksDone = a90, checklistTasksAdded = a91, communityChatAdded = a92, communityChatJoined = a93,
+              communityChatRemoved = a94, directMessagePriceChanged = a95, forumTopicCreated = a96,
+              forumTopicEdited = a97, forumTopicClosed = a98, forumTopicReopened = a99, generalForumTopicHidden = a100,
+              generalForumTopicUnhidden = a101, giveawayCreated = a102, giveaway = a103, giveawayWinners = a104,
+              giveawayCompleted = a105, managedBotCreated = a106, paidMessagePriceChanged = a107,
+              paidMessagesWaived = a108, pollOptionAdded = a109, pollOptionDeleted = a110, suggestedPostApproved = a111,
+              suggestedPostApprovalFailed = a112, suggestedPostDeclined = a113, suggestedPostPaid = a114,
+              suggestedPostRefunded = a115, tonWalletTransfer = a116, videoChatScheduled = a117,
+              videoChatStarted = a118, videoChatEnded = a119, videoChatParticipantsInvited = a120, webAppData = a121,
+              replyMarkup = a122)
         }).map(fix))
   lazy val shrink: Shrink[Message] = fixed(shrinkFields[Message](x =>
       List(
@@ -1734,6 +1830,7 @@ object GenMessage {
         field(x.video)(shrinkOpt(GenVideo.shrink))(v => x.copy(video = v)),
         field(x.videoNote)(shrinkOpt(GenVideoNote.shrink))(v => x.copy(videoNote = v)),
         field(x.voice)(shrinkOpt(GenVoice.shrink))(v => x.copy(voice = v)),
+        field(x.widget)(shrinkOpt(GenWidget.shrink))(v => x.copy(widget = v)),
         field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
         field(x.captionEntities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v => x.copy(captionEntities = v)),
         field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
@@ -1792,6 +1889,7 @@ object GenMessage {
         field(x.giveawayCompleted)(shrinkOpt(GenGiveawayCompleted.shrink))(v => x.copy(giveawayCompleted = v)),
         field(x.managedBotCreated)(shrinkOpt(GenManagedBotCreated.shrink))(v => x.copy(managedBotCreated = v)),
         field(x.paidMessagePriceChanged)(shrinkOpt(noShrink))(v => x.copy(paidMessagePriceChanged = v)),
+        field(x.paidMessagesWaived)(shrinkOpt(noShrink))(v => x.copy(paidMessagesWaived = v)),
         field(x.pollOptionAdded)(shrinkOpt(GenPollOptionAdded.shrink))(v => x.copy(pollOptionAdded = v)),
         field(x.pollOptionDeleted)(shrinkOpt(GenPollOptionDeleted.shrink))(v => x.copy(pollOptionDeleted = v)),
         field(x.suggestedPostApproved)(shrinkOpt(GenSuggestedPostApproved.shrink))(v =>
@@ -1803,6 +1901,7 @@ object GenMessage {
         field(x.suggestedPostPaid)(shrinkOpt(GenSuggestedPostPaid.shrink))(v => x.copy(suggestedPostPaid = v)),
         field(x.suggestedPostRefunded)(shrinkOpt(GenSuggestedPostRefunded.shrink))(v =>
           x.copy(suggestedPostRefunded = v)),
+        field(x.tonWalletTransfer)(shrinkOpt(GenTonWalletTransfer.shrink))(v => x.copy(tonWalletTransfer = v)),
         field(x.videoChatScheduled)(shrinkOpt(noShrink))(v => x.copy(videoChatScheduled = v)),
         field(x.videoChatStarted)(shrinkOpt(noShrink))(v => x.copy(videoChatStarted = v)),
         field(x.videoChatEnded)(shrinkOpt(noShrink))(v => x.copy(videoChatEnded = v)),
@@ -1903,18 +2002,18 @@ object GenExpandableBlockquoteMessageEntity {
   lazy val shrink: Shrink[ExpandableBlockquoteMessageEntity] = noShrink
 }
 
-object GenSpoilerMessageEntity {
-  import GenPrims._
-  lazy val gen: Gen[SpoilerMessageEntity] =
-    Gen.lzy(deeper(Gen.zip(genInt, genInt).map { case (a0, a1) => SpoilerMessageEntity(offset = a0, length = a1) }))
-  lazy val shrink: Shrink[SpoilerMessageEntity] = noShrink
-}
-
 object GenEmailMessageEntity {
   import GenPrims._
   lazy val gen: Gen[EmailMessageEntity] =
     Gen.lzy(deeper(Gen.zip(genInt, genInt).map { case (a0, a1) => EmailMessageEntity(offset = a0, length = a1) }))
   lazy val shrink: Shrink[EmailMessageEntity] = noShrink
+}
+
+object GenSpoilerMessageEntity {
+  import GenPrims._
+  lazy val gen: Gen[SpoilerMessageEntity] =
+    Gen.lzy(deeper(Gen.zip(genInt, genInt).map { case (a0, a1) => SpoilerMessageEntity(offset = a0, length = a1) }))
+  lazy val shrink: Shrink[SpoilerMessageEntity] = noShrink
 }
 
 object GenBlockquoteMessageEntity {
@@ -1986,6 +2085,14 @@ object GenTextMentionMessageEntity {
     shrinkFields[TextMentionMessageEntity](x => List(field(x.user)(GenUser.shrink)(v => x.copy(user = v))))
 }
 
+object GenTextLinkMessageEntity {
+  import GenPrims._
+  lazy val gen: Gen[TextLinkMessageEntity] = Gen.lzy(deeper(Gen.zip(genInt, genInt, genString).map {
+    case (a0, a1, a2) => TextLinkMessageEntity(offset = a0, length = a1, url = a2)
+  }))
+  lazy val shrink: Shrink[TextLinkMessageEntity] = noShrink
+}
+
 object GenUrlMessageEntity {
   import GenPrims._
   lazy val gen: Gen[UrlMessageEntity] =
@@ -1993,12 +2100,19 @@ object GenUrlMessageEntity {
   lazy val shrink: Shrink[UrlMessageEntity] = noShrink
 }
 
-object GenTextLinkMessageEntity {
+object GenTonAddressMessageEntity {
   import GenPrims._
-  lazy val gen: Gen[TextLinkMessageEntity] = Gen.lzy(deeper(Gen.zip(genInt, genInt, genString).map {
-    case (a0, a1, a2) => TextLinkMessageEntity(offset = a0, length = a1, url = a2)
+  lazy val gen: Gen[TonAddressMessageEntity] =
+    Gen.lzy(deeper(Gen.zip(genInt, genInt).map { case (a0, a1) => TonAddressMessageEntity(offset = a0, length = a1) }))
+  lazy val shrink: Shrink[TonAddressMessageEntity] = noShrink
+}
+
+object GenBankCardNumberMessageEntity {
+  import GenPrims._
+  lazy val gen: Gen[BankCardNumberMessageEntity] = Gen.lzy(deeper(Gen.zip(genInt, genInt).map { case (a0, a1) =>
+    BankCardNumberMessageEntity(offset = a0, length = a1)
   }))
-  lazy val shrink: Shrink[TextLinkMessageEntity] = noShrink
+  lazy val shrink: Shrink[BankCardNumberMessageEntity] = noShrink
 }
 
 object GenPhoneNumberMessageEntity {
@@ -2013,17 +2127,18 @@ object GenMessageEntity {
   lazy val gen: Gen[MessageEntity] = Gen.lzy(sum[MessageEntity](
       List(GenMentionMessageEntity.gen, GenCashtagMessageEntity.gen, GenCodeMessageEntity.gen,
         GenBotCommandMessageEntity.gen, GenCustomEmojiMessageEntity.gen, GenExpandableBlockquoteMessageEntity.gen,
-        GenSpoilerMessageEntity.gen, GenEmailMessageEntity.gen, GenBlockquoteMessageEntity.gen,
+        GenEmailMessageEntity.gen, GenSpoilerMessageEntity.gen, GenBlockquoteMessageEntity.gen,
         GenBoldMessageEntity.gen, GenPreMessageEntity.gen, GenItalicMessageEntity.gen, GenDateTimeMessageEntity.gen,
         GenStrikethroughMessageEntity.gen, GenUnderlineMessageEntity.gen, GenHashtagMessageEntity.gen,
-        GenTextMentionMessageEntity.gen, GenUrlMessageEntity.gen, GenTextLinkMessageEntity.gen,
-        GenPhoneNumberMessageEntity.gen),
+        GenTextMentionMessageEntity.gen, GenTextLinkMessageEntity.gen, GenUrlMessageEntity.gen,
+        GenTonAddressMessageEntity.gen, GenBankCardNumberMessageEntity.gen, GenPhoneNumberMessageEntity.gen),
       List(GenMentionMessageEntity.gen, GenCashtagMessageEntity.gen, GenCodeMessageEntity.gen,
         GenBotCommandMessageEntity.gen, GenCustomEmojiMessageEntity.gen, GenExpandableBlockquoteMessageEntity.gen,
-        GenSpoilerMessageEntity.gen, GenEmailMessageEntity.gen, GenBlockquoteMessageEntity.gen,
+        GenEmailMessageEntity.gen, GenSpoilerMessageEntity.gen, GenBlockquoteMessageEntity.gen,
         GenBoldMessageEntity.gen, GenPreMessageEntity.gen, GenItalicMessageEntity.gen, GenDateTimeMessageEntity.gen,
         GenStrikethroughMessageEntity.gen, GenUnderlineMessageEntity.gen, GenHashtagMessageEntity.gen,
-        GenUrlMessageEntity.gen, GenTextLinkMessageEntity.gen, GenPhoneNumberMessageEntity.gen)))
+        GenTextLinkMessageEntity.gen, GenUrlMessageEntity.gen, GenTonAddressMessageEntity.gen,
+        GenBankCardNumberMessageEntity.gen, GenPhoneNumberMessageEntity.gen)))
   lazy val shrink: Shrink[MessageEntity] =
     shrinkSum[MessageEntity](variant(GenPreMessageEntity.shrink), variant(GenTextMentionMessageEntity.shrink))
 }
@@ -2823,6 +2938,15 @@ object GenRichTextBold {
     shrinkFields[RichTextBold](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
+object GenRichTextTonAddress {
+  import GenPrims._
+  lazy val gen: Gen[RichTextTonAddress] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genString).map {
+    case (a0, a1) => RichTextTonAddress(text = a0, address = a1)
+  }))
+  lazy val shrink: Shrink[RichTextTonAddress] = shrinkFields[RichTextTonAddress](x =>
+    List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
+}
+
 object GenRichTextReferenceLink {
   import GenPrims._
   lazy val gen: Gen[RichTextReferenceLink] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genString).map {
@@ -2842,7 +2966,7 @@ object GenRichText {
         GenRichTextEmailAddress.gen, GenRichTextMarked.gen, GenRichTextPlain.gen, GenRichTextItalic.gen,
         GenRichTextBankCardNumber.gen, GenRichTextStrikethrough.gen, GenRichTextCustomEmoji.gen, GenRichTextAnchor.gen,
         GenRichTextHashtag.gen, GenRichTextDateTime.gen, GenRichTextCashtag.gen, GenRichTextBold.gen,
-        GenRichTextReferenceLink.gen),
+        GenRichTextTonAddress.gen, GenRichTextReferenceLink.gen),
       List(GenRichTextConcat.gen, GenRichTextMathematicalExpression.gen, GenRichTextPlain.gen,
         GenRichTextCustomEmoji.gen, GenRichTextAnchor.gen)))
   lazy val shrink: Shrink[RichText] = shrinkSum[RichText](variant(GenRichTextSubscript.shrink),
@@ -2853,7 +2977,8 @@ object GenRichText {
     variant(GenRichTextSuperscript.shrink), variant(GenRichTextEmailAddress.shrink), variant(GenRichTextMarked.shrink),
     variant(GenRichTextItalic.shrink), variant(GenRichTextBankCardNumber.shrink),
     variant(GenRichTextStrikethrough.shrink), variant(GenRichTextHashtag.shrink), variant(GenRichTextDateTime.shrink),
-    variant(GenRichTextCashtag.shrink), variant(GenRichTextBold.shrink), variant(GenRichTextReferenceLink.shrink))
+    variant(GenRichTextCashtag.shrink), variant(GenRichTextBold.shrink), variant(GenRichTextTonAddress.shrink),
+    variant(GenRichTextReferenceLink.shrink))
 }
 
 object GenStoryAreaTypeLink {
@@ -2992,6 +3117,41 @@ object GenTransactionPartner {
     variant(GenTransactionPartnerFragment.shrink))
 }
 
+object GenWidgetQueryTypeSignData {
+  import GenPrims._
+  lazy val gen: Gen[WidgetQueryTypeSignData] = Gen.lzy(deeper(Gen.zip(GenWidgetQueryWallet.gen, genString).map {
+    case (a0, a1) => WidgetQueryTypeSignData(wallet = a0, signData = a1)
+  }))
+  lazy val shrink: Shrink[WidgetQueryTypeSignData] = shrinkFields[WidgetQueryTypeSignData](x =>
+    List(field(x.wallet)(GenWidgetQueryWallet.shrink)(v => x.copy(wallet = v))))
+}
+
+object GenWidgetQueryTypeSentTransaction {
+  import GenPrims._
+  lazy val gen: Gen[WidgetQueryTypeSentTransaction] = Gen.lzy(deeper(Gen.zip(GenWidgetQueryWallet.gen, genString).map {
+    case (a0, a1) => WidgetQueryTypeSentTransaction(wallet = a0, msgHash = a1)
+  }))
+  lazy val shrink: Shrink[WidgetQueryTypeSentTransaction] = shrinkFields[WidgetQueryTypeSentTransaction](x =>
+    List(field(x.wallet)(GenWidgetQueryWallet.shrink)(v => x.copy(wallet = v))))
+}
+
+object GenWidgetQueryTypeData {
+  import GenPrims._
+  lazy val gen: Gen[WidgetQueryTypeData] = Gen.lzy(deeper(opt(GenTonWalletCard.gen).map { a0 =>
+    WidgetQueryTypeData(walletCard = a0)
+  }))
+  lazy val shrink: Shrink[WidgetQueryTypeData] = shrinkFields[WidgetQueryTypeData](x =>
+    List(field(x.walletCard)(shrinkOpt(GenTonWalletCard.shrink))(v => x.copy(walletCard = v))))
+}
+
+object GenWidgetQueryType {
+  import GenPrims._
+  lazy val gen: Gen[WidgetQueryType] = Gen.lzy(sum[WidgetQueryType](List(GenWidgetQueryTypeSignData.gen,
+        GenWidgetQueryTypeSentTransaction.gen, GenWidgetQueryTypeData.gen), List(GenWidgetQueryTypeData.gen)))
+  lazy val shrink: Shrink[WidgetQueryType] = shrinkSum[WidgetQueryType](variant(GenWidgetQueryTypeSignData.shrink),
+    variant(GenWidgetQueryTypeSentTransaction.shrink), variant(GenWidgetQueryTypeData.shrink))
+}
+
 object GenAcceptedGiftTypes {
   import GenPrims._
   lazy val gen: Gen[AcceptedGiftTypes] = Gen.lzy(
@@ -3031,6 +3191,16 @@ object GenAnimation {
       field(x.fileName)(shrinkOpt(noShrink))(v => x.copy(fileName = v)),
       field(x.mimeType)(shrinkOpt(noShrink))(v => x.copy(mimeType = v)),
       field(x.fileSize)(shrinkOpt(noShrink))(v => x.copy(fileSize = v))))
+}
+
+object GenAreaPosition {
+  import GenPrims._
+  lazy val gen: Gen[AreaPosition] = Gen.lzy(
+    deeper(Gen.zip(genFloat, genFloat, genFloat, genFloat, genFloat, genFloat).map { case (a0, a1, a2, a3, a4, a5) =>
+      AreaPosition(xPercentage = a0, yPercentage = a1, widthPercentage = a2, heightPercentage = a3, rotationAngle = a4,
+        cornerRadiusPercentage = a5)
+    }))
+  lazy val shrink: Shrink[AreaPosition] = noShrink
 }
 
 object GenAudio {
@@ -3332,11 +3502,12 @@ object GenChatFullInfo {
           Gen.zip(optPrim(genInt), optPrim(genInt), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean),
             optPrim(genBoolean), optPrim(genString), optPrim(genBoolean), optPrim(genString)),
           Gen.zip(optPrim(genLong), opt(GenChatLocation.gen), opt(GenUserRating.gen), opt(GenAudio.gen),
-            opt(GenUniqueGiftColors.gen), optPrim(genInt), opt(GenUser.gen), opt(GenCommunity.gen)))
+            opt(GenUniqueGiftColors.gen), optPrim(genInt), opt(GenUser.gen), opt(GenCommunity.gen),
+            opt(GenTonWalletCard.gen)), opt(openEnum(GenChatShareTheme.gen)))
         .map {
           case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17),
                 (a18, a19, a20, a21, a22, a23, a24, a25, a26), (a27, a28, a29, a30, a31, a32, a33, a34, a35),
-                (a36, a37, a38, a39, a40, a41, a42, a43, a44), (a45, a46, a47, a48, a49, a50, a51, a52)) =>
+                (a36, a37, a38, a39, a40, a41, a42, a43, a44), (a45, a46, a47, a48, a49, a50, a51, a52, a53), a54) =>
             ChatFullInfo(id = a0, `type` = a1, accentColorId = a2, maxReactionCount = a3, acceptedGiftTypes = a4,
               title = a5, username = a6, firstName = a7, lastName = a8, isForum = a9, isDirectMessages = a10,
               photo = a11, activeUsernames = a12, birthdate = a13, businessIntro = a14, businessLocation = a15,
@@ -3349,7 +3520,7 @@ object GenChatFullInfo {
               hasAggressiveAntiSpamEnabled = a38, hasHiddenMembers = a39, hasProtectedContent = a40,
               hasVisibleHistory = a41, stickerSetName = a42, canSetStickerSet = a43, customEmojiStickerSetName = a44,
               linkedChatId = a45, location = a46, rating = a47, firstProfileAudio = a48, uniqueGiftColors = a49,
-              paidMessageStarCount = a50, guardBot = a51, community = a52)
+              paidMessageStarCount = a50, guardBot = a51, community = a52, tonWalletCard = a53, shareTheme = a54)
         }))
   lazy val shrink: Shrink[ChatFullInfo] = shrinkFields[ChatFullInfo](x =>
     List(
@@ -3401,7 +3572,9 @@ object GenChatFullInfo {
       field(x.uniqueGiftColors)(shrinkOpt(GenUniqueGiftColors.shrink))(v => x.copy(uniqueGiftColors = v)),
       field(x.paidMessageStarCount)(shrinkOpt(noShrink))(v => x.copy(paidMessageStarCount = v)),
       field(x.guardBot)(shrinkOpt(GenUser.shrink))(v => x.copy(guardBot = v)),
-      field(x.community)(shrinkOpt(noShrink))(v => x.copy(community = v))))
+      field(x.community)(shrinkOpt(noShrink))(v => x.copy(community = v)),
+      field(x.tonWalletCard)(shrinkOpt(GenTonWalletCard.shrink))(v => x.copy(tonWalletCard = v)),
+      field(x.shareTheme)(shrinkOpt(shrinkOpenEnum(GenChatShareTheme.shrink)))(v => x.copy(shareTheme = v))))
 }
 
 object GenChatInviteLink {
@@ -3524,6 +3697,24 @@ object GenChatPhoto {
     case (a0, a1, a2, a3) => ChatPhoto(smallFileId = a0, smallFileUniqueId = a1, bigFileId = a2, bigFileUniqueId = a3)
   }))
   lazy val shrink: Shrink[ChatPhoto] = noShrink
+}
+
+object GenChatShareThemeBackdrop {
+  import GenPrims._
+  lazy val gen: Gen[ChatShareThemeBackdrop] =
+    Gen.lzy(deeper(Gen.zip(genInt, genString, GenUniqueGiftBackdropColors.gen).map { case (a0, a1, a2) =>
+      ChatShareThemeBackdrop(id = a0, name = a1, colors = a2)
+    }))
+  lazy val shrink: Shrink[ChatShareThemeBackdrop] = noShrink
+}
+
+object GenChatShareThemeBackdrops {
+  import GenPrims._
+  lazy val gen: Gen[ChatShareThemeBackdrops] = Gen.lzy(deeper(list(GenChatShareThemeBackdrop.gen).map { a0 =>
+    ChatShareThemeBackdrops(backdrops = a0)
+  }))
+  lazy val shrink: Shrink[ChatShareThemeBackdrops] = shrinkFields[ChatShareThemeBackdrops](x =>
+    List(field(x.backdrops)(shrinkList(noShrink))(v => x.copy(backdrops = v))))
 }
 
 object GenChatShared {
@@ -3738,11 +3929,12 @@ object GenEncryptedPassportElement {
 object GenEphemeralMessageParameters {
   import GenPrims._
   lazy val gen: Gen[EphemeralMessageParameters] =
-    Gen.lzy(deeper(Gen.zip(genLong, optPrim(genString), optPrim(genBoolean)).map { case (a0, a1, a2) =>
+    Gen.lzy(deeper(Gen.zip(optPrim(genLong), optPrim(genString), optPrim(genBoolean)).map { case (a0, a1, a2) =>
       EphemeralMessageParameters(receiverUserId = a0, callbackQueryId = a1, replaceCallbackQueryMessage = a2)
     }))
   lazy val shrink: Shrink[EphemeralMessageParameters] = shrinkFields[EphemeralMessageParameters](x =>
     List(
+      field(x.receiverUserId)(shrinkOpt(noShrink))(v => x.copy(receiverUserId = v)),
       field(x.callbackQueryId)(shrinkOpt(noShrink))(v => x.copy(callbackQueryId = v)),
       field(x.replaceCallbackQueryMessage)(shrinkOpt(noShrink))(v => x.copy(replaceCallbackQueryMessage = v))))
 }
@@ -3755,17 +3947,18 @@ object GenExternalReplyInfo {
             opt(GenAnimation.gen), opt(GenAudio.gen), opt(GenDocument.gen), opt(GenLivePhoto.gen),
             opt(GenPaidMediaInfo.gen)),
           Gen.zip(list(GenPhotoSize.gen), opt(GenSticker.gen), opt(GenStory.gen), opt(GenVideo.gen),
-            opt(GenVideoNote.gen), opt(GenVoice.gen), optPrim(genBoolean), opt(GenChecklist.gen), opt(GenContact.gen)),
-          Gen.zip(opt(GenDice.gen), opt(GenGame.gen), opt(GenGiveaway.gen), opt(GenGiveawayWinners.gen),
-            opt(GenInvoice.gen), opt(GenLocation.gen), opt(GenPoll.gen), opt(GenVenue.gen)))
+            opt(GenVideoNote.gen), opt(GenVoice.gen), opt(GenWidget.gen), optPrim(genBoolean), opt(GenChecklist.gen)),
+          Gen.zip(opt(GenContact.gen), opt(GenDice.gen), opt(GenGame.gen), opt(GenGiveaway.gen),
+            opt(GenGiveawayWinners.gen), opt(GenInvoice.gen), opt(GenLocation.gen), opt(GenPoll.gen),
+            opt(GenVenue.gen)))
         .map {
           case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17),
-                (a18, a19, a20, a21, a22, a23, a24, a25)) =>
+                (a18, a19, a20, a21, a22, a23, a24, a25, a26)) =>
             ExternalReplyInfo(origin = a0, chat = a1, messageId = a2, linkPreviewOptions = a3, animation = a4,
               audio = a5, document = a6, livePhoto = a7, paidMedia = a8, photo = a9, sticker = a10, story = a11,
-              video = a12, videoNote = a13, voice = a14, hasMediaSpoiler = a15, checklist = a16, contact = a17,
-              dice = a18, game = a19, giveaway = a20, giveawayWinners = a21, invoice = a22, location = a23, poll = a24,
-              venue = a25)
+              video = a12, videoNote = a13, voice = a14, widget = a15, hasMediaSpoiler = a16, checklist = a17,
+              contact = a18, dice = a19, game = a20, giveaway = a21, giveawayWinners = a22, invoice = a23,
+              location = a24, poll = a25, venue = a26)
         }))
   lazy val shrink: Shrink[ExternalReplyInfo] = shrinkFields[ExternalReplyInfo](x =>
     List(
@@ -3784,6 +3977,7 @@ object GenExternalReplyInfo {
       field(x.video)(shrinkOpt(GenVideo.shrink))(v => x.copy(video = v)),
       field(x.videoNote)(shrinkOpt(GenVideoNote.shrink))(v => x.copy(videoNote = v)),
       field(x.voice)(shrinkOpt(GenVoice.shrink))(v => x.copy(voice = v)),
+      field(x.widget)(shrinkOpt(GenWidget.shrink))(v => x.copy(widget = v)),
       field(x.hasMediaSpoiler)(shrinkOpt(noShrink))(v => x.copy(hasMediaSpoiler = v)),
       field(x.checklist)(shrinkOpt(GenChecklist.shrink))(v => x.copy(checklist = v)),
       field(x.contact)(shrinkOpt(GenContact.shrink))(v => x.copy(contact = v)),
@@ -4500,6 +4694,12 @@ object GenPaidMessagePriceChanged {
   lazy val shrink: Shrink[PaidMessagePriceChanged] = noShrink
 }
 
+object GenPaidMessagesWaived {
+  import GenPrims._
+  lazy val gen: Gen[PaidMessagesWaived.type] = Gen.lzy(Gen.const(PaidMessagesWaived))
+  lazy val shrink: Shrink[PaidMessagesWaived.type] = noShrink
+}
+
 object GenPassportData {
   import GenPrims._
   lazy val gen: Gen[PassportData] =
@@ -4713,11 +4913,12 @@ object GenReplyParameters {
   lazy val gen: Gen[ReplyParameters] = Gen.lzy(
     deeper(Gen
         .zip(Gen.zip(optPrim(genInt), opt(GenChatId.gen), optPrim(genInt), optPrim(genBoolean), optPrim(genString),
-            opt(GenParseMode.gen), list(GenMessageEntity.gen), optPrim(genInt), optPrim(genInt)), optPrim(genString))
-        .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), a9) =>
+            opt(GenParseMode.gen), list(GenMessageEntity.gen), list(GenRichText.gen), optPrim(genInt)),
+          Gen.zip(optPrim(genInt), optPrim(genString)))
+        .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10)) =>
           ReplyParameters(messageId = a0, chatId = a1, ephemeralMessageId = a2, allowSendingWithoutReply = a3,
-            quote = a4, quoteParseMode = a5, quoteEntities = a6, quotePosition = a7, checklistTaskId = a8,
-            pollOptionId = a9)
+            quote = a4, quoteParseMode = a5, quoteEntities = a6, quoteRichTexts = a7, quotePosition = a8,
+            checklistTaskId = a9, pollOptionId = a10)
         }))
   lazy val shrink: Shrink[ReplyParameters] = shrinkFields[ReplyParameters](x =>
     List(
@@ -4728,6 +4929,7 @@ object GenReplyParameters {
       field(x.quote)(shrinkOpt(noShrink))(v => x.copy(quote = v)),
       field(x.quoteParseMode)(shrinkOpt(noShrink))(v => x.copy(quoteParseMode = v)),
       field(x.quoteEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(quoteEntities = v)),
+      field(x.quoteRichTexts)(shrinkList(GenRichText.shrink))(v => x.copy(quoteRichTexts = v)),
       field(x.quotePosition)(shrinkOpt(noShrink))(v => x.copy(quotePosition = v)),
       field(x.checklistTaskId)(shrinkOpt(noShrink))(v => x.copy(checklistTaskId = v)),
       field(x.pollOptionId)(shrinkOpt(noShrink))(v => x.copy(pollOptionId = v))))
@@ -4854,6 +5056,17 @@ object GenSharedUser {
       field(x.photo)(shrinkList(GenPhotoSize.shrink))(v => x.copy(photo = v))))
 }
 
+object GenSharedWidgetQuery {
+  import GenPrims._
+  lazy val gen: Gen[SharedWidgetQuery] =
+    Gen.lzy(deeper(Gen.zip(genString, GenUser.gen, openEnum(GenWidgetQueryType.gen), genString, genString).map {
+      case (a0, a1, a2, a3, a4) => SharedWidgetQuery(id = a0, from = a1, `type` = a2, data = a3, widgetId = a4)
+    }))
+  lazy val shrink: Shrink[SharedWidgetQuery] = shrinkFields[SharedWidgetQuery](x =>
+    List(field(x.from)(GenUser.shrink)(v => x.copy(from = v)),
+      field(x.`type`)(shrinkOpenEnum(GenWidgetQueryType.shrink))(v => x.copy(`type` = v))))
+}
+
 object GenShippingAddress {
   import GenPrims._
   lazy val gen: Gen[ShippingAddress] =
@@ -4961,21 +5174,11 @@ object GenStory {
 
 object GenStoryArea {
   import GenPrims._
-  lazy val gen: Gen[StoryArea] = Gen.lzy(deeper(Gen.zip(GenStoryAreaPosition.gen, GenStoryAreaType.gen).map {
+  lazy val gen: Gen[StoryArea] = Gen.lzy(deeper(Gen.zip(GenAreaPosition.gen, GenStoryAreaType.gen).map {
     case (a0, a1) => StoryArea(position = a0, `type` = a1)
   }))
   lazy val shrink: Shrink[StoryArea] =
     shrinkFields[StoryArea](x => List(field(x.`type`)(GenStoryAreaType.shrink)(v => x.copy(`type` = v))))
-}
-
-object GenStoryAreaPosition {
-  import GenPrims._
-  lazy val gen: Gen[StoryAreaPosition] = Gen.lzy(
-    deeper(Gen.zip(genFloat, genFloat, genFloat, genFloat, genFloat, genFloat).map { case (a0, a1, a2, a3, a4, a5) =>
-      StoryAreaPosition(xPercentage = a0, yPercentage = a1, widthPercentage = a2, heightPercentage = a3,
-        rotationAngle = a4, cornerRadiusPercentage = a5)
-    }))
-  lazy val shrink: Shrink[StoryAreaPosition] = noShrink
 }
 
 object GenSuccessfulPayment {
@@ -5101,14 +5304,71 @@ object GenSwitchInlineQueryChosenChat {
 
 object GenTextQuote {
   import GenPrims._
-  lazy val gen: Gen[TextQuote] =
-    Gen.lzy(deeper(Gen.zip(genString, genInt, list(openEnum(GenMessageEntity.gen)), optPrim(genBoolean)).map {
-      case (a0, a1, a2, a3) => TextQuote(text = a0, position = a1, entities = a2, isManual = a3)
-    }))
+  lazy val gen: Gen[TextQuote] = Gen.lzy(deeper(Gen
+        .zip(genString, genInt, list(openEnum(GenMessageEntity.gen)), list(openEnum(GenRichText.gen)),
+          optPrim(genBoolean))
+        .map { case (a0, a1, a2, a3, a4) =>
+          TextQuote(text = a0, position = a1, entities = a2, richTexts = a3, isManual = a4)
+        }))
   lazy val shrink: Shrink[TextQuote] = shrinkFields[TextQuote](x =>
     List(
       field(x.entities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v => x.copy(entities = v)),
+      field(x.richTexts)(shrinkList(shrinkOpenEnum(GenRichText.shrink)))(v => x.copy(richTexts = v)),
       field(x.isManual)(shrinkOpt(noShrink))(v => x.copy(isManual = v))))
+}
+
+object GenTonNft {
+  import GenPrims._
+  lazy val gen: Gen[TonNft] = Gen.lzy(deeper(Gen
+        .zip(genString, genString, genString, genString, optPrim(genString), list(GenTonNftAttribute.gen),
+          opt(GenUniqueGift.gen))
+        .map { case (a0, a1, a2, a3, a4, a5, a6) =>
+          TonNft(address = a0, index = a1, name = a2, description = a3, collectionAddress = a4, attributes = a5,
+            gift = a6)
+        }))
+  lazy val shrink: Shrink[TonNft] = shrinkFields[TonNft](x =>
+    List(
+      field(x.collectionAddress)(shrinkOpt(noShrink))(v => x.copy(collectionAddress = v)),
+      field(x.attributes)(shrinkList(noShrink))(v => x.copy(attributes = v)),
+      field(x.gift)(shrinkOpt(GenUniqueGift.shrink))(v => x.copy(gift = v))))
+}
+
+object GenTonNftAttribute {
+  import GenPrims._
+  lazy val gen: Gen[TonNftAttribute] =
+    Gen.lzy(deeper(Gen.zip(genString, genString).map { case (a0, a1) => TonNftAttribute(traitType = a0, value = a1) }))
+  lazy val shrink: Shrink[TonNftAttribute] = noShrink
+}
+
+object GenTonWalletCard {
+  import GenPrims._
+  lazy val gen: Gen[TonWalletCard] =
+    Gen.lzy(deeper(Gen.zip(genString, genString, list(GenTonWalletCardSticker.gen), optPrim(genString)).map {
+      case (a0, a1, a2, a3) => TonWalletCard(address = a0, amount = a1, stickers = a2, backgroundNftAddress = a3)
+    }))
+  lazy val shrink: Shrink[TonWalletCard] = shrinkFields[TonWalletCard](x =>
+    List(
+      field(x.stickers)(shrinkList(GenTonWalletCardSticker.shrink))(v => x.copy(stickers = v)),
+      field(x.backgroundNftAddress)(shrinkOpt(noShrink))(v => x.copy(backgroundNftAddress = v))))
+}
+
+object GenTonWalletCardSticker {
+  import GenPrims._
+  lazy val gen: Gen[TonWalletCardSticker] = Gen.lzy(deeper(Gen.zip(GenAreaPosition.gen, GenTonNft.gen).map {
+    case (a0, a1) => TonWalletCardSticker(position = a0, nft = a1)
+  }))
+  lazy val shrink: Shrink[TonWalletCardSticker] =
+    shrinkFields[TonWalletCardSticker](x => List(field(x.nft)(GenTonNft.shrink)(v => x.copy(nft = v))))
+}
+
+object GenTonWalletTransfer {
+  import GenPrims._
+  lazy val gen: Gen[TonWalletTransfer] =
+    Gen.lzy(deeper(Gen.zip(genString, genString, genString, optPrim(genString)).map { case (a0, a1, a2, a3) =>
+      TonWalletTransfer(transactionId = a0, peerAddress = a1, amount = a2, comment = a3)
+    }))
+  lazy val shrink: Shrink[TonWalletTransfer] =
+    shrinkFields[TonWalletTransfer](x => List(field(x.comment)(shrinkOpt(noShrink))(v => x.copy(comment = v))))
 }
 
 object GenUniqueGift {
@@ -5217,22 +5477,23 @@ object GenUpdate {
             opt(GenBusinessConnection.gen), opt(GenMessage.gen), opt(GenMessage.gen),
             opt(GenBusinessMessagesDeleted.gen)),
           Gen.zip(opt(GenMessage.gen), opt(GenMessageReactionUpdated.gen), opt(GenMessageReactionCountUpdated.gen),
-            opt(GenInlineQuery.gen), opt(GenChosenInlineResult.gen), opt(GenCallbackQuery.gen),
-            opt(GenShippingQuery.gen), opt(GenPreCheckoutQuery.gen), opt(GenPaidMediaPurchased.gen)),
-          Gen.zip(opt(GenPoll.gen), opt(GenPollAnswer.gen), opt(GenChatMemberUpdated.gen),
-            opt(GenChatMemberUpdated.gen), opt(GenChatJoinRequest.gen), opt(GenChatBoostUpdated.gen),
-            opt(GenChatBoostRemoved.gen), opt(GenManagedBotUpdated.gen), opt(GenBotSubscriptionUpdated.gen)),
-          opt(GenMessageGenerationStopped.gen))
+            opt(GenInlineQuery.gen), opt(GenChosenInlineResult.gen), opt(GenCallbackQuery.gen), opt(GenWidgetQuery.gen),
+            opt(GenSharedWidgetQuery.gen), opt(GenShippingQuery.gen)),
+          Gen.zip(opt(GenPreCheckoutQuery.gen), opt(GenPaidMediaPurchased.gen), opt(GenPoll.gen),
+            opt(GenPollAnswer.gen), opt(GenChatMemberUpdated.gen), opt(GenChatMemberUpdated.gen),
+            opt(GenChatJoinRequest.gen), opt(GenChatBoostUpdated.gen), opt(GenChatBoostRemoved.gen)),
+          Gen.zip(opt(GenManagedBotUpdated.gen), opt(GenBotSubscriptionUpdated.gen),
+            opt(GenMessageGenerationStopped.gen)))
         .map {
           case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17),
-                (a18, a19, a20, a21, a22, a23, a24, a25, a26), a27) =>
+                (a18, a19, a20, a21, a22, a23, a24, a25, a26), (a27, a28, a29)) =>
             Update(updateId = a0, message = a1, editedMessage = a2, channelPost = a3, editedChannelPost = a4,
               businessConnection = a5, businessMessage = a6, editedBusinessMessage = a7, deletedBusinessMessages = a8,
               guestMessage = a9, messageReaction = a10, messageReactionCount = a11, inlineQuery = a12,
-              chosenInlineResult = a13, callbackQuery = a14, shippingQuery = a15, preCheckoutQuery = a16,
-              purchasedPaidMedia = a17, poll = a18, pollAnswer = a19, myChatMember = a20, chatMember = a21,
-              chatJoinRequest = a22, chatBoost = a23, removedChatBoost = a24, managedBot = a25, subscription = a26,
-              stoppedMessageGeneration = a27)
+              chosenInlineResult = a13, callbackQuery = a14, widgetQuery = a15, sharedWidgetQuery = a16,
+              shippingQuery = a17, preCheckoutQuery = a18, purchasedPaidMedia = a19, poll = a20, pollAnswer = a21,
+              myChatMember = a22, chatMember = a23, chatJoinRequest = a24, chatBoost = a25, removedChatBoost = a26,
+              managedBot = a27, subscription = a28, stoppedMessageGeneration = a29)
         }))
   lazy val shrink: Shrink[Update] = shrinkFields[Update](x =>
     List(
@@ -5252,6 +5513,8 @@ object GenUpdate {
       field(x.inlineQuery)(shrinkOpt(GenInlineQuery.shrink))(v => x.copy(inlineQuery = v)),
       field(x.chosenInlineResult)(shrinkOpt(GenChosenInlineResult.shrink))(v => x.copy(chosenInlineResult = v)),
       field(x.callbackQuery)(shrinkOpt(GenCallbackQuery.shrink))(v => x.copy(callbackQuery = v)),
+      field(x.widgetQuery)(shrinkOpt(GenWidgetQuery.shrink))(v => x.copy(widgetQuery = v)),
+      field(x.sharedWidgetQuery)(shrinkOpt(GenSharedWidgetQuery.shrink))(v => x.copy(sharedWidgetQuery = v)),
       field(x.shippingQuery)(shrinkOpt(GenShippingQuery.shrink))(v => x.copy(shippingQuery = v)),
       field(x.preCheckoutQuery)(shrinkOpt(GenPreCheckoutQuery.shrink))(v => x.copy(preCheckoutQuery = v)),
       field(x.purchasedPaidMedia)(shrinkOpt(GenPaidMediaPurchased.shrink))(v => x.copy(purchasedPaidMedia = v)),
@@ -5476,6 +5739,53 @@ object GenWebhookInfo {
       field(x.lastSynchronizationErrorDate)(shrinkOpt(noShrink))(v => x.copy(lastSynchronizationErrorDate = v)),
       field(x.maxConnections)(shrinkOpt(noShrink))(v => x.copy(maxConnections = v)),
       field(x.allowedUpdates)(shrinkList(noShrink))(v => x.copy(allowedUpdates = v))))
+}
+
+object GenWidget {
+  import GenPrims._
+  lazy val gen: Gen[Widget] = Gen.lzy(deeper(Gen
+        .zip(genString, optPrim(genString), optPrim(genInt), optPrim(genInt), optPrim(genString), optPrim(genString))
+        .map { case (a0, a1, a2, a3, a4, a5) =>
+          Widget(html = a0, id = a1, width = a2, height = a3, publicData = a4, chatData = a5)
+        }))
+  lazy val shrink: Shrink[Widget] = shrinkFields[Widget](x =>
+    List(
+      field(x.id)(shrinkOpt(noShrink))(v => x.copy(id = v)),
+      field(x.width)(shrinkOpt(noShrink))(v => x.copy(width = v)),
+      field(x.height)(shrinkOpt(noShrink))(v => x.copy(height = v)),
+      field(x.publicData)(shrinkOpt(noShrink))(v => x.copy(publicData = v)),
+      field(x.chatData)(shrinkOpt(noShrink))(v => x.copy(chatData = v))))
+}
+
+object GenWidgetQuery {
+  import GenPrims._
+  lazy val gen: Gen[WidgetQuery] = Gen.lzy(deeper(Gen
+        .zip(Gen.zip(genString, GenUser.gen, genString, openEnum(GenWidgetQueryType.gen), genString, opt(GenChat.gen),
+            optPrim(genInt), optPrim(genString), optPrim(genString)), optPrim(genString))
+        .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), a9) =>
+          WidgetQuery(id = a0, from = a1, chatInstance = a2, `type` = a3, data = a4, chat = a5, messageId = a6,
+            inlineMessageId = a7, chatType = a8, widgetId = a9)
+        }))
+  lazy val shrink: Shrink[WidgetQuery] = shrinkFields[WidgetQuery](x =>
+    List(
+      field(x.from)(GenUser.shrink)(v => x.copy(from = v)),
+      field(x.`type`)(shrinkOpenEnum(GenWidgetQueryType.shrink))(v => x.copy(`type` = v)),
+      field(x.chat)(shrinkOpt(GenChat.shrink))(v => x.copy(chat = v)),
+      field(x.messageId)(shrinkOpt(noShrink))(v => x.copy(messageId = v)),
+      field(x.inlineMessageId)(shrinkOpt(noShrink))(v => x.copy(inlineMessageId = v)),
+      field(x.chatType)(shrinkOpt(noShrink))(v => x.copy(chatType = v)),
+      field(x.widgetId)(shrinkOpt(noShrink))(v => x.copy(widgetId = v))))
+}
+
+object GenWidgetQueryWallet {
+  import GenPrims._
+  lazy val gen: Gen[WidgetQueryWallet] =
+    Gen.lzy(deeper(Gen.zip(genString, genString, optPrim(genString), optPrim(genString)).map { case (a0, a1, a2, a3) =>
+      WidgetQueryWallet(address = a0, amount = a1, publicKey = a2, stateInit = a3)
+    }))
+  lazy val shrink: Shrink[WidgetQueryWallet] = shrinkFields[WidgetQueryWallet](x =>
+    List(field(x.publicKey)(shrinkOpt(noShrink))(v => x.copy(publicKey = v)),
+      field(x.stateInit)(shrinkOpt(noShrink))(v => x.copy(stateInit = v))))
 }
 
 object GenWriteAccessAllowed {

@@ -7,4 +7,4 @@ package telegramium.bots
   * @param type
   *   Type of the area
   */
-final case class StoryArea(position: StoryAreaPosition, `type`: StoryAreaType)
+final case class StoryArea(position: AreaPosition, `type`: StoryAreaType)

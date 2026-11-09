@@ -56,7 +56,9 @@ import telegramium.bots.InputInvoiceMessageContent
 import telegramium.bots.InputContactMessageContent
 import telegramium.bots.InputLocationMessageContent
 import telegramium.bots.InputTextMessageContent
+import telegramium.bots.InputWidgetMessageContent
 import telegramium.bots.InputRichMessageContent
+import telegramium.bots.InputSharedWidgetMessageContent
 import telegramium.bots.InputRichBlock
 import telegramium.bots.InputRichBlockTable
 import telegramium.bots.InputRichBlockAnchor
@@ -100,6 +102,7 @@ import telegramium.bots.BusinessConnection
 import telegramium.bots.ChatFullInfo
 import telegramium.bots.ChatMember
 import telegramium.bots.MenuButton
+import telegramium.bots.ChatShareThemeBackdrops
 import telegramium.bots.Sticker
 import telegramium.bots.File
 import telegramium.bots.GameHighScore
@@ -112,6 +115,7 @@ import telegramium.bots.BotName
 import telegramium.bots.BotShortDescription
 import telegramium.bots.StarTransactions
 import telegramium.bots.StickerSet
+import telegramium.bots.UniqueGift
 import telegramium.bots.Update
 import telegramium.bots.UserChatBoosts
 import telegramium.bots.UserProfileAudios
@@ -397,7 +401,8 @@ trait Methods {
       val (richMessage1, richMessageFiles) = attachFiles_InputRichMessage(name + ".rich_message", v.richMessage)
       withAttached(v, richMessageFiles)(v.copy(richMessage = richMessage1))
     case v @ (_: InputVenueMessageContent | _: InputInvoiceMessageContent | _: InputContactMessageContent |
-        _: InputLocationMessageContent | _: InputTextMessageContent) =>
+        _: InputLocationMessageContent | _: InputTextMessageContent | _: InputWidgetMessageContent |
+        _: InputSharedWidgetMessageContent) =>
       (v, Map.empty[String, IFile])
   }
 
@@ -710,6 +715,22 @@ trait Methods {
     MethodReq[SentWebAppMessage]("answerWebAppQuery", req.asJson, resultFiles)
   }
 
+  /** Use this method to send an answer to a query from a widget. The query must be answered within 15 seconds. The
+    * answer is received only by the widget that sent the query and doesn't change data of the widget; use <a
+    * href="https://core.telegram.org/bots/api#editmessagewidgetdata">editMessageWidgetData</a> or <a
+    * href="https://core.telegram.org/bots/api#editsharedwidgetdata">editSharedWidgetData</a> to change it. On success,
+    * <em>True</em> is returned.
+    *
+    * @param widgetQueryId
+    *   Unique identifier for the query to be answered
+    * @param data
+    *   Data to be returned to the widget, 0-1024 bytes
+    */
+  def answerWidgetQuery(widgetQueryId: String, data: Option[String] = Option.empty): Method[Boolean] = {
+    val req = AnswerWidgetQueryReq(widgetQueryId, data)
+    MethodReq[Boolean]("answerWidgetQuery", req.asJson)
+  }
+
   /** Use this method to approve a chat join request. The bot must be an administrator in the chat for this to work and
     * must have the <em>can_invite_users</em> administrator right. Returns <em>True</em> on success.
     *
@@ -838,7 +859,7 @@ trait Methods {
   }
 
   /** Use this method to copy messages of any kind. Service messages, paid media messages, giveaway messages, giveaway
-    * winners messages, and invoice messages can't be copied. A quiz <a
+    * winners messages, invoice messages, and widget messages can't be copied. A quiz <a
     * href="https://core.telegram.org/bots/api#poll">poll</a> can be copied only if the value of the field
     * <em>correct_option_ids</em> is known to the bot. The method is analogous to the method <a
     * href="https://core.telegram.org/bots/api#forwardmessage">forwardMessage</a>, but the copied message doesn't have a
@@ -846,11 +867,11 @@ trait Methods {
     * the sent message on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
     *   <code>&#064;username</code>
     * @param fromChatId
-    *   Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup or
-    *   channel in the format <code>&#064;username</code>)
+    *   Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup,
+    *   or channel in the format <code>&#064;username</code>)
     * @param messageId
     *   Message identifier in the chat specified in <em>from_chat_id</em>
     * @param messageThreadId
@@ -938,18 +959,18 @@ trait Methods {
   }
 
   /** Use this method to copy messages of any kind. If some of the specified messages can't be found or copied, they are
-    * skipped. Service messages, paid media messages, giveaway messages, giveaway winners messages, and invoice messages
-    * can't be copied. A quiz <a href="https://core.telegram.org/bots/api#poll">poll</a> can be copied only if the value
-    * of the field <em>correct_option_ids</em> is known to the bot. The method is analogous to the method <a
-    * href="https://core.telegram.org/bots/api#forwardmessages">forwardMessages</a>, but the copied messages don't have
-    * a link to the original message. Album grouping is kept for copied messages. On success, an Array of <a
-    * href="https://core.telegram.org/bots/api#messageid">MessageId</a> of the sent messages is returned.
+    * skipped. Service messages, paid media messages, giveaway messages, giveaway winners messages, invoice messages,
+    * and widget messages can't be copied. A quiz <a href="https://core.telegram.org/bots/api#poll">poll</a> can be
+    * copied only if the value of the field <em>correct_option_ids</em> is known to the bot. The method is analogous to
+    * the method <a href="https://core.telegram.org/bots/api#forwardmessages">forwardMessages</a>, but the copied
+    * messages don't have a link to the original message. Album grouping is kept for copied messages. On success, an
+    * Array of <a href="https://core.telegram.org/bots/api#messageid">MessageId</a> of the sent messages is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
     *   <code>&#064;username</code>
     * @param fromChatId
-    *   Unique identifier for the chat where the original messages were sent (or username of the target bot, supergroup
+    *   Unique identifier for the chat where the original messages were sent (or username of the target bot, supergroup,
     *   or channel in the format <code>&#064;username</code>)
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
@@ -1054,7 +1075,9 @@ trait Methods {
 
   /** Use this method to create a topic in a forum supergroup chat or a private chat with a user. In the case of a
     * supergroup chat the bot must be an administrator in the chat for this to work and must have the
-    * <em>can_manage_topics</em> administrator right. Returns information about the created topic as a <a
+    * <em>can_manage_topics</em> administrator right. In the case of a private chat, a link to the topic can be created
+    * in the format <code>https://t.me/ᐸbot_usernameᐳ/ᐸmessage_thread_idᐳ</code>; the link opens the topic only for the
+    * user. Returns information about the created topic as a <a
     * href="https://core.telegram.org/bots/api#forumtopic">ForumTopic</a> object.
     *
     * @param chatId
@@ -1290,6 +1313,21 @@ trait Methods {
     MethodReq[Boolean]("deleteAllMessageReactions", req.asJson)
   }
 
+  /** Deletes a regular gift owned by a managed business account without receiving Telegram Stars for it. Requires the
+    * <em>can_convert_gifts_to_stars</em> business bot right. The gift can be deleted only if it isn't limited (the
+    * field <em>total_count</em> of the <a href="https://core.telegram.org/bots/api#gift">Gift</a> is omitted) and
+    * wasn't refunded. Returns <em>True</em> on success.
+    *
+    * @param businessConnectionId
+    *   Unique identifier of the business connection
+    * @param ownedGiftId
+    *   Unique identifier of the regular gift that should be deleted
+    */
+  def deleteBusinessAccountGift(businessConnectionId: String, ownedGiftId: String): Method[Boolean] = {
+    val req = DeleteBusinessAccountGiftReq(businessConnectionId, ownedGiftId)
+    MethodReq[Boolean]("deleteBusinessAccountGift", req.asJson)
+  }
+
   /** Delete messages on behalf of a business account. Requires the <em>can_delete_sent_messages</em> business bot right
     * to delete messages sent by the bot itself, or the <em>can_delete_all_messages</em> business bot right to delete
     * any message. Returns <em>True</em> on success.
@@ -1381,7 +1419,7 @@ trait Methods {
     * Returns <em>True</em> on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
     *   <code>&#064;username</code>
     * @param messageId
     *   Identifier of the message to delete
@@ -1418,7 +1456,7 @@ trait Methods {
     * are skipped. Returns <em>True</em> on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
     *   <code>&#064;username</code>
     * @param messageIds
     *   A JSON-serialized list of 1-100 identifiers of messages to delete. See <a
@@ -1752,7 +1790,7 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if <em>inline_message_id</em> is not specified. Unique identifier for the target chat or username of
-    *   the target bot, supergroup or channel in the format <code>&#064;username</code>.
+    *   the target bot, supergroup, or channel in the format <code>&#064;username</code>.
     * @param messageId
     *   Required if <em>inline_message_id</em> is not specified. Identifier of the message to edit.
     * @param inlineMessageId
@@ -1837,7 +1875,7 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if <em>inline_message_id</em> is not specified. Unique identifier for the target chat or username of
-    *   the target bot, supergroup or channel in the format <code>&#064;username</code>.
+    *   the target bot, supergroup, or channel in the format <code>&#064;username</code>.
     * @param messageId
     *   Required if <em>inline_message_id</em> is not specified. Identifier of the message to edit.
     * @param inlineMessageId
@@ -1902,7 +1940,7 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if <em>inline_message_id</em> is not specified. Unique identifier for the target chat or username of
-    *   the target bot, supergroup or channel in the format <code>&#064;username</code>.
+    *   the target bot, supergroup, or channel in the format <code>&#064;username</code>.
     * @param messageId
     *   Required if <em>inline_message_id</em> is not specified. Identifier of the message to edit.
     * @param inlineMessageId
@@ -1933,7 +1971,7 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if <em>inline_message_id</em> is not specified. Unique identifier for the target chat or username of
-    *   the target bot, supergroup or channel in the format <code>&#064;username</code>.
+    *   the target bot, supergroup, or channel in the format <code>&#064;username</code>.
     * @param messageId
     *   Required if <em>inline_message_id</em> is not specified. Identifier of the message to edit.
     * @param inlineMessageId
@@ -1963,7 +2001,7 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if <em>inline_message_id</em> is not specified. Unique identifier for the target chat or username of
-    *   the target bot, supergroup or channel in the format <code>&#064;username</code>.
+    *   the target bot, supergroup, or channel in the format <code>&#064;username</code>.
     * @param messageId
     *   Required if <em>inline_message_id</em> is not specified. Identifier of the message to edit.
     * @param inlineMessageId
@@ -2013,6 +2051,54 @@ trait Methods {
       replyMarkup
     )
     MethodReq[Either[Boolean, Message]]("editMessageText", req.asJson, richMessageFiles)
+  }
+
+  /** Use this method to edit data of a widget in a message sent by the bot or via the bot (for inline bots). Public
+    * data of a shared widget can be changed at most once per second. On success, <em>True</em> is returned.
+    *
+    * @param chatId
+    *   Required if <em>inline_message_id</em> is not specified. Unique identifier for the target chat or username of
+    *   the target supergroup in the format <code>&#064;username</code>.
+    * @param messageId
+    *   Required if <em>inline_message_id</em> is not specified. Identifier of the message with the widget.
+    * @param inlineMessageId
+    *   Required if <em>chat_id</em> and <em>message_id</em> are not specified. Identifier of the inline message.
+    * @param publicData
+    *   New public data of the widget, 0-1024 bytes; pass an empty string to remove the public data. If omitted, then
+    *   the public data isn't changed.
+    * @param chatData
+    *   New data of the widget, which is specific to the message, 0-1024 bytes; pass an empty string to remove the data.
+    *   If omitted, then the data isn't changed.
+    */
+  def editMessageWidgetData(
+    chatId: Option[ChatId] = Option.empty,
+    messageId: Option[Int] = Option.empty,
+    inlineMessageId: Option[String] = Option.empty,
+    publicData: Option[String] = Option.empty,
+    chatData: Option[String] = Option.empty
+  ): Method[Boolean] = {
+    val req = EditMessageWidgetDataReq(chatId, messageId, inlineMessageId, publicData, chatData)
+    MethodReq[Boolean]("editMessageWidgetData", req.asJson)
+  }
+
+  /** Use this method to edit public data of a shared widget created by the bot. A shared widget can be edited at most
+    * once per second. On success, <em>True</em> is returned.
+    *
+    * @param widgetId
+    *   Unique identifier of the shared widget
+    * @param publicData
+    *   New public data of the widget, 0-1024 bytes; pass an empty string to remove the public data
+    * @param cacheTime
+    *   The maximum amount of time in seconds that the public data of the widget may be cached client-side; 5-3600. If
+    *   omitted, then the current value is kept, which is 30 by default.
+    */
+  def editSharedWidgetData(
+    widgetId: String,
+    publicData: String,
+    cacheTime: Option[Int] = Option.empty
+  ): Method[Boolean] = {
+    val req = EditSharedWidgetDataReq(widgetId, publicData, cacheTime)
+    MethodReq[Boolean]("editSharedWidgetData", req.asJson)
   }
 
   /** Edits a story previously posted by the bot on behalf of a managed business account. Requires the
@@ -2091,11 +2177,11 @@ trait Methods {
     * forwarded. On success, the sent <a href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
     *   <code>&#064;username</code>
     * @param fromChatId
-    *   Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup or
-    *   channel in the format <code>&#064;username</code>)
+    *   Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup,
+    *   or channel in the format <code>&#064;username</code>)
     * @param messageId
     *   Message identifier in the chat specified in <em>from_chat_id</em>
     * @param messageThreadId
@@ -2150,10 +2236,10 @@ trait Methods {
     * href="https://core.telegram.org/bots/api#messageid">MessageId</a> of the sent messages is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
     *   <code>&#064;username</code>
     * @param fromChatId
-    *   Unique identifier for the chat where the original messages were sent (or username of the target bot, supergroup
+    *   Unique identifier for the chat where the original messages were sent (or username of the target bot, supergroup,
     *   or channel in the format <code>&#064;username</code>)
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
@@ -2410,6 +2496,15 @@ trait Methods {
     MethodReq[iozhik.OpenEnum[MenuButton]]("getChatMenuButton", req.asJson)
   }
 
+  /** Use this method to get the list of backdrops, which can be used as the background of a theme of the screen for
+    * sharing a link to a user or a chat. Requires no parameters. Returns a <a
+    * href="https://core.telegram.org/bots/api#chatsharethemebackdrops">ChatShareThemeBackdrops</a> object.
+    */
+  def getChatShareThemeBackdrops(): Method[ChatShareThemeBackdrops] = {
+    val req = GetChatShareThemeBackdropsReq
+    MethodReq[ChatShareThemeBackdrops]("getChatShareThemeBackdrops", req.asJson)
+  }
+
   /** Use this method to get information about custom emoji stickers by their identifiers. Returns an Array of <a
     * href="https://core.telegram.org/bots/api#sticker">Sticker</a> objects.
     *
@@ -2596,6 +2691,17 @@ trait Methods {
   def getStickerSet(name: String): Method[StickerSet] = {
     val req = GetStickerSetReq(name)
     MethodReq[StickerSet]("getStickerSet", req.asJson)
+  }
+
+  /** Use this method to get information about a unique gift by its name. Returns a <a
+    * href="https://core.telegram.org/bots/api#uniquegift">UniqueGift</a> object on success.
+    *
+    * @param name
+    *   Unique name of the gift
+    */
+  def getUniqueGift(name: String): Method[UniqueGift] = {
+    val req = GetUniqueGiftReq(name)
+    MethodReq[UniqueGift]("getUniqueGift", req.asJson)
   }
 
   /** Use this method to receive incoming updates using long polling (<a
@@ -3290,15 +3396,15 @@ trait Methods {
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned. Bots can currently send animation files
     * of up to 50 MB in size, this limit may be changed in the future.
     *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-    *   <code>&#064;username</code>
     * @param animation
     *   Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers
     *   (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new
     *   animation using multipart/form-data.
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
+    *   <code>&#064;username</code>; required unless the message is sent as an ephemeral reply to a callback query
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -3357,9 +3463,9 @@ trait Methods {
     *   reply keyboard or to force a reply from the user.
     */
   def sendAnimation(
-    chatId: ChatId,
     animation: IFile,
     businessConnectionId: Option[String] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
     ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
@@ -3381,9 +3487,9 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendAnimationReq(
-      chatId,
       animation,
       businessConnectionId,
+      chatId,
       messageThreadId,
       directMessagesTopicId,
       ephemeralMessageParameters,
@@ -3417,15 +3523,15 @@ trait Methods {
     * up to 50 MB in size, this limit may be changed in the future. For sending voice messages, use the <a
     * href="https://core.telegram.org/bots/api#sendvoice">sendVoice</a> method instead.
     *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-    *   <code>&#064;username</code>
     * @param audio
     *   Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers
     *   (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new
     *   one using multipart/form-data.
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
+    *   <code>&#064;username</code>; required unless the message is sent as an ephemeral reply to a callback query
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -3479,9 +3585,9 @@ trait Methods {
     *   reply keyboard or to force a reply from the user.
     */
   def sendAudio(
-    chatId: ChatId,
     audio: IFile,
     businessConnectionId: Option[String] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
     ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
@@ -3501,9 +3607,9 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendAudioReq(
-      chatId,
       audio,
       businessConnectionId,
+      chatId,
       messageThreadId,
       directMessagesTopicId,
       ephemeralMessageParameters,
@@ -3634,15 +3740,15 @@ trait Methods {
   /** Use this method to send phone contacts. On success, the sent <a
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-    *   <code>&#064;username</code>
     * @param phoneNumber
     *   Contact's phone number
     * @param firstName
     *   Contact's first name
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
+    *   <code>&#064;username</code>; required unless the message is sent as an ephemeral reply to a callback query
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -3681,10 +3787,10 @@ trait Methods {
     *   reply keyboard or to force a reply from the user.
     */
   def sendContact(
-    chatId: ChatId,
     phoneNumber: String,
     firstName: String,
     businessConnectionId: Option[String] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
     ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
@@ -3699,10 +3805,10 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendContactReq(
-      chatId,
       phoneNumber,
       firstName,
       businessConnectionId,
+      chatId,
       messageThreadId,
       directMessagesTopicId,
       ephemeralMessageParameters,
@@ -3723,7 +3829,7 @@ trait Methods {
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
     *   <code>&#064;username</code>
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
@@ -3796,15 +3902,15 @@ trait Methods {
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned. Bots can currently send files of any
     * type of up to 50 MB in size, this limit may be changed in the future.
     *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-    *   <code>&#064;username</code>
     * @param document
     *   File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an
     *   HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using
     *   multipart/form-data.
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
+    *   <code>&#064;username</code>; required unless the message is sent as an ephemeral reply to a callback query
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -3855,9 +3961,9 @@ trait Methods {
     *   reply keyboard or to force a reply from the user.
     */
   def sendDocument(
-    chatId: ChatId,
     document: IFile,
     businessConnectionId: Option[String] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
     ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
@@ -3875,9 +3981,9 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendDocumentReq(
-      chatId,
       document,
       businessConnectionId,
+      chatId,
       messageThreadId,
       directMessagesTopicId,
       ephemeralMessageParameters,
@@ -3969,8 +4075,8 @@ trait Methods {
     * @param userId
     *   Required if <em>chat_id</em> is not specified. Unique identifier of the target user who will receive the gift.
     * @param chatId
-    *   Required if <em>user_id</em> is not specified. Unique identifier for the chat or username of the channel (in the
-    *   format <code>&#064;username</code>) that will receive the gift.
+    *   Required if <em>user_id</em> is not specified. Unique identifier for the chat that will receive the gift or
+    *   username of the channel in the format <code>&#064;username</code>.
     * @param payForUpgrade
     *   Pass <em>True</em> to pay for the gift upgrade from the bot's balance, thereby making the upgrade free for the
     *   receiver
@@ -4003,7 +4109,7 @@ trait Methods {
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
     *   <code>&#064;username</code>
     * @param title
     *   Product name, 1-32 characters
@@ -4173,9 +4279,6 @@ trait Methods {
   /** Use this method to send live photos. On success, the sent <a
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target channel (in the format
-    *   <code>&#064;channelusername</code>)
     * @param livePhoto
     *   Live photo video to send. The video must be no longer than 10 seconds and must not exceed 10 MB in size. Pass a
     *   file_id as String to send a video that exists on the Telegram servers (recommended) or upload a new video using
@@ -4186,6 +4289,9 @@ trait Methods {
     *   unsupported.
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
+    *   <code>&#064;username</code>; required unless the message is sent as an ephemeral reply to a callback query
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -4232,10 +4338,10 @@ trait Methods {
     *   reply keyboard or to force a reply from the user.
     */
   def sendLivePhoto(
-    chatId: ChatId,
     livePhoto: IFile,
     photo: IFile,
     businessConnectionId: Option[String] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
     ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
@@ -4253,10 +4359,10 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendLivePhotoReq(
-      chatId,
       livePhoto,
       photo,
       businessConnectionId,
+      chatId,
       messageThreadId,
       directMessagesTopicId,
       ephemeralMessageParameters,
@@ -4283,15 +4389,15 @@ trait Methods {
   /** Use this method to send point on the map. On success, the sent <a
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-    *   <code>&#064;username</code>
     * @param latitude
     *   Latitude of the location
     * @param longitude
     *   Longitude of the location
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
+    *   <code>&#064;username</code>; required unless the message is sent as an ephemeral reply to a callback query
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -4336,10 +4442,10 @@ trait Methods {
     *   reply keyboard or to force a reply from the user.
     */
   def sendLocation(
-    chatId: ChatId,
     latitude: Float,
     longitude: Float,
     businessConnectionId: Option[String] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
     ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
@@ -4356,10 +4462,10 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendLocationReq(
-      chatId,
       latitude,
       longitude,
       businessConnectionId,
+      chatId,
       messageThreadId,
       directMessagesTopicId,
       ephemeralMessageParameters,
@@ -4383,7 +4489,7 @@ trait Methods {
     * href="https://core.telegram.org/bots/api#message">Message</a> objects that were sent is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
     *   <code>&#064;username</code>
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
@@ -4441,13 +4547,13 @@ trait Methods {
   /** Use this method to send text messages. On success, the sent <a
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-    *   <code>&#064;username</code>
     * @param text
     *   Text of the message to be sent, 1-4096 characters after entities parsing
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
+    *   <code>&#064;username</code>; required unless the message is sent as an ephemeral reply to a callback query
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -4489,9 +4595,9 @@ trait Methods {
     *   reply keyboard or to force a reply from the user.
     */
   def sendMessage(
-    chatId: ChatId,
     text: String,
     businessConnectionId: Option[String] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
     ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
@@ -4507,9 +4613,9 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendMessageReq(
-      chatId,
       text,
       businessConnectionId,
+      chatId,
       messageThreadId,
       directMessagesTopicId,
       ephemeralMessageParameters,
@@ -4575,7 +4681,7 @@ trait Methods {
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
     *   <code>&#064;username</code>. If the chat is a channel, all Telegram Star proceeds from this media will be
     *   credited to the chat's balance. Otherwise, they will be credited to the bot's balance.
     * @param starCount
@@ -4670,9 +4776,6 @@ trait Methods {
   /** Use this method to send photos. On success, the sent <a
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-    *   <code>&#064;username</code>
     * @param photo
     *   Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass
     *   an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using
@@ -4680,6 +4783,9 @@ trait Methods {
     *   in total. Width and height ratio must be at most 20.
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
+    *   <code>&#064;username</code>; required unless the message is sent as an ephemeral reply to a callback query
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -4726,9 +4832,9 @@ trait Methods {
     *   reply keyboard or to force a reply from the user.
     */
   def sendPhoto(
-    chatId: ChatId,
     photo: IFile,
     businessConnectionId: Option[String] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
     ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
@@ -4746,9 +4852,9 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendPhotoReq(
-      chatId,
       photo,
       businessConnectionId,
+      chatId,
       messageThreadId,
       directMessagesTopicId,
       ephemeralMessageParameters,
@@ -4772,7 +4878,7 @@ trait Methods {
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
     *   <code>&#064;username</code>. Polls can't be sent to channel direct messages chats.
     * @param question
     *   Poll question, 1-300 characters
@@ -4950,14 +5056,14 @@ trait Methods {
     * have the right to send the media to the chat. On success, the sent <a
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-    *   <code>&#064;username</code>
     * @param richMessage
     *   The message to be sent
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent. Bot can send rich
     *   messages on behalf of a business account only if the corresponding user can send rich messages.
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
+    *   <code>&#064;username</code>; required unless the message is sent as an ephemeral reply to a callback query
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -4991,9 +5097,9 @@ trait Methods {
     *   reply keyboard or to force a reply from the user.
     */
   def sendRichMessage(
-    chatId: ChatId,
     richMessage: InputRichMessage,
     businessConnectionId: Option[String] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
     ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
@@ -5007,9 +5113,9 @@ trait Methods {
   ): Method[Message] = {
     val (richMessageAttached, richMessageFiles) = attachFiles_InputRichMessage("rich_message", richMessage)
     val req                                     = SendRichMessageReq(
-      chatId,
       richMessageAttached,
       businessConnectionId,
+      chatId,
       messageThreadId,
       directMessagesTopicId,
       ephemeralMessageParameters,
@@ -5061,19 +5167,99 @@ trait Methods {
     MethodReq[Boolean]("sendRichMessageDraft", req.asJson, richMessageFiles)
   }
 
+  /** Use this method to send again a shared widget created by the bot. Currently, in the production environment,
+    * widgets can be sent only to private chats, and sent widgets automatically have protected content and therefore
+    * can't be forwarded. On success, the sent <a href="https://core.telegram.org/bots/api#message">Message</a> is
+    * returned.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup in the format
+    *   <code>&#064;username</code>
+    * @param widgetId
+    *   Unique identifier of the shared widget
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
+    * @param chatData
+    *   Data of the widget, which is specific to the message, 0-1024 bytes
+    * @param caption
+    *   Widget caption, 0-1024 characters after entities parsing
+    * @param parseMode
+    *   Mode for parsing entities in the widget caption. See <a
+    *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
+    * @param captionEntities
+    *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+    *   <em>parse_mode</em>
+    * @param showCaptionAboveMedia
+    *   Pass <em>True</em> if the caption must be shown above the widget
+    * @param disableNotification
+    *   Sends the message <a href="https://telegram.org/blog/channels-2-0#silent-messages">silently</a>. Users will
+    *   receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass <em>True</em> to allow up to 1000 messages per second, ignoring <a
+    *   href="https://core.telegram.org/bots/faq#how-can-i-message-all-of-my-bot-39s-subscribers-at-once">broadcasting
+    *   limits</a> for a fee of 0.1 Telegram Stars per message. The relevant Stars will be withdrawn from the bot's
+    *   balance.
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param replyParameters
+    *   Description of the message to reply to
+    * @param replyMarkup
+    *   Additional interface options. A JSON-serialized object for an <a
+    *   href="https://core.telegram.org/bots/features#inline-keyboards">inline keyboard</a>, <a
+    *   href="https://core.telegram.org/bots/features#keyboards">custom reply keyboard</a>, instructions to remove a
+    *   reply keyboard or to force a reply from the user.
+    */
+  def sendSharedWidget(
+    chatId: ChatId,
+    widgetId: String,
+    messageThreadId: Option[Int] = Option.empty,
+    chatData: Option[String] = Option.empty,
+    caption: Option[String] = Option.empty,
+    parseMode: Option[ParseMode] = Option.empty,
+    captionEntities: List[MessageEntity] = List.empty,
+    showCaptionAboveMedia: Option[Boolean] = Option.empty,
+    disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
+    replyMarkup: Option[KeyboardMarkup] = Option.empty
+  ): Method[Message] = {
+    val req = SendSharedWidgetReq(
+      chatId,
+      widgetId,
+      messageThreadId,
+      chatData,
+      caption,
+      parseMode,
+      captionEntities,
+      showCaptionAboveMedia,
+      disableNotification,
+      protectContent,
+      allowPaidBroadcast,
+      messageEffectId,
+      replyParameters,
+      replyMarkup
+    )
+    MethodReq[Message]("sendSharedWidget", req.asJson)
+  }
+
   /** Use this method to send static .WEBP, <a href="https://telegram.org/blog/animated-stickers">animated</a> .TGS, or
     * <a href="https://telegram.org/blog/video-stickers-better-reactions">video</a> .WEBM stickers. On success, the sent
     * <a href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-    *   <code>&#064;username</code>
     * @param sticker
     *   Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass
     *   an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP, .TGS, or
     *   .WEBM sticker using multipart/form-data. Video and animated stickers can't be sent via an HTTP URL.
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
+    *   <code>&#064;username</code>; required unless the message is sent as an ephemeral reply to a callback query
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -5109,9 +5295,9 @@ trait Methods {
     *   reply keyboard or to force a reply from the user.
     */
   def sendSticker(
-    chatId: ChatId,
     sticker: IFile,
     businessConnectionId: Option[String] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
     ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
@@ -5125,9 +5311,9 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendStickerReq(
-      chatId,
       sticker,
       businessConnectionId,
+      chatId,
       messageThreadId,
       directMessagesTopicId,
       ephemeralMessageParameters,
@@ -5150,9 +5336,6 @@ trait Methods {
   /** Use this method to send information about a venue. On success, the sent <a
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-    *   <code>&#064;username</code>
     * @param latitude
     *   Latitude of the venue
     * @param longitude
@@ -5163,6 +5346,9 @@ trait Methods {
     *   Address of the venue
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
+    *   <code>&#064;username</code>; required unless the message is sent as an ephemeral reply to a callback query
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -5206,12 +5392,12 @@ trait Methods {
     *   reply keyboard or to force a reply from the user.
     */
   def sendVenue(
-    chatId: ChatId,
     latitude: Float,
     longitude: Float,
     title: String,
     address: String,
     businessConnectionId: Option[String] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
     ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
@@ -5228,12 +5414,12 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendVenueReq(
-      chatId,
       latitude,
       longitude,
       title,
       address,
       businessConnectionId,
+      chatId,
       messageThreadId,
       directMessagesTopicId,
       ephemeralMessageParameters,
@@ -5257,15 +5443,15 @@ trait Methods {
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned. Bots can currently send video files of
     * up to 50 MB in size, this limit may be changed in the future.
     *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-    *   <code>&#064;username</code>
     * @param video
     *   Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass
     *   an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using
     *   multipart/form-data.
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
+    *   <code>&#064;username</code>; required unless the message is sent as an ephemeral reply to a callback query
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -5332,9 +5518,9 @@ trait Methods {
     *   reply keyboard or to force a reply from the user.
     */
   def sendVideo(
-    chatId: ChatId,
     video: IFile,
     businessConnectionId: Option[String] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
     ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
@@ -5359,9 +5545,9 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendVideoReq(
-      chatId,
       video,
       businessConnectionId,
+      chatId,
       messageThreadId,
       directMessagesTopicId,
       ephemeralMessageParameters,
@@ -5395,15 +5581,15 @@ trait Methods {
   /** Use this method to send a rounded square MPEG4 video of up to 1 minute long. On success, the sent <a
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned.
     *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-    *   <code>&#064;username</code>
     * @param videoNote
     *   Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers
     *   (recommended) or upload a new video using multipart/form-data. Sending video notes by a URL is currently
     *   unsupported.
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
+    *   <code>&#064;username</code>; required unless the message is sent as an ephemeral reply to a callback query
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -5447,9 +5633,9 @@ trait Methods {
     *   reply keyboard or to force a reply from the user.
     */
   def sendVideoNote(
-    chatId: ChatId,
     videoNote: IFile,
     businessConnectionId: Option[String] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
     ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
@@ -5465,9 +5651,9 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendVideoNoteReq(
-      chatId,
       videoNote,
       businessConnectionId,
+      chatId,
       messageThreadId,
       directMessagesTopicId,
       ephemeralMessageParameters,
@@ -5496,15 +5682,15 @@ trait Methods {
     * href="https://core.telegram.org/bots/api#message">Message</a> is returned. Bots can currently send voice messages
     * of up to 50 MB in size, this limit may be changed in the future.
     *
-    * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
-    *   <code>&#064;username</code>
     * @param voice
     *   Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended),
     *   pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using
     *   multipart/form-data.
     * @param businessConnectionId
     *   Unique identifier of the business connection on behalf of which the message will be sent
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
+    *   <code>&#064;username</code>; required unless the message is sent as an ephemeral reply to a callback query
     * @param messageThreadId
     *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
     *   bots with forum topic mode enabled only
@@ -5548,9 +5734,9 @@ trait Methods {
     *   reply keyboard or to force a reply from the user.
     */
   def sendVoice(
-    chatId: ChatId,
     voice: IFile,
     businessConnectionId: Option[String] = Option.empty,
+    chatId: Option[ChatId] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
     ephemeralMessageParameters: Option[EphemeralMessageParameters] = Option.empty,
@@ -5567,9 +5753,9 @@ trait Methods {
     replyMarkup: Option[KeyboardMarkup] = Option.empty
   ): Method[Message] = {
     val req = SendVoiceReq(
-      chatId,
       voice,
       businessConnectionId,
+      chatId,
       messageThreadId,
       directMessagesTopicId,
       ephemeralMessageParameters,
@@ -5586,6 +5772,111 @@ trait Methods {
       replyMarkup
     )
     MethodReq[Message]("sendVoice", req.asJson, Map("voice" -> Option(voice)).collect { case (k, Some(v)) => k -> v })
+  }
+
+  /** Use this method to send a message with an <a href="https://core.telegram.org/bots/widgets">HTML widget</a>.
+    * Currently, in the production environment, widgets can be sent only to private chats, and sent widgets
+    * automatically have protected content and therefore can't be forwarded. On success, the sent <a
+    * href="https://core.telegram.org/bots/api#message">Message</a> is returned.
+    *
+    * @param chatId
+    *   Unique identifier for the target chat or username of the target supergroup in the format
+    *   <code>&#064;username</code>
+    * @param html
+    *   HTML code of the widget, 1-32768 bytes. The code must not exceed 4096 bytes when compressed by zlib with the
+    *   maximum compression level.
+    * @param messageThreadId
+    *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
+    *   bots with forum topic mode enabled only
+    * @param width
+    *   Width of the widget in logical pixels; omit if the widget must occupy the whole width of the message bubble. The
+    *   width is clamped by the app to the range from 200 to the maximum width of the message bubble.
+    * @param height
+    *   Height of the widget in logical pixels; omit if the height of the widget isn't fixed. The height is clamped by
+    *   the app to the range 50-600.
+    * @param publicData
+    *   Public data of the widget, 0-1024 bytes, which will be available wherever the widget is shown. If the widget is
+    *   shared, then all messages with it will have the same public data.
+    * @param chatData
+    *   Data of the widget, which is specific to the message, 0-1024 bytes
+    * @param caption
+    *   Widget caption, 0-1024 characters after entities parsing
+    * @param parseMode
+    *   Mode for parsing entities in the widget caption. See <a
+    *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
+    * @param captionEntities
+    *   A JSON-serialized list of special entities that appear in the caption, which can be specified instead of
+    *   <em>parse_mode</em>
+    * @param showCaptionAboveMedia
+    *   Pass <em>True</em> if the caption must be shown above the widget
+    * @param allowQueries
+    *   Pass <em>True</em> to allow the widget to send queries to the bot
+    * @param isShared
+    *   Pass <em>True</em> to create a shared widget, which can be sent again using the method <a
+    *   href="https://core.telegram.org/bots/api#sendsharedwidget">sendSharedWidget</a>
+    * @param disableNotification
+    *   Sends the message <a href="https://telegram.org/blog/channels-2-0#silent-messages">silently</a>. Users will
+    *   receive a notification with no sound.
+    * @param protectContent
+    *   Protects the contents of the sent message from forwarding and saving
+    * @param allowPaidBroadcast
+    *   Pass <em>True</em> to allow up to 1000 messages per second, ignoring <a
+    *   href="https://core.telegram.org/bots/faq#how-can-i-message-all-of-my-bot-39s-subscribers-at-once">broadcasting
+    *   limits</a> for a fee of 0.1 Telegram Stars per message. The relevant Stars will be withdrawn from the bot's
+    *   balance.
+    * @param messageEffectId
+    *   Unique identifier of the message effect to be added to the message; for private chats only
+    * @param replyParameters
+    *   Description of the message to reply to
+    * @param replyMarkup
+    *   Additional interface options. A JSON-serialized object for an <a
+    *   href="https://core.telegram.org/bots/features#inline-keyboards">inline keyboard</a>, <a
+    *   href="https://core.telegram.org/bots/features#keyboards">custom reply keyboard</a>, instructions to remove a
+    *   reply keyboard or to force a reply from the user.
+    */
+  def sendWidget(
+    chatId: ChatId,
+    html: String,
+    messageThreadId: Option[Int] = Option.empty,
+    width: Option[Int] = Option.empty,
+    height: Option[Int] = Option.empty,
+    publicData: Option[String] = Option.empty,
+    chatData: Option[String] = Option.empty,
+    caption: Option[String] = Option.empty,
+    parseMode: Option[ParseMode] = Option.empty,
+    captionEntities: List[MessageEntity] = List.empty,
+    showCaptionAboveMedia: Option[Boolean] = Option.empty,
+    allowQueries: Option[Boolean] = Option.empty,
+    isShared: Option[Boolean] = Option.empty,
+    disableNotification: Option[Boolean] = Option.empty,
+    protectContent: Option[Boolean] = Option.empty,
+    allowPaidBroadcast: Option[Boolean] = Option.empty,
+    messageEffectId: Option[String] = Option.empty,
+    replyParameters: Option[ReplyParameters] = Option.empty,
+    replyMarkup: Option[KeyboardMarkup] = Option.empty
+  ): Method[Message] = {
+    val req = SendWidgetReq(
+      chatId,
+      html,
+      messageThreadId,
+      width,
+      height,
+      publicData,
+      chatData,
+      caption,
+      parseMode,
+      captionEntities,
+      showCaptionAboveMedia,
+      allowQueries,
+      isShared,
+      disableNotification,
+      protectContent,
+      allowPaidBroadcast,
+      messageEffectId,
+      replyParameters,
+      replyMarkup
+    )
+    MethodReq[Message]("sendWidget", req.asJson)
   }
 
   /** Changes the bio of a managed business account. Requires the <em>can_change_bio</em> business bot right. Returns
@@ -5887,7 +6178,7 @@ trait Methods {
     * messages in the channel. Bots can't use paid reactions. Returns <em>True</em> on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
     *   <code>&#064;username</code>
     * @param messageId
     *   Identifier of the target message. If the message belongs to a media group, the reaction is set to the first
@@ -6229,7 +6520,7 @@ trait Methods {
     *   Unique identifier of the business connection on behalf of which the message to be edited was sent
     * @param chatId
     *   Required if <em>inline_message_id</em> is not specified. Unique identifier for the target chat or username of
-    *   the target bot, supergroup or channel in the format <code>&#064;username</code>.
+    *   the target bot, supergroup, or channel in the format <code>&#064;username</code>.
     * @param messageId
     *   Required if <em>inline_message_id</em> is not specified. Identifier of the message with live location to stop.
     * @param inlineMessageId
@@ -6253,7 +6544,7 @@ trait Methods {
     * href="https://core.telegram.org/bots/api#poll">Poll</a> is returned.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
     *   <code>&#064;username</code>
     * @param messageId
     *   Identifier of the original message with the poll
@@ -6476,14 +6767,26 @@ trait Methods {
     * which is represented by the bot. Returns <em>True</em> on success.
     *
     * @param chatId
-    *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+    *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
     *   <code>&#064;username</code>. Channel direct messages chats can't be verified.
     * @param customDescription
     *   Custom description for the verification; 0-70 characters. Must be empty if the organization isn't allowed to
     *   provide a custom verification description.
+    * @param customDescriptionParseMode
+    *   Mode for parsing entities in the custom description. See <a
+    *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details. Only
+    *   “text_link” entities are supported.
+    * @param customDescriptionEntities
+    *   A JSON-serialized list of special entities that appear in the custom description, which can be specified instead
+    *   of <em>custom_description_parse_mode</em>. Only “text_link” entities are supported.
     */
-  def verifyChat(chatId: ChatId, customDescription: Option[String] = Option.empty): Method[Boolean] = {
-    val req = VerifyChatReq(chatId, customDescription)
+  def verifyChat(
+    chatId: ChatId,
+    customDescription: Option[String] = Option.empty,
+    customDescriptionParseMode: Option[ParseMode] = Option.empty,
+    customDescriptionEntities: List[MessageEntity] = List.empty
+  ): Method[Boolean] = {
+    val req = VerifyChatReq(chatId, customDescription, customDescriptionParseMode, customDescriptionEntities)
     MethodReq[Boolean]("verifyChat", req.asJson)
   }
 
@@ -6495,9 +6798,21 @@ trait Methods {
     * @param customDescription
     *   Custom description for the verification; 0-70 characters. Must be empty if the organization isn't allowed to
     *   provide a custom verification description.
+    * @param customDescriptionParseMode
+    *   Mode for parsing entities in the custom description. See <a
+    *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details. Only
+    *   “text_link” entities are supported.
+    * @param customDescriptionEntities
+    *   A JSON-serialized list of special entities that appear in the custom description, which can be specified instead
+    *   of <em>custom_description_parse_mode</em>. Only “text_link” entities are supported.
     */
-  def verifyUser(userId: Long, customDescription: Option[String] = Option.empty): Method[Boolean] = {
-    val req = VerifyUserReq(userId, customDescription)
+  def verifyUser(
+    userId: Long,
+    customDescription: Option[String] = Option.empty,
+    customDescriptionParseMode: Option[ParseMode] = Option.empty,
+    customDescriptionEntities: List[MessageEntity] = List.empty
+  ): Method[Boolean] = {
+    val req = VerifyUserReq(userId, customDescription, customDescriptionParseMode, customDescriptionEntities)
     MethodReq[Boolean]("verifyUser", req.asJson)
   }
 

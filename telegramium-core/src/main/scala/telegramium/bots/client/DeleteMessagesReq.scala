@@ -3,7 +3,7 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+  *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
   *   <code>&#064;username</code>
   * @param messageIds
   *   A JSON-serialized list of 1-100 identifiers of messages to delete. See <a

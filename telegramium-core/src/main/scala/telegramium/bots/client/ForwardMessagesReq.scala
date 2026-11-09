@@ -3,11 +3,11 @@ package telegramium.bots.client
 import telegramium.bots.ChatId
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+  *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
   *   <code>&#064;username</code>
   * @param fromChatId
-  *   Unique identifier for the chat where the original messages were sent (or username of the target bot, supergroup or
-  *   channel in the format <code>&#064;username</code>)
+  *   Unique identifier for the chat where the original messages were sent (or username of the target bot, supergroup,
+  *   or channel in the format <code>&#064;username</code>)
   * @param messageThreadId
   *   Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of
   *   bots with forum topic mode enabled only

@@ -224,6 +224,15 @@ final case class RichTextCashtag(text: iozhik.OpenEnum[RichText], cashtag: Strin
   */
 final case class RichTextBold(text: iozhik.OpenEnum[RichText]) extends RichText
 
+/** An address in the TON blockchain.
+  *
+  * @param text
+  *   Text of the address
+  * @param address
+  *   The address
+  */
+final case class RichTextTonAddress(text: iozhik.OpenEnum[RichText], address: String) extends RichText
+
 /** A link to a reference.
   *
   * @param text

@@ -4,7 +4,7 @@ import telegramium.bots.ChatId
 import telegramium.bots.ReactionType
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+  *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
   *   <code>&#064;username</code>
   * @param messageId
   *   Identifier of the target message. If the message belongs to a media group, the reaction is set to the first

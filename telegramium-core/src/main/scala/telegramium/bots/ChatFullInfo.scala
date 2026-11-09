@@ -134,6 +134,11 @@ package telegramium.bots
   * @param community
   *   <em>Optional</em>. The <a href="https://core.telegram.org/bots/api#community">Community</a> to which the chat
   *   belongs
+  * @param tonWalletCard
+  *   <em>Optional</em>. For private chats, the TON wallet card of the user, which is shown on their profile page
+  * @param shareTheme
+  *   <em>Optional</em>. For private chats, supergroups and channels, the theme of the screen for sharing a link to the
+  *   user or the chat; omitted if the default theme is used
   */
 final case class ChatFullInfo(
   id: Long,
@@ -188,5 +193,7 @@ final case class ChatFullInfo(
   uniqueGiftColors: Option[UniqueGiftColors] = Option.empty,
   paidMessageStarCount: Option[Int] = Option.empty,
   guardBot: Option[User] = Option.empty,
-  community: Option[Community] = Option.empty
+  community: Option[Community] = Option.empty,
+  tonWalletCard: Option[TonWalletCard] = Option.empty,
+  shareTheme: Option[iozhik.OpenEnum[ChatShareTheme]] = Option.empty
 )
