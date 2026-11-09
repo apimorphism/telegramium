@@ -44,8 +44,7 @@ class MessageEntityBuildersSpec extends AnyFreeSpec with Matchers {
     name - {
       s"is built by MessageEntityFormat.$name" in {
         val format = (try Class.forName(classOf[MessageEntityFormat].getName + "$" + name)
-        catch { case _: ClassNotFoundException => fail(s"MessageEntityFormat.$name doesn't exist") })
-          .getConstructors
+        catch { case _: ClassNotFoundException => fail(s"MessageEntityFormat.$name doesn't exist") }).getConstructors
           .find(_.getParameterCount == args.size)
           .getOrElse(fail(s"MessageEntityFormat.$name doesn't take ${args.size} arguments"))
           .newInstance(args*)
