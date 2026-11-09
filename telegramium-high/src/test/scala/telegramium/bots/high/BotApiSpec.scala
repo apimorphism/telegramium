@@ -30,7 +30,7 @@ import telegramium.bots.high.keyboards.InlineKeyboardButtons
 import telegramium.bots.high.keyboards.InlineKeyboardMarkups
 
 class BotApiSpec extends AnyFreeSpec with ForAllTestContainer with BeforeAndAfterAll with Matchers {
-  lazy val container: MockServerContainer = MockServerContainer(MockServerContainerVersion)
+  lazy val container: MockServerContainer = mockServerContainer()
   private val mockServer                  = container.container
 
   private val (httpClient, finalizer) = BlazeClientBuilder[IO].resource.allocated.unsafeRunSync()
