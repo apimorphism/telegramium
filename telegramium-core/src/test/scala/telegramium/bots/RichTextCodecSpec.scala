@@ -338,30 +338,32 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
     }
   }
 
-  it should "decode and re-encode plain_string preserving wire format" in {
-    val json    = Json.fromString("Hello, world!")
-    val decoded = json.as[iozhik.OpenEnum[RichText]].toOption.get
-    decoded match {
-      case iozhik.OpenEnum.Known(rt) => (rt: RichText).asJson shouldBe json
-      case _                         => fail("Expected Known")
+  // ReplyParameters.quote_rich_texts must hold the quoted texts nested exactly as Telegram sent them, so what a bot
+  // decodes has to encode back to the same JSON
+  it should "re-encode every example to the JSON it was decoded from" in {
+    val source  = scala.io.Source.fromResource("richtext-golden.json")
+    val content = try source.mkString
+    finally source.close()
+    val examples = parse(content).toOption.get.asObject.get.toList
+    examples should not be empty
+    examples.foreach { case (name, json) =>
+      withClue(s"'$name': ") {
+        json.as[iozhik.OpenEnum[RichText]] match {
+          case Right(iozhik.OpenEnum.Known(rt)) => (rt: RichText).asJson shouldBe json
+          case other                            => fail(s"expected a known rich text, got $other")
+        }
+      }
     }
   }
 
-  it should "decode and re-encode flat_array preserving wire format" in {
-    val json    = parse("""["Hello, ", {"type": "bold", "text": "world"}, "!"]""").toOption.get
-    val decoded = json.as[iozhik.OpenEnum[RichText]].toOption.get
-    decoded match {
-      case iozhik.OpenEnum.Known(rt) => (rt: RichText).asJson shouldBe json
-      case _                         => fail("Expected Known")
-    }
-  }
-
-  it should "decode and re-encode typed_object preserving wire format" in {
-    val json    = parse("""{"type": "bold", "text": "important"}""").toOption.get
-    val decoded = json.as[iozhik.OpenEnum[RichText]].toOption.get
-    decoded match {
-      case iozhik.OpenEnum.Known(rt) => (rt: RichText).asJson shouldBe json
-      case _                         => fail("Expected Known")
-    }
+  // Pins current behaviour, which is wrong for a value sent back (#723): an unknown rich text keeps only its tag, and
+  // encodes as that tag, a bare string, which Telegram reads as plain text
+  "An unknown nested rich text" should "encode as its bare type tag" in {
+    val json    = parse("""{"type": "bold", "text": {"type": "future_type", "text": "hi"}}""").toOption.get
+    val decoded = json.as[iozhik.OpenEnum[RichText]]
+    decoded shouldBe Right(known(RichTextBold(iozhik.OpenEnum.Unknown("future_type"))))
+    decoded.toOption.collect { case iozhik.OpenEnum.Known(rt) => (rt: RichText).asJson } shouldBe Some(
+      parse("""{"type": "bold", "text": "future_type"}""").toOption.get
+    )
   }
 }

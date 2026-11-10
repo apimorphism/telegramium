@@ -100,8 +100,8 @@ class WebhookBotSpec extends AnyFreeSpec with Matchers {
         IO.pure(
           Some(
             sendDocument(
-              ChatIntId(0),
-              InputPartFile(file),
+              chatId = Some(ChatIntId(0)),
+              document = InputPartFile(file),
               replyMarkup =
                 Some(InlineKeyboardMarkups.singleButton(InlineKeyboardButtons.callbackData("Press", "pressed")))
             )

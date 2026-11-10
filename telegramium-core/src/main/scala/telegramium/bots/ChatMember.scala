@@ -154,7 +154,7 @@ final case class ChatMemberBanned(user: User, untilDate: Long) extends ChatMembe
   * @param canSendPolls
   *   <em>True</em>, if the user is allowed to send polls and checklists
   * @param canSendOtherMessages
-  *   <em>True</em>, if the user is allowed to send animations, games, stickers and use inline bots
+  *   <em>True</em>, if the user is allowed to send animations, games, stickers, widgets and use inline bots
   * @param canAddWebPagePreviews
   *   <em>True</em>, if the user is allowed to add web page previews to their messages
   * @param canReactToMessages

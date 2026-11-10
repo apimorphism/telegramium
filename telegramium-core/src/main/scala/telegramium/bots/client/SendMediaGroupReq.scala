@@ -5,7 +5,7 @@ import telegramium.bots.InputMedia
 import telegramium.bots.ReplyParameters
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+  *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
   *   <code>&#064;username</code>
   * @param businessConnectionId
   *   Unique identifier of the business connection on behalf of which the message will be sent

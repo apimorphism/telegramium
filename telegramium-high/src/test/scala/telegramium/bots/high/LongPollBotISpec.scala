@@ -37,10 +37,13 @@ import telegramium.bots.PaidMediaPurchased
 import telegramium.bots.Poll
 import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
+import telegramium.bots.SharedWidgetQuery
 import telegramium.bots.ShippingAddress
 import telegramium.bots.ShippingQuery
 import telegramium.bots.Update
 import telegramium.bots.User
+import telegramium.bots.WidgetQuery
+import telegramium.bots.WidgetQueryTypeData
 import telegramium.bots.high.HttpMocks.sendMessageRequest
 import telegramium.bots.high.HttpMocks.sendMessageResponse
 
@@ -317,6 +320,47 @@ class LongPollBotISpec
         )
         .unsafeRunSync()
       verifyMessageSent("onStoppedMessageGeneration")
+    }
+
+    "widget query" in {
+      mockServerClient
+        .when(sendMessageRequest("onWidgetQuery"))
+        .respond(sendMessageResponse)
+      bot
+        .onUpdate(
+          testUpdate.copy(widgetQuery =
+            WidgetQuery(
+              id = "1",
+              from = testUser,
+              chatInstance = "1",
+              `type` = OpenEnum(WidgetQueryTypeData()),
+              data = "test"
+            ).some
+          )
+        )
+        .unsafeRunSync()
+      verifyMessageSent("onWidgetQuery")
+    }
+
+    "shared widget query" in {
+      mockServerClient
+        .when(sendMessageRequest("onSharedWidgetQuery"))
+        .respond(sendMessageResponse)
+      bot
+        .onUpdate(
+          testUpdate
+            .copy(sharedWidgetQuery =
+              SharedWidgetQuery(
+                id = "1",
+                from = testUser,
+                `type` = OpenEnum(WidgetQueryTypeData()),
+                data = "test",
+                widgetId = "1"
+              ).some
+            )
+        )
+        .unsafeRunSync()
+      verifyMessageSent("onSharedWidgetQuery")
     }
 
     "The bot's chat member status was updated in a chat" in {

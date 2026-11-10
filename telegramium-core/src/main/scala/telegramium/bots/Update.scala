@@ -50,6 +50,10 @@ package telegramium.bots
   *   enable these updates for your bot.
   * @param callbackQuery
   *   <em>Optional</em>. New incoming callback query
+  * @param widgetQuery
+  *   <em>Optional</em>. New incoming query from a widget in a message sent by the bot or via the bot
+  * @param sharedWidgetQuery
+  *   <em>Optional</em>. New incoming query from a forwarded message with a shared widget
   * @param shippingQuery
   *   <em>Optional</em>. New incoming shipping query. Only for invoices with flexible price.
   * @param preCheckoutQuery
@@ -101,6 +105,8 @@ final case class Update(
   inlineQuery: Option[InlineQuery] = Option.empty,
   chosenInlineResult: Option[ChosenInlineResult] = Option.empty,
   callbackQuery: Option[CallbackQuery] = Option.empty,
+  widgetQuery: Option[WidgetQuery] = Option.empty,
+  sharedWidgetQuery: Option[SharedWidgetQuery] = Option.empty,
   shippingQuery: Option[ShippingQuery] = Option.empty,
   preCheckoutQuery: Option[PreCheckoutQuery] = Option.empty,
   purchasedPaidMedia: Option[PaidMediaPurchased] = Option.empty,

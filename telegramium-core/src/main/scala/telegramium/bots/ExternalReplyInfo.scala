@@ -35,6 +35,8 @@ package telegramium.bots
   *   information about the video message
   * @param voice
   *   <em>Optional</em>. Message is a voice message, information about the file
+  * @param widget
+  *   <em>Optional</em>. Message is an HTML widget, information about the widget
   * @param hasMediaSpoiler
   *   <em>Optional</em>. <em>True</em>, if the message media is covered by a spoiler animation
   * @param checklist
@@ -75,6 +77,7 @@ final case class ExternalReplyInfo(
   video: Option[Video] = Option.empty,
   videoNote: Option[VideoNote] = Option.empty,
   voice: Option[Voice] = Option.empty,
+  widget: Option[Widget] = Option.empty,
   hasMediaSpoiler: Option[Boolean] = Option.empty,
   checklist: Option[Checklist] = Option.empty,
   contact: Option[Contact] = Option.empty,

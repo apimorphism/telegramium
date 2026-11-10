@@ -139,6 +139,17 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val answerwidgetqueryreqEncoder: Encoder[AnswerWidgetQueryReq] =
+    (x: AnswerWidgetQueryReq) => {
+      Json.fromFields(
+        List(
+          "widget_query_id" -> x.widgetQueryId.asJson,
+          "data"            -> x.data.asJson,
+          "method"          -> "answerWidgetQuery".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val approvechatjoinrequestreqEncoder: Encoder[ApproveChatJoinRequestReq] =
     (x: ApproveChatJoinRequestReq) => {
       Json.fromFields(
@@ -380,6 +391,17 @@ object CirceImplicits {
           "user_id"       -> x.userId.asJson,
           "actor_chat_id" -> x.actorChatId.asJson,
           "method"        -> "deleteAllMessageReactions".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val deletebusinessaccountgiftreqEncoder: Encoder[DeleteBusinessAccountGiftReq] =
+    (x: DeleteBusinessAccountGiftReq) => {
+      Json.fromFields(
+        List(
+          "business_connection_id" -> x.businessConnectionId.asJson,
+          "owned_gift_id"          -> x.ownedGiftId.asJson,
+          "method"                 -> "deleteBusinessAccountGift".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -738,6 +760,32 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val editmessagewidgetdatareqEncoder: Encoder[EditMessageWidgetDataReq] =
+    (x: EditMessageWidgetDataReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"           -> x.chatId.asJson,
+          "message_id"        -> x.messageId.asJson,
+          "inline_message_id" -> x.inlineMessageId.asJson,
+          "public_data"       -> x.publicData.asJson,
+          "chat_data"         -> x.chatData.asJson,
+          "method"            -> "editMessageWidgetData".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val editsharedwidgetdatareqEncoder: Encoder[EditSharedWidgetDataReq] =
+    (x: EditSharedWidgetDataReq) => {
+      Json.fromFields(
+        List(
+          "widget_id"   -> x.widgetId.asJson,
+          "public_data" -> x.publicData.asJson,
+          "cache_time"  -> x.cacheTime.asJson,
+          "method"      -> "editSharedWidgetData".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val editstoryreqEncoder: Encoder[EditStoryReq] =
     (x: EditStoryReq) => {
       Json.fromFields(
@@ -926,6 +974,9 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val getchatsharethemebackdropsreqEncoder: Encoder[GetChatShareThemeBackdropsReq.type] =
+    (_: GetChatShareThemeBackdropsReq.type) => Json.obj("method" -> "getChatShareThemeBackdrops".asJson)
+
   implicit lazy val getcustomemojistickersreqEncoder: Encoder[GetCustomEmojiStickersReq] =
     (x: GetCustomEmojiStickersReq) => {
       Json.fromFields(
@@ -1055,6 +1106,16 @@ object CirceImplicits {
         List(
           "name"   -> x.name.asJson,
           "method" -> "getStickerSet".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val getuniquegiftreqEncoder: Encoder[GetUniqueGiftReq] =
+    (x: GetUniqueGiftReq) => {
+      Json.fromFields(
+        List(
+          "name"   -> x.name.asJson,
+          "method" -> "getUniqueGift".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1902,6 +1963,29 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val sendsharedwidgetreqEncoder: Encoder[SendSharedWidgetReq] =
+    (x: SendSharedWidgetReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"                  -> x.chatId.asJson,
+          "message_thread_id"        -> x.messageThreadId.asJson,
+          "widget_id"                -> x.widgetId.asJson,
+          "chat_data"                -> x.chatData.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "disable_notification"     -> x.disableNotification.asJson,
+          "protect_content"          -> x.protectContent.asJson,
+          "allow_paid_broadcast"     -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"        -> x.messageEffectId.asJson,
+          "reply_parameters"         -> x.replyParameters.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "method"                   -> "sendSharedWidget".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val sendstickerreqEncoder: Encoder[SendStickerReq] =
     (x: SendStickerReq) => {
       Json.fromFields(
@@ -2035,6 +2119,34 @@ object CirceImplicits {
           "reply_parameters"             -> x.replyParameters.asJson,
           "reply_markup"                 -> x.replyMarkup.asJson,
           "method"                       -> "sendVoice".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val sendwidgetreqEncoder: Encoder[SendWidgetReq] =
+    (x: SendWidgetReq) => {
+      Json.fromFields(
+        List(
+          "chat_id"                  -> x.chatId.asJson,
+          "message_thread_id"        -> x.messageThreadId.asJson,
+          "html"                     -> x.html.asJson,
+          "width"                    -> x.width.asJson,
+          "height"                   -> x.height.asJson,
+          "public_data"              -> x.publicData.asJson,
+          "chat_data"                -> x.chatData.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "allow_queries"            -> x.allowQueries.asJson,
+          "is_shared"                -> x.isShared.asJson,
+          "disable_notification"     -> x.disableNotification.asJson,
+          "protect_content"          -> x.protectContent.asJson,
+          "allow_paid_broadcast"     -> x.allowPaidBroadcast.asJson,
+          "message_effect_id"        -> x.messageEffectId.asJson,
+          "reply_parameters"         -> x.replyParameters.asJson,
+          "reply_markup"             -> x.replyMarkup.asJson,
+          "method"                   -> "sendWidget".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2569,9 +2681,12 @@ object CirceImplicits {
     (x: VerifyChatReq) => {
       Json.fromFields(
         List(
-          "chat_id"            -> x.chatId.asJson,
-          "custom_description" -> x.customDescription.asJson,
-          "method"             -> "verifyChat".asJson
+          "chat_id"                       -> x.chatId.asJson,
+          "custom_description"            -> x.customDescription.asJson,
+          "custom_description_parse_mode" -> x.customDescriptionParseMode.asJson,
+          "custom_description_entities"   -> (if (x.customDescriptionEntities.isEmpty) Json.Null
+                                            else x.customDescriptionEntities.asJson),
+          "method" -> "verifyChat".asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -2580,9 +2695,12 @@ object CirceImplicits {
     (x: VerifyUserReq) => {
       Json.fromFields(
         List(
-          "user_id"            -> x.userId.asJson,
-          "custom_description" -> x.customDescription.asJson,
-          "method"             -> "verifyUser".asJson
+          "user_id"                       -> x.userId.asJson,
+          "custom_description"            -> x.customDescription.asJson,
+          "custom_description_parse_mode" -> x.customDescriptionParseMode.asJson,
+          "custom_description_entities"   -> (if (x.customDescriptionEntities.isEmpty) Json.Null
+                                            else x.customDescriptionEntities.asJson),
+          "method" -> "verifyUser".asJson
         ).filter(!_._2.isNull)
       )
     }

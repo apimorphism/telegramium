@@ -7,7 +7,7 @@ import telegramium.bots.InlineKeyboardMarkup
   *   Unique identifier of the business connection on behalf of which the message to be edited was sent
   * @param chatId
   *   Required if <em>inline_message_id</em> is not specified. Unique identifier for the target chat or username of the
-  *   target bot, supergroup or channel in the format <code>&#064;username</code>.
+  *   target bot, supergroup, or channel in the format <code>&#064;username</code>.
   * @param messageId
   *   Required if <em>inline_message_id</em> is not specified. Identifier of the message with live location to stop.
   * @param inlineMessageId

@@ -7,7 +7,7 @@ import telegramium.bots.ReplyParameters
 import telegramium.bots.InlineKeyboardMarkup
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+  *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
   *   <code>&#064;username</code>
   * @param title
   *   Product name, 1-32 characters

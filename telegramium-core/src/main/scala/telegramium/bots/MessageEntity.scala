@@ -76,16 +76,6 @@ final case class CustomEmojiMessageEntity(offset: Int, length: Int, customEmojiI
   */
 final case class ExpandableBlockquoteMessageEntity(offset: Int, length: Int) extends MessageEntity
 
-/** spoiler
-  *
-  * @param offset
-  *   Offset in <a href="https://core.telegram.org/api/entities#entity-length">UTF-16 code units</a> to the start of the
-  *   entity
-  * @param length
-  *   Length of the entity in <a href="https://core.telegram.org/api/entities#entity-length">UTF-16 code units</a>
-  */
-final case class SpoilerMessageEntity(offset: Int, length: Int) extends MessageEntity
-
 /** email
   *
   * @param offset
@@ -95,6 +85,16 @@ final case class SpoilerMessageEntity(offset: Int, length: Int) extends MessageE
   *   Length of the entity in <a href="https://core.telegram.org/api/entities#entity-length">UTF-16 code units</a>
   */
 final case class EmailMessageEntity(offset: Int, length: Int) extends MessageEntity
+
+/** spoiler
+  *
+  * @param offset
+  *   Offset in <a href="https://core.telegram.org/api/entities#entity-length">UTF-16 code units</a> to the start of the
+  *   entity
+  * @param length
+  *   Length of the entity in <a href="https://core.telegram.org/api/entities#entity-length">UTF-16 code units</a>
+  */
+final case class SpoilerMessageEntity(offset: Int, length: Int) extends MessageEntity
 
 /** blockquote
   *
@@ -198,16 +198,6 @@ final case class HashtagMessageEntity(offset: Int, length: Int) extends MessageE
   */
 final case class TextMentionMessageEntity(offset: Int, length: Int, user: User) extends MessageEntity
 
-/** url
-  *
-  * @param offset
-  *   Offset in <a href="https://core.telegram.org/api/entities#entity-length">UTF-16 code units</a> to the start of the
-  *   entity
-  * @param length
-  *   Length of the entity in <a href="https://core.telegram.org/api/entities#entity-length">UTF-16 code units</a>
-  */
-final case class UrlMessageEntity(offset: Int, length: Int) extends MessageEntity
-
 /** text_link
   *
   * @param offset
@@ -219,6 +209,36 @@ final case class UrlMessageEntity(offset: Int, length: Int) extends MessageEntit
   *   URL that will be opened after user taps on the text
   */
 final case class TextLinkMessageEntity(offset: Int, length: Int, url: String) extends MessageEntity
+
+/** url
+  *
+  * @param offset
+  *   Offset in <a href="https://core.telegram.org/api/entities#entity-length">UTF-16 code units</a> to the start of the
+  *   entity
+  * @param length
+  *   Length of the entity in <a href="https://core.telegram.org/api/entities#entity-length">UTF-16 code units</a>
+  */
+final case class UrlMessageEntity(offset: Int, length: Int) extends MessageEntity
+
+/** ton_address
+  *
+  * @param offset
+  *   Offset in <a href="https://core.telegram.org/api/entities#entity-length">UTF-16 code units</a> to the start of the
+  *   entity
+  * @param length
+  *   Length of the entity in <a href="https://core.telegram.org/api/entities#entity-length">UTF-16 code units</a>
+  */
+final case class TonAddressMessageEntity(offset: Int, length: Int) extends MessageEntity
+
+/** bank_card_number
+  *
+  * @param offset
+  *   Offset in <a href="https://core.telegram.org/api/entities#entity-length">UTF-16 code units</a> to the start of the
+  *   entity
+  * @param length
+  *   Length of the entity in <a href="https://core.telegram.org/api/entities#entity-length">UTF-16 code units</a>
+  */
+final case class BankCardNumberMessageEntity(offset: Int, length: Int) extends MessageEntity
 
 /** phone_number
   *

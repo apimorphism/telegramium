@@ -36,7 +36,7 @@ class UrlShortenerBot[F[_]](httpClient: Client[F])(using botApi: Api[F], asyncF:
       shorten(url)
         .flatMap { shortUrl =>
           sendMessage(
-            chatId = ChatIntId(msg.chat.id),
+            chatId = Some(ChatIntId(msg.chat.id)),
             text = shortUrl
           ).exec.void
         }

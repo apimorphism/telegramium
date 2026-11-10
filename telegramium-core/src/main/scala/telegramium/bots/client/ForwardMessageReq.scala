@@ -4,10 +4,10 @@ import telegramium.bots.ChatId
 import telegramium.bots.SuggestedPostParameters
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+  *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
   *   <code>&#064;username</code>
   * @param fromChatId
-  *   Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup or
+  *   Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup, or
   *   channel in the format <code>&#064;username</code>)
   * @param messageId
   *   Message identifier in the chat specified in <em>from_chat_id</em>

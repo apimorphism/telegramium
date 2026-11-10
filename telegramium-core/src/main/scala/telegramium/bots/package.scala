@@ -755,6 +755,112 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val chatsharethemeEncoder: Encoder[ChatShareTheme] = {
+    case unique_gift: ChatShareThemeUniqueGift => unique_gift.asJson
+    case emoji: ChatShareThemeEmoji            => emoji.asJson
+  }
+
+  implicit lazy val chatsharethemeDecoder: Decoder[iozhik.OpenEnum[ChatShareTheme]] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "unique_gift" => Decoder[ChatShareThemeUniqueGift].map(iozhik.OpenEnum.Known(_))
+      case "emoji"       => Decoder[ChatShareThemeEmoji].map(iozhik.OpenEnum.Known(_))
+      case unknown       => Decoder.const(iozhik.OpenEnum.Unknown[ChatShareTheme](unknown))
+    }
+  } yield value
+
+  implicit lazy val chatsharethemeuniquegiftEncoder: Encoder[ChatShareThemeUniqueGift] =
+    (x: ChatShareThemeUniqueGift) => {
+      Json.fromFields(
+        List(
+          "gift" -> x.gift.asJson,
+          "type" -> "unique_gift".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatsharethemeuniquegiftDecoder: Decoder[ChatShareThemeUniqueGift] =
+    Decoder.instance { h =>
+      for {
+        _gift <- h.get[UniqueGift]("gift")
+      } yield {
+        ChatShareThemeUniqueGift(gift = _gift)
+      }
+    }
+
+  implicit lazy val chatsharethemeemojiEncoder: Encoder[ChatShareThemeEmoji] =
+    (x: ChatShareThemeEmoji) => {
+      Json.fromFields(
+        List(
+          "emojis"                 -> x.emojis.asJson,
+          "background_backdrop_id" -> x.backgroundBackdropId.asJson,
+          "type"                   -> "emoji".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatsharethemeemojiDecoder: Decoder[ChatShareThemeEmoji] =
+    Decoder.instance { h =>
+      for {
+        _emojis               <- h.getOrElse[List[iozhik.OpenEnum[EmojiType]]]("emojis")(List.empty)
+        _backgroundBackdropId <- h.get[Option[Int]]("background_backdrop_id")
+      } yield {
+        ChatShareThemeEmoji(emojis = _emojis, backgroundBackdropId = _backgroundBackdropId)
+      }
+    }
+
+  implicit lazy val emojitypeEncoder: Encoder[EmojiType] = {
+    case custom_emoji: EmojiTypeCustomEmoji => custom_emoji.asJson
+    case emoji: EmojiTypeEmoji              => emoji.asJson
+  }
+
+  implicit lazy val emojitypeDecoder: Decoder[iozhik.OpenEnum[EmojiType]] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "custom_emoji" => Decoder[EmojiTypeCustomEmoji].map(iozhik.OpenEnum.Known(_))
+      case "emoji"        => Decoder[EmojiTypeEmoji].map(iozhik.OpenEnum.Known(_))
+      case unknown        => Decoder.const(iozhik.OpenEnum.Unknown[EmojiType](unknown))
+    }
+  } yield value
+
+  implicit lazy val emojitypecustomemojiEncoder: Encoder[EmojiTypeCustomEmoji] =
+    (x: EmojiTypeCustomEmoji) => {
+      Json.fromFields(
+        List(
+          "custom_emoji_id" -> x.customEmojiId.asJson,
+          "type"            -> "custom_emoji".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val emojitypecustomemojiDecoder: Decoder[EmojiTypeCustomEmoji] =
+    Decoder.instance { h =>
+      for {
+        _customEmojiId <- h.get[String]("custom_emoji_id")
+      } yield {
+        EmojiTypeCustomEmoji(customEmojiId = _customEmojiId)
+      }
+    }
+
+  implicit lazy val emojitypeemojiEncoder: Encoder[EmojiTypeEmoji] =
+    (x: EmojiTypeEmoji) => {
+      Json.fromFields(
+        List(
+          "emoji" -> x.emoji.asJson,
+          "type"  -> "emoji".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val emojitypeemojiDecoder: Decoder[EmojiTypeEmoji] =
+    Decoder.instance { h =>
+      for {
+        _emoji <- h.get[String]("emoji")
+      } yield {
+        EmojiTypeEmoji(emoji = _emoji)
+      }
+    }
+
   implicit lazy val inlinequeryresultEncoder: Encoder[InlineQueryResult] = {
     case mpeg4_gif: InlineQueryResultMpeg4Gif       => mpeg4_gif.asJson
     case mpeg4_gif: InlineQueryResultCachedMpeg4Gif => mpeg4_gif.asJson
@@ -1344,12 +1450,14 @@ object CirceImplicits {
     }
 
   implicit lazy val inputmessagecontentEncoder: Encoder[InputMessageContent] = {
-    case x: InputVenueMessageContent    => x.asJson
-    case x: InputInvoiceMessageContent  => x.asJson
-    case x: InputContactMessageContent  => x.asJson
-    case x: InputLocationMessageContent => x.asJson
-    case x: InputTextMessageContent     => x.asJson
-    case x: InputRichMessageContent     => x.asJson
+    case x: InputVenueMessageContent        => x.asJson
+    case x: InputInvoiceMessageContent      => x.asJson
+    case x: InputContactMessageContent      => x.asJson
+    case x: InputLocationMessageContent     => x.asJson
+    case x: InputTextMessageContent         => x.asJson
+    case x: InputWidgetMessageContent       => x.asJson
+    case x: InputRichMessageContent         => x.asJson
+    case x: InputSharedWidgetMessageContent => x.asJson
   }
 
   implicit lazy val inputvenuemessagecontentEncoder: Encoder[InputVenueMessageContent] =
@@ -1434,11 +1542,44 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val inputwidgetmessagecontentEncoder: Encoder[InputWidgetMessageContent] =
+    (x: InputWidgetMessageContent) => {
+      Json.fromFields(
+        List(
+          "html"                     -> x.html.asJson,
+          "width"                    -> x.width.asJson,
+          "height"                   -> x.height.asJson,
+          "public_data"              -> x.publicData.asJson,
+          "chat_data"                -> x.chatData.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson,
+          "allow_queries"            -> x.allowQueries.asJson,
+          "is_shared"                -> x.isShared.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val inputrichmessagecontentEncoder: Encoder[InputRichMessageContent] =
     (x: InputRichMessageContent) => {
       Json.fromFields(
         List(
           "rich_message" -> x.richMessage.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val inputsharedwidgetmessagecontentEncoder: Encoder[InputSharedWidgetMessageContent] =
+    (x: InputSharedWidgetMessageContent) => {
+      Json.fromFields(
+        List(
+          "widget_id"                -> x.widgetId.asJson,
+          "chat_data"                -> x.chatData.asJson,
+          "caption"                  -> x.caption.asJson,
+          "parse_mode"               -> x.parseMode.asJson,
+          "caption_entities"         -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
+          "show_caption_above_media" -> x.showCaptionAboveMedia.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -1894,6 +2035,7 @@ object CirceImplicits {
           "video"                      -> x.video.asJson,
           "video_note"                 -> x.videoNote.asJson,
           "voice"                      -> x.voice.asJson,
+          "widget"                     -> x.widget.asJson,
           "caption"                    -> x.caption.asJson,
           "caption_entities"           -> (if (x.captionEntities.isEmpty) Json.Null else x.captionEntities.asJson),
           "show_caption_above_media"   -> x.showCaptionAboveMedia.asJson,
@@ -1951,6 +2093,7 @@ object CirceImplicits {
           "giveaway_completed"                -> x.giveawayCompleted.asJson,
           "managed_bot_created"               -> x.managedBotCreated.asJson,
           "paid_message_price_changed"        -> x.paidMessagePriceChanged.asJson,
+          "paid_messages_waived"              -> x.paidMessagesWaived.asJson,
           "poll_option_added"                 -> x.pollOptionAdded.asJson,
           "poll_option_deleted"               -> x.pollOptionDeleted.asJson,
           "suggested_post_approved"           -> x.suggestedPostApproved.asJson,
@@ -1958,6 +2101,7 @@ object CirceImplicits {
           "suggested_post_declined"           -> x.suggestedPostDeclined.asJson,
           "suggested_post_paid"               -> x.suggestedPostPaid.asJson,
           "suggested_post_refunded"           -> x.suggestedPostRefunded.asJson,
+          "ton_wallet_transfer"               -> x.tonWalletTransfer.asJson,
           "video_chat_scheduled"              -> x.videoChatScheduled.asJson,
           "video_chat_started"                -> x.videoChatStarted.asJson,
           "video_chat_ended"                  -> x.videoChatEnded.asJson,
@@ -2021,6 +2165,7 @@ object CirceImplicits {
         _video                  <- h.get[Option[Video]]("video")
         _videoNote              <- h.get[Option[VideoNote]]("video_note")
         _voice                  <- h.get[Option[Voice]]("voice")
+        _widget                 <- h.get[Option[Widget]]("widget")
         _caption                <- h.get[Option[String]]("caption")
         _captionEntities        <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
         _showCaptionAboveMedia  <- h.get[Option[Boolean]]("show_caption_above_media")
@@ -2080,6 +2225,7 @@ object CirceImplicits {
         _giveawayCompleted            <- h.get[Option[GiveawayCompleted]]("giveaway_completed")
         _managedBotCreated            <- h.get[Option[ManagedBotCreated]]("managed_bot_created")
         _paidMessagePriceChanged      <- h.get[Option[PaidMessagePriceChanged]]("paid_message_price_changed")
+        _paidMessagesWaived           <- h.get[Option[PaidMessagesWaived.type]]("paid_messages_waived")
         _pollOptionAdded              <- h.get[Option[PollOptionAdded]]("poll_option_added")
         _pollOptionDeleted            <- h.get[Option[PollOptionDeleted]]("poll_option_deleted")
         _suggestedPostApproved        <- h.get[Option[SuggestedPostApproved]]("suggested_post_approved")
@@ -2087,6 +2233,7 @@ object CirceImplicits {
         _suggestedPostDeclined        <- h.get[Option[SuggestedPostDeclined]]("suggested_post_declined")
         _suggestedPostPaid            <- h.get[Option[SuggestedPostPaid]]("suggested_post_paid")
         _suggestedPostRefunded        <- h.get[Option[SuggestedPostRefunded]]("suggested_post_refunded")
+        _tonWalletTransfer            <- h.get[Option[TonWalletTransfer]]("ton_wallet_transfer")
         _videoChatScheduled           <- h.get[Option[VideoChatScheduled]]("video_chat_scheduled")
         _videoChatStarted             <- h.get[Option[VideoChatStarted.type]]("video_chat_started")
         _videoChatEnded               <- h.get[Option[VideoChatEnded]]("video_chat_ended")
@@ -2145,6 +2292,7 @@ object CirceImplicits {
           video = _video,
           videoNote = _videoNote,
           voice = _voice,
+          widget = _widget,
           caption = _caption,
           captionEntities = _captionEntities,
           showCaptionAboveMedia = _showCaptionAboveMedia,
@@ -2202,6 +2350,7 @@ object CirceImplicits {
           giveawayCompleted = _giveawayCompleted,
           managedBotCreated = _managedBotCreated,
           paidMessagePriceChanged = _paidMessagePriceChanged,
+          paidMessagesWaived = _paidMessagesWaived,
           pollOptionAdded = _pollOptionAdded,
           pollOptionDeleted = _pollOptionDeleted,
           suggestedPostApproved = _suggestedPostApproved,
@@ -2209,6 +2358,7 @@ object CirceImplicits {
           suggestedPostDeclined = _suggestedPostDeclined,
           suggestedPostPaid = _suggestedPostPaid,
           suggestedPostRefunded = _suggestedPostRefunded,
+          tonWalletTransfer = _tonWalletTransfer,
           videoChatScheduled = _videoChatScheduled,
           videoChatStarted = _videoChatStarted,
           videoChatEnded = _videoChatEnded,
@@ -2296,6 +2446,7 @@ object CirceImplicits {
     case blockquote: BlockquoteMessageEntity                      => blockquote.asJson
     case date_time: DateTimeMessageEntity                         => date_time.asJson
     case text_link: TextLinkMessageEntity                         => text_link.asJson
+    case bank_card_number: BankCardNumberMessageEntity            => bank_card_number.asJson
     case strikethrough: StrikethroughMessageEntity                => strikethrough.asJson
     case pre: PreMessageEntity                                    => pre.asJson
     case text_mention: TextMentionMessageEntity                   => text_mention.asJson
@@ -2309,6 +2460,7 @@ object CirceImplicits {
     case cashtag: CashtagMessageEntity                            => cashtag.asJson
     case code: CodeMessageEntity                                  => code.asJson
     case spoiler: SpoilerMessageEntity                            => spoiler.asJson
+    case ton_address: TonAddressMessageEntity                     => ton_address.asJson
     case mention: MentionMessageEntity                            => mention.asJson
   }
 
@@ -2321,6 +2473,7 @@ object CirceImplicits {
       case "blockquote"            => Decoder[BlockquoteMessageEntity].map(iozhik.OpenEnum.Known(_))
       case "date_time"             => Decoder[DateTimeMessageEntity].map(iozhik.OpenEnum.Known(_))
       case "text_link"             => Decoder[TextLinkMessageEntity].map(iozhik.OpenEnum.Known(_))
+      case "bank_card_number"      => Decoder[BankCardNumberMessageEntity].map(iozhik.OpenEnum.Known(_))
       case "strikethrough"         => Decoder[StrikethroughMessageEntity].map(iozhik.OpenEnum.Known(_))
       case "pre"                   => Decoder[PreMessageEntity].map(iozhik.OpenEnum.Known(_))
       case "text_mention"          => Decoder[TextMentionMessageEntity].map(iozhik.OpenEnum.Known(_))
@@ -2334,6 +2487,7 @@ object CirceImplicits {
       case "cashtag"               => Decoder[CashtagMessageEntity].map(iozhik.OpenEnum.Known(_))
       case "code"                  => Decoder[CodeMessageEntity].map(iozhik.OpenEnum.Known(_))
       case "spoiler"               => Decoder[SpoilerMessageEntity].map(iozhik.OpenEnum.Known(_))
+      case "ton_address"           => Decoder[TonAddressMessageEntity].map(iozhik.OpenEnum.Known(_))
       case "mention"               => Decoder[MentionMessageEntity].map(iozhik.OpenEnum.Known(_))
       case unknown                 => Decoder.const(iozhik.OpenEnum.Unknown[MessageEntity](unknown))
     }
@@ -2467,27 +2621,6 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val spoilermessageentityEncoder: Encoder[SpoilerMessageEntity] =
-    (x: SpoilerMessageEntity) => {
-      Json.fromFields(
-        List(
-          "offset" -> x.offset.asJson,
-          "length" -> x.length.asJson,
-          "type"   -> "spoiler".asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
-  implicit lazy val spoilermessageentityDecoder: Decoder[SpoilerMessageEntity] =
-    Decoder.instance { h =>
-      for {
-        _offset <- h.get[Int]("offset")
-        _length <- h.get[Int]("length")
-      } yield {
-        SpoilerMessageEntity(offset = _offset, length = _length)
-      }
-    }
-
   implicit lazy val emailmessageentityEncoder: Encoder[EmailMessageEntity] =
     (x: EmailMessageEntity) => {
       Json.fromFields(
@@ -2506,6 +2639,27 @@ object CirceImplicits {
         _length <- h.get[Int]("length")
       } yield {
         EmailMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val spoilermessageentityEncoder: Encoder[SpoilerMessageEntity] =
+    (x: SpoilerMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson,
+          "type"   -> "spoiler".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val spoilermessageentityDecoder: Decoder[SpoilerMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        SpoilerMessageEntity(offset = _offset, length = _length)
       }
     }
 
@@ -2711,6 +2865,29 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val textlinkmessageentityEncoder: Encoder[TextLinkMessageEntity] =
+    (x: TextLinkMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson,
+          "url"    -> x.url.asJson,
+          "type"   -> "text_link".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val textlinkmessageentityDecoder: Decoder[TextLinkMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+        _url    <- h.get[String]("url")
+      } yield {
+        TextLinkMessageEntity(offset = _offset, length = _length, url = _url)
+      }
+    }
+
   implicit lazy val urlmessageentityEncoder: Encoder[UrlMessageEntity] =
     (x: UrlMessageEntity) => {
       Json.fromFields(
@@ -2732,26 +2909,45 @@ object CirceImplicits {
       }
     }
 
-  implicit lazy val textlinkmessageentityEncoder: Encoder[TextLinkMessageEntity] =
-    (x: TextLinkMessageEntity) => {
+  implicit lazy val tonaddressmessageentityEncoder: Encoder[TonAddressMessageEntity] =
+    (x: TonAddressMessageEntity) => {
       Json.fromFields(
         List(
           "offset" -> x.offset.asJson,
           "length" -> x.length.asJson,
-          "url"    -> x.url.asJson,
-          "type"   -> "text_link".asJson
+          "type"   -> "ton_address".asJson
         ).filter(!_._2.isNull)
       )
     }
 
-  implicit lazy val textlinkmessageentityDecoder: Decoder[TextLinkMessageEntity] =
+  implicit lazy val tonaddressmessageentityDecoder: Decoder[TonAddressMessageEntity] =
     Decoder.instance { h =>
       for {
         _offset <- h.get[Int]("offset")
         _length <- h.get[Int]("length")
-        _url    <- h.get[String]("url")
       } yield {
-        TextLinkMessageEntity(offset = _offset, length = _length, url = _url)
+        TonAddressMessageEntity(offset = _offset, length = _length)
+      }
+    }
+
+  implicit lazy val bankcardnumbermessageentityEncoder: Encoder[BankCardNumberMessageEntity] =
+    (x: BankCardNumberMessageEntity) => {
+      Json.fromFields(
+        List(
+          "offset" -> x.offset.asJson,
+          "length" -> x.length.asJson,
+          "type"   -> "bank_card_number".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val bankcardnumbermessageentityDecoder: Decoder[BankCardNumberMessageEntity] =
+    Decoder.instance { h =>
+      for {
+        _offset <- h.get[Int]("offset")
+        _length <- h.get[Int]("length")
+      } yield {
+        BankCardNumberMessageEntity(offset = _offset, length = _length)
       }
     }
 
@@ -3915,6 +4111,7 @@ object CirceImplicits {
     case code: RichTextCode                                      => code.asJson
     case button: RichTextButton                                  => button.asJson
     case spoiler: RichTextSpoiler                                => spoiler.asJson
+    case ton_address: RichTextTonAddress                         => ton_address.asJson
     case mention: RichTextMention                                => mention.asJson
   }
 
@@ -3954,6 +4151,7 @@ object CirceImplicits {
       case "code"                    => Decoder[RichTextCode].map(iozhik.OpenEnum.Known(_))
       case "button"                  => Decoder[RichTextButton].map(iozhik.OpenEnum.Known(_))
       case "spoiler"                 => Decoder[RichTextSpoiler].map(iozhik.OpenEnum.Known(_))
+      case "ton_address"             => Decoder[RichTextTonAddress].map(iozhik.OpenEnum.Known(_))
       case "mention"                 => Decoder[RichTextMention].map(iozhik.OpenEnum.Known(_))
       case unknown                   => Decoder.const(iozhik.OpenEnum.Unknown[RichText](unknown))
     }
@@ -4509,6 +4707,27 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val richtexttonaddressEncoder: Encoder[RichTextTonAddress] =
+    (x: RichTextTonAddress) => {
+      Json.fromFields(
+        List(
+          "text"    -> x.text.asJson,
+          "address" -> x.address.asJson,
+          "type"    -> "ton_address".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val richtexttonaddressDecoder: Decoder[RichTextTonAddress] =
+    Decoder.instance { h =>
+      for {
+        _text    <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _address <- h.get[String]("address")
+      } yield {
+        RichTextTonAddress(text = _text, address = _address)
+      }
+    }
+
   implicit lazy val richtextreferencelinkEncoder: Encoder[RichTextReferenceLink] =
     (x: RichTextReferenceLink) => {
       Json.fromFields(
@@ -4755,6 +4974,83 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val widgetquerytypeEncoder: Encoder[WidgetQueryType] = {
+    case data: WidgetQueryTypeData                        => data.asJson
+    case sent_transaction: WidgetQueryTypeSentTransaction => sent_transaction.asJson
+    case sign_data: WidgetQueryTypeSignData               => sign_data.asJson
+  }
+
+  implicit lazy val widgetquerytypeDecoder: Decoder[iozhik.OpenEnum[WidgetQueryType]] = for {
+    fType <- Decoder[String].prepare(_.downField("type"))
+    value <- fType match {
+      case "data"             => Decoder[WidgetQueryTypeData].map(iozhik.OpenEnum.Known(_))
+      case "sent_transaction" => Decoder[WidgetQueryTypeSentTransaction].map(iozhik.OpenEnum.Known(_))
+      case "sign_data"        => Decoder[WidgetQueryTypeSignData].map(iozhik.OpenEnum.Known(_))
+      case unknown            => Decoder.const(iozhik.OpenEnum.Unknown[WidgetQueryType](unknown))
+    }
+  } yield value
+
+  implicit lazy val widgetquerytypesigndataEncoder: Encoder[WidgetQueryTypeSignData] =
+    (x: WidgetQueryTypeSignData) => {
+      Json.fromFields(
+        List(
+          "wallet"    -> x.wallet.asJson,
+          "sign_data" -> x.signData.asJson,
+          "type"      -> "sign_data".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val widgetquerytypesigndataDecoder: Decoder[WidgetQueryTypeSignData] =
+    Decoder.instance { h =>
+      for {
+        _wallet   <- h.get[WidgetQueryWallet]("wallet")
+        _signData <- h.get[String]("sign_data")
+      } yield {
+        WidgetQueryTypeSignData(wallet = _wallet, signData = _signData)
+      }
+    }
+
+  implicit lazy val widgetquerytypesenttransactionEncoder: Encoder[WidgetQueryTypeSentTransaction] =
+    (x: WidgetQueryTypeSentTransaction) => {
+      Json.fromFields(
+        List(
+          "wallet"   -> x.wallet.asJson,
+          "msg_hash" -> x.msgHash.asJson,
+          "type"     -> "sent_transaction".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val widgetquerytypesenttransactionDecoder: Decoder[WidgetQueryTypeSentTransaction] =
+    Decoder.instance { h =>
+      for {
+        _wallet  <- h.get[WidgetQueryWallet]("wallet")
+        _msgHash <- h.get[String]("msg_hash")
+      } yield {
+        WidgetQueryTypeSentTransaction(wallet = _wallet, msgHash = _msgHash)
+      }
+    }
+
+  implicit lazy val widgetquerytypedataEncoder: Encoder[WidgetQueryTypeData] =
+    (x: WidgetQueryTypeData) => {
+      Json.fromFields(
+        List(
+          "wallet_card" -> x.walletCard.asJson,
+          "type"        -> "data".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val widgetquerytypedataDecoder: Decoder[WidgetQueryTypeData] =
+    Decoder.instance { h =>
+      for {
+        _walletCard <- h.get[Option[TonWalletCard]]("wallet_card")
+      } yield {
+        WidgetQueryTypeData(walletCard = _walletCard)
+      }
+    }
+
   implicit lazy val acceptedgifttypesEncoder: Encoder[AcceptedGiftTypes] =
     (x: AcceptedGiftTypes) => {
       Json.fromFields(
@@ -4859,6 +5155,41 @@ object CirceImplicits {
           fileName = _fileName,
           mimeType = _mimeType,
           fileSize = _fileSize
+        )
+      }
+    }
+
+  implicit lazy val areapositionEncoder: Encoder[AreaPosition] =
+    (x: AreaPosition) => {
+      Json.fromFields(
+        List(
+          "x_percentage"             -> x.xPercentage.asJson,
+          "y_percentage"             -> x.yPercentage.asJson,
+          "width_percentage"         -> x.widthPercentage.asJson,
+          "height_percentage"        -> x.heightPercentage.asJson,
+          "rotation_angle"           -> x.rotationAngle.asJson,
+          "corner_radius_percentage" -> x.cornerRadiusPercentage.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val areapositionDecoder: Decoder[AreaPosition] =
+    Decoder.instance { h =>
+      for {
+        _xPercentage            <- h.get[Float]("x_percentage")
+        _yPercentage            <- h.get[Float]("y_percentage")
+        _widthPercentage        <- h.get[Float]("width_percentage")
+        _heightPercentage       <- h.get[Float]("height_percentage")
+        _rotationAngle          <- h.get[Float]("rotation_angle")
+        _cornerRadiusPercentage <- h.get[Float]("corner_radius_percentage")
+      } yield {
+        AreaPosition(
+          xPercentage = _xPercentage,
+          yPercentage = _yPercentage,
+          widthPercentage = _widthPercentage,
+          heightPercentage = _heightPercentage,
+          rotationAngle = _rotationAngle,
+          cornerRadiusPercentage = _cornerRadiusPercentage
         )
       }
     }
@@ -5558,7 +5889,9 @@ object CirceImplicits {
           "unique_gift_colors"                      -> x.uniqueGiftColors.asJson,
           "paid_message_star_count"                 -> x.paidMessageStarCount.asJson,
           "guard_bot"                               -> x.guardBot.asJson,
-          "community"                               -> x.community.asJson
+          "community"                               -> x.community.asJson,
+          "ton_wallet_card"                         -> x.tonWalletCard.asJson,
+          "share_theme"                             -> x.shareTheme.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -5619,6 +5952,8 @@ object CirceImplicits {
         _paidMessageStarCount               <- h.get[Option[Int]]("paid_message_star_count")
         _guardBot                           <- h.get[Option[User]]("guard_bot")
         _community                          <- h.get[Option[Community]]("community")
+        _tonWalletCard                      <- h.get[Option[TonWalletCard]]("ton_wallet_card")
+        _shareTheme                         <- h.get[Option[iozhik.OpenEnum[ChatShareTheme]]]("share_theme")
       } yield {
         ChatFullInfo(
           id = _id,
@@ -5673,7 +6008,9 @@ object CirceImplicits {
           uniqueGiftColors = _uniqueGiftColors,
           paidMessageStarCount = _paidMessageStarCount,
           guardBot = _guardBot,
-          community = _community
+          community = _community,
+          tonWalletCard = _tonWalletCard,
+          shareTheme = _shareTheme
         )
       }
     }
@@ -5954,6 +6291,46 @@ object CirceImplicits {
           bigFileId = _bigFileId,
           bigFileUniqueId = _bigFileUniqueId
         )
+      }
+    }
+
+  implicit lazy val chatsharethemebackdropEncoder: Encoder[ChatShareThemeBackdrop] =
+    (x: ChatShareThemeBackdrop) => {
+      Json.fromFields(
+        List(
+          "id"     -> x.id.asJson,
+          "name"   -> x.name.asJson,
+          "colors" -> x.colors.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatsharethemebackdropDecoder: Decoder[ChatShareThemeBackdrop] =
+    Decoder.instance { h =>
+      for {
+        _id     <- h.get[Int]("id")
+        _name   <- h.get[String]("name")
+        _colors <- h.get[UniqueGiftBackdropColors]("colors")
+      } yield {
+        ChatShareThemeBackdrop(id = _id, name = _name, colors = _colors)
+      }
+    }
+
+  implicit lazy val chatsharethemebackdropsEncoder: Encoder[ChatShareThemeBackdrops] =
+    (x: ChatShareThemeBackdrops) => {
+      Json.fromFields(
+        List(
+          "backdrops" -> x.backdrops.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val chatsharethemebackdropsDecoder: Decoder[ChatShareThemeBackdrops] =
+    Decoder.instance { h =>
+      for {
+        _backdrops <- h.getOrElse[List[ChatShareThemeBackdrop]]("backdrops")(List.empty)
+      } yield {
+        ChatShareThemeBackdrops(backdrops = _backdrops)
       }
     }
 
@@ -6441,6 +6818,7 @@ object CirceImplicits {
           "video"                -> x.video.asJson,
           "video_note"           -> x.videoNote.asJson,
           "voice"                -> x.voice.asJson,
+          "widget"               -> x.widget.asJson,
           "has_media_spoiler"    -> x.hasMediaSpoiler.asJson,
           "checklist"            -> x.checklist.asJson,
           "contact"              -> x.contact.asJson,
@@ -6474,6 +6852,7 @@ object CirceImplicits {
         _video              <- h.get[Option[Video]]("video")
         _videoNote          <- h.get[Option[VideoNote]]("video_note")
         _voice              <- h.get[Option[Voice]]("voice")
+        _widget             <- h.get[Option[Widget]]("widget")
         _hasMediaSpoiler    <- h.get[Option[Boolean]]("has_media_spoiler")
         _checklist          <- h.get[Option[Checklist]]("checklist")
         _contact            <- h.get[Option[Contact]]("contact")
@@ -6502,6 +6881,7 @@ object CirceImplicits {
           video = _video,
           videoNote = _videoNote,
           voice = _voice,
+          widget = _widget,
           hasMediaSpoiler = _hasMediaSpoiler,
           checklist = _checklist,
           contact = _contact,
@@ -7749,6 +8129,12 @@ object CirceImplicits {
       }
     }
 
+  implicit lazy val paidmessageswaivedEncoder: Encoder[PaidMessagesWaived.type] = (_: PaidMessagesWaived.type) =>
+    ().asJson
+
+  implicit lazy val paidmessageswaivedDecoder: Decoder[PaidMessagesWaived.type] = (_: HCursor) =>
+    Right(PaidMessagesWaived)
+
   implicit lazy val passportdataEncoder: Encoder[PassportData] =
     (x: PassportData) => {
       Json.fromFields(
@@ -8244,6 +8630,7 @@ object CirceImplicits {
           "quote"                       -> x.quote.asJson,
           "quote_parse_mode"            -> x.quoteParseMode.asJson,
           "quote_entities"              -> (if (x.quoteEntities.isEmpty) Json.Null else x.quoteEntities.asJson),
+          "quote_rich_texts"            -> (if (x.quoteRichTexts.isEmpty) Json.Null else x.quoteRichTexts.asJson),
           "quote_position"              -> x.quotePosition.asJson,
           "checklist_task_id"           -> x.checklistTaskId.asJson,
           "poll_option_id"              -> x.pollOptionId.asJson
@@ -8480,6 +8867,32 @@ object CirceImplicits {
         _photo     <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
       } yield {
         SharedUser(userId = _userId, firstName = _firstName, lastName = _lastName, username = _username, photo = _photo)
+      }
+    }
+
+  implicit lazy val sharedwidgetqueryEncoder: Encoder[SharedWidgetQuery] =
+    (x: SharedWidgetQuery) => {
+      Json.fromFields(
+        List(
+          "id"        -> x.id.asJson,
+          "from"      -> x.from.asJson,
+          "type"      -> x.`type`.asJson,
+          "data"      -> x.data.asJson,
+          "widget_id" -> x.widgetId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val sharedwidgetqueryDecoder: Decoder[SharedWidgetQuery] =
+    Decoder.instance { h =>
+      for {
+        _id       <- h.get[String]("id")
+        _from     <- h.get[User]("from")
+        _type     <- h.get[iozhik.OpenEnum[WidgetQueryType]]("type")
+        _data     <- h.get[String]("data")
+        _widgetId <- h.get[String]("widget_id")
+      } yield {
+        SharedWidgetQuery(id = _id, from = _from, `type` = _type, data = _data, widgetId = _widgetId)
       }
     }
 
@@ -8750,20 +9163,6 @@ object CirceImplicits {
       )
     }
 
-  implicit lazy val storyareapositionEncoder: Encoder[StoryAreaPosition] =
-    (x: StoryAreaPosition) => {
-      Json.fromFields(
-        List(
-          "x_percentage"             -> x.xPercentage.asJson,
-          "y_percentage"             -> x.yPercentage.asJson,
-          "width_percentage"         -> x.widthPercentage.asJson,
-          "height_percentage"        -> x.heightPercentage.asJson,
-          "rotation_angle"           -> x.rotationAngle.asJson,
-          "corner_radius_percentage" -> x.cornerRadiusPercentage.asJson
-        ).filter(!_._2.isNull)
-      )
-    }
-
   implicit lazy val successfulpaymentEncoder: Encoder[SuccessfulPayment] =
     (x: SuccessfulPayment) => {
       Json.fromFields(
@@ -9010,10 +9409,11 @@ object CirceImplicits {
     (x: TextQuote) => {
       Json.fromFields(
         List(
-          "text"      -> x.text.asJson,
-          "entities"  -> (if (x.entities.isEmpty) Json.Null else x.entities.asJson),
-          "position"  -> x.position.asJson,
-          "is_manual" -> x.isManual.asJson
+          "text"       -> x.text.asJson,
+          "entities"   -> (if (x.entities.isEmpty) Json.Null else x.entities.asJson),
+          "rich_texts" -> (if (x.richTexts.isEmpty) Json.Null else x.richTexts.asJson),
+          "position"   -> x.position.asJson,
+          "is_manual"  -> x.isManual.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -9021,12 +9421,155 @@ object CirceImplicits {
   implicit lazy val textquoteDecoder: Decoder[TextQuote] =
     Decoder.instance { h =>
       for {
-        _text     <- h.get[String]("text")
-        _entities <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
-        _position <- h.get[Int]("position")
-        _isManual <- h.get[Option[Boolean]]("is_manual")
+        _text      <- h.get[String]("text")
+        _entities  <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
+        _richTexts <- h.getOrElse[List[iozhik.OpenEnum[RichText]]]("rich_texts")(List.empty)
+        _position  <- h.get[Int]("position")
+        _isManual  <- h.get[Option[Boolean]]("is_manual")
       } yield {
-        TextQuote(text = _text, entities = _entities, position = _position, isManual = _isManual)
+        TextQuote(
+          text = _text,
+          entities = _entities,
+          richTexts = _richTexts,
+          position = _position,
+          isManual = _isManual
+        )
+      }
+    }
+
+  implicit lazy val tonnftEncoder: Encoder[TonNft] =
+    (x: TonNft) => {
+      Json.fromFields(
+        List(
+          "address"            -> x.address.asJson,
+          "collection_address" -> x.collectionAddress.asJson,
+          "index"              -> x.index.asJson,
+          "name"               -> x.name.asJson,
+          "description"        -> x.description.asJson,
+          "attributes"         -> (if (x.attributes.isEmpty) Json.Null else x.attributes.asJson),
+          "gift"               -> x.gift.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val tonnftDecoder: Decoder[TonNft] =
+    Decoder.instance { h =>
+      for {
+        _address           <- h.get[String]("address")
+        _collectionAddress <- h.get[Option[String]]("collection_address")
+        _index             <- h.get[String]("index")
+        _name              <- h.get[String]("name")
+        _description       <- h.get[String]("description")
+        _attributes        <- h.getOrElse[List[TonNftAttribute]]("attributes")(List.empty)
+        _gift              <- h.get[Option[UniqueGift]]("gift")
+      } yield {
+        TonNft(
+          address = _address,
+          collectionAddress = _collectionAddress,
+          index = _index,
+          name = _name,
+          description = _description,
+          attributes = _attributes,
+          gift = _gift
+        )
+      }
+    }
+
+  implicit lazy val tonnftattributeEncoder: Encoder[TonNftAttribute] =
+    (x: TonNftAttribute) => {
+      Json.fromFields(
+        List(
+          "trait_type" -> x.traitType.asJson,
+          "value"      -> x.value.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val tonnftattributeDecoder: Decoder[TonNftAttribute] =
+    Decoder.instance { h =>
+      for {
+        _traitType <- h.get[String]("trait_type")
+        _value     <- h.get[String]("value")
+      } yield {
+        TonNftAttribute(traitType = _traitType, value = _value)
+      }
+    }
+
+  implicit lazy val tonwalletcardEncoder: Encoder[TonWalletCard] =
+    (x: TonWalletCard) => {
+      Json.fromFields(
+        List(
+          "address"                -> x.address.asJson,
+          "amount"                 -> x.amount.asJson,
+          "stickers"               -> x.stickers.asJson,
+          "background_nft_address" -> x.backgroundNftAddress.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val tonwalletcardDecoder: Decoder[TonWalletCard] =
+    Decoder.instance { h =>
+      for {
+        _address              <- h.get[String]("address")
+        _amount               <- h.get[String]("amount")
+        _stickers             <- h.getOrElse[List[TonWalletCardSticker]]("stickers")(List.empty)
+        _backgroundNftAddress <- h.get[Option[String]]("background_nft_address")
+      } yield {
+        TonWalletCard(
+          address = _address,
+          amount = _amount,
+          stickers = _stickers,
+          backgroundNftAddress = _backgroundNftAddress
+        )
+      }
+    }
+
+  implicit lazy val tonwalletcardstickerEncoder: Encoder[TonWalletCardSticker] =
+    (x: TonWalletCardSticker) => {
+      Json.fromFields(
+        List(
+          "position" -> x.position.asJson,
+          "nft"      -> x.nft.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val tonwalletcardstickerDecoder: Decoder[TonWalletCardSticker] =
+    Decoder.instance { h =>
+      for {
+        _position <- h.get[AreaPosition]("position")
+        _nft      <- h.get[TonNft]("nft")
+      } yield {
+        TonWalletCardSticker(position = _position, nft = _nft)
+      }
+    }
+
+  implicit lazy val tonwallettransferEncoder: Encoder[TonWalletTransfer] =
+    (x: TonWalletTransfer) => {
+      Json.fromFields(
+        List(
+          "transaction_id" -> x.transactionId.asJson,
+          "peer_address"   -> x.peerAddress.asJson,
+          "amount"         -> x.amount.asJson,
+          "comment"        -> x.comment.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val tonwallettransferDecoder: Decoder[TonWalletTransfer] =
+    Decoder.instance { h =>
+      for {
+        _transactionId <- h.get[String]("transaction_id")
+        _peerAddress   <- h.get[String]("peer_address")
+        _amount        <- h.get[String]("amount")
+        _comment       <- h.get[Option[String]]("comment")
+      } yield {
+        TonWalletTransfer(
+          transactionId = _transactionId,
+          peerAddress = _peerAddress,
+          amount = _amount,
+          comment = _comment
+        )
       }
     }
 
@@ -9281,6 +9824,8 @@ object CirceImplicits {
           "inline_query"               -> x.inlineQuery.asJson,
           "chosen_inline_result"       -> x.chosenInlineResult.asJson,
           "callback_query"             -> x.callbackQuery.asJson,
+          "widget_query"               -> x.widgetQuery.asJson,
+          "shared_widget_query"        -> x.sharedWidgetQuery.asJson,
           "shipping_query"             -> x.shippingQuery.asJson,
           "pre_checkout_query"         -> x.preCheckoutQuery.asJson,
           "purchased_paid_media"       -> x.purchasedPaidMedia.asJson,
@@ -9316,6 +9861,8 @@ object CirceImplicits {
         _inlineQuery              <- h.get[Option[InlineQuery]]("inline_query")
         _chosenInlineResult       <- h.get[Option[ChosenInlineResult]]("chosen_inline_result")
         _callbackQuery            <- h.get[Option[CallbackQuery]]("callback_query")
+        _widgetQuery              <- h.get[Option[WidgetQuery]]("widget_query")
+        _sharedWidgetQuery        <- h.get[Option[SharedWidgetQuery]]("shared_widget_query")
         _shippingQuery            <- h.get[Option[ShippingQuery]]("shipping_query")
         _preCheckoutQuery         <- h.get[Option[PreCheckoutQuery]]("pre_checkout_query")
         _purchasedPaidMedia       <- h.get[Option[PaidMediaPurchased]]("purchased_paid_media")
@@ -9346,6 +9893,8 @@ object CirceImplicits {
           inlineQuery = _inlineQuery,
           chosenInlineResult = _chosenInlineResult,
           callbackQuery = _callbackQuery,
+          widgetQuery = _widgetQuery,
+          sharedWidgetQuery = _sharedWidgetQuery,
           shippingQuery = _shippingQuery,
           preCheckoutQuery = _preCheckoutQuery,
           purchasedPaidMedia = _purchasedPaidMedia,
@@ -9870,6 +10419,105 @@ object CirceImplicits {
           maxConnections = _maxConnections,
           allowedUpdates = _allowedUpdates
         )
+      }
+    }
+
+  implicit lazy val widgetEncoder: Encoder[Widget] =
+    (x: Widget) => {
+      Json.fromFields(
+        List(
+          "id"          -> x.id.asJson,
+          "width"       -> x.width.asJson,
+          "height"      -> x.height.asJson,
+          "html"        -> x.html.asJson,
+          "public_data" -> x.publicData.asJson,
+          "chat_data"   -> x.chatData.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val widgetDecoder: Decoder[Widget] =
+    Decoder.instance { h =>
+      for {
+        _id         <- h.get[Option[String]]("id")
+        _width      <- h.get[Option[Int]]("width")
+        _height     <- h.get[Option[Int]]("height")
+        _html       <- h.get[String]("html")
+        _publicData <- h.get[Option[String]]("public_data")
+        _chatData   <- h.get[Option[String]]("chat_data")
+      } yield {
+        Widget(id = _id, width = _width, height = _height, html = _html, publicData = _publicData, chatData = _chatData)
+      }
+    }
+
+  implicit lazy val widgetqueryEncoder: Encoder[WidgetQuery] =
+    (x: WidgetQuery) => {
+      Json.fromFields(
+        List(
+          "id"                -> x.id.asJson,
+          "from"              -> x.from.asJson,
+          "chat"              -> x.chat.asJson,
+          "message_id"        -> x.messageId.asJson,
+          "inline_message_id" -> x.inlineMessageId.asJson,
+          "chat_instance"     -> x.chatInstance.asJson,
+          "chat_type"         -> x.chatType.asJson,
+          "type"              -> x.`type`.asJson,
+          "data"              -> x.data.asJson,
+          "widget_id"         -> x.widgetId.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val widgetqueryDecoder: Decoder[WidgetQuery] =
+    Decoder.instance { h =>
+      for {
+        _id              <- h.get[String]("id")
+        _from            <- h.get[User]("from")
+        _chat            <- h.get[Option[Chat]]("chat")
+        _messageId       <- h.get[Option[Int]]("message_id")
+        _inlineMessageId <- h.get[Option[String]]("inline_message_id")
+        _chatInstance    <- h.get[String]("chat_instance")
+        _chatType        <- h.get[Option[String]]("chat_type")
+        _type            <- h.get[iozhik.OpenEnum[WidgetQueryType]]("type")
+        _data            <- h.get[String]("data")
+        _widgetId        <- h.get[Option[String]]("widget_id")
+      } yield {
+        WidgetQuery(
+          id = _id,
+          from = _from,
+          chat = _chat,
+          messageId = _messageId,
+          inlineMessageId = _inlineMessageId,
+          chatInstance = _chatInstance,
+          chatType = _chatType,
+          `type` = _type,
+          data = _data,
+          widgetId = _widgetId
+        )
+      }
+    }
+
+  implicit lazy val widgetquerywalletEncoder: Encoder[WidgetQueryWallet] =
+    (x: WidgetQueryWallet) => {
+      Json.fromFields(
+        List(
+          "address"    -> x.address.asJson,
+          "amount"     -> x.amount.asJson,
+          "public_key" -> x.publicKey.asJson,
+          "state_init" -> x.stateInit.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val widgetquerywalletDecoder: Decoder[WidgetQueryWallet] =
+    Decoder.instance { h =>
+      for {
+        _address   <- h.get[String]("address")
+        _amount    <- h.get[String]("amount")
+        _publicKey <- h.get[Option[String]]("public_key")
+        _stateInit <- h.get[Option[String]]("state_init")
+      } yield {
+        WidgetQueryWallet(address = _address, amount = _amount, publicKey = _publicKey, stateInit = _stateInit)
       }
     }
 

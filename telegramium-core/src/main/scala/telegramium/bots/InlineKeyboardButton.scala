@@ -25,7 +25,7 @@ package telegramium.bots
   *   launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the
   *   user using the method <a href="https://core.telegram.org/bots/api#answerwebappquery">answerWebAppQuery</a>.
   *   Available only in private chats between a user and the bot. Not supported for messages sent on behalf of a
-  *   business account.
+  *   business account and ephemeral messages.
   * @param loginUrl
   *   <em>Optional</em>. An HTTPS URL used to automatically authorize the user. Can be used as a replacement for the <a
   *   href="https://core.telegram.org/widgets/login">Telegram Login Widget</a>. Not supported for ephemeral messages.

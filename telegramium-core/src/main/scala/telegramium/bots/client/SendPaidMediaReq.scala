@@ -9,7 +9,7 @@ import telegramium.bots.ReplyParameters
 import telegramium.bots.KeyboardMarkup
 
 /** @param chatId
-  *   Unique identifier for the target chat or username of the target bot, supergroup or channel in the format
+  *   Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format
   *   <code>&#064;username</code>. If the chat is a channel, all Telegram Star proceeds from this media will be credited
   *   to the chat's balance. Otherwise, they will be credited to the bot's balance.
   * @param starCount

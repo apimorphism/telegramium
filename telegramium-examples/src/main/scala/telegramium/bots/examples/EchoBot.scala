@@ -21,12 +21,12 @@ class EchoBot[F[_]]()(implicit
     msg.text match {
       case Some("/rich") =>
         sendRichMessage(
-          chatId = ChatIntId(msg.chat.id),
+          chatId = Some(ChatIntId(msg.chat.id)),
           richMessage = InputRichMessage(html = Some(richHtmlText))
         ).exec.void
       case Some("/richmd") =>
         sendRichMessage(
-          chatId = ChatIntId(msg.chat.id),
+          chatId = Some(ChatIntId(msg.chat.id)),
           richMessage = InputRichMessage(markdown = Some(richMarkdownText))
         ).exec.void
       // Demo for https://github.com/apimorphism/telegramium/issues/666: the `media` list's second element
@@ -48,7 +48,7 @@ class EchoBot[F[_]]()(implicit
         ).exec.void
       case _ =>
         sendMessage(
-          chatId = ChatIntId(msg.chat.id),
+          chatId = Some(ChatIntId(msg.chat.id)),
           text = msg.text.getOrElse("NO_TEXT"),
           replyMarkup = Some(
             InlineKeyboardMarkup(
@@ -106,7 +106,7 @@ class EchoBot[F[_]]()(implicit
 
     def sendMsg(chatId: Long, text: String, parseMode: ParseMode): F[Unit] = {
       sendMessage(
-        chatId = ChatIntId(chatId),
+        chatId = Some(ChatIntId(chatId)),
         text = text,
         parseMode = Some(parseMode)
       ).exec.void >> answerCallbackQuery(callbackQueryId = query.id).exec.void

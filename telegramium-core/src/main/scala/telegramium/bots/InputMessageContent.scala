@@ -194,6 +194,57 @@ final case class InputTextMessageContent(
   linkPreviewOptions: Option[LinkPreviewOptions] = Option.empty
 ) extends InputMessageContent
 
+/** Represents the <a href="https://core.telegram.org/bots/api#inputmessagecontent">content</a> of a message with an <a
+  * href="https://core.telegram.org/bots/widgets">HTML widget</a> to be sent as the result of an inline query.
+  * Currently, widgets can't be sent in response to inline queries in the production environment.
+  *
+  * @param html
+  *   HTML code of the widget, 1-32768 bytes. The code must not exceed 4096 bytes when compressed by zlib with the
+  *   maximum compression level.
+  * @param width
+  *   <em>Optional</em>. Width of the widget in logical pixels; omit if the widget must occupy the whole width of the
+  *   message bubble. The width is clamped by the app to the range from 200 to the maximum width of the message bubble.
+  * @param height
+  *   <em>Optional</em>. Height of the widget in logical pixels; omit if the height of the widget isn't fixed. The
+  *   height is clamped by the app to the range 50-600.
+  * @param publicData
+  *   <em>Optional</em>. Public data of the widget, 0-1024 bytes, which will be available wherever the widget is shown.
+  *   If the widget is shared, then all messages with it will have the same public data.
+  * @param chatData
+  *   <em>Optional</em>. Data of the widget, which is specific to the message, 0-1024 bytes
+  * @param caption
+  *   <em>Optional</em>. Widget caption, 0-1024 characters after entities parsing
+  * @param parseMode
+  *   <em>Optional</em>. Mode for parsing entities in the widget caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
+  * @param captionEntities
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
+  * @param showCaptionAboveMedia
+  *   <em>Optional</em>. Pass <em>True</em> if the caption must be shown above the widget
+  * @param allowQueries
+  *   <em>Optional</em>. Pass <em>True</em> to allow the widget to send queries to the bot
+  * @param isShared
+  *   <em>Optional</em>. Pass <em>True</em> to create a shared widget. Each message sent from the result creates a
+  *   separate shared widget, whose identifier is received by the bot only in the field <em>widget_id</em> of queries
+  *   from the widget. To send an existing shared widget in response to an inline query, use <a
+  *   href="https://core.telegram.org/bots/api#inputsharedwidgetmessagecontent">InputSharedWidgetMessageContent</a>
+  *   instead.
+  */
+final case class InputWidgetMessageContent(
+  html: String,
+  width: Option[Int] = Option.empty,
+  height: Option[Int] = Option.empty,
+  publicData: Option[String] = Option.empty,
+  chatData: Option[String] = Option.empty,
+  caption: Option[String] = Option.empty,
+  parseMode: Option[ParseMode] = Option.empty,
+  captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty,
+  allowQueries: Option[Boolean] = Option.empty,
+  isShared: Option[Boolean] = Option.empty
+) extends InputMessageContent
+
 /** Represents the <a href="https://core.telegram.org/bots/api#inputmessagecontent">content</a> of a rich message to be
   * sent as the result of an inline query.
   *
@@ -201,3 +252,31 @@ final case class InputTextMessageContent(
   *   The message to be sent. Only previously uploaded files may be used in the message.
   */
 final case class InputRichMessageContent(richMessage: InputRichMessage) extends InputMessageContent
+
+/** Represents the <a href="https://core.telegram.org/bots/api#inputmessagecontent">content</a> of a message with a
+  * shared widget to be sent as the result of an inline query. Currently, widgets can't be sent in response to inline
+  * queries in the production environment.
+  *
+  * @param widgetId
+  *   Unique identifier of the shared widget created by the bot
+  * @param chatData
+  *   <em>Optional</em>. Data of the widget, which is specific to the message, 0-1024 bytes
+  * @param caption
+  *   <em>Optional</em>. Widget caption, 0-1024 characters after entities parsing
+  * @param parseMode
+  *   <em>Optional</em>. Mode for parsing entities in the widget caption. See <a
+  *   href="https://core.telegram.org/bots/api#formatting-options">formatting options</a> for more details.
+  * @param captionEntities
+  *   <em>Optional</em>. List of special entities that appear in the caption, which can be specified instead of
+  *   <em>parse_mode</em>
+  * @param showCaptionAboveMedia
+  *   <em>Optional</em>. Pass <em>True</em> if the caption must be shown above the widget
+  */
+final case class InputSharedWidgetMessageContent(
+  widgetId: String,
+  chatData: Option[String] = Option.empty,
+  caption: Option[String] = Option.empty,
+  parseMode: Option[ParseMode] = Option.empty,
+  captionEntities: List[MessageEntity] = List.empty,
+  showCaptionAboveMedia: Option[Boolean] = Option.empty
+) extends InputMessageContent

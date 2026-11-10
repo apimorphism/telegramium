@@ -24,7 +24,7 @@ class IceCreamParlorBot[F[_]]()(implicit
   override def onMessage(msg: Message): F[Unit] =
     msg.text.filter(_.toLowerCase.startsWith("/order")).fold(asyncF.unit) { _ =>
       sendMessage(
-        chatId = ChatIntId(msg.chat.id),
+        chatId = Some(ChatIntId(msg.chat.id)),
         text = "Choose your flavor:",
         replyMarkup = Some(
           InlineKeyboardMarkups.singleColumn(

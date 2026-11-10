@@ -1,6 +1,6 @@
 # F[Tg] - Telegramium
 
-[![Telegram](https://img.shields.io/badge/Telegram%20Bot%20API-10.3%20(August%2024%2C%202026)-blue)](https://core.telegram.org/bots/api#recent-changes)
+[![Telegram](https://img.shields.io/badge/Telegram%20Bot%20API-10.4%20(November%209%2C%202026)-blue)](https://core.telegram.org/bots/api#recent-changes)
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.apimorphism/telegramium-core_3)
 
 F[Tg] is a pure functional Telegram Bot API for Scala.
@@ -43,7 +43,7 @@ BlazeClientBuilder[F].resource.use { httpClient =>
 ```scala
 class MyLongPollBot[F[_]: Async: Parallel]()(implicit api: Api[F]) extends LongPollBot[F](api) {
   override def onMessage(msg: Message): F[Unit] =
-    Methods.sendMessage(chatId = ChatIntId(msg.chat.id), text = "Hello, world!").exec.void
+    Methods.sendMessage(chatId = Some(ChatIntId(msg.chat.id)), text = "Hello, world!").exec.void
 }
 ```
 
@@ -55,14 +55,14 @@ class MyWebhookBot[F[_]: Async](url: String, path: String)(
   implicit api: Api[F]
 ) extends WebhookBot[F](api, url, path) {
   override def onMessage(msg: Message): F[Unit] =
-    sendMessage(chatId = ChatIntId(msg.chat.id), text = "Hello, world!").exec.void
+    sendMessage(chatId = Some(ChatIntId(msg.chat.id)), text = "Hello, world!").exec.void
 }
 ```
 
 You can also perform a request to the Bot API while [sending an answer to the webhook](https://core.telegram.org/bots/api#making-requests-when-getting-updates):
 ```scala
 override def onMessageReply(msg: Message): F[Option[Method[_]]] =
-  Sync[F].pure(Some(sendMessage(chatId = ChatIntId(msg.chat.id), text = "Hello, world!")))
+  Sync[F].pure(Some(sendMessage(chatId = Some(ChatIntId(msg.chat.id)), text = "Hello, world!")))
 ```
 In addition, the library provides a way to compose multiple Webhook
 bots into a single `Http4s` Server that will handle the webhooks
@@ -134,7 +134,7 @@ val msgEntities = MessageEntities()
   .plain("Enjoy your stay.")
 
 Methods.sendMessage(
-  chatId,
+  chatId = Some(chatId),
   // Hello, @user! Welcome to our website\nEnjoy your stay.
   text = msgEntities.toPlainText(),
   // List(BoldMessageEntity(0, 7), MentionMessageEntity(7, 5), TextLinkMessageEntity(29, 7, "https://example.com"))
@@ -155,6 +155,7 @@ Please, note, that this versioning scheme is started from version `1.48.0`.
 #### Upgrading
 
 * Pass optional arguments by name: `editMessageReplyMarkup(chatId = Some(ChatIntId(id)), messageId = Some(msgId))`. Telegram often adds new optional parameters in the middle of a method's list, so positional calls can stop compiling after a Bot API update.
+* Since `10.1004.0`, `chatId` is an `Option[ChatId]` in `sendMessage`, `sendRichMessage`, `sendAnimation`, `sendAudio`, `sendContact`, `sendDocument`, `sendLivePhoto`, `sendLocation`, `sendPhoto`, `sendSticker`, `sendVenue`, `sendVideo`, `sendVideoNote` and `sendVoice`, and comes after their required parameters: Bot API 10.4 lets an ephemeral reply to a callback query omit it. Wrap it in `Some` and pass it by name: `sendMessage(chatId = Some(ChatIntId(id)), text = "hi")`.
 * On Scala 2.13, telegramium depends on the latest scala-library (2.13.18 since `10.905.0`), and sbt refuses to build a project whose `scalaVersion` is older than that. Upgrade `scalaVersion` along with telegramium.
 
 ### Contribution

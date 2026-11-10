@@ -47,8 +47,10 @@ import telegramium.bots.PaidMediaPurchased
 import telegramium.bots.Poll
 import telegramium.bots.PollAnswer
 import telegramium.bots.PreCheckoutQuery
+import telegramium.bots.SharedWidgetQuery
 import telegramium.bots.ShippingQuery
 import telegramium.bots.Update
+import telegramium.bots.WidgetQuery
 import telegramium.bots.client.Method
 import telegramium.bots.client.Methods as ApiMethods
 import telegramium.bots.high.Http4sUtils.toFileDataParts
@@ -118,6 +120,8 @@ abstract class WebhookBot[F[_]: Async](
   def onManagedBot(managedBot: ManagedBotUpdated): F[Unit]                   = noop(managedBot)
   def onSubscription(subscription: BotSubscriptionUpdated): F[Unit]          = noop(subscription)
   def onStoppedMessageGeneration(stopped: MessageGenerationStopped): F[Unit] = noop(stopped)
+  def onWidgetQuery(query: WidgetQuery): F[Unit]                             = noop(query)
+  def onSharedWidgetQuery(query: SharedWidgetQuery): F[Unit]                 = noop(query)
 
   private def noopReply[A](a: A) = Monad[F].pure(a).map(_ => Option.empty[Method[?]])
 
@@ -150,6 +154,8 @@ abstract class WebhookBot[F[_]: Async](
   def onManagedBotReply(managedBot: ManagedBotUpdated): F[Option[Method[?]]]                   = noopReply(managedBot)
   def onSubscriptionReply(subscription: BotSubscriptionUpdated): F[Option[Method[?]]]          = noopReply(subscription)
   def onStoppedMessageGenerationReply(stopped: MessageGenerationStopped): F[Option[Method[?]]] = noopReply(stopped)
+  def onWidgetQueryReply(query: WidgetQuery): F[Option[Method[?]]]                             = noopReply(query)
+  def onSharedWidgetQueryReply(query: SharedWidgetQuery): F[Option[Method[?]]]                 = noopReply(query)
 
   def onUpdate(update: Update): F[Option[Method[?]]] =
     List(
@@ -191,7 +197,9 @@ abstract class WebhookBot[F[_]: Async](
       update.subscription.map(subscription => onSubscriptionReply(subscription) <* onSubscription(subscription)),
       update.stoppedMessageGeneration.map(stopped =>
         onStoppedMessageGenerationReply(stopped) <* onStoppedMessageGeneration(stopped)
-      )
+      ),
+      update.widgetQuery.map(query => onWidgetQueryReply(query) <* onWidgetQuery(query)),
+      update.sharedWidgetQuery.map(query => onSharedWidgetQueryReply(query) <* onSharedWidgetQuery(query))
     ).flatten.headOption.getOrElse(noopReply(update))
 
   private def handleUpdateReq(rawReq: org.http4s.Request[F]): F[Option[Method[?]]] =

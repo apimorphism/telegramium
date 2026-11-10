@@ -18,6 +18,8 @@ import telegramium.bots.InputLinkFile
 import telegramium.bots.InputMediaPhoto
 import telegramium.bots.InputPartFile
 import telegramium.bots.InputRichMessage
+import telegramium.bots.ReplyParameters
+import telegramium.bots.RichBlockParagraph
 import telegramium.bots.client.Method
 import telegramium.bots.high.keyboards.InlineKeyboardButtons
 import telegramium.bots.high.keyboards.InlineKeyboardMarkups
@@ -79,8 +81,8 @@ class TelegramLiveSpec extends AnyFreeSpec with Matchers {
     )
     val message = execute(
       Methods.sendPhoto(
-        chatId,
-        InputPartFile(image),
+        chatId = Some(chatId),
+        photo = InputPartFile(image),
         caption = Some("#669: uploaded, with reply_markup"),
         replyMarkup = Some(markup)
       )
@@ -90,16 +92,42 @@ class TelegramLiveSpec extends AnyFreeSpec with Matchers {
 
   "a markdown-only rich message is not rejected as RICH_MESSAGE_EMPTY (#686)" taggedAs LiveTest in {
     val message = execute(
-      Methods.sendRichMessage(chatId, InputRichMessage(markdown = Some("**#686**: a *markdown-only* rich message")))
+      Methods.sendRichMessage(
+        chatId = Some(chatId),
+        richMessage = InputRichMessage(markdown = Some("**#686**: a *markdown-only* rich message"))
+      )
     )
     message.richMessage shouldBe defined
+  }
+
+  "a reply quotes a rich message with the rich text Telegram sent, re-encoded as is" taggedAs LiveTest in {
+    val message = execute(
+      Methods.sendRichMessage(
+        chatId = Some(chatId),
+        richMessage = InputRichMessage(markdown = Some("Quoted: **bold with *nested italic*** and plain"))
+      )
+    )
+    val paragraph = message.richMessage.toList.flatMap(_.blocks).collectFirst {
+      case iozhik.OpenEnum.Known(RichBlockParagraph(iozhik.OpenEnum.Known(text))) => text
+    }
+    paragraph shouldBe defined
+    // the docs require the quoted parts nested exactly as in the message received, which a re-encoding that changed
+    // their shape would break
+    val reply = execute(
+      Methods.sendMessage(
+        chatId = Some(chatId),
+        text = "Replying with a rich quote",
+        replyParameters = Some(ReplyParameters(messageId = Some(message.messageId), quoteRichTexts = paragraph.toList))
+      )
+    )
+    reply.quote.map(_.richTexts) shouldBe Some(paragraph.toList.map(iozhik.OpenEnum.Known(_)))
   }
 
   "a document with an uploaded thumbnail keeps the thumbnail" taggedAs LiveTest in {
     val message = execute(
       Methods.sendDocument(
-        chatId,
-        InputPartFile(new File(this.getClass.getResource("/document.txt").getFile)),
+        chatId = Some(chatId),
+        document = InputPartFile(new File(this.getClass.getResource("/document.txt").getFile)),
         thumbnail = Some(InputPartFile(image)),
         caption = Some("Uploaded, with an uploaded thumbnail")
       )
