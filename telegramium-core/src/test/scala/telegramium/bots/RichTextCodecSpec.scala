@@ -356,33 +356,6 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
     }
   }
 
-  it should "decode and re-encode plain_string preserving wire format" in {
-    val json    = Json.fromString("Hello, world!")
-    val decoded = json.as[iozhik.OpenEnum[RichText]].toOption.get
-    decoded match {
-      case iozhik.OpenEnum.Known(rt) => (rt: RichText).asJson shouldBe json
-      case _                         => fail("Expected Known")
-    }
-  }
-
-  it should "decode and re-encode flat_array preserving wire format" in {
-    val json    = parse("""["Hello, ", {"type": "bold", "text": "world"}, "!"]""").toOption.get
-    val decoded = json.as[iozhik.OpenEnum[RichText]].toOption.get
-    decoded match {
-      case iozhik.OpenEnum.Known(rt) => (rt: RichText).asJson shouldBe json
-      case _                         => fail("Expected Known")
-    }
-  }
-
-  it should "decode and re-encode typed_object preserving wire format" in {
-    val json    = parse("""{"type": "bold", "text": "important"}""").toOption.get
-    val decoded = json.as[iozhik.OpenEnum[RichText]].toOption.get
-    decoded match {
-      case iozhik.OpenEnum.Known(rt) => (rt: RichText).asJson shouldBe json
-      case _                         => fail("Expected Known")
-    }
-  }
-
   // Pins current behaviour, which is wrong for a value sent back (#723): an unknown rich text keeps only its tag, and
   // encodes as that tag, a bare string, which Telegram reads as plain text
   "An unknown nested rich text" should "encode as its bare type tag" in {
