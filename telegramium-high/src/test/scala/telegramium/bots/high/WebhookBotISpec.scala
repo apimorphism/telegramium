@@ -424,7 +424,15 @@ class WebhookBotISpec
         .when(sendMessageRequest("onWidgetQuery"))
         .respond(sendMessageResponse)
       verifyResult(
-        testUpdate.copy(widgetQuery = WidgetQuery("", testUser, "", OpenEnum(WidgetQueryTypeData()), "").some),
+        testUpdate.copy(widgetQuery =
+          WidgetQuery(
+            id = "1",
+            from = testUser,
+            chatInstance = "1",
+            `type` = OpenEnum(WidgetQueryTypeData()),
+            data = "test"
+          ).some
+        ),
         "onWidgetQueryReply"
       )
     }
@@ -435,7 +443,13 @@ class WebhookBotISpec
         .respond(sendMessageResponse)
       verifyResult(
         testUpdate.copy(sharedWidgetQuery =
-          SharedWidgetQuery("", testUser, OpenEnum(WidgetQueryTypeData()), "", "").some
+          SharedWidgetQuery(
+            id = "1",
+            from = testUser,
+            `type` = OpenEnum(WidgetQueryTypeData()),
+            data = "test",
+            widgetId = "1"
+          ).some
         ),
         "onSharedWidgetQueryReply"
       )

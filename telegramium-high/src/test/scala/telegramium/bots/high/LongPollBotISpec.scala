@@ -328,7 +328,15 @@ class LongPollBotISpec
         .respond(sendMessageResponse)
       bot
         .onUpdate(
-          testUpdate.copy(widgetQuery = WidgetQuery("", testUser, "", OpenEnum(WidgetQueryTypeData()), "").some)
+          testUpdate.copy(widgetQuery =
+            WidgetQuery(
+              id = "1",
+              from = testUser,
+              chatInstance = "1",
+              `type` = OpenEnum(WidgetQueryTypeData()),
+              data = "test"
+            ).some
+          )
         )
         .unsafeRunSync()
       verifyMessageSent("onWidgetQuery")
@@ -341,7 +349,15 @@ class LongPollBotISpec
       bot
         .onUpdate(
           testUpdate
-            .copy(sharedWidgetQuery = SharedWidgetQuery("", testUser, OpenEnum(WidgetQueryTypeData()), "", "").some)
+            .copy(sharedWidgetQuery =
+              SharedWidgetQuery(
+                id = "1",
+                from = testUser,
+                `type` = OpenEnum(WidgetQueryTypeData()),
+                data = "test",
+                widgetId = "1"
+              ).some
+            )
         )
         .unsafeRunSync()
       verifyMessageSent("onSharedWidgetQuery")
