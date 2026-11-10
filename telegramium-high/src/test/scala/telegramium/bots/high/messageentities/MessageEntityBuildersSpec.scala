@@ -40,7 +40,8 @@ class MessageEntityBuildersSpec extends AnyFreeSpec with Matchers {
 
   private val params = Gen.Parameters.default.withSize(GenPrims.Budget)
 
-  // a sample of each variant; MessageEntity's own case, the sum of them, samples as one of the variants
+  // a sample of each variant; MessageEntity's own case, the sum of them, samples as one of the variants. A fixed seed,
+  // unlike SeededCheck's: any value of each variant will do
   private val variants: List[MessageEntity] =
     RoundTrips.all
       .map(c => (c.name, c.gen.pureApply(params, Seed(0L))))

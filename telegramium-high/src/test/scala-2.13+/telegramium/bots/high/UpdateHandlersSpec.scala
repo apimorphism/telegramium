@@ -24,8 +24,9 @@ class UpdateHandlersSpec extends AnyFreeSpec with Matchers {
 
   private val params = Gen.Parameters.default.withSize(GenPrims.Budget)
 
-  // generated updates, cut down to update_id and one other field each, by that field's JSON key
-  private val (undecoded, updates) =
+  // generated updates, cut down to update_id and one other field each, by that field's JSON key. Fixed seeds, unlike
+  // SeededCheck's: the samples only need to cover every kind, so they stay the same from run to run
+  private val (decodeErrors, updates) =
     (0L until 100L).toList
       .flatMap(i => updateEncoder(GenUpdate.gen.pureApply(params, Seed(i))).asObject.toList.flatMap(_.toList))
       .collect { case (key, value) if key != "update_id" && !value.isNull => key -> value }
@@ -35,7 +36,7 @@ class UpdateHandlersSpec extends AnyFreeSpec with Matchers {
       }
 
   // a failed test each, rather than the whole suite aborting
-  undecoded.foreach { case (key, e) =>
+  decodeErrors.foreach { case (key, e) =>
     s"an update with only $key decodes" in fail(e.toString)
   }
 
@@ -43,7 +44,7 @@ class UpdateHandlersSpec extends AnyFreeSpec with Matchers {
   private def kindOf(update: Update): String =
     update.productElementNames.zip(update.productIterator).collectFirst { case (name, Some(_)) => name }.get
 
-  private val kinds: Map[String, Update] = updates.groupBy(kindOf).map { case (kind, us) => kind -> us.head }
+  private val kinds: Map[String, Update] = updates.groupBy(kindOf).map { case (kind, ofKind) => kind -> ofKind.head }
 
   "every kind of update is sampled" in {
     kinds.keySet shouldBe updates.head.productElementNames.toSet - "updateId"
@@ -67,10 +68,10 @@ class UpdateHandlersSpec extends AnyFreeSpec with Matchers {
     }
 
     s"$kind reaches WebhookBot.$handler and ${handler}Reply" in {
-      val sent  = ListBuffer.empty[String]
-      val reply = new TestWebhookBot(recordingApi(sent)).onUpdate(update).unsafeRunSync()
+      val sent         = ListBuffer.empty[String]
+      val webhookReply = new TestWebhookBot(recordingApi(sent)).onUpdate(update).unsafeRunSync()
       sent.toList shouldBe List(handler)
-      reply.map(textOf) shouldBe Some(handler + "Reply")
+      webhookReply.map(textOf) shouldBe Some(handler + "Reply")
     }
   }
 
