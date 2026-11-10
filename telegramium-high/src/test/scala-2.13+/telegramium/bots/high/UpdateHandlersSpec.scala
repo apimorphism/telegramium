@@ -24,15 +24,20 @@ class UpdateHandlersSpec extends AnyFreeSpec with Matchers {
 
   private val params = Gen.Parameters.default.withSize(GenPrims.Budget)
 
-  // generated updates, cut down to update_id and one other field each
-  private val updates: List[Update] =
-    (0L until 100L).toList.flatMap { i =>
-      val json = updateEncoder(GenUpdate.gen.pureApply(params, Seed(i))).asObject.get
-      json.toList.collect {
-        case (key, value) if key != "update_id" && !value.isNull =>
-          Json.obj("update_id" -> Json.fromInt(1), key -> value).as[Update].toOption.get
+  // generated updates, cut down to update_id and one other field each, by that field's JSON key
+  private val (undecoded, updates) =
+    (0L until 100L).toList
+      .flatMap(i => updateEncoder(GenUpdate.gen.pureApply(params, Seed(i))).asObject.toList.flatMap(_.toList))
+      .collect { case (key, value) if key != "update_id" && !value.isNull => key -> value }
+      .distinctBy(_._1)
+      .partitionMap { case (key, value) =>
+        Json.obj("update_id" -> Json.fromInt(1), key -> value).as[Update].left.map(e => key -> e)
       }
-    }
+
+  // a failed test each, rather than the whole suite aborting
+  undecoded.foreach { case (key, e) =>
+    s"an update with only $key decodes" in fail(e.toString)
+  }
 
   // the field an update sets, e.g. widgetQuery
   private def kindOf(update: Update): String =
@@ -45,7 +50,8 @@ class UpdateHandlersSpec extends AnyFreeSpec with Matchers {
   }
 
   // the test bots send a message named after the handler they're in
-  private def textOf(method: Method[?]): String = method.payload.json.hcursor.get[String]("text").toOption.get
+  private def textOf(method: Method[?]): String =
+    method.payload.json.hcursor.get[String]("text").getOrElse(s"${method.payload.name} without text")
 
   private def recordingApi(sent: ListBuffer[String]): Api[IO] = new Api[IO] {
     override def execute[Res](method: Method[Res]): IO[Res] = IO(sent += textOf(method)).as(null.asInstanceOf[Res])

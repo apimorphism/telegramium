@@ -28,6 +28,14 @@ class MessageEntityBuildersSpec extends AnyFreeSpec with Matchers {
 
   private val text = "abc"
 
+  // the fields' values arrive boxed, the parameters may be primitive
+  private val boxed: Map[Class[?], Class[?]] = Map(
+    classOf[Int]     -> classOf[java.lang.Integer],
+    classOf[Long]    -> classOf[java.lang.Long],
+    classOf[Boolean] -> classOf[java.lang.Boolean],
+    classOf[Double]  -> classOf[java.lang.Double]
+  )
+
   "MessageEntity has variants" in {
     variants should not be empty
   }
@@ -41,12 +49,16 @@ class MessageEntityBuildersSpec extends AnyFreeSpec with Matchers {
       case other          => other
     }
 
+    // by parameter types too, so that an overload of the same arity isn't picked instead
+    def takesArgs(types: Array[Class[?]]): Boolean =
+      types.length == args.size && types.zip(args).forall { case (t, a) => boxed.getOrElse(t, t).isInstance(a) }
+
     name - {
       s"is built by MessageEntityFormat.$name" in {
         val format = (try Class.forName(classOf[MessageEntityFormat].getName + "$" + name)
         catch { case _: ClassNotFoundException => fail(s"MessageEntityFormat.$name doesn't exist") }).getConstructors
-          .find(_.getParameterCount == args.size)
-          .getOrElse(fail(s"MessageEntityFormat.$name doesn't take ${args.size} arguments"))
+          .find(c => takesArgs(c.getParameterTypes))
+          .getOrElse(fail(s"MessageEntityFormat.$name doesn't take $args"))
           .newInstance(args*)
           .asInstanceOf[MessageEntityFormat]
         val built = MessageEntityFormat.toMessageEntities(Vector(format))
@@ -59,8 +71,8 @@ class MessageEntityBuildersSpec extends AnyFreeSpec with Matchers {
         // a value class: its methods return the underlying Vector on the JVM
         val entities = MessageEntities(
           classOf[MessageEntities].getMethods
-            .find(m => m.getName == builder && m.getParameterCount == args.size)
-            .getOrElse(fail(s"MessageEntities has no $builder method taking ${args.size} arguments"))
+            .find(m => m.getName == builder && takesArgs(m.getParameterTypes))
+            .getOrElse(fail(s"MessageEntities has no $builder method taking $args"))
             .invoke(MessageEntities(), args*)
             .asInstanceOf[Vector[MessageEntityFormat]]
         )
