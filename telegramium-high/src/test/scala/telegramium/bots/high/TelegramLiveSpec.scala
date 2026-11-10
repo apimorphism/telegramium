@@ -18,6 +18,8 @@ import telegramium.bots.InputLinkFile
 import telegramium.bots.InputMediaPhoto
 import telegramium.bots.InputPartFile
 import telegramium.bots.InputRichMessage
+import telegramium.bots.ReplyParameters
+import telegramium.bots.RichBlockParagraph
 import telegramium.bots.client.Method
 import telegramium.bots.high.keyboards.InlineKeyboardButtons
 import telegramium.bots.high.keyboards.InlineKeyboardMarkups
@@ -96,6 +98,29 @@ class TelegramLiveSpec extends AnyFreeSpec with Matchers {
       )
     )
     message.richMessage shouldBe defined
+  }
+
+  "a reply quotes a rich message with the rich text Telegram sent, re-encoded as is" taggedAs LiveTest in {
+    val message = execute(
+      Methods.sendRichMessage(
+        chatId = Some(chatId),
+        richMessage = InputRichMessage(markdown = Some("Quoted: **bold with *nested italic*** and plain"))
+      )
+    )
+    val paragraph = message.richMessage.toList.flatMap(_.blocks).collectFirst {
+      case iozhik.OpenEnum.Known(RichBlockParagraph(iozhik.OpenEnum.Known(text))) => text
+    }
+    paragraph shouldBe defined
+    // the docs require the quoted parts nested exactly as in the message received, which a re-encoding that changed
+    // their shape would break
+    val reply = execute(
+      Methods.sendMessage(
+        chatId = Some(chatId),
+        text = "Replying with a rich quote",
+        replyParameters = Some(ReplyParameters(messageId = Some(message.messageId), quoteRichTexts = paragraph.toList))
+      )
+    )
+    reply.quote.map(_.richTexts) shouldBe Some(paragraph.toList.map(iozhik.OpenEnum.Known(_)))
   }
 
   "a document with an uploaded thumbnail keeps the thumbnail" taggedAs LiveTest in {
