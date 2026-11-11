@@ -93,6 +93,8 @@ The Telegram Bot API is not versioned, which means bots and libraries must try t
 
 Telegramium introduces `OpenEnum`, a wrapper for Telegram Bot API enumerations with two cases: `Known` and `Unknown`. This type allows unknown values to be explicitly handled (similar to `Option` or `Either`), enabling bots using Telegramium to be more robust, improve error handling, and degrade gracefully in light of frequent Telegram Bot API updates.
 
+An `Unknown` keeps the JSON it was decoded from, `Unknown(tag, raw)`, and encodes back to it. So unknown parts nested in a received value, e.g. inside a quoted rich text, are sent back as Telegram sent them. A top-level one can't be sent: request fields take the plain type, as in `quoteRichTexts: List[RichText]`.
+
 #### Unknown updates
 
 For the same reason, Telegram may introduce a new update type (a new top-level field on `Update`) before Telegramium adds explicit support for it. When that happens, `LongPollBot` and `WebhookBot` still dispatch the update's known fields as usual, and additionally call `onUnknownUpdate` with the decoded update, the names of the unknown fields and the raw JSON:
@@ -156,7 +158,7 @@ Please, note, that this versioning scheme is started from version `1.48.0`.
 
 * Pass optional arguments by name: `editMessageReplyMarkup(chatId = Some(ChatIntId(id)), messageId = Some(msgId))`. Telegram often adds new optional parameters in the middle of a method's list, so positional calls can stop compiling after a Bot API update.
 * Since `10.1004.0`, `chatId` is an `Option[ChatId]` in `sendMessage`, `sendRichMessage`, `sendAnimation`, `sendAudio`, `sendContact`, `sendDocument`, `sendLivePhoto`, `sendLocation`, `sendPhoto`, `sendSticker`, `sendVenue`, `sendVideo`, `sendVideoNote` and `sendVoice`, and comes after their required parameters: Bot API 10.4 lets an ephemeral reply to a callback query omit it. Wrap it in `Some` and pass it by name: `sendMessage(chatId = Some(ChatIntId(id)), text = "hi")`.
-* Since `10.1004.0`, `OpenEnum.Unknown` keeps the JSON it was decoded from, `Unknown(value, raw)`, and encodes back to it, so unknown parts nested in a received value (e.g. inside a quoted rich text) are sent back as Telegram sent them. A top-level one can't be sent: request fields take the plain type, as in `quoteRichTexts: List[RichText]`. Match it as `case Unknown(tag, _)`.
+* Since `10.1004.0`, `OpenEnum.Unknown` also holds the JSON it was decoded from (see [OpenEnum](#openenum)). Match it as `case Unknown(tag, _)`.
 * On Scala 2.13, telegramium depends on the latest scala-library (2.13.18 since `10.905.0`), and sbt refuses to build a project whose `scalaVersion` is older than that. Upgrade `scalaVersion` along with telegramium.
 
 ### Contribution
