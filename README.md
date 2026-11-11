@@ -156,6 +156,7 @@ Please, note, that this versioning scheme is started from version `1.48.0`.
 
 * Pass optional arguments by name: `editMessageReplyMarkup(chatId = Some(ChatIntId(id)), messageId = Some(msgId))`. Telegram often adds new optional parameters in the middle of a method's list, so positional calls can stop compiling after a Bot API update.
 * Since `10.1004.0`, `chatId` is an `Option[ChatId]` in `sendMessage`, `sendRichMessage`, `sendAnimation`, `sendAudio`, `sendContact`, `sendDocument`, `sendLivePhoto`, `sendLocation`, `sendPhoto`, `sendSticker`, `sendVenue`, `sendVideo`, `sendVideoNote` and `sendVoice`, and comes after their required parameters: Bot API 10.4 lets an ephemeral reply to a callback query omit it. Wrap it in `Some` and pass it by name: `sendMessage(chatId = Some(ChatIntId(id)), text = "hi")`.
+* Since `10.1004.0`, `OpenEnum.Unknown` keeps the JSON it was decoded from, `Unknown(value, raw)`, and encodes back to it, so a received value with unknown parts (e.g. a quoted rich text) is sent back as Telegram sent it. Match it as `case Unknown(tag, _)`.
 * On Scala 2.13, telegramium depends on the latest scala-library (2.13.18 since `10.905.0`), and sbt refuses to build a project whose `scalaVersion` is older than that. Upgrade `scalaVersion` along with telegramium.
 
 ### Contribution

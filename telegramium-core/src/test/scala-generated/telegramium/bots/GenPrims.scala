@@ -59,7 +59,7 @@ object GenPrims {
     Gen.sized(n => if (n <= 0) pick(atZero) else pick(all))
   }
 
-  // Only Known values: Unknown values are receive-only
+  // Only Known values: Unknown values only come from decoding
   def openEnum[A](g: => Gen[A]): Gen[iozhik.OpenEnum[A]] = Gen.lzy(g).map(iozhik.OpenEnum.Known(_))
 
   // Shrinking only drops optional and list values, and shrinks the composite ones: primitives stay as generated, so a
@@ -126,8 +126,8 @@ object GenPrims {
       : RoundTripCase[A] =
       new RoundTripCase(name, gen, shrink, e,
         d.emap {
-          case iozhik.OpenEnum.Known(a)   => Right(a)
-          case iozhik.OpenEnum.Unknown(v) => Left("unknown value: " + v)
+          case iozhik.OpenEnum.Known(a)      => Right(a)
+          case iozhik.OpenEnum.Unknown(v, _) => Left("unknown value: " + v)
         })
   }
 }

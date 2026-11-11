@@ -41,5 +41,9 @@ An update carrying fields or kinds this version of the library does not know.
 _Avoid_: unsupported update, invalid update
 
 **Unknown value**:
-An enum value from Telegram that this version of the library does not know. It is only ever received, never sent back.
+An enum value from Telegram that this version of the library does not know. It can't be read, and if it is sent back, it goes exactly as received.
 _Avoid_: unsupported value, raw value
+
+**Forward compatibility**:
+A bot built on an older version of the library keeps working against a newer Bot API: values it doesn't know are accepted as Unknown values and Unknown updates instead of failing.
+_Avoid_: future-proofing, backward compatibility (for this direction)

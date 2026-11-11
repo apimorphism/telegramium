@@ -154,7 +154,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
   it should "decode an unknown type as OpenEnum.Unknown" in {
     val json   = parse("""{"type": "future_type", "text": "hello"}""").toOption.get
     val result = json.as[iozhik.OpenEnum[RichText]]
-    result shouldBe Right(iozhik.OpenEnum.Unknown("future_type"))
+    result shouldBe Right(iozhik.OpenEnum.Unknown("future_type", json))
   }
 
   // --- Unit tests: encode ---
@@ -356,14 +356,13 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
     }
   }
 
-  // Pins current behaviour, which is wrong for a value sent back (#723): an unknown rich text keeps only its tag, and
-  // encodes as that tag, a bare string, which Telegram reads as plain text
-  "An unknown nested rich text" should "encode as its bare type tag" in {
-    val json    = parse("""{"type": "bold", "text": {"type": "future_type", "text": "hi"}}""").toOption.get
+  // A bot can send back a rich text it received, e.g. as a quote (#723): an unknown part must go back as Telegram sent
+  // it, not as its tag, a bare string, which Telegram reads as plain text
+  "An unknown nested rich text" should "encode back to the JSON it was decoded from" in {
+    val unknown = parse("""{"type": "future_type", "text": "hi"}""").toOption.get
+    val json    = Json.obj("type" -> Json.fromString("bold"), "text" -> unknown)
     val decoded = json.as[iozhik.OpenEnum[RichText]]
-    decoded shouldBe Right(known(RichTextBold(iozhik.OpenEnum.Unknown("future_type"))))
-    decoded.toOption.collect { case iozhik.OpenEnum.Known(rt) => (rt: RichText).asJson } shouldBe Some(
-      parse("""{"type": "bold", "text": "future_type"}""").toOption.get
-    )
+    decoded shouldBe Right(known(RichTextBold(iozhik.OpenEnum.Unknown("future_type", unknown))))
+    decoded.toOption.collect { case iozhik.OpenEnum.Known(rt) => (rt: RichText).asJson } shouldBe Some(json)
   }
 }
