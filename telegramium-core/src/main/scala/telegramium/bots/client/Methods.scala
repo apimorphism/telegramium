@@ -2392,9 +2392,9 @@ trait Methods {
   def getChatAdministrators(
     chatId: ChatId,
     returnBots: Option[Boolean] = Option.empty
-  ): Method[List[iozhik.OpenEnum[ChatMember]]] = {
+  ): Method[List[iozhik.JsonOpenEnum[ChatMember]]] = {
     val req = GetChatAdministratorsReq(chatId, returnBots)
-    MethodReq[List[iozhik.OpenEnum[ChatMember]]]("getChatAdministrators", req.asJson)
+    MethodReq[List[iozhik.JsonOpenEnum[ChatMember]]]("getChatAdministrators", req.asJson)
   }
 
   /** Returns the gifts owned by a chat. Returns <a href="https://core.telegram.org/bots/api#ownedgifts">OwnedGifts</a>
@@ -2469,9 +2469,9 @@ trait Methods {
     * @param userId
     *   Unique identifier of the target user
     */
-  def getChatMember(chatId: ChatId, userId: Long): Method[iozhik.OpenEnum[ChatMember]] = {
+  def getChatMember(chatId: ChatId, userId: Long): Method[iozhik.JsonOpenEnum[ChatMember]] = {
     val req = GetChatMemberReq(chatId, userId)
-    MethodReq[iozhik.OpenEnum[ChatMember]]("getChatMember", req.asJson)
+    MethodReq[iozhik.JsonOpenEnum[ChatMember]]("getChatMember", req.asJson)
   }
 
   /** Use this method to get the number of members in a chat. Returns <em>Integer</em> on success.
@@ -2491,9 +2491,9 @@ trait Methods {
     * @param chatId
     *   Unique identifier for the target private chat. If not specified, the bot's default menu button will be returned.
     */
-  def getChatMenuButton(chatId: Option[Long] = Option.empty): Method[iozhik.OpenEnum[MenuButton]] = {
+  def getChatMenuButton(chatId: Option[Long] = Option.empty): Method[iozhik.JsonOpenEnum[MenuButton]] = {
     val req = GetChatMenuButtonReq(chatId)
-    MethodReq[iozhik.OpenEnum[MenuButton]]("getChatMenuButton", req.asJson)
+    MethodReq[iozhik.JsonOpenEnum[MenuButton]]("getChatMenuButton", req.asJson)
   }
 
   /** Use this method to get the list of backdrops, which can be used as the background of a theme of the screen for

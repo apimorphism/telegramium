@@ -60,7 +60,7 @@ final case class TransactionPartnerUser(
   affiliate: Option[AffiliateInfo] = Option.empty,
   invoicePayload: Option[String] = Option.empty,
   subscriptionPeriod: Option[Int] = Option.empty,
-  paidMedia: List[iozhik.OpenEnum[PaidMedia]] = List.empty,
+  paidMedia: List[iozhik.JsonOpenEnum[PaidMedia]] = List.empty,
   paidMediaPayload: Option[String] = Option.empty,
   gift: Option[Gift] = Option.empty,
   premiumSubscriptionDuration: Option[Int] = Option.empty
@@ -80,5 +80,5 @@ final case class TransactionPartnerTelegramApi(requestCount: Int) extends Transa
   *   <em>Optional</em>. State of the transaction if the transaction is outgoing
   */
 final case class TransactionPartnerFragment(
-  withdrawalState: Option[iozhik.OpenEnum[RevenueWithdrawalState]] = Option.empty
+  withdrawalState: Option[iozhik.JsonOpenEnum[RevenueWithdrawalState]] = Option.empty
 ) extends TransactionPartner

@@ -25,7 +25,7 @@ final case class PollOption(
   persistentId: String,
   text: String,
   voterCount: Int,
-  textEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  textEntities: List[iozhik.JsonOpenEnum[MessageEntity]] = List.empty,
   media: Option[PollMedia] = Option.empty,
   addedByUser: Option[User] = Option.empty,
   addedByChat: Option[Chat] = Option.empty,

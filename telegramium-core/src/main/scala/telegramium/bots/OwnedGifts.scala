@@ -11,6 +11,6 @@ package telegramium.bots
   */
 final case class OwnedGifts(
   totalCount: Int,
-  gifts: List[iozhik.OpenEnum[OwnedGift]] = List.empty,
+  gifts: List[iozhik.JsonOpenEnum[OwnedGift]] = List.empty,
   nextOffset: Option[String] = Option.empty
 )

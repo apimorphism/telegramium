@@ -27,8 +27,8 @@ final case class RichBlockVideo(
   *   <em>Optional</em>. <em>True</em>, if the content of the block is visible by default
   */
 final case class RichBlockDetails(
-  summary: iozhik.OpenEnum[RichText],
-  blocks: List[iozhik.OpenEnum[RichBlock]] = List.empty,
+  summary: iozhik.JsonOpenEnum[RichText],
+  blocks: List[iozhik.JsonOpenEnum[RichBlock]] = List.empty,
   isOpen: Option[Boolean] = Option.empty
 ) extends RichBlock
 
@@ -66,14 +66,14 @@ final case class RichBlockPhoto(
   *   href="https://t.me/addemoji/AIActions">https://t.me/addemoji/AIActions</a> for examples of custom emoji that are
   *   recommended for usage in the block.
   */
-final case class RichBlockThinking(text: iozhik.OpenEnum[RichText]) extends RichBlock
+final case class RichBlockThinking(text: iozhik.JsonOpenEnum[RichText]) extends RichBlock
 
 /** A footer, corresponding to the HTML tag <code>ᐸfooterᐳ</code>.
   *
   * @param text
   *   Text of the block
   */
-final case class RichBlockFooter(text: iozhik.OpenEnum[RichText]) extends RichBlock
+final case class RichBlockFooter(text: iozhik.JsonOpenEnum[RichText]) extends RichBlock
 
 /** A block with an anchor, corresponding to the HTML tag <code>ᐸaᐳ</code> with the attribute <code>name</code>.
   *
@@ -108,8 +108,8 @@ final case class RichBlockMathematicalExpression(expression: String) extends Ric
   *   <em>Optional</em>. Credit of the block
   */
 final case class RichBlockBlockQuotation(
-  blocks: List[iozhik.OpenEnum[RichBlock]] = List.empty,
-  credit: Option[iozhik.OpenEnum[RichText]] = Option.empty
+  blocks: List[iozhik.JsonOpenEnum[RichBlock]] = List.empty,
+  credit: Option[iozhik.JsonOpenEnum[RichText]] = Option.empty
 ) extends RichBlock
 
 /** A block with a map, corresponding to the custom HTML tag <code>ᐸtg-mapᐳ</code>.
@@ -141,7 +141,7 @@ final case class RichBlockMap(
   *   <em>Optional</em>. Caption of the block
   */
 final case class RichBlockSlideshow(
-  blocks: List[iozhik.OpenEnum[RichBlock]] = List.empty,
+  blocks: List[iozhik.JsonOpenEnum[RichBlock]] = List.empty,
   caption: Option[RichBlockCaption] = Option.empty
 ) extends RichBlock
 
@@ -150,7 +150,7 @@ final case class RichBlockSlideshow(
   * @param text
   *   Text of the block
   */
-final case class RichBlockParagraph(text: iozhik.OpenEnum[RichText]) extends RichBlock
+final case class RichBlockParagraph(text: iozhik.JsonOpenEnum[RichText]) extends RichBlock
 
 /** A quotation with centered text, loosely corresponding to the HTML tag <code>ᐸasideᐳ</code>.
   *
@@ -160,8 +160,8 @@ final case class RichBlockParagraph(text: iozhik.OpenEnum[RichText]) extends Ric
   *   <em>Optional</em>. Credit of the block
   */
 final case class RichBlockPullQuotation(
-  text: iozhik.OpenEnum[RichText],
-  credit: Option[iozhik.OpenEnum[RichText]] = Option.empty
+  text: iozhik.JsonOpenEnum[RichText],
+  credit: Option[iozhik.JsonOpenEnum[RichText]] = Option.empty
 ) extends RichBlock
 
 /** A preformatted text block, corresponding to the nested HTML tags <code>ᐸpreᐳ</code> and <code>ᐸcodeᐳ</code>.
@@ -171,7 +171,7 @@ final case class RichBlockPullQuotation(
   * @param language
   *   <em>Optional</em>. The programming language of the text
   */
-final case class RichBlockPreformatted(text: iozhik.OpenEnum[RichText], language: Option[String] = Option.empty)
+final case class RichBlockPreformatted(text: iozhik.JsonOpenEnum[RichText], language: Option[String] = Option.empty)
     extends RichBlock
 
 /** A table, corresponding to the HTML tag <code>ᐸtableᐳ</code>.
@@ -192,7 +192,7 @@ final case class RichBlockTable(
   isBordered: Option[Boolean] = Option.empty,
   isStriped: Option[Boolean] = Option.empty,
   isCompact: Option[Boolean] = Option.empty,
-  caption: Option[iozhik.OpenEnum[RichText]] = Option.empty
+  caption: Option[iozhik.JsonOpenEnum[RichText]] = Option.empty
 ) extends RichBlock
 
 /** A collage, corresponding to the custom HTML tag <code>ᐸtg-collageᐳ</code>.
@@ -203,7 +203,7 @@ final case class RichBlockTable(
   *   <em>Optional</em>. Caption of the block
   */
 final case class RichBlockCollage(
-  blocks: List[iozhik.OpenEnum[RichBlock]] = List.empty,
+  blocks: List[iozhik.JsonOpenEnum[RichBlock]] = List.empty,
   caption: Option[RichBlockCaption] = Option.empty
 ) extends RichBlock
 
@@ -243,8 +243,8 @@ final case class RichBlockAnimation(
   *   <em>Optional</em>. Credit of the block
   */
 final case class RichBlockExpandableBlockQuotation(
-  text: iozhik.OpenEnum[RichText],
-  credit: Option[iozhik.OpenEnum[RichText]] = Option.empty
+  text: iozhik.JsonOpenEnum[RichText],
+  credit: Option[iozhik.JsonOpenEnum[RichText]] = Option.empty
 ) extends RichBlock
 
 /** A section heading, corresponding to the HTML tags <code>ᐸh1ᐳ</code>, <code>ᐸh2ᐳ</code>, <code>ᐸh3ᐳ</code>,
@@ -255,7 +255,7 @@ final case class RichBlockExpandableBlockQuotation(
   * @param size
   *   Relative size of the text font; 1-6, 1 is the largest, 6 is the smallest
   */
-final case class RichBlockSectionHeading(text: iozhik.OpenEnum[RichText], size: Int) extends RichBlock
+final case class RichBlockSectionHeading(text: iozhik.JsonOpenEnum[RichText], size: Int) extends RichBlock
 
 /** A block containing a list of buttons that are shown in one row, corresponding to the custom HTML tag
   * <code>ᐸtg-button-rowᐳ</code>.

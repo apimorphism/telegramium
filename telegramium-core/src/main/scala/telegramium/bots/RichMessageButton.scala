@@ -47,7 +47,7 @@ package telegramium.bots
   *   <em>Optional</em>. If set, then the button is disabled and does nothing
   */
 final case class RichMessageButton(
-  text: iozhik.OpenEnum[RichText],
+  text: iozhik.JsonOpenEnum[RichText],
   style: Option[String] = Option.empty,
   url: Option[String] = Option.empty,
   callbackData: Option[String] = Option.empty,

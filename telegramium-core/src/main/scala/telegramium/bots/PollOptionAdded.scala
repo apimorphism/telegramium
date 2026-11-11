@@ -17,5 +17,5 @@ final case class PollOptionAdded(
   optionPersistentId: String,
   optionText: String,
   pollMessage: Option[MaybeInaccessibleMessage] = Option.empty,
-  optionTextEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty
+  optionTextEntities: List[iozhik.JsonOpenEnum[MessageEntity]] = List.empty
 )

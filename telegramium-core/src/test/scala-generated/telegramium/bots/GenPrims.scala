@@ -63,10 +63,10 @@ object GenPrims {
   // version knows, with a field no version knows, or a bare string for an enum of strings. They have to decode and
   // encode back to the same JSON wherever an OpenEnum is.
   // `tagField` is the field holding the type tag; None for an enum of strings.
-  def openEnum[A](g: => Gen[A], tagField: Option[String]): Gen[iozhik.OpenEnum[A]] =
+  def openEnum[A](g: => Gen[A], tagField: Option[String]): Gen[iozhik.JsonOpenEnum[A]] =
     Gen.frequency(9 -> Gen.lzy(g).map(iozhik.OpenEnum.Known(_)), 1 -> genUnknown[A](tagField))
 
-  private def genUnknown[A](tagField: Option[String]): Gen[iozhik.OpenEnum[A]] =
+  private def genUnknown[A](tagField: Option[String]): Gen[iozhik.JsonOpenEnum[A]] =
     for {
       unknownTag <- Gen.listOfN(6, Gen.alphaLowerChar).map("future_" + _.mkString)
       fieldValue <- genString
@@ -74,7 +74,7 @@ object GenPrims {
       val raw = tagField.fold(Json.fromString(unknownTag)) { f =>
         Json.obj(f -> Json.fromString(unknownTag), "future_field" -> Json.fromString(fieldValue))
       }
-      iozhik.OpenEnum.Unknown[A](unknownTag, raw)
+      iozhik.OpenEnum.Unknown(unknownTag, raw)
     }
 
   // Shrinking only drops optional and list values, and shrinks the composite ones: primitives stay as generated, so a
@@ -93,7 +93,7 @@ object GenPrims {
         Nil #:: dropOne #::: l.indices.toStream.flatMap(i => s.shrink(l(i)).map(l.updated(i, _)))
       }
     }
-  def shrinkOpenEnum[A](s: => Shrink[A]): Shrink[iozhik.OpenEnum[A]] =
+  def shrinkOpenEnum[A](s: => Shrink[A]): Shrink[iozhik.JsonOpenEnum[A]] =
     Shrink {
       case iozhik.OpenEnum.Known(a) => s.shrink(a).map(iozhik.OpenEnum.Known(_))
       case _                        => Stream.empty
@@ -139,8 +139,8 @@ object GenPrims {
     // decoded as an OpenEnum, so round-tripped as one, Unknown values included
     def open[A](name: String, gen: Gen[A], shrink: Shrink[A], tagField: Option[String])(
       implicit e: Encoder[A],
-      d: Decoder[iozhik.OpenEnum[A]]
-    ): RoundTripCase[iozhik.OpenEnum[A]] =
-      new RoundTripCase(name, openEnum(gen, tagField), shrinkOpenEnum(shrink), Encoder[iozhik.OpenEnum[A]], d)
+      d: Decoder[iozhik.JsonOpenEnum[A]]
+    ): RoundTripCase[iozhik.JsonOpenEnum[A]] =
+      new RoundTripCase(name, openEnum(gen, tagField), shrinkOpenEnum(shrink), Encoder[iozhik.JsonOpenEnum[A]], d)
   }
 }
