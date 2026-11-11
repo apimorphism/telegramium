@@ -212,12 +212,12 @@ object GenBackgroundTypeWallpaper {
 
 object GenBackgroundTypePattern {
   import GenPrims._
-  lazy val gen: Gen[BackgroundTypePattern] = Gen.lzy(
-    deeper(
-      Gen.zip(GenDocument.gen, openEnum(GenBackgroundFill.gen), genInt, optPrim(genBoolean), optPrim(genBoolean)).map {
-        case (a0, a1, a2, a3, a4) =>
+  lazy val gen: Gen[BackgroundTypePattern] = Gen.lzy(deeper(Gen
+        .zip(GenDocument.gen, openEnum(GenBackgroundFill.gen, Some("type")), genInt, optPrim(genBoolean),
+          optPrim(genBoolean))
+        .map { case (a0, a1, a2, a3, a4) =>
           BackgroundTypePattern(document = a0, fill = a1, intensity = a2, isInverted = a3, isMoving = a4)
-      }))
+        }))
   lazy val shrink: Shrink[BackgroundTypePattern] = shrinkFields[BackgroundTypePattern](x =>
     List(
       field(x.document)(GenDocument.shrink)(v => x.copy(document = v)),
@@ -236,9 +236,10 @@ object GenBackgroundTypeChatTheme {
 
 object GenBackgroundTypeFill {
   import GenPrims._
-  lazy val gen: Gen[BackgroundTypeFill] = Gen.lzy(deeper(Gen.zip(openEnum(GenBackgroundFill.gen), genInt).map {
-    case (a0, a1) => BackgroundTypeFill(fill = a0, darkThemeDimming = a1)
-  }))
+  lazy val gen: Gen[BackgroundTypeFill] =
+    Gen.lzy(deeper(Gen.zip(openEnum(GenBackgroundFill.gen, Some("type")), genInt).map { case (a0, a1) =>
+      BackgroundTypeFill(fill = a0, darkThemeDimming = a1)
+    }))
   lazy val shrink: Shrink[BackgroundTypeFill] = shrinkFields[BackgroundTypeFill](x =>
     List(field(x.fill)(shrinkOpenEnum(GenBackgroundFill.shrink))(v => x.copy(fill = v))))
 }
@@ -454,7 +455,7 @@ object GenChatShareThemeUniqueGift {
 object GenChatShareThemeEmoji {
   import GenPrims._
   lazy val gen: Gen[ChatShareThemeEmoji] =
-    Gen.lzy(deeper(Gen.zip(list(openEnum(GenEmojiType.gen)), optPrim(genInt)).map { case (a0, a1) =>
+    Gen.lzy(deeper(Gen.zip(list(openEnum(GenEmojiType.gen, Some("type"))), optPrim(genInt)).map { case (a0, a1) =>
       ChatShareThemeEmoji(emojis = a0, backgroundBackdropId = a1)
     }))
   lazy val shrink: Shrink[ChatShareThemeEmoji] = shrinkFields[ChatShareThemeEmoji](x =>
@@ -1707,17 +1708,19 @@ object GenMessage {
           Gen.zip(Gen.zip(genInt, genLong, GenChat.gen, optPrim(genInt), opt(GenDirectMessagesTopic.gen),
               opt(GenUser.gen), opt(GenChat.gen), optPrim(genInt), opt(GenUser.gen)),
             Gen.zip(optPrim(genString), opt(GenUser.gen), optPrim(genInt), optPrim(genString), optPrim(genString),
-              opt(openEnum(GenMessageOrigin.gen)), optPrim(genBoolean), optPrim(genBoolean), opt(GenMessage.gen)),
+              opt(openEnum(GenMessageOrigin.gen, Some("type"))), optPrim(genBoolean), optPrim(genBoolean),
+              opt(GenMessage.gen)),
             Gen.zip(opt(GenExternalReplyInfo.gen), opt(GenTextQuote.gen), opt(GenStory.gen), optPrim(genInt),
               optPrim(genString), opt(GenUser.gen), opt(GenUser.gen), opt(GenChat.gen), optPrim(genLong)),
             Gen.zip(optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genString),
-              optPrim(genString), optPrim(genInt), optPrim(genString), list(openEnum(GenMessageEntity.gen)),
-              opt(GenLinkPreviewOptions.gen)),
+              optPrim(genString), optPrim(genInt), optPrim(genString),
+              list(openEnum(GenMessageEntity.gen, Some("type"))), opt(GenLinkPreviewOptions.gen)),
             Gen.zip(opt(GenSuggestedPostInfo.gen), optPrim(genString), opt(GenRichMessage.gen), opt(GenAnimation.gen),
               opt(GenAudio.gen), opt(GenDocument.gen), opt(GenLivePhoto.gen), opt(GenPaidMediaInfo.gen),
               list(GenPhotoSize.gen)),
             Gen.zip(opt(GenSticker.gen), opt(GenStory.gen), opt(GenVideo.gen), opt(GenVideoNote.gen), opt(GenVoice.gen),
-              opt(GenWidget.gen), optPrim(genString), list(openEnum(GenMessageEntity.gen)), optPrim(genBoolean)),
+              opt(GenWidget.gen), optPrim(genString), list(openEnum(GenMessageEntity.gen, Some("type"))),
+              optPrim(genBoolean)),
             Gen.zip(optPrim(genBoolean), opt(GenChecklist.gen), opt(GenContact.gen), opt(GenDice.gen), opt(GenGame.gen),
               opt(GenPoll.gen), opt(GenVenue.gen), opt(GenLocation.gen), list(GenUser.gen)),
             Gen.zip(opt(GenUser.gen), opt(GenChatOwnerLeft.gen), opt(GenChatOwnerChanged.gen), optPrim(genString),
@@ -2215,7 +2218,8 @@ object GenOwnedGiftRegular {
   lazy val gen: Gen[OwnedGiftRegular] = Gen.lzy(
     deeper(Gen
         .zip(Gen.zip(GenGift.gen, genLong, optPrim(genString), opt(GenUser.gen), optPrim(genString),
-            list(openEnum(GenMessageEntity.gen)), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean)),
+            list(openEnum(GenMessageEntity.gen, Some("type"))), optPrim(genBoolean), optPrim(genBoolean),
+            optPrim(genBoolean)),
           Gen.zip(optPrim(genBoolean), optPrim(genInt), optPrim(genInt), optPrim(genBoolean), optPrim(genInt)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13)) =>
           OwnedGiftRegular(gift = a0, sendDate = a1, ownedGiftId = a2, senderUser = a3, text = a4, entities = a5,
@@ -2446,10 +2450,10 @@ object GenRichBlockVideo {
 
 object GenRichBlockDetails {
   import GenPrims._
-  lazy val gen: Gen[RichBlockDetails] =
-    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), list(openEnum(GenRichBlock.gen)), optPrim(genBoolean)).map {
-      case (a0, a1, a2) => RichBlockDetails(summary = a0, blocks = a1, isOpen = a2)
-    }))
+  lazy val gen: Gen[RichBlockDetails] = Gen.lzy(deeper(Gen
+        .zip(openEnum(GenRichText.gen, Some("type")), list(openEnum(GenRichBlock.gen, Some("type"))),
+          optPrim(genBoolean))
+        .map { case (a0, a1, a2) => RichBlockDetails(summary = a0, blocks = a1, isOpen = a2) }))
   lazy val shrink: Shrink[RichBlockDetails] = shrinkFields[RichBlockDetails](x =>
     List(
       field(x.summary)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(summary = v)),
@@ -2481,7 +2485,7 @@ object GenRichBlockPhoto {
 
 object GenRichBlockThinking {
   import GenPrims._
-  lazy val gen: Gen[RichBlockThinking] = Gen.lzy(deeper(openEnum(GenRichText.gen).map { a0 =>
+  lazy val gen: Gen[RichBlockThinking] = Gen.lzy(deeper(openEnum(GenRichText.gen, Some("type")).map { a0 =>
     RichBlockThinking(text = a0)
   }))
   lazy val shrink: Shrink[RichBlockThinking] =
@@ -2490,7 +2494,7 @@ object GenRichBlockThinking {
 
 object GenRichBlockFooter {
   import GenPrims._
-  lazy val gen: Gen[RichBlockFooter] = Gen.lzy(deeper(openEnum(GenRichText.gen).map { a0 =>
+  lazy val gen: Gen[RichBlockFooter] = Gen.lzy(deeper(openEnum(GenRichText.gen, Some("type")).map { a0 =>
     RichBlockFooter(text = a0)
   }))
   lazy val shrink: Shrink[RichBlockFooter] =
@@ -2523,9 +2527,9 @@ object GenRichBlockMathematicalExpression {
 
 object GenRichBlockBlockQuotation {
   import GenPrims._
-  lazy val gen: Gen[RichBlockBlockQuotation] =
-    Gen.lzy(deeper(Gen.zip(list(openEnum(GenRichBlock.gen)), opt(openEnum(GenRichText.gen))).map { case (a0, a1) =>
-      RichBlockBlockQuotation(blocks = a0, credit = a1)
+  lazy val gen: Gen[RichBlockBlockQuotation] = Gen.lzy(
+    deeper(Gen.zip(list(openEnum(GenRichBlock.gen, Some("type"))), opt(openEnum(GenRichText.gen, Some("type")))).map {
+      case (a0, a1) => RichBlockBlockQuotation(blocks = a0, credit = a1)
     }))
   lazy val shrink: Shrink[RichBlockBlockQuotation] = shrinkFields[RichBlockBlockQuotation](x =>
     List(
@@ -2547,8 +2551,8 @@ object GenRichBlockMap {
 object GenRichBlockSlideshow {
   import GenPrims._
   lazy val gen: Gen[RichBlockSlideshow] =
-    Gen.lzy(deeper(Gen.zip(list(openEnum(GenRichBlock.gen)), opt(GenRichBlockCaption.gen)).map { case (a0, a1) =>
-      RichBlockSlideshow(blocks = a0, caption = a1)
+    Gen.lzy(deeper(Gen.zip(list(openEnum(GenRichBlock.gen, Some("type"))), opt(GenRichBlockCaption.gen)).map {
+      case (a0, a1) => RichBlockSlideshow(blocks = a0, caption = a1)
     }))
   lazy val shrink: Shrink[RichBlockSlideshow] = shrinkFields[RichBlockSlideshow](x =>
     List(
@@ -2558,7 +2562,7 @@ object GenRichBlockSlideshow {
 
 object GenRichBlockParagraph {
   import GenPrims._
-  lazy val gen: Gen[RichBlockParagraph] = Gen.lzy(deeper(openEnum(GenRichText.gen).map { a0 =>
+  lazy val gen: Gen[RichBlockParagraph] = Gen.lzy(deeper(openEnum(GenRichText.gen, Some("type")).map { a0 =>
     RichBlockParagraph(text = a0)
   }))
   lazy val shrink: Shrink[RichBlockParagraph] = shrinkFields[RichBlockParagraph](x =>
@@ -2568,8 +2572,8 @@ object GenRichBlockParagraph {
 object GenRichBlockPullQuotation {
   import GenPrims._
   lazy val gen: Gen[RichBlockPullQuotation] =
-    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), opt(openEnum(GenRichText.gen))).map { case (a0, a1) =>
-      RichBlockPullQuotation(text = a0, credit = a1)
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), opt(openEnum(GenRichText.gen, Some("type")))).map {
+      case (a0, a1) => RichBlockPullQuotation(text = a0, credit = a1)
     }))
   lazy val shrink: Shrink[RichBlockPullQuotation] = shrinkFields[RichBlockPullQuotation](x =>
     List(
@@ -2579,9 +2583,10 @@ object GenRichBlockPullQuotation {
 
 object GenRichBlockPreformatted {
   import GenPrims._
-  lazy val gen: Gen[RichBlockPreformatted] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), optPrim(genString)).map {
-    case (a0, a1) => RichBlockPreformatted(text = a0, language = a1)
-  }))
+  lazy val gen: Gen[RichBlockPreformatted] =
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), optPrim(genString)).map { case (a0, a1) =>
+      RichBlockPreformatted(text = a0, language = a1)
+    }))
   lazy val shrink: Shrink[RichBlockPreformatted] = shrinkFields[RichBlockPreformatted](x =>
     List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v)),
       field(x.language)(shrinkOpt(noShrink))(v => x.copy(language = v))))
@@ -2591,7 +2596,7 @@ object GenRichBlockTable {
   import GenPrims._
   lazy val gen: Gen[RichBlockTable] = Gen.lzy(deeper(Gen
         .zip(list(list(GenRichBlockTableCell.gen)), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean),
-          opt(openEnum(GenRichText.gen)))
+          opt(openEnum(GenRichText.gen, Some("type"))))
         .map { case (a0, a1, a2, a3, a4) =>
           RichBlockTable(cells = a0, isBordered = a1, isStriped = a2, isCompact = a3, caption = a4)
         }))
@@ -2607,8 +2612,8 @@ object GenRichBlockTable {
 object GenRichBlockCollage {
   import GenPrims._
   lazy val gen: Gen[RichBlockCollage] =
-    Gen.lzy(deeper(Gen.zip(list(openEnum(GenRichBlock.gen)), opt(GenRichBlockCaption.gen)).map { case (a0, a1) =>
-      RichBlockCollage(blocks = a0, caption = a1)
+    Gen.lzy(deeper(Gen.zip(list(openEnum(GenRichBlock.gen, Some("type"))), opt(GenRichBlockCaption.gen)).map {
+      case (a0, a1) => RichBlockCollage(blocks = a0, caption = a1)
     }))
   lazy val shrink: Shrink[RichBlockCollage] = shrinkFields[RichBlockCollage](x =>
     List(
@@ -2648,8 +2653,8 @@ object GenRichBlockAnimation {
 object GenRichBlockExpandableBlockQuotation {
   import GenPrims._
   lazy val gen: Gen[RichBlockExpandableBlockQuotation] =
-    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), opt(openEnum(GenRichText.gen))).map { case (a0, a1) =>
-      RichBlockExpandableBlockQuotation(text = a0, credit = a1)
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), opt(openEnum(GenRichText.gen, Some("type")))).map {
+      case (a0, a1) => RichBlockExpandableBlockQuotation(text = a0, credit = a1)
     }))
   lazy val shrink: Shrink[RichBlockExpandableBlockQuotation] = shrinkFields[RichBlockExpandableBlockQuotation](x =>
     List(
@@ -2659,9 +2664,10 @@ object GenRichBlockExpandableBlockQuotation {
 
 object GenRichBlockSectionHeading {
   import GenPrims._
-  lazy val gen: Gen[RichBlockSectionHeading] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genInt).map {
-    case (a0, a1) => RichBlockSectionHeading(text = a0, size = a1)
-  }))
+  lazy val gen: Gen[RichBlockSectionHeading] =
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), genInt).map { case (a0, a1) =>
+      RichBlockSectionHeading(text = a0, size = a1)
+    }))
   lazy val shrink: Shrink[RichBlockSectionHeading] = shrinkFields[RichBlockSectionHeading](x =>
     List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
@@ -2712,7 +2718,7 @@ object GenRichBlock {
 
 object GenRichTextSubscript {
   import GenPrims._
-  lazy val gen: Gen[RichTextSubscript] = Gen.lzy(deeper(openEnum(GenRichText.gen).map { a0 =>
+  lazy val gen: Gen[RichTextSubscript] = Gen.lzy(deeper(openEnum(GenRichText.gen, Some("type")).map { a0 =>
     RichTextSubscript(text = a0)
   }))
   lazy val shrink: Shrink[RichTextSubscript] =
@@ -2721,32 +2727,36 @@ object GenRichTextSubscript {
 
 object GenRichTextPhoneNumber {
   import GenPrims._
-  lazy val gen: Gen[RichTextPhoneNumber] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genString).map {
-    case (a0, a1) => RichTextPhoneNumber(text = a0, phoneNumber = a1)
-  }))
+  lazy val gen: Gen[RichTextPhoneNumber] =
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), genString).map { case (a0, a1) =>
+      RichTextPhoneNumber(text = a0, phoneNumber = a1)
+    }))
   lazy val shrink: Shrink[RichTextPhoneNumber] = shrinkFields[RichTextPhoneNumber](x =>
     List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextCode {
   import GenPrims._
-  lazy val gen: Gen[RichTextCode] = Gen.lzy(deeper(openEnum(GenRichText.gen).map { a0 => RichTextCode(text = a0) }))
+  lazy val gen: Gen[RichTextCode] = Gen.lzy(deeper(openEnum(GenRichText.gen, Some("type")).map { a0 =>
+    RichTextCode(text = a0)
+  }))
   lazy val shrink: Shrink[RichTextCode] =
     shrinkFields[RichTextCode](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextAnchorLink {
   import GenPrims._
-  lazy val gen: Gen[RichTextAnchorLink] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genString).map {
-    case (a0, a1) => RichTextAnchorLink(text = a0, anchorName = a1)
-  }))
+  lazy val gen: Gen[RichTextAnchorLink] =
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), genString).map { case (a0, a1) =>
+      RichTextAnchorLink(text = a0, anchorName = a1)
+    }))
   lazy val shrink: Shrink[RichTextAnchorLink] = shrinkFields[RichTextAnchorLink](x =>
     List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextConcat {
   import GenPrims._
-  lazy val gen: Gen[RichTextConcat] = Gen.lzy(deeper(list(openEnum(GenRichText.gen)).map { a0 =>
+  lazy val gen: Gen[RichTextConcat] = Gen.lzy(deeper(list(openEnum(GenRichText.gen, Some("type"))).map { a0 =>
     RichTextConcat(texts = a0)
   }))
   lazy val shrink: Shrink[RichTextConcat] = shrinkFields[RichTextConcat](x =>
@@ -2755,7 +2765,7 @@ object GenRichTextConcat {
 
 object GenRichTextSpoiler {
   import GenPrims._
-  lazy val gen: Gen[RichTextSpoiler] = Gen.lzy(deeper(openEnum(GenRichText.gen).map { a0 =>
+  lazy val gen: Gen[RichTextSpoiler] = Gen.lzy(deeper(openEnum(GenRichText.gen, Some("type")).map { a0 =>
     RichTextSpoiler(text = a0)
   }))
   lazy val shrink: Shrink[RichTextSpoiler] =
@@ -2764,16 +2774,17 @@ object GenRichTextSpoiler {
 
 object GenRichTextReference {
   import GenPrims._
-  lazy val gen: Gen[RichTextReference] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genString).map {
-    case (a0, a1) => RichTextReference(text = a0, name = a1)
-  }))
+  lazy val gen: Gen[RichTextReference] =
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), genString).map { case (a0, a1) =>
+      RichTextReference(text = a0, name = a1)
+    }))
   lazy val shrink: Shrink[RichTextReference] =
     shrinkFields[RichTextReference](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextMention {
   import GenPrims._
-  lazy val gen: Gen[RichTextMention] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genString).map {
+  lazy val gen: Gen[RichTextMention] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), genString).map {
     case (a0, a1) => RichTextMention(text = a0, username = a1)
   }))
   lazy val shrink: Shrink[RichTextMention] =
@@ -2782,7 +2793,7 @@ object GenRichTextMention {
 
 object GenRichTextUnderline {
   import GenPrims._
-  lazy val gen: Gen[RichTextUnderline] = Gen.lzy(deeper(openEnum(GenRichText.gen).map { a0 =>
+  lazy val gen: Gen[RichTextUnderline] = Gen.lzy(deeper(openEnum(GenRichText.gen, Some("type")).map { a0 =>
     RichTextUnderline(text = a0)
   }))
   lazy val shrink: Shrink[RichTextUnderline] =
@@ -2791,8 +2802,8 @@ object GenRichTextUnderline {
 
 object GenRichTextUrl {
   import GenPrims._
-  lazy val gen: Gen[RichTextUrl] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genString).map { case (a0, a1) =>
-    RichTextUrl(text = a0, url = a1)
+  lazy val gen: Gen[RichTextUrl] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), genString).map {
+    case (a0, a1) => RichTextUrl(text = a0, url = a1)
   }))
   lazy val shrink: Shrink[RichTextUrl] =
     shrinkFields[RichTextUrl](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
@@ -2809,18 +2820,20 @@ object GenRichTextButton {
 
 object GenRichTextBotCommand {
   import GenPrims._
-  lazy val gen: Gen[RichTextBotCommand] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genString).map {
-    case (a0, a1) => RichTextBotCommand(text = a0, botCommand = a1)
-  }))
+  lazy val gen: Gen[RichTextBotCommand] =
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), genString).map { case (a0, a1) =>
+      RichTextBotCommand(text = a0, botCommand = a1)
+    }))
   lazy val shrink: Shrink[RichTextBotCommand] = shrinkFields[RichTextBotCommand](x =>
     List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextTextMention {
   import GenPrims._
-  lazy val gen: Gen[RichTextTextMention] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), GenUser.gen).map {
-    case (a0, a1) => RichTextTextMention(text = a0, user = a1)
-  }))
+  lazy val gen: Gen[RichTextTextMention] =
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), GenUser.gen).map { case (a0, a1) =>
+      RichTextTextMention(text = a0, user = a1)
+    }))
   lazy val shrink: Shrink[RichTextTextMention] = shrinkFields[RichTextTextMention](x =>
     List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v)),
       field(x.user)(GenUser.shrink)(v => x.copy(user = v))))
@@ -2836,7 +2849,7 @@ object GenRichTextMathematicalExpression {
 
 object GenRichTextSuperscript {
   import GenPrims._
-  lazy val gen: Gen[RichTextSuperscript] = Gen.lzy(deeper(openEnum(GenRichText.gen).map { a0 =>
+  lazy val gen: Gen[RichTextSuperscript] = Gen.lzy(deeper(openEnum(GenRichText.gen, Some("type")).map { a0 =>
     RichTextSuperscript(text = a0)
   }))
   lazy val shrink: Shrink[RichTextSuperscript] = shrinkFields[RichTextSuperscript](x =>
@@ -2845,16 +2858,19 @@ object GenRichTextSuperscript {
 
 object GenRichTextEmailAddress {
   import GenPrims._
-  lazy val gen: Gen[RichTextEmailAddress] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genString).map {
-    case (a0, a1) => RichTextEmailAddress(text = a0, emailAddress = a1)
-  }))
+  lazy val gen: Gen[RichTextEmailAddress] =
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), genString).map { case (a0, a1) =>
+      RichTextEmailAddress(text = a0, emailAddress = a1)
+    }))
   lazy val shrink: Shrink[RichTextEmailAddress] = shrinkFields[RichTextEmailAddress](x =>
     List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextMarked {
   import GenPrims._
-  lazy val gen: Gen[RichTextMarked] = Gen.lzy(deeper(openEnum(GenRichText.gen).map { a0 => RichTextMarked(text = a0) }))
+  lazy val gen: Gen[RichTextMarked] = Gen.lzy(deeper(openEnum(GenRichText.gen, Some("type")).map { a0 =>
+    RichTextMarked(text = a0)
+  }))
   lazy val shrink: Shrink[RichTextMarked] =
     shrinkFields[RichTextMarked](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
@@ -2867,23 +2883,26 @@ object GenRichTextPlain {
 
 object GenRichTextItalic {
   import GenPrims._
-  lazy val gen: Gen[RichTextItalic] = Gen.lzy(deeper(openEnum(GenRichText.gen).map { a0 => RichTextItalic(text = a0) }))
+  lazy val gen: Gen[RichTextItalic] = Gen.lzy(deeper(openEnum(GenRichText.gen, Some("type")).map { a0 =>
+    RichTextItalic(text = a0)
+  }))
   lazy val shrink: Shrink[RichTextItalic] =
     shrinkFields[RichTextItalic](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextBankCardNumber {
   import GenPrims._
-  lazy val gen: Gen[RichTextBankCardNumber] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genString).map {
-    case (a0, a1) => RichTextBankCardNumber(text = a0, bankCardNumber = a1)
-  }))
+  lazy val gen: Gen[RichTextBankCardNumber] =
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), genString).map { case (a0, a1) =>
+      RichTextBankCardNumber(text = a0, bankCardNumber = a1)
+    }))
   lazy val shrink: Shrink[RichTextBankCardNumber] = shrinkFields[RichTextBankCardNumber](x =>
     List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextStrikethrough {
   import GenPrims._
-  lazy val gen: Gen[RichTextStrikethrough] = Gen.lzy(deeper(openEnum(GenRichText.gen).map { a0 =>
+  lazy val gen: Gen[RichTextStrikethrough] = Gen.lzy(deeper(openEnum(GenRichText.gen, Some("type")).map { a0 =>
     RichTextStrikethrough(text = a0)
   }))
   lazy val shrink: Shrink[RichTextStrikethrough] = shrinkFields[RichTextStrikethrough](x =>
@@ -2906,7 +2925,7 @@ object GenRichTextAnchor {
 
 object GenRichTextHashtag {
   import GenPrims._
-  lazy val gen: Gen[RichTextHashtag] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genString).map {
+  lazy val gen: Gen[RichTextHashtag] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), genString).map {
     case (a0, a1) => RichTextHashtag(text = a0, hashtag = a1)
   }))
   lazy val shrink: Shrink[RichTextHashtag] =
@@ -2915,16 +2934,17 @@ object GenRichTextHashtag {
 
 object GenRichTextDateTime {
   import GenPrims._
-  lazy val gen: Gen[RichTextDateTime] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genLong, genString).map {
-    case (a0, a1, a2) => RichTextDateTime(text = a0, unixTime = a1, dateTimeFormat = a2)
-  }))
+  lazy val gen: Gen[RichTextDateTime] =
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), genLong, genString).map { case (a0, a1, a2) =>
+      RichTextDateTime(text = a0, unixTime = a1, dateTimeFormat = a2)
+    }))
   lazy val shrink: Shrink[RichTextDateTime] =
     shrinkFields[RichTextDateTime](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextCashtag {
   import GenPrims._
-  lazy val gen: Gen[RichTextCashtag] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genString).map {
+  lazy val gen: Gen[RichTextCashtag] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), genString).map {
     case (a0, a1) => RichTextCashtag(text = a0, cashtag = a1)
   }))
   lazy val shrink: Shrink[RichTextCashtag] =
@@ -2933,25 +2953,29 @@ object GenRichTextCashtag {
 
 object GenRichTextBold {
   import GenPrims._
-  lazy val gen: Gen[RichTextBold] = Gen.lzy(deeper(openEnum(GenRichText.gen).map { a0 => RichTextBold(text = a0) }))
+  lazy val gen: Gen[RichTextBold] = Gen.lzy(deeper(openEnum(GenRichText.gen, Some("type")).map { a0 =>
+    RichTextBold(text = a0)
+  }))
   lazy val shrink: Shrink[RichTextBold] =
     shrinkFields[RichTextBold](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextTonAddress {
   import GenPrims._
-  lazy val gen: Gen[RichTextTonAddress] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genString).map {
-    case (a0, a1) => RichTextTonAddress(text = a0, address = a1)
-  }))
+  lazy val gen: Gen[RichTextTonAddress] =
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), genString).map { case (a0, a1) =>
+      RichTextTonAddress(text = a0, address = a1)
+    }))
   lazy val shrink: Shrink[RichTextTonAddress] = shrinkFields[RichTextTonAddress](x =>
     List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextReferenceLink {
   import GenPrims._
-  lazy val gen: Gen[RichTextReferenceLink] = Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), genString).map {
-    case (a0, a1) => RichTextReferenceLink(text = a0, referenceName = a1)
-  }))
+  lazy val gen: Gen[RichTextReferenceLink] =
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), genString).map { case (a0, a1) =>
+      RichTextReferenceLink(text = a0, referenceName = a1)
+    }))
   lazy val shrink: Shrink[RichTextReferenceLink] = shrinkFields[RichTextReferenceLink](x =>
     List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
@@ -3071,7 +3095,7 @@ object GenTransactionPartnerUser {
   lazy val gen: Gen[TransactionPartnerUser] = Gen.lzy(
     deeper(Gen
         .zip(genString, GenUser.gen, opt(GenAffiliateInfo.gen), optPrim(genString), optPrim(genInt),
-          list(openEnum(GenPaidMedia.gen)), optPrim(genString), opt(GenGift.gen), optPrim(genInt))
+          list(openEnum(GenPaidMedia.gen, Some("type"))), optPrim(genString), opt(GenGift.gen), optPrim(genInt))
         .map { case (a0, a1, a2, a3, a4, a5, a6, a7, a8) =>
           TransactionPartnerUser(transactionType = a0, user = a1, affiliate = a2, invoicePayload = a3,
             subscriptionPeriod = a4, paidMedia = a5, paidMediaPayload = a6, gift = a7, premiumSubscriptionDuration = a8)
@@ -3098,9 +3122,10 @@ object GenTransactionPartnerTelegramApi {
 
 object GenTransactionPartnerFragment {
   import GenPrims._
-  lazy val gen: Gen[TransactionPartnerFragment] = Gen.lzy(deeper(opt(openEnum(GenRevenueWithdrawalState.gen)).map {
-    a0 => TransactionPartnerFragment(withdrawalState = a0)
-  }))
+  lazy val gen: Gen[TransactionPartnerFragment] =
+    Gen.lzy(deeper(opt(openEnum(GenRevenueWithdrawalState.gen, Some("type"))).map { a0 =>
+      TransactionPartnerFragment(withdrawalState = a0)
+    }))
   lazy val shrink: Shrink[TransactionPartnerFragment] = shrinkFields[TransactionPartnerFragment](x =>
     List(field(x.withdrawalState)(shrinkOpt(noShrink))(v => x.copy(withdrawalState = v))))
 }
@@ -3442,7 +3467,7 @@ object GenChatAdministratorRights {
 
 object GenChatBackground {
   import GenPrims._
-  lazy val gen: Gen[ChatBackground] = Gen.lzy(deeper(openEnum(GenBackgroundType.gen).map { a0 =>
+  lazy val gen: Gen[ChatBackground] = Gen.lzy(deeper(openEnum(GenBackgroundType.gen, Some("type")).map { a0 =>
     ChatBackground(`type` = a0)
   }))
   lazy val shrink: Shrink[ChatBackground] = shrinkFields[ChatBackground](x =>
@@ -3452,8 +3477,8 @@ object GenChatBackground {
 object GenChatBoost {
   import GenPrims._
   lazy val gen: Gen[ChatBoost] =
-    Gen.lzy(deeper(Gen.zip(genString, genLong, genLong, openEnum(GenChatBoostSource.gen)).map { case (a0, a1, a2, a3) =>
-      ChatBoost(boostId = a0, addDate = a1, expirationDate = a2, source = a3)
+    Gen.lzy(deeper(Gen.zip(genString, genLong, genLong, openEnum(GenChatBoostSource.gen, Some("source"))).map {
+      case (a0, a1, a2, a3) => ChatBoost(boostId = a0, addDate = a1, expirationDate = a2, source = a3)
     }))
   lazy val shrink: Shrink[ChatBoost] = shrinkFields[ChatBoost](x =>
     List(field(x.source)(shrinkOpenEnum(GenChatBoostSource.shrink))(v => x.copy(source = v))))
@@ -3468,7 +3493,7 @@ object GenChatBoostAdded {
 object GenChatBoostRemoved {
   import GenPrims._
   lazy val gen: Gen[ChatBoostRemoved] =
-    Gen.lzy(deeper(Gen.zip(GenChat.gen, genString, genLong, openEnum(GenChatBoostSource.gen)).map {
+    Gen.lzy(deeper(Gen.zip(GenChat.gen, genString, genLong, openEnum(GenChatBoostSource.gen, Some("source"))).map {
       case (a0, a1, a2, a3) => ChatBoostRemoved(chat = a0, boostId = a1, removeDate = a2, source = a3)
     }))
   lazy val shrink: Shrink[ChatBoostRemoved] = shrinkFields[ChatBoostRemoved](x =>
@@ -3495,15 +3520,16 @@ object GenChatFullInfo {
           Gen.zip(optPrim(genBoolean), optPrim(genBoolean), opt(GenChatPhoto.gen), listPrim(genString),
             opt(GenBirthdate.gen), opt(GenBusinessIntro.gen), opt(GenBusinessLocation.gen),
             opt(GenBusinessOpeningHours.gen), opt(GenChat.gen)),
-          Gen.zip(opt(GenChat.gen), opt(list(openEnum(GenReactionType.gen))), optPrim(genString), optPrim(genInt),
-            optPrim(genString), optPrim(genString), optPrim(genLong), optPrim(genString), optPrim(genBoolean)),
+          Gen.zip(opt(GenChat.gen), opt(list(openEnum(GenReactionType.gen, Some("type")))), optPrim(genString),
+            optPrim(genInt), optPrim(genString), optPrim(genString), optPrim(genLong), optPrim(genString),
+            optPrim(genBoolean)),
           Gen.zip(optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genString), optPrim(genString),
             opt(GenMessage.gen), opt(GenChatPermissions.gen), optPrim(genBoolean), optPrim(genInt)),
           Gen.zip(optPrim(genInt), optPrim(genInt), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean),
             optPrim(genBoolean), optPrim(genString), optPrim(genBoolean), optPrim(genString)),
           Gen.zip(optPrim(genLong), opt(GenChatLocation.gen), opt(GenUserRating.gen), opt(GenAudio.gen),
             opt(GenUniqueGiftColors.gen), optPrim(genInt), opt(GenUser.gen), opt(GenCommunity.gen),
-            opt(GenTonWalletCard.gen)), opt(openEnum(GenChatShareTheme.gen)))
+            opt(GenTonWalletCard.gen)), opt(openEnum(GenChatShareTheme.gen, Some("type"))))
         .map {
           case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17),
                 (a18, a19, a20, a21, a22, a23, a24, a25, a26), (a27, a28, a29, a30, a31, a32, a33, a34, a35),
@@ -3626,9 +3652,11 @@ object GenChatLocation {
 
 object GenChatMemberUpdated {
   import GenPrims._
-  lazy val gen: Gen[ChatMemberUpdated] = Gen.lzy(deeper(Gen
-        .zip(GenChat.gen, GenUser.gen, genLong, openEnum(GenChatMember.gen), openEnum(GenChatMember.gen),
-          opt(GenChatInviteLink.gen), optPrim(genBoolean), optPrim(genBoolean))
+  lazy val gen: Gen[ChatMemberUpdated] = Gen.lzy(
+    deeper(Gen
+        .zip(GenChat.gen, GenUser.gen, genLong, openEnum(GenChatMember.gen, Some("status")),
+          openEnum(GenChatMember.gen, Some("status")), opt(GenChatInviteLink.gen), optPrim(genBoolean),
+          optPrim(genBoolean))
         .map { case (a0, a1, a2, a3, a4, a5, a6, a7) =>
           ChatMemberUpdated(chat = a0, from = a1, date = a2, oldChatMember = a3, newChatMember = a4, inviteLink = a5,
             viaJoinRequest = a6, viaChatFolderInviteLink = a7)
@@ -3733,8 +3761,8 @@ object GenChatShared {
 object GenChecklist {
   import GenPrims._
   lazy val gen: Gen[Checklist] = Gen.lzy(deeper(Gen
-        .zip(genString, list(openEnum(GenMessageEntity.gen)), list(GenChecklistTask.gen), optPrim(genBoolean),
-          optPrim(genBoolean))
+        .zip(genString, list(openEnum(GenMessageEntity.gen, Some("type"))), list(GenChecklistTask.gen),
+          optPrim(genBoolean), optPrim(genBoolean))
         .map { case (a0, a1, a2, a3, a4) =>
           Checklist(title = a0, titleEntities = a1, tasks = a2, othersCanAddTasks = a3, othersCanMarkTasksAsDone = a4)
         }))
@@ -3749,7 +3777,7 @@ object GenChecklist {
 object GenChecklistTask {
   import GenPrims._
   lazy val gen: Gen[ChecklistTask] = Gen.lzy(deeper(Gen
-        .zip(genInt, genString, list(openEnum(GenMessageEntity.gen)), opt(GenUser.gen), opt(GenChat.gen),
+        .zip(genInt, genString, list(openEnum(GenMessageEntity.gen, Some("type"))), opt(GenUser.gen), opt(GenChat.gen),
           optPrim(genLong))
         .map { case (a0, a1, a2, a3, a4, a5) =>
           ChecklistTask(id = a0, text = a1, textEntities = a2, completedByUser = a3, completedByChat = a4,
@@ -3943,9 +3971,9 @@ object GenExternalReplyInfo {
   import GenPrims._
   lazy val gen: Gen[ExternalReplyInfo] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(openEnum(GenMessageOrigin.gen), opt(GenChat.gen), optPrim(genInt), opt(GenLinkPreviewOptions.gen),
-            opt(GenAnimation.gen), opt(GenAudio.gen), opt(GenDocument.gen), opt(GenLivePhoto.gen),
-            opt(GenPaidMediaInfo.gen)),
+        .zip(Gen.zip(openEnum(GenMessageOrigin.gen, Some("type")), opt(GenChat.gen), optPrim(genInt),
+            opt(GenLinkPreviewOptions.gen), opt(GenAnimation.gen), opt(GenAudio.gen), opt(GenDocument.gen),
+            opt(GenLivePhoto.gen), opt(GenPaidMediaInfo.gen)),
           Gen.zip(list(GenPhotoSize.gen), opt(GenSticker.gen), opt(GenStory.gen), opt(GenVideo.gen),
             opt(GenVideoNote.gen), opt(GenVoice.gen), opt(GenWidget.gen), optPrim(genBoolean), opt(GenChecklist.gen)),
           Gen.zip(opt(GenContact.gen), opt(GenDice.gen), opt(GenGame.gen), opt(GenGiveaway.gen),
@@ -4051,8 +4079,8 @@ object GenForumTopicReopened {
 object GenGame {
   import GenPrims._
   lazy val gen: Gen[Game] = Gen.lzy(deeper(Gen
-        .zip(genString, genString, list(GenPhotoSize.gen), optPrim(genString), list(openEnum(GenMessageEntity.gen)),
-          opt(GenAnimation.gen))
+        .zip(genString, genString, list(GenPhotoSize.gen), optPrim(genString),
+          list(openEnum(GenMessageEntity.gen, Some("type"))), opt(GenAnimation.gen))
         .map { case (a0, a1, a2, a3, a4, a5) =>
           Game(title = a0, description = a1, photo = a2, text = a3, textEntities = a4, animation = a5)
         }))
@@ -4125,8 +4153,8 @@ object GenGiftInfo {
   lazy val gen: Gen[GiftInfo] = Gen.lzy(
     deeper(Gen
         .zip(Gen.zip(GenGift.gen, optPrim(genString), optPrim(genInt), optPrim(genInt), optPrim(genBoolean),
-            optPrim(genBoolean), optPrim(genString), list(openEnum(GenMessageEntity.gen)), optPrim(genBoolean)),
-          optPrim(genInt))
+            optPrim(genBoolean), optPrim(genString), list(openEnum(GenMessageEntity.gen, Some("type"))),
+            optPrim(genBoolean)), optPrim(genInt))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), a9) =>
           GiftInfo(gift = a0, ownedGiftId = a1, convertStarCount = a2, prepaidUpgradeStarCount = a3,
             isUpgradeSeparate = a4, canBeUpgraded = a5, text = a6, entities = a7, isPrivate = a8, uniqueGiftNumber = a9)
@@ -4627,8 +4655,8 @@ object GenMessageReactionCountUpdated {
 object GenMessageReactionUpdated {
   import GenPrims._
   lazy val gen: Gen[MessageReactionUpdated] = Gen.lzy(deeper(Gen
-        .zip(GenChat.gen, genInt, genLong, opt(GenUser.gen), opt(GenChat.gen), list(openEnum(GenReactionType.gen)),
-          list(openEnum(GenReactionType.gen)))
+        .zip(GenChat.gen, genInt, genLong, opt(GenUser.gen), opt(GenChat.gen),
+          list(openEnum(GenReactionType.gen, Some("type"))), list(openEnum(GenReactionType.gen, Some("type"))))
         .map { case (a0, a1, a2, a3, a4, a5, a6) =>
           MessageReactionUpdated(chat = a0, messageId = a1, date = a2, user = a3, actorChat = a4, oldReaction = a5,
             newReaction = a6)
@@ -4659,8 +4687,8 @@ object GenOrderInfo {
 object GenOwnedGifts {
   import GenPrims._
   lazy val gen: Gen[OwnedGifts] =
-    Gen.lzy(deeper(Gen.zip(genInt, list(openEnum(GenOwnedGift.gen)), optPrim(genString)).map { case (a0, a1, a2) =>
-      OwnedGifts(totalCount = a0, gifts = a1, nextOffset = a2)
+    Gen.lzy(deeper(Gen.zip(genInt, list(openEnum(GenOwnedGift.gen, Some("type"))), optPrim(genString)).map {
+      case (a0, a1, a2) => OwnedGifts(totalCount = a0, gifts = a1, nextOffset = a2)
     }))
   lazy val shrink: Shrink[OwnedGifts] = shrinkFields[OwnedGifts](x =>
     List(
@@ -4670,9 +4698,10 @@ object GenOwnedGifts {
 
 object GenPaidMediaInfo {
   import GenPrims._
-  lazy val gen: Gen[PaidMediaInfo] = Gen.lzy(deeper(Gen.zip(genInt, list(openEnum(GenPaidMedia.gen))).map {
-    case (a0, a1) => PaidMediaInfo(starCount = a0, paidMedia = a1)
-  }))
+  lazy val gen: Gen[PaidMediaInfo] =
+    Gen.lzy(deeper(Gen.zip(genInt, list(openEnum(GenPaidMedia.gen, Some("type")))).map { case (a0, a1) =>
+      PaidMediaInfo(starCount = a0, paidMedia = a1)
+    }))
   lazy val shrink: Shrink[PaidMediaInfo] = shrinkFields[PaidMediaInfo](x =>
     List(field(x.paidMedia)(shrinkList(shrinkOpenEnum(GenPaidMedia.shrink)))(v => x.copy(paidMedia = v))))
 }
@@ -4733,9 +4762,10 @@ object GenPoll {
     deeper(Gen
         .zip(Gen.zip(genString, genString, genInt, genBoolean, genBoolean, genString, genBoolean, genBoolean,
             genBoolean),
-          Gen.zip(list(openEnum(GenMessageEntity.gen)), list(GenPollOption.gen), listPrim(genString), listPrim(genInt),
-            optPrim(genString), list(openEnum(GenMessageEntity.gen)), opt(GenPollMedia.gen), optPrim(genInt),
-            optPrim(genLong)), Gen.zip(optPrim(genString), list(openEnum(GenMessageEntity.gen)), opt(GenPollMedia.gen)))
+          Gen.zip(list(openEnum(GenMessageEntity.gen, Some("type"))), list(GenPollOption.gen), listPrim(genString),
+            listPrim(genInt), optPrim(genString), list(openEnum(GenMessageEntity.gen, Some("type"))),
+            opt(GenPollMedia.gen), optPrim(genInt), optPrim(genLong)),
+          Gen.zip(optPrim(genString), list(openEnum(GenMessageEntity.gen, Some("type"))), opt(GenPollMedia.gen)))
         .map {
           case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14, a15, a16, a17), (a18, a19, a20)) =>
             Poll(id = a0, question = a1, totalVoterCount = a2, isClosed = a3, isAnonymous = a4, `type` = a5,
@@ -4804,7 +4834,7 @@ object GenPollMedia {
 object GenPollOption {
   import GenPrims._
   lazy val gen: Gen[PollOption] = Gen.lzy(deeper(Gen
-        .zip(genString, genString, genInt, list(openEnum(GenMessageEntity.gen)), opt(GenPollMedia.gen),
+        .zip(genString, genString, genInt, list(openEnum(GenMessageEntity.gen, Some("type"))), opt(GenPollMedia.gen),
           opt(GenUser.gen), opt(GenChat.gen), optPrim(genLong))
         .map { case (a0, a1, a2, a3, a4, a5, a6, a7) =>
           PollOption(persistentId = a0, text = a1, voterCount = a2, textEntities = a3, media = a4, addedByUser = a5,
@@ -4821,12 +4851,12 @@ object GenPollOption {
 
 object GenPollOptionAdded {
   import GenPrims._
-  lazy val gen: Gen[PollOptionAdded] = Gen.lzy(
-    deeper(
-      Gen.zip(genString, genString, opt(GenMaybeInaccessibleMessage.gen), list(openEnum(GenMessageEntity.gen))).map {
-        case (a0, a1, a2, a3) =>
+  lazy val gen: Gen[PollOptionAdded] = Gen.lzy(deeper(Gen
+        .zip(genString, genString, opt(GenMaybeInaccessibleMessage.gen),
+          list(openEnum(GenMessageEntity.gen, Some("type"))))
+        .map { case (a0, a1, a2, a3) =>
           PollOptionAdded(optionPersistentId = a0, optionText = a1, pollMessage = a2, optionTextEntities = a3)
-      }))
+        }))
   lazy val shrink: Shrink[PollOptionAdded] = shrinkFields[PollOptionAdded](x =>
     List(
       field(x.pollMessage)(shrinkOpt(GenMaybeInaccessibleMessage.shrink))(v => x.copy(pollMessage = v)),
@@ -4836,12 +4866,12 @@ object GenPollOptionAdded {
 
 object GenPollOptionDeleted {
   import GenPrims._
-  lazy val gen: Gen[PollOptionDeleted] = Gen.lzy(
-    deeper(
-      Gen.zip(genString, genString, opt(GenMaybeInaccessibleMessage.gen), list(openEnum(GenMessageEntity.gen))).map {
-        case (a0, a1, a2, a3) =>
+  lazy val gen: Gen[PollOptionDeleted] = Gen.lzy(deeper(Gen
+        .zip(genString, genString, opt(GenMaybeInaccessibleMessage.gen),
+          list(openEnum(GenMessageEntity.gen, Some("type"))))
+        .map { case (a0, a1, a2, a3) =>
           PollOptionDeleted(optionPersistentId = a0, optionText = a1, pollMessage = a2, optionTextEntities = a3)
-      }))
+        }))
   lazy val shrink: Shrink[PollOptionDeleted] = shrinkFields[PollOptionDeleted](x =>
     List(
       field(x.pollMessage)(shrinkOpt(GenMaybeInaccessibleMessage.shrink))(v => x.copy(pollMessage = v)),
@@ -4891,7 +4921,7 @@ object GenProximityAlertTriggered {
 
 object GenReactionCount {
   import GenPrims._
-  lazy val gen: Gen[ReactionCount] = Gen.lzy(deeper(Gen.zip(openEnum(GenReactionType.gen), genInt).map {
+  lazy val gen: Gen[ReactionCount] = Gen.lzy(deeper(Gen.zip(openEnum(GenReactionType.gen, Some("type")), genInt).map {
     case (a0, a1) => ReactionCount(`type` = a0, totalCount = a1)
   }))
   lazy val shrink: Shrink[ReactionCount] = noShrink
@@ -4948,8 +4978,8 @@ object GenResponseParameters {
 object GenRichBlockCaption {
   import GenPrims._
   lazy val gen: Gen[RichBlockCaption] =
-    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen), opt(openEnum(GenRichText.gen))).map { case (a0, a1) =>
-      RichBlockCaption(text = a0, credit = a1)
+    Gen.lzy(deeper(Gen.zip(openEnum(GenRichText.gen, Some("type")), opt(openEnum(GenRichText.gen, Some("type")))).map {
+      case (a0, a1) => RichBlockCaption(text = a0, credit = a1)
     }))
   lazy val shrink: Shrink[RichBlockCaption] = shrinkFields[RichBlockCaption](x =>
     List(
@@ -4960,8 +4990,8 @@ object GenRichBlockCaption {
 object GenRichBlockListItem {
   import GenPrims._
   lazy val gen: Gen[RichBlockListItem] = Gen.lzy(deeper(Gen
-        .zip(genString, list(openEnum(GenRichBlock.gen)), optPrim(genBoolean), optPrim(genBoolean), optPrim(genInt),
-          optPrim(genString))
+        .zip(genString, list(openEnum(GenRichBlock.gen, Some("type"))), optPrim(genBoolean), optPrim(genBoolean),
+          optPrim(genInt), optPrim(genString))
         .map { case (a0, a1, a2, a3, a4, a5) =>
           RichBlockListItem(label = a0, blocks = a1, hasCheckbox = a2, isChecked = a3, value = a4, `type` = a5)
         }))
@@ -4977,7 +5007,7 @@ object GenRichBlockListItem {
 object GenRichBlockTableCell {
   import GenPrims._
   lazy val gen: Gen[RichBlockTableCell] = Gen.lzy(deeper(Gen
-        .zip(genString, genString, opt(openEnum(GenRichText.gen)), optPrim(genBoolean), optPrim(genInt),
+        .zip(genString, genString, opt(openEnum(GenRichText.gen, Some("type"))), optPrim(genBoolean), optPrim(genInt),
           optPrim(genInt))
         .map { case (a0, a1, a2, a3, a4, a5) =>
           RichBlockTableCell(align = a0, valign = a1, text = a2, isHeader = a3, colspan = a4, rowspan = a5)
@@ -4992,9 +5022,10 @@ object GenRichBlockTableCell {
 
 object GenRichMessage {
   import GenPrims._
-  lazy val gen: Gen[RichMessage] = Gen.lzy(deeper(Gen.zip(list(openEnum(GenRichBlock.gen)), optPrim(genBoolean)).map {
-    case (a0, a1) => RichMessage(blocks = a0, isRtl = a1)
-  }))
+  lazy val gen: Gen[RichMessage] =
+    Gen.lzy(deeper(Gen.zip(list(openEnum(GenRichBlock.gen, Some("type"))), optPrim(genBoolean)).map { case (a0, a1) =>
+      RichMessage(blocks = a0, isRtl = a1)
+    }))
   lazy val shrink: Shrink[RichMessage] = shrinkFields[RichMessage](x =>
     List(field(x.blocks)(shrinkList(shrinkOpenEnum(GenRichBlock.shrink)))(v => x.copy(blocks = v)),
       field(x.isRtl)(shrinkOpt(noShrink))(v => x.copy(isRtl = v))))
@@ -5004,8 +5035,8 @@ object GenRichMessageButton {
   import GenPrims._
   lazy val gen: Gen[RichMessageButton] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(openEnum(GenRichText.gen), optPrim(genString), optPrim(genString), optPrim(genString),
-            opt(GenWebAppInfo.gen), opt(GenLoginUrl.gen), optPrim(genString), optPrim(genString),
+        .zip(Gen.zip(openEnum(GenRichText.gen, Some("type")), optPrim(genString), optPrim(genString),
+            optPrim(genString), opt(GenWebAppInfo.gen), opt(GenLoginUrl.gen), optPrim(genString), optPrim(genString),
             opt(GenSwitchInlineQueryChosenChat.gen)), Gen.zip(opt(GenCopyTextButton.gen), opt(GenDisabledButton.gen)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10)) =>
           RichMessageButton(text = a0, style = a1, url = a2, callbackData = a3, webApp = a4, loginUrl = a5,
@@ -5058,8 +5089,8 @@ object GenSharedUser {
 
 object GenSharedWidgetQuery {
   import GenPrims._
-  lazy val gen: Gen[SharedWidgetQuery] =
-    Gen.lzy(deeper(Gen.zip(genString, GenUser.gen, openEnum(GenWidgetQueryType.gen), genString, genString).map {
+  lazy val gen: Gen[SharedWidgetQuery] = Gen.lzy(
+    deeper(Gen.zip(genString, GenUser.gen, openEnum(GenWidgetQueryType.gen, Some("type")), genString, genString).map {
       case (a0, a1, a2, a3, a4) => SharedWidgetQuery(id = a0, from = a1, `type` = a2, data = a3, widgetId = a4)
     }))
   lazy val shrink: Shrink[SharedWidgetQuery] = shrinkFields[SharedWidgetQuery](x =>
@@ -5108,8 +5139,8 @@ object GenStarAmount {
 object GenStarTransaction {
   import GenPrims._
   lazy val gen: Gen[StarTransaction] = Gen.lzy(deeper(Gen
-        .zip(genString, genLong, genLong, optPrim(genLong), opt(openEnum(GenTransactionPartner.gen)),
-          opt(openEnum(GenTransactionPartner.gen)))
+        .zip(genString, genLong, genLong, optPrim(genLong), opt(openEnum(GenTransactionPartner.gen, Some("type"))),
+          opt(openEnum(GenTransactionPartner.gen, Some("type"))))
         .map { case (a0, a1, a2, a3, a4, a5) =>
           StarTransaction(id = a0, amount = a1, date = a2, nanostarAmount = a3, source = a4, receiver = a5)
         }))
@@ -5305,8 +5336,8 @@ object GenSwitchInlineQueryChosenChat {
 object GenTextQuote {
   import GenPrims._
   lazy val gen: Gen[TextQuote] = Gen.lzy(deeper(Gen
-        .zip(genString, genInt, list(openEnum(GenMessageEntity.gen)), list(openEnum(GenRichText.gen)),
-          optPrim(genBoolean))
+        .zip(genString, genInt, list(openEnum(GenMessageEntity.gen, Some("type"))),
+          list(openEnum(GenRichText.gen, Some("type"))), optPrim(genBoolean))
         .map { case (a0, a1, a2, a3, a4) =>
           TextQuote(text = a0, position = a1, entities = a2, richTexts = a3, isManual = a4)
         }))
@@ -5429,9 +5460,9 @@ object GenUniqueGiftInfo {
   import GenPrims._
   lazy val gen: Gen[UniqueGiftInfo] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenUniqueGift.gen, genString, optPrim(genString), list(openEnum(GenMessageEntity.gen)),
-            optPrim(genBoolean), optPrim(genString), optPrim(genLong), optPrim(genString), optPrim(genInt)),
-          optPrim(genLong))
+        .zip(Gen.zip(GenUniqueGift.gen, genString, optPrim(genString),
+            list(openEnum(GenMessageEntity.gen, Some("type"))), optPrim(genBoolean), optPrim(genString),
+            optPrim(genLong), optPrim(genString), optPrim(genInt)), optPrim(genLong))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), a9) =>
           UniqueGiftInfo(gift = a0, origin = a1, text = a2, entities = a3, isPrivate = a4, lastResaleCurrency = a5,
             lastResaleAmount = a6, ownedGiftId = a7, transferStarCount = a8, nextTransferDate = a9)
@@ -5759,9 +5790,10 @@ object GenWidget {
 
 object GenWidgetQuery {
   import GenPrims._
-  lazy val gen: Gen[WidgetQuery] = Gen.lzy(deeper(Gen
-        .zip(Gen.zip(genString, GenUser.gen, genString, openEnum(GenWidgetQueryType.gen), genString, opt(GenChat.gen),
-            optPrim(genInt), optPrim(genString), optPrim(genString)), optPrim(genString))
+  lazy val gen: Gen[WidgetQuery] = Gen.lzy(
+    deeper(Gen
+        .zip(Gen.zip(genString, GenUser.gen, genString, openEnum(GenWidgetQueryType.gen, Some("type")), genString,
+            opt(GenChat.gen), optPrim(genInt), optPrim(genString), optPrim(genString)), optPrim(genString))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), a9) =>
           WidgetQuery(id = a0, from = a1, chatInstance = a2, `type` = a3, data = a4, chat = a5, messageId = a6,
             inlineMessageId = a7, chatType = a8, widgetId = a9)

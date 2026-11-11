@@ -183,7 +183,11 @@ abstract class WireSpec extends AnyFreeSpec {
       // sent as the value they hold
       case Some(v)                  => Right(List(node.copy(value = v, field = None, optionalArray = false)))
       case iozhik.OpenEnum.Known(v) => Right(List(node.copy(value = v, field = None, optionalArray = false)))
-      case it: Iterable[?]          =>
+      // sent as the JSON it was decoded from, whatever its shape: there's nothing below it to walk (#723)
+      case iozhik.OpenEnum.Unknown(_, raw) =>
+        if (node.json.contains(raw)) Right(Nil)
+        else Left(s"${node.path}: an Unknown value is sent as ${node.json.fold("nothing")(_.noSpaces)}, not as $raw")
+      case it: Iterable[?] =>
         val js = node.json.flatMap(_.asArray).getOrElse(Vector.empty)
         Right(it.toList.zipWithIndex.map { case (v, i) => Sent(v, js.lift(i), s"${node.path}[$i]", None, false) })
       case p: Product =>
