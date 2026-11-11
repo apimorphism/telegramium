@@ -98,6 +98,9 @@ lazy val `telegramium-high` = (projectMatrix in file("telegramium-high"))
   )
   .settings(libraryDependencies ++= Dependencies.telegramiumHigh)
   .settings(
+    // tests that need what 2.12 lacks, such as productElementNames
+    Test / unmanagedSourceDirectories ++=
+      (if (scalaBinaryVersion.value == "2.12") Nil else Seq((Test / sourceDirectory).value / "scala-2.13+")),
     Test / testOptions += Tests.Argument(
       TestFrameworks.ScalaTest,
       if (onlyLiveTests.value) "-n" else "-l",
