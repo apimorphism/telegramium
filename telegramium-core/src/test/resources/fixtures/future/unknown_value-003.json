@@ -1,0 +1,24 @@
+{
+  "update_id" : 2005,
+  "message" : {
+    "message_id" : 1039,
+    "from" : {
+      "id" : 1003,
+      "is_bot" : false,
+      "first_name" : "xxxx",
+      "username" : "xxxxxxxxx",
+      "language_code" : "xx"
+    },
+    "chat" : {
+      "id" : 1003,
+      "first_name" : "xxxx",
+      "username" : "xxxxxxxxx",
+      "type" : "future_chat"
+    },
+    "date" : 1793844346,
+    "dice" : {
+      "emoji" : "🪀",
+      "value" : 3
+    }
+  }
+}

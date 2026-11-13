@@ -7,6 +7,7 @@ import cats.syntax.option.*
 import com.dimafeng.testcontainers.ForAllTestContainer
 import com.dimafeng.testcontainers.MockServerContainer
 import iozhik.OpenEnum
+import iozhik.OpenUnion
 import org.http4s.blaze.client.BlazeClientBuilder
 import org.mockserver.client.MockServerClient
 import org.scalatest.BeforeAndAfterAll
@@ -26,6 +27,7 @@ import telegramium.bots.ChatBoostUpdated
 import telegramium.bots.ChatJoinRequest
 import telegramium.bots.ChatMemberMember
 import telegramium.bots.ChatMemberUpdated
+import telegramium.bots.ChatTypePrivate
 import telegramium.bots.ChosenInlineResult
 import telegramium.bots.InlineQuery
 import telegramium.bots.ManagedBotUpdated
@@ -62,7 +64,7 @@ class LongPollBotISpec
   private lazy val bot                = new TestLongPollBot(api)
 
   private val testUpdate  = Update(updateId = 0)
-  private val testChat    = Chat(0, `type` = "")
+  private val testChat    = Chat(0, `type` = OpenEnum(ChatTypePrivate))
   private val testMessage = Message(0, date = 0, chat = testChat)
   private val testUser    = User(0, isBot = false, "")
 
@@ -71,8 +73,8 @@ class LongPollBotISpec
       testChat,
       testUser,
       0,
-      OpenEnum(ChatMemberMember(testUser)),
-      OpenEnum(ChatMemberMember(testUser))
+      OpenUnion(ChatMemberMember(testUser)),
+      OpenUnion(ChatMemberMember(testUser))
     )
 
   private val testChatJoinRequest =
@@ -333,7 +335,7 @@ class LongPollBotISpec
               id = "1",
               from = testUser,
               chatInstance = "1",
-              `type` = OpenEnum(WidgetQueryTypeData()),
+              `type` = OpenUnion(WidgetQueryTypeData()),
               data = "test"
             ).some
           )
@@ -353,7 +355,7 @@ class LongPollBotISpec
               SharedWidgetQuery(
                 id = "1",
                 from = testUser,
-                `type` = OpenEnum(WidgetQueryTypeData()),
+                `type` = OpenUnion(WidgetQueryTypeData()),
                 data = "test",
                 widgetId = "1"
               ).some
@@ -395,7 +397,7 @@ class LongPollBotISpec
         .onUpdate(
           testUpdate
             .copy(chatBoost =
-              ChatBoostUpdated(testChat, ChatBoost("", 0, 0, OpenEnum(ChatBoostSourcePremium(testUser)))).some
+              ChatBoostUpdated(testChat, ChatBoost("", 0, 0, OpenUnion(ChatBoostSourcePremium(testUser)))).some
             )
         )
         .unsafeRunSync()
@@ -409,7 +411,9 @@ class LongPollBotISpec
       bot
         .onUpdate(
           testUpdate
-            .copy(removedChatBoost = ChatBoostRemoved(testChat, "", 0, OpenEnum(ChatBoostSourcePremium(testUser))).some)
+            .copy(removedChatBoost =
+              ChatBoostRemoved(testChat, "", 0, OpenUnion(ChatBoostSourcePremium(testUser))).some
+            )
         )
         .unsafeRunSync()
       verifyMessageSent("onRemovedChatBoost")

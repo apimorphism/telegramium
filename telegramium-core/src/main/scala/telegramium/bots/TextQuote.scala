@@ -34,7 +34,7 @@ package telegramium.bots
 final case class TextQuote(
   text: String,
   position: Int,
-  entities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
-  richTexts: List[iozhik.OpenEnum[RichText]] = List.empty,
+  entities: List[iozhik.OpenUnion[MessageEntity]] = List.empty,
+  richTexts: List[iozhik.OpenUnion[RichText]] = List.empty,
   isManual: Option[Boolean] = Option.empty
 )

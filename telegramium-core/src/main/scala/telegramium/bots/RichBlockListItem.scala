@@ -19,7 +19,7 @@ package telegramium.bots
   */
 final case class RichBlockListItem(
   label: String,
-  blocks: List[iozhik.OpenEnum[RichBlock]] = List.empty,
+  blocks: List[iozhik.OpenUnion[RichBlock]] = List.empty,
   hasCheckbox: Option[Boolean] = Option.empty,
   isChecked: Option[Boolean] = Option.empty,
   value: Option[Int] = Option.empty,

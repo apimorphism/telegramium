@@ -24,7 +24,7 @@ package telegramium.bots
   */
 final case class Chat(
   id: Long,
-  `type`: String,
+  `type`: iozhik.OpenEnum[ChatType],
   title: Option[String] = Option.empty,
   username: Option[String] = Option.empty,
   firstName: Option[String] = Option.empty,

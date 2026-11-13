@@ -97,7 +97,7 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     "a reaction of an unknown type" in {
       decodeFuture("unknown_value-001.json").messageReaction.map(_.newReaction) shouldBe Some(
         List(
-          iozhik.OpenEnum.Unknown[ReactionType](
+          iozhik.OpenUnion.Unknown(
             "future_reaction",
             Json.obj(
               "type"               -> Json.fromString("future_reaction"),
@@ -110,7 +110,7 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     "an entity of an unknown type" in {
       decodeFuture("unknown_value-002.json").message.map(_.entities) shouldBe Some(
         List(
-          iozhik.OpenEnum.Unknown[MessageEntity](
+          iozhik.OpenUnion.Unknown(
             "future_entity",
             Json.obj(
               "offset" -> Json.fromInt(0),
@@ -123,11 +123,25 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     }
   }
 
+  "unknown strings decode as Unknown" - {
+    "a chat of an unknown type" in {
+      decodeFuture("unknown_value-003.json").message.map(_.chat.`type`) shouldBe Some(
+        iozhik.OpenEnum.Unknown("future_chat")
+      )
+    }
+    "a dice with an unknown emoji" in {
+      decodeFuture("unknown_value-003.json").message.flatMap(_.dice).map(_.emoji) shouldBe Some(
+        iozhik.OpenEnum.Unknown("🪀")
+      )
+    }
+  }
+
   "unknown fields nested inside known objects leave the known ones intact" in {
     val message = decodeFuture("unknown_nested_fields-001.json").message
     message.map(_.chat.id) shouldBe Some(1003L)
     message.flatMap(_.from).map(_.id) shouldBe Some(1003L)
-    message.map(_.entities) shouldBe Some(List(iozhik.OpenEnum.Known[MessageEntity](BotCommandMessageEntity(0, 6))))
+    message.map(_.entities) shouldBe Some(List(iozhik.OpenUnion.Known[MessageEntity](BotCommandMessageEntity(0, 6))))
+    message.map(_.chat.`type`) shouldBe Some(iozhik.OpenEnum.Known(ChatTypePrivate))
   }
 
 }

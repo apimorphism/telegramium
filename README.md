@@ -87,13 +87,30 @@ For details, have a look
 at the [Github Issue](https://github.com/apimorphism/telegramium/issues/143) and
 the related [Pull Request](https://github.com/apimorphism/telegramium/pull/145).
 
-#### OpenEnum
+#### OpenEnum and OpenUnion
 
 The Telegram Bot API is not versioned, which means bots and libraries must try to be forward-compatible. Specifically for enumerations, this implies that bots should always anticipate new values being added. Handling these values depends on the bot's business logic. Some apps may simply ignore unknown values, while others might respond with "This message is not supported," save the message for manual processing later, or throw a request handling error.
 
-Telegramium introduces `OpenEnum`, a wrapper for Telegram Bot API enumerations with two cases: `Known` and `Unknown`. This type allows unknown values to be explicitly handled (similar to `Option` or `Either`), enabling bots using Telegramium to be more robust, improve error handling, and degrade gracefully in light of frequent Telegram Bot API updates.
+Telegramium wraps the values a bot receives that Telegram may extend. A wrapper has two cases, `Known` and `Unknown`, so unknown values are handled explicitly (similar to `Option` or `Either`), and a bot degrades gracefully when the Bot API is updated. There are two wrappers:
 
-An `Unknown` keeps the JSON it was decoded from, `Unknown(tag, raw)`, and encodes back to it. So unknown parts nested in a received value, e.g. inside a quoted rich text, are sent back as Telegram sent them. A top-level one can't be sent: request fields take the plain type, as in `quoteRichTexts: List[RichText]`.
+* `OpenUnion[T]` for a family of objects told apart by a type tag, such as `MessageEntity`, `ChatMember` or `RichText`. Its `Unknown(tag, raw)` keeps the JSON object it was decoded from.
+* `OpenEnum[T]` for an enum of strings, such as `Chat.type`. Its `Unknown(value)` is the string.
+
+```scala
+import iozhik.{OpenEnum, OpenUnion}
+
+msg.entities.collect { case OpenUnion.Known(e: BoldMessageEntity) => e }
+
+msg.chat.`type` match {
+  case OpenEnum.Known(ChatTypePrivate) => ...
+  case OpenEnum.Known(_)               => ...
+  case OpenEnum.Unknown(value)         => ... // a chat type this version doesn't know
+}
+```
+
+What a bot sends is not wrapped: request fields take the plain type, as in `entities: List[MessageEntity]`. So an unknown value can't be sent on its own.
+
+An `OpenUnion.Unknown` encodes back to its JSON. So unknown parts nested in a received value, e.g. inside a quoted rich text, are sent back as Telegram sent them. The parts nested in a `RichText` are `OpenUnion`s for that reason, but a rich text to send is written without the wrapper: `RichTextBold(RichTextPlain("hi"))`.
 
 #### Unknown updates
 
@@ -158,7 +175,8 @@ Please, note, that this versioning scheme is started from version `1.48.0`.
 
 * Pass optional arguments by name: `editMessageReplyMarkup(chatId = Some(ChatIntId(id)), messageId = Some(msgId))`. Telegram often adds new optional parameters in the middle of a method's list, so positional calls can stop compiling after a Bot API update.
 * Since `10.1004.0`, `chatId` is an `Option[ChatId]` in `sendMessage`, `sendRichMessage`, `sendAnimation`, `sendAudio`, `sendContact`, `sendDocument`, `sendLivePhoto`, `sendLocation`, `sendPhoto`, `sendSticker`, `sendVenue`, `sendVideo`, `sendVideoNote` and `sendVoice`, and comes after their required parameters: Bot API 10.4 lets an ephemeral reply to a callback query omit it. Wrap it in `Some` and pass it by name: `sendMessage(chatId = Some(ChatIntId(id)), text = "hi")`.
-* Since `10.1004.0`, `OpenEnum.Unknown` also holds the JSON it was decoded from (see [OpenEnum](#openenum)). Match it as `case Unknown(tag, _)`.
+* Since `10.1004.0`, the wrapper of object families such as `MessageEntity`, `ChatMember` and `RichText` is `OpenUnion`, not `OpenEnum` (see [OpenEnum and OpenUnion](#openenum-and-openunion)): rename it in imports and patterns. Its `Unknown` also holds the JSON it was decoded from: match it as `case OpenUnion.Unknown(tag, _)`.
+* Since `10.1004.0`, `Chat.type` and `ChatFullInfo.type` are an `OpenEnum[ChatType]` and `Dice.emoji` is an `OpenEnum[Emoji]`, where they were a `String`. Check your comparisons: on Scala 2, `chat.type == "private"` still compiles, with a warning, and is always false. Write `chat.type == OpenEnum.Known(ChatTypePrivate)` or match on it.
 * On Scala 2.13, telegramium depends on the latest scala-library (2.13.18 since `10.905.0`), and sbt refuses to build a project whose `scalaVersion` is older than that. Upgrade `scalaVersion` along with telegramium.
 
 ### Contribution

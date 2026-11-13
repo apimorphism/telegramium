@@ -60,22 +60,23 @@ object GenPrims {
   }
 
   // Mostly Known values. The rest are Unknown ones, as a newer Bot API would send them: an object under a type tag no
-  // version knows, with a field no version knows, or a bare string for an enum of strings. They have to decode and
-  // encode back to the same JSON wherever an OpenEnum is.
-  // `tagField` is the field holding the type tag; None for an enum of strings.
-  def openEnum[A](g: => Gen[A], tagField: Option[String]): Gen[iozhik.OpenEnum[A]] =
-    Gen.frequency(9 -> Gen.lzy(g).map(iozhik.OpenEnum.Known(_)), 1 -> genUnknown[A](tagField))
+  // version knows, with a field no version knows, or a string no version knows for an enum of strings. They have to
+  // decode and encode back to the same JSON wherever an OpenUnion or OpenEnum is.
+  // `tagField` is the field holding the type tag.
+  def openUnion[A](g: => Gen[A], tagField: String): Gen[iozhik.OpenUnion[A]] =
+    Gen.frequency(9 -> Gen.lzy(g).map(iozhik.OpenUnion.Known(_)), 1 -> genUnknownObject(tagField))
 
-  private def genUnknown[A](tagField: Option[String]): Gen[iozhik.OpenEnum[A]] =
+  def openEnum[A](g: => Gen[A]): Gen[iozhik.OpenEnum[A]] =
+    Gen.frequency(9 -> Gen.lzy(g).map(iozhik.OpenEnum.Known(_)), 1 -> genUnknownTag.map(iozhik.OpenEnum.Unknown(_)))
+
+  private val genUnknownTag: Gen[String] = Gen.listOfN(6, Gen.alphaLowerChar).map("future_" + _.mkString)
+
+  private def genUnknownObject(tagField: String): Gen[iozhik.OpenUnion[Nothing]] =
     for {
-      unknownTag <- Gen.listOfN(6, Gen.alphaLowerChar).map("future_" + _.mkString)
+      unknownTag <- genUnknownTag
       fieldValue <- genString
-    } yield {
-      val raw = tagField.fold(Json.fromString(unknownTag)) { f =>
-        Json.obj(f -> Json.fromString(unknownTag), "future_field" -> Json.fromString(fieldValue))
-      }
-      iozhik.OpenEnum.Unknown[A](unknownTag, raw)
-    }
+    } yield iozhik.OpenUnion.Unknown(unknownTag,
+      Json.obj(tagField -> Json.fromString(unknownTag), "future_field" -> Json.fromString(fieldValue)))
 
   // Shrinking only drops optional and list values, and shrinks the composite ones: primitives stay as generated, so a
   // shrunk value can't break a restriction on them. Everything is lazy, as ScalaCheck stops at the first failing one.
@@ -97,6 +98,11 @@ object GenPrims {
     Shrink {
       case iozhik.OpenEnum.Known(a) => s.shrink(a).map(iozhik.OpenEnum.Known(_))
       case _                        => Stream.empty
+    }
+  def shrinkOpenUnion[A](s: => Shrink[A]): Shrink[iozhik.OpenUnion[A]] =
+    Shrink {
+      case iozhik.OpenUnion.Known(a) => s.shrink(a).map(iozhik.OpenUnion.Known(_))
+      case _                         => Stream.empty
     }
   // a sum type shrinks as the variant it is; case objects have nothing to shrink, and can't be matched by type
   def shrinkSum[A](variants: PartialFunction[A, Stream[A]]*): Shrink[A] =
@@ -136,11 +142,17 @@ object GenPrims {
       : RoundTripCase[A] =
       new RoundTripCase(name, gen, shrink, e, d)
 
-    // decoded as an OpenEnum, so round-tripped as one, Unknown values included
-    def open[A](name: String, gen: Gen[A], shrink: Shrink[A], tagField: Option[String])(
-      implicit e: Encoder[A],
+    // decoded as an OpenUnion or an OpenEnum, so round-tripped as one, Unknown values included
+    def openUnion[A](name: String, gen: Gen[A], shrink: Shrink[A], tagField: String)(
+      implicit e: Encoder[iozhik.OpenUnion[A]],
+      d: Decoder[iozhik.OpenUnion[A]]
+    ): RoundTripCase[iozhik.OpenUnion[A]] =
+      new RoundTripCase(name, GenPrims.openUnion(gen, tagField), shrinkOpenUnion(shrink), e, d)
+
+    def openEnum[A](name: String, gen: Gen[A], shrink: Shrink[A])(
+      implicit e: Encoder[iozhik.OpenEnum[A]],
       d: Decoder[iozhik.OpenEnum[A]]
     ): RoundTripCase[iozhik.OpenEnum[A]] =
-      new RoundTripCase(name, openEnum(gen, tagField), shrinkOpenEnum(shrink), Encoder[iozhik.OpenEnum[A]], d)
+      new RoundTripCase(name, GenPrims.openEnum(gen), shrinkOpenEnum(shrink), e, d)
   }
 }

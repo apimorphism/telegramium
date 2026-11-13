@@ -15,7 +15,7 @@ package telegramium.bots
   */
 final case class Checklist(
   title: String,
-  titleEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  titleEntities: List[iozhik.OpenUnion[MessageEntity]] = List.empty,
   tasks: List[ChecklistTask] = List.empty,
   othersCanAddTasks: Option[Boolean] = Option.empty,
   othersCanMarkTasksAsDone: Option[Boolean] = Option.empty

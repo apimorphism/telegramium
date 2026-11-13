@@ -8,4 +8,4 @@ package telegramium.bots
   *   Value of the dice, 1-6 for “🎲”, “🎯” and “🎳” base emoji, 1-5 for “🏀” and “⚽” base emoji, 1-64 for “🎰” base
   *   emoji
   */
-final case class Dice(emoji: String, value: Int)
+final case class Dice(emoji: iozhik.OpenEnum[Emoji], value: Int)

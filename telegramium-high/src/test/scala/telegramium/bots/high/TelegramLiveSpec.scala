@@ -108,7 +108,7 @@ class TelegramLiveSpec extends AnyFreeSpec with Matchers {
       )
     )
     val paragraph = message.richMessage.toList.flatMap(_.blocks).collectFirst {
-      case iozhik.OpenEnum.Known(RichBlockParagraph(iozhik.OpenEnum.Known(text))) => text
+      case iozhik.OpenUnion.Known(RichBlockParagraph(iozhik.OpenUnion.Known(text))) => text
     }
     paragraph shouldBe defined
     // the docs require the quoted parts nested exactly as in the message received, which a re-encoding that changed
@@ -120,7 +120,7 @@ class TelegramLiveSpec extends AnyFreeSpec with Matchers {
         replyParameters = Some(ReplyParameters(messageId = Some(message.messageId), quoteRichTexts = paragraph.toList))
       )
     )
-    reply.quote.map(_.richTexts) shouldBe Some(paragraph.toList.map(iozhik.OpenEnum.Known(_)))
+    reply.quote.map(_.richTexts) shouldBe Some(paragraph.toList.map(iozhik.OpenUnion.Known(_)))
   }
 
   "a document with an uploaded thumbnail keeps the thumbnail" taggedAs LiveTest in {
