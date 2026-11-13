@@ -3872,7 +3872,7 @@ trait Methods {
     businessConnectionId: Option[String] = Option.empty,
     messageThreadId: Option[Int] = Option.empty,
     directMessagesTopicId: Option[Long] = Option.empty,
-    emoji: Option[String] = Option.empty,
+    emoji: Option[Emoji] = Option.empty,
     disableNotification: Option[Boolean] = Option.empty,
     protectContent: Option[Boolean] = Option.empty,
     allowPaidBroadcast: Option[Boolean] = Option.empty,

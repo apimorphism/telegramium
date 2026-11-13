@@ -82,7 +82,7 @@ class EchoBot[F[_]]()(implicit
       message.collect { case m: Message => m }.fold(asyncF.unit)(f)
 
     def rollTheDice(chatId: Long, emoji: Emoji = EmojiDice): F[Unit] = {
-      sendDice(ChatIntId(chatId), emoji = Some(emoji.toString)).exec.void >>
+      sendDice(ChatIntId(chatId), emoji = Some(emoji)).exec.void >>
         answerCallbackQuery(callbackQueryId = query.id).exec.void
     }
 
