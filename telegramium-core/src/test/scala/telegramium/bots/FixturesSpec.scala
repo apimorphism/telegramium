@@ -97,7 +97,7 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     "a reaction of an unknown type" in {
       decodeFuture("unknown_value-001.json").messageReaction.map(_.newReaction) shouldBe Some(
         List(
-          iozhik.OpenEnum.Unknown(
+          iozhik.OpenEnum.Unknown[ReactionType](
             "future_reaction",
             Json.obj(
               "type"               -> Json.fromString("future_reaction"),
@@ -110,7 +110,7 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     "an entity of an unknown type" in {
       decodeFuture("unknown_value-002.json").message.map(_.entities) shouldBe Some(
         List(
-          iozhik.OpenEnum.Unknown(
+          iozhik.OpenEnum.Unknown[MessageEntity](
             "future_entity",
             Json.obj(
               "offset" -> Json.fromInt(0),

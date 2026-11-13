@@ -31,7 +31,7 @@ final case class WidgetQuery(
   id: String,
   from: User,
   chatInstance: String,
-  `type`: iozhik.JsonOpenEnum[WidgetQueryType],
+  `type`: iozhik.OpenEnum[WidgetQueryType],
   data: String,
   chat: Option[Chat] = Option.empty,
   messageId: Option[Int] = Option.empty,

@@ -18,7 +18,7 @@ package telegramium.bots
 final case class ChecklistTask(
   id: Int,
   text: String,
-  textEntities: List[iozhik.JsonOpenEnum[MessageEntity]] = List.empty,
+  textEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   completedByUser: Option[User] = Option.empty,
   completedByChat: Option[Chat] = Option.empty,
   completionDate: Option[Long] = Option.empty

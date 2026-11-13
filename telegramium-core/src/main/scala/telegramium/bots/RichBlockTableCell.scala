@@ -18,7 +18,7 @@ package telegramium.bots
 final case class RichBlockTableCell(
   align: String,
   valign: String,
-  text: Option[iozhik.JsonOpenEnum[RichText]] = Option.empty,
+  text: Option[iozhik.OpenEnum[RichText]] = Option.empty,
   isHeader: Option[Boolean] = Option.empty,
   colspan: Option[Int] = Option.empty,
   rowspan: Option[Int] = Option.empty

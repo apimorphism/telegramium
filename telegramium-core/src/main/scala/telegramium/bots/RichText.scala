@@ -7,7 +7,7 @@ sealed trait RichText {}
   * @param text
   *   The text
   */
-final case class RichTextSubscript(text: iozhik.JsonOpenEnum[RichText]) extends RichText
+final case class RichTextSubscript(text: iozhik.OpenEnum[RichText]) extends RichText
 
 /** A text with a phone number.
   *
@@ -16,14 +16,14 @@ final case class RichTextSubscript(text: iozhik.JsonOpenEnum[RichText]) extends 
   * @param phoneNumber
   *   The phone number
   */
-final case class RichTextPhoneNumber(text: iozhik.JsonOpenEnum[RichText], phoneNumber: String) extends RichText
+final case class RichTextPhoneNumber(text: iozhik.OpenEnum[RichText], phoneNumber: String) extends RichText
 
 /** A monowidth text.
   *
   * @param text
   *   The text
   */
-final case class RichTextCode(text: iozhik.JsonOpenEnum[RichText]) extends RichText
+final case class RichTextCode(text: iozhik.OpenEnum[RichText]) extends RichText
 
 /** A link to an anchor.
   *
@@ -32,21 +32,21 @@ final case class RichTextCode(text: iozhik.JsonOpenEnum[RichText]) extends RichT
   * @param anchorName
   *   The name of the anchor. If the name is empty, then the link brings back to the top of the message.
   */
-final case class RichTextAnchorLink(text: iozhik.JsonOpenEnum[RichText], anchorName: String) extends RichText
+final case class RichTextAnchorLink(text: iozhik.OpenEnum[RichText], anchorName: String) extends RichText
 
 /** Concatenation of rich texts.
   *
   * @param texts
   *   The texts
   */
-final case class RichTextConcat(texts: List[iozhik.JsonOpenEnum[RichText]] = List.empty) extends RichText
+final case class RichTextConcat(texts: List[iozhik.OpenEnum[RichText]] = List.empty) extends RichText
 
 /** A text covered by a spoiler.
   *
   * @param text
   *   The text
   */
-final case class RichTextSpoiler(text: iozhik.JsonOpenEnum[RichText]) extends RichText
+final case class RichTextSpoiler(text: iozhik.OpenEnum[RichText]) extends RichText
 
 /** A reference.
   *
@@ -55,7 +55,7 @@ final case class RichTextSpoiler(text: iozhik.JsonOpenEnum[RichText]) extends Ri
   * @param name
   *   The name of the reference
   */
-final case class RichTextReference(text: iozhik.JsonOpenEnum[RichText], name: String) extends RichText
+final case class RichTextReference(text: iozhik.OpenEnum[RichText], name: String) extends RichText
 
 /** A mention by a username.
   *
@@ -64,14 +64,14 @@ final case class RichTextReference(text: iozhik.JsonOpenEnum[RichText], name: St
   * @param username
   *   The username
   */
-final case class RichTextMention(text: iozhik.JsonOpenEnum[RichText], username: String) extends RichText
+final case class RichTextMention(text: iozhik.OpenEnum[RichText], username: String) extends RichText
 
 /** An underlined text.
   *
   * @param text
   *   The text
   */
-final case class RichTextUnderline(text: iozhik.JsonOpenEnum[RichText]) extends RichText
+final case class RichTextUnderline(text: iozhik.OpenEnum[RichText]) extends RichText
 
 /** A text with a link.
   *
@@ -80,7 +80,7 @@ final case class RichTextUnderline(text: iozhik.JsonOpenEnum[RichText]) extends 
   * @param url
   *   URL of the link
   */
-final case class RichTextUrl(text: iozhik.JsonOpenEnum[RichText], url: String) extends RichText
+final case class RichTextUrl(text: iozhik.OpenEnum[RichText], url: String) extends RichText
 
 /** A button.
   *
@@ -96,7 +96,7 @@ final case class RichTextButton(button: RichMessageButton) extends RichText
   * @param botCommand
   *   The bot command
   */
-final case class RichTextBotCommand(text: iozhik.JsonOpenEnum[RichText], botCommand: String) extends RichText
+final case class RichTextBotCommand(text: iozhik.OpenEnum[RichText], botCommand: String) extends RichText
 
 /** A mention of a Telegram user by their identifier.
   *
@@ -105,7 +105,7 @@ final case class RichTextBotCommand(text: iozhik.JsonOpenEnum[RichText], botComm
   * @param user
   *   The mentioned user
   */
-final case class RichTextTextMention(text: iozhik.JsonOpenEnum[RichText], user: User) extends RichText
+final case class RichTextTextMention(text: iozhik.OpenEnum[RichText], user: User) extends RichText
 
 /** A mathematical expression.
   *
@@ -119,7 +119,7 @@ final case class RichTextMathematicalExpression(expression: String) extends Rich
   * @param text
   *   The text
   */
-final case class RichTextSuperscript(text: iozhik.JsonOpenEnum[RichText]) extends RichText
+final case class RichTextSuperscript(text: iozhik.OpenEnum[RichText]) extends RichText
 
 /** A text with an email address.
   *
@@ -128,14 +128,14 @@ final case class RichTextSuperscript(text: iozhik.JsonOpenEnum[RichText]) extend
   * @param emailAddress
   *   The email address
   */
-final case class RichTextEmailAddress(text: iozhik.JsonOpenEnum[RichText], emailAddress: String) extends RichText
+final case class RichTextEmailAddress(text: iozhik.OpenEnum[RichText], emailAddress: String) extends RichText
 
 /** A marked text.
   *
   * @param text
   *   The text
   */
-final case class RichTextMarked(text: iozhik.JsonOpenEnum[RichText]) extends RichText
+final case class RichTextMarked(text: iozhik.OpenEnum[RichText]) extends RichText
 
 /** Plain text.
   *
@@ -149,7 +149,7 @@ final case class RichTextPlain(text: String) extends RichText
   * @param text
   *   The text
   */
-final case class RichTextItalic(text: iozhik.JsonOpenEnum[RichText]) extends RichText
+final case class RichTextItalic(text: iozhik.OpenEnum[RichText]) extends RichText
 
 /** A text with a bank card number.
   *
@@ -158,14 +158,14 @@ final case class RichTextItalic(text: iozhik.JsonOpenEnum[RichText]) extends Ric
   * @param bankCardNumber
   *   The bank card number
   */
-final case class RichTextBankCardNumber(text: iozhik.JsonOpenEnum[RichText], bankCardNumber: String) extends RichText
+final case class RichTextBankCardNumber(text: iozhik.OpenEnum[RichText], bankCardNumber: String) extends RichText
 
 /** A strikethrough text.
   *
   * @param text
   *   The text
   */
-final case class RichTextStrikethrough(text: iozhik.JsonOpenEnum[RichText]) extends RichText
+final case class RichTextStrikethrough(text: iozhik.OpenEnum[RichText]) extends RichText
 
 /** A custom emoji.
   *
@@ -192,7 +192,7 @@ final case class RichTextAnchor(name: String) extends RichText
   * @param hashtag
   *   The hashtag
   */
-final case class RichTextHashtag(text: iozhik.JsonOpenEnum[RichText], hashtag: String) extends RichText
+final case class RichTextHashtag(text: iozhik.OpenEnum[RichText], hashtag: String) extends RichText
 
 /** Formatted date and time.
   *
@@ -205,7 +205,7 @@ final case class RichTextHashtag(text: iozhik.JsonOpenEnum[RichText], hashtag: S
   *   href="https://core.telegram.org/bots/api#date-time-entity-formatting">date-time entity formatting</a> for more
   *   details.
   */
-final case class RichTextDateTime(text: iozhik.JsonOpenEnum[RichText], unixTime: Long, dateTimeFormat: String)
+final case class RichTextDateTime(text: iozhik.OpenEnum[RichText], unixTime: Long, dateTimeFormat: String)
     extends RichText
 
 /** A cashtag.
@@ -215,14 +215,14 @@ final case class RichTextDateTime(text: iozhik.JsonOpenEnum[RichText], unixTime:
   * @param cashtag
   *   The cashtag
   */
-final case class RichTextCashtag(text: iozhik.JsonOpenEnum[RichText], cashtag: String) extends RichText
+final case class RichTextCashtag(text: iozhik.OpenEnum[RichText], cashtag: String) extends RichText
 
 /** A bold text.
   *
   * @param text
   *   The text
   */
-final case class RichTextBold(text: iozhik.JsonOpenEnum[RichText]) extends RichText
+final case class RichTextBold(text: iozhik.OpenEnum[RichText]) extends RichText
 
 /** An address in the TON blockchain.
   *
@@ -231,7 +231,7 @@ final case class RichTextBold(text: iozhik.JsonOpenEnum[RichText]) extends RichT
   * @param address
   *   The address
   */
-final case class RichTextTonAddress(text: iozhik.JsonOpenEnum[RichText], address: String) extends RichText
+final case class RichTextTonAddress(text: iozhik.OpenEnum[RichText], address: String) extends RichText
 
 /** A link to a reference.
   *
@@ -240,4 +240,4 @@ final case class RichTextTonAddress(text: iozhik.JsonOpenEnum[RichText], address
   * @param referenceName
   *   The name of the reference
   */
-final case class RichTextReferenceLink(text: iozhik.JsonOpenEnum[RichText], referenceName: String) extends RichText
+final case class RichTextReferenceLink(text: iozhik.OpenEnum[RichText], referenceName: String) extends RichText

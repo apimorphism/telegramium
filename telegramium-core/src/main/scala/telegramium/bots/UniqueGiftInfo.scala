@@ -35,7 +35,7 @@ final case class UniqueGiftInfo(
   gift: UniqueGift,
   origin: String,
   text: Option[String] = Option.empty,
-  entities: List[iozhik.JsonOpenEnum[MessageEntity]] = List.empty,
+  entities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   isPrivate: Option[Boolean] = Option.empty,
   lastResaleCurrency: Option[String] = Option.empty,
   lastResaleAmount: Option[Long] = Option.empty,

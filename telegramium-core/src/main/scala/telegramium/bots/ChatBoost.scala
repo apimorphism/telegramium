@@ -16,5 +16,5 @@ final case class ChatBoost(
   boostId: String,
   addDate: Long,
   expirationDate: Long,
-  source: iozhik.JsonOpenEnum[ChatBoostSource]
+  source: iozhik.OpenEnum[ChatBoostSource]
 )

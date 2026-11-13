@@ -11,25 +11,25 @@ import telegramium.bots.CirceImplicits._
 
 class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropertyChecks {
 
-  private def known(rt: RichText): iozhik.JsonOpenEnum[RichText] = iozhik.OpenEnum.Known(rt)
+  private def known(rt: RichText): iozhik.OpenEnum[RichText] = iozhik.OpenEnum.Known(rt)
 
   // --- Unit tests: decode from raw JSON ---
 
   "RichText decoder" should "decode a plain string" in {
     val json   = Json.fromString("Hello, world!")
-    val result = json.as[iozhik.JsonOpenEnum[RichText]]
+    val result = json.as[iozhik.OpenEnum[RichText]]
     result shouldBe Right(known(RichTextPlain("Hello, world!")))
   }
 
   it should "decode an empty string" in {
     val json   = Json.fromString("")
-    val result = json.as[iozhik.JsonOpenEnum[RichText]]
+    val result = json.as[iozhik.OpenEnum[RichText]]
     result shouldBe Right(known(RichTextPlain("")))
   }
 
   it should "decode a flat array" in {
     val json   = parse("""["Hello, ", {"type": "bold", "text": "world"}, "!"]""").toOption.get
-    val result = json.as[iozhik.JsonOpenEnum[RichText]]
+    val result = json.as[iozhik.OpenEnum[RichText]]
     result shouldBe Right(
       known(
         RichTextConcat(
@@ -49,7 +49,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
       ["nested ", {"type": "bold", "text": "deep"}],
       " end"
     ]""").toOption.get
-    val result = json.as[iozhik.JsonOpenEnum[RichText]]
+    val result = json.as[iozhik.OpenEnum[RichText]]
     result shouldBe Right(
       known(
         RichTextConcat(
@@ -72,13 +72,13 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
 
   it should "decode an empty array" in {
     val json   = parse("[]").toOption.get
-    val result = json.as[iozhik.JsonOpenEnum[RichText]]
+    val result = json.as[iozhik.OpenEnum[RichText]]
     result shouldBe Right(known(RichTextConcat(List.empty)))
   }
 
   it should "decode a typed object (bold)" in {
     val json   = parse("""{"type": "bold", "text": "important"}""").toOption.get
-    val result = json.as[iozhik.JsonOpenEnum[RichText]]
+    val result = json.as[iozhik.OpenEnum[RichText]]
     result shouldBe Right(known(RichTextBold(known(RichTextPlain("important")))))
   }
 
@@ -86,7 +86,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
     val json = parse(
       """{"type": "url", "text": ["Click ", {"type": "bold", "text": "here"}], "url": "https://example.com"}"""
     ).toOption.get
-    val result = json.as[iozhik.JsonOpenEnum[RichText]]
+    val result = json.as[iozhik.OpenEnum[RichText]]
     result shouldBe Right(
       known(
         RichTextUrl(
@@ -106,7 +106,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
 
   it should "decode a mathematical_expression" in {
     val json   = parse("""{"type": "mathematical_expression", "expression": "E = mc^2"}""").toOption.get
-    val result = json.as[iozhik.JsonOpenEnum[RichText]]
+    val result = json.as[iozhik.OpenEnum[RichText]]
     result shouldBe Right(known(RichTextMathematicalExpression("E = mc^2")))
   }
 
@@ -114,13 +114,13 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
     val json = parse(
       """{"type": "custom_emoji", "custom_emoji_id": "5368324170671202286", "alternative_text": "👍"}"""
     ).toOption.get
-    val result = json.as[iozhik.JsonOpenEnum[RichText]]
+    val result = json.as[iozhik.OpenEnum[RichText]]
     result shouldBe Right(known(RichTextCustomEmoji("5368324170671202286", "👍")))
   }
 
   it should "decode an anchor" in {
     val json   = parse("""{"type": "anchor", "name": "section-1"}""").toOption.get
-    val result = json.as[iozhik.JsonOpenEnum[RichText]]
+    val result = json.as[iozhik.OpenEnum[RichText]]
     result shouldBe Right(known(RichTextAnchor("section-1")))
   }
 
@@ -128,7 +128,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
     val json = parse(
       """{"type": "date_time", "text": "tomorrow", "unix_time": 1720000000, "date_time_format": "dd MMM yyyy"}"""
     ).toOption.get
-    val result = json.as[iozhik.JsonOpenEnum[RichText]]
+    val result = json.as[iozhik.OpenEnum[RichText]]
     result shouldBe Right(
       known(
         RichTextDateTime(
@@ -143,7 +143,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
   it should "decode a button" in {
     val json =
       parse("""{"type": "button", "button": {"text": "Click me", "url": "https://example.com"}}""").toOption.get
-    val result = json.as[iozhik.JsonOpenEnum[RichText]]
+    val result = json.as[iozhik.OpenEnum[RichText]]
     result shouldBe Right(
       known(
         RichTextButton(RichMessageButton(text = known(RichTextPlain("Click me")), url = Some("https://example.com")))
@@ -153,7 +153,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
 
   it should "decode an unknown type as OpenEnum.Unknown" in {
     val json   = parse("""{"type": "future_type", "text": "hello"}""").toOption.get
-    val result = json.as[iozhik.JsonOpenEnum[RichText]]
+    val result = json.as[iozhik.OpenEnum[RichText]]
     result shouldBe Right(iozhik.OpenEnum.Unknown("future_type", json))
   }
 
@@ -223,7 +223,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
   "RichText round-trip" should "preserve RichTextPlain" in {
     val rt      = RichTextPlain("test")
     val encoded = (rt: RichText).asJson
-    encoded.as[iozhik.JsonOpenEnum[RichText]] shouldBe Right(known(rt))
+    encoded.as[iozhik.OpenEnum[RichText]] shouldBe Right(known(rt))
   }
 
   it should "preserve RichTextConcat" in {
@@ -235,20 +235,20 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
       )
     )
     val encoded = (rt: RichText).asJson
-    encoded.as[iozhik.JsonOpenEnum[RichText]] shouldBe Right(known(rt))
+    encoded.as[iozhik.OpenEnum[RichText]] shouldBe Right(known(rt))
   }
 
   it should "preserve a button" in {
     val rt =
       RichTextButton(RichMessageButton(text = known(RichTextPlain("Click me")), url = Some("https://example.com")))
     val encoded = (rt: RichText).asJson
-    encoded.as[iozhik.JsonOpenEnum[RichText]] shouldBe Right(known(rt))
+    encoded.as[iozhik.OpenEnum[RichText]] shouldBe Right(known(rt))
   }
 
   it should "preserve typed objects" in {
     val rt      = RichTextUrl(known(RichTextPlain("click")), "https://example.com")
     val encoded = (rt: RichText).asJson
-    encoded.as[iozhik.JsonOpenEnum[RichText]] shouldBe Right(known(rt))
+    encoded.as[iozhik.OpenEnum[RichText]] shouldBe Right(known(rt))
   }
 
   it should "preserve deeply nested structures" in {
@@ -271,7 +271,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
       )
     )
     val encoded = (rt: RichText).asJson
-    encoded.as[iozhik.JsonOpenEnum[RichText]] shouldBe Right(known(rt))
+    encoded.as[iozhik.OpenEnum[RichText]] shouldBe Right(known(rt))
   }
 
   // --- Property-based tests ---
@@ -332,7 +332,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
     cases.foreach { name =>
       withClue(s"Failed to decode '$name': ") {
         val json   = doc.downField(name).focus.get
-        val result = json.as[iozhik.JsonOpenEnum[RichText]]
+        val result = json.as[iozhik.OpenEnum[RichText]]
         result.isRight shouldBe true
       }
     }
@@ -348,7 +348,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
     examples should not be empty
     examples.foreach { case (name, json) =>
       withClue(s"'$name': ") {
-        json.as[iozhik.JsonOpenEnum[RichText]] match {
+        json.as[iozhik.OpenEnum[RichText]] match {
           case Right(iozhik.OpenEnum.Known(rt)) => (rt: RichText).asJson shouldBe json
           case other                            => fail(s"expected a known rich text, got $other")
         }
@@ -361,7 +361,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
   "An unknown nested rich text" should "encode back to the JSON it was decoded from" in {
     val unknown = parse("""{"type": "future_type", "text": "hi"}""").toOption.get
     val json    = Json.obj("type" -> Json.fromString("bold"), "text" -> unknown)
-    val decoded = json.as[iozhik.JsonOpenEnum[RichText]]
+    val decoded = json.as[iozhik.OpenEnum[RichText]]
     decoded shouldBe Right(known(RichTextBold(iozhik.OpenEnum.Unknown("future_type", unknown))))
     decoded.toOption.collect { case iozhik.OpenEnum.Known(rt) => (rt: RichText).asJson } shouldBe Some(json)
   }

@@ -7,4 +7,4 @@ package telegramium.bots
   * @param paidMedia
   *   Information about the paid media
   */
-final case class PaidMediaInfo(starCount: Int, paidMedia: List[iozhik.JsonOpenEnum[PaidMedia]] = List.empty)
+final case class PaidMediaInfo(starCount: Int, paidMedia: List[iozhik.OpenEnum[PaidMedia]] = List.empty)

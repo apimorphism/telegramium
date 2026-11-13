@@ -15,5 +15,5 @@ final case class ChatBoostRemoved(
   chat: Chat,
   boostId: String,
   removeDate: Long,
-  source: iozhik.JsonOpenEnum[ChatBoostSource]
+  source: iozhik.OpenEnum[ChatBoostSource]
 )

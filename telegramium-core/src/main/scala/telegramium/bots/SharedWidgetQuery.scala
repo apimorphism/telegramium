@@ -18,7 +18,7 @@ package telegramium.bots
 final case class SharedWidgetQuery(
   id: String,
   from: User,
-  `type`: iozhik.JsonOpenEnum[WidgetQueryType],
+  `type`: iozhik.OpenEnum[WidgetQueryType],
   data: String,
   widgetId: String
 )

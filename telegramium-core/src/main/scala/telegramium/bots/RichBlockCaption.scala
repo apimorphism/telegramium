@@ -8,6 +8,6 @@ package telegramium.bots
   *   <em>Optional</em>. Block credit which corresponds to the HTML tag ᐸciteᐳ
   */
 final case class RichBlockCaption(
-  text: iozhik.JsonOpenEnum[RichText],
-  credit: Option[iozhik.JsonOpenEnum[RichText]] = Option.empty
+  text: iozhik.OpenEnum[RichText],
+  credit: Option[iozhik.OpenEnum[RichText]] = Option.empty
 )

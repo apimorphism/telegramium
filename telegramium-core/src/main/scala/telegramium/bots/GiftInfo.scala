@@ -35,7 +35,7 @@ final case class GiftInfo(
   isUpgradeSeparate: Option[Boolean] = Option.empty,
   canBeUpgraded: Option[Boolean] = Option.empty,
   text: Option[String] = Option.empty,
-  entities: List[iozhik.JsonOpenEnum[MessageEntity]] = List.empty,
+  entities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
   isPrivate: Option[Boolean] = Option.empty,
   uniqueGiftNumber: Option[Int] = Option.empty
 )
