@@ -38,7 +38,7 @@ final case class BackgroundTypeWallpaper(
   */
 final case class BackgroundTypePattern(
   document: Document,
-  fill: iozhik.OpenEnum[BackgroundFill],
+  fill: iozhik.OpenUnion[BackgroundFill],
   intensity: Int,
   isInverted: Option[Boolean] = Option.empty,
   isMoving: Option[Boolean] = Option.empty
@@ -58,4 +58,5 @@ final case class BackgroundTypeChatTheme(themeName: String) extends BackgroundTy
   * @param darkThemeDimming
   *   Dimming of the background in dark themes, as a percentage; 0-100
   */
-final case class BackgroundTypeFill(fill: iozhik.OpenEnum[BackgroundFill], darkThemeDimming: Int) extends BackgroundType
+final case class BackgroundTypeFill(fill: iozhik.OpenUnion[BackgroundFill], darkThemeDimming: Int)
+    extends BackgroundType

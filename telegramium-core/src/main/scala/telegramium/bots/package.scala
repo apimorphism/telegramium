@@ -16,6 +16,21 @@ object CirceImplicits {
     case EmojiBowling     => EmojiBowling.asJson
   }
 
+  implicit lazy val emojiOpenEncoder: Encoder[iozhik.OpenEnum[Emoji]] = {
+    case iozhik.OpenEnum.Known(x)   => Encoder[Emoji].apply(x)
+    case iozhik.OpenEnum.Unknown(s) => Json.fromString(s)
+  }
+
+  implicit lazy val emojiDecoder: Decoder[iozhik.OpenEnum[Emoji]] = Decoder[String].map {
+    case "🎲" => iozhik.OpenEnum.Known(EmojiDice)
+    case "🎯" => iozhik.OpenEnum.Known(EmojiDarts)
+    case "🏀" => iozhik.OpenEnum.Known(EmojiBasketball)
+    case "⚽"  => iozhik.OpenEnum.Known(EmojiFootball)
+    case "🎰" => iozhik.OpenEnum.Known(EmojiSlotMachine)
+    case "🎳" => iozhik.OpenEnum.Known(EmojiBowling)
+    case s    => iozhik.OpenEnum.Unknown(s)
+  }
+
   implicit lazy val emojidiceEncoder: Encoder[EmojiDice.type] = (_: EmojiDice.type) => "🎲".asJson
 
   implicit lazy val emojidiceDecoder: Decoder[EmojiDice.type] =
@@ -45,6 +60,49 @@ object CirceImplicits {
 
   implicit lazy val emojibowlingDecoder: Decoder[EmojiBowling.type] =
     Decoder[String].emap(s => Either.cond(s == "🎳", EmojiBowling, s"Expected 🎳"))
+
+  implicit lazy val chattypeEncoder: Encoder[ChatType] = {
+    case ChatTypePrivate    => ChatTypePrivate.asJson
+    case ChatTypeGroup      => ChatTypeGroup.asJson
+    case ChatTypeSupergroup => ChatTypeSupergroup.asJson
+    case ChatTypeChannel    => ChatTypeChannel.asJson
+  }
+
+  implicit lazy val chattypeOpenEncoder: Encoder[iozhik.OpenEnum[ChatType]] = {
+    case iozhik.OpenEnum.Known(x)   => Encoder[ChatType].apply(x)
+    case iozhik.OpenEnum.Unknown(s) => Json.fromString(s)
+  }
+
+  implicit lazy val chattypeDecoder: Decoder[iozhik.OpenEnum[ChatType]] = Decoder[String].map {
+    case "private"    => iozhik.OpenEnum.Known(ChatTypePrivate)
+    case "group"      => iozhik.OpenEnum.Known(ChatTypeGroup)
+    case "supergroup" => iozhik.OpenEnum.Known(ChatTypeSupergroup)
+    case "channel"    => iozhik.OpenEnum.Known(ChatTypeChannel)
+    case s            => iozhik.OpenEnum.Unknown(s)
+  }
+
+  implicit lazy val chattypeprivateEncoder: Encoder[ChatTypePrivate.type] = (_: ChatTypePrivate.type) =>
+    "private".asJson
+
+  implicit lazy val chattypeprivateDecoder: Decoder[ChatTypePrivate.type] =
+    Decoder[String].emap(s => Either.cond(s == "private", ChatTypePrivate, s"Expected private"))
+
+  implicit lazy val chattypegroupEncoder: Encoder[ChatTypeGroup.type] = (_: ChatTypeGroup.type) => "group".asJson
+
+  implicit lazy val chattypegroupDecoder: Decoder[ChatTypeGroup.type] =
+    Decoder[String].emap(s => Either.cond(s == "group", ChatTypeGroup, s"Expected group"))
+
+  implicit lazy val chattypesupergroupEncoder: Encoder[ChatTypeSupergroup.type] = (_: ChatTypeSupergroup.type) =>
+    "supergroup".asJson
+
+  implicit lazy val chattypesupergroupDecoder: Decoder[ChatTypeSupergroup.type] =
+    Decoder[String].emap(s => Either.cond(s == "supergroup", ChatTypeSupergroup, s"Expected supergroup"))
+
+  implicit lazy val chattypechannelEncoder: Encoder[ChatTypeChannel.type] = (_: ChatTypeChannel.type) =>
+    "channel".asJson
+
+  implicit lazy val chattypechannelDecoder: Decoder[ChatTypeChannel.type] =
+    Decoder[String].emap(s => Either.cond(s == "channel", ChatTypeChannel, s"Expected channel"))
 
   implicit lazy val parsemodeEncoder: Encoder[ParseMode] = {
     case Markdown  => Markdown.asJson
@@ -159,13 +217,14 @@ object CirceImplicits {
     case solid: BackgroundFillSolid                        => solid.asJson
   }
 
-  implicit lazy val backgroundfillDecoder: Decoder[iozhik.OpenEnum[BackgroundFill]] = for {
+  implicit lazy val backgroundfillDecoder: Decoder[iozhik.OpenUnion[BackgroundFill]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "freeform_gradient" => Decoder[BackgroundFillFreeformGradient].map(iozhik.OpenEnum.Known(_))
-      case "gradient"          => Decoder[BackgroundFillGradient].map(iozhik.OpenEnum.Known(_))
-      case "solid"             => Decoder[BackgroundFillSolid].map(iozhik.OpenEnum.Known(_))
-      case unknown             => Decoder.const(iozhik.OpenEnum.Unknown[BackgroundFill](unknown))
+      case "freeform_gradient" => Decoder[BackgroundFillFreeformGradient].map(iozhik.OpenUnion.Known(_))
+      case "gradient"          => Decoder[BackgroundFillGradient].map(iozhik.OpenUnion.Known(_))
+      case "solid"             => Decoder[BackgroundFillSolid].map(iozhik.OpenUnion.Known(_))
+      case unknown             =>
+        Decoder.instance[iozhik.OpenUnion[BackgroundFill]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -237,14 +296,15 @@ object CirceImplicits {
     case pattern: BackgroundTypePattern      => pattern.asJson
   }
 
-  implicit lazy val backgroundtypeDecoder: Decoder[iozhik.OpenEnum[BackgroundType]] = for {
+  implicit lazy val backgroundtypeDecoder: Decoder[iozhik.OpenUnion[BackgroundType]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "chat_theme" => Decoder[BackgroundTypeChatTheme].map(iozhik.OpenEnum.Known(_))
-      case "fill"       => Decoder[BackgroundTypeFill].map(iozhik.OpenEnum.Known(_))
-      case "wallpaper"  => Decoder[BackgroundTypeWallpaper].map(iozhik.OpenEnum.Known(_))
-      case "pattern"    => Decoder[BackgroundTypePattern].map(iozhik.OpenEnum.Known(_))
-      case unknown      => Decoder.const(iozhik.OpenEnum.Unknown[BackgroundType](unknown))
+      case "chat_theme" => Decoder[BackgroundTypeChatTheme].map(iozhik.OpenUnion.Known(_))
+      case "fill"       => Decoder[BackgroundTypeFill].map(iozhik.OpenUnion.Known(_))
+      case "wallpaper"  => Decoder[BackgroundTypeWallpaper].map(iozhik.OpenUnion.Known(_))
+      case "pattern"    => Decoder[BackgroundTypePattern].map(iozhik.OpenUnion.Known(_))
+      case unknown      =>
+        Decoder.instance[iozhik.OpenUnion[BackgroundType]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -296,7 +356,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _document   <- h.get[Document]("document")
-        _fill       <- h.get[iozhik.OpenEnum[BackgroundFill]]("fill")
+        _fill       <- h.get[iozhik.OpenUnion[BackgroundFill]]("fill")
         _intensity  <- h.get[Int]("intensity")
         _isInverted <- h.get[Option[Boolean]]("is_inverted")
         _isMoving   <- h.get[Option[Boolean]]("is_moving")
@@ -344,7 +404,7 @@ object CirceImplicits {
   implicit lazy val backgroundtypefillDecoder: Decoder[BackgroundTypeFill] =
     Decoder.instance { h =>
       for {
-        _fill             <- h.get[iozhik.OpenEnum[BackgroundFill]]("fill")
+        _fill             <- h.get[iozhik.OpenUnion[BackgroundFill]]("fill")
         _darkThemeDimming <- h.get[Int]("dark_theme_dimming")
       } yield {
         BackgroundTypeFill(fill = _fill, darkThemeDimming = _darkThemeDimming)
@@ -410,13 +470,14 @@ object CirceImplicits {
     case gift_code: ChatBoostSourceGiftCode => gift_code.asJson
   }
 
-  implicit lazy val chatboostsourceDecoder: Decoder[iozhik.OpenEnum[ChatBoostSource]] = for {
+  implicit lazy val chatboostsourceDecoder: Decoder[iozhik.OpenUnion[ChatBoostSource]] = for {
     fType <- Decoder[String].prepare(_.downField("source"))
     value <- fType match {
-      case "giveaway"  => Decoder[ChatBoostSourceGiveaway].map(iozhik.OpenEnum.Known(_))
-      case "premium"   => Decoder[ChatBoostSourcePremium].map(iozhik.OpenEnum.Known(_))
-      case "gift_code" => Decoder[ChatBoostSourceGiftCode].map(iozhik.OpenEnum.Known(_))
-      case unknown     => Decoder.const(iozhik.OpenEnum.Unknown[ChatBoostSource](unknown))
+      case "giveaway"  => Decoder[ChatBoostSourceGiveaway].map(iozhik.OpenUnion.Known(_))
+      case "premium"   => Decoder[ChatBoostSourcePremium].map(iozhik.OpenUnion.Known(_))
+      case "gift_code" => Decoder[ChatBoostSourceGiftCode].map(iozhik.OpenUnion.Known(_))
+      case unknown     =>
+        Decoder.instance[iozhik.OpenUnion[ChatBoostSource]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -497,16 +558,17 @@ object CirceImplicits {
     case restricted: ChatMemberRestricted       => restricted.asJson
   }
 
-  implicit lazy val chatmemberDecoder: Decoder[iozhik.OpenEnum[ChatMember]] = for {
+  implicit lazy val chatmemberDecoder: Decoder[iozhik.OpenUnion[ChatMember]] = for {
     fType <- Decoder[String].prepare(_.downField("status"))
     value <- fType match {
-      case "kicked"        => Decoder[ChatMemberBanned].map(iozhik.OpenEnum.Known(_))
-      case "left"          => Decoder[ChatMemberLeft].map(iozhik.OpenEnum.Known(_))
-      case "administrator" => Decoder[ChatMemberAdministrator].map(iozhik.OpenEnum.Known(_))
-      case "creator"       => Decoder[ChatMemberOwner].map(iozhik.OpenEnum.Known(_))
-      case "member"        => Decoder[ChatMemberMember].map(iozhik.OpenEnum.Known(_))
-      case "restricted"    => Decoder[ChatMemberRestricted].map(iozhik.OpenEnum.Known(_))
-      case unknown         => Decoder.const(iozhik.OpenEnum.Unknown[ChatMember](unknown))
+      case "kicked"        => Decoder[ChatMemberBanned].map(iozhik.OpenUnion.Known(_))
+      case "left"          => Decoder[ChatMemberLeft].map(iozhik.OpenUnion.Known(_))
+      case "administrator" => Decoder[ChatMemberAdministrator].map(iozhik.OpenUnion.Known(_))
+      case "creator"       => Decoder[ChatMemberOwner].map(iozhik.OpenUnion.Known(_))
+      case "member"        => Decoder[ChatMemberMember].map(iozhik.OpenUnion.Known(_))
+      case "restricted"    => Decoder[ChatMemberRestricted].map(iozhik.OpenUnion.Known(_))
+      case unknown         =>
+        Decoder.instance[iozhik.OpenUnion[ChatMember]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -760,12 +822,13 @@ object CirceImplicits {
     case emoji: ChatShareThemeEmoji            => emoji.asJson
   }
 
-  implicit lazy val chatsharethemeDecoder: Decoder[iozhik.OpenEnum[ChatShareTheme]] = for {
+  implicit lazy val chatsharethemeDecoder: Decoder[iozhik.OpenUnion[ChatShareTheme]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "unique_gift" => Decoder[ChatShareThemeUniqueGift].map(iozhik.OpenEnum.Known(_))
-      case "emoji"       => Decoder[ChatShareThemeEmoji].map(iozhik.OpenEnum.Known(_))
-      case unknown       => Decoder.const(iozhik.OpenEnum.Unknown[ChatShareTheme](unknown))
+      case "unique_gift" => Decoder[ChatShareThemeUniqueGift].map(iozhik.OpenUnion.Known(_))
+      case "emoji"       => Decoder[ChatShareThemeEmoji].map(iozhik.OpenUnion.Known(_))
+      case unknown       =>
+        Decoder.instance[iozhik.OpenUnion[ChatShareTheme]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -802,7 +865,7 @@ object CirceImplicits {
   implicit lazy val chatsharethemeemojiDecoder: Decoder[ChatShareThemeEmoji] =
     Decoder.instance { h =>
       for {
-        _emojis               <- h.getOrElse[List[iozhik.OpenEnum[EmojiType]]]("emojis")(List.empty)
+        _emojis               <- h.getOrElse[List[iozhik.OpenUnion[EmojiType]]]("emojis")(List.empty)
         _backgroundBackdropId <- h.get[Option[Int]]("background_backdrop_id")
       } yield {
         ChatShareThemeEmoji(emojis = _emojis, backgroundBackdropId = _backgroundBackdropId)
@@ -814,12 +877,13 @@ object CirceImplicits {
     case emoji: EmojiTypeEmoji              => emoji.asJson
   }
 
-  implicit lazy val emojitypeDecoder: Decoder[iozhik.OpenEnum[EmojiType]] = for {
+  implicit lazy val emojitypeDecoder: Decoder[iozhik.OpenUnion[EmojiType]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "custom_emoji" => Decoder[EmojiTypeCustomEmoji].map(iozhik.OpenEnum.Known(_))
-      case "emoji"        => Decoder[EmojiTypeEmoji].map(iozhik.OpenEnum.Known(_))
-      case unknown        => Decoder.const(iozhik.OpenEnum.Unknown[EmojiType](unknown))
+      case "custom_emoji" => Decoder[EmojiTypeCustomEmoji].map(iozhik.OpenUnion.Known(_))
+      case "emoji"        => Decoder[EmojiTypeEmoji].map(iozhik.OpenUnion.Known(_))
+      case unknown        =>
+        Decoder.instance[iozhik.OpenUnion[EmojiType]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -2129,7 +2193,7 @@ object CirceImplicits {
         _guestQueryId           <- h.get[Option[String]]("guest_query_id")
         _businessConnectionId   <- h.get[Option[String]]("business_connection_id")
         _chat                   <- h.get[Chat]("chat")
-        _forwardOrigin          <- h.get[Option[iozhik.OpenEnum[MessageOrigin]]]("forward_origin")
+        _forwardOrigin          <- h.get[Option[iozhik.OpenUnion[MessageOrigin]]]("forward_origin")
         _isTopicMessage         <- h.get[Option[Boolean]]("is_topic_message")
         _isAutomaticForward     <- h.get[Option[Boolean]]("is_automatic_forward")
         _replyToMessage         <- h.get[Option[Message]]("reply_to_message")
@@ -2149,7 +2213,7 @@ object CirceImplicits {
         _authorSignature        <- h.get[Option[String]]("author_signature")
         _paidStarCount          <- h.get[Option[Int]]("paid_star_count")
         _text                   <- h.get[Option[String]]("text")
-        _entities               <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
+        _entities               <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("entities")(List.empty)
         _linkPreviewOptions     <- h.get[Option[LinkPreviewOptions]]("link_preview_options")
         _suggestedPostInfo      <- h.get[Option[SuggestedPostInfo]]("suggested_post_info")
         _effectId               <- h.get[Option[String]]("effect_id")
@@ -2167,7 +2231,7 @@ object CirceImplicits {
         _voice                  <- h.get[Option[Voice]]("voice")
         _widget                 <- h.get[Option[Widget]]("widget")
         _caption                <- h.get[Option[String]]("caption")
-        _captionEntities        <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("caption_entities")(List.empty)
+        _captionEntities        <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("caption_entities")(List.empty)
         _showCaptionAboveMedia  <- h.get[Option[Boolean]]("show_caption_above_media")
         _hasMediaSpoiler        <- h.get[Option[Boolean]]("has_media_spoiler")
         _checklist              <- h.get[Option[Checklist]]("checklist")
@@ -2397,13 +2461,14 @@ object CirceImplicits {
     case commands: MenuButtonCommands.type => commands.asJson
   }
 
-  implicit lazy val menubuttonDecoder: Decoder[iozhik.OpenEnum[MenuButton]] = for {
+  implicit lazy val menubuttonDecoder: Decoder[iozhik.OpenUnion[MenuButton]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "web_app"  => Decoder[MenuButtonWebApp].map(iozhik.OpenEnum.Known(_))
-      case "default"  => Decoder[MenuButtonDefault.type].map(iozhik.OpenEnum.Known(_))
-      case "commands" => Decoder[MenuButtonCommands.type].map(iozhik.OpenEnum.Known(_))
-      case unknown    => Decoder.const(iozhik.OpenEnum.Unknown[MenuButton](unknown))
+      case "web_app"  => Decoder[MenuButtonWebApp].map(iozhik.OpenUnion.Known(_))
+      case "default"  => Decoder[MenuButtonDefault.type].map(iozhik.OpenUnion.Known(_))
+      case "commands" => Decoder[MenuButtonCommands.type].map(iozhik.OpenUnion.Known(_))
+      case unknown    =>
+        Decoder.instance[iozhik.OpenUnion[MenuButton]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -2464,32 +2529,33 @@ object CirceImplicits {
     case mention: MentionMessageEntity                            => mention.asJson
   }
 
-  implicit lazy val messageentityDecoder: Decoder[iozhik.OpenEnum[MessageEntity]] = for {
+  implicit lazy val messageentityDecoder: Decoder[iozhik.OpenUnion[MessageEntity]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "underline"             => Decoder[UnderlineMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "expandable_blockquote" => Decoder[ExpandableBlockquoteMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "hashtag"               => Decoder[HashtagMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "blockquote"            => Decoder[BlockquoteMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "date_time"             => Decoder[DateTimeMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "text_link"             => Decoder[TextLinkMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "bank_card_number"      => Decoder[BankCardNumberMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "strikethrough"         => Decoder[StrikethroughMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "pre"                   => Decoder[PreMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "text_mention"          => Decoder[TextMentionMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "bot_command"           => Decoder[BotCommandMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "phone_number"          => Decoder[PhoneNumberMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "email"                 => Decoder[EmailMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "custom_emoji"          => Decoder[CustomEmojiMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "url"                   => Decoder[UrlMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "italic"                => Decoder[ItalicMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "bold"                  => Decoder[BoldMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "cashtag"               => Decoder[CashtagMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "code"                  => Decoder[CodeMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "spoiler"               => Decoder[SpoilerMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "ton_address"           => Decoder[TonAddressMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case "mention"               => Decoder[MentionMessageEntity].map(iozhik.OpenEnum.Known(_))
-      case unknown                 => Decoder.const(iozhik.OpenEnum.Unknown[MessageEntity](unknown))
+      case "underline"             => Decoder[UnderlineMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "expandable_blockquote" => Decoder[ExpandableBlockquoteMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "hashtag"               => Decoder[HashtagMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "blockquote"            => Decoder[BlockquoteMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "date_time"             => Decoder[DateTimeMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "text_link"             => Decoder[TextLinkMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "bank_card_number"      => Decoder[BankCardNumberMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "strikethrough"         => Decoder[StrikethroughMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "pre"                   => Decoder[PreMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "text_mention"          => Decoder[TextMentionMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "bot_command"           => Decoder[BotCommandMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "phone_number"          => Decoder[PhoneNumberMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "email"                 => Decoder[EmailMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "custom_emoji"          => Decoder[CustomEmojiMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "url"                   => Decoder[UrlMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "italic"                => Decoder[ItalicMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "bold"                  => Decoder[BoldMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "cashtag"               => Decoder[CashtagMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "code"                  => Decoder[CodeMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "spoiler"               => Decoder[SpoilerMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "ton_address"           => Decoder[TonAddressMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case "mention"               => Decoder[MentionMessageEntity].map(iozhik.OpenUnion.Known(_))
+      case unknown                 =>
+        Decoder.instance[iozhik.OpenUnion[MessageEntity]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -2979,14 +3045,15 @@ object CirceImplicits {
     case user: MessageOriginUser              => user.asJson
   }
 
-  implicit lazy val messageoriginDecoder: Decoder[iozhik.OpenEnum[MessageOrigin]] = for {
+  implicit lazy val messageoriginDecoder: Decoder[iozhik.OpenUnion[MessageOrigin]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "channel"     => Decoder[MessageOriginChannel].map(iozhik.OpenEnum.Known(_))
-      case "hidden_user" => Decoder[MessageOriginHiddenUser].map(iozhik.OpenEnum.Known(_))
-      case "chat"        => Decoder[MessageOriginChat].map(iozhik.OpenEnum.Known(_))
-      case "user"        => Decoder[MessageOriginUser].map(iozhik.OpenEnum.Known(_))
-      case unknown       => Decoder.const(iozhik.OpenEnum.Unknown[MessageOrigin](unknown))
+      case "channel"     => Decoder[MessageOriginChannel].map(iozhik.OpenUnion.Known(_))
+      case "hidden_user" => Decoder[MessageOriginHiddenUser].map(iozhik.OpenUnion.Known(_))
+      case "chat"        => Decoder[MessageOriginChat].map(iozhik.OpenUnion.Known(_))
+      case "user"        => Decoder[MessageOriginUser].map(iozhik.OpenUnion.Known(_))
+      case unknown       =>
+        Decoder.instance[iozhik.OpenUnion[MessageOrigin]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -3085,12 +3152,13 @@ object CirceImplicits {
     case unique: OwnedGiftUnique   => unique.asJson
   }
 
-  implicit lazy val ownedgiftDecoder: Decoder[iozhik.OpenEnum[OwnedGift]] = for {
+  implicit lazy val ownedgiftDecoder: Decoder[iozhik.OpenUnion[OwnedGift]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "regular" => Decoder[OwnedGiftRegular].map(iozhik.OpenEnum.Known(_))
-      case "unique"  => Decoder[OwnedGiftUnique].map(iozhik.OpenEnum.Known(_))
-      case unknown   => Decoder.const(iozhik.OpenEnum.Unknown[OwnedGift](unknown))
+      case "regular" => Decoder[OwnedGiftRegular].map(iozhik.OpenUnion.Known(_))
+      case "unique"  => Decoder[OwnedGiftUnique].map(iozhik.OpenUnion.Known(_))
+      case unknown   =>
+        Decoder.instance[iozhik.OpenUnion[OwnedGift]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -3167,7 +3235,7 @@ object CirceImplicits {
         _senderUser              <- h.get[Option[User]]("sender_user")
         _sendDate                <- h.get[Long]("send_date")
         _text                    <- h.get[Option[String]]("text")
-        _entities                <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
+        _entities                <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("entities")(List.empty)
         _isPrivate               <- h.get[Option[Boolean]]("is_private")
         _isSaved                 <- h.get[Option[Boolean]]("is_saved")
         _canBeUpgraded           <- h.get[Option[Boolean]]("can_be_upgraded")
@@ -3203,14 +3271,15 @@ object CirceImplicits {
     case video: PaidMediaVideo          => video.asJson
   }
 
-  implicit lazy val paidmediaDecoder: Decoder[iozhik.OpenEnum[PaidMedia]] = for {
+  implicit lazy val paidmediaDecoder: Decoder[iozhik.OpenUnion[PaidMedia]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "photo"      => Decoder[PaidMediaPhoto].map(iozhik.OpenEnum.Known(_))
-      case "preview"    => Decoder[PaidMediaPreview].map(iozhik.OpenEnum.Known(_))
-      case "live_photo" => Decoder[PaidMediaLivePhoto].map(iozhik.OpenEnum.Known(_))
-      case "video"      => Decoder[PaidMediaVideo].map(iozhik.OpenEnum.Known(_))
-      case unknown      => Decoder.const(iozhik.OpenEnum.Unknown[PaidMedia](unknown))
+      case "photo"      => Decoder[PaidMediaPhoto].map(iozhik.OpenUnion.Known(_))
+      case "preview"    => Decoder[PaidMediaPreview].map(iozhik.OpenUnion.Known(_))
+      case "live_photo" => Decoder[PaidMediaLivePhoto].map(iozhik.OpenUnion.Known(_))
+      case "video"      => Decoder[PaidMediaVideo].map(iozhik.OpenUnion.Known(_))
+      case unknown      =>
+        Decoder.instance[iozhik.OpenUnion[PaidMedia]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -3421,13 +3490,14 @@ object CirceImplicits {
     case emoji: ReactionTypeEmoji              => emoji.asJson
   }
 
-  implicit lazy val reactiontypeDecoder: Decoder[iozhik.OpenEnum[ReactionType]] = for {
+  implicit lazy val reactiontypeDecoder: Decoder[iozhik.OpenUnion[ReactionType]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "custom_emoji" => Decoder[ReactionTypeCustomEmoji].map(iozhik.OpenEnum.Known(_))
-      case "paid"         => Decoder[ReactionTypePaid.type].map(iozhik.OpenEnum.Known(_))
-      case "emoji"        => Decoder[ReactionTypeEmoji].map(iozhik.OpenEnum.Known(_))
-      case unknown        => Decoder.const(iozhik.OpenEnum.Unknown[ReactionType](unknown))
+      case "custom_emoji" => Decoder[ReactionTypeCustomEmoji].map(iozhik.OpenUnion.Known(_))
+      case "paid"         => Decoder[ReactionTypePaid.type].map(iozhik.OpenUnion.Known(_))
+      case "emoji"        => Decoder[ReactionTypeEmoji].map(iozhik.OpenUnion.Known(_))
+      case unknown        =>
+        Decoder.instance[iozhik.OpenUnion[ReactionType]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -3480,13 +3550,16 @@ object CirceImplicits {
     case pending: RevenueWithdrawalStatePending.type => pending.asJson
   }
 
-  implicit lazy val revenuewithdrawalstateDecoder: Decoder[iozhik.OpenEnum[RevenueWithdrawalState]] = for {
+  implicit lazy val revenuewithdrawalstateDecoder: Decoder[iozhik.OpenUnion[RevenueWithdrawalState]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "failed"    => Decoder[RevenueWithdrawalStateFailed.type].map(iozhik.OpenEnum.Known(_))
-      case "succeeded" => Decoder[RevenueWithdrawalStateSucceeded].map(iozhik.OpenEnum.Known(_))
-      case "pending"   => Decoder[RevenueWithdrawalStatePending.type].map(iozhik.OpenEnum.Known(_))
-      case unknown     => Decoder.const(iozhik.OpenEnum.Unknown[RevenueWithdrawalState](unknown))
+      case "failed"    => Decoder[RevenueWithdrawalStateFailed.type].map(iozhik.OpenUnion.Known(_))
+      case "succeeded" => Decoder[RevenueWithdrawalStateSucceeded].map(iozhik.OpenUnion.Known(_))
+      case "pending"   => Decoder[RevenueWithdrawalStatePending.type].map(iozhik.OpenUnion.Known(_))
+      case unknown     =>
+        Decoder.instance[iozhik.OpenUnion[RevenueWithdrawalState]](c =>
+          Right(iozhik.OpenUnion.Unknown(unknown, c.value))
+        )
     }
   } yield value
 
@@ -3550,34 +3623,35 @@ object CirceImplicits {
     case table: RichBlockTable                                    => table.asJson
   }
 
-  implicit lazy val richblockDecoder: Decoder[iozhik.OpenEnum[RichBlock]] = for {
+  implicit lazy val richblockDecoder: Decoder[iozhik.OpenUnion[RichBlock]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "heading"                 => Decoder[RichBlockSectionHeading].map(iozhik.OpenEnum.Known(_))
-      case "map"                     => Decoder[RichBlockMap].map(iozhik.OpenEnum.Known(_))
-      case "document"                => Decoder[RichBlockDocument].map(iozhik.OpenEnum.Known(_))
-      case "audio"                   => Decoder[RichBlockAudio].map(iozhik.OpenEnum.Known(_))
-      case "divider"                 => Decoder[RichBlockDivider.type].map(iozhik.OpenEnum.Known(_))
-      case "buttons"                 => Decoder[RichBlockButtons].map(iozhik.OpenEnum.Known(_))
-      case "blockquote"              => Decoder[RichBlockBlockQuotation].map(iozhik.OpenEnum.Known(_))
-      case "video"                   => Decoder[RichBlockVideo].map(iozhik.OpenEnum.Known(_))
-      case "details"                 => Decoder[RichBlockDetails].map(iozhik.OpenEnum.Known(_))
-      case "thinking"                => Decoder[RichBlockThinking].map(iozhik.OpenEnum.Known(_))
-      case "footer"                  => Decoder[RichBlockFooter].map(iozhik.OpenEnum.Known(_))
-      case "anchor"                  => Decoder[RichBlockAnchor].map(iozhik.OpenEnum.Known(_))
-      case "pre"                     => Decoder[RichBlockPreformatted].map(iozhik.OpenEnum.Known(_))
-      case "pullquote"               => Decoder[RichBlockPullQuotation].map(iozhik.OpenEnum.Known(_))
-      case "mathematical_expression" => Decoder[RichBlockMathematicalExpression].map(iozhik.OpenEnum.Known(_))
-      case "slideshow"               => Decoder[RichBlockSlideshow].map(iozhik.OpenEnum.Known(_))
-      case "photo"                   => Decoder[RichBlockPhoto].map(iozhik.OpenEnum.Known(_))
-      case "collage"                 => Decoder[RichBlockCollage].map(iozhik.OpenEnum.Known(_))
-      case "expandable_blockquote"   => Decoder[RichBlockExpandableBlockQuotation].map(iozhik.OpenEnum.Known(_))
-      case "voice_note"              => Decoder[RichBlockVoiceNote].map(iozhik.OpenEnum.Known(_))
-      case "paragraph"               => Decoder[RichBlockParagraph].map(iozhik.OpenEnum.Known(_))
-      case "animation"               => Decoder[RichBlockAnimation].map(iozhik.OpenEnum.Known(_))
-      case "list"                    => Decoder[RichBlockList].map(iozhik.OpenEnum.Known(_))
-      case "table"                   => Decoder[RichBlockTable].map(iozhik.OpenEnum.Known(_))
-      case unknown                   => Decoder.const(iozhik.OpenEnum.Unknown[RichBlock](unknown))
+      case "heading"                 => Decoder[RichBlockSectionHeading].map(iozhik.OpenUnion.Known(_))
+      case "map"                     => Decoder[RichBlockMap].map(iozhik.OpenUnion.Known(_))
+      case "document"                => Decoder[RichBlockDocument].map(iozhik.OpenUnion.Known(_))
+      case "audio"                   => Decoder[RichBlockAudio].map(iozhik.OpenUnion.Known(_))
+      case "divider"                 => Decoder[RichBlockDivider.type].map(iozhik.OpenUnion.Known(_))
+      case "buttons"                 => Decoder[RichBlockButtons].map(iozhik.OpenUnion.Known(_))
+      case "blockquote"              => Decoder[RichBlockBlockQuotation].map(iozhik.OpenUnion.Known(_))
+      case "video"                   => Decoder[RichBlockVideo].map(iozhik.OpenUnion.Known(_))
+      case "details"                 => Decoder[RichBlockDetails].map(iozhik.OpenUnion.Known(_))
+      case "thinking"                => Decoder[RichBlockThinking].map(iozhik.OpenUnion.Known(_))
+      case "footer"                  => Decoder[RichBlockFooter].map(iozhik.OpenUnion.Known(_))
+      case "anchor"                  => Decoder[RichBlockAnchor].map(iozhik.OpenUnion.Known(_))
+      case "pre"                     => Decoder[RichBlockPreformatted].map(iozhik.OpenUnion.Known(_))
+      case "pullquote"               => Decoder[RichBlockPullQuotation].map(iozhik.OpenUnion.Known(_))
+      case "mathematical_expression" => Decoder[RichBlockMathematicalExpression].map(iozhik.OpenUnion.Known(_))
+      case "slideshow"               => Decoder[RichBlockSlideshow].map(iozhik.OpenUnion.Known(_))
+      case "photo"                   => Decoder[RichBlockPhoto].map(iozhik.OpenUnion.Known(_))
+      case "collage"                 => Decoder[RichBlockCollage].map(iozhik.OpenUnion.Known(_))
+      case "expandable_blockquote"   => Decoder[RichBlockExpandableBlockQuotation].map(iozhik.OpenUnion.Known(_))
+      case "voice_note"              => Decoder[RichBlockVoiceNote].map(iozhik.OpenUnion.Known(_))
+      case "paragraph"               => Decoder[RichBlockParagraph].map(iozhik.OpenUnion.Known(_))
+      case "animation"               => Decoder[RichBlockAnimation].map(iozhik.OpenUnion.Known(_))
+      case "list"                    => Decoder[RichBlockList].map(iozhik.OpenUnion.Known(_))
+      case "table"                   => Decoder[RichBlockTable].map(iozhik.OpenUnion.Known(_))
+      case unknown                   =>
+        Decoder.instance[iozhik.OpenUnion[RichBlock]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -3619,8 +3693,8 @@ object CirceImplicits {
   implicit lazy val richblockdetailsDecoder: Decoder[RichBlockDetails] =
     Decoder.instance { h =>
       for {
-        _summary <- h.get[iozhik.OpenEnum[RichText]]("summary")
-        _blocks  <- h.getOrElse[List[iozhik.OpenEnum[RichBlock]]]("blocks")(List.empty)
+        _summary <- h.get[iozhik.OpenUnion[RichText]]("summary")
+        _blocks  <- h.getOrElse[List[iozhik.OpenUnion[RichBlock]]]("blocks")(List.empty)
         _isOpen  <- h.get[Option[Boolean]]("is_open")
       } yield {
         RichBlockDetails(summary = _summary, blocks = _blocks, isOpen = _isOpen)
@@ -3682,7 +3756,7 @@ object CirceImplicits {
   implicit lazy val richblockthinkingDecoder: Decoder[RichBlockThinking] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
       } yield {
         RichBlockThinking(text = _text)
       }
@@ -3701,7 +3775,7 @@ object CirceImplicits {
   implicit lazy val richblockfooterDecoder: Decoder[RichBlockFooter] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
       } yield {
         RichBlockFooter(text = _text)
       }
@@ -3780,8 +3854,8 @@ object CirceImplicits {
   implicit lazy val richblockblockquotationDecoder: Decoder[RichBlockBlockQuotation] =
     Decoder.instance { h =>
       for {
-        _blocks <- h.getOrElse[List[iozhik.OpenEnum[RichBlock]]]("blocks")(List.empty)
-        _credit <- h.get[Option[iozhik.OpenEnum[RichText]]]("credit")
+        _blocks <- h.getOrElse[List[iozhik.OpenUnion[RichBlock]]]("blocks")(List.empty)
+        _credit <- h.get[Option[iozhik.OpenUnion[RichText]]]("credit")
       } yield {
         RichBlockBlockQuotation(blocks = _blocks, credit = _credit)
       }
@@ -3828,7 +3902,7 @@ object CirceImplicits {
   implicit lazy val richblockslideshowDecoder: Decoder[RichBlockSlideshow] =
     Decoder.instance { h =>
       for {
-        _blocks  <- h.getOrElse[List[iozhik.OpenEnum[RichBlock]]]("blocks")(List.empty)
+        _blocks  <- h.getOrElse[List[iozhik.OpenUnion[RichBlock]]]("blocks")(List.empty)
         _caption <- h.get[Option[RichBlockCaption]]("caption")
       } yield {
         RichBlockSlideshow(blocks = _blocks, caption = _caption)
@@ -3848,7 +3922,7 @@ object CirceImplicits {
   implicit lazy val richblockparagraphDecoder: Decoder[RichBlockParagraph] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
       } yield {
         RichBlockParagraph(text = _text)
       }
@@ -3868,8 +3942,8 @@ object CirceImplicits {
   implicit lazy val richblockpullquotationDecoder: Decoder[RichBlockPullQuotation] =
     Decoder.instance { h =>
       for {
-        _text   <- h.get[iozhik.OpenEnum[RichText]]("text")
-        _credit <- h.get[Option[iozhik.OpenEnum[RichText]]]("credit")
+        _text   <- h.get[iozhik.OpenUnion[RichText]]("text")
+        _credit <- h.get[Option[iozhik.OpenUnion[RichText]]]("credit")
       } yield {
         RichBlockPullQuotation(text = _text, credit = _credit)
       }
@@ -3889,7 +3963,7 @@ object CirceImplicits {
   implicit lazy val richblockpreformattedDecoder: Decoder[RichBlockPreformatted] =
     Decoder.instance { h =>
       for {
-        _text     <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text     <- h.get[iozhik.OpenUnion[RichText]]("text")
         _language <- h.get[Option[String]]("language")
       } yield {
         RichBlockPreformatted(text = _text, language = _language)
@@ -3917,7 +3991,7 @@ object CirceImplicits {
         _isBordered <- h.get[Option[Boolean]]("is_bordered")
         _isStriped  <- h.get[Option[Boolean]]("is_striped")
         _isCompact  <- h.get[Option[Boolean]]("is_compact")
-        _caption    <- h.get[Option[iozhik.OpenEnum[RichText]]]("caption")
+        _caption    <- h.get[Option[iozhik.OpenUnion[RichText]]]("caption")
       } yield {
         RichBlockTable(
           cells = _cells,
@@ -3943,7 +4017,7 @@ object CirceImplicits {
   implicit lazy val richblockcollageDecoder: Decoder[RichBlockCollage] =
     Decoder.instance { h =>
       for {
-        _blocks  <- h.getOrElse[List[iozhik.OpenEnum[RichBlock]]]("blocks")(List.empty)
+        _blocks  <- h.getOrElse[List[iozhik.OpenUnion[RichBlock]]]("blocks")(List.empty)
         _caption <- h.get[Option[RichBlockCaption]]("caption")
       } yield {
         RichBlockCollage(blocks = _blocks, caption = _caption)
@@ -4013,8 +4087,8 @@ object CirceImplicits {
   implicit lazy val richblockexpandableblockquotationDecoder: Decoder[RichBlockExpandableBlockQuotation] =
     Decoder.instance { h =>
       for {
-        _text   <- h.get[iozhik.OpenEnum[RichText]]("text")
-        _credit <- h.get[Option[iozhik.OpenEnum[RichText]]]("credit")
+        _text   <- h.get[iozhik.OpenUnion[RichText]]("text")
+        _credit <- h.get[Option[iozhik.OpenUnion[RichText]]]("credit")
       } yield {
         RichBlockExpandableBlockQuotation(text = _text, credit = _credit)
       }
@@ -4034,7 +4108,7 @@ object CirceImplicits {
   implicit lazy val richblocksectionheadingDecoder: Decoder[RichBlockSectionHeading] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
         _size <- h.get[Int]("size")
       } yield {
         RichBlockSectionHeading(text = _text, size = _size)
@@ -4121,47 +4195,48 @@ object CirceImplicits {
     case other                  => richtextGeneratedEncoder(other)
   }
 
-  private lazy val richtextGeneratedDecoder: Decoder[iozhik.OpenEnum[RichText]] = for {
+  private lazy val richtextGeneratedDecoder: Decoder[iozhik.OpenUnion[RichText]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "mathematical_expression" => Decoder[RichTextMathematicalExpression].map(iozhik.OpenEnum.Known(_))
-      case "underline"               => Decoder[RichTextUnderline].map(iozhik.OpenEnum.Known(_))
-      case "marked"                  => Decoder[RichTextMarked].map(iozhik.OpenEnum.Known(_))
-      case "hashtag"                 => Decoder[RichTextHashtag].map(iozhik.OpenEnum.Known(_))
-      case "date_time"               => Decoder[RichTextDateTime].map(iozhik.OpenEnum.Known(_))
-      case "reference_link"          => Decoder[RichTextReferenceLink].map(iozhik.OpenEnum.Known(_))
-      case "plain"                   => Decoder[RichTextPlain].map(iozhik.OpenEnum.Known(_))
-      case "anchor_link"             => Decoder[RichTextAnchorLink].map(iozhik.OpenEnum.Known(_))
-      case "bank_card_number"        => Decoder[RichTextBankCardNumber].map(iozhik.OpenEnum.Known(_))
-      case "strikethrough"           => Decoder[RichTextStrikethrough].map(iozhik.OpenEnum.Known(_))
-      case "reference"               => Decoder[RichTextReference].map(iozhik.OpenEnum.Known(_))
-      case "anchor"                  => Decoder[RichTextAnchor].map(iozhik.OpenEnum.Known(_))
-      case "text_mention"            => Decoder[RichTextTextMention].map(iozhik.OpenEnum.Known(_))
-      case "bot_command"             => Decoder[RichTextBotCommand].map(iozhik.OpenEnum.Known(_))
-      case "phone_number"            => Decoder[RichTextPhoneNumber].map(iozhik.OpenEnum.Known(_))
-      case "email_address"           => Decoder[RichTextEmailAddress].map(iozhik.OpenEnum.Known(_))
-      case "custom_emoji"            => Decoder[RichTextCustomEmoji].map(iozhik.OpenEnum.Known(_))
-      case "url"                     => Decoder[RichTextUrl].map(iozhik.OpenEnum.Known(_))
-      case "italic"                  => Decoder[RichTextItalic].map(iozhik.OpenEnum.Known(_))
-      case "bold"                    => Decoder[RichTextBold].map(iozhik.OpenEnum.Known(_))
-      case "concat"                  => Decoder[RichTextConcat].map(iozhik.OpenEnum.Known(_))
-      case "subscript"               => Decoder[RichTextSubscript].map(iozhik.OpenEnum.Known(_))
-      case "superscript"             => Decoder[RichTextSuperscript].map(iozhik.OpenEnum.Known(_))
-      case "cashtag"                 => Decoder[RichTextCashtag].map(iozhik.OpenEnum.Known(_))
-      case "code"                    => Decoder[RichTextCode].map(iozhik.OpenEnum.Known(_))
-      case "button"                  => Decoder[RichTextButton].map(iozhik.OpenEnum.Known(_))
-      case "spoiler"                 => Decoder[RichTextSpoiler].map(iozhik.OpenEnum.Known(_))
-      case "ton_address"             => Decoder[RichTextTonAddress].map(iozhik.OpenEnum.Known(_))
-      case "mention"                 => Decoder[RichTextMention].map(iozhik.OpenEnum.Known(_))
-      case unknown                   => Decoder.const(iozhik.OpenEnum.Unknown[RichText](unknown))
+      case "mathematical_expression" => Decoder[RichTextMathematicalExpression].map(iozhik.OpenUnion.Known(_))
+      case "underline"               => Decoder[RichTextUnderline].map(iozhik.OpenUnion.Known(_))
+      case "marked"                  => Decoder[RichTextMarked].map(iozhik.OpenUnion.Known(_))
+      case "hashtag"                 => Decoder[RichTextHashtag].map(iozhik.OpenUnion.Known(_))
+      case "date_time"               => Decoder[RichTextDateTime].map(iozhik.OpenUnion.Known(_))
+      case "reference_link"          => Decoder[RichTextReferenceLink].map(iozhik.OpenUnion.Known(_))
+      case "plain"                   => Decoder[RichTextPlain].map(iozhik.OpenUnion.Known(_))
+      case "anchor_link"             => Decoder[RichTextAnchorLink].map(iozhik.OpenUnion.Known(_))
+      case "bank_card_number"        => Decoder[RichTextBankCardNumber].map(iozhik.OpenUnion.Known(_))
+      case "strikethrough"           => Decoder[RichTextStrikethrough].map(iozhik.OpenUnion.Known(_))
+      case "reference"               => Decoder[RichTextReference].map(iozhik.OpenUnion.Known(_))
+      case "anchor"                  => Decoder[RichTextAnchor].map(iozhik.OpenUnion.Known(_))
+      case "text_mention"            => Decoder[RichTextTextMention].map(iozhik.OpenUnion.Known(_))
+      case "bot_command"             => Decoder[RichTextBotCommand].map(iozhik.OpenUnion.Known(_))
+      case "phone_number"            => Decoder[RichTextPhoneNumber].map(iozhik.OpenUnion.Known(_))
+      case "email_address"           => Decoder[RichTextEmailAddress].map(iozhik.OpenUnion.Known(_))
+      case "custom_emoji"            => Decoder[RichTextCustomEmoji].map(iozhik.OpenUnion.Known(_))
+      case "url"                     => Decoder[RichTextUrl].map(iozhik.OpenUnion.Known(_))
+      case "italic"                  => Decoder[RichTextItalic].map(iozhik.OpenUnion.Known(_))
+      case "bold"                    => Decoder[RichTextBold].map(iozhik.OpenUnion.Known(_))
+      case "concat"                  => Decoder[RichTextConcat].map(iozhik.OpenUnion.Known(_))
+      case "subscript"               => Decoder[RichTextSubscript].map(iozhik.OpenUnion.Known(_))
+      case "superscript"             => Decoder[RichTextSuperscript].map(iozhik.OpenUnion.Known(_))
+      case "cashtag"                 => Decoder[RichTextCashtag].map(iozhik.OpenUnion.Known(_))
+      case "code"                    => Decoder[RichTextCode].map(iozhik.OpenUnion.Known(_))
+      case "button"                  => Decoder[RichTextButton].map(iozhik.OpenUnion.Known(_))
+      case "spoiler"                 => Decoder[RichTextSpoiler].map(iozhik.OpenUnion.Known(_))
+      case "ton_address"             => Decoder[RichTextTonAddress].map(iozhik.OpenUnion.Known(_))
+      case "mention"                 => Decoder[RichTextMention].map(iozhik.OpenUnion.Known(_))
+      case unknown                   =>
+        Decoder.instance[iozhik.OpenUnion[RichText]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
-  implicit lazy val richtextDecoder: Decoder[iozhik.OpenEnum[RichText]] = Decoder.instance { c =>
+  implicit lazy val richtextDecoder: Decoder[iozhik.OpenUnion[RichText]] = Decoder.instance { c =>
     if (c.value.isString)
-      c.as[String].map(s => iozhik.OpenEnum.Known(RichTextPlain(s)))
+      c.as[String].map(s => iozhik.OpenUnion.Known(RichTextPlain(s)))
     else if (c.value.isArray)
-      c.as[List[iozhik.OpenEnum[RichText]]].map(ts => iozhik.OpenEnum.Known(RichTextConcat(ts)))
+      c.as[List[iozhik.OpenUnion[RichText]]].map(ts => iozhik.OpenUnion.Known(RichTextConcat(ts)))
     else
       richtextGeneratedDecoder(c)
   }
@@ -4179,7 +4254,7 @@ object CirceImplicits {
   implicit lazy val richtextsubscriptDecoder: Decoder[RichTextSubscript] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
       } yield {
         RichTextSubscript(text = _text)
       }
@@ -4199,7 +4274,7 @@ object CirceImplicits {
   implicit lazy val richtextphonenumberDecoder: Decoder[RichTextPhoneNumber] =
     Decoder.instance { h =>
       for {
-        _text        <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text        <- h.get[iozhik.OpenUnion[RichText]]("text")
         _phoneNumber <- h.get[String]("phone_number")
       } yield {
         RichTextPhoneNumber(text = _text, phoneNumber = _phoneNumber)
@@ -4219,7 +4294,7 @@ object CirceImplicits {
   implicit lazy val richtextcodeDecoder: Decoder[RichTextCode] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
       } yield {
         RichTextCode(text = _text)
       }
@@ -4239,7 +4314,7 @@ object CirceImplicits {
   implicit lazy val richtextanchorlinkDecoder: Decoder[RichTextAnchorLink] =
     Decoder.instance { h =>
       for {
-        _text       <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text       <- h.get[iozhik.OpenUnion[RichText]]("text")
         _anchorName <- h.get[String]("anchor_name")
       } yield {
         RichTextAnchorLink(text = _text, anchorName = _anchorName)
@@ -4259,7 +4334,7 @@ object CirceImplicits {
   implicit lazy val richtextconcatDecoder: Decoder[RichTextConcat] =
     Decoder.instance { h =>
       for {
-        _texts <- h.getOrElse[List[iozhik.OpenEnum[RichText]]]("texts")(List.empty)
+        _texts <- h.getOrElse[List[iozhik.OpenUnion[RichText]]]("texts")(List.empty)
       } yield {
         RichTextConcat(texts = _texts)
       }
@@ -4278,7 +4353,7 @@ object CirceImplicits {
   implicit lazy val richtextspoilerDecoder: Decoder[RichTextSpoiler] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
       } yield {
         RichTextSpoiler(text = _text)
       }
@@ -4298,7 +4373,7 @@ object CirceImplicits {
   implicit lazy val richtextreferenceDecoder: Decoder[RichTextReference] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
         _name <- h.get[String]("name")
       } yield {
         RichTextReference(text = _text, name = _name)
@@ -4319,7 +4394,7 @@ object CirceImplicits {
   implicit lazy val richtextmentionDecoder: Decoder[RichTextMention] =
     Decoder.instance { h =>
       for {
-        _text     <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text     <- h.get[iozhik.OpenUnion[RichText]]("text")
         _username <- h.get[String]("username")
       } yield {
         RichTextMention(text = _text, username = _username)
@@ -4339,7 +4414,7 @@ object CirceImplicits {
   implicit lazy val richtextunderlineDecoder: Decoder[RichTextUnderline] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
       } yield {
         RichTextUnderline(text = _text)
       }
@@ -4359,7 +4434,7 @@ object CirceImplicits {
   implicit lazy val richtexturlDecoder: Decoder[RichTextUrl] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
         _url  <- h.get[String]("url")
       } yield {
         RichTextUrl(text = _text, url = _url)
@@ -4399,7 +4474,7 @@ object CirceImplicits {
   implicit lazy val richtextbotcommandDecoder: Decoder[RichTextBotCommand] =
     Decoder.instance { h =>
       for {
-        _text       <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text       <- h.get[iozhik.OpenUnion[RichText]]("text")
         _botCommand <- h.get[String]("bot_command")
       } yield {
         RichTextBotCommand(text = _text, botCommand = _botCommand)
@@ -4420,7 +4495,7 @@ object CirceImplicits {
   implicit lazy val richtexttextmentionDecoder: Decoder[RichTextTextMention] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
         _user <- h.get[User]("user")
       } yield {
         RichTextTextMention(text = _text, user = _user)
@@ -4459,7 +4534,7 @@ object CirceImplicits {
   implicit lazy val richtextsuperscriptDecoder: Decoder[RichTextSuperscript] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
       } yield {
         RichTextSuperscript(text = _text)
       }
@@ -4479,7 +4554,7 @@ object CirceImplicits {
   implicit lazy val richtextemailaddressDecoder: Decoder[RichTextEmailAddress] =
     Decoder.instance { h =>
       for {
-        _text         <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text         <- h.get[iozhik.OpenUnion[RichText]]("text")
         _emailAddress <- h.get[String]("email_address")
       } yield {
         RichTextEmailAddress(text = _text, emailAddress = _emailAddress)
@@ -4499,7 +4574,7 @@ object CirceImplicits {
   implicit lazy val richtextmarkedDecoder: Decoder[RichTextMarked] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
       } yield {
         RichTextMarked(text = _text)
       }
@@ -4537,7 +4612,7 @@ object CirceImplicits {
   implicit lazy val richtextitalicDecoder: Decoder[RichTextItalic] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
       } yield {
         RichTextItalic(text = _text)
       }
@@ -4557,7 +4632,7 @@ object CirceImplicits {
   implicit lazy val richtextbankcardnumberDecoder: Decoder[RichTextBankCardNumber] =
     Decoder.instance { h =>
       for {
-        _text           <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text           <- h.get[iozhik.OpenUnion[RichText]]("text")
         _bankCardNumber <- h.get[String]("bank_card_number")
       } yield {
         RichTextBankCardNumber(text = _text, bankCardNumber = _bankCardNumber)
@@ -4577,7 +4652,7 @@ object CirceImplicits {
   implicit lazy val richtextstrikethroughDecoder: Decoder[RichTextStrikethrough] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
       } yield {
         RichTextStrikethrough(text = _text)
       }
@@ -4637,7 +4712,7 @@ object CirceImplicits {
   implicit lazy val richtexthashtagDecoder: Decoder[RichTextHashtag] =
     Decoder.instance { h =>
       for {
-        _text    <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text    <- h.get[iozhik.OpenUnion[RichText]]("text")
         _hashtag <- h.get[String]("hashtag")
       } yield {
         RichTextHashtag(text = _text, hashtag = _hashtag)
@@ -4659,7 +4734,7 @@ object CirceImplicits {
   implicit lazy val richtextdatetimeDecoder: Decoder[RichTextDateTime] =
     Decoder.instance { h =>
       for {
-        _text           <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text           <- h.get[iozhik.OpenUnion[RichText]]("text")
         _unixTime       <- h.get[Long]("unix_time")
         _dateTimeFormat <- h.get[String]("date_time_format")
       } yield {
@@ -4681,7 +4756,7 @@ object CirceImplicits {
   implicit lazy val richtextcashtagDecoder: Decoder[RichTextCashtag] =
     Decoder.instance { h =>
       for {
-        _text    <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text    <- h.get[iozhik.OpenUnion[RichText]]("text")
         _cashtag <- h.get[String]("cashtag")
       } yield {
         RichTextCashtag(text = _text, cashtag = _cashtag)
@@ -4701,7 +4776,7 @@ object CirceImplicits {
   implicit lazy val richtextboldDecoder: Decoder[RichTextBold] =
     Decoder.instance { h =>
       for {
-        _text <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text <- h.get[iozhik.OpenUnion[RichText]]("text")
       } yield {
         RichTextBold(text = _text)
       }
@@ -4721,7 +4796,7 @@ object CirceImplicits {
   implicit lazy val richtexttonaddressDecoder: Decoder[RichTextTonAddress] =
     Decoder.instance { h =>
       for {
-        _text    <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text    <- h.get[iozhik.OpenUnion[RichText]]("text")
         _address <- h.get[String]("address")
       } yield {
         RichTextTonAddress(text = _text, address = _address)
@@ -4742,7 +4817,7 @@ object CirceImplicits {
   implicit lazy val richtextreferencelinkDecoder: Decoder[RichTextReferenceLink] =
     Decoder.instance { h =>
       for {
-        _text          <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text          <- h.get[iozhik.OpenUnion[RichText]]("text")
         _referenceName <- h.get[String]("reference_name")
       } yield {
         RichTextReferenceLink(text = _text, referenceName = _referenceName)
@@ -4823,17 +4898,18 @@ object CirceImplicits {
     case other: TransactionPartnerOther.type                   => other.asJson
   }
 
-  implicit lazy val transactionpartnerDecoder: Decoder[iozhik.OpenEnum[TransactionPartner]] = for {
+  implicit lazy val transactionpartnerDecoder: Decoder[iozhik.OpenUnion[TransactionPartner]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "fragment"          => Decoder[TransactionPartnerFragment].map(iozhik.OpenEnum.Known(_))
-      case "telegram_ads"      => Decoder[TransactionPartnerTelegramAds.type].map(iozhik.OpenEnum.Known(_))
-      case "chat"              => Decoder[TransactionPartnerChat].map(iozhik.OpenEnum.Known(_))
-      case "telegram_api"      => Decoder[TransactionPartnerTelegramApi].map(iozhik.OpenEnum.Known(_))
-      case "affiliate_program" => Decoder[TransactionPartnerAffiliateProgram].map(iozhik.OpenEnum.Known(_))
-      case "user"              => Decoder[TransactionPartnerUser].map(iozhik.OpenEnum.Known(_))
-      case "other"             => Decoder[TransactionPartnerOther.type].map(iozhik.OpenEnum.Known(_))
-      case unknown             => Decoder.const(iozhik.OpenEnum.Unknown[TransactionPartner](unknown))
+      case "fragment"          => Decoder[TransactionPartnerFragment].map(iozhik.OpenUnion.Known(_))
+      case "telegram_ads"      => Decoder[TransactionPartnerTelegramAds.type].map(iozhik.OpenUnion.Known(_))
+      case "chat"              => Decoder[TransactionPartnerChat].map(iozhik.OpenUnion.Known(_))
+      case "telegram_api"      => Decoder[TransactionPartnerTelegramApi].map(iozhik.OpenUnion.Known(_))
+      case "affiliate_program" => Decoder[TransactionPartnerAffiliateProgram].map(iozhik.OpenUnion.Known(_))
+      case "user"              => Decoder[TransactionPartnerUser].map(iozhik.OpenUnion.Known(_))
+      case "other"             => Decoder[TransactionPartnerOther.type].map(iozhik.OpenUnion.Known(_))
+      case unknown             =>
+        Decoder.instance[iozhik.OpenUnion[TransactionPartner]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -4917,7 +4993,7 @@ object CirceImplicits {
         _affiliate                   <- h.get[Option[AffiliateInfo]]("affiliate")
         _invoicePayload              <- h.get[Option[String]]("invoice_payload")
         _subscriptionPeriod          <- h.get[Option[Int]]("subscription_period")
-        _paidMedia                   <- h.getOrElse[List[iozhik.OpenEnum[PaidMedia]]]("paid_media")(List.empty)
+        _paidMedia                   <- h.getOrElse[List[iozhik.OpenUnion[PaidMedia]]]("paid_media")(List.empty)
         _paidMediaPayload            <- h.get[Option[String]]("paid_media_payload")
         _gift                        <- h.get[Option[Gift]]("gift")
         _premiumSubscriptionDuration <- h.get[Option[Int]]("premium_subscription_duration")
@@ -4968,7 +5044,7 @@ object CirceImplicits {
   implicit lazy val transactionpartnerfragmentDecoder: Decoder[TransactionPartnerFragment] =
     Decoder.instance { h =>
       for {
-        _withdrawalState <- h.get[Option[iozhik.OpenEnum[RevenueWithdrawalState]]]("withdrawal_state")
+        _withdrawalState <- h.get[Option[iozhik.OpenUnion[RevenueWithdrawalState]]]("withdrawal_state")
       } yield {
         TransactionPartnerFragment(withdrawalState = _withdrawalState)
       }
@@ -4980,13 +5056,14 @@ object CirceImplicits {
     case sign_data: WidgetQueryTypeSignData               => sign_data.asJson
   }
 
-  implicit lazy val widgetquerytypeDecoder: Decoder[iozhik.OpenEnum[WidgetQueryType]] = for {
+  implicit lazy val widgetquerytypeDecoder: Decoder[iozhik.OpenUnion[WidgetQueryType]] = for {
     fType <- Decoder[String].prepare(_.downField("type"))
     value <- fType match {
-      case "data"             => Decoder[WidgetQueryTypeData].map(iozhik.OpenEnum.Known(_))
-      case "sent_transaction" => Decoder[WidgetQueryTypeSentTransaction].map(iozhik.OpenEnum.Known(_))
-      case "sign_data"        => Decoder[WidgetQueryTypeSignData].map(iozhik.OpenEnum.Known(_))
-      case unknown            => Decoder.const(iozhik.OpenEnum.Unknown[WidgetQueryType](unknown))
+      case "data"             => Decoder[WidgetQueryTypeData].map(iozhik.OpenUnion.Known(_))
+      case "sent_transaction" => Decoder[WidgetQueryTypeSentTransaction].map(iozhik.OpenUnion.Known(_))
+      case "sign_data"        => Decoder[WidgetQueryTypeSignData].map(iozhik.OpenUnion.Known(_))
+      case unknown            =>
+        Decoder.instance[iozhik.OpenUnion[WidgetQueryType]](c => Right(iozhik.OpenUnion.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -5637,7 +5714,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _id               <- h.get[Long]("id")
-        _type             <- h.get[String]("type")
+        _type             <- h.get[iozhik.OpenEnum[ChatType]]("type")
         _title            <- h.get[Option[String]]("title")
         _username         <- h.get[Option[String]]("username")
         _firstName        <- h.get[Option[String]]("first_name")
@@ -5741,7 +5818,7 @@ object CirceImplicits {
   implicit lazy val chatbackgroundDecoder: Decoder[ChatBackground] =
     Decoder.instance { h =>
       for {
-        _type <- h.get[iozhik.OpenEnum[BackgroundType]]("type")
+        _type <- h.get[iozhik.OpenUnion[BackgroundType]]("type")
       } yield {
         ChatBackground(`type` = _type)
       }
@@ -5765,7 +5842,7 @@ object CirceImplicits {
         _boostId        <- h.get[String]("boost_id")
         _addDate        <- h.get[Long]("add_date")
         _expirationDate <- h.get[Long]("expiration_date")
-        _source         <- h.get[iozhik.OpenEnum[ChatBoostSource]]("source")
+        _source         <- h.get[iozhik.OpenUnion[ChatBoostSource]]("source")
       } yield {
         ChatBoost(boostId = _boostId, addDate = _addDate, expirationDate = _expirationDate, source = _source)
       }
@@ -5807,7 +5884,7 @@ object CirceImplicits {
         _chat       <- h.get[Chat]("chat")
         _boostId    <- h.get[String]("boost_id")
         _removeDate <- h.get[Long]("remove_date")
-        _source     <- h.get[iozhik.OpenEnum[ChatBoostSource]]("source")
+        _source     <- h.get[iozhik.OpenUnion[ChatBoostSource]]("source")
       } yield {
         ChatBoostRemoved(chat = _chat, boostId = _boostId, removeDate = _removeDate, source = _source)
       }
@@ -5899,32 +5976,32 @@ object CirceImplicits {
   implicit lazy val chatfullinfoDecoder: Decoder[ChatFullInfo] =
     Decoder.instance { h =>
       for {
-        _id                                 <- h.get[Long]("id")
-        _type                               <- h.get[String]("type")
-        _title                              <- h.get[Option[String]]("title")
-        _username                           <- h.get[Option[String]]("username")
-        _firstName                          <- h.get[Option[String]]("first_name")
-        _lastName                           <- h.get[Option[String]]("last_name")
-        _isForum                            <- h.get[Option[Boolean]]("is_forum")
-        _isDirectMessages                   <- h.get[Option[Boolean]]("is_direct_messages")
-        _accentColorId                      <- h.get[Int]("accent_color_id")
-        _maxReactionCount                   <- h.get[Int]("max_reaction_count")
-        _photo                              <- h.get[Option[ChatPhoto]]("photo")
-        _activeUsernames                    <- h.getOrElse[List[String]]("active_usernames")(List.empty)
-        _birthdate                          <- h.get[Option[Birthdate]]("birthdate")
-        _businessIntro                      <- h.get[Option[BusinessIntro]]("business_intro")
-        _businessLocation                   <- h.get[Option[BusinessLocation]]("business_location")
-        _businessOpeningHours               <- h.get[Option[BusinessOpeningHours]]("business_opening_hours")
-        _personalChat                       <- h.get[Option[Chat]]("personal_chat")
-        _parentChat                         <- h.get[Option[Chat]]("parent_chat")
-        _availableReactions                 <- h.get[Option[List[iozhik.OpenEnum[ReactionType]]]]("available_reactions")
-        _backgroundCustomEmojiId            <- h.get[Option[String]]("background_custom_emoji_id")
-        _profileAccentColorId               <- h.get[Option[Int]]("profile_accent_color_id")
-        _profileBackgroundCustomEmojiId     <- h.get[Option[String]]("profile_background_custom_emoji_id")
-        _emojiStatusCustomEmojiId           <- h.get[Option[String]]("emoji_status_custom_emoji_id")
-        _emojiStatusExpirationDate          <- h.get[Option[Long]]("emoji_status_expiration_date")
-        _bio                                <- h.get[Option[String]]("bio")
-        _hasPrivateForwards                 <- h.get[Option[Boolean]]("has_private_forwards")
+        _id                             <- h.get[Long]("id")
+        _type                           <- h.get[iozhik.OpenEnum[ChatType]]("type")
+        _title                          <- h.get[Option[String]]("title")
+        _username                       <- h.get[Option[String]]("username")
+        _firstName                      <- h.get[Option[String]]("first_name")
+        _lastName                       <- h.get[Option[String]]("last_name")
+        _isForum                        <- h.get[Option[Boolean]]("is_forum")
+        _isDirectMessages               <- h.get[Option[Boolean]]("is_direct_messages")
+        _accentColorId                  <- h.get[Int]("accent_color_id")
+        _maxReactionCount               <- h.get[Int]("max_reaction_count")
+        _photo                          <- h.get[Option[ChatPhoto]]("photo")
+        _activeUsernames                <- h.getOrElse[List[String]]("active_usernames")(List.empty)
+        _birthdate                      <- h.get[Option[Birthdate]]("birthdate")
+        _businessIntro                  <- h.get[Option[BusinessIntro]]("business_intro")
+        _businessLocation               <- h.get[Option[BusinessLocation]]("business_location")
+        _businessOpeningHours           <- h.get[Option[BusinessOpeningHours]]("business_opening_hours")
+        _personalChat                   <- h.get[Option[Chat]]("personal_chat")
+        _parentChat                     <- h.get[Option[Chat]]("parent_chat")
+        _availableReactions             <- h.get[Option[List[iozhik.OpenUnion[ReactionType]]]]("available_reactions")
+        _backgroundCustomEmojiId        <- h.get[Option[String]]("background_custom_emoji_id")
+        _profileAccentColorId           <- h.get[Option[Int]]("profile_accent_color_id")
+        _profileBackgroundCustomEmojiId <- h.get[Option[String]]("profile_background_custom_emoji_id")
+        _emojiStatusCustomEmojiId       <- h.get[Option[String]]("emoji_status_custom_emoji_id")
+        _emojiStatusExpirationDate      <- h.get[Option[Long]]("emoji_status_expiration_date")
+        _bio                            <- h.get[Option[String]]("bio")
+        _hasPrivateForwards             <- h.get[Option[Boolean]]("has_private_forwards")
         _hasRestrictedVoiceAndVideoMessages <- h.get[Option[Boolean]]("has_restricted_voice_and_video_messages")
         _joinToSendMessages                 <- h.get[Option[Boolean]]("join_to_send_messages")
         _joinByRequest                      <- h.get[Option[Boolean]]("join_by_request")
@@ -5953,7 +6030,7 @@ object CirceImplicits {
         _guardBot                           <- h.get[Option[User]]("guard_bot")
         _community                          <- h.get[Option[Community]]("community")
         _tonWalletCard                      <- h.get[Option[TonWalletCard]]("ton_wallet_card")
-        _shareTheme                         <- h.get[Option[iozhik.OpenEnum[ChatShareTheme]]]("share_theme")
+        _shareTheme                         <- h.get[Option[iozhik.OpenUnion[ChatShareTheme]]]("share_theme")
       } yield {
         ChatFullInfo(
           id = _id,
@@ -6145,8 +6222,8 @@ object CirceImplicits {
         _chat                    <- h.get[Chat]("chat")
         _from                    <- h.get[User]("from")
         _date                    <- h.get[Long]("date")
-        _oldChatMember           <- h.get[iozhik.OpenEnum[ChatMember]]("old_chat_member")
-        _newChatMember           <- h.get[iozhik.OpenEnum[ChatMember]]("new_chat_member")
+        _oldChatMember           <- h.get[iozhik.OpenUnion[ChatMember]]("old_chat_member")
+        _newChatMember           <- h.get[iozhik.OpenUnion[ChatMember]]("new_chat_member")
         _inviteLink              <- h.get[Option[ChatInviteLink]]("invite_link")
         _viaJoinRequest          <- h.get[Option[Boolean]]("via_join_request")
         _viaChatFolderInviteLink <- h.get[Option[Boolean]]("via_chat_folder_invite_link")
@@ -6377,7 +6454,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _title                    <- h.get[String]("title")
-        _titleEntities            <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("title_entities")(List.empty)
+        _titleEntities            <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("title_entities")(List.empty)
         _tasks                    <- h.getOrElse[List[ChecklistTask]]("tasks")(List.empty)
         _othersCanAddTasks        <- h.get[Option[Boolean]]("others_can_add_tasks")
         _othersCanMarkTasksAsDone <- h.get[Option[Boolean]]("others_can_mark_tasks_as_done")
@@ -6411,7 +6488,7 @@ object CirceImplicits {
       for {
         _id              <- h.get[Int]("id")
         _text            <- h.get[String]("text")
-        _textEntities    <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("text_entities")(List.empty)
+        _textEntities    <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("text_entities")(List.empty)
         _completedByUser <- h.get[Option[User]]("completed_by_user")
         _completedByChat <- h.get[Option[Chat]]("completed_by_chat")
         _completionDate  <- h.get[Option[Long]]("completion_date")
@@ -6631,7 +6708,7 @@ object CirceImplicits {
   implicit lazy val diceDecoder: Decoder[Dice] =
     Decoder.instance { h =>
       for {
-        _emoji <- h.get[String]("emoji")
+        _emoji <- h.get[iozhik.OpenEnum[Emoji]]("emoji")
         _value <- h.get[Int]("value")
       } yield {
         Dice(emoji = _emoji, value = _value)
@@ -6837,7 +6914,7 @@ object CirceImplicits {
   implicit lazy val externalreplyinfoDecoder: Decoder[ExternalReplyInfo] =
     Decoder.instance { h =>
       for {
-        _origin             <- h.get[iozhik.OpenEnum[MessageOrigin]]("origin")
+        _origin             <- h.get[iozhik.OpenUnion[MessageOrigin]]("origin")
         _chat               <- h.get[Option[Chat]]("chat")
         _messageId          <- h.get[Option[Int]]("message_id")
         _linkPreviewOptions <- h.get[Option[LinkPreviewOptions]]("link_preview_options")
@@ -7032,7 +7109,7 @@ object CirceImplicits {
         _description  <- h.get[String]("description")
         _photo        <- h.getOrElse[List[PhotoSize]]("photo")(List.empty)
         _text         <- h.get[Option[String]]("text")
-        _textEntities <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("text_entities")(List.empty)
+        _textEntities <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("text_entities")(List.empty)
         _animation    <- h.get[Option[Animation]]("animation")
       } yield {
         Game(
@@ -7186,7 +7263,7 @@ object CirceImplicits {
         _isUpgradeSeparate       <- h.get[Option[Boolean]]("is_upgrade_separate")
         _canBeUpgraded           <- h.get[Option[Boolean]]("can_be_upgraded")
         _text                    <- h.get[Option[String]]("text")
-        _entities                <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
+        _entities                <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("entities")(List.empty)
         _isPrivate               <- h.get[Option[Boolean]]("is_private")
         _uniqueGiftNumber        <- h.get[Option[Int]]("unique_gift_number")
       } yield {
@@ -8010,8 +8087,8 @@ object CirceImplicits {
         _user        <- h.get[Option[User]]("user")
         _actorChat   <- h.get[Option[Chat]]("actor_chat")
         _date        <- h.get[Long]("date")
-        _oldReaction <- h.getOrElse[List[iozhik.OpenEnum[ReactionType]]]("old_reaction")(List.empty)
-        _newReaction <- h.getOrElse[List[iozhik.OpenEnum[ReactionType]]]("new_reaction")(List.empty)
+        _oldReaction <- h.getOrElse[List[iozhik.OpenUnion[ReactionType]]]("old_reaction")(List.empty)
+        _newReaction <- h.getOrElse[List[iozhik.OpenUnion[ReactionType]]]("new_reaction")(List.empty)
       } yield {
         MessageReactionUpdated(
           chat = _chat,
@@ -8064,7 +8141,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _totalCount <- h.get[Int]("total_count")
-        _gifts      <- h.getOrElse[List[iozhik.OpenEnum[OwnedGift]]]("gifts")(List.empty)
+        _gifts      <- h.getOrElse[List[iozhik.OpenUnion[OwnedGift]]]("gifts")(List.empty)
         _nextOffset <- h.get[Option[String]]("next_offset")
       } yield {
         OwnedGifts(totalCount = _totalCount, gifts = _gifts, nextOffset = _nextOffset)
@@ -8085,7 +8162,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _starCount <- h.get[Int]("star_count")
-        _paidMedia <- h.getOrElse[List[iozhik.OpenEnum[PaidMedia]]]("paid_media")(List.empty)
+        _paidMedia <- h.getOrElse[List[iozhik.OpenUnion[PaidMedia]]]("paid_media")(List.empty)
       } yield {
         PaidMediaInfo(starCount = _starCount, paidMedia = _paidMedia)
       }
@@ -8245,7 +8322,7 @@ object CirceImplicits {
       for {
         _id                    <- h.get[String]("id")
         _question              <- h.get[String]("question")
-        _questionEntities      <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("question_entities")(List.empty)
+        _questionEntities      <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("question_entities")(List.empty)
         _options               <- h.getOrElse[List[PollOption]]("options")(List.empty)
         _totalVoterCount       <- h.get[Int]("total_voter_count")
         _isClosed              <- h.get[Boolean]("is_closed")
@@ -8257,12 +8334,12 @@ object CirceImplicits {
         _countryCodes          <- h.getOrElse[List[String]]("country_codes")(List.empty)
         _correctOptionIds      <- h.getOrElse[List[Int]]("correct_option_ids")(List.empty)
         _explanation           <- h.get[Option[String]]("explanation")
-        _explanationEntities   <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("explanation_entities")(List.empty)
+        _explanationEntities   <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("explanation_entities")(List.empty)
         _explanationMedia      <- h.get[Option[PollMedia]]("explanation_media")
         _openPeriod            <- h.get[Option[Int]]("open_period")
         _closeDate             <- h.get[Option[Long]]("close_date")
         _description           <- h.get[Option[String]]("description")
-        _descriptionEntities   <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("description_entities")(List.empty)
+        _descriptionEntities   <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("description_entities")(List.empty)
         _media                 <- h.get[Option[PollMedia]]("media")
       } yield {
         Poll(
@@ -8391,7 +8468,7 @@ object CirceImplicits {
       for {
         _persistentId <- h.get[String]("persistent_id")
         _text         <- h.get[String]("text")
-        _textEntities <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("text_entities")(List.empty)
+        _textEntities <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("text_entities")(List.empty)
         _media        <- h.get[Option[PollMedia]]("media")
         _voterCount   <- h.get[Int]("voter_count")
         _addedByUser  <- h.get[Option[User]]("added_by_user")
@@ -8429,7 +8506,7 @@ object CirceImplicits {
         _pollMessage        <- h.get[Option[MaybeInaccessibleMessage]]("poll_message")
         _optionPersistentId <- h.get[String]("option_persistent_id")
         _optionText         <- h.get[String]("option_text")
-        _optionTextEntities <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("option_text_entities")(List.empty)
+        _optionTextEntities <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("option_text_entities")(List.empty)
       } yield {
         PollOptionAdded(
           pollMessage = _pollMessage,
@@ -8458,7 +8535,7 @@ object CirceImplicits {
         _pollMessage        <- h.get[Option[MaybeInaccessibleMessage]]("poll_message")
         _optionPersistentId <- h.get[String]("option_persistent_id")
         _optionText         <- h.get[String]("option_text")
-        _optionTextEntities <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("option_text_entities")(List.empty)
+        _optionTextEntities <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("option_text_entities")(List.empty)
       } yield {
         PollOptionDeleted(
           pollMessage = _pollMessage,
@@ -8580,7 +8657,7 @@ object CirceImplicits {
   implicit lazy val reactioncountDecoder: Decoder[ReactionCount] =
     Decoder.instance { h =>
       for {
-        _type       <- h.get[iozhik.OpenEnum[ReactionType]]("type")
+        _type       <- h.get[iozhik.OpenUnion[ReactionType]]("type")
         _totalCount <- h.get[Int]("total_count")
       } yield {
         ReactionCount(`type` = _type, totalCount = _totalCount)
@@ -8661,8 +8738,8 @@ object CirceImplicits {
   implicit lazy val richblockcaptionDecoder: Decoder[RichBlockCaption] =
     Decoder.instance { h =>
       for {
-        _text   <- h.get[iozhik.OpenEnum[RichText]]("text")
-        _credit <- h.get[Option[iozhik.OpenEnum[RichText]]]("credit")
+        _text   <- h.get[iozhik.OpenUnion[RichText]]("text")
+        _credit <- h.get[Option[iozhik.OpenUnion[RichText]]]("credit")
       } yield {
         RichBlockCaption(text = _text, credit = _credit)
       }
@@ -8686,7 +8763,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _label       <- h.get[String]("label")
-        _blocks      <- h.getOrElse[List[iozhik.OpenEnum[RichBlock]]]("blocks")(List.empty)
+        _blocks      <- h.getOrElse[List[iozhik.OpenUnion[RichBlock]]]("blocks")(List.empty)
         _hasCheckbox <- h.get[Option[Boolean]]("has_checkbox")
         _isChecked   <- h.get[Option[Boolean]]("is_checked")
         _value       <- h.get[Option[Int]]("value")
@@ -8720,7 +8797,7 @@ object CirceImplicits {
   implicit lazy val richblocktablecellDecoder: Decoder[RichBlockTableCell] =
     Decoder.instance { h =>
       for {
-        _text     <- h.get[Option[iozhik.OpenEnum[RichText]]]("text")
+        _text     <- h.get[Option[iozhik.OpenUnion[RichText]]]("text")
         _isHeader <- h.get[Option[Boolean]]("is_header")
         _colspan  <- h.get[Option[Int]]("colspan")
         _rowspan  <- h.get[Option[Int]]("rowspan")
@@ -8751,7 +8828,7 @@ object CirceImplicits {
   implicit lazy val richmessageDecoder: Decoder[RichMessage] =
     Decoder.instance { h =>
       for {
-        _blocks <- h.getOrElse[List[iozhik.OpenEnum[RichBlock]]]("blocks")(List.empty)
+        _blocks <- h.getOrElse[List[iozhik.OpenUnion[RichBlock]]]("blocks")(List.empty)
         _isRtl  <- h.get[Option[Boolean]]("is_rtl")
       } yield {
         RichMessage(blocks = _blocks, isRtl = _isRtl)
@@ -8780,7 +8857,7 @@ object CirceImplicits {
   implicit lazy val richmessagebuttonDecoder: Decoder[RichMessageButton] =
     Decoder.instance { h =>
       for {
-        _text                         <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _text                         <- h.get[iozhik.OpenUnion[RichText]]("text")
         _style                        <- h.get[Option[String]]("style")
         _url                          <- h.get[Option[String]]("url")
         _callbackData                 <- h.get[Option[String]]("callback_data")
@@ -8888,7 +8965,7 @@ object CirceImplicits {
       for {
         _id       <- h.get[String]("id")
         _from     <- h.get[User]("from")
-        _type     <- h.get[iozhik.OpenEnum[WidgetQueryType]]("type")
+        _type     <- h.get[iozhik.OpenUnion[WidgetQueryType]]("type")
         _data     <- h.get[String]("data")
         _widgetId <- h.get[String]("widget_id")
       } yield {
@@ -9007,8 +9084,8 @@ object CirceImplicits {
         _amount         <- h.get[Long]("amount")
         _nanostarAmount <- h.get[Option[Long]]("nanostar_amount")
         _date           <- h.get[Long]("date")
-        _source         <- h.get[Option[iozhik.OpenEnum[TransactionPartner]]]("source")
-        _receiver       <- h.get[Option[iozhik.OpenEnum[TransactionPartner]]]("receiver")
+        _source         <- h.get[Option[iozhik.OpenUnion[TransactionPartner]]]("source")
+        _receiver       <- h.get[Option[iozhik.OpenUnion[TransactionPartner]]]("receiver")
       } yield {
         StarTransaction(
           id = _id,
@@ -9422,8 +9499,8 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _text      <- h.get[String]("text")
-        _entities  <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
-        _richTexts <- h.getOrElse[List[iozhik.OpenEnum[RichText]]]("rich_texts")(List.empty)
+        _entities  <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("entities")(List.empty)
+        _richTexts <- h.getOrElse[List[iozhik.OpenUnion[RichText]]]("rich_texts")(List.empty)
         _position  <- h.get[Int]("position")
         _isManual  <- h.get[Option[Boolean]]("is_manual")
       } yield {
@@ -9736,7 +9813,7 @@ object CirceImplicits {
         _gift               <- h.get[UniqueGift]("gift")
         _origin             <- h.get[String]("origin")
         _text               <- h.get[Option[String]]("text")
-        _entities           <- h.getOrElse[List[iozhik.OpenEnum[MessageEntity]]]("entities")(List.empty)
+        _entities           <- h.getOrElse[List[iozhik.OpenUnion[MessageEntity]]]("entities")(List.empty)
         _isPrivate          <- h.get[Option[Boolean]]("is_private")
         _lastResaleCurrency <- h.get[Option[String]]("last_resale_currency")
         _lastResaleAmount   <- h.get[Option[Long]]("last_resale_amount")
@@ -10478,7 +10555,7 @@ object CirceImplicits {
         _inlineMessageId <- h.get[Option[String]]("inline_message_id")
         _chatInstance    <- h.get[String]("chat_instance")
         _chatType        <- h.get[Option[String]]("chat_type")
-        _type            <- h.get[iozhik.OpenEnum[WidgetQueryType]]("type")
+        _type            <- h.get[iozhik.OpenUnion[WidgetQueryType]]("type")
         _data            <- h.get[String]("data")
         _widgetId        <- h.get[Option[String]]("widget_id")
       } yield {

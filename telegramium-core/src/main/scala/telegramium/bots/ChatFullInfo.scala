@@ -142,7 +142,7 @@ package telegramium.bots
   */
 final case class ChatFullInfo(
   id: Long,
-  `type`: String,
+  `type`: iozhik.OpenEnum[ChatType],
   accentColorId: Int,
   maxReactionCount: Int,
   acceptedGiftTypes: AcceptedGiftTypes,
@@ -160,7 +160,7 @@ final case class ChatFullInfo(
   businessOpeningHours: Option[BusinessOpeningHours] = Option.empty,
   personalChat: Option[Chat] = Option.empty,
   parentChat: Option[Chat] = Option.empty,
-  availableReactions: Option[List[iozhik.OpenEnum[ReactionType]]] = Option.empty,
+  availableReactions: Option[List[iozhik.OpenUnion[ReactionType]]] = Option.empty,
   backgroundCustomEmojiId: Option[String] = Option.empty,
   profileAccentColorId: Option[Int] = Option.empty,
   profileBackgroundCustomEmojiId: Option[String] = Option.empty,
@@ -195,5 +195,5 @@ final case class ChatFullInfo(
   guardBot: Option[User] = Option.empty,
   community: Option[Community] = Option.empty,
   tonWalletCard: Option[TonWalletCard] = Option.empty,
-  shareTheme: Option[iozhik.OpenEnum[ChatShareTheme]] = Option.empty
+  shareTheme: Option[iozhik.OpenUnion[ChatShareTheme]] = Option.empty
 )

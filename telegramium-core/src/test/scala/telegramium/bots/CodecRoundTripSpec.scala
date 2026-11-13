@@ -26,4 +26,12 @@ class CodecRoundTripSpec extends AnyFlatSpec with Matchers {
     }
 
   RoundTrips.all.foreach(c => roundTrips(c))
+
+  "An unknown string" should "encode back to itself, next to a known one" in {
+    import io.circe.syntax._
+    import CirceImplicits._
+    val dice = List(Dice(iozhik.OpenEnum.Unknown("🪀"), 3), Dice(iozhik.OpenEnum(EmojiDice), 6))
+    dice.asJson.noSpaces shouldBe """[{"emoji":"🪀","value":3},{"emoji":"🎲","value":6}]"""
+    decode[List[Dice]](dice.asJson.noSpaces) shouldBe Right(dice)
+  }
 }

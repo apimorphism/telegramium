@@ -6,7 +6,7 @@ import cats.Parallel
 import cats.effect.Async
 import cats.syntax.all.*
 
-import iozhik.OpenEnum
+import iozhik.OpenUnion
 import org.http4s.client.Client
 
 import telegramium.bots.ChatIntId
@@ -29,7 +29,7 @@ class UrlShortenerBot[F[_]](httpClient: Client[F])(using botApi: Api[F], asyncF:
   override def onMessage(msg: Message): F[Unit] =
     val reply = for {
       text <- msg.text
-      url  <- msg.entities.collectFirst { case OpenEnum.Known(UrlMessageEntity(offset, length)) =>
+      url  <- msg.entities.collectFirst { case OpenUnion.Known(UrlMessageEntity(offset, length)) =>
         text.slice(offset, offset + length)
       }
     } yield {

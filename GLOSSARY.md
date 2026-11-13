@@ -40,6 +40,18 @@ _Avoid_: missing, blank, null (for either)
 An update carrying fields or kinds this version of the library does not know.
 _Avoid_: unsupported update, invalid update
 
+**Open enum**:
+A set of strings Telegram may add to, such as the type of a chat.
+_Avoid_: string enum, extensible enum
+
+**Open union**:
+A family of objects told apart by a type tag, which Telegram may add to, such as message entities.
+_Avoid_: tagged enum, open enum (for objects), polymorphic type
+
 **Unknown value**:
-An enum value from Telegram that this version of the library does not know. It is only ever received, never sent back.
+A value of an open enum or an open union that this version of the library does not know.
 _Avoid_: unsupported value, raw value
+
+**Forward compatibility**:
+A bot built on an older version of the library keeps working against a newer Bot API: values it doesn't know are accepted as Unknown values and Unknown updates instead of failing.
+_Avoid_: future-proofing, backward compatibility (for this direction)

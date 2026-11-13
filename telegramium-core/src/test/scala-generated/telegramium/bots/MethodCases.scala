@@ -1560,7 +1560,7 @@ object GenSendDiceReq {
   import GenPrims._
   lazy val gen: Gen[client.SendDiceReq] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(GenChatId.gen, optPrim(genString), optPrim(genInt), optPrim(genLong), optPrim(genString),
+        .zip(Gen.zip(GenChatId.gen, optPrim(genString), optPrim(genInt), optPrim(genLong), opt(GenEmoji.gen),
             optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genString)),
           Gen.zip(opt(GenSuggestedPostParameters.gen), opt(GenReplyParameters.gen), opt(GenKeyboardMarkup.gen)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11)) =>

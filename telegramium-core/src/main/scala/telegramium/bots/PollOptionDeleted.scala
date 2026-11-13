@@ -17,5 +17,5 @@ final case class PollOptionDeleted(
   optionPersistentId: String,
   optionText: String,
   pollMessage: Option[MaybeInaccessibleMessage] = Option.empty,
-  optionTextEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty
+  optionTextEntities: List[iozhik.OpenUnion[MessageEntity]] = List.empty
 )

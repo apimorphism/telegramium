@@ -19,6 +19,6 @@ final case class ChatShareThemeUniqueGift(gift: UniqueGift) extends ChatShareThe
   *   details about the backdrop.
   */
 final case class ChatShareThemeEmoji(
-  emojis: List[iozhik.OpenEnum[EmojiType]] = List.empty,
+  emojis: List[iozhik.OpenUnion[EmojiType]] = List.empty,
   backgroundBackdropId: Option[Int] = Option.empty
 ) extends ChatShareTheme
