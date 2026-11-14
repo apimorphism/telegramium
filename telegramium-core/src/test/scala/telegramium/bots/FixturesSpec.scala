@@ -5,6 +5,7 @@ import java.io.{File => JFile}
 import io.circe.{Decoder, Encoder, Json}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
+import io.circe.syntax._
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.{Method, Methods}
 
@@ -93,7 +94,7 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     future.foreach(file => file.getName in decode(file))
   }
 
-  "unknown values decode as Unknown" - {
+  "unknown values of an open union decode as Unknown" - {
     "a reaction of an unknown type" in {
       decodeFuture("unknown_value-001.json").messageReaction.map(_.newReaction) shouldBe Some(
         List(
@@ -123,7 +124,30 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     }
   }
 
-  "unknown strings decode as Unknown" - {
+  // #723: a bot quotes what it received. The parts it knows go into the reply, and what they hold that this version
+  // doesn't know goes back as Telegram sent it, however deep it sits.
+  "a quoted rich text goes back as Telegram sent it, unknown parts nested in it included" in {
+    val update   = future.find(_.getName == "unknown_value-004.json").map(Fixtures.read).getOrElse(fail("no fixture"))
+    val received = update.hcursor.downField("message").downField("quote").downField("rich_texts").as[List[Json]]
+    val quote    = decodeFuture("unknown_value-004.json").message.flatMap(_.quote).getOrElse(fail("no quote"))
+    quote.richTexts.map {
+      case iozhik.OpenUnion.Known(_)        => "known"
+      case iozhik.OpenUnion.Unknown(tag, _) => tag
+    } shouldBe List("known", "future_block")
+
+    val known = quote.richTexts.collect { case iozhik.OpenUnion.Known(richText) => richText }
+    val reply = methods.sendMessage(
+      text = "",
+      chatId = Some(ChatIntId(0)),
+      replyParameters = Some(ReplyParameters(messageId = Some(1), quoteRichTexts = known))
+    )
+    reply.payload.json.hcursor.downField("reply_parameters").downField("quote_rich_texts").as[List[Json]] shouldBe
+      received.map(_.take(1))
+    // the part this version doesn't know is still there to read
+    quote.richTexts.lastOption.map(_.asJson) shouldBe received.toOption.flatMap(_.lastOption)
+  }
+
+  "unknown values of an open enum decode as Unknown" - {
     "a chat of an unknown type" in {
       decodeFuture("unknown_value-003.json").message.map(_.chat.`type`) shouldBe Some(
         iozhik.OpenEnum.Unknown("future_chat")

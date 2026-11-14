@@ -177,6 +177,13 @@ abstract class WireSpec extends AnyFreeSpec {
   // A case class's fields under their JSON keys, generated with the encoders: no field names, so this runs on 2.12 too
   private val fieldsOf: Map[Class[?], FieldsOf[?]] = JsonFields.all.map(f => (f.runtimeClass: Class[?]) -> f).toMap
 
+  private def sentAs(node: Sent, expected: Json): Either[String, List[Sent]] =
+    if (node.json.contains(expected)) Right(Nil)
+    else
+      Left(
+        s"${node.path}: an Unknown value is sent as ${node.json.fold("nothing")(_.noSpaces)}, not as ${expected.noSpaces}"
+      )
+
   // One layer: the values one level down, each with the JSON it was sent as; Left for a case class the list doesn't have
   private def step(node: Sent): Either[String, List[Sent]] =
     node.value match {
@@ -185,17 +192,10 @@ abstract class WireSpec extends AnyFreeSpec {
       case iozhik.OpenUnion.Known(v) => Right(List(node.copy(value = v, field = None, optionalArray = false)))
       case iozhik.OpenEnum.Known(v)  => Right(List(node.copy(value = v, field = None, optionalArray = false)))
       // sent as the string it was decoded from
-      case iozhik.OpenEnum.Unknown(s) =>
-        if (node.json.contains(Json.fromString(s))) Right(Nil)
-        else
-          Left(
-            s"${node.path}: an Unknown value is sent as ${node.json.fold("nothing")(_.noSpaces)}, not as ${Json.fromString(s).noSpaces}"
-          )
+      case iozhik.OpenEnum.Unknown(s) => sentAs(node, Json.fromString(s))
       // sent as the JSON it was decoded from, whatever its shape: there's nothing below it to walk (#723)
-      case iozhik.OpenUnion.Unknown(_, raw) =>
-        if (node.json.contains(raw)) Right(Nil)
-        else Left(s"${node.path}: an Unknown value is sent as ${node.json.fold("nothing")(_.noSpaces)}, not as $raw")
-      case it: Iterable[?] =>
+      case iozhik.OpenUnion.Unknown(_, raw) => sentAs(node, raw)
+      case it: Iterable[?]                  =>
         val js = node.json.flatMap(_.asArray).getOrElse(Vector.empty)
         Right(it.toList.zipWithIndex.map { case (v, i) => Sent(v, js.lift(i), s"${node.path}[$i]", None, false) })
       case p: Product =>
