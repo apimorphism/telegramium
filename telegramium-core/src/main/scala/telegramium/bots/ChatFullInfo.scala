@@ -142,7 +142,7 @@ package telegramium.bots
   */
 final case class ChatFullInfo(
   id: Long,
-  `type`: iozhik.OpenEnum[ChatType],
+  `type`: String,
   accentColorId: Int,
   maxReactionCount: Int,
   acceptedGiftTypes: AcceptedGiftTypes,

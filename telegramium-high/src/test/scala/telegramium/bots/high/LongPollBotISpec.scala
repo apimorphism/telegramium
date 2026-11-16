@@ -6,7 +6,6 @@ import cats.syntax.option.*
 
 import com.dimafeng.testcontainers.ForAllTestContainer
 import com.dimafeng.testcontainers.MockServerContainer
-import iozhik.OpenEnum
 import iozhik.OpenUnion
 import org.http4s.blaze.client.BlazeClientBuilder
 import org.mockserver.client.MockServerClient
@@ -27,7 +26,6 @@ import telegramium.bots.ChatBoostUpdated
 import telegramium.bots.ChatJoinRequest
 import telegramium.bots.ChatMemberMember
 import telegramium.bots.ChatMemberUpdated
-import telegramium.bots.ChatTypePrivate
 import telegramium.bots.ChosenInlineResult
 import telegramium.bots.InlineQuery
 import telegramium.bots.ManagedBotUpdated
@@ -64,7 +62,7 @@ class LongPollBotISpec
   private lazy val bot                = new TestLongPollBot(api)
 
   private val testUpdate  = Update(updateId = 0)
-  private val testChat    = Chat(0, `type` = OpenEnum(ChatTypePrivate))
+  private val testChat    = Chat(0, `type` = "")
   private val testMessage = Message(0, date = 0, chat = testChat)
   private val testUser    = User(0, isBot = false, "")
 

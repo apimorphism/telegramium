@@ -32,7 +32,6 @@ class FutureUpdatesSpec extends AnyFreeSpec with Matchers {
     "unknown_update_kind-001.json"     -> List("future_update"),
     "unknown_value-001.json"           -> List.empty,
     "unknown_value-002.json"           -> List.empty,
-    "unknown_value-003.json"           -> List.empty,
     "unknown_value-004.json"           -> List.empty,
     "unknown_nested_fields-001.json"   -> List.empty
   )

@@ -147,25 +147,11 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     quote.richTexts.lastOption.map(_.asJson) shouldBe received.toOption.flatMap(_.lastOption)
   }
 
-  "unknown values of an open enum decode as Unknown" - {
-    "a chat of an unknown type" in {
-      decodeFuture("unknown_value-003.json").message.map(_.chat.`type`) shouldBe Some(
-        iozhik.OpenEnum.Unknown("future_chat")
-      )
-    }
-    "a dice with an unknown emoji" in {
-      decodeFuture("unknown_value-003.json").message.flatMap(_.dice).map(_.emoji) shouldBe Some(
-        iozhik.OpenEnum.Unknown("🪀")
-      )
-    }
-  }
-
   "unknown fields nested inside known objects leave the known ones intact" in {
     val message = decodeFuture("unknown_nested_fields-001.json").message
     message.map(_.chat.id) shouldBe Some(1003L)
     message.flatMap(_.from).map(_.id) shouldBe Some(1003L)
     message.map(_.entities) shouldBe Some(List(iozhik.OpenUnion.Known[MessageEntity](BotCommandMessageEntity(0, 6))))
-    message.map(_.chat.`type`) shouldBe Some(iozhik.OpenEnum.Known(ChatTypePrivate))
   }
 
 }

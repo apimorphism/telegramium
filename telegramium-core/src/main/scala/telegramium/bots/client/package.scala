@@ -29,7 +29,6 @@ object CirceImplicits {
   import telegramium.bots.KeyboardButton
   import telegramium.bots.EphemeralMessageParameters
   import telegramium.bots.IFile
-  import telegramium.bots.Emoji
   import telegramium.bots.InputPaidMedia
   import telegramium.bots.InputPollOption
   import telegramium.bots.AcceptedGiftTypes

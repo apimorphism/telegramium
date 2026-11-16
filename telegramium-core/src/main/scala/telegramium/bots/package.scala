@@ -16,21 +16,6 @@ object CirceImplicits {
     case EmojiBowling     => EmojiBowling.asJson
   }
 
-  implicit lazy val emojiOpenEncoder: Encoder[iozhik.OpenEnum[Emoji]] = {
-    case iozhik.OpenEnum.Known(x)   => Encoder[Emoji].apply(x)
-    case iozhik.OpenEnum.Unknown(s) => Json.fromString(s)
-  }
-
-  implicit lazy val emojiDecoder: Decoder[iozhik.OpenEnum[Emoji]] = Decoder[String].map {
-    case "🎲" => iozhik.OpenEnum.Known(EmojiDice)
-    case "🎯" => iozhik.OpenEnum.Known(EmojiDarts)
-    case "🏀" => iozhik.OpenEnum.Known(EmojiBasketball)
-    case "⚽"  => iozhik.OpenEnum.Known(EmojiFootball)
-    case "🎰" => iozhik.OpenEnum.Known(EmojiSlotMachine)
-    case "🎳" => iozhik.OpenEnum.Known(EmojiBowling)
-    case s    => iozhik.OpenEnum.Unknown(s)
-  }
-
   implicit lazy val emojidiceEncoder: Encoder[EmojiDice.type] = (_: EmojiDice.type) => "🎲".asJson
 
   implicit lazy val emojidiceDecoder: Decoder[EmojiDice.type] =
@@ -60,49 +45,6 @@ object CirceImplicits {
 
   implicit lazy val emojibowlingDecoder: Decoder[EmojiBowling.type] =
     Decoder[String].emap(s => Either.cond(s == "🎳", EmojiBowling, s"Expected 🎳"))
-
-  implicit lazy val chattypeEncoder: Encoder[ChatType] = {
-    case ChatTypePrivate    => ChatTypePrivate.asJson
-    case ChatTypeGroup      => ChatTypeGroup.asJson
-    case ChatTypeSupergroup => ChatTypeSupergroup.asJson
-    case ChatTypeChannel    => ChatTypeChannel.asJson
-  }
-
-  implicit lazy val chattypeOpenEncoder: Encoder[iozhik.OpenEnum[ChatType]] = {
-    case iozhik.OpenEnum.Known(x)   => Encoder[ChatType].apply(x)
-    case iozhik.OpenEnum.Unknown(s) => Json.fromString(s)
-  }
-
-  implicit lazy val chattypeDecoder: Decoder[iozhik.OpenEnum[ChatType]] = Decoder[String].map {
-    case "private"    => iozhik.OpenEnum.Known(ChatTypePrivate)
-    case "group"      => iozhik.OpenEnum.Known(ChatTypeGroup)
-    case "supergroup" => iozhik.OpenEnum.Known(ChatTypeSupergroup)
-    case "channel"    => iozhik.OpenEnum.Known(ChatTypeChannel)
-    case s            => iozhik.OpenEnum.Unknown(s)
-  }
-
-  implicit lazy val chattypeprivateEncoder: Encoder[ChatTypePrivate.type] = (_: ChatTypePrivate.type) =>
-    "private".asJson
-
-  implicit lazy val chattypeprivateDecoder: Decoder[ChatTypePrivate.type] =
-    Decoder[String].emap(s => Either.cond(s == "private", ChatTypePrivate, s"Expected private"))
-
-  implicit lazy val chattypegroupEncoder: Encoder[ChatTypeGroup.type] = (_: ChatTypeGroup.type) => "group".asJson
-
-  implicit lazy val chattypegroupDecoder: Decoder[ChatTypeGroup.type] =
-    Decoder[String].emap(s => Either.cond(s == "group", ChatTypeGroup, s"Expected group"))
-
-  implicit lazy val chattypesupergroupEncoder: Encoder[ChatTypeSupergroup.type] = (_: ChatTypeSupergroup.type) =>
-    "supergroup".asJson
-
-  implicit lazy val chattypesupergroupDecoder: Decoder[ChatTypeSupergroup.type] =
-    Decoder[String].emap(s => Either.cond(s == "supergroup", ChatTypeSupergroup, s"Expected supergroup"))
-
-  implicit lazy val chattypechannelEncoder: Encoder[ChatTypeChannel.type] = (_: ChatTypeChannel.type) =>
-    "channel".asJson
-
-  implicit lazy val chattypechannelDecoder: Decoder[ChatTypeChannel.type] =
-    Decoder[String].emap(s => Either.cond(s == "channel", ChatTypeChannel, s"Expected channel"))
 
   implicit lazy val parsemodeEncoder: Encoder[ParseMode] = {
     case Markdown  => Markdown.asJson
@@ -5714,7 +5656,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _id               <- h.get[Long]("id")
-        _type             <- h.get[iozhik.OpenEnum[ChatType]]("type")
+        _type             <- h.get[String]("type")
         _title            <- h.get[Option[String]]("title")
         _username         <- h.get[Option[String]]("username")
         _firstName        <- h.get[Option[String]]("first_name")
@@ -5977,7 +5919,7 @@ object CirceImplicits {
     Decoder.instance { h =>
       for {
         _id                             <- h.get[Long]("id")
-        _type                           <- h.get[iozhik.OpenEnum[ChatType]]("type")
+        _type                           <- h.get[String]("type")
         _title                          <- h.get[Option[String]]("title")
         _username                       <- h.get[Option[String]]("username")
         _firstName                      <- h.get[Option[String]]("first_name")
@@ -6708,7 +6650,7 @@ object CirceImplicits {
   implicit lazy val diceDecoder: Decoder[Dice] =
     Decoder.instance { h =>
       for {
-        _emoji <- h.get[iozhik.OpenEnum[Emoji]]("emoji")
+        _emoji <- h.get[String]("emoji")
         _value <- h.get[Int]("value")
       } yield {
         Dice(emoji = _emoji, value = _value)

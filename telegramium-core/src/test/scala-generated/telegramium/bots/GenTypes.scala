@@ -47,37 +47,6 @@ object GenEmoji {
   lazy val shrink: Shrink[Emoji] = noShrink
 }
 
-object GenChatTypePrivate {
-  import GenPrims._
-  lazy val gen: Gen[ChatTypePrivate.type] = Gen.lzy(Gen.const(ChatTypePrivate))
-  lazy val shrink: Shrink[ChatTypePrivate.type] = noShrink
-}
-
-object GenChatTypeGroup {
-  import GenPrims._
-  lazy val gen: Gen[ChatTypeGroup.type] = Gen.lzy(Gen.const(ChatTypeGroup))
-  lazy val shrink: Shrink[ChatTypeGroup.type] = noShrink
-}
-
-object GenChatTypeSupergroup {
-  import GenPrims._
-  lazy val gen: Gen[ChatTypeSupergroup.type] = Gen.lzy(Gen.const(ChatTypeSupergroup))
-  lazy val shrink: Shrink[ChatTypeSupergroup.type] = noShrink
-}
-
-object GenChatTypeChannel {
-  import GenPrims._
-  lazy val gen: Gen[ChatTypeChannel.type] = Gen.lzy(Gen.const(ChatTypeChannel))
-  lazy val shrink: Shrink[ChatTypeChannel.type] = noShrink
-}
-
-object GenChatType {
-  import GenPrims._
-  lazy val gen: Gen[ChatType] = Gen.lzy(Gen.oneOf[ChatType](GenChatTypePrivate.gen, GenChatTypeGroup.gen,
-      GenChatTypeSupergroup.gen, GenChatTypeChannel.gen))
-  lazy val shrink: Shrink[ChatType] = noShrink
-}
-
 object GenMarkdown {
   import GenPrims._
   lazy val gen: Gen[Markdown.type] = Gen.lzy(Gen.const(Markdown))
@@ -3447,8 +3416,8 @@ object GenCallbackQuery {
 object GenChat {
   import GenPrims._
   lazy val gen: Gen[Chat] = Gen.lzy(deeper(Gen
-        .zip(genLong, openEnum(GenChatType.gen), optPrim(genString), optPrim(genString), optPrim(genString),
-          optPrim(genString), optPrim(genBoolean), optPrim(genBoolean))
+        .zip(genLong, genString, optPrim(genString), optPrim(genString), optPrim(genString), optPrim(genString),
+          optPrim(genBoolean), optPrim(genBoolean))
         .map { case (a0, a1, a2, a3, a4, a5, a6, a7) =>
           Chat(id = a0, `type` = a1, title = a2, username = a3, firstName = a4, lastName = a5, isForum = a6,
             isDirectMessages = a7)
@@ -3538,7 +3507,7 @@ object GenChatFullInfo {
   import GenPrims._
   lazy val gen: Gen[ChatFullInfo] = Gen.lzy(
     deeper(Gen
-        .zip(Gen.zip(genLong, openEnum(GenChatType.gen), genInt, genInt, GenAcceptedGiftTypes.gen, optPrim(genString),
+        .zip(Gen.zip(genLong, genString, genInt, genInt, GenAcceptedGiftTypes.gen, optPrim(genString),
             optPrim(genString), optPrim(genString), optPrim(genString)),
           Gen.zip(optPrim(genBoolean), optPrim(genBoolean), opt(GenChatPhoto.gen), listPrim(genString),
             opt(GenBirthdate.gen), opt(GenBusinessIntro.gen), opt(GenBusinessLocation.gen),
@@ -3902,7 +3871,7 @@ object GenCopyTextButton {
 object GenDice {
   import GenPrims._
   lazy val gen: Gen[Dice] =
-    Gen.lzy(deeper(Gen.zip(openEnum(GenEmoji.gen), genInt).map { case (a0, a1) => Dice(emoji = a0, value = a1) }))
+    Gen.lzy(deeper(Gen.zip(genString, genInt).map { case (a0, a1) => Dice(emoji = a0, value = a1) }))
   lazy val shrink: Shrink[Dice] = noShrink
 }
 

@@ -3,13 +3,13 @@ package telegramium.bots
 import io.circe.Json
 import io.circe.parser.parse
 import io.circe.syntax._
-import iozhik.{OpenEnum, OpenUnion}
+import iozhik.OpenUnion
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import telegramium.bots.CirceImplicits._
 
-/** Where an Unknown value ends and a decoding failure begins: only a tag or a string this version doesn't know gives an
-  * Unknown value. Anything malformed fails, so an incompatible change isn't hidden as one.
+/** Where an Unknown value ends and a decoding failure begins: only a tag this version doesn't know gives an Unknown
+  * value. Anything malformed fails, so an incompatible change isn't hidden as one.
   */
 class UnknownValuesCodecSpec extends AnyFlatSpec with Matchers {
 
@@ -66,35 +66,5 @@ class UnknownValuesCodecSpec extends AnyFlatSpec with Matchers {
     json("5").as[OpenUnion[RichText]].isLeft shouldBe true
     json("""{"text": "no tag"}""").as[OpenUnion[RichText]].isLeft shouldBe true
     json("""{"type": 5, "text": "hi"}""").as[OpenUnion[RichText]].isLeft shouldBe true
-  }
-
-  "An open enum" should "decode a string it knows as Known and one it doesn't as Unknown" in {
-    json(""""private"""").as[OpenEnum[ChatType]] shouldBe Right(OpenEnum.Known(ChatTypePrivate))
-    json(""""future_chat"""").as[OpenEnum[ChatType]] shouldBe Right(OpenEnum.Unknown("future_chat"))
-    // an enum's strings are matched as they are
-    json(""""Private"""").as[OpenEnum[ChatType]] shouldBe Right(OpenEnum.Unknown("Private"))
-  }
-
-  it should "fail on a value that isn't a string" in {
-    json("5").as[OpenEnum[ChatType]].isLeft shouldBe true
-    json("null").as[OpenEnum[ChatType]].isLeft shouldBe true
-    json("""{"type": "private"}""").as[OpenEnum[ChatType]].isLeft shouldBe true
-    json("""{"id": 1, "type": 5}""").as[Chat].isLeft shouldBe true
-    json("""{"id": 1}""").as[Chat].isLeft shouldBe true
-  }
-
-  it should "encode a Known value like the plain enum, and an Unknown one as its string" in {
-    (OpenEnum(ChatTypeChannel): OpenEnum[ChatType]).asJson shouldBe (ChatTypeChannel: ChatType).asJson
-    (OpenEnum.Unknown("future_chat"): OpenEnum[ChatType]).asJson shouldBe Json.fromString("future_chat")
-  }
-
-  "A Method's arguments" should "take the plain enum, not a string or an OpenEnum" in {
-    import telegramium.bots.client.Methods
-    object methods extends Methods
-    methods.sendDice(ChatIntId(1), emoji = Some(EmojiDarts)).payload.json.hcursor.get[String]("emoji") shouldBe
-      Right("🎯")
-    assertTypeError("""methods.sendDice(ChatIntId(1), emoji = Some("🎯"))""")
-    assertTypeError("""methods.sendDice(ChatIntId(1), emoji = Some(OpenEnum(EmojiDarts)))""")
-    assertTypeError("""methods.sendDice(ChatIntId(1), emoji = Some(OpenEnum.Unknown("🪀")))""")
   }
 }
