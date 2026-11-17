@@ -2,10 +2,10 @@ package telegramium.bots
 
 import java.io.{File => JFile}
 
+import io.circe.syntax._
 import io.circe.{Decoder, Encoder, Json}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
-import io.circe.syntax._
 import telegramium.bots.CirceImplicits._
 import telegramium.bots.client.{Method, Methods}
 
@@ -127,9 +127,9 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
   // #723: a bot quotes what it received. The parts it knows go into the reply, and what they hold that this version
   // doesn't know goes back as Telegram sent it, however deep it sits.
   "a quoted rich text goes back as Telegram sent it, unknown parts nested in it included" in {
-    val update   = future.find(_.getName == "unknown_value-004.json").map(Fixtures.read).getOrElse(fail("no fixture"))
+    val update   = future.find(_.getName == "unknown_value-003.json").map(Fixtures.read).getOrElse(fail("no fixture"))
     val received = update.hcursor.downField("message").downField("quote").downField("rich_texts").as[List[Json]]
-    val quote    = decodeFuture("unknown_value-004.json").message.flatMap(_.quote).getOrElse(fail("no quote"))
+    val quote    = decodeFuture("unknown_value-003.json").message.flatMap(_.quote).getOrElse(fail("no quote"))
     quote.richTexts.map {
       case iozhik.OpenUnion.Known(_)        => "known"
       case iozhik.OpenUnion.Unknown(tag, _) => tag

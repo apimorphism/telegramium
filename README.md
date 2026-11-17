@@ -89,7 +89,7 @@ the related [Pull Request](https://github.com/apimorphism/telegramium/pull/145).
 
 #### OpenUnion
 
-The Telegram Bot API is not versioned, which means bots and libraries must try to be forward-compatible. Specifically for enumerations, this implies that bots should always anticipate new values being added. Handling these values depends on the bot's business logic. Some apps may simply ignore unknown values, while others might respond with "This message is not supported," save the message for manual processing later, or throw a request handling error.
+The Telegram Bot API is not versioned, which means bots and libraries must try to be forward-compatible. Specifically for open unions, such as message entities, this implies that bots should always anticipate new kinds being added. Handling these values depends on the bot's business logic. Some apps may simply ignore unknown values, while others might respond with "This message is not supported," save the message for manual processing later, or throw a request handling error.
 
 Telegramium wraps the open unions a bot receives in `OpenUnion[T]`. An open union is a family of objects told apart by a type tag, which Telegram may add to, such as `MessageEntity`, `ChatMember` or `RichText`. The wrapper has two cases, `Known` and `Unknown`, so unknown values are handled explicitly (similar to `Option` or `Either`), and a bot degrades gracefully when the Bot API is updated. `Unknown(tag, raw)` keeps the JSON object it was decoded from.
 
