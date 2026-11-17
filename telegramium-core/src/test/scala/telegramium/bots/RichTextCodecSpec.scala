@@ -154,7 +154,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
   it should "decode an unknown type as OpenEnum.Unknown" in {
     val json   = parse("""{"type": "future_type", "text": "hello"}""").toOption.get
     val result = json.as[iozhik.OpenEnum[RichText]]
-    result shouldBe Right(iozhik.OpenEnum.Unknown("future_type")(json))
+    result shouldBe Right(iozhik.OpenEnum.Unknown("future_type", json))
   }
 
   // --- Unit tests: encode ---
@@ -362,7 +362,7 @@ class RichTextCodecSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
     val unknown = parse("""{"type": "future_type", "text": "hi"}""").toOption.get
     val json    = Json.obj("type" -> Json.fromString("bold"), "text" -> unknown)
     val decoded = json.as[iozhik.OpenEnum[RichText]]
-    decoded shouldBe Right(known(RichTextBold(iozhik.OpenEnum.Unknown("future_type")(unknown))))
+    decoded shouldBe Right(known(RichTextBold(iozhik.OpenEnum.Unknown("future_type", unknown))))
     decoded.toOption.collect { case iozhik.OpenEnum.Known(rt) => (rt: RichText).asJson } shouldBe Some(json)
   }
 

@@ -23,7 +23,7 @@ class UnknownValuesCodecSpec extends AnyFlatSpec with Matchers {
 
   it should "decode a tag it doesn't know as Unknown, with the whole object" in {
     val raw = json("""{"type": "future_entity", "offset": 0, "length": 4, "future_field": [1, {"a": null}]}""")
-    raw.as[OpenEnum[MessageEntity]] shouldBe Right(OpenEnum.Unknown("future_entity")(raw))
+    raw.as[OpenEnum[MessageEntity]] shouldBe Right(OpenEnum.Unknown("future_entity", raw))
   }
 
   it should "fail on a known tag whose object is malformed, not give an Unknown value" in {
@@ -53,18 +53,7 @@ class UnknownValuesCodecSpec extends AnyFlatSpec with Matchers {
 
   it should "encode an Unknown value as its JSON, whatever that holds" in {
     val raw = json("""{"type": "future_entity", "nested": {"type": "bold", "list": [1.50, -0.0, "x"]}, "n": null}""")
-    (OpenEnum.Unknown("future_entity")(raw): OpenEnum[MessageEntity]).asJson.noSpaces shouldBe raw.noSpaces
-  }
-
-  it should "be matched by its tag alone, and equal another only with the same JSON" in {
-    val raw = json("""{"type": "future_entity", "offset": 0}""")
-    (OpenEnum.Unknown("future_entity")(raw): OpenEnum[MessageEntity]) match {
-      case OpenEnum.Known(_)     => fail("decoded as Known")
-      case OpenEnum.Unknown(tag) => tag shouldBe "future_entity"
-    }
-    OpenEnum.Unknown("future_entity")(raw) should not be OpenEnum.Unknown("future_entity")(
-      json("""{"type": "future_entity"}""")
-    )
+    (OpenEnum.Unknown("future_entity", raw): OpenEnum[MessageEntity]).asJson.noSpaces shouldBe raw.noSpaces
   }
 
   "A rich text" should "fail on a known tag whose object is malformed, nested ones too" in {

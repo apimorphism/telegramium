@@ -98,7 +98,8 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     "a reaction of an unknown type" in {
       decodeFuture("unknown_value-001.json").messageReaction.map(_.newReaction) shouldBe Some(
         List(
-          iozhik.OpenEnum.Unknown("future_reaction")(
+          iozhik.OpenEnum.Unknown(
+            "future_reaction",
             Json.obj(
               "type"               -> Json.fromString("future_reaction"),
               "future_reaction_id" -> Json.fromString("xxxxxxxxxxxxxxxxxxx")
@@ -110,7 +111,8 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     "an entity of an unknown type" in {
       decodeFuture("unknown_value-002.json").message.map(_.entities) shouldBe Some(
         List(
-          iozhik.OpenEnum.Unknown("future_entity")(
+          iozhik.OpenEnum.Unknown(
+            "future_entity",
             Json.obj(
               "offset" -> Json.fromInt(0),
               "length" -> Json.fromInt(6),
@@ -129,8 +131,8 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     val received = update.hcursor.downField("message").downField("quote").downField("rich_texts").as[List[Json]]
     val quote    = decodeFuture("unknown_value-003.json").message.flatMap(_.quote).getOrElse(fail("no quote"))
     quote.richTexts.map {
-      case iozhik.OpenEnum.Known(_)     => "known"
-      case iozhik.OpenEnum.Unknown(tag) => tag
+      case iozhik.OpenEnum.Known(_)        => "known"
+      case iozhik.OpenEnum.Unknown(tag, _) => tag
     } shouldBe List("known", "future_block")
 
     val known = quote.richTexts.collect { case iozhik.OpenEnum.Known(richText) => richText }

@@ -166,7 +166,7 @@ object CirceImplicits {
       case "gradient"          => Decoder[BackgroundFillGradient].map(iozhik.OpenEnum.Known(_))
       case "solid"             => Decoder[BackgroundFillSolid].map(iozhik.OpenEnum.Known(_))
       case unknown             =>
-        Decoder.instance[iozhik.OpenEnum[BackgroundFill]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[BackgroundFill]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -246,7 +246,7 @@ object CirceImplicits {
       case "wallpaper"  => Decoder[BackgroundTypeWallpaper].map(iozhik.OpenEnum.Known(_))
       case "pattern"    => Decoder[BackgroundTypePattern].map(iozhik.OpenEnum.Known(_))
       case unknown      =>
-        Decoder.instance[iozhik.OpenEnum[BackgroundType]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[BackgroundType]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -419,7 +419,7 @@ object CirceImplicits {
       case "premium"   => Decoder[ChatBoostSourcePremium].map(iozhik.OpenEnum.Known(_))
       case "gift_code" => Decoder[ChatBoostSourceGiftCode].map(iozhik.OpenEnum.Known(_))
       case unknown     =>
-        Decoder.instance[iozhik.OpenEnum[ChatBoostSource]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[ChatBoostSource]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -510,7 +510,7 @@ object CirceImplicits {
       case "member"        => Decoder[ChatMemberMember].map(iozhik.OpenEnum.Known(_))
       case "restricted"    => Decoder[ChatMemberRestricted].map(iozhik.OpenEnum.Known(_))
       case unknown         =>
-        Decoder.instance[iozhik.OpenEnum[ChatMember]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[ChatMember]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -770,7 +770,7 @@ object CirceImplicits {
       case "unique_gift" => Decoder[ChatShareThemeUniqueGift].map(iozhik.OpenEnum.Known(_))
       case "emoji"       => Decoder[ChatShareThemeEmoji].map(iozhik.OpenEnum.Known(_))
       case unknown       =>
-        Decoder.instance[iozhik.OpenEnum[ChatShareTheme]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[ChatShareTheme]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -825,7 +825,7 @@ object CirceImplicits {
       case "custom_emoji" => Decoder[EmojiTypeCustomEmoji].map(iozhik.OpenEnum.Known(_))
       case "emoji"        => Decoder[EmojiTypeEmoji].map(iozhik.OpenEnum.Known(_))
       case unknown        =>
-        Decoder.instance[iozhik.OpenEnum[EmojiType]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[EmojiType]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -2410,7 +2410,7 @@ object CirceImplicits {
       case "default"  => Decoder[MenuButtonDefault.type].map(iozhik.OpenEnum.Known(_))
       case "commands" => Decoder[MenuButtonCommands.type].map(iozhik.OpenEnum.Known(_))
       case unknown    =>
-        Decoder.instance[iozhik.OpenEnum[MenuButton]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[MenuButton]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -2497,7 +2497,7 @@ object CirceImplicits {
       case "ton_address"           => Decoder[TonAddressMessageEntity].map(iozhik.OpenEnum.Known(_))
       case "mention"               => Decoder[MentionMessageEntity].map(iozhik.OpenEnum.Known(_))
       case unknown                 =>
-        Decoder.instance[iozhik.OpenEnum[MessageEntity]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[MessageEntity]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -2995,7 +2995,7 @@ object CirceImplicits {
       case "chat"        => Decoder[MessageOriginChat].map(iozhik.OpenEnum.Known(_))
       case "user"        => Decoder[MessageOriginUser].map(iozhik.OpenEnum.Known(_))
       case unknown       =>
-        Decoder.instance[iozhik.OpenEnum[MessageOrigin]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[MessageOrigin]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -3100,7 +3100,7 @@ object CirceImplicits {
       case "regular" => Decoder[OwnedGiftRegular].map(iozhik.OpenEnum.Known(_))
       case "unique"  => Decoder[OwnedGiftUnique].map(iozhik.OpenEnum.Known(_))
       case unknown   =>
-        Decoder.instance[iozhik.OpenEnum[OwnedGift]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[OwnedGift]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -3221,7 +3221,7 @@ object CirceImplicits {
       case "live_photo" => Decoder[PaidMediaLivePhoto].map(iozhik.OpenEnum.Known(_))
       case "video"      => Decoder[PaidMediaVideo].map(iozhik.OpenEnum.Known(_))
       case unknown      =>
-        Decoder.instance[iozhik.OpenEnum[PaidMedia]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[PaidMedia]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -3439,7 +3439,7 @@ object CirceImplicits {
       case "paid"         => Decoder[ReactionTypePaid.type].map(iozhik.OpenEnum.Known(_))
       case "emoji"        => Decoder[ReactionTypeEmoji].map(iozhik.OpenEnum.Known(_))
       case unknown        =>
-        Decoder.instance[iozhik.OpenEnum[ReactionType]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[ReactionType]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -3499,7 +3499,7 @@ object CirceImplicits {
       case "succeeded" => Decoder[RevenueWithdrawalStateSucceeded].map(iozhik.OpenEnum.Known(_))
       case "pending"   => Decoder[RevenueWithdrawalStatePending.type].map(iozhik.OpenEnum.Known(_))
       case unknown     =>
-        Decoder.instance[iozhik.OpenEnum[RevenueWithdrawalState]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[RevenueWithdrawalState]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -3591,7 +3591,7 @@ object CirceImplicits {
       case "list"                    => Decoder[RichBlockList].map(iozhik.OpenEnum.Known(_))
       case "table"                   => Decoder[RichBlockTable].map(iozhik.OpenEnum.Known(_))
       case unknown                   =>
-        Decoder.instance[iozhik.OpenEnum[RichBlock]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[RichBlock]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -4167,7 +4167,7 @@ object CirceImplicits {
       case "spoiler"                 => Decoder[RichTextSpoiler].map(iozhik.OpenEnum.Known(_))
       case "ton_address"             => Decoder[RichTextTonAddress].map(iozhik.OpenEnum.Known(_))
       case "mention"                 => Decoder[RichTextMention].map(iozhik.OpenEnum.Known(_))
-      case unknown => Decoder.instance[iozhik.OpenEnum[RichText]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+      case unknown => Decoder.instance[iozhik.OpenEnum[RichText]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -4848,7 +4848,7 @@ object CirceImplicits {
       case "user"              => Decoder[TransactionPartnerUser].map(iozhik.OpenEnum.Known(_))
       case "other"             => Decoder[TransactionPartnerOther.type].map(iozhik.OpenEnum.Known(_))
       case unknown             =>
-        Decoder.instance[iozhik.OpenEnum[TransactionPartner]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[TransactionPartner]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
@@ -5002,7 +5002,7 @@ object CirceImplicits {
       case "sent_transaction" => Decoder[WidgetQueryTypeSentTransaction].map(iozhik.OpenEnum.Known(_))
       case "sign_data"        => Decoder[WidgetQueryTypeSignData].map(iozhik.OpenEnum.Known(_))
       case unknown            =>
-        Decoder.instance[iozhik.OpenEnum[WidgetQueryType]](c => Right(iozhik.OpenEnum.Unknown(unknown)(c.value)))
+        Decoder.instance[iozhik.OpenEnum[WidgetQueryType]](c => Right(iozhik.OpenEnum.Unknown(unknown, c.value)))
     }
   } yield value
 
