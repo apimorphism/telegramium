@@ -87,20 +87,20 @@ For details, have a look
 at the [Github Issue](https://github.com/apimorphism/telegramium/issues/143) and
 the related [Pull Request](https://github.com/apimorphism/telegramium/pull/145).
 
-#### OpenUnion
+#### OpenEnum
 
-The Telegram Bot API is not versioned, which means bots and libraries must try to be forward-compatible. Specifically for open unions, such as message entities, this implies that bots should always anticipate new kinds being added. Handling these values depends on the bot's business logic. Some apps may simply ignore unknown values, while others might respond with "This message is not supported," save the message for manual processing later, or throw a request handling error.
+The Telegram Bot API is not versioned, which means bots and libraries must try to be forward-compatible. Specifically for enumerations, this implies that bots should always anticipate new values being added. Handling these values depends on the bot's business logic. Some apps may simply ignore unknown values, while others might respond with "This message is not supported," save the message for manual processing later, or throw a request handling error.
 
-Telegramium wraps the open unions a bot receives in `OpenUnion[T]`. An open union is a family of objects told apart by a type tag, which Telegram may add to, such as `MessageEntity`, `ChatMember` or `RichText`. The wrapper has two cases, `Known` and `Unknown`, so unknown values are handled explicitly (similar to `Option` or `Either`), and a bot degrades gracefully when the Bot API is updated. `Unknown(tag, raw)` keeps the JSON object it was decoded from.
+Telegramium introduces `OpenEnum`, a wrapper for Telegram Bot API enumerations with two cases: `Known` and `Unknown`. This type allows unknown values to be explicitly handled (similar to `Option` or `Either`), enabling bots using Telegramium to be more robust, improve error handling, and degrade gracefully in light of frequent Telegram Bot API updates.
 
 ```scala
-import iozhik.OpenUnion
+import iozhik.OpenEnum
 
-msg.entities.collect { case OpenUnion.Known(e: BoldMessageEntity) => e }
+msg.entities.collect { case OpenEnum.Known(e: BoldMessageEntity) => e }
 
 msg.entities.foreach {
-  case OpenUnion.Known(entity)   => ...
-  case OpenUnion.Unknown(tag, _) => ... // an entity type this version doesn't know
+  case OpenEnum.Known(entity) => ...
+  case OpenEnum.Unknown(tag)  => ... // an entity type this version doesn't know
 }
 ```
 
@@ -108,7 +108,7 @@ What a bot sends is not wrapped: a Method's arguments take the plain type, as in
 
 Only a type tag this version doesn't know gives an `Unknown`. A value of a known type that is malformed, such as a `bold` entity without its `offset`, still fails to decode.
 
-An `OpenUnion.Unknown` encodes back to its JSON. So unknown parts nested in a received value, e.g. inside a quoted rich text, are sent back as Telegram sent them. The parts nested in a `RichText` are `OpenUnion`s for that reason, but a rich text to send is written without the wrapper: `RichTextBold(RichTextPlain("hi"))`.
+An `OpenEnum.Unknown` holds the type tag as `value` and the JSON it was decoded from as `raw`, and encodes back to that JSON. So unknown parts nested in a received value, e.g. inside a quoted rich text, are sent back as Telegram sent them. The parts nested in a `RichText` are `OpenEnum`s for that reason, but a rich text to send is written without the wrapper: `RichTextBold(RichTextPlain("hi"))`.
 
 #### Unknown updates
 
@@ -173,7 +173,7 @@ Please, note, that this versioning scheme is started from version `1.48.0`.
 
 * Pass optional arguments by name: `editMessageReplyMarkup(chatId = Some(ChatIntId(id)), messageId = Some(msgId))`. Telegram often adds new optional parameters in the middle of a method's list, so positional calls can stop compiling after a Bot API update.
 * Since `11.1004.0`, `chatId` is an `Option[ChatId]` in `sendMessage`, `sendRichMessage`, `sendAnimation`, `sendAudio`, `sendContact`, `sendDocument`, `sendLivePhoto`, `sendLocation`, `sendPhoto`, `sendSticker`, `sendVenue`, `sendVideo`, `sendVideoNote` and `sendVoice`, and comes after their required parameters: Bot API 10.4 lets an ephemeral reply to a callback query omit it. Wrap it in `Some` and pass it by name: `sendMessage(chatId = Some(ChatIntId(id)), text = "hi")`.
-* Since `11.1004.0`, the wrapper of object families such as `MessageEntity`, `ChatMember` and `RichText` is `OpenUnion`, not `OpenEnum` (see [OpenUnion](#openunion)): rename it in imports, patterns, type annotations such as `List[OpenUnion[ChatMember]]`, and where you build a received value, e.g. `OpenUnion(ChatMemberMember(user))` in a test. Its `Unknown` also holds the JSON it was decoded from: match it as `case OpenUnion.Unknown(tag, _)`.
+* Since `11.1004.0`, an `OpenEnum.Unknown` keeps the JSON it was decoded from, as `raw`, and encodes back to it, not to its bare type tag (see [OpenEnum](#openenum)). `case OpenEnum.Unknown(tag)` still matches. `Unknown` has no type parameter, and one built by hand, e.g. in a test, takes the JSON too: `OpenEnum.Unknown("future_entity")(json)`.
 * On Scala 2.13, telegramium depends on the latest scala-library (2.13.18 since `10.905.0`), and sbt refuses to build a project whose `scalaVersion` is older than that. Upgrade `scalaVersion` along with telegramium.
 
 ### Contribution

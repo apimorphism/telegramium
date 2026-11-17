@@ -6,7 +6,7 @@ import cats.syntax.option.*
 
 import com.dimafeng.testcontainers.ForAllTestContainer
 import com.dimafeng.testcontainers.MockServerContainer
-import iozhik.OpenUnion
+import iozhik.OpenEnum
 import org.http4s.blaze.client.BlazeClientBuilder
 import org.mockserver.client.MockServerClient
 import org.scalatest.BeforeAndAfterAll
@@ -71,8 +71,8 @@ class LongPollBotISpec
       testChat,
       testUser,
       0,
-      OpenUnion(ChatMemberMember(testUser)),
-      OpenUnion(ChatMemberMember(testUser))
+      OpenEnum(ChatMemberMember(testUser)),
+      OpenEnum(ChatMemberMember(testUser))
     )
 
   private val testChatJoinRequest =
@@ -333,7 +333,7 @@ class LongPollBotISpec
               id = "1",
               from = testUser,
               chatInstance = "1",
-              `type` = OpenUnion(WidgetQueryTypeData()),
+              `type` = OpenEnum(WidgetQueryTypeData()),
               data = "test"
             ).some
           )
@@ -353,7 +353,7 @@ class LongPollBotISpec
               SharedWidgetQuery(
                 id = "1",
                 from = testUser,
-                `type` = OpenUnion(WidgetQueryTypeData()),
+                `type` = OpenEnum(WidgetQueryTypeData()),
                 data = "test",
                 widgetId = "1"
               ).some
@@ -395,7 +395,7 @@ class LongPollBotISpec
         .onUpdate(
           testUpdate
             .copy(chatBoost =
-              ChatBoostUpdated(testChat, ChatBoost("", 0, 0, OpenUnion(ChatBoostSourcePremium(testUser)))).some
+              ChatBoostUpdated(testChat, ChatBoost("", 0, 0, OpenEnum(ChatBoostSourcePremium(testUser)))).some
             )
         )
         .unsafeRunSync()
@@ -409,9 +409,7 @@ class LongPollBotISpec
       bot
         .onUpdate(
           testUpdate
-            .copy(removedChatBoost =
-              ChatBoostRemoved(testChat, "", 0, OpenUnion(ChatBoostSourcePremium(testUser))).some
-            )
+            .copy(removedChatBoost = ChatBoostRemoved(testChat, "", 0, OpenEnum(ChatBoostSourcePremium(testUser))).some)
         )
         .unsafeRunSync()
       verifyMessageSent("onRemovedChatBoost")

@@ -221,7 +221,7 @@ object GenBackgroundTypePattern {
   lazy val shrink: Shrink[BackgroundTypePattern] = shrinkFields[BackgroundTypePattern](x =>
     List(
       field(x.document)(GenDocument.shrink)(v => x.copy(document = v)),
-      field(x.fill)(shrinkOpenUnion(GenBackgroundFill.shrink))(v => x.copy(fill = v)),
+      field(x.fill)(shrinkOpenEnum(GenBackgroundFill.shrink))(v => x.copy(fill = v)),
       field(x.isInverted)(shrinkOpt(noShrink))(v => x.copy(isInverted = v)),
       field(x.isMoving)(shrinkOpt(noShrink))(v => x.copy(isMoving = v))))
 }
@@ -240,7 +240,7 @@ object GenBackgroundTypeFill {
     case (a0, a1) => BackgroundTypeFill(fill = a0, darkThemeDimming = a1)
   }))
   lazy val shrink: Shrink[BackgroundTypeFill] = shrinkFields[BackgroundTypeFill](x =>
-    List(field(x.fill)(shrinkOpenUnion(GenBackgroundFill.shrink))(v => x.copy(fill = v))))
+    List(field(x.fill)(shrinkOpenEnum(GenBackgroundFill.shrink))(v => x.copy(fill = v))))
 }
 
 object GenBackgroundType {
@@ -1796,7 +1796,7 @@ object GenMessage {
         field(x.ephemeralMessageId)(shrinkOpt(noShrink))(v => x.copy(ephemeralMessageId = v)),
         field(x.guestQueryId)(shrinkOpt(noShrink))(v => x.copy(guestQueryId = v)),
         field(x.businessConnectionId)(shrinkOpt(noShrink))(v => x.copy(businessConnectionId = v)),
-        field(x.forwardOrigin)(shrinkOpt(shrinkOpenUnion(GenMessageOrigin.shrink)))(v => x.copy(forwardOrigin = v)),
+        field(x.forwardOrigin)(shrinkOpt(shrinkOpenEnum(GenMessageOrigin.shrink)))(v => x.copy(forwardOrigin = v)),
         field(x.isTopicMessage)(shrinkOpt(noShrink))(v => x.copy(isTopicMessage = v)),
         field(x.isAutomaticForward)(shrinkOpt(noShrink))(v => x.copy(isAutomaticForward = v)),
         field(x.replyToMessage)(shrinkOpt(GenMessage.shrink))(v => x.copy(replyToMessage = v)),
@@ -1816,7 +1816,7 @@ object GenMessage {
         field(x.authorSignature)(shrinkOpt(noShrink))(v => x.copy(authorSignature = v)),
         field(x.paidStarCount)(shrinkOpt(noShrink))(v => x.copy(paidStarCount = v)),
         field(x.text)(shrinkOpt(noShrink))(v => x.copy(text = v)),
-        field(x.entities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v => x.copy(entities = v)),
+        field(x.entities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v => x.copy(entities = v)),
         field(x.linkPreviewOptions)(shrinkOpt(GenLinkPreviewOptions.shrink))(v => x.copy(linkPreviewOptions = v)),
         field(x.suggestedPostInfo)(shrinkOpt(GenSuggestedPostInfo.shrink))(v => x.copy(suggestedPostInfo = v)),
         field(x.effectId)(shrinkOpt(noShrink))(v => x.copy(effectId = v)),
@@ -1834,8 +1834,7 @@ object GenMessage {
         field(x.voice)(shrinkOpt(GenVoice.shrink))(v => x.copy(voice = v)),
         field(x.widget)(shrinkOpt(GenWidget.shrink))(v => x.copy(widget = v)),
         field(x.caption)(shrinkOpt(noShrink))(v => x.copy(caption = v)),
-        field(x.captionEntities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v =>
-          x.copy(captionEntities = v)),
+        field(x.captionEntities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v => x.copy(captionEntities = v)),
         field(x.showCaptionAboveMedia)(shrinkOpt(noShrink))(v => x.copy(showCaptionAboveMedia = v)),
         field(x.hasMediaSpoiler)(shrinkOpt(noShrink))(v => x.copy(hasMediaSpoiler = v)),
         field(x.checklist)(shrinkOpt(GenChecklist.shrink))(v => x.copy(checklist = v)),
@@ -2232,7 +2231,7 @@ object GenOwnedGiftRegular {
       field(x.ownedGiftId)(shrinkOpt(noShrink))(v => x.copy(ownedGiftId = v)),
       field(x.senderUser)(shrinkOpt(GenUser.shrink))(v => x.copy(senderUser = v)),
       field(x.text)(shrinkOpt(noShrink))(v => x.copy(text = v)),
-      field(x.entities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v => x.copy(entities = v)),
+      field(x.entities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v => x.copy(entities = v)),
       field(x.isPrivate)(shrinkOpt(noShrink))(v => x.copy(isPrivate = v)),
       field(x.isSaved)(shrinkOpt(noShrink))(v => x.copy(isSaved = v)),
       field(x.canBeUpgraded)(shrinkOpt(noShrink))(v => x.copy(canBeUpgraded = v)),
@@ -2457,8 +2456,8 @@ object GenRichBlockDetails {
       }))
   lazy val shrink: Shrink[RichBlockDetails] = shrinkFields[RichBlockDetails](x =>
     List(
-      field(x.summary)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(summary = v)),
-      field(x.blocks)(shrinkList(shrinkOpenUnion(GenRichBlock.shrink)))(v => x.copy(blocks = v)),
+      field(x.summary)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(summary = v)),
+      field(x.blocks)(shrinkList(shrinkOpenEnum(GenRichBlock.shrink)))(v => x.copy(blocks = v)),
       field(x.isOpen)(shrinkOpt(noShrink))(v => x.copy(isOpen = v))))
 }
 
@@ -2489,8 +2488,8 @@ object GenRichBlockThinking {
   lazy val gen: Gen[RichBlockThinking] = Gen.lzy(deeper(openUnion(GenRichText.gen, "type").map { a0 =>
     RichBlockThinking(text = a0)
   }))
-  lazy val shrink: Shrink[RichBlockThinking] = shrinkFields[RichBlockThinking](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+  lazy val shrink: Shrink[RichBlockThinking] =
+    shrinkFields[RichBlockThinking](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichBlockFooter {
@@ -2499,7 +2498,7 @@ object GenRichBlockFooter {
     RichBlockFooter(text = a0)
   }))
   lazy val shrink: Shrink[RichBlockFooter] =
-    shrinkFields[RichBlockFooter](x => List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    shrinkFields[RichBlockFooter](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichBlockAnchor {
@@ -2534,8 +2533,8 @@ object GenRichBlockBlockQuotation {
     }))
   lazy val shrink: Shrink[RichBlockBlockQuotation] = shrinkFields[RichBlockBlockQuotation](x =>
     List(
-      field(x.blocks)(shrinkList(shrinkOpenUnion(GenRichBlock.shrink)))(v => x.copy(blocks = v)),
-      field(x.credit)(shrinkOpt(shrinkOpenUnion(GenRichText.shrink)))(v => x.copy(credit = v))))
+      field(x.blocks)(shrinkList(shrinkOpenEnum(GenRichBlock.shrink)))(v => x.copy(blocks = v)),
+      field(x.credit)(shrinkOpt(shrinkOpenEnum(GenRichText.shrink)))(v => x.copy(credit = v))))
 }
 
 object GenRichBlockMap {
@@ -2557,7 +2556,7 @@ object GenRichBlockSlideshow {
     }))
   lazy val shrink: Shrink[RichBlockSlideshow] = shrinkFields[RichBlockSlideshow](x =>
     List(
-      field(x.blocks)(shrinkList(shrinkOpenUnion(GenRichBlock.shrink)))(v => x.copy(blocks = v)),
+      field(x.blocks)(shrinkList(shrinkOpenEnum(GenRichBlock.shrink)))(v => x.copy(blocks = v)),
       field(x.caption)(shrinkOpt(GenRichBlockCaption.shrink))(v => x.copy(caption = v))))
 }
 
@@ -2567,7 +2566,7 @@ object GenRichBlockParagraph {
     RichBlockParagraph(text = a0)
   }))
   lazy val shrink: Shrink[RichBlockParagraph] = shrinkFields[RichBlockParagraph](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichBlockPullQuotation {
@@ -2578,8 +2577,8 @@ object GenRichBlockPullQuotation {
     }))
   lazy val shrink: Shrink[RichBlockPullQuotation] = shrinkFields[RichBlockPullQuotation](x =>
     List(
-      field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v)),
-      field(x.credit)(shrinkOpt(shrinkOpenUnion(GenRichText.shrink)))(v => x.copy(credit = v))))
+      field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v)),
+      field(x.credit)(shrinkOpt(shrinkOpenEnum(GenRichText.shrink)))(v => x.copy(credit = v))))
 }
 
 object GenRichBlockPreformatted {
@@ -2589,7 +2588,7 @@ object GenRichBlockPreformatted {
       RichBlockPreformatted(text = a0, language = a1)
     }))
   lazy val shrink: Shrink[RichBlockPreformatted] = shrinkFields[RichBlockPreformatted](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v)),
+    List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v)),
       field(x.language)(shrinkOpt(noShrink))(v => x.copy(language = v))))
 }
 
@@ -2607,7 +2606,7 @@ object GenRichBlockTable {
       field(x.isBordered)(shrinkOpt(noShrink))(v => x.copy(isBordered = v)),
       field(x.isStriped)(shrinkOpt(noShrink))(v => x.copy(isStriped = v)),
       field(x.isCompact)(shrinkOpt(noShrink))(v => x.copy(isCompact = v)),
-      field(x.caption)(shrinkOpt(shrinkOpenUnion(GenRichText.shrink)))(v => x.copy(caption = v))))
+      field(x.caption)(shrinkOpt(shrinkOpenEnum(GenRichText.shrink)))(v => x.copy(caption = v))))
 }
 
 object GenRichBlockCollage {
@@ -2618,7 +2617,7 @@ object GenRichBlockCollage {
     }))
   lazy val shrink: Shrink[RichBlockCollage] = shrinkFields[RichBlockCollage](x =>
     List(
-      field(x.blocks)(shrinkList(shrinkOpenUnion(GenRichBlock.shrink)))(v => x.copy(blocks = v)),
+      field(x.blocks)(shrinkList(shrinkOpenEnum(GenRichBlock.shrink)))(v => x.copy(blocks = v)),
       field(x.caption)(shrinkOpt(GenRichBlockCaption.shrink))(v => x.copy(caption = v))))
 }
 
@@ -2659,8 +2658,8 @@ object GenRichBlockExpandableBlockQuotation {
     }))
   lazy val shrink: Shrink[RichBlockExpandableBlockQuotation] = shrinkFields[RichBlockExpandableBlockQuotation](x =>
     List(
-      field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v)),
-      field(x.credit)(shrinkOpt(shrinkOpenUnion(GenRichText.shrink)))(v => x.copy(credit = v))))
+      field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v)),
+      field(x.credit)(shrinkOpt(shrinkOpenEnum(GenRichText.shrink)))(v => x.copy(credit = v))))
 }
 
 object GenRichBlockSectionHeading {
@@ -2669,7 +2668,7 @@ object GenRichBlockSectionHeading {
     case (a0, a1) => RichBlockSectionHeading(text = a0, size = a1)
   }))
   lazy val shrink: Shrink[RichBlockSectionHeading] = shrinkFields[RichBlockSectionHeading](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichBlockButtons {
@@ -2721,8 +2720,8 @@ object GenRichTextSubscript {
   lazy val gen: Gen[RichTextSubscript] = Gen.lzy(deeper(openUnion(GenRichText.gen, "type").map { a0 =>
     RichTextSubscript(text = a0)
   }))
-  lazy val shrink: Shrink[RichTextSubscript] = shrinkFields[RichTextSubscript](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+  lazy val shrink: Shrink[RichTextSubscript] =
+    shrinkFields[RichTextSubscript](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextPhoneNumber {
@@ -2731,7 +2730,7 @@ object GenRichTextPhoneNumber {
     case (a0, a1) => RichTextPhoneNumber(text = a0, phoneNumber = a1)
   }))
   lazy val shrink: Shrink[RichTextPhoneNumber] = shrinkFields[RichTextPhoneNumber](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextCode {
@@ -2740,7 +2739,7 @@ object GenRichTextCode {
     RichTextCode(text = a0)
   }))
   lazy val shrink: Shrink[RichTextCode] =
-    shrinkFields[RichTextCode](x => List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    shrinkFields[RichTextCode](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextAnchorLink {
@@ -2749,7 +2748,7 @@ object GenRichTextAnchorLink {
     case (a0, a1) => RichTextAnchorLink(text = a0, anchorName = a1)
   }))
   lazy val shrink: Shrink[RichTextAnchorLink] = shrinkFields[RichTextAnchorLink](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextConcat {
@@ -2758,7 +2757,7 @@ object GenRichTextConcat {
     RichTextConcat(texts = a0)
   }))
   lazy val shrink: Shrink[RichTextConcat] = shrinkFields[RichTextConcat](x =>
-    List(field(x.texts)(shrinkList(shrinkOpenUnion(GenRichText.shrink)))(v => x.copy(texts = v))))
+    List(field(x.texts)(shrinkList(shrinkOpenEnum(GenRichText.shrink)))(v => x.copy(texts = v))))
 }
 
 object GenRichTextSpoiler {
@@ -2767,7 +2766,7 @@ object GenRichTextSpoiler {
     RichTextSpoiler(text = a0)
   }))
   lazy val shrink: Shrink[RichTextSpoiler] =
-    shrinkFields[RichTextSpoiler](x => List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    shrinkFields[RichTextSpoiler](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextReference {
@@ -2775,8 +2774,8 @@ object GenRichTextReference {
   lazy val gen: Gen[RichTextReference] = Gen.lzy(deeper(Gen.zip(openUnion(GenRichText.gen, "type"), genString).map {
     case (a0, a1) => RichTextReference(text = a0, name = a1)
   }))
-  lazy val shrink: Shrink[RichTextReference] = shrinkFields[RichTextReference](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+  lazy val shrink: Shrink[RichTextReference] =
+    shrinkFields[RichTextReference](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextMention {
@@ -2785,7 +2784,7 @@ object GenRichTextMention {
     case (a0, a1) => RichTextMention(text = a0, username = a1)
   }))
   lazy val shrink: Shrink[RichTextMention] =
-    shrinkFields[RichTextMention](x => List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    shrinkFields[RichTextMention](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextUnderline {
@@ -2793,8 +2792,8 @@ object GenRichTextUnderline {
   lazy val gen: Gen[RichTextUnderline] = Gen.lzy(deeper(openUnion(GenRichText.gen, "type").map { a0 =>
     RichTextUnderline(text = a0)
   }))
-  lazy val shrink: Shrink[RichTextUnderline] = shrinkFields[RichTextUnderline](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+  lazy val shrink: Shrink[RichTextUnderline] =
+    shrinkFields[RichTextUnderline](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextUrl {
@@ -2803,7 +2802,7 @@ object GenRichTextUrl {
     case (a0, a1) => RichTextUrl(text = a0, url = a1)
   }))
   lazy val shrink: Shrink[RichTextUrl] =
-    shrinkFields[RichTextUrl](x => List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    shrinkFields[RichTextUrl](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextButton {
@@ -2821,7 +2820,7 @@ object GenRichTextBotCommand {
     case (a0, a1) => RichTextBotCommand(text = a0, botCommand = a1)
   }))
   lazy val shrink: Shrink[RichTextBotCommand] = shrinkFields[RichTextBotCommand](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextTextMention {
@@ -2830,7 +2829,7 @@ object GenRichTextTextMention {
     case (a0, a1) => RichTextTextMention(text = a0, user = a1)
   }))
   lazy val shrink: Shrink[RichTextTextMention] = shrinkFields[RichTextTextMention](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v)),
+    List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v)),
       field(x.user)(GenUser.shrink)(v => x.copy(user = v))))
 }
 
@@ -2848,7 +2847,7 @@ object GenRichTextSuperscript {
     RichTextSuperscript(text = a0)
   }))
   lazy val shrink: Shrink[RichTextSuperscript] = shrinkFields[RichTextSuperscript](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextEmailAddress {
@@ -2857,7 +2856,7 @@ object GenRichTextEmailAddress {
     case (a0, a1) => RichTextEmailAddress(text = a0, emailAddress = a1)
   }))
   lazy val shrink: Shrink[RichTextEmailAddress] = shrinkFields[RichTextEmailAddress](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextMarked {
@@ -2866,7 +2865,7 @@ object GenRichTextMarked {
     RichTextMarked(text = a0)
   }))
   lazy val shrink: Shrink[RichTextMarked] =
-    shrinkFields[RichTextMarked](x => List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    shrinkFields[RichTextMarked](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextPlain {
@@ -2881,7 +2880,7 @@ object GenRichTextItalic {
     RichTextItalic(text = a0)
   }))
   lazy val shrink: Shrink[RichTextItalic] =
-    shrinkFields[RichTextItalic](x => List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    shrinkFields[RichTextItalic](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextBankCardNumber {
@@ -2891,7 +2890,7 @@ object GenRichTextBankCardNumber {
       RichTextBankCardNumber(text = a0, bankCardNumber = a1)
     }))
   lazy val shrink: Shrink[RichTextBankCardNumber] = shrinkFields[RichTextBankCardNumber](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextStrikethrough {
@@ -2900,7 +2899,7 @@ object GenRichTextStrikethrough {
     RichTextStrikethrough(text = a0)
   }))
   lazy val shrink: Shrink[RichTextStrikethrough] = shrinkFields[RichTextStrikethrough](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextCustomEmoji {
@@ -2923,7 +2922,7 @@ object GenRichTextHashtag {
     case (a0, a1) => RichTextHashtag(text = a0, hashtag = a1)
   }))
   lazy val shrink: Shrink[RichTextHashtag] =
-    shrinkFields[RichTextHashtag](x => List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    shrinkFields[RichTextHashtag](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextDateTime {
@@ -2933,7 +2932,7 @@ object GenRichTextDateTime {
       RichTextDateTime(text = a0, unixTime = a1, dateTimeFormat = a2)
     }))
   lazy val shrink: Shrink[RichTextDateTime] =
-    shrinkFields[RichTextDateTime](x => List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    shrinkFields[RichTextDateTime](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextCashtag {
@@ -2942,7 +2941,7 @@ object GenRichTextCashtag {
     case (a0, a1) => RichTextCashtag(text = a0, cashtag = a1)
   }))
   lazy val shrink: Shrink[RichTextCashtag] =
-    shrinkFields[RichTextCashtag](x => List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    shrinkFields[RichTextCashtag](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextBold {
@@ -2951,7 +2950,7 @@ object GenRichTextBold {
     RichTextBold(text = a0)
   }))
   lazy val shrink: Shrink[RichTextBold] =
-    shrinkFields[RichTextBold](x => List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    shrinkFields[RichTextBold](x => List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextTonAddress {
@@ -2960,7 +2959,7 @@ object GenRichTextTonAddress {
     case (a0, a1) => RichTextTonAddress(text = a0, address = a1)
   }))
   lazy val shrink: Shrink[RichTextTonAddress] = shrinkFields[RichTextTonAddress](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichTextReferenceLink {
@@ -2969,7 +2968,7 @@ object GenRichTextReferenceLink {
     case (a0, a1) => RichTextReferenceLink(text = a0, referenceName = a1)
   }))
   lazy val shrink: Shrink[RichTextReferenceLink] = shrinkFields[RichTextReferenceLink](x =>
-    List(field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v))))
+    List(field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v))))
 }
 
 object GenRichText {
@@ -3098,7 +3097,7 @@ object GenTransactionPartnerUser {
       field(x.affiliate)(shrinkOpt(GenAffiliateInfo.shrink))(v => x.copy(affiliate = v)),
       field(x.invoicePayload)(shrinkOpt(noShrink))(v => x.copy(invoicePayload = v)),
       field(x.subscriptionPeriod)(shrinkOpt(noShrink))(v => x.copy(subscriptionPeriod = v)),
-      field(x.paidMedia)(shrinkList(shrinkOpenUnion(GenPaidMedia.shrink)))(v => x.copy(paidMedia = v)),
+      field(x.paidMedia)(shrinkList(shrinkOpenEnum(GenPaidMedia.shrink)))(v => x.copy(paidMedia = v)),
       field(x.paidMediaPayload)(shrinkOpt(noShrink))(v => x.copy(paidMediaPayload = v)),
       field(x.gift)(shrinkOpt(GenGift.shrink))(v => x.copy(gift = v)),
       field(x.premiumSubscriptionDuration)(shrinkOpt(noShrink))(v => x.copy(premiumSubscriptionDuration = v))))
@@ -3463,7 +3462,7 @@ object GenChatBackground {
     ChatBackground(`type` = a0)
   }))
   lazy val shrink: Shrink[ChatBackground] = shrinkFields[ChatBackground](x =>
-    List(field(x.`type`)(shrinkOpenUnion(GenBackgroundType.shrink))(v => x.copy(`type` = v))))
+    List(field(x.`type`)(shrinkOpenEnum(GenBackgroundType.shrink))(v => x.copy(`type` = v))))
 }
 
 object GenChatBoost {
@@ -3473,7 +3472,7 @@ object GenChatBoost {
       case (a0, a1, a2, a3) => ChatBoost(boostId = a0, addDate = a1, expirationDate = a2, source = a3)
     }))
   lazy val shrink: Shrink[ChatBoost] = shrinkFields[ChatBoost](x =>
-    List(field(x.source)(shrinkOpenUnion(GenChatBoostSource.shrink))(v => x.copy(source = v))))
+    List(field(x.source)(shrinkOpenEnum(GenChatBoostSource.shrink))(v => x.copy(source = v))))
 }
 
 object GenChatBoostAdded {
@@ -3490,7 +3489,7 @@ object GenChatBoostRemoved {
     }))
   lazy val shrink: Shrink[ChatBoostRemoved] = shrinkFields[ChatBoostRemoved](x =>
     List(field(x.chat)(GenChat.shrink)(v => x.copy(chat = v)),
-      field(x.source)(shrinkOpenUnion(GenChatBoostSource.shrink))(v => x.copy(source = v))))
+      field(x.source)(shrinkOpenEnum(GenChatBoostSource.shrink))(v => x.copy(source = v))))
 }
 
 object GenChatBoostUpdated {
@@ -3592,7 +3591,7 @@ object GenChatFullInfo {
       field(x.guardBot)(shrinkOpt(GenUser.shrink))(v => x.copy(guardBot = v)),
       field(x.community)(shrinkOpt(noShrink))(v => x.copy(community = v)),
       field(x.tonWalletCard)(shrinkOpt(GenTonWalletCard.shrink))(v => x.copy(tonWalletCard = v)),
-      field(x.shareTheme)(shrinkOpt(shrinkOpenUnion(GenChatShareTheme.shrink)))(v => x.copy(shareTheme = v))))
+      field(x.shareTheme)(shrinkOpt(shrinkOpenEnum(GenChatShareTheme.shrink)))(v => x.copy(shareTheme = v))))
 }
 
 object GenChatInviteLink {
@@ -3655,8 +3654,8 @@ object GenChatMemberUpdated {
   lazy val shrink: Shrink[ChatMemberUpdated] = shrinkFields[ChatMemberUpdated](x =>
     List(
       field(x.chat)(GenChat.shrink)(v => x.copy(chat = v)), field(x.from)(GenUser.shrink)(v => x.copy(from = v)),
-      field(x.oldChatMember)(shrinkOpenUnion(GenChatMember.shrink))(v => x.copy(oldChatMember = v)),
-      field(x.newChatMember)(shrinkOpenUnion(GenChatMember.shrink))(v => x.copy(newChatMember = v)),
+      field(x.oldChatMember)(shrinkOpenEnum(GenChatMember.shrink))(v => x.copy(oldChatMember = v)),
+      field(x.newChatMember)(shrinkOpenEnum(GenChatMember.shrink))(v => x.copy(newChatMember = v)),
       field(x.inviteLink)(shrinkOpt(GenChatInviteLink.shrink))(v => x.copy(inviteLink = v)),
       field(x.viaJoinRequest)(shrinkOpt(noShrink))(v => x.copy(viaJoinRequest = v)),
       field(x.viaChatFolderInviteLink)(shrinkOpt(noShrink))(v => x.copy(viaChatFolderInviteLink = v))))
@@ -3759,7 +3758,7 @@ object GenChecklist {
         }))
   lazy val shrink: Shrink[Checklist] = shrinkFields[Checklist](x =>
     List(
-      field(x.titleEntities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v => x.copy(titleEntities = v)),
+      field(x.titleEntities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v => x.copy(titleEntities = v)),
       field(x.tasks)(shrinkList(GenChecklistTask.shrink))(v => x.copy(tasks = v)),
       field(x.othersCanAddTasks)(shrinkOpt(noShrink))(v => x.copy(othersCanAddTasks = v)),
       field(x.othersCanMarkTasksAsDone)(shrinkOpt(noShrink))(v => x.copy(othersCanMarkTasksAsDone = v))))
@@ -3776,7 +3775,7 @@ object GenChecklistTask {
         }))
   lazy val shrink: Shrink[ChecklistTask] = shrinkFields[ChecklistTask](x =>
     List(
-      field(x.textEntities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v => x.copy(textEntities = v)),
+      field(x.textEntities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v => x.copy(textEntities = v)),
       field(x.completedByUser)(shrinkOpt(GenUser.shrink))(v => x.copy(completedByUser = v)),
       field(x.completedByChat)(shrinkOpt(GenChat.shrink))(v => x.copy(completedByChat = v)),
       field(x.completionDate)(shrinkOpt(noShrink))(v => x.copy(completionDate = v))))
@@ -3981,7 +3980,7 @@ object GenExternalReplyInfo {
         }))
   lazy val shrink: Shrink[ExternalReplyInfo] = shrinkFields[ExternalReplyInfo](x =>
     List(
-      field(x.origin)(shrinkOpenUnion(GenMessageOrigin.shrink))(v => x.copy(origin = v)),
+      field(x.origin)(shrinkOpenEnum(GenMessageOrigin.shrink))(v => x.copy(origin = v)),
       field(x.chat)(shrinkOpt(GenChat.shrink))(v => x.copy(chat = v)),
       field(x.messageId)(shrinkOpt(noShrink))(v => x.copy(messageId = v)),
       field(x.linkPreviewOptions)(shrinkOpt(GenLinkPreviewOptions.shrink))(v => x.copy(linkPreviewOptions = v)),
@@ -4079,7 +4078,7 @@ object GenGame {
     List(
       field(x.photo)(shrinkList(GenPhotoSize.shrink))(v => x.copy(photo = v)),
       field(x.text)(shrinkOpt(noShrink))(v => x.copy(text = v)),
-      field(x.textEntities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v => x.copy(textEntities = v)),
+      field(x.textEntities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v => x.copy(textEntities = v)),
       field(x.animation)(shrinkOpt(GenAnimation.shrink))(v => x.copy(animation = v))))
 }
 
@@ -4159,7 +4158,7 @@ object GenGiftInfo {
       field(x.isUpgradeSeparate)(shrinkOpt(noShrink))(v => x.copy(isUpgradeSeparate = v)),
       field(x.canBeUpgraded)(shrinkOpt(noShrink))(v => x.copy(canBeUpgraded = v)),
       field(x.text)(shrinkOpt(noShrink))(v => x.copy(text = v)),
-      field(x.entities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v => x.copy(entities = v)),
+      field(x.entities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v => x.copy(entities = v)),
       field(x.isPrivate)(shrinkOpt(noShrink))(v => x.copy(isPrivate = v)),
       field(x.uniqueGiftNumber)(shrinkOpt(noShrink))(v => x.copy(uniqueGiftNumber = v))))
 }
@@ -4683,7 +4682,7 @@ object GenOwnedGifts {
     }))
   lazy val shrink: Shrink[OwnedGifts] = shrinkFields[OwnedGifts](x =>
     List(
-      field(x.gifts)(shrinkList(shrinkOpenUnion(GenOwnedGift.shrink)))(v => x.copy(gifts = v)),
+      field(x.gifts)(shrinkList(shrinkOpenEnum(GenOwnedGift.shrink)))(v => x.copy(gifts = v)),
       field(x.nextOffset)(shrinkOpt(noShrink))(v => x.copy(nextOffset = v))))
 }
 
@@ -4693,7 +4692,7 @@ object GenPaidMediaInfo {
     case (a0, a1) => PaidMediaInfo(starCount = a0, paidMedia = a1)
   }))
   lazy val shrink: Shrink[PaidMediaInfo] = shrinkFields[PaidMediaInfo](x =>
-    List(field(x.paidMedia)(shrinkList(shrinkOpenUnion(GenPaidMedia.shrink)))(v => x.copy(paidMedia = v))))
+    List(field(x.paidMedia)(shrinkList(shrinkOpenEnum(GenPaidMedia.shrink)))(v => x.copy(paidMedia = v))))
 }
 
 object GenPaidMediaPurchased {
@@ -4766,18 +4765,18 @@ object GenPoll {
         }))
   lazy val shrink: Shrink[Poll] = shrinkFields[Poll](x =>
     List(
-      field(x.questionEntities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v =>
-        x.copy(questionEntities = v)), field(x.options)(shrinkList(GenPollOption.shrink))(v => x.copy(options = v)),
+      field(x.questionEntities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v => x.copy(questionEntities = v)),
+      field(x.options)(shrinkList(GenPollOption.shrink))(v => x.copy(options = v)),
       field(x.countryCodes)(shrinkList(noShrink))(v => x.copy(countryCodes = v)),
       field(x.correctOptionIds)(shrinkList(noShrink))(v => x.copy(correctOptionIds = v)),
       field(x.explanation)(shrinkOpt(noShrink))(v => x.copy(explanation = v)),
-      field(x.explanationEntities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v =>
+      field(x.explanationEntities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v =>
         x.copy(explanationEntities = v)),
       field(x.explanationMedia)(shrinkOpt(GenPollMedia.shrink))(v => x.copy(explanationMedia = v)),
       field(x.openPeriod)(shrinkOpt(noShrink))(v => x.copy(openPeriod = v)),
       field(x.closeDate)(shrinkOpt(noShrink))(v => x.copy(closeDate = v)),
       field(x.description)(shrinkOpt(noShrink))(v => x.copy(description = v)),
-      field(x.descriptionEntities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v =>
+      field(x.descriptionEntities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v =>
         x.copy(descriptionEntities = v)), field(x.media)(shrinkOpt(GenPollMedia.shrink))(v => x.copy(media = v))))
 }
 
@@ -4832,7 +4831,7 @@ object GenPollOption {
         }))
   lazy val shrink: Shrink[PollOption] = shrinkFields[PollOption](x =>
     List(
-      field(x.textEntities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v => x.copy(textEntities = v)),
+      field(x.textEntities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v => x.copy(textEntities = v)),
       field(x.media)(shrinkOpt(GenPollMedia.shrink))(v => x.copy(media = v)),
       field(x.addedByUser)(shrinkOpt(GenUser.shrink))(v => x.copy(addedByUser = v)),
       field(x.addedByChat)(shrinkOpt(GenChat.shrink))(v => x.copy(addedByChat = v)),
@@ -4849,7 +4848,7 @@ object GenPollOptionAdded {
   lazy val shrink: Shrink[PollOptionAdded] = shrinkFields[PollOptionAdded](x =>
     List(
       field(x.pollMessage)(shrinkOpt(GenMaybeInaccessibleMessage.shrink))(v => x.copy(pollMessage = v)),
-      field(x.optionTextEntities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v =>
+      field(x.optionTextEntities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v =>
         x.copy(optionTextEntities = v))))
 }
 
@@ -4863,7 +4862,7 @@ object GenPollOptionDeleted {
   lazy val shrink: Shrink[PollOptionDeleted] = shrinkFields[PollOptionDeleted](x =>
     List(
       field(x.pollMessage)(shrinkOpt(GenMaybeInaccessibleMessage.shrink))(v => x.copy(pollMessage = v)),
-      field(x.optionTextEntities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v =>
+      field(x.optionTextEntities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v =>
         x.copy(optionTextEntities = v))))
 }
 
@@ -4971,8 +4970,8 @@ object GenRichBlockCaption {
     }))
   lazy val shrink: Shrink[RichBlockCaption] = shrinkFields[RichBlockCaption](x =>
     List(
-      field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v)),
-      field(x.credit)(shrinkOpt(shrinkOpenUnion(GenRichText.shrink)))(v => x.copy(credit = v))))
+      field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v)),
+      field(x.credit)(shrinkOpt(shrinkOpenEnum(GenRichText.shrink)))(v => x.copy(credit = v))))
 }
 
 object GenRichBlockListItem {
@@ -4985,7 +4984,7 @@ object GenRichBlockListItem {
         }))
   lazy val shrink: Shrink[RichBlockListItem] = shrinkFields[RichBlockListItem](x =>
     List(
-      field(x.blocks)(shrinkList(shrinkOpenUnion(GenRichBlock.shrink)))(v => x.copy(blocks = v)),
+      field(x.blocks)(shrinkList(shrinkOpenEnum(GenRichBlock.shrink)))(v => x.copy(blocks = v)),
       field(x.hasCheckbox)(shrinkOpt(noShrink))(v => x.copy(hasCheckbox = v)),
       field(x.isChecked)(shrinkOpt(noShrink))(v => x.copy(isChecked = v)),
       field(x.value)(shrinkOpt(noShrink))(v => x.copy(value = v)),
@@ -5002,7 +5001,7 @@ object GenRichBlockTableCell {
         }))
   lazy val shrink: Shrink[RichBlockTableCell] = shrinkFields[RichBlockTableCell](x =>
     List(
-      field(x.text)(shrinkOpt(shrinkOpenUnion(GenRichText.shrink)))(v => x.copy(text = v)),
+      field(x.text)(shrinkOpt(shrinkOpenEnum(GenRichText.shrink)))(v => x.copy(text = v)),
       field(x.isHeader)(shrinkOpt(noShrink))(v => x.copy(isHeader = v)),
       field(x.colspan)(shrinkOpt(noShrink))(v => x.copy(colspan = v)),
       field(x.rowspan)(shrinkOpt(noShrink))(v => x.copy(rowspan = v))))
@@ -5015,7 +5014,7 @@ object GenRichMessage {
       RichMessage(blocks = a0, isRtl = a1)
     }))
   lazy val shrink: Shrink[RichMessage] = shrinkFields[RichMessage](x =>
-    List(field(x.blocks)(shrinkList(shrinkOpenUnion(GenRichBlock.shrink)))(v => x.copy(blocks = v)),
+    List(field(x.blocks)(shrinkList(shrinkOpenEnum(GenRichBlock.shrink)))(v => x.copy(blocks = v)),
       field(x.isRtl)(shrinkOpt(noShrink))(v => x.copy(isRtl = v))))
 }
 
@@ -5033,7 +5032,7 @@ object GenRichMessageButton {
         }))
   lazy val shrink: Shrink[RichMessageButton] = shrinkFields[RichMessageButton](x =>
     List(
-      field(x.text)(shrinkOpenUnion(GenRichText.shrink))(v => x.copy(text = v)),
+      field(x.text)(shrinkOpenEnum(GenRichText.shrink))(v => x.copy(text = v)),
       field(x.style)(shrinkOpt(noShrink))(v => x.copy(style = v)),
       field(x.url)(shrinkOpt(noShrink))(v => x.copy(url = v)),
       field(x.callbackData)(shrinkOpt(noShrink))(v => x.copy(callbackData = v)),
@@ -5083,7 +5082,7 @@ object GenSharedWidgetQuery {
     }))
   lazy val shrink: Shrink[SharedWidgetQuery] = shrinkFields[SharedWidgetQuery](x =>
     List(field(x.from)(GenUser.shrink)(v => x.copy(from = v)),
-      field(x.`type`)(shrinkOpenUnion(GenWidgetQueryType.shrink))(v => x.copy(`type` = v))))
+      field(x.`type`)(shrinkOpenEnum(GenWidgetQueryType.shrink))(v => x.copy(`type` = v))))
 }
 
 object GenShippingAddress {
@@ -5135,8 +5134,8 @@ object GenStarTransaction {
   lazy val shrink: Shrink[StarTransaction] = shrinkFields[StarTransaction](x =>
     List(
       field(x.nanostarAmount)(shrinkOpt(noShrink))(v => x.copy(nanostarAmount = v)),
-      field(x.source)(shrinkOpt(shrinkOpenUnion(GenTransactionPartner.shrink)))(v => x.copy(source = v)),
-      field(x.receiver)(shrinkOpt(shrinkOpenUnion(GenTransactionPartner.shrink)))(v => x.copy(receiver = v))))
+      field(x.source)(shrinkOpt(shrinkOpenEnum(GenTransactionPartner.shrink)))(v => x.copy(source = v)),
+      field(x.receiver)(shrinkOpt(shrinkOpenEnum(GenTransactionPartner.shrink)))(v => x.copy(receiver = v))))
 }
 
 object GenStarTransactions {
@@ -5331,8 +5330,8 @@ object GenTextQuote {
         }))
   lazy val shrink: Shrink[TextQuote] = shrinkFields[TextQuote](x =>
     List(
-      field(x.entities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v => x.copy(entities = v)),
-      field(x.richTexts)(shrinkList(shrinkOpenUnion(GenRichText.shrink)))(v => x.copy(richTexts = v)),
+      field(x.entities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v => x.copy(entities = v)),
+      field(x.richTexts)(shrinkList(shrinkOpenEnum(GenRichText.shrink)))(v => x.copy(richTexts = v)),
       field(x.isManual)(shrinkOpt(noShrink))(v => x.copy(isManual = v))))
 }
 
@@ -5459,7 +5458,7 @@ object GenUniqueGiftInfo {
     List(
       field(x.gift)(GenUniqueGift.shrink)(v => x.copy(gift = v)),
       field(x.text)(shrinkOpt(noShrink))(v => x.copy(text = v)),
-      field(x.entities)(shrinkList(shrinkOpenUnion(GenMessageEntity.shrink)))(v => x.copy(entities = v)),
+      field(x.entities)(shrinkList(shrinkOpenEnum(GenMessageEntity.shrink)))(v => x.copy(entities = v)),
       field(x.isPrivate)(shrinkOpt(noShrink))(v => x.copy(isPrivate = v)),
       field(x.lastResaleCurrency)(shrinkOpt(noShrink))(v => x.copy(lastResaleCurrency = v)),
       field(x.lastResaleAmount)(shrinkOpt(noShrink))(v => x.copy(lastResaleAmount = v)),
@@ -5789,7 +5788,7 @@ object GenWidgetQuery {
   lazy val shrink: Shrink[WidgetQuery] = shrinkFields[WidgetQuery](x =>
     List(
       field(x.from)(GenUser.shrink)(v => x.copy(from = v)),
-      field(x.`type`)(shrinkOpenUnion(GenWidgetQueryType.shrink))(v => x.copy(`type` = v)),
+      field(x.`type`)(shrinkOpenEnum(GenWidgetQueryType.shrink))(v => x.copy(`type` = v)),
       field(x.chat)(shrinkOpt(GenChat.shrink))(v => x.copy(chat = v)),
       field(x.messageId)(shrinkOpt(noShrink))(v => x.copy(messageId = v)),
       field(x.inlineMessageId)(shrinkOpt(noShrink))(v => x.copy(inlineMessageId = v)),

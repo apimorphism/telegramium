@@ -10,7 +10,7 @@ import com.dimafeng.testcontainers.MockServerContainer
 import io.circe.Json
 import io.circe.parser.parse
 import io.circe.syntax.*
-import iozhik.OpenUnion
+import iozhik.OpenEnum
 import org.http4s.Request
 import org.http4s.blaze.client.BlazeClientBuilder
 import org.http4s.circe.*
@@ -86,8 +86,8 @@ class WebhookBotISpec
       testChat,
       testUser,
       0,
-      OpenUnion(ChatMemberMember(testUser)),
-      OpenUnion(ChatMemberMember(testUser))
+      OpenEnum(ChatMemberMember(testUser)),
+      OpenEnum(ChatMemberMember(testUser))
     )
 
   private val testChatJoinRequest =
@@ -429,7 +429,7 @@ class WebhookBotISpec
             id = "1",
             from = testUser,
             chatInstance = "1",
-            `type` = OpenUnion(WidgetQueryTypeData()),
+            `type` = OpenEnum(WidgetQueryTypeData()),
             data = "test"
           ).some
         ),
@@ -446,7 +446,7 @@ class WebhookBotISpec
           SharedWidgetQuery(
             id = "1",
             from = testUser,
-            `type` = OpenUnion(WidgetQueryTypeData()),
+            `type` = OpenEnum(WidgetQueryTypeData()),
             data = "test",
             widgetId = "1"
           ).some
@@ -482,7 +482,7 @@ class WebhookBotISpec
         .respond(sendMessageResponse)
       verifyResult(
         testUpdate.copy(chatBoost =
-          ChatBoostUpdated(testChat, ChatBoost("", 0, 0, OpenUnion(ChatBoostSourcePremium(testUser)))).some
+          ChatBoostUpdated(testChat, ChatBoost("", 0, 0, OpenEnum(ChatBoostSourcePremium(testUser)))).some
         ),
         "onChatBoostReply"
       )
@@ -494,7 +494,7 @@ class WebhookBotISpec
         .respond(sendMessageResponse)
       verifyResult(
         testUpdate.copy(removedChatBoost =
-          ChatBoostRemoved(testChat, "", 0, OpenUnion(ChatBoostSourcePremium(testUser))).some
+          ChatBoostRemoved(testChat, "", 0, OpenEnum(ChatBoostSourcePremium(testUser))).some
         ),
         "onRemovedChatBoostReply"
       )

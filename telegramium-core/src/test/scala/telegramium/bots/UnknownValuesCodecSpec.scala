@@ -3,7 +3,7 @@ package telegramium.bots
 import io.circe.Json
 import io.circe.parser.parse
 import io.circe.syntax._
-import iozhik.OpenUnion
+import iozhik.OpenEnum
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import telegramium.bots.CirceImplicits._
@@ -15,15 +15,15 @@ class UnknownValuesCodecSpec extends AnyFlatSpec with Matchers {
 
   private def json(s: String): Json = parse(s).fold(e => fail(s"bad JSON in the test: $e"), j => j)
 
-  private def entity(s: String) = json(s).as[OpenUnion[MessageEntity]]
+  private def entity(s: String) = json(s).as[OpenEnum[MessageEntity]]
 
   "An open union" should "decode a known tag as Known" in {
-    entity("""{"type": "bold", "offset": 0, "length": 4}""") shouldBe Right(OpenUnion.Known(BoldMessageEntity(0, 4)))
+    entity("""{"type": "bold", "offset": 0, "length": 4}""") shouldBe Right(OpenEnum.Known(BoldMessageEntity(0, 4)))
   }
 
   it should "decode a tag it doesn't know as Unknown, with the whole object" in {
     val raw = json("""{"type": "future_entity", "offset": 0, "length": 4, "future_field": [1, {"a": null}]}""")
-    raw.as[OpenUnion[MessageEntity]] shouldBe Right(OpenUnion.Unknown("future_entity", raw))
+    raw.as[OpenEnum[MessageEntity]] shouldBe Right(OpenEnum.Unknown("future_entity")(raw))
   }
 
   it should "fail on a known tag whose object is malformed, not give an Unknown value" in {
@@ -47,24 +47,35 @@ class UnknownValuesCodecSpec extends AnyFlatSpec with Matchers {
 
   it should "drop a field it doesn't know from a known variant" in {
     val decoded = entity("""{"type": "bold", "offset": 0, "length": 4, "future_field": true}""")
-    decoded shouldBe Right(OpenUnion.Known(BoldMessageEntity(0, 4)))
+    decoded shouldBe Right(OpenEnum.Known(BoldMessageEntity(0, 4)))
     decoded.map(_.asJson) shouldBe Right(json("""{"type": "bold", "offset": 0, "length": 4}"""))
   }
 
   it should "encode an Unknown value as its JSON, whatever that holds" in {
     val raw = json("""{"type": "future_entity", "nested": {"type": "bold", "list": [1.50, -0.0, "x"]}, "n": null}""")
-    (OpenUnion.Unknown("future_entity", raw): OpenUnion[MessageEntity]).asJson.noSpaces shouldBe raw.noSpaces
+    (OpenEnum.Unknown("future_entity")(raw): OpenEnum[MessageEntity]).asJson.noSpaces shouldBe raw.noSpaces
+  }
+
+  it should "be matched by its tag alone, and equal another only with the same JSON" in {
+    val raw = json("""{"type": "future_entity", "offset": 0}""")
+    (OpenEnum.Unknown("future_entity")(raw): OpenEnum[MessageEntity]) match {
+      case OpenEnum.Known(_)     => fail("decoded as Known")
+      case OpenEnum.Unknown(tag) => tag shouldBe "future_entity"
+    }
+    OpenEnum.Unknown("future_entity")(raw) should not be OpenEnum.Unknown("future_entity")(
+      json("""{"type": "future_entity"}""")
+    )
   }
 
   "A rich text" should "fail on a known tag whose object is malformed, nested ones too" in {
-    json("""{"type": "bold"}""").as[OpenUnion[RichText]].isLeft shouldBe true
-    json("""{"type": "bold", "text": {"type": "italic"}}""").as[OpenUnion[RichText]].isLeft shouldBe true
-    json("""["plain", {"type": "url", "text": "link"}]""").as[OpenUnion[RichText]].isLeft shouldBe true
+    json("""{"type": "bold"}""").as[OpenEnum[RichText]].isLeft shouldBe true
+    json("""{"type": "bold", "text": {"type": "italic"}}""").as[OpenEnum[RichText]].isLeft shouldBe true
+    json("""["plain", {"type": "url", "text": "link"}]""").as[OpenEnum[RichText]].isLeft shouldBe true
   }
 
   it should "fail on JSON that is no rich text at all" in {
-    json("5").as[OpenUnion[RichText]].isLeft shouldBe true
-    json("""{"text": "no tag"}""").as[OpenUnion[RichText]].isLeft shouldBe true
-    json("""{"type": 5, "text": "hi"}""").as[OpenUnion[RichText]].isLeft shouldBe true
+    json("5").as[OpenEnum[RichText]].isLeft shouldBe true
+    json("""{"text": "no tag"}""").as[OpenEnum[RichText]].isLeft shouldBe true
+    json("""{"type": 5, "text": "hi"}""").as[OpenEnum[RichText]].isLeft shouldBe true
   }
 }
