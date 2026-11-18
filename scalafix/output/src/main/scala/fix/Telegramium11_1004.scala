@@ -23,6 +23,7 @@ object Telegramium11_1004:
   val venue               = Methods.sendVenue(chatId = Some(ChatIntId(1)), latitude = 1f, longitude = 2f, title = "title", address = "address")
   val unrelated           = Other.sendMessage(1L, "hi")
   val notMoved            = Methods.answerCallbackQuery("id", Some("text"))
+  val areaPosition        = AreaPosition(1f, 2f, 3f, 4f, 0f, 0f)
 
   def tag(e: OpenEnum[MessageEntity]): String = e match
     case OpenEnum.Unknown(tag, _) => tag
