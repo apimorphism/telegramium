@@ -78,4 +78,17 @@ class UnknownValuesCodecSpec extends AnyFlatSpec with Matchers {
     quote.asJson.hcursor.get[List[Json]]("quote_entities") shouldBe
       Right(List(json("""{"type": "bold", "offset": 0, "length": 5}"""), unknown))
   }
+
+  "An OpenEnum" should "compare with a plain value through equalsKnown, which takes only the wrapped type" in {
+    val entities: List[OpenEnum[MessageEntity]] =
+      List(OpenEnum(BoldMessageEntity(0, 4)), OpenEnum.Unknown("future_entity", json("""{"type": "future_entity"}""")))
+    entities.map(_.equalsKnown(BoldMessageEntity(0, 4))) shouldBe List(true, false)
+    entities.exists(_.equalsKnown(ItalicMessageEntity(0, 4))) shouldBe false
+    assertTypeError("""entities.head.equalsKnown("bold")""")
+  }
+
+  "An Unknown value" should "print on one line, with its JSON" in {
+    OpenEnum.Unknown("future_entity", json("""{"type": "future_entity", "n": [1, 2]}""")).toString shouldBe
+      """Unknown(future_entity,{"type":"future_entity","n":[1,2]})"""
+  }
 }

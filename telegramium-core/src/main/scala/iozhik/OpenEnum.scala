@@ -15,7 +15,10 @@ object OpenEnum {
   /** A value this version doesn't know: the enum's string or the object's type tag, and the JSON it was decoded from,
     * which it encodes back to.
     */
-  final case class Unknown(value: String, raw: Json) extends OpenEnum[Nothing]
+  final case class Unknown(value: String, raw: Json) extends OpenEnum[Nothing] {
+    // on one line: Json's own toString spreads it over many, which logs badly
+    override def toString: String = s"Unknown($value,${raw.noSpaces})"
+  }
 
   def apply[T](value: T): OpenEnum[T] = Known(value)
 
@@ -27,6 +30,15 @@ object OpenEnum {
   implicit def encoder[T: Encoder]: Encoder[OpenEnum[T]] = {
     case Known(value)    => Encoder[T].apply(value)
     case Unknown(_, raw) => raw
+  }
+
+  /** `==` takes anything, so the lift doesn't apply to it: `entity == BoldMessageEntity(0, 4)` is always false, and
+    * Scala 3 doesn't warn. `entity.equalsKnown(BoldMessageEntity(0, 4))` compares with the Known value, and only takes
+    * a value of the wrapped type. The evidence pins that type: with `value: T`, Scala 3 widens `T` to fit the argument,
+    * as OpenEnum is covariant, and takes any value.
+    */
+  implicit final class OpenEnumOps[T](private val e: OpenEnum[T]) extends AnyVal {
+    def equalsKnown[U](value: U)(implicit ev: U <:< T): Boolean = e == Known(value)
   }
 
 }
