@@ -124,9 +124,9 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     }
   }
 
-  // #723: a bot quotes what it received. The parts it knows go into the reply, and what they hold that this version
-  // doesn't know goes back as Telegram sent it, however deep it sits.
-  "a quoted rich text goes back as Telegram sent it, unknown parts nested in it included" in {
+  // #723: a bot quotes what it received. Telegram wants the quoted texts back one for each, nested as received, so
+  // they go back as Telegram sent them: unknown ones too, at the top or however deep.
+  "a quoted rich text goes back as Telegram sent it, unknown parts included" in {
     val update   = future.find(_.getName == "unknown_value-003.json").map(Fixtures.read).getOrElse(fail("no fixture"))
     val received = update.hcursor.downField("message").downField("quote").downField("rich_texts").as[List[Json]]
     val quote    = decodeFuture("unknown_value-003.json").message.flatMap(_.quote).getOrElse(fail("no quote"))
@@ -135,16 +135,25 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
       case iozhik.OpenEnum.Unknown(tag, _) => tag
     } shouldBe List("known", "future_block")
 
-    val known = quote.richTexts.collect { case iozhik.OpenEnum.Known(richText) => richText }
-    val reply = methods.sendMessage(
-      text = "",
-      chatId = Some(ChatIntId(0)),
-      replyParameters = Some(ReplyParameters(messageId = Some(1), quoteRichTexts = known))
-    )
-    reply.payload.json.hcursor.downField("reply_parameters").downField("quote_rich_texts").as[List[Json]] shouldBe
-      received.map(_.take(1))
-    // the part this version doesn't know is still there to read
-    quote.richTexts.lastOption.map(_.asJson) shouldBe received.toOption.flatMap(_.lastOption)
+    def sentQuote(quoteRichTexts: List[iozhik.OpenEnum[RichText]]) =
+      methods
+        .sendMessage(
+          text = "",
+          chatId = Some(ChatIntId(0)),
+          replyParameters = Some(ReplyParameters(messageId = Some(1), quoteRichTexts = quoteRichTexts))
+        )
+        .payload
+        .json
+        .hcursor
+        .downField("reply_parameters")
+        .downField("quote_rich_texts")
+        .as[List[Json]]
+    sentQuote(quote.richTexts) shouldBe received
+  }
+
+  "a quote a bot writes takes plain rich texts" in {
+    ReplyParameters(quoteRichTexts = List(RichTextPlain("a"), RichTextBold(RichTextPlain("b")))).quoteRichTexts shouldBe
+      List(iozhik.OpenEnum.Known(RichTextPlain("a")), iozhik.OpenEnum.Known(RichTextBold(RichTextPlain("b"))))
   }
 
   "unknown fields nested inside known objects leave the known ones intact" in {

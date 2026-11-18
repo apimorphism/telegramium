@@ -104,7 +104,7 @@ msg.entities.foreach {
 }
 ```
 
-What a bot sends is not wrapped: a Method's arguments take the plain type, as in `entities: List[MessageEntity]`. So an unknown value can't be sent on its own.
+What a bot sends is not wrapped: a Method's arguments take the plain type, as in `entities: List[MessageEntity]`. So an unknown value can't be sent on its own. The exception is `ReplyParameters.quoteRichTexts`, a `List[OpenEnum[RichText]]`: Telegram wants a quote's rich texts back as they were received, so a bot passes the received ones as they are, unknown ones included. A list the bot writes takes plain values: `quoteRichTexts = List(RichTextPlain("hi"))`.
 
 Only a type tag this version doesn't know gives an `Unknown`. A value of a known type that is malformed, such as a `bold` entity without its `offset`, still fails to decode.
 
@@ -174,6 +174,7 @@ Please, note, that this versioning scheme is started from version `1.48.0`.
 * Pass optional arguments by name: `editMessageReplyMarkup(chatId = Some(ChatIntId(id)), messageId = Some(msgId))`. Telegram often adds new optional parameters in the middle of a method's list, so positional calls can stop compiling after a Bot API update.
 * Since `11.1004.0`, `chatId` is an `Option[ChatId]` in `sendMessage`, `sendRichMessage`, `sendAnimation`, `sendAudio`, `sendContact`, `sendDocument`, `sendLivePhoto`, `sendLocation`, `sendPhoto`, `sendSticker`, `sendVenue`, `sendVideo`, `sendVideoNote` and `sendVoice`, and comes after their required parameters: Bot API 10.4 lets an ephemeral reply to a callback query omit it. Wrap it in `Some` and pass it by name: `sendMessage(chatId = Some(ChatIntId(id)), text = "hi")`.
 * Since `11.1004.0`, an `OpenEnum.Unknown` keeps the JSON it was decoded from, as `raw`, and encodes back to it, not to its bare type tag (see [OpenEnum](#openenum)). Match it as `case OpenEnum.Unknown(tag, _)`. It has no type parameter, and one built by hand, e.g. in a test, takes the JSON too: `OpenEnum.Unknown("future_entity", json)`.
+* Since `11.1004.0`, `ReplyParameters.quoteRichTexts` is a `List[OpenEnum[RichText]]`. Received rich texts go in as they are, and a list written out takes plain values; a `List[RichText]` the bot already holds needs `.map(OpenEnum(_))`.
 * On Scala 2.13, telegramium depends on the latest scala-library (2.13.18 since `10.905.0`), and sbt refuses to build a project whose `scalaVersion` is older than that. Upgrade `scalaVersion` along with telegramium.
 
 ### Contribution

@@ -4930,8 +4930,8 @@ object GenReplyParameters {
   lazy val gen: Gen[ReplyParameters] = Gen.lzy(
     deeper(Gen
         .zip(Gen.zip(optPrim(genInt), opt(GenChatId.gen), optPrim(genInt), optPrim(genBoolean), optPrim(genString),
-            opt(GenParseMode.gen), list(GenMessageEntity.gen), list(GenRichText.gen), optPrim(genInt)),
-          Gen.zip(optPrim(genInt), optPrim(genString)))
+            opt(GenParseMode.gen), list(GenMessageEntity.gen), list(openUnion(GenRichText.gen, "type")),
+            optPrim(genInt)), Gen.zip(optPrim(genInt), optPrim(genString)))
         .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10)) =>
           ReplyParameters(messageId = a0, chatId = a1, ephemeralMessageId = a2, allowSendingWithoutReply = a3,
             quote = a4, quoteParseMode = a5, quoteEntities = a6, quoteRichTexts = a7, quotePosition = a8,
@@ -4946,7 +4946,7 @@ object GenReplyParameters {
       field(x.quote)(shrinkOpt(noShrink))(v => x.copy(quote = v)),
       field(x.quoteParseMode)(shrinkOpt(noShrink))(v => x.copy(quoteParseMode = v)),
       field(x.quoteEntities)(shrinkList(GenMessageEntity.shrink))(v => x.copy(quoteEntities = v)),
-      field(x.quoteRichTexts)(shrinkList(GenRichText.shrink))(v => x.copy(quoteRichTexts = v)),
+      field(x.quoteRichTexts)(shrinkList(shrinkOpenEnum(GenRichText.shrink)))(v => x.copy(quoteRichTexts = v)),
       field(x.quotePosition)(shrinkOpt(noShrink))(v => x.copy(quotePosition = v)),
       field(x.checklistTaskId)(shrinkOpt(noShrink))(v => x.copy(checklistTaskId = v)),
       field(x.pollOptionId)(shrinkOpt(noShrink))(v => x.copy(pollOptionId = v))))
