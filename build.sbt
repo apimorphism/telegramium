@@ -122,6 +122,58 @@ lazy val `telegramium-examples` = (projectMatrix in file("telegramium-examples")
   )
   .settings(libraryDependencies ++= Dependencies.telegramiumExam)
 
+// Scalafix migration rules, one per breaking release. Users and Scala Steward run them from GitHub
+// (`github:apimorphism/telegramium/<Rule>?sha=<tag>`), so nothing here is published. The rule source must stay at
+// scalafix/rules/src/main/scala/fix/<Rule>.scala and depend on scalafix-core only.
+lazy val `scalafix-rules` = (project in file("scalafix/rules"))
+  // plain Scala 2.13, as scalafix compiles a rule: the repo's Scala 3 import style wouldn't parse there
+  .disablePlugins(ScalafixPlugin)
+  .settings(
+    scalaVersion                           := scala213,
+    publish / skip                         := true,
+    libraryDependencies += "ch.epfl.scala" %% "scalafix-core" % _root_.scalafix.sbt.BuildInfo.scalafixVersion
+  )
+
+// The code a rule migrates, on the last release before it, and what the rule should make of it, on this build. Scala 3
+// as most bots are, and there scalafix can't read a dependency's signatures, so a rule must not need them.
+lazy val `scalafix-input` = (project in file("scalafix/input"))
+  .disablePlugins(ScalafixPlugin)
+  .settings(
+    scalaVersion                                   := scala3,
+    publish / skip                                 := true,
+    semanticdbEnabled                              := true,
+    libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "10.1003.2"
+  )
+
+lazy val `scalafix-output` = (project in file("scalafix/output"))
+  .disablePlugins(ScalafixPlugin)
+  .dependsOn(`telegramium-high`.jvm(scala3))
+  .settings(
+    scalaVersion   := scala3,
+    publish / skip := true
+  )
+
+lazy val `scalafix-tests` = (project in file("scalafix/tests"))
+  // plain Scala 2.13, as scalafix compiles a rule: the repo's Scala 3 import style wouldn't parse there
+  .disablePlugins(ScalafixPlugin)
+  .enablePlugins(ScalafixTestkitPlugin)
+  .dependsOn(`scalafix-rules`)
+  .settings(
+    scalaVersion                           := scala213,
+    publish / skip                         := true,
+    libraryDependencies += ("ch.epfl.scala" % "scalafix-testkit" % _root_.scalafix.sbt.BuildInfo.scalafixVersion % Test)
+      .cross(CrossVersion.full),
+    // scala-reports holds the output of what the rule only reports, which doesn't compile on this build
+    scalafixTestkitOutputSourceDirectories := (`scalafix-output` / Compile / unmanagedSourceDirectories).value :+
+      (`scalafix-output` / baseDirectory).value / "src/main/scala-reports",
+    scalafixTestkitInputSourceDirectories := (`scalafix-input` / Compile / unmanagedSourceDirectories).value,
+    scalafixTestkitInputClasspath         := (`scalafix-input` / Compile / fullClasspath).value,
+    scalafixTestkitInputScalacOptions     := (`scalafix-input` / Compile / scalacOptions).value,
+    scalafixTestkitInputScalaVersion      := (`scalafix-input` / Compile / scalaVersion).value,
+    // the output must compile against this build
+    Test / test := (Test / test).dependsOn(`scalafix-output` / Compile / compile).value
+  )
+
 lazy val telegramium = (project in file("."))
   .settings(
     name           := "F[Tg]",
@@ -130,7 +182,8 @@ lazy val telegramium = (project in file("."))
   .aggregate(
     `telegramium-core`.projectRefs ++
       `telegramium-high`.projectRefs ++
-      `telegramium-examples`.projectRefs: _*
+      `telegramium-examples`.projectRefs ++
+      Seq[ProjectReference](`scalafix-rules`, `scalafix-input`, `scalafix-output`, `scalafix-tests`): _*
   )
 
 addCommandAlias("fmtAll", "scalafixAll; scalafmtAll; scalafmtSbt")
