@@ -13,14 +13,18 @@ import org.http4s.blaze.client.BlazeClientBuilder
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
+import telegramium.bots.BoldMessageEntity
 import telegramium.bots.ChatIntId
+import telegramium.bots.DateTimeMessageEntity
 import telegramium.bots.InputLinkFile
 import telegramium.bots.InputMediaPhoto
 import telegramium.bots.InputPartFile
 import telegramium.bots.InputRichMessage
+import telegramium.bots.Message
 import telegramium.bots.ReplyParameters
 import telegramium.bots.RichBlockParagraph
 import telegramium.bots.client.Method
+import telegramium.bots.client.MethodReq
 import telegramium.bots.high.keyboards.InlineKeyboardButtons
 import telegramium.bots.high.keyboards.InlineKeyboardMarkups
 
@@ -108,11 +112,11 @@ class TelegramLiveSpec extends AnyFreeSpec with Matchers {
       )
     )
     val paragraph = message.richMessage.toList.flatMap(_.blocks).collectFirst {
-      case iozhik.OpenEnum.Known(RichBlockParagraph(iozhik.OpenEnum.Known(text))) => text
+      case iozhik.OpenEnum.Known(RichBlockParagraph(text)) => text
     }
     paragraph shouldBe defined
     // the docs require the quoted parts nested exactly as in the message received, which a re-encoding that changed
-    // their shape would break
+    // their shape would break; the received text goes in as it is, unwrapped or not
     val reply = execute(
       Methods.sendMessage(
         chatId = Some(chatId),
@@ -120,7 +124,42 @@ class TelegramLiveSpec extends AnyFreeSpec with Matchers {
         replyParameters = Some(ReplyParameters(messageId = Some(message.messageId), quoteRichTexts = paragraph.toList))
       )
     )
-    reply.quote.map(_.richTexts) shouldBe Some(paragraph.toList.map(iozhik.OpenEnum.Known(_)))
+    reply.quote.map(_.richTexts) shouldBe Some(paragraph.toList)
+  }
+
+  "a reply quotes a text with an entity this version doesn't know, sent back as Telegram sent it" taggedAs LiveTest in {
+    import io.circe.{Decoder, Json}
+    import telegramium.bots.CirceImplicits._
+    val sent = Methods.sendMessage(
+      chatId = Some(chatId),
+      text = "Meet at noon tomorrow",
+      entities = List(BoldMessageEntity(0, 4), DateTimeMessageEntity(8, 4, 1795521600L, ""))
+    )
+    // the message as Telegram sent it, so the Unknown value below holds Telegram's JSON, not a re-encoding of ours
+    val json     = execute(MethodReq[Json](sent.payload, Decoder[Json]))
+    val message  = json.as[Message].fold(e => fail(s"the message doesn't decode: $e"), identity)
+    val received = json.hcursor.get[List[Json]]("entities").fold(e => fail(s"no entities: $e"), identity)
+    received.flatMap(_.hcursor.get[String]("type").toOption) shouldBe List("bold", "date_time")
+    // as a version older than date_time entities (Bot API 9.5) decodes it: an Unknown value with its JSON
+    val asReceivedByOlder = message.entities.zip(received).map {
+      case (iozhik.OpenEnum.Known(_: DateTimeMessageEntity), raw) => iozhik.OpenEnum.Unknown("date_time", raw)
+      case (other, _)                                             => other
+    }
+    // the quote must keep its formatting entities, or Telegram answers QUOTE_TEXT_INVALID
+    val reply = execute(
+      Methods.sendMessage(
+        chatId = Some(chatId),
+        text = "Replying with a quote",
+        replyParameters = Some(
+          ReplyParameters(
+            messageId = Some(message.messageId),
+            quote = Some("Meet at noon"),
+            quoteEntities = asReceivedByOlder
+          )
+        )
+      )
+    )
+    reply.quote.map(_.entities) shouldBe Some(message.entities)
   }
 
   "a document with an uploaded thumbnail keeps the thumbnail" taggedAs LiveTest in {

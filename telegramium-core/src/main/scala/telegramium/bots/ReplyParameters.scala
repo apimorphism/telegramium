@@ -70,8 +70,8 @@ final case class ReplyParameters(
   allowSendingWithoutReply: Option[Boolean] = Option.empty,
   quote: Option[String] = Option.empty,
   quoteParseMode: Option[ParseMode] = Option.empty,
-  quoteEntities: List[MessageEntity] = List.empty,
-  quoteRichTexts: List[RichText] = List.empty,
+  quoteEntities: List[iozhik.OpenEnum[MessageEntity]] = List.empty,
+  quoteRichTexts: List[iozhik.OpenEnum[RichText]] = List.empty,
   quotePosition: Option[Int] = Option.empty,
   checklistTaskId: Option[Int] = Option.empty,
   pollOptionId: Option[String] = Option.empty

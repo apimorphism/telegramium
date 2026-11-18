@@ -89,9 +89,27 @@ the related [Pull Request](https://github.com/apimorphism/telegramium/pull/145).
 
 #### OpenEnum
 
-The Telegram Bot API is not versioned, which means bots and libraries must try to be forward-compatible. Specifically for enumerations, this implies that bots should always anticipate new values being added. Handling these values depends on the bot's business logic. Some apps may simply ignore unknown values, while others might respond with "This message is not supported," save the message for manual processing later, or throw a request handling error.
+Telegram adds new values to its enums without notice, such as a new kind of message entity. So that a bot doesn't break when that happens, Telegramium wraps these values in `OpenEnum`: `Known(value)` for a value this version knows, and `Unknown(tag, raw)` for a new one. It's up to the bot what to do with an unknown value: ignore it, log it, or reply "not supported".
 
-Telegramium introduces `OpenEnum`, a wrapper for Telegram Bot API enumerations with two cases: `Known` and `Unknown`. This type allows unknown values to be explicitly handled (similar to `Option` or `Either`), enabling bots using Telegramium to be more robust, improve error handling, and degrade gracefully in light of frequent Telegram Bot API updates.
+```scala
+import iozhik.OpenEnum
+
+msg.entities.collect { case OpenEnum.Known(e: BoldMessageEntity) => e }
+
+msg.entities.foreach {
+  case OpenEnum.Known(entity)   => ...
+  case OpenEnum.Unknown(tag, _) => ... // an entity type this version doesn't know
+}
+```
+
+- **Sending:** methods take plain values, as in `entities = List(BoldMessageEntity(0, 4))`. Quotes are the exception. Telegram rejects a quote that doesn't match the original (`QUOTE_TEXT_INVALID`), so `ReplyParameters.quoteRichTexts` and `quoteEntities` take the received values as they are, unknown ones included. Offsets in `quoteEntities` count from the start of the quote.
+- **Comparing:** a wrapped value never equals a plain one. `entity == BoldMessageEntity(0, 4)` is always false, and you get no warning. Use `entity.equalsKnown(BoldMessageEntity(0, 4))` or a pattern match instead. On Scala 3, an "Unreachable case" warning usually means a pattern is missing its `OpenEnum.Known(...)`.
+- **Adding to a received list:** wrap the new value, `msg.entities :+ OpenEnum(ItalicMessageEntity(0, 4))`.
+- **Unknown values** keep Telegram's JSON in `raw` and are sent back unchanged. One prints only its tag, e.g. `Unknown(date_time)`, because `raw` may contain personal data.
+- **Broken values:** only a new type becomes `Unknown`. A known type with bad data, such as a `bold` entity without an `offset`, still fails to decode.
+- **Rich text:** write it without the wrapper, `RichTextBold(RichTextPlain("hi"))`. To put a received unknown rich text into a block you send, wrap it as `RichTextConcat(List(unknown))`.
+- **Limitation:** a new field Telegram adds to a known type is dropped when the value is sent back. So until you upgrade, quoting text that has such a field fails ([iozhik#44](https://github.com/apimorphism/iozhik/issues/44)).
+- **Rich messages** have no `text`: their content is only in `richMessage`. Helpers for reading one as plain text and for quoting part of one are planned ([#725](https://github.com/apimorphism/telegramium/issues/725)).
 
 #### Unknown updates
 
@@ -155,7 +173,9 @@ Please, note, that this versioning scheme is started from version `1.48.0`.
 #### Upgrading
 
 * Pass optional arguments by name: `editMessageReplyMarkup(chatId = Some(ChatIntId(id)), messageId = Some(msgId))`. Telegram often adds new optional parameters in the middle of a method's list, so positional calls can stop compiling after a Bot API update.
-* Since `10.1004.0`, `chatId` is an `Option[ChatId]` in `sendMessage`, `sendRichMessage`, `sendAnimation`, `sendAudio`, `sendContact`, `sendDocument`, `sendLivePhoto`, `sendLocation`, `sendPhoto`, `sendSticker`, `sendVenue`, `sendVideo`, `sendVideoNote` and `sendVoice`, and comes after their required parameters: Bot API 10.4 lets an ephemeral reply to a callback query omit it. Wrap it in `Some` and pass it by name: `sendMessage(chatId = Some(ChatIntId(id)), text = "hi")`.
+* Since `11.1004.0`, `chatId` is an `Option[ChatId]` in `sendMessage`, `sendRichMessage`, `sendAnimation`, `sendAudio`, `sendContact`, `sendDocument`, `sendLivePhoto`, `sendLocation`, `sendPhoto`, `sendSticker`, `sendVenue`, `sendVideo`, `sendVideoNote` and `sendVoice`, and comes after their required parameters: Bot API 10.4 lets an ephemeral reply to a callback query omit it. Wrap it in `Some` and pass it by name: `sendMessage(chatId = Some(ChatIntId(id)), text = "hi")`.
+* Since `11.1004.0`, an `OpenEnum.Unknown` keeps the JSON it was decoded from, as `raw`, and encodes back to it, not to its bare type tag (see [OpenEnum](#openenum)). Match it as `case OpenEnum.Unknown(tag, _)`. It has no type parameter, and one built by hand, e.g. in a test, takes the JSON too: `OpenEnum.Unknown("future_entity", json)`.
+* Since `11.1004.0`, `ReplyParameters.quoteRichTexts` is a `List[OpenEnum[RichText]]` and `quoteEntities` a `List[OpenEnum[MessageEntity]]`. Received values go in as they are, and a list written out takes plain values; a `List[RichText]` or `List[MessageEntity]` the bot already holds needs `.map(OpenEnum(_))`.
 * On Scala 2.13, telegramium depends on the latest scala-library (2.13.18 since `10.905.0`), and sbt refuses to build a project whose `scalaVersion` is older than that. Upgrade `scalaVersion` along with telegramium.
 
 ### Contribution

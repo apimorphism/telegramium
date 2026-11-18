@@ -2,6 +2,7 @@ package telegramium.bots
 
 import java.io.{File => JFile}
 
+import io.circe.syntax._
 import io.circe.{Decoder, Encoder, Json}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
@@ -93,17 +94,66 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     future.foreach(file => file.getName in decode(file))
   }
 
-  "unknown values decode as Unknown" - {
+  "unknown values of an open enum of objects decode as Unknown" - {
     "a reaction of an unknown type" in {
       decodeFuture("unknown_value-001.json").messageReaction.map(_.newReaction) shouldBe Some(
-        List(iozhik.OpenEnum.Unknown[ReactionType]("future_reaction"))
+        List(
+          iozhik.OpenEnum.Unknown(
+            "future_reaction",
+            Json.obj(
+              "type"               -> Json.fromString("future_reaction"),
+              "future_reaction_id" -> Json.fromString("xxxxxxxxxxxxxxxxxxx")
+            )
+          )
+        )
       )
     }
     "an entity of an unknown type" in {
       decodeFuture("unknown_value-002.json").message.map(_.entities) shouldBe Some(
-        List(iozhik.OpenEnum.Unknown[MessageEntity]("future_entity"))
+        List(
+          iozhik.OpenEnum.Unknown(
+            "future_entity",
+            Json.obj(
+              "offset" -> Json.fromInt(0),
+              "length" -> Json.fromInt(6),
+              "type"   -> Json.fromString("future_entity")
+            )
+          )
+        )
       )
     }
+  }
+
+  // #723: a bot quotes what it received. Telegram wants the quoted texts back one for each, nested as received, so
+  // they go back as Telegram sent them: unknown ones too, at the top or however deep.
+  "a quoted rich text goes back as Telegram sent it, unknown parts included" in {
+    val update   = future.find(_.getName == "unknown_value-003.json").map(Fixtures.read).getOrElse(fail("no fixture"))
+    val received = update.hcursor.downField("message").downField("quote").downField("rich_texts").as[List[Json]]
+    val quote    = decodeFuture("unknown_value-003.json").message.flatMap(_.quote).getOrElse(fail("no quote"))
+    quote.richTexts.map {
+      case iozhik.OpenEnum.Known(_)        => "known"
+      case iozhik.OpenEnum.Unknown(tag, _) => tag
+    } shouldBe List("known", "future_block")
+
+    def sentQuote(quoteRichTexts: List[iozhik.OpenEnum[RichText]]) =
+      methods
+        .sendMessage(
+          text = "",
+          chatId = Some(ChatIntId(0)),
+          replyParameters = Some(ReplyParameters(messageId = Some(1), quoteRichTexts = quoteRichTexts))
+        )
+        .payload
+        .json
+        .hcursor
+        .downField("reply_parameters")
+        .downField("quote_rich_texts")
+        .as[List[Json]]
+    sentQuote(quote.richTexts) shouldBe received
+  }
+
+  "a quote a bot writes takes plain rich texts" in {
+    ReplyParameters(quoteRichTexts = List(RichTextPlain("a"), RichTextBold(RichTextPlain("b")))).quoteRichTexts shouldBe
+      List(iozhik.OpenEnum.Known(RichTextPlain("a")), iozhik.OpenEnum.Known(RichTextBold(RichTextPlain("b"))))
   }
 
   "unknown fields nested inside known objects leave the known ones intact" in {
