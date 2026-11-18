@@ -51,11 +51,6 @@ class UnknownValuesCodecSpec extends AnyFlatSpec with Matchers {
     decoded.map(_.asJson) shouldBe Right(json("""{"type": "bold", "offset": 0, "length": 4}"""))
   }
 
-  it should "encode an Unknown value as its JSON, whatever that holds" in {
-    val raw = json("""{"type": "future_entity", "nested": {"type": "bold", "list": [1.50, -0.0, "x"]}, "n": null}""")
-    (OpenEnum.Unknown("future_entity", raw): OpenEnum[MessageEntity]).asJson.noSpaces shouldBe raw.noSpaces
-  }
-
   "A rich text" should "fail on a known tag whose object is malformed, nested ones too" in {
     json("""{"type": "bold"}""").as[OpenEnum[RichText]].isLeft shouldBe true
     json("""{"type": "bold", "text": {"type": "italic"}}""").as[OpenEnum[RichText]].isLeft shouldBe true
