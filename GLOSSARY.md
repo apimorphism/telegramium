@@ -46,7 +46,7 @@ _Avoid_: string enum, extensible enum
 
 **Open union**:
 A family of objects told apart by a type tag, which Telegram may add to, such as message entities.
-_Avoid_: tagged enum, open enum (for objects), polymorphic type
+_Avoid_: tagged enum, polymorphic type
 
 **Unknown value**:
 A value of an open enum or an open union that this version of the library does not know.

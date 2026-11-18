@@ -67,4 +67,15 @@ class UnknownValuesCodecSpec extends AnyFlatSpec with Matchers {
     json("""{"text": "no tag"}""").as[OpenEnum[RichText]].isLeft shouldBe true
     json("""{"type": 5, "text": "hi"}""").as[OpenEnum[RichText]].isLeft shouldBe true
   }
+
+  "A quote" should "send back an entity this version doesn't know as Telegram sent it, next to plain ones" in {
+    val unknown = json("""{"type": "future_entity", "offset": 6, "length": 4, "future_field": {"x": 1}}""")
+    val quote   = ReplyParameters(
+      messageId = Some(1),
+      quote = Some("plain bold"),
+      quoteEntities = List(BoldMessageEntity(0, 5), OpenEnum.Unknown("future_entity", unknown))
+    )
+    quote.asJson.hcursor.get[List[Json]]("quote_entities") shouldBe
+      Right(List(json("""{"type": "bold", "offset": 0, "length": 5}"""), unknown))
+  }
 }
