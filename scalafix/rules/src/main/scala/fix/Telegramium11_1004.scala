@@ -11,6 +11,7 @@ import scalafix.v1._
   *   - the 14 send methods take `chatId` as an `Option[ChatId]`, after their required parameters: `chatId` becomes
   *     `chatId = Some(...)`, and every argument passed by position is passed by name;
   *   - `case OpenEnum.Unknown(tag)` becomes `case OpenEnum.Unknown(tag, _)`;
+  *   - `StoryAreaPosition` becomes `AreaPosition`, its new name in the Bot API;
   *   - an `OpenEnum.Unknown` built by hand is only reported: it now takes the JSON it stands for.
   */
 class Telegramium11_1004 extends SemanticRule("Telegramium11_1004") {
@@ -47,9 +48,23 @@ class Telegramium11_1004 extends SemanticRule("Telegramium11_1004") {
             .collect { case a: Term.ApplyType => a }
             .exists(a => isUnknown(a.fun.symbol)) =>
         Patch.lint(HandBuiltUnknown(t))
+      // by hand, not with Patch.replaceSymbols, which adds an import that `telegramium.bots._` already covers
+      case n: Term.Name if n.value == oldAreaPosition && isOldAreaPosition(n.symbol) =>
+        Patch.replaceTree(n, "AreaPosition")
+      case n: Type.Name if n.value == oldAreaPosition && isOldAreaPosition(n.symbol) =>
+        Patch.replaceTree(n, "AreaPosition")
+      case i: Importer if i.ref.syntax == "telegramium.bots" =>
+        i.importees.collect {
+          case Importee.Name(n) if n.value == oldAreaPosition      => Patch.replaceTree(n, "AreaPosition")
+          case Importee.Rename(n, _) if n.value == oldAreaPosition => Patch.replaceTree(n, "AreaPosition")
+        }.asPatch
     }.asPatch
 
   private def isUnknown(s: Symbol): Boolean = s.value.startsWith(unknown)
+
+  private val oldAreaPosition = "StoryAreaPosition"
+
+  private def isOldAreaPosition(s: Symbol): Boolean = s.value.startsWith("telegramium/bots/StoryAreaPosition")
 
   private def sendMethod(fun: Term)(implicit doc: SemanticDocument): Option[String] = {
     val s    = fun.symbol
