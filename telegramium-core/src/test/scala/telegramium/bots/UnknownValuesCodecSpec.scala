@@ -17,7 +17,7 @@ class UnknownValuesCodecSpec extends AnyFlatSpec with Matchers {
 
   private def entity(s: String) = json(s).as[OpenEnum[MessageEntity]]
 
-  "An open union" should "decode a known tag as Known" in {
+  "An open enum of objects" should "decode a known tag as Known" in {
     entity("""{"type": "bold", "offset": 0, "length": 4}""") shouldBe Right(OpenEnum.Known(BoldMessageEntity(0, 4)))
   }
 
@@ -87,8 +87,8 @@ class UnknownValuesCodecSpec extends AnyFlatSpec with Matchers {
     assertTypeError("""entities.head.equalsKnown("bold")""")
   }
 
-  "An Unknown value" should "print on one line, with its JSON" in {
-    OpenEnum.Unknown("future_entity", json("""{"type": "future_entity", "n": [1, 2]}""")).toString shouldBe
-      """Unknown(future_entity,{"type":"future_entity","n":[1,2]})"""
+  "An Unknown value" should "print only its tag, as its JSON may hold personal data" in {
+    OpenEnum.Unknown("future_entity", json("""{"type": "future_entity", "text": "secret"}""")).toString shouldBe
+      "Unknown(future_entity)"
   }
 }

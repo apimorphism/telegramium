@@ -16,8 +16,8 @@ object OpenEnum {
     * which it encodes back to.
     */
   final case class Unknown(value: String, raw: Json) extends OpenEnum[Nothing] {
-    // on one line: Json's own toString spreads it over many, which logs badly
-    override def toString: String = s"Unknown($value,${raw.noSpaces})"
+    // only the tag: raw may hold personal data, which shouldn't reach a log
+    override def toString: String = s"Unknown($value)"
   }
 
   def apply[T](value: T): OpenEnum[T] = Known(value)

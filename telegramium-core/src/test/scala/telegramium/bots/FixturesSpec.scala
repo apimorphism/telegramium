@@ -94,7 +94,7 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     future.foreach(file => file.getName in decode(file))
   }
 
-  "unknown values of an open union decode as Unknown" - {
+  "unknown values of an open enum of objects decode as Unknown" - {
     "a reaction of an unknown type" in {
       decodeFuture("unknown_value-001.json").messageReaction.map(_.newReaction) shouldBe Some(
         List(
