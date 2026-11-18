@@ -89,9 +89,7 @@ the related [Pull Request](https://github.com/apimorphism/telegramium/pull/145).
 
 #### OpenEnum
 
-The Telegram Bot API is not versioned, which means bots and libraries must try to be forward-compatible. Specifically for enumerations, this implies that bots should always anticipate new values being added. Handling these values depends on the bot's business logic. Some apps may simply ignore unknown values, while others might respond with "This message is not supported," save the message for manual processing later, or throw a request handling error.
-
-Telegramium introduces `OpenEnum`, a wrapper for Telegram Bot API enumerations with two cases: `Known` and `Unknown`. This type allows unknown values to be explicitly handled (similar to `Option` or `Either`), enabling bots using Telegramium to be more robust, improve error handling, and degrade gracefully in light of frequent Telegram Bot API updates.
+Telegram adds new values to its enums without notice, such as a new kind of message entity. So that a bot doesn't break when that happens, Telegramium wraps these values in `OpenEnum`: `Known(value)` for a value this version knows, and `Unknown(tag, raw)` for a new one. It's up to the bot what to do with an unknown value: ignore it, log it, or reply "not supported".
 
 ```scala
 import iozhik.OpenEnum
@@ -104,17 +102,14 @@ msg.entities.foreach {
 }
 ```
 
-What a bot sends is not wrapped: a Method's arguments take the plain type, as in `entities: List[MessageEntity]`. So an unknown value can't be sent on its own. The exception is a quote, `ReplyParameters.quoteRichTexts` and `quoteEntities`, a `List[OpenEnum[RichText]]` and a `List[OpenEnum[MessageEntity]]`: Telegram wants a quote back as it was received, its rich texts and formatting entities included, and answers `QUOTE_TEXT_INVALID` otherwise. So a bot passes the received ones as they are, unknown ones included. Offsets in `quoteEntities` count from the start of the quote, not from the start of the message. A list the bot writes takes plain values: `quoteRichTexts = List(RichTextPlain("hi"))`. With `-Xlint` on Scala 2, write an optional plain value as `Some(RichTextPlain("hi"))`, not `Option(...)`: lifting inside `Option.apply` warns as a suspicious implicit view, which `-Werror` makes fatal.
-
-A wrapped value is never equal to a plain one: `entity == BoldMessageEntity(0, 4)` and `msg.entities.contains(BoldMessageEntity(0, 4))` are always false, and Scala 3 doesn't warn. Compare with `entity.equalsKnown(BoldMessageEntity(0, 4))`, which only takes the wrapped type, or match. Likewise, a plain value added to a received list stays plain: `msg.entities :+ ItalicMessageEntity(0, 4)` is a list of `OpenEnum`s and an entity side by side, unless the result has a type. Wrap it, `msg.entities :+ OpenEnum(ItalicMessageEntity(0, 4))`. On Scala 3, a match that reports "Unreachable case" for a pattern such as `case RichTextBold(...)` is usually missing its `OpenEnum.Known(...)`.
-
-Only a type tag this version doesn't know gives an `Unknown`. A value of a known type that is malformed, such as a `bold` entity without its `offset`, still fails to decode.
-
-An `OpenEnum.Unknown` holds the type tag as `value` and the JSON it was decoded from as `raw`, and encodes back to that JSON. So unknown parts nested in a received value, e.g. inside a quoted rich text, are sent back as Telegram sent them. The parts nested in a `RichText` are `OpenEnum`s for that reason, but a rich text to send is written without the wrapper: `RichTextBold(RichTextPlain("hi"))`. To put a received `Unknown` rich text into a block to send, whose field takes a plain `RichText`, wrap it in a one-element `RichTextConcat`: `InputRichBlockParagraph(RichTextConcat(List(unknown)))`. An `Unknown` prints only the tag, as in `Unknown(date_time)`, because `raw` may hold personal data.
-
-Unknown fields of a known value are not kept. A field Telegram adds to a kind this version knows is dropped when the value is sent back. So quoting an entity that has such a field gets `QUOTE_TEXT_INVALID` until telegramium is upgraded ([iozhik#44](https://github.com/apimorphism/iozhik/issues/44)).
-
-A rich message comes without `text`; its content is only in `richMessage`. A helper that reads it as plain text, and one that quotes part of a message, are planned in [#725](https://github.com/apimorphism/telegramium/issues/725).
+- **Sending:** methods take plain values, as in `entities = List(BoldMessageEntity(0, 4))`. Quotes are the exception. Telegram rejects a quote that doesn't match the original (`QUOTE_TEXT_INVALID`), so `ReplyParameters.quoteRichTexts` and `quoteEntities` take the received values as they are, unknown ones included. Offsets in `quoteEntities` count from the start of the quote.
+- **Comparing:** a wrapped value never equals a plain one. `entity == BoldMessageEntity(0, 4)` is always false, and you get no warning. Use `entity.equalsKnown(BoldMessageEntity(0, 4))` or a pattern match instead. On Scala 3, an "Unreachable case" warning usually means a pattern is missing its `OpenEnum.Known(...)`.
+- **Adding to a received list:** wrap the new value, `msg.entities :+ OpenEnum(ItalicMessageEntity(0, 4))`.
+- **Unknown values** keep Telegram's JSON in `raw` and are sent back unchanged. One prints only its tag, e.g. `Unknown(date_time)`, because `raw` may contain personal data.
+- **Broken values:** only a new type becomes `Unknown`. A known type with bad data, such as a `bold` entity without an `offset`, still fails to decode.
+- **Rich text:** write it without the wrapper, `RichTextBold(RichTextPlain("hi"))`. To put a received unknown rich text into a block you send, wrap it as `RichTextConcat(List(unknown))`.
+- **Limitation:** a new field Telegram adds to a known type is dropped when the value is sent back. So until you upgrade, quoting text that has such a field fails ([iozhik#44](https://github.com/apimorphism/iozhik/issues/44)).
+- **Rich messages** have no `text`: their content is only in `richMessage`. Helpers for reading one as plain text and for quoting part of one are planned ([#725](https://github.com/apimorphism/telegramium/issues/725)).
 
 #### Unknown updates
 
