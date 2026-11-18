@@ -63,10 +63,10 @@ object GenPrims {
   // version knows, with a field no version knows, or a string no version knows for an enum of strings. They have to
   // decode and encode back to the same JSON wherever an OpenEnum is.
   // `tagField` is the field holding the type tag.
-  def openUnion[A](g: => Gen[A], tagField: String): Gen[iozhik.OpenEnum[A]] =
+  def openTagged[A](g: => Gen[A], tagField: String): Gen[iozhik.OpenEnum[A]] =
     Gen.frequency(9 -> Gen.lzy(g).map(iozhik.OpenEnum.Known(_)), 1 -> genUnknownObject(tagField))
 
-  def openEnum[A](g: => Gen[A]): Gen[iozhik.OpenEnum[A]] =
+  def openStrings[A](g: => Gen[A]): Gen[iozhik.OpenEnum[A]] =
     Gen.frequency(9 -> Gen.lzy(g).map(iozhik.OpenEnum.Known(_)),
       1 -> genUnknownTag.map(s => iozhik.OpenEnum.Unknown(s, Json.fromString(s))))
 
@@ -139,16 +139,16 @@ object GenPrims {
       new RoundTripCase(name, gen, shrink, e, d)
 
     // decoded as an OpenEnum, so round-tripped as one, Unknown values included
-    def openUnion[A](name: String, gen: Gen[A], shrink: Shrink[A], tagField: String)(
+    def openTagged[A](name: String, gen: Gen[A], shrink: Shrink[A], tagField: String)(
       implicit e: Encoder[iozhik.OpenEnum[A]],
       d: Decoder[iozhik.OpenEnum[A]]
     ): RoundTripCase[iozhik.OpenEnum[A]] =
-      new RoundTripCase(name, GenPrims.openUnion(gen, tagField), shrinkOpenEnum(shrink), e, d)
+      new RoundTripCase(name, GenPrims.openTagged(gen, tagField), shrinkOpenEnum(shrink), e, d)
 
-    def openEnum[A](name: String, gen: Gen[A], shrink: Shrink[A])(
+    def openStrings[A](name: String, gen: Gen[A], shrink: Shrink[A])(
       implicit e: Encoder[iozhik.OpenEnum[A]],
       d: Decoder[iozhik.OpenEnum[A]]
     ): RoundTripCase[iozhik.OpenEnum[A]] =
-      new RoundTripCase(name, GenPrims.openEnum(gen), shrinkOpenEnum(shrink), e, d)
+      new RoundTripCase(name, GenPrims.openStrings(gen), shrinkOpenEnum(shrink), e, d)
   }
 }
