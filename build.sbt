@@ -142,7 +142,7 @@ lazy val `scalafix-input` = (project in file("scalafix/input"))
     scalaVersion                                   := scala3,
     publish / skip                                 := true,
     semanticdbEnabled                              := true,
-    libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "10.1003.2"
+    libraryDependencies += "io.github.apimorphism" %% "telegramium-high" % "11.1004.0"
   )
 
 lazy val `scalafix-output` = (project in file("scalafix/output"))
