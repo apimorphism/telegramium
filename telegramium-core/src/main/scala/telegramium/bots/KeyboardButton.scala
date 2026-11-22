@@ -24,7 +24,9 @@ package telegramium.bots
   * @param requestManagedBot
   *   <em>Optional</em>. If specified, pressing the button will ask the user to create and share a bot that will be
   *   managed by the current bot. Available for bots that enabled management of other bots in the <a
-  *   href="https://t.me/BotFather">&#064;BotFather</a> Mini App. Available in private chats only.
+  *   href="https://t.me/BotFather">&#064;BotFather</a> Mini App or using the parameter <em>can_manage_bots</em> of the
+  *   method <a href="https://core.telegram.org/bots/api#setmysettings">setMySettings</a>. Available in private chats
+  *   only.
   * @param requestContact
   *   <em>Optional</em>. If <em>True</em>, the user's phone number will be sent as a contact when the button is pressed.
   *   Available in private chats only.

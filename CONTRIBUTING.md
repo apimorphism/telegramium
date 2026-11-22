@@ -88,8 +88,9 @@ To refresh the fixtures, for example after a Bot API release:
 1. Record. Leave this running while you produce updates by hand: post, edit
    and react in the channel, and message the bot privately (text, photos,
    stickers, voice, polls, locations, contacts, forwards, replies, edits,
-   reactions, blocking and unblocking it, ...). Send the bot `/interact`, then
-   tap its buttons and vote in its poll. With inline mode and inline feedback
+   reactions, blocking and unblocking it, ...). Send the bot `/interact`: it
+   replies with buttons, a poll and a rich message. Tap the buttons and vote
+   in the poll. With inline mode and inline feedback
    enabled in @BotFather (`/setinline`, `/setinlinefeedback`), type the bot's
    username in a chat and pick its result:
 

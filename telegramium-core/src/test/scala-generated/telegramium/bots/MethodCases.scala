@@ -2543,6 +2543,40 @@ object GenSetMyProfilePhotoReq {
     List(field(x.photo)(GenInputProfilePhoto.shrink)(v => x.copy(photo = v))))
 }
 
+object GenSetMySettingsReq {
+  import GenPrims._
+  lazy val gen: Gen[client.SetMySettingsReq] = Gen.lzy(
+    deeper(Gen
+        .zip(Gen.zip(optPrim(genBoolean), optPrim(genString), optPrim(genBoolean), optPrim(genInt), optPrim(genBoolean),
+            optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean)),
+          Gen.zip(optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean), optPrim(genBoolean),
+            optPrim(genBoolean), optPrim(genString)))
+        .map { case ((a0, a1, a2, a3, a4, a5, a6, a7, a8), (a9, a10, a11, a12, a13, a14)) =>
+          client.SetMySettingsReq(supportsInlineQueries = a0, inlineQueryPlaceholder = a1,
+            needsInlineQueryLocation = a2, inlineFeedbackShareDenominator = a3, canJoinGroups = a4,
+            canReadAllGroupMessages = a5, canConnectToBusiness = a6, canManageBots = a7, supportsGuestQueries = a8,
+            supportsJoinRequestQueries = a9, hasTopicsEnabled = a10, allowsUsersToCreateTopics = a11,
+            hasTopicSidebar = a12, canCommunicateWithBots = a13, callbackQueryMode = a14)
+        }))
+  lazy val shrink: Shrink[client.SetMySettingsReq] = shrinkFields[client.SetMySettingsReq](x =>
+    List(
+      field(x.supportsInlineQueries)(shrinkOpt(noShrink))(v => x.copy(supportsInlineQueries = v)),
+      field(x.inlineQueryPlaceholder)(shrinkOpt(noShrink))(v => x.copy(inlineQueryPlaceholder = v)),
+      field(x.needsInlineQueryLocation)(shrinkOpt(noShrink))(v => x.copy(needsInlineQueryLocation = v)),
+      field(x.inlineFeedbackShareDenominator)(shrinkOpt(noShrink))(v => x.copy(inlineFeedbackShareDenominator = v)),
+      field(x.canJoinGroups)(shrinkOpt(noShrink))(v => x.copy(canJoinGroups = v)),
+      field(x.canReadAllGroupMessages)(shrinkOpt(noShrink))(v => x.copy(canReadAllGroupMessages = v)),
+      field(x.canConnectToBusiness)(shrinkOpt(noShrink))(v => x.copy(canConnectToBusiness = v)),
+      field(x.canManageBots)(shrinkOpt(noShrink))(v => x.copy(canManageBots = v)),
+      field(x.supportsGuestQueries)(shrinkOpt(noShrink))(v => x.copy(supportsGuestQueries = v)),
+      field(x.supportsJoinRequestQueries)(shrinkOpt(noShrink))(v => x.copy(supportsJoinRequestQueries = v)),
+      field(x.hasTopicsEnabled)(shrinkOpt(noShrink))(v => x.copy(hasTopicsEnabled = v)),
+      field(x.allowsUsersToCreateTopics)(shrinkOpt(noShrink))(v => x.copy(allowsUsersToCreateTopics = v)),
+      field(x.hasTopicSidebar)(shrinkOpt(noShrink))(v => x.copy(hasTopicSidebar = v)),
+      field(x.canCommunicateWithBots)(shrinkOpt(noShrink))(v => x.copy(canCommunicateWithBots = v)),
+      field(x.callbackQueryMode)(shrinkOpt(noShrink))(v => x.copy(callbackQueryMode = v))))
+}
+
 object GenSetMyShortDescriptionReq {
   import GenPrims._
   lazy val gen: Gen[client.SetMyShortDescriptionReq] =
@@ -3600,6 +3634,16 @@ object MethodCases {
       x => Factory.setMyName(name = x.name, languageCode = x.languageCode), _.asJson),
     new MethodCase[client.SetMyProfilePhotoReq]("setMyProfilePhoto", GenSetMyProfilePhotoReq.gen,
       GenSetMyProfilePhotoReq.shrink, x => Factory.setMyProfilePhoto(photo = x.photo), _.asJson),
+    new MethodCase[client.SetMySettingsReq]("setMySettings", GenSetMySettingsReq.gen, GenSetMySettingsReq.shrink,
+      x =>
+        Factory.setMySettings(supportsInlineQueries = x.supportsInlineQueries,
+          inlineQueryPlaceholder = x.inlineQueryPlaceholder, needsInlineQueryLocation = x.needsInlineQueryLocation,
+          inlineFeedbackShareDenominator = x.inlineFeedbackShareDenominator, canJoinGroups = x.canJoinGroups,
+          canReadAllGroupMessages = x.canReadAllGroupMessages, canConnectToBusiness = x.canConnectToBusiness,
+          canManageBots = x.canManageBots, supportsGuestQueries = x.supportsGuestQueries,
+          supportsJoinRequestQueries = x.supportsJoinRequestQueries, hasTopicsEnabled = x.hasTopicsEnabled,
+          allowsUsersToCreateTopics = x.allowsUsersToCreateTopics, hasTopicSidebar = x.hasTopicSidebar,
+          canCommunicateWithBots = x.canCommunicateWithBots, callbackQueryMode = x.callbackQueryMode), _.asJson),
     new MethodCase[client.SetMyShortDescriptionReq]("setMyShortDescription", GenSetMyShortDescriptionReq.gen,
       GenSetMyShortDescriptionReq.shrink,
       x => Factory.setMyShortDescription(shortDescription = x.shortDescription, languageCode = x.languageCode),

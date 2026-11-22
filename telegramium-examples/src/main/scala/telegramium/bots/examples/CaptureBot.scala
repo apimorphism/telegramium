@@ -23,10 +23,10 @@ import org.http4s.client.Client
 /** Records the raw JSON Telegram sends the live-test bot, for FixtureScrubber to turn into telegramium-core's fixtures:
   * every update, and the response to getMe, and to getChat, getChatAdministrators, getUserProfilePhotos and getFile for
   * each chat, user and file the updates mention. Raw, rather than through BotApi, so that fields telegramium doesn't
-  * know yet are kept. On /interact in a private chat it sends an inline keyboard and a poll, and records those
-  * responses too, so that tapping a button and voting give callback_query, poll and poll_answer updates. It answers
-  * inline queries with one article, so that picking it gives chosen_inline_result (with inline feedback on). See
-  * CONTRIBUTING.md on refreshing the fixtures.
+  * know yet are kept. On /interact in a private chat it sends an inline keyboard, a poll and a rich message, and
+  * records those responses too, so that tapping a button and voting give callback_query, poll and poll_answer updates.
+  * It answers inline queries with one article, so that picking it gives chosen_inline_result (with inline feedback on).
+  * See CONTRIBUTING.md on refreshing the fixtures.
   *
   * Usage: CaptureBot [rawDir], with TELEGRAM_LIVE_BOT_TOKEN set. rawDir defaults to .fixtures-raw, which is gitignored:
   * what it holds is not scrubbed yet.
@@ -145,7 +145,18 @@ object CaptureBot extends IOApp {
       )
     } yield ()
 
-    // updates only the bot's own messages can produce: a tap on an inline button, and a vote in a non-anonymous poll
+    // Telegram also sends the expandable quotation's text, deprecated in Bot API 10.5: its paragraph's text if it has only
+    // one, else ""
+    private def expandableQuote(paragraphs: String*): Json =
+      Json.obj(
+        "type"   -> Json.fromString("expandable_blockquote"),
+        "blocks" -> Json.fromValues(
+          paragraphs.map(text => Json.obj("type" -> Json.fromString("paragraph"), "text" -> Json.fromString(text)))
+        )
+      )
+
+    // updates only the bot's own messages can produce: a tap on an inline button, and a vote in a non-anonymous poll;
+    // and a rich message, for the response
     private def interact(update: Json): IO[Unit] = {
       val message  = update.hcursor.downField("message")
       val callback = update.hcursor.downField("callback_query").get[String]("id").toOption
@@ -167,6 +178,16 @@ object CaptureBot extends IOApp {
             "question" -> Json.fromString("Vote"),
             "options"  -> Json.arr(Json.obj("text" -> Json.fromString("A")), Json.obj("text" -> Json.fromString("B"))),
             "is_anonymous" -> Json.False
+          ) >> record(
+            "sendRichMessage",
+            chatId.toString,
+            "chat_id"      -> Json.fromLong(chatId),
+            "rich_message" -> Json.obj(
+              "blocks" -> Json.arr(
+                expandableQuote("One paragraph"),
+                expandableQuote("First paragraph", "Second paragraph")
+              )
+            )
           )
         case _ =>
           // stops the button's loading spinner

@@ -30,7 +30,8 @@ class FixturesSpec extends AnyFreeSpec with Matchers {
     "getUserProfilePhotos"  -> codec(methods.getUserProfilePhotos(0)),
     "getFile"               -> codec(methods.getFile("")),
     "sendMessage"           -> codec(methods.sendMessage(chatId = Some(ChatIntId(0)), text = "")),
-    "sendPoll"              -> codec(methods.sendPoll(ChatIntId(0), "", options = List.empty))
+    "sendPoll"              -> codec(methods.sendPoll(ChatIntId(0), "", options = List.empty)),
+    "sendRichMessage"       -> codec(methods.sendRichMessage(InputRichMessage()))
   )
 
   private def roundTrips[A](file: JFile, codec: Codec[A]): Unit = {

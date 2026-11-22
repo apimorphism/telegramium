@@ -1,0 +1,45 @@
+{
+  "message_id" : 1007,
+  "from" : {
+    "id" : 7000000004,
+    "is_bot" : true,
+    "first_name" : "xxxxxxxxxxx xxxx xxxx",
+    "username" : "xxx_xxxx_xxxx_xxx"
+  },
+  "chat" : {
+    "id" : 1003,
+    "first_name" : "xxxx",
+    "last_name" : "x",
+    "username" : "xxxxxxxxx",
+    "type" : "private"
+  },
+  "date" : 1795389699,
+  "rich_message" : {
+    "blocks" : [
+      {
+        "type" : "expandable_blockquote",
+        "blocks" : [
+          {
+            "type" : "paragraph",
+            "text" : "xxx xxxxxxxxx"
+          }
+        ],
+        "text" : "xxx xxxxxxxxx"
+      },
+      {
+        "type" : "expandable_blockquote",
+        "blocks" : [
+          {
+            "type" : "paragraph",
+            "text" : "xxxxx xxxxxxxxx"
+          },
+          {
+            "type" : "paragraph",
+            "text" : "xxxxxx xxxxxxxxx"
+          }
+        ],
+        "text" : ""
+      }
+    ]
+  }
+}

@@ -107,7 +107,7 @@ import telegramium.bots.Sticker
 import telegramium.bots.File
 import telegramium.bots.GameHighScore
 import telegramium.bots.BotAccessSettings
-import telegramium.bots.User
+import telegramium.bots.BotFullInfo
 import telegramium.bots.BotCommand
 import telegramium.bots.ChatAdministratorRights
 import telegramium.bots.BotDescription
@@ -418,6 +418,10 @@ trait Methods {
       case v: InputRichBlockAudio =>
         val (audio1, audioFiles) = attachFiles_InputMediaAudio(name + ".audio", v.audio)
         withAttached(v, audioFiles)(v.copy(audio = audio1))
+      case v: InputRichBlockExpandableBlockQuotation =>
+        val (blocks1, blocksFiles) =
+          attachList(name + ".blocks", v.blocks)((n0, x0) => attachFiles_InputRichBlock(n0, x0))
+        withAttached(v, blocksFiles)(v.copy(blocks = blocks1))
       case v: InputRichBlockCollage =>
         val (blocks1, blocksFiles) =
           attachList(name + ".blocks", v.blocks)((n0, x0) => attachFiles_InputRichBlock(n0, x0))
@@ -447,10 +451,9 @@ trait Methods {
         val (video1, videoFiles) = attachFiles_InputMediaVideo(name + ".video", v.video)
         withAttached(v, videoFiles)(v.copy(video = video1))
       case v @ (_: InputRichBlockTable | _: InputRichBlockAnchor | _: InputRichBlockParagraph |
-          _: InputRichBlockPreformatted | _: InputRichBlockExpandableBlockQuotation | _: InputRichBlockFooter |
-          _: InputRichBlockMathematicalExpression | InputRichBlockDivider | _: InputRichBlockThinking |
-          _: InputRichBlockMap | _: InputRichBlockSectionHeading | _: InputRichBlockButtons |
-          _: InputRichBlockPullQuotation) =>
+          _: InputRichBlockPreformatted | _: InputRichBlockFooter | _: InputRichBlockMathematicalExpression |
+          InputRichBlockDivider | _: InputRichBlockThinking | _: InputRichBlockMap | _: InputRichBlockSectionHeading |
+          _: InputRichBlockButtons | _: InputRichBlockPullQuotation) =>
         (v, Map.empty[String, IFile])
     }
 
@@ -546,8 +549,9 @@ trait Methods {
   }
 
   /** Use this method to send answers to callback queries sent from <a
-    * href="https://core.telegram.org/bots/features#inline-keyboards">inline keyboards</a>. The answer will be displayed
-    * to the user as a notification at the top of the chat screen or as an alert. On success, <em>True</em> is returned.
+    * href="https://core.telegram.org/bots/features#inline-keyboards">inline keyboards</a> or <a
+    * href="https://core.telegram.org/bots/api#richmessage">rich messages</a>. The answer will be displayed to the user
+    * as a notification at the top of the chat screen or as an alert. On success, <em>True</em> is returned.
     *
     * Alternatively, the user can be redirected to the specified Game URL. For this option to work, you must first
     * create a game for your bot via <a href="https://t.me/botfather">&#064;BotFather</a> and accept the terms.
@@ -2587,12 +2591,12 @@ trait Methods {
     MethodReq[String]("getManagedBotToken", req.asJson)
   }
 
-  /** A simple method for testing your bot's authentication token. Requires no parameters. Returns basic information
-    * about the bot in form of a <a href="https://core.telegram.org/bots/api#user">User</a> object.
+  /** A simple method for testing your bot's authentication token. Requires no parameters. Returns information about the
+    * bot in form of a <a href="https://core.telegram.org/bots/api#botfullinfo">BotFullInfo</a> object.
     */
-  def getMe(): Method[User] = {
+  def getMe(): Method[BotFullInfo] = {
     val req = GetMeReq
-    MethodReq[User]("getMe", req.asJson)
+    MethodReq[BotFullInfo]("getMe", req.asJson)
   }
 
   /** Use this method to get the current list of the bot's commands for the given scope and user language. Returns an
@@ -6282,6 +6286,94 @@ trait Methods {
     val (photoAttached, photoFiles) = attachFiles_InputProfilePhoto("photo", photo)
     val req                         = SetMyProfilePhotoReq(photoAttached)
     MethodReq[Boolean]("setMyProfilePhoto", req.asJson, photoFiles)
+  }
+
+  /** Use this method to change settings of the bot. Settings that aren't specified remain unchanged. Returns
+    * <em>True</em> on success.
+    *
+    * @param supportsInlineQueries
+    *   Pass <em>True</em> to enable <a href="https://core.telegram.org/bots/api#inline-mode">inline mode</a> for the
+    *   bot or <em>False</em> to disable it
+    * @param inlineQueryPlaceholder
+    *   New placeholder for inline queries, which is shown in the input field after the bot's username. Pass an empty
+    *   string to use the default placeholder.
+    * @param needsInlineQueryLocation
+    *   Pass <em>True</em> to request the location of the user with every inline query to the bot or <em>False</em> to
+    *   stop requesting it
+    * @param inlineFeedbackShareDenominator
+    *   Denominator of the share of <a href="https://core.telegram.org/bots/api#choseninlineresult">chosen inline
+    *   results</a> received by the bot; the bot receives 1 out of <em>inline_feedback_share_denominator</em> chosen
+    *   results. Must be one of 1, 10, 100, or 1000. Pass 0 to stop receiving chosen inline results.
+    * @param canJoinGroups
+    *   Pass <em>True</em> to allow adding the bot to groups or <em>False</em> to disallow it
+    * @param canReadAllGroupMessages
+    *   Pass <em>True</em> to disable <a href="https://core.telegram.org/bots/features#privacy-mode">privacy mode</a>
+    *   for the bot or <em>False</em> to enable it
+    * @param canConnectToBusiness
+    *   Pass <em>True</em> to allow connecting the bot to user accounts to manage them or <em>False</em> to disallow it
+    * @param canManageBots
+    *   Pass <em>True</em> to allow creating other bots that will be controlled by the bot or <em>False</em> to disallow
+    *   it
+    * @param supportsGuestQueries
+    *   Pass <em>True</em> to allow guest queries to the bot from chats it isn't a member of or <em>False</em> to
+    *   disallow them
+    * @param supportsJoinRequestQueries
+    *   Pass <em>True</em> to allow assigning the bot to process join request queries or <em>False</em> to disallow it
+    * @param hasTopicsEnabled
+    *   Pass <em>True</em> to enable forum topic mode in private chats with the bot or <em>False</em> to disable it
+    * @param allowsUsersToCreateTopics
+    *   Pass <em>True</em> to allow users to create and delete topics in private chats with the bot or <em>False</em> to
+    *   disallow it
+    * @param hasTopicSidebar
+    *   Pass <em>True</em> to show topics in private chats with the bot in a sidebar or <em>False</em> to stop showing
+    *   them in a sidebar
+    * @param canCommunicateWithBots
+    *   Pass <em>True</em> to allow the bot to communicate with other bots in groups, private chats, and through
+    *   business accounts or <em>False</em> to disallow it
+    * @param callbackQueryMode
+    *   Mode in which the bot receives <a href="https://core.telegram.org/bots/api#callbackquery">callback queries</a>
+    *   from buttons in messages sent by the bot. Must be one of “default” (the field <em>message</em> is always used
+    *   and contains an <a href="https://core.telegram.org/bots/api#inaccessiblemessage">InaccessibleMessage</a> if the
+    *   message is inaccessible to the bot), “auto” (the field <em>inline_message_id</em> is used instead of the field
+    *   <em>message</em> if the message is inaccessible to the bot; the field <em>message</em> can still contain an
+    *   inaccessible message if the message has just been deleted), or “inline” (the field <em>inline_message_id</em> is
+    *   always used instead of the field <em>message</em>).
+    */
+  def setMySettings(
+    supportsInlineQueries: Option[Boolean] = Option.empty,
+    inlineQueryPlaceholder: Option[String] = Option.empty,
+    needsInlineQueryLocation: Option[Boolean] = Option.empty,
+    inlineFeedbackShareDenominator: Option[Int] = Option.empty,
+    canJoinGroups: Option[Boolean] = Option.empty,
+    canReadAllGroupMessages: Option[Boolean] = Option.empty,
+    canConnectToBusiness: Option[Boolean] = Option.empty,
+    canManageBots: Option[Boolean] = Option.empty,
+    supportsGuestQueries: Option[Boolean] = Option.empty,
+    supportsJoinRequestQueries: Option[Boolean] = Option.empty,
+    hasTopicsEnabled: Option[Boolean] = Option.empty,
+    allowsUsersToCreateTopics: Option[Boolean] = Option.empty,
+    hasTopicSidebar: Option[Boolean] = Option.empty,
+    canCommunicateWithBots: Option[Boolean] = Option.empty,
+    callbackQueryMode: Option[String] = Option.empty
+  ): Method[Boolean] = {
+    val req = SetMySettingsReq(
+      supportsInlineQueries,
+      inlineQueryPlaceholder,
+      needsInlineQueryLocation,
+      inlineFeedbackShareDenominator,
+      canJoinGroups,
+      canReadAllGroupMessages,
+      canConnectToBusiness,
+      canManageBots,
+      supportsGuestQueries,
+      supportsJoinRequestQueries,
+      hasTopicsEnabled,
+      allowsUsersToCreateTopics,
+      hasTopicSidebar,
+      canCommunicateWithBots,
+      callbackQueryMode
+    )
+    MethodReq[Boolean]("setMySettings", req.asJson)
   }
 
   /** Use this method to change the bot's short description, which is shown on the bot's profile page and is sent
