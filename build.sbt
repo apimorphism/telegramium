@@ -65,7 +65,42 @@ ThisBuild / githubWorkflowBuildPreamble ++=
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-val settings = Compiler.settings ++ Seq()
+// Central caps an org's monthly upload size, and Scala 2 scaladoc was 2/3 of a release. The API is the same in every
+// Scala version, so only _3 ships scaladoc; 2.x ships the placeholder -javadoc.jar Central still requires.
+val scaladocSettings = Seq(
+  Compile / doc / sources := {
+    if (scalaBinaryVersion.value == "3") (Compile / doc / sources).value else Nil
+  },
+  Compile / packageDoc / mappings ++= {
+    if (scalaBinaryVersion.value == "3") Nil
+    else {
+      val docs   = s"https://javadoc.io/doc/${organization.value}/${moduleName.value}_3/${version.value}"
+      val readme = target.value / "javadoc-placeholder" / "README.md"
+      IO.write(
+        readme,
+        s"Scaladoc is published only for Scala 3, and the API is the same in every Scala version:\n$docs\n"
+      )
+      Seq(readme -> "README.md")
+    }
+  },
+  // TODO: remove on Scala 3.3.10. 3.3.9's scaladoc hijacks link clicks with jQuery's $.get, but no longer ships
+  // jQuery, so clicking a link does nothing (scala/scala3#27173). This drops the handler, as the fix does
+  // (scala/scala3#26664).
+  Compile / doc := {
+    val out = (Compile / doc).value
+    val ux  = out / "scripts" / "ux.js"
+    val js  = if (scalaVersion.value == "3.3.9") IO.read(ux) else ""
+    if (js.contains("$.get(")) {
+      val start = js.indexOf("""document.querySelectorAll("a").forEach""")
+      val end   = js.indexOf("""document.querySelectorAll('.ar')""")
+      require(start >= 0 && end > start, s"$ux no longer matches 3.3.9's layout")
+      IO.write(ux, js.substring(0, start) + js.substring(end))
+    }
+    out
+  }
+)
+
+val settings = Compiler.settings ++ scaladocSettings
 
 // Live tests talk to real Telegram (see TelegramLiveSpec): plain `sbt test` skips them, `sbt liveTest` runs only them
 val onlyLiveTests = settingKey[Boolean]("Run only the tests tagged LiveTest, instead of skipping them")
