@@ -82,6 +82,21 @@ val scaladocSettings = Seq(
       )
       Seq(readme -> "README.md")
     }
+  },
+  // TODO: remove on Scala 3.3.10. 3.3.9's scaladoc hijacks link clicks with jQuery's $.get, but no longer ships
+  // jQuery, so clicking a link does nothing (scala/scala3#27173). This drops the handler, as the fix does
+  // (scala/scala3#26664).
+  Compile / doc := {
+    val out = (Compile / doc).value
+    val ux  = out / "scripts" / "ux.js"
+    val js  = if (scalaVersion.value == "3.3.9") IO.read(ux) else ""
+    if (js.contains("$.get(")) {
+      val start = js.indexOf("""document.querySelectorAll("a").forEach""")
+      val end   = js.indexOf("""document.querySelectorAll('.ar')""")
+      require(start >= 0 && end > start, s"$ux no longer matches 3.3.9's layout")
+      IO.write(ux, js.substring(0, start) + js.substring(end))
+    }
+    out
   }
 )
 
