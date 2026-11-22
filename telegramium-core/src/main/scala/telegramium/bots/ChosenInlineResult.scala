@@ -10,7 +10,9 @@ package telegramium.bots
   * @param query
   *   The query that was used to obtain the result
   * @param location
-  *   <em>Optional</em>. Sender location, only for bots that require user location
+  *   <em>Optional</em>. Sender location, only for bots that enabled user location requests via <a
+  *   href="https://t.me/botfather">&#064;BotFather</a> or using the parameter <em>needs_inline_query_location</em> of
+  *   the method <a href="https://core.telegram.org/bots/api#setmysettings">setMySettings</a>
   * @param inlineMessageId
   *   <em>Optional</em>. Identifier of the sent inline message. Available only if there is an <a
   *   href="https://core.telegram.org/bots/api#inlinekeyboardmarkup">inline keyboard</a> attached to the message. Will

@@ -1768,7 +1768,7 @@ object CirceImplicits {
     (x: InputRichBlockExpandableBlockQuotation) => {
       Json.fromFields(
         List(
-          "text"   -> x.text.asJson,
+          "blocks" -> x.blocks.asJson,
           "credit" -> x.credit.asJson,
           "type"   -> "expandable_blockquote".asJson
         ).filter(!_._2.isNull)
@@ -4017,7 +4017,7 @@ object CirceImplicits {
     (x: RichBlockExpandableBlockQuotation) => {
       Json.fromFields(
         List(
-          "text"   -> x.text.asJson,
+          "blocks" -> x.blocks.asJson,
           "credit" -> x.credit.asJson,
           "type"   -> "expandable_blockquote".asJson
         ).filter(!_._2.isNull)
@@ -4027,10 +4027,10 @@ object CirceImplicits {
   implicit lazy val richblockexpandableblockquotationDecoder: Decoder[RichBlockExpandableBlockQuotation] =
     Decoder.instance { h =>
       for {
-        _text   <- h.get[iozhik.OpenEnum[RichText]]("text")
+        _blocks <- h.getOrElse[List[iozhik.OpenEnum[RichBlock]]]("blocks")(List.empty)
         _credit <- h.get[Option[iozhik.OpenEnum[RichText]]]("credit")
       } yield {
-        RichBlockExpandableBlockQuotation(text = _text, credit = _credit)
+        RichBlockExpandableBlockQuotation(blocks = _blocks, credit = _credit)
       }
     }
 
@@ -5333,6 +5333,77 @@ object CirceImplicits {
         _description <- h.get[String]("description")
       } yield {
         BotDescription(description = _description)
+      }
+    }
+
+  implicit lazy val botfullinfoEncoder: Encoder[BotFullInfo] =
+    (x: BotFullInfo) => {
+      Json.fromFields(
+        List(
+          "id"                            -> x.id.asJson,
+          "is_bot"                        -> x.isBot.asJson,
+          "first_name"                    -> x.firstName.asJson,
+          "username"                      -> x.username.asJson,
+          "active_usernames"              -> (if (x.activeUsernames.isEmpty) Json.Null else x.activeUsernames.asJson),
+          "can_join_groups"               -> x.canJoinGroups.asJson,
+          "can_read_all_group_messages"   -> x.canReadAllGroupMessages.asJson,
+          "supports_guest_queries"        -> x.supportsGuestQueries.asJson,
+          "supports_inline_queries"       -> x.supportsInlineQueries.asJson,
+          "inline_query_placeholder"      -> x.inlineQueryPlaceholder.asJson,
+          "needs_inline_query_location"   -> x.needsInlineQueryLocation.asJson,
+          "can_connect_to_business"       -> x.canConnectToBusiness.asJson,
+          "has_main_web_app"              -> x.hasMainWebApp.asJson,
+          "has_topics_enabled"            -> x.hasTopicsEnabled.asJson,
+          "allows_users_to_create_topics" -> x.allowsUsersToCreateTopics.asJson,
+          "has_topic_sidebar"             -> x.hasTopicSidebar.asJson,
+          "can_manage_bots"               -> x.canManageBots.asJson,
+          "supports_join_request_queries" -> x.supportsJoinRequestQueries.asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
+  implicit lazy val botfullinfoDecoder: Decoder[BotFullInfo] =
+    Decoder.instance { h =>
+      for {
+        _id                         <- h.get[Long]("id")
+        _isBot                      <- h.get[Boolean]("is_bot")
+        _firstName                  <- h.get[String]("first_name")
+        _username                   <- h.get[Option[String]]("username")
+        _activeUsernames            <- h.getOrElse[List[String]]("active_usernames")(List.empty)
+        _canJoinGroups              <- h.get[Boolean]("can_join_groups")
+        _canReadAllGroupMessages    <- h.get[Boolean]("can_read_all_group_messages")
+        _supportsGuestQueries       <- h.get[Boolean]("supports_guest_queries")
+        _supportsInlineQueries      <- h.get[Boolean]("supports_inline_queries")
+        _inlineQueryPlaceholder     <- h.get[Option[String]]("inline_query_placeholder")
+        _needsInlineQueryLocation   <- h.get[Boolean]("needs_inline_query_location")
+        _canConnectToBusiness       <- h.get[Boolean]("can_connect_to_business")
+        _hasMainWebApp              <- h.get[Boolean]("has_main_web_app")
+        _hasTopicsEnabled           <- h.get[Boolean]("has_topics_enabled")
+        _allowsUsersToCreateTopics  <- h.get[Boolean]("allows_users_to_create_topics")
+        _hasTopicSidebar            <- h.get[Boolean]("has_topic_sidebar")
+        _canManageBots              <- h.get[Boolean]("can_manage_bots")
+        _supportsJoinRequestQueries <- h.get[Boolean]("supports_join_request_queries")
+      } yield {
+        BotFullInfo(
+          id = _id,
+          isBot = _isBot,
+          firstName = _firstName,
+          username = _username,
+          activeUsernames = _activeUsernames,
+          canJoinGroups = _canJoinGroups,
+          canReadAllGroupMessages = _canReadAllGroupMessages,
+          supportsGuestQueries = _supportsGuestQueries,
+          supportsInlineQueries = _supportsInlineQueries,
+          inlineQueryPlaceholder = _inlineQueryPlaceholder,
+          needsInlineQueryLocation = _needsInlineQueryLocation,
+          canConnectToBusiness = _canConnectToBusiness,
+          hasMainWebApp = _hasMainWebApp,
+          hasTopicsEnabled = _hasTopicsEnabled,
+          allowsUsersToCreateTopics = _allowsUsersToCreateTopics,
+          hasTopicSidebar = _hasTopicSidebar,
+          canManageBots = _canManageBots,
+          supportsJoinRequestQueries = _supportsJoinRequestQueries
+        )
       }
     }
 
@@ -9932,24 +10003,14 @@ object CirceImplicits {
     (x: User) => {
       Json.fromFields(
         List(
-          "id"                            -> x.id.asJson,
-          "is_bot"                        -> x.isBot.asJson,
-          "first_name"                    -> x.firstName.asJson,
-          "last_name"                     -> x.lastName.asJson,
-          "username"                      -> x.username.asJson,
-          "language_code"                 -> x.languageCode.asJson,
-          "is_premium"                    -> x.isPremium.asJson,
-          "added_to_attachment_menu"      -> x.addedToAttachmentMenu.asJson,
-          "can_join_groups"               -> x.canJoinGroups.asJson,
-          "can_read_all_group_messages"   -> x.canReadAllGroupMessages.asJson,
-          "supports_guest_queries"        -> x.supportsGuestQueries.asJson,
-          "supports_inline_queries"       -> x.supportsInlineQueries.asJson,
-          "can_connect_to_business"       -> x.canConnectToBusiness.asJson,
-          "has_main_web_app"              -> x.hasMainWebApp.asJson,
-          "has_topics_enabled"            -> x.hasTopicsEnabled.asJson,
-          "allows_users_to_create_topics" -> x.allowsUsersToCreateTopics.asJson,
-          "can_manage_bots"               -> x.canManageBots.asJson,
-          "supports_join_request_queries" -> x.supportsJoinRequestQueries.asJson
+          "id"                       -> x.id.asJson,
+          "is_bot"                   -> x.isBot.asJson,
+          "first_name"               -> x.firstName.asJson,
+          "last_name"                -> x.lastName.asJson,
+          "username"                 -> x.username.asJson,
+          "language_code"            -> x.languageCode.asJson,
+          "is_premium"               -> x.isPremium.asJson,
+          "added_to_attachment_menu" -> x.addedToAttachmentMenu.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -9957,24 +10018,14 @@ object CirceImplicits {
   implicit lazy val userDecoder: Decoder[User] =
     Decoder.instance { h =>
       for {
-        _id                         <- h.get[Long]("id")
-        _isBot                      <- h.get[Boolean]("is_bot")
-        _firstName                  <- h.get[String]("first_name")
-        _lastName                   <- h.get[Option[String]]("last_name")
-        _username                   <- h.get[Option[String]]("username")
-        _languageCode               <- h.get[Option[String]]("language_code")
-        _isPremium                  <- h.get[Option[Boolean]]("is_premium")
-        _addedToAttachmentMenu      <- h.get[Option[Boolean]]("added_to_attachment_menu")
-        _canJoinGroups              <- h.get[Option[Boolean]]("can_join_groups")
-        _canReadAllGroupMessages    <- h.get[Option[Boolean]]("can_read_all_group_messages")
-        _supportsGuestQueries       <- h.get[Option[Boolean]]("supports_guest_queries")
-        _supportsInlineQueries      <- h.get[Option[Boolean]]("supports_inline_queries")
-        _canConnectToBusiness       <- h.get[Option[Boolean]]("can_connect_to_business")
-        _hasMainWebApp              <- h.get[Option[Boolean]]("has_main_web_app")
-        _hasTopicsEnabled           <- h.get[Option[Boolean]]("has_topics_enabled")
-        _allowsUsersToCreateTopics  <- h.get[Option[Boolean]]("allows_users_to_create_topics")
-        _canManageBots              <- h.get[Option[Boolean]]("can_manage_bots")
-        _supportsJoinRequestQueries <- h.get[Option[Boolean]]("supports_join_request_queries")
+        _id                    <- h.get[Long]("id")
+        _isBot                 <- h.get[Boolean]("is_bot")
+        _firstName             <- h.get[String]("first_name")
+        _lastName              <- h.get[Option[String]]("last_name")
+        _username              <- h.get[Option[String]]("username")
+        _languageCode          <- h.get[Option[String]]("language_code")
+        _isPremium             <- h.get[Option[Boolean]]("is_premium")
+        _addedToAttachmentMenu <- h.get[Option[Boolean]]("added_to_attachment_menu")
       } yield {
         User(
           id = _id,
@@ -9984,17 +10035,7 @@ object CirceImplicits {
           username = _username,
           languageCode = _languageCode,
           isPremium = _isPremium,
-          addedToAttachmentMenu = _addedToAttachmentMenu,
-          canJoinGroups = _canJoinGroups,
-          canReadAllGroupMessages = _canReadAllGroupMessages,
-          supportsGuestQueries = _supportsGuestQueries,
-          supportsInlineQueries = _supportsInlineQueries,
-          canConnectToBusiness = _canConnectToBusiness,
-          hasMainWebApp = _hasMainWebApp,
-          hasTopicsEnabled = _hasTopicsEnabled,
-          allowsUsersToCreateTopics = _allowsUsersToCreateTopics,
-          canManageBots = _canManageBots,
-          supportsJoinRequestQueries = _supportsJoinRequestQueries
+          addedToAttachmentMenu = _addedToAttachmentMenu
         )
       }
     }
@@ -10543,7 +10584,8 @@ object CirceImplicits {
         List(
           "from_request"         -> x.fromRequest.asJson,
           "web_app_name"         -> x.webAppName.asJson,
-          "from_attachment_menu" -> x.fromAttachmentMenu.asJson
+          "from_attachment_menu" -> x.fromAttachmentMenu.asJson,
+          "inviter"              -> x.inviter.asJson
         ).filter(!_._2.isNull)
       )
     }
@@ -10554,11 +10596,13 @@ object CirceImplicits {
         _fromRequest        <- h.get[Option[Boolean]]("from_request")
         _webAppName         <- h.get[Option[String]]("web_app_name")
         _fromAttachmentMenu <- h.get[Option[Boolean]]("from_attachment_menu")
+        _inviter            <- h.get[Option[User]]("inviter")
       } yield {
         WriteAccessAllowed(
           fromRequest = _fromRequest,
           webAppName = _webAppName,
-          fromAttachmentMenu = _fromAttachmentMenu
+          fromAttachmentMenu = _fromAttachmentMenu,
+          inviter = _inviter
         )
       }
     }

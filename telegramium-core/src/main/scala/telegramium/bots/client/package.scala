@@ -2407,6 +2407,30 @@ object CirceImplicits {
       )
     }
 
+  implicit lazy val setmysettingsreqEncoder: Encoder[SetMySettingsReq] =
+    (x: SetMySettingsReq) => {
+      Json.fromFields(
+        List(
+          "supports_inline_queries"           -> x.supportsInlineQueries.asJson,
+          "inline_query_placeholder"          -> x.inlineQueryPlaceholder.asJson,
+          "needs_inline_query_location"       -> x.needsInlineQueryLocation.asJson,
+          "inline_feedback_share_denominator" -> x.inlineFeedbackShareDenominator.asJson,
+          "can_join_groups"                   -> x.canJoinGroups.asJson,
+          "can_read_all_group_messages"       -> x.canReadAllGroupMessages.asJson,
+          "can_connect_to_business"           -> x.canConnectToBusiness.asJson,
+          "can_manage_bots"                   -> x.canManageBots.asJson,
+          "supports_guest_queries"            -> x.supportsGuestQueries.asJson,
+          "supports_join_request_queries"     -> x.supportsJoinRequestQueries.asJson,
+          "has_topics_enabled"                -> x.hasTopicsEnabled.asJson,
+          "allows_users_to_create_topics"     -> x.allowsUsersToCreateTopics.asJson,
+          "has_topic_sidebar"                 -> x.hasTopicSidebar.asJson,
+          "can_communicate_with_bots"         -> x.canCommunicateWithBots.asJson,
+          "callback_query_mode"               -> x.callbackQueryMode.asJson,
+          "method"                            -> "setMySettings".asJson
+        ).filter(!_._2.isNull)
+      )
+    }
+
   implicit lazy val setmyshortdescriptionreqEncoder: Encoder[SetMyShortDescriptionReq] =
     (x: SetMyShortDescriptionReq) => {
       Json.fromFields(

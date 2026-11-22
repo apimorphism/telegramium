@@ -237,13 +237,13 @@ final case class RichBlockAnimation(
 /** A block quotation, corresponding to the HTML tag <code>ᐸblockquoteᐳ</code> with custom attribute
   * <code>"expandable"</code>.
   *
-  * @param text
+  * @param blocks
   *   Content of the block
   * @param credit
   *   <em>Optional</em>. Credit of the block
   */
 final case class RichBlockExpandableBlockQuotation(
-  text: iozhik.OpenEnum[RichText],
+  blocks: List[iozhik.OpenEnum[RichBlock]] = List.empty,
   credit: Option[iozhik.OpenEnum[RichText]] = Option.empty
 ) extends RichBlock
 

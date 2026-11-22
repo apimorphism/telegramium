@@ -247,6 +247,7 @@ object RoundTrips {
       RoundTripCase[BotAccessSettings]("BotAccessSettings", GenBotAccessSettings.gen, GenBotAccessSettings.shrink),
       RoundTripCase[BotCommand]("BotCommand", GenBotCommand.gen, GenBotCommand.shrink),
       RoundTripCase[BotDescription]("BotDescription", GenBotDescription.gen, GenBotDescription.shrink),
+      RoundTripCase[BotFullInfo]("BotFullInfo", GenBotFullInfo.gen, GenBotFullInfo.shrink),
       RoundTripCase[BotName]("BotName", GenBotName.gen, GenBotName.shrink),
       RoundTripCase[BotShortDescription]("BotShortDescription", GenBotShortDescription.gen,
         GenBotShortDescription.shrink),

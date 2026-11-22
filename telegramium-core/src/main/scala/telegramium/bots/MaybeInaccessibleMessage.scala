@@ -226,7 +226,8 @@ sealed trait MaybeInaccessibleMessage {}
   * @param writeAccessAllowed
   *   <em>Optional</em>. Service message: the user allowed the bot to write messages after adding it to the attachment
   *   or side menu, launching a Web App from a link, or accepting an explicit request from a Web App sent by the method
-  *   <a href="https://core.telegram.org/bots/webapps#initializing-mini-apps">requestWriteAccess</a>
+  *   <a href="https://core.telegram.org/bots/webapps#initializing-mini-apps">requestWriteAccess</a>, or the user was
+  *   invited to the private chat with the bot by the owner of the bot
   * @param passportData
   *   <em>Optional</em>. Telegram Passport data
   * @param proximityAlertTriggered
